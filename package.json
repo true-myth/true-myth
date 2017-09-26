@@ -1,13 +1,32 @@
 {
   "name": "less-clever",
-  "version": "0.1",
+  "version": "0.1.0",
   "author": {
     "name": "Chris Krycho",
     "email": "chris@chriskrycho.com",
     "url": "http://www.chriskrycho.com"
   },
   "devDependencies": {
+    "@types/jest": "^21.1.0",
+    "jest": "^21.1.0",
     "prettier": "^1.7.0",
+    "ts-jest": "^21.0.1",
     "typescript": "2.5"
+  },
+  "scripts": {
+    "test": "jest"
+  },
+  "jest": {
+    "transform": {
+      "^.+\\.tsx?$": "<rootDir>/node_modules/ts-jest/preprocessor.js"
+    },
+    "testRegex": "(/__tests__/.*|(\\.|/)(test|spec))\\.(jsx?|tsx?)$",
+    "moduleFileExtensions": [
+      "ts",
+      "tsx",
+      "js",
+      "jsx",
+      "json"
+    ]
   }
 }
