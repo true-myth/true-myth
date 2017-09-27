@@ -26,7 +26,7 @@ export type Nothing = { variant: Variant.Nothing }
 
 const __Nothing: Nothing = Object.freeze({ variant: Variant.Nothing as Variant.Nothing })
 
-export const Nothing = (): Maybe<never> => __Nothing
+export const Nothing = <T>(): Maybe<T> => __Nothing
 
 export type Maybe<T> = Some<T> | Nothing
 export const Maybe = <T>(value: T | null | undefined): Maybe<T> =>
@@ -53,7 +53,6 @@ export const mapOrElse = <T, U>(
 
 export const and = <T, U>(mu: Maybe<U>, mt: Maybe<T>): Maybe<U> => (isSome(mt) ? mu : Nothing())
 
-// ~= Folktale `chain`
 export const andThen = <T, U>(thenFn: (t: T) => Maybe<U>, mt: Maybe<T>): Maybe<U> =>
   isSome(mt) ? thenFn(mt.value) : Nothing()
 
