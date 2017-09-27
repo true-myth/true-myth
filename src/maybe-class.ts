@@ -12,13 +12,13 @@ export interface IMaybe<T> {
   variant: Variant;
   map<U>(this: Maybe<T>, mapFn: MapFn<T, U>): Maybe<U>;
   mapOr<U>(this: Maybe<T>, orU: U, mapFn: MapFn<T, U>): U;
-  mapOrElse<U>(this: Maybe<T>, orElseFn: () => U, mapFn: MapFn<T, U>): U;
+  mapOrElse<U>(this: Maybe<T>, orElseFn: (...args: any[]) => U, mapFn: MapFn<T, U>): U;
   or(this: Maybe<T>, mOr: Maybe<T>): Maybe<T>;
-  orElse(this: Maybe<T>, orElseFn: () => Maybe<T>): Maybe<T>;
+  orElse(this: Maybe<T>, orElseFn: (...args: any[]) => Maybe<T>): Maybe<T>;
   and<U>(this: Maybe<T>, mAnd: Maybe<U>): Maybe<U>;
   andThen<U>(this: Maybe<T>, andThenFn: (t: T) => Maybe<U>): Maybe<U>;
   unwrap(): T | never;
-  unwrapOrElse(this: Maybe<T>, elseFn: () => T): T;
+  unwrapOrElse(this: Maybe<T>, elseFn: (...args: any[]) => T): T;
 }
 
 export class Some<T> implements IMaybe<T> {
@@ -38,7 +38,7 @@ export class Some<T> implements IMaybe<T> {
     return mapOr(orU, mapFn, this);
   }
 
-  mapOrElse<U>(this: Maybe<T>, orElseFn: () => U, mapFn: MapFn<T, U>): U {
+  mapOrElse<U>(this: Maybe<T>, orElseFn: (...args: any[]) => U, mapFn: MapFn<T, U>): U {
     return mapOrElse(orElseFn, mapFn, this);
   }
 
@@ -46,7 +46,7 @@ export class Some<T> implements IMaybe<T> {
     return or(mOr, this);
   }
 
-  orElse(this: Maybe<T>, orElseFn: () => Maybe<T>): Maybe<T> {
+  orElse(this: Maybe<T>, orElseFn: (...args: any[]) => Maybe<T>): Maybe<T> {
     return orElse(orElseFn, this);
   }
 
@@ -62,7 +62,7 @@ export class Some<T> implements IMaybe<T> {
     return this.value;
   }
 
-  unwrapOrElse(this: Maybe<T>, elseFn: () => T): T {
+  unwrapOrElse(this: Maybe<T>, elseFn: (...args: any[]) => T): T {
     return unwrapOrElse(elseFn, this);
   }
 }
@@ -78,7 +78,7 @@ export class Nothing<T> implements IMaybe<T> {
     return mapOr(orU, mapFn, this);
   }
 
-  mapOrElse<U>(this: Maybe<T>, orElseFn: () => U, mapFn: MapFn<T, U>): U {
+  mapOrElse<U>(this: Maybe<T>, orElseFn: (...args: any[]) => U, mapFn: MapFn<T, U>): U {
     return mapOrElse(orElseFn, mapFn, this);
   }
 
@@ -86,7 +86,7 @@ export class Nothing<T> implements IMaybe<T> {
     return or(mOr, this);
   }
 
-  orElse(this: Maybe<T>, orElseFn: () => Maybe<T>): Maybe<T> {
+  orElse(this: Maybe<T>, orElseFn: (...args: any[]) => Maybe<T>): Maybe<T> {
     return orElse(orElseFn, this);
   }
 
@@ -102,7 +102,7 @@ export class Nothing<T> implements IMaybe<T> {
     throw new Error('Tried to `unwrap(Nothing)`');
   }
 
-  unwrapOrElse(this: Maybe<T>, elseFn: () => T): T {
+  unwrapOrElse(this: Maybe<T>, elseFn: (...args: any[]) => T): T {
     return unwrapOrElse(elseFn, this);
   }
 }
@@ -123,8 +123,11 @@ export const map = <T, U>(mapFn: MapFn<T, U>, mt: Maybe<T>): Maybe<U> =>
 export const mapOr = <T, U>(orU: U, mapFn: MapFn<T, U>, mt: Maybe<T>): U =>
   isSome(mt) ? mapFn(unwrap(mt)) : orU;
 
-export const mapOrElse = <T, U>(orElseFn: () => U, mapFn: MapFn<T, U>, mt: Maybe<T>): U =>
-  isSome(mt) ? mapFn(unwrap(mt)) : orElseFn();
+export const mapOrElse = <T, U>(
+  orElseFn: (...args: any[]) => U,
+  mapFn: MapFn<T, U>,
+  mt: Maybe<T>
+): U => (isSome(mt) ? mapFn(unwrap(mt)) : orElseFn());
 
 export const and = <T, U>(mu: Maybe<U>, mt: Maybe<T>): Maybe<U> => (isSome(mt) ? mu : nothing());
 
@@ -133,12 +136,12 @@ export const andThen = <T, U>(thenFn: (t: T) => Maybe<U>, mt: Maybe<T>): Maybe<U
 
 export const or = <T>(mDef: Maybe<T>, mt: Maybe<T>): Maybe<T> => (isSome(mt) ? mt : mDef);
 
-export const orElse = <T>(elseFn: () => Maybe<T>, mt: Maybe<T>): Maybe<T> =>
+export const orElse = <T>(elseFn: (...args: any[]) => Maybe<T>, mt: Maybe<T>): Maybe<T> =>
   isSome(mt) ? mt : elseFn();
 
 export const unwrap = <T>(mt: Maybe<T>): T => {
   return mt.unwrap();
 };
 
-export const unwrapOrElse = <T>(orElseFn: () => T, mt: Maybe<T>): T =>
+export const unwrapOrElse = <T>(orElseFn: (...args: any[]) => T, mt: Maybe<T>): T =>
   isSome(mt) ? unwrap(mt) : orElseFn();
