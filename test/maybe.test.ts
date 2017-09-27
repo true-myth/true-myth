@@ -1,28 +1,38 @@
 import { assertType } from './lib/assert'
 import * as Maybe from '../src/maybe'
 
-test('the basics', () => {
-  const someString: Maybe.Maybe<string> = Maybe.Some('string')
-  const nothing: Maybe.Maybe<number> = Maybe.Nothing()
+type Neat = { neat: string }
 
-  type Neat = { neat: string }
+test('`Maybe.Some`', () => {
   const shouldBeFine = Maybe.Maybe({ neat: 'string' })
   assertType<Maybe.Maybe<Neat>>(shouldBeFine)
   const shouldBeNeat = Maybe.Maybe<Neat>(undefined)
   assertType<Maybe.Maybe<Neat>>(shouldBeNeat)
-  const alsoNeat = Maybe.of<Neat>({ neat: 'strings' })
-  assertType<Maybe.Maybe<Neat>>(alsoNeat)
-  const andThisToo = Maybe.of<Neat>(null)
-  assertType<Maybe.Maybe<Neat>>(andThisToo)
 
+  const someString: Maybe.Maybe<string> = Maybe.Some('string')
   switch (someString.variant) {
     case Maybe.Variant.Some:
       expect(someString.value).toBe('string')
       break
     case Maybe.Variant.Nothing:
-      expect(Maybe.unwrap(nothing)).toThrow()
+      expect(false).toBe(true) // because this should never happen
       break
   }
+})
+
+test('`Maybe.Nothing`', () => {
+  const nothing: Maybe.Maybe<number> = Maybe.Nothing()
+  switch (nothing.variant) {
+    case Maybe.Variant.Some:
+      expect(true).toBe(false) // because this should never happen
+      break
+    case Maybe.Variant.Nothing:
+      expect(true).toBe(true) // yay
+      break
+  }
+
+  const nothingOnType = Maybe.Nothing<string>()
+  assertType<Maybe.Maybe<string>>(nothingOnType)
 })
 
 test('`Maybe.of` with `null', () => {
@@ -42,6 +52,11 @@ test('`Maybe.of` with `undefined`', () => {
 })
 
 test('`Maybe.of` with values', () => {
+  const alsoNeat = Maybe.of<Neat>({ neat: 'strings' })
+  assertType<Maybe.Maybe<Neat>>(alsoNeat)
+  const andThisToo = Maybe.of<Neat>(null)
+  assertType<Maybe.Maybe<Neat>>(andThisToo)
+
   const maybeNumber = Maybe.of(42)
   assertType<Maybe.Maybe<number>>(maybeNumber)
   expect(Maybe.isSome(maybeNumber)).toBe(true)
