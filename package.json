@@ -16,7 +16,7 @@
   "scripts": {
     "test": "jest",
     "doc":
-      "rm -rf docs && typedoc --out ./docs --toc --excludePrivate --theme 'minimal' --name 'True Myth'"
+      "rm -rf docs && typedoc --out ./docs --toc --excludePrivate --theme 'minimal' --name 'True Myth' && touch docs/.nojekyll"
   },
   "jest": {
     "transform": {
