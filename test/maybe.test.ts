@@ -101,17 +101,28 @@ test('`Maybe.and`', () => {
 });
 
 test('`Maybe.andThen`', () => {
-  expect(Maybe.andThen(x => Maybe.of(Number(x)), Maybe.of('42'))).toEqual(Maybe.Some(42));
-  expect(Maybe.andThen(() => Maybe.of(null), Maybe.of('42'))).toEqual(Maybe.Nothing());
-  expect(Maybe.andThen(x => Maybe.of(Number(x)), Maybe.of(null))).toEqual(Maybe.Nothing());
-  expect(Maybe.andThen(() => Maybe.of(null), Maybe.of(null))).toEqual(Maybe.Nothing());
+  const strNum = Maybe.of('42');
+  const number = Maybe.of(42);
+  const toNumber = (x: string) => Maybe.of(Number(x));
+  const toNothing = (x: string) => Maybe.Nothing<number>();
+  const noString = Maybe.Nothing<string>();
+  const noNumber = Maybe.Nothing<number>();
+
+  expect(Maybe.andThen(toNumber, strNum)).toEqual(number);
+  expect(Maybe.andThen(toNothing, strNum)).toEqual(noNumber);
+  expect(Maybe.andThen(toNumber, noString)).toEqual(noNumber);
+  expect(Maybe.andThen(toNothing, noString)).toEqual(noNumber);
 });
 
 test('`Maybe.or`', () => {
-  expect(Maybe.or(Maybe.of('42'), Maybe.of('string'))).toEqual(Maybe.Some('string'));
-  expect(Maybe.or(Maybe.Nothing(), Maybe.of('string'))).toEqual(Maybe.Some('string'));
-  expect(Maybe.or(Maybe.Nothing(), Maybe.of('42'))).toEqual(Maybe.Some('42'));
-  expect(Maybe.or(Maybe.Nothing(), Maybe.Nothing())).toEqual(Maybe.Nothing());
+  const someAnswer = Maybe.of('42');
+  const someWaffles = Maybe.of('waffles');
+  const nothing = Maybe.Nothing();
+
+  expect(Maybe.or(someAnswer, someWaffles)).toBe(someWaffles);
+  expect(Maybe.or(nothing, someWaffles)).toBe(someWaffles);
+  expect(Maybe.or(someAnswer, nothing)).toBe(someAnswer);
+  expect(Maybe.or(nothing, nothing)).toBe(nothing);
 });
 
 test('`Maybe.orElse`', () => {
