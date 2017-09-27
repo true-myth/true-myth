@@ -6,10 +6,14 @@ test('the basics', () => {
   const nothing: Maybe.Maybe<number> = Maybe.Nothing()
 
   type Neat = { neat: string }
-  const shouldBeFine: Maybe.Maybe<Neat> = Maybe.Maybe({ neat: 'string' })
-  const shouldBeNeat: Maybe.Maybe<Neat> = Maybe.Maybe<Neat>(undefined)
+  const shouldBeFine = Maybe.Maybe({ neat: 'string' })
+  assertType<Maybe.Maybe<Neat>>(shouldBeFine)
+  const shouldBeNeat = Maybe.Maybe<Neat>(undefined)
+  assertType<Maybe.Maybe<Neat>>(shouldBeNeat)
   const alsoNeat = Maybe.of<Neat>({ neat: 'strings' })
+  assertType<Maybe.Maybe<Neat>>(alsoNeat)
   const andThisToo = Maybe.of<Neat>(null)
+  assertType<Maybe.Maybe<Neat>>(andThisToo)
 
   switch (someString.variant) {
     case Maybe.Variant.Some:
@@ -19,19 +23,6 @@ test('the basics', () => {
       expect(Maybe.unwrap(nothing)).toThrow()
       break
   }
-})
-
-test('`Maybe.map`', () => {
-  const someString = Maybe.of('string')
-  const itsLength = Maybe.map(s => s.length, someString)
-  expect(itsLength).toEqual(Maybe.Some('string'.length))
-  assertType<Maybe.Maybe<number>>(itsLength)
-
-  const nada: number | undefined = undefined
-  const none = Maybe.of<string>(nada)
-  assertType<Maybe.Maybe<string>>(none)
-  const mapped = Maybe.map(x => x + 2, none)
-  expect(mapped).toEqual(Maybe.Nothing())
 })
 
 test('`Maybe.of` with `null', () => {
@@ -58,16 +49,66 @@ test('`Maybe.of` with values', () => {
   expect(Maybe.unwrap(maybeNumber)).toBe(42)
 })
 
-test('`Maybe.and', () => {
-  expect(Maybe.and(Maybe.of('string'), Maybe.of(42))).toEqual(Maybe.Some(42))
-  expect(Maybe.and(Maybe.of('string'), Maybe.Nothing())).toEqual(Maybe.Nothing())
+test('`Maybe.map`', () => {
+  const length = (s: string) => s.length
+
+  const someString = Maybe.of('string')
+  const itsLength = Maybe.map(length, someString)
+  assertType<Maybe.Maybe<number>>(itsLength)
+  expect(itsLength).toEqual(Maybe.Some('string'.length))
+
+  const none = Maybe.of<string>(null)
+  const noLength = Maybe.map(length, none)
+  assertType<Maybe.Maybe<string>>(none)
+  expect(noLength).toEqual(Maybe.Nothing())
+})
+
+test('`Maybe.mapOr`', () => {
+  expect(Maybe.mapOr(x => x.length, 0, Maybe.Some('string'))).toEqual(Maybe.Some('string'.length))
+  expect(Maybe.mapOr(x => x.length, 0, Maybe.of<string>(null))).toEqual(Maybe.Some(0))
+})
+
+test('`Maybe.mapOrElse`', () => {
+  const length = (s: { length: number }) => s.length
+  const string = 'a string'
+  expect(Maybe.mapOrElse(length, () => 0, Maybe.of('a string'))).toBe(string.length)
+  expect(Maybe.mapOrElse(length, () => 0, Maybe.Nothing())).toBe(0)
+})
+
+test('`Maybe.and`', () => {
+  expect(Maybe.and(Maybe.of(42), Maybe.of('string'))).toEqual(Maybe.Some(42))
+  expect(Maybe.and(Maybe.Nothing(), Maybe.of('string'))).toEqual(Maybe.Nothing())
   expect(Maybe.and(Maybe.Nothing(), Maybe.of(42))).toEqual(Maybe.Nothing())
   expect(Maybe.and(Maybe.Nothing(), Maybe.Nothing())).toEqual(Maybe.Nothing())
 })
 
-test('`Maybe.or', () => {
-  expect(Maybe.or(Maybe.of('string'), Maybe.of('42'))).toEqual(Maybe.Some('string'))
-  expect(Maybe.or(Maybe.of('string'), Maybe.Nothing())).toEqual(Maybe.Some('string'))
+test('`Maybe.andThen`', () => {
+  expect(Maybe.andThen(x => Maybe.of(Number(x)), Maybe.of('42'))).toEqual(Maybe.Some(42))
+  expect(Maybe.andThen(() => Maybe.of(null), Maybe.of('42'))).toEqual(Maybe.Nothing())
+  expect(Maybe.andThen(x => Maybe.of(Number(x)), Maybe.of(null))).toEqual(Maybe.Nothing())
+  expect(Maybe.andThen(() => Maybe.of(null), Maybe.of(null))).toEqual(Maybe.Nothing())
+})
+
+test('`Maybe.or`', () => {
+  expect(Maybe.or(Maybe.of('42'), Maybe.of('string'))).toEqual(Maybe.Some('string'))
+  expect(Maybe.or(Maybe.Nothing(), Maybe.of('string'))).toEqual(Maybe.Some('string'))
   expect(Maybe.or(Maybe.Nothing(), Maybe.of('42'))).toEqual(Maybe.Some('42'))
   expect(Maybe.or(Maybe.Nothing(), Maybe.Nothing())).toEqual(Maybe.Nothing())
+})
+
+test('`Maybe.orElse`', () => {
+  expect(Maybe.orElse(() => Maybe.of('waffles'), Maybe.of('42'))).toEqual(Maybe.Some('42'))
+  expect(Maybe.orElse(() => Maybe.of('waffles'), Maybe.of(null))).toEqual(Maybe.Some('waffles'))
+  expect(Maybe.orElse(() => Maybe.of(null), Maybe.of('42'))).toEqual(Maybe.Some('42'))
+  expect(Maybe.orElse(() => Maybe.of(null), Maybe.of(null))).toEqual(Maybe.Nothing())
+})
+
+test('`Maybe.unwrap`', () => {
+  expect(Maybe.unwrap(Maybe.of('42'))).toBe('42')
+  expect(() => Maybe.unwrap(Maybe.Nothing())).toThrow()
+})
+
+test('`Maybe.unwrapOrElse`', () => {
+  expect(Maybe.unwrapOrElse(Maybe.of(42), () => 100)).toBe(42)
+  expect(Maybe.unwrapOrElse(Maybe.Nothing(), () => 42)).toBe(42)
 })
