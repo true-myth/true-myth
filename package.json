@@ -1,5 +1,5 @@
 {
-  "name": "less-clever",
+  "name": "true-myth",
   "version": "0.1.0",
   "author": {
     "name": "Chris Krycho",
@@ -14,19 +14,15 @@
     "typescript": "2.5"
   },
   "scripts": {
-    "test": "jest"
+    "test": "jest",
+    "doc":
+      "rm -rf docs && typedoc --out ./docs --toc --excludePrivate --theme 'minimal' --name 'True Myth'"
   },
   "jest": {
     "transform": {
       "^.+\\.tsx?$": "<rootDir>/node_modules/ts-jest/preprocessor.js"
     },
     "testRegex": "(/__tests__/.*|(\\.|/)(test|spec))\\.(jsx?|tsx?)$",
-    "moduleFileExtensions": [
-      "ts",
-      "tsx",
-      "js",
-      "jsx",
-      "json"
-    ]
+    "moduleFileExtensions": ["ts", "tsx", "js", "jsx", "json"]
   }
 }

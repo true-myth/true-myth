@@ -1,3 +1,7 @@
+/**
+ * Check if the value here is an all-consuming monstrosity which will consume
+ * everything in its transdimensional rage. A.k.a. `null` or `undefined`.
+ */
 const isCthulhu = (value: any): value is undefined | null =>
   typeof value === 'undefined' || value === null;
 
@@ -24,7 +28,7 @@ export interface IMaybe<T> {
 }
 
 export class Some<T> implements IMaybe<T> {
-  private value: T;
+  private __value: T;
 
   variant = Variant.Some;
 
@@ -33,7 +37,7 @@ export class Some<T> implements IMaybe<T> {
       throw new Error('Tried to construct `Some` with `null` or `undefined`');
     }
 
-    this.value = value;
+    this.__value = value;
   }
 
   map<U>(this: Maybe<T>, mapFn: MapFn<T, U>): Maybe<U> {
@@ -65,7 +69,7 @@ export class Some<T> implements IMaybe<T> {
   }
 
   unwrap(): T {
-    return this.value;
+    return this.__value;
   }
 
   unwrapOrElse(this: Maybe<T>, elseFn: (...args: any[]) => T): T {
@@ -119,9 +123,23 @@ export const isNothing = <T>(m: Maybe<T>): m is Nothing<T> => m.variant === Vari
 export const some = <T>(value: T) => new Some<T>(value);
 export const nothing = <T>() => new Nothing<T>();
 
+/**
+ * A value which may or may not be present.
+ * 
+ * If the value is present, it is `Some(value)`. If it's absent, it's `Nothing`.
+ * This provides a type-safe container for dealing with the possibility that
+ * there's nothing here – a container you can do many of the same things you
+ * might with an array – so that you can avoid nasty `null` and `undefined`
+ * checks throughout your codebase.
+ * 
+ * The behavior of this type is checked by TypeScript at compile time, and bears
+ * no runtime overhead other than the very small cost of the container object.
+ */
 export type Maybe<T> = Some<T> | Nothing<T>;
 export const of = <T>(value: T | undefined | null): Maybe<T> =>
   isCthulhu(value) ? nothing<T>() : some(value);
+
+export default Maybe;
 
 export const map = <T, U>(mapFn: MapFn<T, U>, mt: Maybe<T>): Maybe<U> =>
   isSome(mt) ? some(mapFn(unwrap(mt))) : nothing<U>();
