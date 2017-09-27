@@ -26,7 +26,11 @@ export class Some<T> implements IMaybe<T> {
 
   variant = Variant.Some;
 
-  constructor(value: T) {
+  constructor(value: T | null | undefined) {
+    if (isCthulhu(value)) {
+      throw new Error('Tried to construct `Some` with `null` or `undefined`');
+    }
+
     this.value = value;
   }
 
