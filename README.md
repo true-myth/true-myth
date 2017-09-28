@@ -6,6 +6,17 @@
 This is a library for safe functional programming in JavaScript, with
 first-class support for TypeScript and Flow.
 
+- [What is this for?](#what-is-this-for)
+    - [What's with the name?](#whats-with-the-name)
+- [Setup](#setup)
+    - [JavaScript](#javascript)
+    - [TypeScript](#typescript)
+    - [Flow](#flow)
+- [Roadmap](#roadmap)
+- [Why not...](#why-not)
+    - [Folktale](#folktale)
+    - [Sanctuary](#sanctuary)
+
 ## What is this for?
 
 - [ ] TODO: motivation
