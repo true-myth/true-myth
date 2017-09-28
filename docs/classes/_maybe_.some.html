@@ -981,13 +981,41 @@ img { max-width: 100%; }
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/chriskrycho/i-fp-js/blob/3e7f76e/src/maybe.ts#L33">maybe.ts:33</a></li>
+								<li>Defined in <a href="https://github.com/chriskrycho/i-fp-js/blob/a08b2a6/src/maybe.ts#L47">maybe.ts:47</a></li>
 							</ul>
 						</aside>
+						<div class="tsd-comment tsd-typography">
+							<div class="lead">
+								<p>Directly create a <code>Maybe.Some</code> instance.</p>
+							</div>
+							<p><strong>Note:</strong> While you <em>may</em> create the <code>Some</code> type via normal JavaScript
+								class construction, it is not recommended for the functional style for
+								which the library is intended. Instead, use <a href="../modules/_maybe_.html#of">of</a> (for the general case)
+							or <a href="../modules/_maybe_.html#some-1">some</a> for this specific case.</p>
+							<pre><code class="lang-ts"><span class="hljs-comment">// Avoid:</span>
+<span class="hljs-keyword">const</span> aString = <span class="hljs-keyword">new</span> Maybe.Some(<span class="hljs-string">'characters'</span>);
+
+<span class="hljs-comment">// Prefer:</span>
+<span class="hljs-keyword">const</span> aString = Maybe.some(<span class="hljs-string">'characters);</span>
+</code></pre>
+							<dl class="tsd-comment-tags">
+								<dt>throws</dt>
+								<dd><p>If you pass <code>null</code> or <code>undefined</code>.</p>
+								</dd>
+							</dl>
+						</div>
 						<h4 class="tsd-parameters-title">Parameters</h4>
 						<ul class="tsd-parameters">
 							<li>
 								<h5>value: <span class="tsd-signature-type">T</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">undefined</span></h5>
+								<div class="tsd-comment tsd-typography">
+									<div class="lead">
+										<p>The value to wrap in a <code>Maybe.Some</code>.</p>
+										<p><code>null</code> and <code>undefined</code> are allowed by the type signature so
+											that the constructor may <code>throw</code> on those rather than
+										constructing a type like <code>Maybe&lt;undefined&gt;</code>.</p>
+									</div>
+								</div>
 							</li>
 						</ul>
 						<h4 class="tsd-returns-title">Returns <a href="_maybe_.some.html" class="tsd-signature-type">Some</a></h4>
@@ -1003,7 +1031,7 @@ img { max-width: 100%; }
 				<div class="tsd-signature tsd-kind-icon">___value<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">T</span></div>
 				<aside class="tsd-sources">
 					<ul>
-						<li>Defined in <a href="https://github.com/chriskrycho/i-fp-js/blob/3e7f76e/src/maybe.ts#L31">maybe.ts:31</a></li>
+						<li>Defined in <a href="https://github.com/chriskrycho/i-fp-js/blob/a08b2a6/src/maybe.ts#L45">maybe.ts:45</a></li>
 					</ul>
 				</aside>
 			</section>
@@ -1014,7 +1042,7 @@ img { max-width: 100%; }
 				<aside class="tsd-sources">
 					<p>Implementation of <a href="../interfaces/_maybe_.imaybe.html">IMaybe</a>.<a href="../interfaces/_maybe_.imaybe.html#variant">variant</a></p>
 					<ul>
-						<li>Defined in <a href="https://github.com/chriskrycho/i-fp-js/blob/3e7f76e/src/maybe.ts#L33">maybe.ts:33</a></li>
+						<li>Defined in <a href="https://github.com/chriskrycho/i-fp-js/blob/a08b2a6/src/maybe.ts#L47">maybe.ts:47</a></li>
 					</ul>
 				</aside>
 			</section>
@@ -1032,7 +1060,7 @@ img { max-width: 100%; }
 						<aside class="tsd-sources">
 							<p>Implementation of <a href="../interfaces/_maybe_.imaybe.html">IMaybe</a>.<a href="../interfaces/_maybe_.imaybe.html#and">and</a></p>
 							<ul>
-								<li>Defined in <a href="https://github.com/chriskrycho/i-fp-js/blob/3e7f76e/src/maybe.ts#L63">maybe.ts:63</a></li>
+								<li>Defined in <a href="https://github.com/chriskrycho/i-fp-js/blob/a08b2a6/src/maybe.ts#L102">maybe.ts:102</a></li>
 							</ul>
 						</aside>
 						<h4 class="tsd-type-parameters-title">Type parameters</h4>
@@ -1064,7 +1092,7 @@ img { max-width: 100%; }
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/chriskrycho/i-fp-js/blob/3e7f76e/src/maybe.ts#L67">maybe.ts:67</a></li>
+								<li>Defined in <a href="https://github.com/chriskrycho/i-fp-js/blob/a08b2a6/src/maybe.ts#L106">maybe.ts:106</a></li>
 							</ul>
 						</aside>
 						<h4 class="tsd-type-parameters-title">Type parameters</h4>
@@ -1108,14 +1136,13 @@ img { max-width: 100%; }
 				<a name="map" class="tsd-anchor"></a>
 				<h3>map</h3>
 				<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-has-type-parameter">
-					<li class="tsd-signature tsd-kind-icon">map&lt;U&gt;<span class="tsd-signature-symbol">(</span>this<span class="tsd-signature-symbol">: </span><a href="../modules/_maybe_.html#maybe" class="tsd-signature-type">Maybe</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span>, mapFn<span class="tsd-signature-symbol">: </span><a href="../modules/_maybe_.html#mapfn" class="tsd-signature-type">MapFn</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">U</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../modules/_maybe_.html#maybe" class="tsd-signature-type">Maybe</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">U</span><span class="tsd-signature-symbol">&gt;</span></li>
+					<li class="tsd-signature tsd-kind-icon">map&lt;U&gt;<span class="tsd-signature-symbol">(</span>this<span class="tsd-signature-symbol">: </span><a href="../modules/_maybe_.html#maybe" class="tsd-signature-type">Maybe</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span>, mapFn<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">function</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../modules/_maybe_.html#maybe" class="tsd-signature-type">Maybe</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">U</span><span class="tsd-signature-symbol">&gt;</span></li>
 				</ul>
 				<ul class="tsd-descriptions">
 					<li class="tsd-description">
 						<aside class="tsd-sources">
-							<p>Implementation of <a href="../interfaces/_maybe_.imaybe.html">IMaybe</a>.<a href="../interfaces/_maybe_.imaybe.html#map">map</a></p>
 							<ul>
-								<li>Defined in <a href="https://github.com/chriskrycho/i-fp-js/blob/3e7f76e/src/maybe.ts#L43">maybe.ts:43</a></li>
+								<li>Defined in <a href="https://github.com/chriskrycho/i-fp-js/blob/a08b2a6/src/maybe.ts#L82">maybe.ts:82</a></li>
 							</ul>
 						</aside>
 						<h4 class="tsd-type-parameters-title">Type parameters</h4>
@@ -1130,7 +1157,25 @@ img { max-width: 100%; }
 								<h5>this: <a href="../modules/_maybe_.html#maybe" class="tsd-signature-type">Maybe</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span></h5>
 							</li>
 							<li>
-								<h5>mapFn: <a href="../modules/_maybe_.html#mapfn" class="tsd-signature-type">MapFn</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">U</span><span class="tsd-signature-symbol">&gt;</span></h5>
+								<h5>mapFn: <span class="tsd-signature-type">function</span></h5>
+								<ul class="tsd-parameters">
+									<li class="tsd-parameter-siganture">
+										<ul class="tsd-signatures tsd-kind-type-literal tsd-is-not-exported">
+											<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span>t<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">U</span></li>
+										</ul>
+										<ul class="tsd-descriptions">
+											<li class="tsd-description">
+												<h4 class="tsd-parameters-title">Parameters</h4>
+												<ul class="tsd-parameters">
+													<li>
+														<h5>t: <span class="tsd-signature-type">T</span></h5>
+													</li>
+												</ul>
+												<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">U</span></h4>
+											</li>
+										</ul>
+									</li>
+								</ul>
 							</li>
 						</ul>
 						<h4 class="tsd-returns-title">Returns <a href="../modules/_maybe_.html#maybe" class="tsd-signature-type">Maybe</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">U</span><span class="tsd-signature-symbol">&gt;</span></h4>
@@ -1141,14 +1186,13 @@ img { max-width: 100%; }
 				<a name="mapor" class="tsd-anchor"></a>
 				<h3>map<wbr>Or</h3>
 				<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-has-type-parameter">
-					<li class="tsd-signature tsd-kind-icon">map<wbr>Or&lt;U&gt;<span class="tsd-signature-symbol">(</span>this<span class="tsd-signature-symbol">: </span><a href="../modules/_maybe_.html#maybe" class="tsd-signature-type">Maybe</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span>, orU<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">U</span>, mapFn<span class="tsd-signature-symbol">: </span><a href="../modules/_maybe_.html#mapfn" class="tsd-signature-type">MapFn</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">U</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">U</span></li>
+					<li class="tsd-signature tsd-kind-icon">map<wbr>Or&lt;U&gt;<span class="tsd-signature-symbol">(</span>this<span class="tsd-signature-symbol">: </span><a href="../modules/_maybe_.html#maybe" class="tsd-signature-type">Maybe</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span>, orU<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">U</span>, mapFn<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">function</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">U</span></li>
 				</ul>
 				<ul class="tsd-descriptions">
 					<li class="tsd-description">
 						<aside class="tsd-sources">
-							<p>Implementation of <a href="../interfaces/_maybe_.imaybe.html">IMaybe</a>.<a href="../interfaces/_maybe_.imaybe.html#mapor">mapOr</a></p>
 							<ul>
-								<li>Defined in <a href="https://github.com/chriskrycho/i-fp-js/blob/3e7f76e/src/maybe.ts#L47">maybe.ts:47</a></li>
+								<li>Defined in <a href="https://github.com/chriskrycho/i-fp-js/blob/a08b2a6/src/maybe.ts#L86">maybe.ts:86</a></li>
 							</ul>
 						</aside>
 						<h4 class="tsd-type-parameters-title">Type parameters</h4>
@@ -1166,7 +1210,25 @@ img { max-width: 100%; }
 								<h5>orU: <span class="tsd-signature-type">U</span></h5>
 							</li>
 							<li>
-								<h5>mapFn: <a href="../modules/_maybe_.html#mapfn" class="tsd-signature-type">MapFn</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">U</span><span class="tsd-signature-symbol">&gt;</span></h5>
+								<h5>mapFn: <span class="tsd-signature-type">function</span></h5>
+								<ul class="tsd-parameters">
+									<li class="tsd-parameter-siganture">
+										<ul class="tsd-signatures tsd-kind-type-literal tsd-is-not-exported">
+											<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span>t<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">U</span></li>
+										</ul>
+										<ul class="tsd-descriptions">
+											<li class="tsd-description">
+												<h4 class="tsd-parameters-title">Parameters</h4>
+												<ul class="tsd-parameters">
+													<li>
+														<h5>t: <span class="tsd-signature-type">T</span></h5>
+													</li>
+												</ul>
+												<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">U</span></h4>
+											</li>
+										</ul>
+									</li>
+								</ul>
 							</li>
 						</ul>
 						<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">U</span></h4>
@@ -1177,13 +1239,13 @@ img { max-width: 100%; }
 				<a name="maporelse" class="tsd-anchor"></a>
 				<h3>map<wbr>OrElse</h3>
 				<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-has-type-parameter">
-					<li class="tsd-signature tsd-kind-icon">map<wbr>OrElse&lt;U&gt;<span class="tsd-signature-symbol">(</span>this<span class="tsd-signature-symbol">: </span><a href="../modules/_maybe_.html#maybe" class="tsd-signature-type">Maybe</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span>, orElseFn<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">function</span>, mapFn<span class="tsd-signature-symbol">: </span><a href="../modules/_maybe_.html#mapfn" class="tsd-signature-type">MapFn</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">U</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">U</span></li>
+					<li class="tsd-signature tsd-kind-icon">map<wbr>OrElse&lt;U&gt;<span class="tsd-signature-symbol">(</span>this<span class="tsd-signature-symbol">: </span><a href="../modules/_maybe_.html#maybe" class="tsd-signature-type">Maybe</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span>, orElseFn<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">function</span>, mapFn<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">function</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">U</span></li>
 				</ul>
 				<ul class="tsd-descriptions">
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/chriskrycho/i-fp-js/blob/3e7f76e/src/maybe.ts#L51">maybe.ts:51</a></li>
+								<li>Defined in <a href="https://github.com/chriskrycho/i-fp-js/blob/a08b2a6/src/maybe.ts#L90">maybe.ts:90</a></li>
 							</ul>
 						</aside>
 						<h4 class="tsd-type-parameters-title">Type parameters</h4>
@@ -1219,7 +1281,25 @@ img { max-width: 100%; }
 								</ul>
 							</li>
 							<li>
-								<h5>mapFn: <a href="../modules/_maybe_.html#mapfn" class="tsd-signature-type">MapFn</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">U</span><span class="tsd-signature-symbol">&gt;</span></h5>
+								<h5>mapFn: <span class="tsd-signature-type">function</span></h5>
+								<ul class="tsd-parameters">
+									<li class="tsd-parameter-siganture">
+										<ul class="tsd-signatures tsd-kind-type-literal tsd-is-not-exported">
+											<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span>t<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">U</span></li>
+										</ul>
+										<ul class="tsd-descriptions">
+											<li class="tsd-description">
+												<h4 class="tsd-parameters-title">Parameters</h4>
+												<ul class="tsd-parameters">
+													<li>
+														<h5>t: <span class="tsd-signature-type">T</span></h5>
+													</li>
+												</ul>
+												<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">U</span></h4>
+											</li>
+										</ul>
+									</li>
+								</ul>
 							</li>
 						</ul>
 						<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">U</span></h4>
@@ -1237,7 +1317,7 @@ img { max-width: 100%; }
 						<aside class="tsd-sources">
 							<p>Implementation of <a href="../interfaces/_maybe_.imaybe.html">IMaybe</a>.<a href="../interfaces/_maybe_.imaybe.html#or">or</a></p>
 							<ul>
-								<li>Defined in <a href="https://github.com/chriskrycho/i-fp-js/blob/3e7f76e/src/maybe.ts#L55">maybe.ts:55</a></li>
+								<li>Defined in <a href="https://github.com/chriskrycho/i-fp-js/blob/a08b2a6/src/maybe.ts#L94">maybe.ts:94</a></li>
 							</ul>
 						</aside>
 						<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1263,7 +1343,7 @@ img { max-width: 100%; }
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/chriskrycho/i-fp-js/blob/3e7f76e/src/maybe.ts#L59">maybe.ts:59</a></li>
+								<li>Defined in <a href="https://github.com/chriskrycho/i-fp-js/blob/a08b2a6/src/maybe.ts#L98">maybe.ts:98</a></li>
 							</ul>
 						</aside>
 						<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1308,7 +1388,7 @@ img { max-width: 100%; }
 						<aside class="tsd-sources">
 							<p>Implementation of <a href="../interfaces/_maybe_.imaybe.html">IMaybe</a>.<a href="../interfaces/_maybe_.imaybe.html#unwrap">unwrap</a></p>
 							<ul>
-								<li>Defined in <a href="https://github.com/chriskrycho/i-fp-js/blob/3e7f76e/src/maybe.ts#L71">maybe.ts:71</a></li>
+								<li>Defined in <a href="https://github.com/chriskrycho/i-fp-js/blob/a08b2a6/src/maybe.ts#L110">maybe.ts:110</a></li>
 							</ul>
 						</aside>
 						<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">T</span></h4>
@@ -1325,7 +1405,7 @@ img { max-width: 100%; }
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/chriskrycho/i-fp-js/blob/3e7f76e/src/maybe.ts#L75">maybe.ts:75</a></li>
+								<li>Defined in <a href="https://github.com/chriskrycho/i-fp-js/blob/a08b2a6/src/maybe.ts#L114">maybe.ts:114</a></li>
 							</ul>
 						</aside>
 						<h4 class="tsd-parameters-title">Parameters</h4>
