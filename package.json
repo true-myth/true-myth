@@ -1,6 +1,12 @@
 {
   "name": "true-myth",
-  "version": "0.1.0",
+  "description":
+    "A library for safe functional programming in JavaScript, with first-class support for TypeScript and Flow",
+  "main": "dist/index.js",
+  "homepage": "https://chriskrycho.github.io/true-myth",
+  "license": "MIT",
+  "types": "dist/index.d.ts",
+  "version": "0.0.1",
   "author": {
     "name": "Chris Krycho",
     "email": "chris@chriskrycho.com",
