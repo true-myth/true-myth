@@ -51,8 +51,8 @@ export class Some<T> implements IMaybe<T> {
    * 
    * **Note:** While you *may* create the `Some` type via normal JavaScript
    * class construction, it is not recommended for the functional style for
-   * which the library is intended. Instead, use [[of]] (for the general case)
-   * or [[some]] for this specific case.
+   * which the library is intended. Instead, use Maybe.[[of]] (for the general
+   * case) or Maybe.[[some]] for this specific case.
    * 
    * ```ts
    * // Avoid:
