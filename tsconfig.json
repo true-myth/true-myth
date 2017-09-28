@@ -14,5 +14,13 @@
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true
   },
-  "include": ["./src"]
+  "include": ["./src"],
+  "typedocOptions": {
+    "out": "./docs",
+    "toc": true,
+    "excludePrivate": true,
+    "target": "ES6",
+    "theme": "default",
+    "name": "True Myth"
+  }
 }

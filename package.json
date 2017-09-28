@@ -21,7 +21,8 @@
   },
   "scripts": {
     "test": "jest",
-    "doc": "rm -rf docs && typedoc --out ./docs --toc --excludePrivate --theme 'minimal' --name 'True Myth' && touch docs/.nojekyll"
+    "doc": "./build-docs",
+    "version": "./build-docs && git add docs"
   },
   "jest": {
     "transform": {
