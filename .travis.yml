@@ -3,9 +3,7 @@ node_js:
   - "lts/*"
 
 cache: yarn
-script:
-  - yarn test
-  - if [[ $TRAVIS_PULL_REQUEST == 'false' ]]; then yarn run doc; fi
+script: yarn test
 
 # We build PRs, but don't trigger separate builds for the PR from the branch.
 branches:

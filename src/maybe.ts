@@ -160,6 +160,18 @@ export const isSome = <T>(m: Maybe<T>): m is Some<T> => m.variant === Variant.So
 export const isNothing = <T>(m: Maybe<T>): m is Nothing<T> => m.variant === Variant.Nothing;
 
 export const some = <T>(value: T) => new Some<T>(value);
+
+/**
+ * Create an instance of `Maybe.Nothing`.
+ * 
+ * If you want to create an instance with a specific type, e.g. for use in a
+ * function which expects a `Maybe<T>` where the `<T>` is known but you have no
+ * value to give it, you can use a type parameter:
+ * 
+ * ```ts
+ * const notString = Maybe.nothing<string>();
+ * ```
+ */
 export const nothing = <T>() => new Nothing<T>();
 
 /**
