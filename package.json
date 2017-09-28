@@ -5,7 +5,7 @@
   "homepage": "https://chriskrycho.github.io/true-myth",
   "license": "MIT",
   "types": "dist/index.d.ts",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "author": {
     "name": "Chris Krycho",
     "email": "chris@chriskrycho.com",
