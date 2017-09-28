@@ -1,6 +1,7 @@
 # True Myth
 
 [![Build Status](https://travis-ci.org/chriskrycho/true-myth.svg?branch=master)](https://travis-ci.org/chriskrycho/true-myth)
+[![npm version](https://badge.fury.io/js/true-myth.svg)](https://badge.fury.io/js/true-myth)
 
 This is a library for safe functional programming in JavaScript, with
 first-class support for TypeScript and Flow.
