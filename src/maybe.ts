@@ -170,7 +170,7 @@ export const isNothing = <T>(m: Maybe<T>): m is Nothing<T> => m.variant === Vari
  * @param value The value to wrap in a `Maybe.Some`.
  * @throws      If you pass `null` or `undefined`.
 */
-export const some = <T>(value: T) => new Some<T>(value);
+export const some = <T>(value: T | null | undefined): Maybe<T> => new Some<T>(value);
 
 /**
  * Create an instance of `Maybe.Nothing`.
@@ -185,7 +185,7 @@ export const some = <T>(value: T) => new Some<T>(value);
  * 
  * @typeparam T The type of the item contained in the `Maybe`.
  */
-export const nothing = <T>() => new Nothing<T>();
+export const nothing = <T>(): Maybe<T> => new Nothing<T>();
 
 /**
  * A value which may (`Some<T>`) or may not (`Nothing`) be present.
