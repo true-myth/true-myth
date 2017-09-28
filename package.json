@@ -1,6 +1,7 @@
 {
   "name": "true-myth",
-  "description": "A library for safe functional programming in JavaScript, with first-class support for TypeScript and Flow",
+  "description":
+    "A library for safe functional programming in JavaScript, with first-class support for TypeScript and Flow",
   "main": "dist/index.js",
   "homepage": "https://chriskrycho.github.io/true-myth",
   "license": "MIT",
@@ -13,6 +14,7 @@
   },
   "devDependencies": {
     "@types/jest": "^21.1.0",
+    "husky": "^0.14.3",
     "jest": "^21.1.0",
     "prettier": "^1.7.0",
     "ts-jest": "^21.0.1",
@@ -22,6 +24,7 @@
   "scripts": {
     "test": "jest",
     "doc": "./build-docs",
+    "precommit": "./build-docs && git add docs",
     "version": "./build-docs && git add docs"
   },
   "jest": {
@@ -29,12 +32,6 @@
       "^.+\\.tsx?$": "<rootDir>/node_modules/ts-jest/preprocessor.js"
     },
     "testRegex": "(/__tests__/.*|(\\.|/)(test|spec))\\.(jsx?|tsx?)$",
-    "moduleFileExtensions": [
-      "ts",
-      "tsx",
-      "js",
-      "jsx",
-      "json"
-    ]
+    "moduleFileExtensions": ["ts", "tsx", "js", "jsx", "json"]
   }
 }
