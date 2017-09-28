@@ -51,12 +51,8 @@ typings/
 # Optional REPL history
 .node_repl_history
 
-# Output of 'npm pack'
-*.tgz
-
-# Yarn Integrity file
-.yarn-integrity
-
 # dotenv environment variables file
 .env
 
+# JetBrains
+.idea/
