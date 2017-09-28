@@ -47,7 +47,7 @@ export class Some<T> implements IMaybe<T> {
   variant = Variant.Some;
 
   /**
-   * Directly create a `Maybe.Some` instance.
+   * Create an instance of `Maybe.Some` with `new`.
    * 
    * **Note:** While you *may* create the `Some` type via normal JavaScript
    * class construction, it is not recommended for the functional style for
@@ -65,9 +65,9 @@ export class Some<T> implements IMaybe<T> {
    * @param value
    * The value to wrap in a `Maybe.Some`.
    * 
-   * `null` and `undefined` are allowed by the type signature so 
-   * that the constructor may `throw` on those rather than
-   * constructing a type like `Maybe<undefined>`.
+   * `null` and `undefined` are allowed by the type signature so that the
+   * constructor may `throw` on those rather than constructing a type like
+   * `Maybe<undefined>`.
    * 
    * @throws      If you pass `null` or `undefined`.
    */
@@ -159,6 +159,17 @@ export class Nothing<T> implements IMaybe<T> {
 export const isSome = <T>(m: Maybe<T>): m is Some<T> => m.variant === Variant.Some;
 export const isNothing = <T>(m: Maybe<T>): m is Nothing<T> => m.variant === Variant.Nothing;
 
+/**
+ * Create an instance of `Maybe.Some`.
+ * 
+ * `null` and `undefined` are allowed by the type signature so that the
+ * function may `throw` on those rather than constructing a type like
+ * `Maybe<undefined>`.
+ * 
+ * @typeparam T The type of the item contained in the `Maybe`.
+ * @param value The value to wrap in a `Maybe.Some`.
+ * @throws      If you pass `null` or `undefined`.
+*/
 export const some = <T>(value: T) => new Some<T>(value);
 
 /**
@@ -171,6 +182,8 @@ export const some = <T>(value: T) => new Some<T>(value);
  * ```ts
  * const notString = Maybe.nothing<string>();
  * ```
+ * 
+ * @typeparam T The type of the item contained in the `Maybe`.
  */
 export const nothing = <T>() => new Nothing<T>();
 
@@ -185,13 +198,8 @@ export type Maybe<T> = Some<T> | Nothing<T>;
 /**
  * Create a `Maybe` from any value.
  * 
- * @typeparam T The type of the item contained in the `Maybe`.
- * @param value The value to wrap in a `Maybe`. If it is `undefined` or `null`,
- *              the result will be `Nothing`; otherwise it will be the type of
- *              the value passed.
- * 
  * To specify that the result should be interpreted as a specific type, you may
- * invoke of with a type parameter:
+ * invoke `Maybe.of` with an explicit type parameter:
  * 
  * ```ts
  * const foo = Maybe.of<string>(null);
@@ -203,6 +211,11 @@ export type Maybe<T> = Some<T> | Nothing<T>;
  *     undefined value.
  * 2.  If you are specifying that the type is more general than the value passed
  *     (since TypeScript can define types as literals).
+ * 
+ * @typeparam T The type of the item contained in the `Maybe`.
+ * @param value The value to wrap in a `Maybe`. If it is `undefined` or `null`,
+ *              the result will be `Nothing`; otherwise it will be the type of
+ *              the value passed.
  */
 export const of = <T>(value: T | undefined | null): Maybe<T> =>
   isCthulhu(value) ? nothing<T>() : some(value);
