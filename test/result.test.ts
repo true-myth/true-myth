@@ -1,7 +1,7 @@
 import { assertType } from './lib/assert';
 import * as Result from '../src/result';
 
-describe('`Result` static methods', () => {
+describe('`Result` pure functions', () => {
   test('`ok`', () => {
     expect('to be implemented').toBe(false);
   });
