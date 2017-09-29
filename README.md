@@ -27,7 +27,7 @@ support for TypeScript and Flow.
 The design aims of this library are:
 
 -   to be as idiomatic as possible in JavaScript
--   to support a natural *functional* style
+-   to support a natural functional programming style
 -   to have zero runtime cost beyond simple object construction and function
     invocation
 -   to lean heavily on TypeScript and Flow to enable all of the above
@@ -39,7 +39,7 @@ In practice, that means:
 
     ```ts
     const classical = new Some('value');
-    const functional = some('value);
+    const functional = some('value');
     ```
 
 -   Similarly, you can use methods or pure functions:
