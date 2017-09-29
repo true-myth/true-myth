@@ -69,7 +69,7 @@
 			<section class="tsd-panel tsd-comment">
 				<div class="tsd-comment tsd-typography">
 					<div class="lead">
-						<h1 id="-maybe-"><code>Maybe</code></h1>
+						<h1 id="maybe">Maybe</h1>
 					</div>
 					<p>A <code>Maybe&lt;T&gt;</code> is a value of type <code>T</code> which may or may not be present.</p>
 					<p>If the value is present, it is <code>Some(value)</code>. If it&#39;s absent, it&#39;s <code>Nothing</code>.
@@ -113,7 +113,6 @@
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-function tsd-parent-kind-external-module tsd-has-type-parameter"><a href="_maybe_.html#and" class="tsd-kind-icon">and</a></li>
 								<li class="tsd-kind-function tsd-parent-kind-external-module tsd-has-type-parameter"><a href="_maybe_.html#andthen" class="tsd-kind-icon">and<wbr>Then</a></li>
-								<li class="tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported"><a href="_maybe_.html#iscthulhu" class="tsd-kind-icon">is<wbr>Cthulhu</a></li>
 								<li class="tsd-kind-function tsd-parent-kind-external-module tsd-has-type-parameter"><a href="_maybe_.html#isnothing" class="tsd-kind-icon">is<wbr>Nothing</a></li>
 								<li class="tsd-kind-function tsd-parent-kind-external-module tsd-has-type-parameter"><a href="_maybe_.html#issome" class="tsd-kind-icon">is<wbr>Some</a></li>
 								<li class="tsd-kind-function tsd-parent-kind-external-module tsd-has-type-parameter"><a href="_maybe_.html#map" class="tsd-kind-icon">map</a></li>
@@ -124,6 +123,8 @@
 								<li class="tsd-kind-function tsd-parent-kind-external-module tsd-has-type-parameter"><a href="_maybe_.html#or" class="tsd-kind-icon">or</a></li>
 								<li class="tsd-kind-function tsd-parent-kind-external-module tsd-has-type-parameter"><a href="_maybe_.html#orelse" class="tsd-kind-icon">or<wbr>Else</a></li>
 								<li class="tsd-kind-function tsd-parent-kind-external-module tsd-has-type-parameter"><a href="_maybe_.html#some-1" class="tsd-kind-icon">some</a></li>
+								<li class="tsd-kind-function tsd-parent-kind-external-module tsd-has-type-parameter"><a href="_maybe_.html#tookorelseerr" class="tsd-kind-icon">to<wbr>OkOr<wbr>Else<wbr>Err</a></li>
+								<li class="tsd-kind-function tsd-parent-kind-external-module tsd-has-type-parameter"><a href="_maybe_.html#tookorerr" class="tsd-kind-icon">to<wbr>OkOr<wbr>Err</a></li>
 								<li class="tsd-kind-function tsd-parent-kind-external-module tsd-has-type-parameter"><a href="_maybe_.html#unwrap" class="tsd-kind-icon">unwrap</a></li>
 								<li class="tsd-kind-function tsd-parent-kind-external-module tsd-has-type-parameter"><a href="_maybe_.html#unwraporelse" class="tsd-kind-icon">unwrap<wbr>OrElse</a></li>
 							</ul>
@@ -139,7 +140,7 @@
 					<div class="tsd-signature tsd-kind-icon">Maybe<span class="tsd-signature-symbol">:</span> <a href="../classes/_maybe_.some.html" class="tsd-signature-type">Some</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> | </span><a href="../classes/_maybe_.nothing.html" class="tsd-signature-type">Nothing</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in maybe.ts:196</li>
+							<li>Defined in maybe.ts:258</li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -163,7 +164,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in maybe.ts:237</li>
+									<li>Defined in maybe.ts:299</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
@@ -198,7 +199,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in maybe.ts:239</li>
+									<li>Defined in maybe.ts:301</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
@@ -241,35 +242,6 @@
 						</li>
 					</ul>
 				</section>
-				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported">
-					<a name="iscthulhu" class="tsd-anchor"></a>
-					<h3>is<wbr>Cthulhu</h3>
-					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported">
-						<li class="tsd-signature tsd-kind-icon">is<wbr>Cthulhu<span class="tsd-signature-symbol">(</span>value<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span></li>
-					</ul>
-					<ul class="tsd-descriptions">
-						<li class="tsd-description">
-							<aside class="tsd-sources">
-								<ul>
-									<li>Defined in maybe.ts:17</li>
-								</ul>
-							</aside>
-							<div class="tsd-comment tsd-typography">
-								<div class="lead">
-									<p>Check if the value here is an all-consuming monstrosity which will consume
-									everything in its transdimensional rage. A.k.a. <code>null</code> or <code>undefined</code>.</p>
-								</div>
-							</div>
-							<h4 class="tsd-parameters-title">Parameters</h4>
-							<ul class="tsd-parameters">
-								<li>
-									<h5>value: <span class="tsd-signature-type">any</span></h5>
-								</li>
-							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
-						</li>
-					</ul>
-				</section>
 				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-external-module tsd-has-type-parameter">
 					<a name="isnothing" class="tsd-anchor"></a>
 					<h3>is<wbr>Nothing</h3>
@@ -280,7 +252,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in maybe.ts:160</li>
+									<li>Defined in maybe.ts:222</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
@@ -309,7 +281,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in maybe.ts:159</li>
+									<li>Defined in maybe.ts:221</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
@@ -338,7 +310,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in maybe.ts:225</li>
+									<li>Defined in maybe.ts:287</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
@@ -391,7 +363,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in maybe.ts:228</li>
+									<li>Defined in maybe.ts:290</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
@@ -447,7 +419,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in maybe.ts:231</li>
+									<li>Defined in maybe.ts:293</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
@@ -521,7 +493,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in maybe.ts:188</li>
+									<li>Defined in maybe.ts:250</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -557,7 +529,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in maybe.ts:220</li>
+									<li>Defined in maybe.ts:282</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -612,7 +584,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in maybe.ts:242</li>
+									<li>Defined in maybe.ts:304</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
@@ -644,7 +616,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in maybe.ts:244</li>
+									<li>Defined in maybe.ts:306</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
@@ -694,7 +666,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in maybe.ts:173</li>
+									<li>Defined in maybe.ts:235</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -730,6 +702,138 @@
 					</ul>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-external-module tsd-has-type-parameter">
+					<a name="tookorelseerr" class="tsd-anchor"></a>
+					<h3>to<wbr>OkOr<wbr>Else<wbr>Err</h3>
+					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-external-module tsd-has-type-parameter">
+						<li class="tsd-signature tsd-kind-icon">to<wbr>OkOr<wbr>Else<wbr>Err&lt;T, E&gt;<span class="tsd-signature-symbol">(</span>elseFn<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">function</span>, maybe<span class="tsd-signature-symbol">: </span><a href="_maybe_.html#maybe" class="tsd-signature-type">Maybe</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_result_.html#result" class="tsd-signature-type">Result</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">E</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in maybe.ts:337</li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Transform the <a href="_maybe_.html#maybe">Maybe</a> into a <a href="_result_.html#result">Result</a>, using the wrapped value as the
+									<code>Ok</code> value if <code>Some</code>; otherwise using <code>elseFn</code> to generate <code>Err</code>.</p>
+								</div>
+							</div>
+							<h4 class="tsd-type-parameters-title">Type parameters</h4>
+							<ul class="tsd-type-parameters">
+								<li>
+									<h4>T</h4>
+									<div class="tsd-comment tsd-typography">
+										<p>The wrapped value.</p>
+									</div>
+								</li>
+								<li>
+									<h4>E</h4>
+									<div class="tsd-comment tsd-typography">
+										<p>The error type to in the <code>Result</code>.</p>
+									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>elseFn: <span class="tsd-signature-type">function</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<div class="lead">
+											<p>The function which generates an error of type <code>E</code>.</p>
+										</div>
+									</div>
+									<ul class="tsd-parameters">
+										<li class="tsd-parameter-siganture">
+											<ul class="tsd-signatures tsd-kind-type-literal tsd-is-not-exported">
+												<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">...</span>args<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">E</span></li>
+											</ul>
+											<ul class="tsd-descriptions">
+												<li class="tsd-description">
+													<h4 class="tsd-parameters-title">Parameters</h4>
+													<ul class="tsd-parameters">
+														<li>
+															<h5><span class="tsd-flag ts-flagRest">Rest</span> <span class="tsd-signature-symbol">...</span>args: <span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">[]</span></h5>
+														</li>
+													</ul>
+													<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">E</span></h4>
+												</li>
+											</ul>
+										</li>
+									</ul>
+								</li>
+								<li>
+									<h5>maybe: <a href="_maybe_.html#maybe" class="tsd-signature-type">Maybe</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<div class="lead">
+											<p>The <code>Maybe</code> instance to convert.</p>
+										</div>
+									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <a href="_result_.html#result" class="tsd-signature-type">Result</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">E</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-external-module tsd-has-type-parameter">
+					<a name="tookorerr" class="tsd-anchor"></a>
+					<h3>to<wbr>OkOr<wbr>Err</h3>
+					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-external-module tsd-has-type-parameter">
+						<li class="tsd-signature tsd-kind-icon">to<wbr>OkOr<wbr>Err&lt;T, E&gt;<span class="tsd-signature-symbol">(</span>error<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">E</span>, maybe<span class="tsd-signature-symbol">: </span><a href="_maybe_.html#maybe" class="tsd-signature-type">Maybe</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_result_.html#result" class="tsd-signature-type">Result</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">E</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in maybe.ts:325</li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Transform the <a href="_maybe_.html#maybe">Maybe</a> into a <a href="_result_.html#result">Result</a>, using the wrapped value as the
+									<code>Ok</code> value if <code>Some</code>; otherwise using the supplied <code>error</code> value for <code>Err</code>.</p>
+								</div>
+							</div>
+							<h4 class="tsd-type-parameters-title">Type parameters</h4>
+							<ul class="tsd-type-parameters">
+								<li>
+									<h4>T</h4>
+									<div class="tsd-comment tsd-typography">
+										<p>The wrapped value.</p>
+									</div>
+								</li>
+								<li>
+									<h4>E</h4>
+									<div class="tsd-comment tsd-typography">
+										<p>The error type to in the <code>Result</code>.</p>
+									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>error: <span class="tsd-signature-type">E</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<div class="lead">
+											<p>The function which generates an error of type <code>E</code>.</p>
+										</div>
+									</div>
+								</li>
+								<li>
+									<h5>maybe: <a href="_maybe_.html#maybe" class="tsd-signature-type">Maybe</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<div class="lead">
+											<p>The <code>Maybe</code> instance to convert.</p>
+										</div>
+									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <a href="_result_.html#result" class="tsd-signature-type">Result</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">E</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-external-module tsd-has-type-parameter">
 					<a name="unwrap" class="tsd-anchor"></a>
 					<h3>unwrap</h3>
 					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-external-module tsd-has-type-parameter">
@@ -739,7 +843,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in maybe.ts:247</li>
+									<li>Defined in maybe.ts:309</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
@@ -768,7 +872,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in maybe.ts:251</li>
+									<li>Defined in maybe.ts:313</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
@@ -825,6 +929,9 @@
 					<li class=" tsd-kind-external-module">
 						<a href="_result_.html">"result"</a>
 					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="_utils_.html">"utils"</a>
+					</li>
 				</ul>
 			</nav>
 			<nav class="tsd-navigation secondary menu-sticky">
@@ -849,9 +956,6 @@
 					</li>
 					<li class=" tsd-kind-function tsd-parent-kind-external-module tsd-has-type-parameter">
 						<a href="_maybe_.html#andthen" class="tsd-kind-icon">and<wbr>Then</a>
-					</li>
-					<li class=" tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported">
-						<a href="_maybe_.html#iscthulhu" class="tsd-kind-icon">is<wbr>Cthulhu</a>
 					</li>
 					<li class=" tsd-kind-function tsd-parent-kind-external-module tsd-has-type-parameter">
 						<a href="_maybe_.html#isnothing" class="tsd-kind-icon">is<wbr>Nothing</a>
@@ -882,6 +986,12 @@
 					</li>
 					<li class=" tsd-kind-function tsd-parent-kind-external-module tsd-has-type-parameter">
 						<a href="_maybe_.html#some-1" class="tsd-kind-icon">some</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-external-module tsd-has-type-parameter">
+						<a href="_maybe_.html#tookorelseerr" class="tsd-kind-icon">to<wbr>OkOr<wbr>Else<wbr>Err</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-external-module tsd-has-type-parameter">
+						<a href="_maybe_.html#tookorerr" class="tsd-kind-icon">to<wbr>OkOr<wbr>Err</a>
 					</li>
 					<li class=" tsd-kind-function tsd-parent-kind-external-module tsd-has-type-parameter">
 						<a href="_maybe_.html#unwrap" class="tsd-kind-icon">unwrap</a>

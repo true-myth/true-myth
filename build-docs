@@ -1,2 +1,2 @@
 #!/usr/bin/env sh
-rm -rf docs && typedoc && touch docs/.nojekyll
+rm -rf docs && ./node_modules/.bin/typedoc && touch docs/.nojekyll

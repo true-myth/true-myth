@@ -1,5 +1,5 @@
 /**
- * # `Maybe`
+ * # Maybe
  * 
  * A `Maybe<T>` is a value of type `T` which may or may not be present.
  * 
@@ -10,13 +10,13 @@
  * checks throughout your codebase.
  */
 
-/**
- * Check if the value here is an all-consuming monstrosity which will consume
- * everything in its transdimensional rage. A.k.a. `null` or `undefined`.
- */
-const isCthulhu = (value: any): value is undefined | null =>
-  typeof value === 'undefined' || value === null;
+/** (keep typedoc from getting confused by the imports) */
+import { isVoid } from './utils';
+import { Result, ok, err } from './result';
 
+/**
+ * Discriminant for the `Some` and `Nothing` variants.
+ */
 export enum Variant {
   Some = 'Some',
   Nothing = 'Nothing',
@@ -25,20 +25,46 @@ export enum Variant {
 // Someday maybe we'll have `protocol`s and this would just have default
 // implementations for nearly everything in the concrete classes below.
 export interface IMaybe<T> {
-  /**
-   * Distinguish between the `Some` and `Nothing` variants.
-   */
   variant: Variant;
 
+  /** Method variant for [`Maybe.isSome`](../modules/_maybe_.html#issome) */
+  isSome(this: Maybe<T>): this is Some<T>;
+
+  /** Method variant for [`Maybe.isNothing`](../modules/_maybe_.html#isnothing) */
+  isNothing(this: Maybe<T>): this is Nothing<T>;
+
+  /** Method variant for [`Maybe.map`](../modules/_maybe_.html#map) */
   map<U>(this: Maybe<T>, mapFn: (t: T) => U): Maybe<U>;
+
+  /** Method variant for [`Maybe.mapOr`](../modules/_maybe_.html#mapor) */
   mapOr<U>(this: Maybe<T>, orU: U, mapFn: (t: T) => U): U;
+
+  /** Method variant for [`Maybe.mapOrElse`](../modules/_maybe_.html#maporelse) */
   mapOrElse<U>(this: Maybe<T>, orElseFn: (...args: any[]) => U, mapFn: (t: T) => U): U;
+
+  /** Method variant for [`Maybe.or`](../modules/_maybe_.html#or) */
   or(this: Maybe<T>, mOr: Maybe<T>): Maybe<T>;
+
+  /** Method variant for [`Maybe.orElse`](../modules/_maybe_.html#orelse) */
   orElse(this: Maybe<T>, orElseFn: (...args: any[]) => Maybe<T>): Maybe<T>;
+
+  /** Method variant for [`Maybe.and`](../modules/_maybe_.html#and) */
   and<U>(this: Maybe<T>, mAnd: Maybe<U>): Maybe<U>;
+
+  /** Method variant for [`Maybe.andThen`](../modules/_maybe_.html#andthen) */
   andThen<U>(this: Maybe<T>, andThenFn: (t: T) => Maybe<U>): Maybe<U>;
+
+  /** Method variant for [`Maybe.unwrap`](../modules/_maybe_.html#unwrap) */
   unwrap(): T | never;
+
+  /** Method variant for [`Maybe.unwrapOrElse`](../modules/_maybe_.html#unwraporelse) */
   unwrapOrElse(this: Maybe<T>, elseFn: (...args: any[]) => T): T;
+
+  /** Method variant for [`Maybe.toOkOrErr`](../modules/_maybe_.html#tookorerr) */
+  toOkOrErr<E>(this: Maybe<T>, error: E): Result<T, E>;
+
+  /** Method variant for [`Maybe.toOkOrElseErr`](../modules/_maybe_.html#tookorelseerr) */
+  toOkOrElseErr<T, E>(this: Maybe<T>, elseFn: (...args: any[]) => E): Result<T, E>;
 }
 
 export class Some<T> implements IMaybe<T> {
@@ -72,11 +98,21 @@ export class Some<T> implements IMaybe<T> {
    * @throws      If you pass `null` or `undefined`.
    */
   constructor(value: T | null | undefined) {
-    if (isCthulhu(value)) {
+    if (isVoid(value)) {
       throw new Error('Tried to construct `Some` with `null` or `undefined`');
     }
 
     this.__value = value;
+  }
+
+  /** Method variant for [`Maybe.isSome`](../modules/_maybe_.html#issome) */
+  isSome(this: Maybe<T>): this is Some<T> {
+    return isSome(this);
+  }
+
+  /** Method variant for [`Maybe.isNothing`](../modules/_maybe_.html#isnothing) */
+  isNothing(this: Maybe<T>): this is Nothing<T> {
+    return isNothing(this);
   }
 
   map<U>(this: Maybe<T>, mapFn: (t: T) => U): Maybe<U> {
@@ -114,10 +150,28 @@ export class Some<T> implements IMaybe<T> {
   unwrapOrElse(this: Maybe<T>, elseFn: (...args: any[]) => T): T {
     return unwrapOrElse(elseFn, this);
   }
+
+  toOkOrErr<E>(this: Maybe<T>, error: E): Result<T, E> {
+    return toOkOrErr(error, this);
+  }
+
+  toOkOrElseErr<T, E>(this: Maybe<T>, elseFn: (...args: any[]) => E): Result<T, E> {
+    return toOkOrElseErr(elseFn, this);
+  }
 }
 
 export class Nothing<T> implements IMaybe<T> {
   variant = Variant.Nothing;
+
+  /** Method variant for [`Maybe.isSome`](../modules/_maybe_.html#issome) */
+  isSome(this: Maybe<T>): this is Some<T> {
+    return isSome(this);
+  }
+
+  /** Method variant for [`Maybe.isNothing`](../modules/_maybe_.html#isnothing) */
+  isNothing(this: Maybe<T>): this is Nothing<T> {
+    return isNothing(this);
+  }
 
   map<U>(this: Maybe<T>, mapFn: (t: T) => U): Maybe<U> {
     return map(mapFn, this);
@@ -153,6 +207,14 @@ export class Nothing<T> implements IMaybe<T> {
 
   unwrapOrElse(this: Maybe<T>, elseFn: (...args: any[]) => T): T {
     return unwrapOrElse(elseFn, this);
+  }
+
+  toOkOrErr<E>(this: Maybe<T>, error: E): Result<T, E> {
+    return toOkOrErr(error, this);
+  }
+
+  toOkOrElseErr<T, E>(this: Maybe<T>, elseFn: (...args: any[]) => E): Result<T, E> {
+    return toOkOrElseErr(elseFn, this);
   }
 }
 
@@ -218,7 +280,7 @@ export type Maybe<T> = Some<T> | Nothing<T>;
  *              the value passed.
  */
 export const of = <T>(value: T | undefined | null): Maybe<T> =>
-  isCthulhu(value) ? nothing<T>() : some(value);
+  isVoid(value) ? nothing<T>() : some(value);
 
 export default Maybe;
 
@@ -250,3 +312,27 @@ export const unwrap = <T>(mt: Maybe<T>): T => {
 
 export const unwrapOrElse = <T>(orElseFn: (...args: any[]) => T, mt: Maybe<T>): T =>
   isSome(mt) ? unwrap(mt) : orElseFn();
+
+/**
+ * Transform the [[Maybe]] into a [[Result]], using the wrapped value as the
+ * `Ok` value if `Some`; otherwise using the supplied `error` value for `Err`.
+ * 
+ * @typeparam T The wrapped value.
+ * @typeparam E The error type to in the `Result`.
+ * @param error The function which generates an error of type `E`.
+ * @param maybe The `Maybe` instance to convert.
+ */
+export const toOkOrErr = <T, E>(error: E, maybe: Maybe<T>): Result<T, E> =>
+  isSome(maybe) ? ok(unwrap(maybe)) : err(error);
+
+/**
+ * Transform the [[Maybe]] into a [[Result]], using the wrapped value as the
+ * `Ok` value if `Some`; otherwise using `elseFn` to generate `Err`.
+ * 
+ * @typeparam T  The wrapped value.
+ * @typeparam E  The error type to in the `Result`.
+ * @param elseFn The function which generates an error of type `E`.
+ * @param maybe  The `Maybe` instance to convert.
+ */
+export const toOkOrElseErr = <T, E>(elseFn: (...args: any[]) => E, maybe: Maybe<T>): Result<T, E> =>
+  isSome(maybe) ? ok(unwrap(maybe)) : err(elseFn());
