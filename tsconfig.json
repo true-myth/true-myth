@@ -1,13 +1,12 @@
 {
   "compilerOptions": {
-    /* Basic Options */
     "target": "es2017",
     "module": "es2015",
     "declaration": true,
     "sourceMap": true,
     "outDir": "./dist",
 
-    "strict": true /* Enable all strict type-checking options. */,
+    "strict": true,
 
     "noUnusedLocals": true,
     "noUnusedParameters": true,

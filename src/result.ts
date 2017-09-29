@@ -71,7 +71,7 @@ export interface IResult<T, E> {
   unwrapErr(): E | never;
 
   /** Method variant for [`Result.unwrapOrElse`](../modules/_result_.html#unwrapOrElse) */
-  unwrapOrElse(this: Result<T, E>, elseFn: (...args: any[]) => T): T;
+  unwrapOrElse(this: Result<T, E>, elseFn: (error: E) => T): T;
 
   /** Method variant for [`Result.toMaybe`](../modules/_result_.html#tomaybe) */
   toMaybe(this: Result<T, E>): Maybe<T>;
@@ -119,50 +119,62 @@ export class Ok<T, E> implements IResult<T, E> {
     this.__value = value;
   }
 
+  /** Method variant for [`Result.map`](../modules/_result_.html#map) */
   map<U>(this: Result<T, E>, mapFn: (t: T) => U): Result<U, E> {
     return map(mapFn, this);
   }
 
+  /** Method variant for [`Result.mapOr`](../modules/_result_.html#mapor) */
   mapOr<U>(this: Result<T, E>, orU: U, mapFn: (t: T) => U): U {
     return mapOr(orU, mapFn, this);
   }
 
+  /** Method variant for [`Result.mapOrElse`](../modules/_result_.html#maporelse) */
   mapOrElse<U>(this: Result<T, E>, orElseFn: (...args: any[]) => U, mapFn: (t: T) => U): U {
     return mapOrElse(orElseFn, mapFn, this);
   }
 
+  /** Method variant for [`Result.mapErr`](../modules/_result_.html#maperr) */
   mapErr<F>(this: Result<T, E>, mapErrFn: (e: E) => F): Result<T, F> {
     return mapErr(mapErrFn, this);
   }
 
+  /** Method variant for [`Result.or`](../modules/_result_.html#or) */
   or(this: Result<T, E>, mOr: Result<T, E>): Result<T, E> {
     return or(mOr, this);
   }
 
+  /** Method variant for [`Result.orElse`](../modules/_result_.html#orelse) */
   orElse(this: Result<T, E>, orElseFn: (...args: any[]) => Result<T, E>): Result<T, E> {
     return orElse(orElseFn, this);
   }
 
+  /** Method variant for [`Result.and`](../modules/_result_.html#and) */
   and<U>(this: Result<T, E>, mAnd: Result<U, E>): Result<U, E> {
     return and(mAnd, this);
   }
 
+  /** Method variant for [`Result.andThen`](../modules/_result_.html#andthen) */
   andThen<U>(this: Result<T, E>, andThenFn: (t: T) => Result<U, E>): Result<U, E> {
     return andThen(andThenFn, this);
   }
 
+  /** Method variant for [`Result.unwrap`](../modules/_result_.html#unwrap) */
   unwrap(): T {
     return this.__value;
   }
 
+  /** Method variant for [`Result.unwrapErr`](../modules/_result_.html#unwraperr) */
   unwrapErr(): E | never {
     throw 'Tried to `unwrapErr` an `Ok`';
   }
 
-  unwrapOrElse(this: Result<T, E>, elseFn: (...args: any[]) => T): T {
+  /** Method variant for [`Result.unwrapOrElse`](../modules/_result_.html#unwrapOrElse) */
+  unwrapOrElse(this: Result<T, E>, elseFn: (error: E) => T): T {
     return unwrapOrElse(elseFn, this);
   }
 
+  /** Method variant for [`Result.toMaybe`](../modules/_result_.html#tomaybe) */
   toMaybe(this: Result<T, E>): Maybe<T> {
     return toMaybe(this);
   }
@@ -177,10 +189,12 @@ export class Err<T, E> implements IResult<T, E> {
     this.__error = error;
   }
 
+  /** Method variant for [`Result.map`](../modules/_result_.html#map) */
   map<U>(this: Result<T, E>, mapFn: (t: T) => U): Result<U, E> {
     return map(mapFn, this);
   }
 
+  /** Method variant for [`Result.mapOr`](../modules/_result_.html#mapor) */
   mapOr<U>(this: Result<T, E>, orU: U, mapFn: (t: T) => U): U {
     return mapOr(orU, mapFn, this);
   }
@@ -217,10 +231,11 @@ export class Err<T, E> implements IResult<T, E> {
     return this.__error;
   }
 
-  unwrapOrElse(this: Result<T, E>, elseFn: (...args: any[]) => T): T {
+  unwrapOrElse(this: Result<T, E>, elseFn: (error: E) => T): T {
     return unwrapOrElse(elseFn, this);
   }
 
+  /** Method variant for [`Result.toMaybe`](../modules/_result_.html#tomaybe) */
   toMaybe(this: Result<T, E>): Maybe<T> {
     return toMaybe(this);
   }
@@ -230,8 +245,6 @@ export class Err<T, E> implements IResult<T, E> {
  * Is this result an `Ok` instance?
  * 
  * In TypeScript, narrows the type from `Result<T, E>` to `Ok<T, E>`.
- * 
- * @param result The `Result` instance to check.
  */
 export const isOk = <T, E>(result: Result<T, E>): result is Ok<T, E> =>
   result.variant === Variant.Ok;
@@ -240,8 +253,6 @@ export const isOk = <T, E>(result: Result<T, E>): result is Ok<T, E> =>
  * Is this result an `Err` instance?
  * 
  * In TypeScript, narrows the type from `Result<T, E>` to `Err<T, E>`.
- * 
- * @param result The `Result` instance to check.
  */
 export const isError = <T, E>(result: Result<T, E>): result is Err<T, E> =>
   result.variant === Variant.Err;
@@ -287,14 +298,14 @@ export default Result;
 export const map = <T, U, E>(mapFn: (t: T) => U, result: Result<T, E>): Result<U, E> =>
   isOk(result) ? ok(mapFn(unwrap(result))) : err<U, E>(unwrapErr(result));
 
-export const mapOr = <T, U, E>(orU: U, mapFn: (t: T) => U, mt: Result<T, E>): U =>
-  isOk(mt) ? mapFn(unwrap(mt)) : orU;
+export const mapOr = <T, U, E>(orU: U, mapFn: (t: T) => U, result: Result<T, E>): U =>
+  isOk(result) ? mapFn(unwrap(result)) : orU;
 
 export const mapOrElse = <T, U, E>(
   orElseFn: (...args: any[]) => U,
   mapFn: (t: T) => U,
-  mt: Result<T, E>
-): U => (isOk(mt) ? mapFn(unwrap(mt)) : orElseFn());
+  result: Result<T, E>
+): U => (isOk(result) ? mapFn(unwrap(result)) : orElseFn());
 
 export const mapErr = <T, E, F>(mapErrFn: (e: E) => F, result: Result<T, E>): Result<T, F> =>
   isOk(result) ? ok(unwrap(result)) : err(mapErrFn(unwrapErr(result)));
@@ -312,19 +323,32 @@ export const or = <T, E>(orResult: Result<T, E>, result: Result<T, E>): Result<T
 
 export const orElse = <T, E>(
   elseFn: (...args: any[]) => Result<T, E>,
-  mt: Result<T, E>
-): Result<T, E> => (isOk(mt) ? mt : elseFn());
+  result: Result<T, E>
+): Result<T, E> => (isOk(result) ? result : elseFn());
 
-export const unwrap = <T, E>(mt: Result<T, E>): T => {
-  return mt.unwrap();
-};
+/**
+ * Get the value out of the `Result`.
+ * 
+ * Returns the content of an `Ok`, but throws if the `Result` is `Err`.
+ * Prefer to use [[unwrapOrElse]].
+ *
+ * @throws If the `Result` instance is `Nothing`.
+ */
+export const unwrap = <T, E>(result: Result<T, E>): T => result.unwrap();
 
-export const unwrapErr = <T, E>(result: Result<T, E>): E => {
-  return result.unwrapErr();
-};
+/**
+ * Get the error value out of the `Result`.
+ * 
+ * Returns the content of an `Err`, but throws if the `Result` is `Ok`.
+ * Prefer to use [[unwrapOrElse]].
+ *
+ * @param result
+ * @throws Error If the `Result` instance is `Nothing`.
+ */
+export const unwrapErr = <T, E>(result: Result<T, E>): E => result.unwrapErr();
 
-export const unwrapOrElse = <T, E>(orElseFn: (...args: any[]) => T, mt: Result<T, E>): T =>
-  isOk(mt) ? unwrap(mt) : orElseFn();
+export const unwrapOrElse = <T, E>(orElseFn: (error: E) => T, result: Result<T, E>): T =>
+  isOk(result) ? unwrap(result) : orElseFn(unwrapErr(result));
 
 /**
  * Convert a [[Result]] to a [[Maybe]].
