@@ -2,6 +2,7 @@
 
 [![Travis `master`](https://img.shields.io/travis/chriskrycho/true-myth/master.svg?style=flat-square)](https://travis-ci.org/chriskrycho/true-myth)
 [![npm](https://img.shields.io/npm/v/true-myth.svg?style=flat-square)](https://www.npmjs.com/package/true-myth)
+[![license](https://img.shields.io/github/license/chriskrycho/true-myth.svg?style=flat-square)](https://github.com/chriskrycho/true-myth/blob/master/LICENSE)
 
 A library for safe functional programming in JavaScript, with first-class
 support for TypeScript and Flow.
