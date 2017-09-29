@@ -187,6 +187,7 @@ export class Nothing<T> implements IMaybe<T> {
     return isNothing(this);
   }
 
+  /** Method variant for [`Maybe.map`](../modules/_maybe_.html#map) */
   map<U>(this: Maybe<T>, mapFn: (t: T) => U): Maybe<U> {
     return map(mapFn, this);
   }
@@ -316,6 +317,25 @@ export const of = <T>(value: T | undefined | null): Maybe<T> =>
 
 export default Maybe;
 
+/**
+ * Map over a `Maybe` instance: apply the function to the wrapped value if the
+ * instance is `Some`, and return `Nothing` if the instance is `Nothing`.
+ * 
+ * ```ts
+ * const someString = Maybe.some('string');
+ * const notAString = Maybe.nothing<string>();
+ * const length = (s: string) => s.length;
+ * 
+ * const someStringLength = map(length, someString);
+ * console.log(stringLength.toString()); // "Some(6)"
+ * 
+ * const notAStringLength = map(length, notAString);
+ * console.log(notAStringLength.toString()); // "Nothing"
+ * ```
+ * 
+ * @param mapFn The function to apply the value to if `Maybe` is `Some`.
+ * @param maybe The `Maybe` instance to map over.
+ */
 export const map = <T, U>(mapFn: (t: T) => U, maybe: Maybe<T>): Maybe<U> =>
   isSome(maybe) ? some(mapFn(unwrap(maybe))) : nothing<U>();
 
@@ -365,7 +385,7 @@ export const orElse = <T>(elseFn: (...args: any[]) => Maybe<T>, maybe: Maybe<T>)
  * Get the value out of the `Maybe`.
  *
  * Returns the content of a `Some`, but **throws if the `Maybe` is `Nothing`**.
- * Prefer to use [[unwrapOr]] or [[unwrapOrElse]].
+ * Prefer to use [`unwrapOr`](#unwrapor) or [`unwrapOrElse`](#unwraporelse).
  *
  * @param maybe The value to unwrap
  * @returns     The unwrapped value if the `Maybe` instance is `Some`.

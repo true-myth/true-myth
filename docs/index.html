@@ -65,12 +65,13 @@
 		<div class="col-8 col-content">
 			<div class="tsd-panel tsd-typography">
 				<h1 id="true-myth">True Myth</h1>
-				<p><a href="https://travis-ci.org/chriskrycho/true-myth"><img src="https://travis-ci.org/chriskrycho/true-myth.svg?branch=master" alt="Build Status"></a>
-				<a href="https://badge.fury.io/js/true-myth"><img src="https://badge.fury.io/js/true-myth.svg" alt="npm version"></a></p>
-				<p>This is a library for safe functional programming in JavaScript, with
-				first-class support for TypeScript and Flow.</p>
+				<p><a href="https://travis-ci.org/chriskrycho/true-myth"><img src="https://img.shields.io/travis/chriskrycho/true-myth.svg?style=flat-square" alt="Travis"></a>
+				<a href="https://www.npmjs.com/package/true-myth"><img src="https://img.shields.io/npm/v/true-myth.svg?style=flat-square" alt="npm"></a></p>
+				<p>A library for safe functional programming in JavaScript, with first-class
+				support for TypeScript and Flow.</p>
 				<ul>
 					<li><a href="#what-is-this-for">What is this for?</a><ul>
+							<li><a href="#philosophy">Philosophy</a></li>
 							<li><a href="#whats-with-the-name">What&#39;s with the name?</a></li>
 						</ul>
 					</li>
@@ -91,6 +92,54 @@
 				<ul>
 					<li>[ ] TODO: motivation</li>
 				</ul>
+				<h3 id="philosophy">Philosophy</h3>
+				<p>The design aims of this library are:</p>
+				<ul>
+					<li>to be as idiomatic as possible in JavaScript</li>
+					<li>to support a natural <em>functional</em> style</li>
+					<li>to have zero runtime cost beyond simple object construction and function
+					invocation</li>
+					<li>to lean heavily on TypeScript and Flow to enable all of the above</li>
+				</ul>
+				<p>In practice, that means:</p>
+				<ul>
+					<li><p>You can construct the variant types in the traditional JavaScript way or
+						with a pure function:</p>
+						<pre><code class="lang-ts">const classical = new Some(&#39;value&#39;);
+const functional = some(&#39;value);
+</code></pre>
+					</li>
+					<li><p>Similarly, you can use methods or pure functions:</p>
+						<pre><code class="lang-ts"><span class="hljs-keyword">const</span> numberResult = ok(<span class="hljs-number">42</span>);
+<span class="hljs-keyword">const</span> ok84 = numberResult.map(<span class="hljs-function"><span class="hljs-params">x</span> =&gt;</span> x * <span class="hljs-number">2</span>);
+<span class="hljs-keyword">const</span> ok21 = map(<span class="hljs-function"><span class="hljs-params">x</span> =&gt;</span> x / <span class="hljs-number">2</span>, numberResult);
+</code></pre>
+						<p>As this second example suggests, the aim has been to support the most
+							idiomatic approach for each style. This means that yes, you might find it a
+							bit confusing if you&#39;re actively switching between the two of them. (Why
+						would you do that?!!)</p>
+					</li>
+					<li><p>Using the library with TypeScript or Flow will <em>just work</em> and will provide
+							you with considerable safety out of the box. Using it with JavaScript will
+							work just fine, but there is no runtime checking, and you&#39;re responsible to
+							make sure you don&#39;t <code>unwrap()</code> a <code>Maybe</code> without checking that it&#39;s safe to
+						do so.</p>
+					</li>
+				</ul>
+				<p>The overarching themes are flexibility and approachability.</p>
+				<p>The hope is that a team just picking up these ideas for the first time can use
+					them without adapting their whole style to a &quot;traditional&quot; functional
+					programming approach, but a team comfortable with functional idioms will find
+					themselves at home with the item-last pure functions. (For a brief discussion
+				of why you want the item last in a functional style, see <a href="http://www.chriskrycho.com/2017/collection-last-auto-curried-functions.html">this blog post</a>.)</p>
+				<p>(As a closely related note: this library does not currently supply curried
+					variants of the functions. There are a <em>lot</em> of good options out there for
+					that; both <a href="https://lodash.com">lodash</a> and <a href="http://ramdajs.com">Ramda</a> have tools for currying existing function
+					definitions. It also profoundly complicates writing the type signatures for
+					these functions, since neither TypeScript nor Flow can easily represent auto-
+					curried functions – unsurprisingly, given they&#39;re uncommon in JavaScript. Using
+					Ramda or lodash to get curried versions of the functions may be a huge win for
+				you in your codebase, though!)</p>
 				<h3 id="what-s-with-the-name-">What&#39;s with the name?</h3>
 				<ul>
 					<li>[ ] TODO: Tolkien/Lewis, also Folktale/FantasyLand/Sanctuary. Nice resonance</li>

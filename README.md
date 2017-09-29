@@ -1,12 +1,13 @@
 # True Myth
 
-[![Build Status](https://travis-ci.org/chriskrycho/true-myth.svg?branch=master)](https://travis-ci.org/chriskrycho/true-myth)
-[![npm version](https://badge.fury.io/js/true-myth.svg)](https://badge.fury.io/js/true-myth)
+[![Travis](https://img.shields.io/travis/chriskrycho/true-myth.svg?style=flat-square)](https://travis-ci.org/chriskrycho/true-myth)
+[![npm](https://img.shields.io/npm/v/true-myth.svg?style=flat-square)](https://www.npmjs.com/package/true-myth)
 
-This is a library for safe functional programming in JavaScript, with
-first-class support for TypeScript and Flow.
+A library for safe functional programming in JavaScript, with first-class
+support for TypeScript and Flow.
 
 - [What is this for?](#what-is-this-for)
+    - [Philosophy](#philosophy)
     - [What's with the name?](#whats-with-the-name)
 - [Setup](#setup)
     - [JavaScript](#javascript)
@@ -20,6 +21,67 @@ first-class support for TypeScript and Flow.
 ## What is this for?
 
 - [ ] TODO: motivation
+
+### Philosophy
+
+The design aims of this library are:
+
+-   to be as idiomatic as possible in JavaScript
+-   to support a natural *functional* style
+-   to have zero runtime cost beyond simple object construction and function
+    invocation
+-   to lean heavily on TypeScript and Flow to enable all of the above
+
+In practice, that means:
+
+-   You can construct the variant types in the traditional JavaScript way or
+    with a pure function:
+
+    ```ts
+    const classical = new Some('value');
+    const functional = some('value);
+    ```
+
+-   Similarly, you can use methods or pure functions:
+
+    ```ts
+    const numberResult = ok(42);
+    const ok84 = numberResult.map(x => x * 2);
+    const ok21 = map(x => x / 2, numberResult);
+    ```
+
+    As this second example suggests, the aim has been to support the most
+    idiomatic approach for each style. This means that yes, you might find it a
+    bit confusing if you're actively switching between the two of them. (Why
+    would you do that?!!)
+
+-   Using the library with TypeScript or Flow will *just work* and will provide
+    you with considerable safety out of the box. Using it with JavaScript will
+    work just fine, but there is no runtime checking, and you're responsible to
+    make sure you don't `unwrap()` a `Maybe` without checking that it's safe to
+    do so.
+
+The overarching themes are flexibility and approachability.
+
+The hope is that a team just picking up these ideas for the first time can use
+them without adapting their whole style to a "traditional" functional
+programming approach, but a team comfortable with functional idioms will find
+themselves at home with the item-last pure functions. (For a brief discussion
+of why you want the item last in a functional style, see [this blog post].)
+
+[this blog post]: http://www.chriskrycho.com/2017/collection-last-auto-curried-functions.html
+
+(As a closely related note: this library does not currently supply curried
+variants of the functions. There are a *lot* of good options out there for
+that; both [lodash] and [Ramda] have tools for currying existing function
+definitions. It also profoundly complicates writing the type signatures for
+these functions, since neither TypeScript nor Flow can easily represent auto-
+curried functions – unsurprisingly, given they're uncommon in JavaScript. Using
+Ramda or lodash to get curried versions of the functions may be a huge win for
+you in your codebase, though!)
+
+[Ramda]: http://ramdajs.com
+[lodash]: https://lodash.com
 
 ### What's with the name?
 
