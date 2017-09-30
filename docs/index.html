@@ -73,16 +73,29 @@
 				functional style and a more traditional method-call style.</p>
 				<ul>
 					<li><a href="#just-the-api-please">Just the API, please</a><ul>
-							<li><a href="#-result-with-a-functional-style"><code>Result</code> with a functional style</a></li>
-							<li><a href="#-maybe-with-the-method-style"><code>Maybe</code> with the method style</a></li>
-							<li><a href="#constructing-maybe-">Constructing <code>Maybe</code></a></li>
-							<li><a href="#safely-gettng-at-values">Safely getting at values</a></li>
+							<li><a href="#result-with-a-functional-style"><code>Result</code> with a functional style</a></li>
+							<li><a href="#maybe-with-the-method-style"><code>Maybe</code> with the method style</a></li>
+							<li><a href="#constructing-maybe">Constructing <code>Maybe</code></a></li>
+							<li><a href="#safely-getting-at-values">Safely getting at values</a></li>
 						</ul>
 					</li>
 					<li><a href="#what-is-this-for">What is this for?</a><ul>
 							<li><a href="#the-problem">The problem</a></li>
-							<li><a href="#philosophy">Philosophy</a></li>
-							<li><a href="#whats-with-the-name">What&#39;s with the name?</a></li>
+							<li><a href="#the-solution">The solution</a></li>
+						</ul>
+					</li>
+					<li><a href="#design-philosophy">Design philosophy</a><ul>
+							<li><a href="#the-type-names">The type names</a><ul>
+									<li><a href="#maybe"><code>Maybe</code></a><ul>
+											<li><a href="#the-maybe-variants-some-and-nothing">The <code>Maybe</code> variants: <code>Some</code> and <code>Nothing</code></a></li>
+										</ul>
+									</li>
+									<li><a href="#result"><code>Result</code></a><ul>
+											<li><a href="#the-result-variants-ok-and-err">The <code>Result</code> variants: <code>Ok</code> and <code>Err</code></a></li>
+										</ul>
+									</li>
+								</ul>
+							</li>
 						</ul>
 					</li>
 					<li><a href="#setup">Setup</a><ul>
@@ -97,6 +110,7 @@
 							<li><a href="#sanctuary">Sanctuary</a></li>
 						</ul>
 					</li>
+					<li><a href="#whats-with-the-name">What&#39;s with the name?</a></li>
 				</ul>
 				<h2 id="just-the-api-please">Just the API, please</h2>
 				<p>A quick overview of using this library – if you&#39;re unsure of why you would want
@@ -148,7 +162,7 @@
 				<pre><code class="lang-ts"><span class="hljs-keyword">const</span> theAnswerValue = unwrapOr(<span class="hljs-number">0</span>, theAnswer);
 </code></pre>
 				<h2 id="what-is-this-for-">What is this for?</h2>
-				<h4 id="the-problem">The problem</h4>
+				<h3 id="the-problem">The problem</h3>
 				<p><code>null</code> and <code>undefined</code> are a curse. Their presence in JavaScript (and similar
 					in many other languages) introduces a host of problems, because they mean that
 					you can never trust that this thing you <em>think</em> is present <em>actually</em> is
@@ -182,11 +196,11 @@
 					This at least helps keep us honest. But we still end up writing a ton of
 					repeated boilerplate to deal with this problem. And given <a href="http://www.artima.com/intv/dry.html">DRY</a>, it seems like
 				we should just handle it once and be done with it. Enter <code>Maybe</code> and <code>Result</code>.</p>
-				<h4 id="the-solution">The solution</h4>
+				<h3 id="the-solution">The solution</h3>
 				<ul>
 					<li>[ ] TODO: describe how <code>Maybe</code> and <code>Result</code> solve this problem.</li>
 				</ul>
-				<h3 id="philosophy">Philosophy</h3>
+				<h2 id="design-philosophy">Design philosophy</h2>
 				<p>The design aims of this library are:</p>
 				<ul>
 					<li>to be as idiomatic as possible in JavaScript</li>
@@ -234,10 +248,6 @@ const functional = some(&#39;value&#39;);
 					curried functions – unsurprisingly, given they&#39;re uncommon in JavaScript. Using
 					Ramda or lodash to get curried versions of the functions may be a huge win for
 				you in your codebase, though!)</p>
-				<h3 id="what-s-with-the-name-">What&#39;s with the name?</h3>
-				<ul>
-					<li>[ ] TODO: Tolkien/Lewis, also Folktale/FantasyLand/Sanctuary. Nice resonance</li>
-				</ul>
 				<h3 id="the-type-names">The type names</h3>
 				<h4 id="-maybe-"><code>Maybe</code></h4>
 				<p>The primary options in this space include <code>Option</code>, <code>Optional</code>, and <code>Maybe</code>. You
@@ -255,7 +265,7 @@ const functional = some(&#39;value&#39;);
 					string&quot; isn&#39;t great – but &quot;maybe a string&quot; is the most natural <em>accurate</em> way to
 				answer the question, &quot;What&#39;s in this field?&quot; It&#39;s also the shortest!</p>
 				<p><code>Optional</code> or <code>Maybe</code> are both good names; <code>Maybe</code> just seemed slightly better.</p>
-				<h5 id="the-maybe-variants-some-and-nothing-">The <code>Maybe</code> variants: <code>Some</code> and <code>Nothing</code>.</h5>
+				<h5 id="the-maybe-variants-some-and-nothing-">The <code>Maybe</code> variants: <code>Some</code> and <code>Nothing</code></h5>
 				<p>Similar consideration was given to the names of the type variants. Options for
 					the &quot;present&quot; type in other libraries are <code>Some</code> and <code>Just</code>. Options for the
 				&quot;absent&quot; type are <code>None</code> or <code>Nothing</code>.</p>
@@ -334,6 +344,10 @@ const functional = some(&#39;value&#39;);
 				<h3 id="sanctuary-">Sanctuary?</h3>
 				<ul>
 					<li>[ ] TODO: kind of the same as Folktale, but add specific details</li>
+				</ul>
+				<h2 id="what-s-with-the-name-">What&#39;s with the name?</h2>
+				<ul>
+					<li>[ ] TODO: Tolkien/Lewis, also Folktale/FantasyLand/Sanctuary. Nice resonance</li>
 				</ul>
 			</div>
 		</div>

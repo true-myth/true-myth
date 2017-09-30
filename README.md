@@ -9,14 +9,19 @@ support for TypeScript and Flow. `Maybe` and `Result` types, supporitng both a
 functional style and a more traditional method-call style.
 
 - [Just the API, please](#just-the-api-please)
-    - [`Result` with a functional style](#-result-with-a-functional-style)
-    - [`Maybe` with the method style](#-maybe-with-the-method-style)
-    - [Constructing `Maybe`](#constructing-maybe-)
-    - [Safely getting at values](#safely-gettng-at-values)
+    - [`Result` with a functional style](#result-with-a-functional-style)
+    - [`Maybe` with the method style](#maybe-with-the-method-style)
+    - [Constructing `Maybe`](#constructing-maybe)
+    - [Safely getting at values](#safely-getting-at-values)
 - [What is this for?](#what-is-this-for)
     - [The problem](#the-problem)
-    - [Philosophy](#philosophy)
-    - [What's with the name?](#whats-with-the-name)
+    - [The solution](#the-solution)
+- [Design philosophy](#design-philosophy)
+    - [The type names](#the-type-names)
+        - [`Maybe`](#maybe)
+            - [The `Maybe` variants: `Some` and `Nothing`](#the-maybe-variants-some-and-nothing)
+        - [`Result`](#result)
+            - [The `Result` variants: `Ok` and `Err`](#the-result-variants-ok-and-err)
 - [Setup](#setup)
     - [JavaScript](#javascript)
     - [TypeScript](#typescript)
@@ -25,6 +30,7 @@ functional style and a more traditional method-call style.
 - [Why not...](#why-not)
     - [Folktale](#folktale)
     - [Sanctuary](#sanctuary)
+- [What's with the name?](#whats-with-the-name)
 
 ## Just the API, please
 
@@ -99,7 +105,7 @@ const theAnswerValue = unwrapOr(0, theAnswer);
 
 ## What is this for?
 
-#### The problem
+### The problem
 
 `null` and `undefined` are a curse. Their presence in JavaScript (and similar
 in many other languages) introduces a host of problems, because they mean that
@@ -145,11 +151,11 @@ we should just handle it once and be done with it. Enter `Maybe` and `Result`.
 [optional]: http://www.typescriptlang.org/docs/handbook/interfaces.html#optional-properties
 [DRY]: http://www.artima.com/intv/dry.html
 
-#### The solution
+### The solution
 
 - [ ] TODO: describe how `Maybe` and `Result` solve this problem.
 
-### Philosophy
+## Design philosophy
 
 The design aims of this library are:
 
@@ -210,10 +216,6 @@ you in your codebase, though!)
 [Ramda]: http://ramdajs.com
 [lodash]: https://lodash.com
 
-### What's with the name?
-
-- [ ] TODO: Tolkien/Lewis, also Folktale/FantasyLand/Sanctuary. Nice resonance
-
 ### The type names
 
 #### `Maybe`
@@ -238,7 +240,7 @@ answer the question, "What's in this field?" It's also the shortest!
 
 `Optional` or `Maybe` are both good names; `Maybe` just seemed slightly better.
 
-##### The `Maybe` variants: `Some` and `Nothing`.
+##### The `Maybe` variants: `Some` and `Nothing`
 
 Similar consideration was given to the names of the type variants. Options for
 the "present" type in other libraries are `Some` and `Just`. Options for the
@@ -323,3 +325,7 @@ There were also a few nitpicky things about Folktale's API that weren't to
 ### Sanctuary?
 
 - [ ] TODO: kind of the same as Folktale, but add specific details
+
+## What's with the name?
+
+- [ ] TODO: Tolkien/Lewis, also Folktale/FantasyLand/Sanctuary. Nice resonance
