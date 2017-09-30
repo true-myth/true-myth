@@ -322,6 +322,8 @@ However, there are two main reasons you might prefer <this library> to Folktale:
 
 There were also a few nitpicky things about Folktale's API that weren't to
 
+- [ ] TODO: finish folktale discussion
+
 ### Sanctuary?
 
 - [ ] TODO: kind of the same as Folktale, but add specific details
