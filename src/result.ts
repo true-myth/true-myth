@@ -20,7 +20,7 @@
 
 /** (keep typedoc from getting confused by the import) */
 import { isVoid } from './utils';
-import { Maybe, some, nothing } from './maybe';
+import { Maybe, just, nothing } from './maybe';
 
 /**
  * Discriminant for `Ok` or `Error`.
@@ -357,4 +357,4 @@ export const unwrapOrElse = <T, E>(orElseFn: (error: E) => T, result: Result<T, 
  * if the `Result` is [[Err]]; the wrapped error value will be discarded.
  */
 export const toMaybe = <T, E>(result: Result<T, E>): Maybe<T> =>
-  isOk(result) ? some(unwrap(result)) : nothing();
+  isOk(result) ? just(unwrap(result)) : nothing();

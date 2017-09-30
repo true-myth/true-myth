@@ -3,7 +3,7 @@
  * 
  * A `Maybe<T>` is a value of type `T` which may or may not be present.
  * 
- * If the value is present, it is `Some(value)`. If it's absent, it's `Nothing`.
+ * If the value is present, it is `Just(value)`. If it's absent, it's `Nothing`.
  * This provides a type-safe container for dealing with the possibility that
  * there's nothing here – a container you can do many of the same things you
  * might with an array – so that you can avoid nasty `null` and `undefined`
@@ -15,10 +15,10 @@ import { isVoid } from './utils';
 import { Result, ok, err } from './result';
 
 /**
- * Discriminant for the `Some` and `Nothing` variants.
+ * Discriminant for the `Just` and `Nothing` variants.
  */
 export enum Variant {
-  Some = 'Some',
+  Just = 'Just',
   Nothing = 'Nothing',
 }
 
@@ -27,8 +27,8 @@ export enum Variant {
 export interface IMaybe<T> {
   variant: Variant;
 
-  /** Method variant for [`Maybe.isSome`](../modules/_maybe_.html#issome) */
-  isSome(this: Maybe<T>): this is Some<T>;
+  /** Method variant for [`Maybe.isJust`](../modules/_maybe_.html#isjust) */
+  isJust(this: Maybe<T>): this is Just<T>;
 
   /** Method variant for [`Maybe.isNothing`](../modules/_maybe_.html#isnothing) */
   isNothing(this: Maybe<T>): this is Nothing<T>;
@@ -57,11 +57,11 @@ export interface IMaybe<T> {
   /**
    * Method variant for [`Maybe.unwrap`](../modules/_maybe_.html#unwrap)
    * 
-   * @return {T} The unwrapped value, if `Some`
+   * @return {T} The unwrapped value, if `Just`
    * 
    * @throws     If `None`.
    */
-  unwrap(): T | never;
+  unsafelyUnwrap(): T | never;
 
   /** Method variant for [`Maybe.unwrapOrElse`](../modules/_maybe_.html#unwraporelse) */
   unwrapOrElse(this: Maybe<T>, elseFn: (...args: any[]) => T): T;
@@ -76,29 +76,29 @@ export interface IMaybe<T> {
   toString<T>(this: Maybe<T>): string;
 }
 
-export class Some<T> implements IMaybe<T> {
+export class Just<T> implements IMaybe<T> {
   private __value: T;
 
-  variant = Variant.Some;
+  variant = Variant.Just;
 
   /**
-   * Create an instance of `Maybe.Some` with `new`.
+   * Create an instance of `Maybe.Just` with `new`.
    * 
-   * **Note:** While you *may* create the `Some` type via normal JavaScript
+   * **Note:** While you *may* create the `Just` type via normal JavaScript
    * class construction, it is not recommended for the functional style for
    * which the library is intended. Instead, use Maybe.[[of]] (for the general
-   * case) or Maybe.[[some]] for this specific case.
+   * case) or Maybe.[[just]] for this specific case.
    * 
    * ```ts
    * // Avoid:
-   * const aString = new Maybe.Some('characters');
+   * const aString = new Maybe.Just('characters');
    * 
    * // Prefer:
-   * const aString = Maybe.some('characters);
+   * const aString = Maybe.just('characters);
    * ```
    * 
    * @param value
-   * The value to wrap in a `Maybe.Some`.
+   * The value to wrap in a `Maybe.Just`.
    * 
    * `null` and `undefined` are allowed by the type signature so that the
    * constructor may `throw` on those rather than constructing a type like
@@ -108,15 +108,15 @@ export class Some<T> implements IMaybe<T> {
    */
   constructor(value: T | null | undefined) {
     if (isVoid(value)) {
-      throw 'Tried to construct `Some` with `null` or `undefined`';
+      throw 'Tried to construct `Just` with `null` or `undefined`';
     }
 
     this.__value = value;
   }
 
-  /** Method variant for [`Maybe.isSome`](../modules/_maybe_.html#issome) */
-  isSome(this: Maybe<T>): this is Some<T> {
-    return isSome(this);
+  /** Method variant for [`Maybe.isJust`](../modules/_maybe_.html#isjust) */
+  isJust(this: Maybe<T>): this is Just<T> {
+    return isJust(this);
   }
 
   /** Method variant for [`Maybe.isNothing`](../modules/_maybe_.html#isnothing) */
@@ -152,7 +152,7 @@ export class Some<T> implements IMaybe<T> {
     return andThen(andThenFn, this);
   }
 
-  unwrap(): T {
+  unsafelyUnwrap(): T {
     return this.__value;
   }
 
@@ -177,9 +177,9 @@ export class Some<T> implements IMaybe<T> {
 export class Nothing<T> implements IMaybe<T> {
   variant = Variant.Nothing;
 
-  /** Method variant for [`Maybe.isSome`](../modules/_maybe_.html#issome) */
-  isSome(this: Maybe<T>): this is Some<T> {
-    return isSome(this);
+  /** Method variant for [`Maybe.isJust`](../modules/_maybe_.html#isjust) */
+  isJust(this: Maybe<T>): this is Just<T> {
+    return isJust(this);
   }
 
   /** Method variant for [`Maybe.isNothing`](../modules/_maybe_.html#isnothing) */
@@ -216,8 +216,8 @@ export class Nothing<T> implements IMaybe<T> {
     return andThen(andThenFn, this);
   }
 
-  unwrap(): never {
-    throw 'Tried to `unwrap(Nothing)`';
+  unsafelyUnwrap(): never {
+    throw 'Tried to `unsafelyUnwrap(Nothing)`';
   }
 
   unwrapOrElse(this: Maybe<T>, elseFn: (...args: any[]) => T): T {
@@ -240,11 +240,11 @@ export class Nothing<T> implements IMaybe<T> {
 }
 
 /**
- * Is this result a `Some` instance?
+ * Is this result a `Just` instance?
  * 
- * In TypeScript, narrows the type from `Maybe<T>` to `Some<T>`.
+ * In TypeScript, narrows the type from `Maybe<T>` to `Just<T>`.
  */
-export const isSome = <T>(maybe: Maybe<T>): maybe is Some<T> => maybe.variant === Variant.Some;
+export const isJust = <T>(maybe: Maybe<T>): maybe is Just<T> => maybe.variant === Variant.Just;
 
 /**
  * Is this result a `Nothing` instance?
@@ -255,17 +255,17 @@ export const isNothing = <T>(maybe: Maybe<T>): maybe is Nothing<T> =>
   maybe.variant === Variant.Nothing;
 
 /**
- * Create an instance of `Maybe.Some`.
+ * Create an instance of `Maybe.Just`.
  * 
  * `null` and `undefined` are allowed by the type signature so that the
  * function may `throw` on those rather than constructing a type like
  * `Maybe<undefined>`.
  * 
  * @typeparam T The type of the item contained in the `Maybe`.
- * @param value The value to wrap in a `Maybe.Some`.
+ * @param value The value to wrap in a `Maybe.Just`.
  * @throws      If you pass `null` or `undefined`.
 */
-export const some = <T>(value: T | null | undefined): Maybe<T> => new Some<T>(value);
+export const just = <T>(value: T | null | undefined): Maybe<T> => new Just<T>(value);
 
 /**
  * Create an instance of `Maybe.Nothing`.
@@ -283,12 +283,12 @@ export const some = <T>(value: T | null | undefined): Maybe<T> => new Some<T>(va
 export const nothing = <T>(): Maybe<T> => new Nothing<T>();
 
 /**
- * A value which may (`Some<T>`) or may not (`Nothing`) be present.
+ * A value which may (`Just<T>`) or may not (`Nothing`) be present.
  * 
  * The behavior of this type is checked by TypeScript at compile time, and bears
  * no runtime overhead other than the very small cost of the container object.
  */
-export type Maybe<T> = Some<T> | Nothing<T>;
+export type Maybe<T> = Just<T> | Nothing<T>;
 
 /**
  * Create a `Maybe` from any value.
@@ -313,114 +313,118 @@ export type Maybe<T> = Some<T> | Nothing<T>;
  *              the value passed.
  */
 export const of = <T>(value: T | undefined | null): Maybe<T> =>
-  isVoid(value) ? nothing<T>() : some(value);
+  isVoid(value) ? nothing<T>() : just(value);
 
 export default Maybe;
 
 /**
  * Map over a `Maybe` instance: apply the function to the wrapped value if the
- * instance is `Some`, and return `Nothing` if the instance is `Nothing`.
+ * instance is `Just`, and return `Nothing` if the instance is `Nothing`.
  * 
  * ```ts
- * const someString = Maybe.some('string');
+ * const someString = Maybe.just('string');
  * const notAString = Maybe.nothing<string>();
  * const length = (s: string) => s.length;
  * 
  * const someStringLength = map(length, someString);
- * console.log(stringLength.toString()); // "Some(6)"
+ * console.log(stringLength.toString()); // "Just(6)"
  * 
  * const notAStringLength = map(length, notAString);
  * console.log(notAStringLength.toString()); // "Nothing"
  * ```
  * 
- * @param mapFn The function to apply the value to if `Maybe` is `Some`.
+ * @param mapFn The function to apply the value to if `Maybe` is `Just`.
  * @param maybe The `Maybe` instance to map over.
  */
 export const map = <T, U>(mapFn: (t: T) => U, maybe: Maybe<T>): Maybe<U> =>
-  isSome(maybe) ? some(mapFn(unwrap(maybe))) : nothing<U>();
+  isJust(maybe) ? just(mapFn(unwrap(maybe))) : nothing<U>();
 
 export const mapOr = <T, U>(orU: U, mapFn: (t: T) => U, maybe: Maybe<T>): U =>
-  isSome(maybe) ? mapFn(unwrap(maybe)) : orU;
+  isJust(maybe) ? mapFn(unwrap(maybe)) : orU;
 
 export const mapOrElse = <T, U>(
   orElseFn: (...args: any[]) => U,
   mapFn: (t: T) => U,
   maybe: Maybe<T>
-): U => (isSome(maybe) ? mapFn(unwrap(maybe)) : orElseFn());
+): U => (isJust(maybe) ? mapFn(unwrap(maybe)) : orElseFn());
 
 /**
  * You can think of this like a short-circuiting logical "and" operation on a
  * `Maybe` type. If the first item is `Nothing`, the result is `Nothing`. If the
- * first item is `Some`, then the value is the `Maybe` instance.
+ * first item is `Just`, then the value is the `Maybe` instance.
  *
  * ```ts
  * const stringA = Maybe.of('A');
  * const stringB = Maybe.of('B');
  * const nothing = Maybe.nothing<number>;
  *
- * console.log(and(stringA, stringB).toString());  // 'Some("B")'
+ * console.log(and(stringA, stringB).toString());  // 'Just("B")'
  * console.log(and(nothing, stringB).toString());  // 'Nothing'
  * console.log(and(stringA, nothing).toString());  // 'Nothing'
  * console.log(and(nothing, nothing).toString());  // 'Nothing'
  * ```
  * 
- * @param andMaybe The `Maybe` instance to return if `maybe` is `Some`
+ * @param andMaybe The `Maybe` instance to return if `maybe` is `Just`
  * @param maybe    The `Maybe` instance to check.
  * @return         `Nothing` if the original `maybe` is `Nothing`, or `andMaybe`
- *                 if the original `maybe` is `Some`.
+ *                 if the original `maybe` is `Just`.
  */
 export const and = <T, U>(andMaybe: Maybe<U>, maybe: Maybe<T>): Maybe<U> =>
-  isSome(maybe) ? andMaybe : nothing();
+  isJust(maybe) ? andMaybe : nothing();
 
 export const andThen = <T, U>(thenFn: (t: T) => Maybe<U>, maybe: Maybe<T>): Maybe<U> =>
-  isSome(maybe) ? thenFn(unwrap(maybe)) : nothing();
+  isJust(maybe) ? thenFn(unwrap(maybe)) : nothing();
 
 export const or = <T>(defaultMaybe: Maybe<T>, maybe: Maybe<T>): Maybe<T> =>
-  isSome(maybe) ? maybe : defaultMaybe;
+  isJust(maybe) ? maybe : defaultMaybe;
 
 export const orElse = <T>(elseFn: (...args: any[]) => Maybe<T>, maybe: Maybe<T>): Maybe<T> =>
-  isSome(maybe) ? maybe : elseFn();
+  isJust(maybe) ? maybe : elseFn();
+
+// For internal use; but not exported because we want to emphasize that this is
+// a bad idea via the name.
+const unwrap = <T>(maybe: Maybe<T>): T => maybe.unsafelyUnwrap();
 
 /**
  * Get the value out of the `Maybe`.
  *
- * Returns the content of a `Some`, but **throws if the `Maybe` is `Nothing`**.
+ * Returns the content of a `Just`, but **throws if the `Maybe` is `Nothing`**.
  * Prefer to use [`unwrapOr`](#unwrapor) or [`unwrapOrElse`](#unwraporelse).
  *
  * @param maybe The value to unwrap
- * @returns     The unwrapped value if the `Maybe` instance is `Some`.
+ * @returns     The unwrapped value if the `Maybe` instance is `Just`.
  */
-export const unwrap = <T>(maybe: Maybe<T>): T => maybe.unwrap();
+export const unsafelyUnwrap = unwrap;
 
 /**
  * Safely get the value out of a `Maybe`.
  *
- * Returns the content of a `Some` or `defaultValue` if `Nothing`.
+ * Returns the content of a `Just` or `defaultValue` if `Nothing`.
  */
 export const unwrapOr = <T>(defaultValue: T, maybe: Maybe<T>): T =>
-  isSome(maybe) ? unwrap(maybe) : defaultValue;
+  isJust(maybe) ? unwrap(maybe) : defaultValue;
 
 /**
    * Safely get the value out of a `Maybe`.
    *
-   * Returns the content of a `Some` or `defaultValue` if `Nothing`.
+   * Returns the content of a `Just` or `defaultValue` if `Nothing`.
    */
 export const unwrapOrElse = <T>(orElseFn: (...args: any[]) => T, maybe: Maybe<T>): T =>
-  isSome(maybe) ? unwrap(maybe) : orElseFn();
+  isJust(maybe) ? unwrap(maybe) : orElseFn();
 
 /**
  * Transform the [[Maybe]] into a [[Result]], using the wrapped value as the
- * `Ok` value if `Some`; otherwise using the supplied `error` value for `Err`.
+ * `Ok` value if `Just`; otherwise using the supplied `error` value for `Err`.
  * 
  * @param error The error value to use if the `Maybe` is `Nothing`.
  * @param maybe The `Maybe` instance to convert.
  */
 export const toOkOrErr = <T, E>(error: E, maybe: Maybe<T>): Result<T, E> =>
-  isSome(maybe) ? ok(unwrap(maybe)) : err(error);
+  isJust(maybe) ? ok(unwrap(maybe)) : err(error);
 
 /**
  * Transform the [[Maybe]] into a [[Result]], using the wrapped value as the
- * `Ok` value if `Some`; otherwise using `elseFn` to generate `Err`.
+ * `Ok` value if `Just`; otherwise using `elseFn` to generate `Err`.
  * 
  * @typeparam T  The wrapped value.
  * @typeparam E  The error type to in the `Result`.
@@ -428,7 +432,7 @@ export const toOkOrErr = <T, E>(error: E, maybe: Maybe<T>): Result<T, E> =>
  * @param maybe  The `Maybe` instance to convert.
  */
 export const toOkOrElseErr = <T, E>(elseFn: (...args: any[]) => E, maybe: Maybe<T>): Result<T, E> =>
-  isSome(maybe) ? ok(unwrap(maybe)) : err(elseFn());
+  isJust(maybe) ? ok(unwrap(maybe)) : err(elseFn());
 
 export const toString = <T>(maybe: Maybe<T>): string =>
-  isSome(maybe) ? `Some${unwrap(maybe).toString()}` : `Nothing()`;
+  isJust(maybe) ? `Just${unwrap(maybe).toString()}` : `Nothing()`;
