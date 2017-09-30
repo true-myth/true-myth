@@ -331,7 +331,7 @@ However, there are two main reasons you might prefer <this library> to Folktale:
     FP names for them, this library aims at people just coming up to speed on
     these ideas.
 
-    The big win for Folktale over True Myth is [FantasyLand] compatibility.
+    The big win for Folktale over True Myth is [Fantasy Land] compatibility.
 
 
 3.  True Myth's API aims to be more idiomatic as JavaScript/TypeScript, with a
@@ -352,6 +352,8 @@ However, there are two main reasons you might prefer <this library> to Folktale:
         unreasonable, but it dramatically decreases the convenience of
         integration with existing JS codebases or interfacing with untyped JS
         libraries.
+
+[Fantasy Land]: https://github.com/fantasyland/fantasy-land
 
 ### Sanctuary?
 
