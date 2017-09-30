@@ -435,4 +435,4 @@ export const toOkOrElseErr = <T, E>(elseFn: (...args: any[]) => E, maybe: Maybe<
   isJust(maybe) ? ok(unwrap(maybe)) : err(elseFn());
 
 export const toString = <T>(maybe: Maybe<T>): string =>
-  isJust(maybe) ? `Just${unwrap(maybe).toString()}` : `Nothing()`;
+  isJust(maybe) ? `Just(${unwrap(maybe).toString()})` : `Nothing`;

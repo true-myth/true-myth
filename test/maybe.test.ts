@@ -1,5 +1,6 @@
 import { assertType } from './lib/assert';
 import * as Maybe from '../src/maybe';
+import { ok, err } from '../src/result';
 
 type Neat = { neat: string };
 
@@ -144,6 +145,24 @@ describe('`Maybe` pure functions', () => {
     expect(Maybe.unwrapOrElse(() => 100, Maybe.of(42))).toBe(42);
     expect(Maybe.unwrapOrElse(() => 42, Maybe.nothing())).toBe(42);
   });
+
+  test('`toOkOrErr`', () => {
+    const errValue = { reason: 'such badness' };
+    expect(Maybe.toOkOrErr(errValue, Maybe.of('string'))).toEqual(ok('string'));
+    expect(Maybe.toOkOrErr(errValue, Maybe.nothing())).toEqual(err(errValue));
+  });
+
+  test('`toOkOrElseErr`', () => {
+    const errValue = 24;
+    const getErrValue = () => errValue;
+    expect(Maybe.toOkOrElseErr(getErrValue, Maybe.of(12))).toEqual(ok(12));
+    expect(Maybe.toOkOrElseErr(getErrValue, Maybe.nothing())).toEqual(err(errValue));
+  });
+
+  test('`toString`', () => {
+    expect(Maybe.toString(Maybe.of(42))).toEqual('Just(42)');
+    expect(Maybe.toString(Maybe.nothing())).toEqual('Nothing');
+  });
 });
 
 describe('`Maybe.Just` class', () => {
@@ -212,6 +231,18 @@ describe('`Maybe.Just` class', () => {
     const something = Maybe.just(value);
     expect(something.unwrapOrElse(() => 'other value')).toEqual(value);
   });
+
+  test('`toOkOrErr` method', () => {
+    const errValue = { reason: 'such badness' };
+    expect(Maybe.of('string').toOkOrErr(errValue)).toEqual(ok('string'));
+    expect(Maybe.nothing().toOkOrErr(errValue)).toEqual(err(errValue));
+  });
+
+  test('`toOkOrElseErr` method', () => {});
+
+  test('`toString` method', () => {
+    expect(Maybe.of(42).toString()).toEqual('Just(42)');
+  });
 });
 
 describe('`Maybe.Nothing` class', () => {
@@ -270,5 +301,17 @@ describe('`Maybe.Nothing` class', () => {
     const srslyNothingHereYo = Maybe.of(undefined);
     const sokay = 'it be all fine tho';
     expect(srslyNothingHereYo.unwrapOrElse(() => sokay)).toEqual(sokay);
+  });
+
+  test('`toOkOrErr` method', () => {
+    const errValue = { reason: 'such badness' };
+    expect(Maybe.of('string').toOkOrErr(errValue)).toEqual(ok('string'));
+    expect(Maybe.nothing().toOkOrErr(errValue)).toEqual(err(errValue));
+  });
+
+  test('`toOkOrElseErr` method', () => {});
+
+  test('`toString` method', () => {
+    expect(Maybe.nothing().toString()).toEqual('Just(42)');
   });
 });
