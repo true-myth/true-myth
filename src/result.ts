@@ -68,7 +68,7 @@ export interface IResult<T, E> {
   unsafelyUnwrap(): T | never;
 
   /** Method variant for [`Result.unwrapErr`](../modules/_result_.html#unwraperr) */
-  unwrapErr(): E | never;
+  unsafelyUnwrapErr(): E | never;
 
   /** Method variant for [`Result.unwrapOrElse`](../modules/_result_.html#unwrapOrElse) */
   unwrapOrElse(this: Result<T, E>, elseFn: (error: E) => T): T;
@@ -165,7 +165,7 @@ export class Ok<T, E> implements IResult<T, E> {
   }
 
   /** Method variant for [`Result.unwrapErr`](../modules/_result_.html#unwraperr) */
-  unwrapErr(): E | never {
+  unsafelyUnwrapErr(): E | never {
     throw 'Tried to `unwrapErr` an `Ok`';
   }
 
@@ -227,7 +227,7 @@ export class Err<T, E> implements IResult<T, E> {
     throw 'Tried to `unwrap(Nothing)`';
   }
 
-  unwrapErr(): E {
+  unsafelyUnwrapErr(): E {
     return this.__error;
   }
 
@@ -329,7 +329,7 @@ export const orElse = <T, E>(
 /**
  * Get the value out of the `Result`.
  * 
- * Returns the content of an `Ok`, but throws if the `Result` is `Err`.
+ * Returns the content of an `Ok`, but **throws if the `Result` is `Err`.**
  * Prefer to use [[unwrapOrElse]].
  *
  * @throws If the `Result` instance is `Nothing`.
@@ -343,13 +343,17 @@ const unwrap = unsafelyUnwrap;
 /**
  * Get the error value out of the `Result`.
  * 
- * Returns the content of an `Err`, but throws if the `Result` is `Ok`.
+ * Returns the content of an `Err`, but **throws if the `Result` is `Ok`**.
  * Prefer to use [[unwrapOrElse]].
  *
  * @param result
  * @throws Error If the `Result` instance is `Nothing`.
  */
-export const unwrapErr = <T, E>(result: Result<T, E>): E => result.unwrapErr();
+export const unsafelyUnwrapErr = <T, E>(result: Result<T, E>): E => result.unsafelyUnwrapErr();
+
+// For internal use; but not exported because we want to emphasize that this is
+// a bad idea via the name.
+const unwrapErr = unsafelyUnwrapErr;
 
 export const unwrapOrElse = <T, E>(orElseFn: (error: E) => T, result: Result<T, E>): T =>
   isOk(result) ? unwrap(result) : orElseFn(unwrapErr(result));

@@ -121,6 +121,7 @@
 							<h3>Variables</h3>
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-variable tsd-parent-kind-external-module tsd-is-not-exported"><a href="_result_.html#unwrap" class="tsd-kind-icon">unwrap</a></li>
+								<li class="tsd-kind-variable tsd-parent-kind-external-module tsd-is-not-exported"><a href="_result_.html#unwraperr" class="tsd-kind-icon">unwrap<wbr>Err</a></li>
 							</ul>
 						</section>
 						<section class="tsd-index-section ">
@@ -140,7 +141,7 @@
 								<li class="tsd-kind-function tsd-parent-kind-external-module tsd-has-type-parameter"><a href="_result_.html#orelse" class="tsd-kind-icon">or<wbr>Else</a></li>
 								<li class="tsd-kind-function tsd-parent-kind-external-module tsd-has-type-parameter"><a href="_result_.html#tomaybe" class="tsd-kind-icon">to<wbr>Maybe</a></li>
 								<li class="tsd-kind-function tsd-parent-kind-external-module tsd-has-type-parameter"><a href="_result_.html#unsafelyunwrap" class="tsd-kind-icon">unsafely<wbr>Unwrap</a></li>
-								<li class="tsd-kind-function tsd-parent-kind-external-module tsd-has-type-parameter"><a href="_result_.html#unwraperr" class="tsd-kind-icon">unwrap<wbr>Err</a></li>
+								<li class="tsd-kind-function tsd-parent-kind-external-module tsd-has-type-parameter"><a href="_result_.html#unsafelyunwraperr" class="tsd-kind-icon">unsafely<wbr>Unwrap<wbr>Err</a></li>
 								<li class="tsd-kind-function tsd-parent-kind-external-module tsd-has-type-parameter"><a href="_result_.html#unwraporelse" class="tsd-kind-icon">unwrap<wbr>OrElse</a></li>
 							</ul>
 						</section>
@@ -176,6 +177,16 @@
 					<aside class="tsd-sources">
 						<ul>
 							<li>Defined in result.ts:341</li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-external-module tsd-is-not-exported">
+					<a name="unwraperr" class="tsd-anchor"></a>
+					<h3>unwrap<wbr>Err</h3>
+					<div class="tsd-signature tsd-kind-icon">unwrap<wbr>Err<span class="tsd-signature-symbol">:</span> <a href="" class="tsd-signature-type">unsafelyUnwrapErr</a><span class="tsd-signature-symbol"> =&nbsp;unsafelyUnwrapErr</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in result.ts:356</li>
 						</ul>
 					</aside>
 				</section>
@@ -791,7 +802,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in result.ts:363</li>
+									<li>Defined in result.ts:367</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -837,7 +848,7 @@
 								<div class="lead">
 									<p>Get the value out of the <code>Result</code>.</p>
 								</div>
-								<p>Returns the content of an <code>Ok</code>, but throws if the <code>Result</code> is <code>Err</code>.
+								<p>Returns the content of an <code>Ok</code>, but <strong>throws if the <code>Result</code> is <code>Err</code>.</strong>
 								Prefer to use <a href="_result_.html#unwraporelse">unwrapOrElse</a>.</p>
 							</div>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
@@ -860,10 +871,10 @@
 					</ul>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-external-module tsd-has-type-parameter">
-					<a name="unwraperr" class="tsd-anchor"></a>
-					<h3>unwrap<wbr>Err</h3>
+					<a name="unsafelyunwraperr" class="tsd-anchor"></a>
+					<h3>unsafely<wbr>Unwrap<wbr>Err</h3>
 					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-external-module tsd-has-type-parameter">
-						<li class="tsd-signature tsd-kind-icon">unwrap<wbr>Err&lt;T, E&gt;<span class="tsd-signature-symbol">(</span>result<span class="tsd-signature-symbol">: </span><a href="_result_.html#result" class="tsd-signature-type">Result</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">E</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">E</span></li>
+						<li class="tsd-signature tsd-kind-icon">unsafely<wbr>Unwrap<wbr>Err&lt;T, E&gt;<span class="tsd-signature-symbol">(</span>result<span class="tsd-signature-symbol">: </span><a href="_result_.html#result" class="tsd-signature-type">Result</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">E</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">E</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
@@ -876,7 +887,7 @@
 								<div class="lead">
 									<p>Get the error value out of the <code>Result</code>.</p>
 								</div>
-								<p>Returns the content of an <code>Err</code>, but throws if the <code>Result</code> is <code>Ok</code>.
+								<p>Returns the content of an <code>Err</code>, but <strong>throws if the <code>Result</code> is <code>Ok</code></strong>.
 								Prefer to use <a href="_result_.html#unwraporelse">unwrapOrElse</a>.</p>
 							</div>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
@@ -908,7 +919,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in result.ts:354</li>
+									<li>Defined in result.ts:358</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
@@ -993,6 +1004,9 @@
 					<li class=" tsd-kind-variable tsd-parent-kind-external-module tsd-is-not-exported">
 						<a href="_result_.html#unwrap" class="tsd-kind-icon">unwrap</a>
 					</li>
+					<li class=" tsd-kind-variable tsd-parent-kind-external-module tsd-is-not-exported">
+						<a href="_result_.html#unwraperr" class="tsd-kind-icon">unwrap<wbr>Err</a>
+					</li>
 					<li class=" tsd-kind-function tsd-parent-kind-external-module tsd-has-type-parameter">
 						<a href="_result_.html#and" class="tsd-kind-icon">and</a>
 					</li>
@@ -1036,7 +1050,7 @@
 						<a href="_result_.html#unsafelyunwrap" class="tsd-kind-icon">unsafely<wbr>Unwrap</a>
 					</li>
 					<li class=" tsd-kind-function tsd-parent-kind-external-module tsd-has-type-parameter">
-						<a href="_result_.html#unwraperr" class="tsd-kind-icon">unwrap<wbr>Err</a>
+						<a href="_result_.html#unsafelyunwraperr" class="tsd-kind-icon">unsafely<wbr>Unwrap<wbr>Err</a>
 					</li>
 					<li class=" tsd-kind-function tsd-parent-kind-external-module tsd-has-type-parameter">
 						<a href="_result_.html#unwraporelse" class="tsd-kind-icon">unwrap<wbr>OrElse</a>

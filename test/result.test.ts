@@ -61,11 +61,11 @@ describe('`Result` pure functions', () => {
     expect('to be implemented').toBe(false);
   });
 
-  test('`unwrap`', () => {
+  test('`unsafelyUnwrap`', () => {
     expect('to be implemented').toBe(false);
   });
 
-  test('`unwrapErr`', () => {
+  test('`unsafelyUnwrapErr`', () => {
     expect('to be implemented').toBe(false);
   });
 
