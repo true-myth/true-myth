@@ -294,7 +294,7 @@ just use one of them?
 ### Folktale?
 
 Folktale has an API a lot like this one, as you'll see when perusing the docs.
-However, there are two main reasons you might prefer <this library> to Folktale:
+However, there are two main reasons you might prefer True Myth to Folktale:
 
 1.  True Myth is TypeScript-first and Flow-first, which means that it assumes
     you are using TypeScript or Flow if you're aiming for rigorous type safety.
