@@ -36,6 +36,7 @@
     "collectCoverage": true,
     "mapCoverage": true,
     "collectCoverageFrom": ["src/*"],
+    "coveragePathIgnorePatterns": ["src/index.ts"],
     "coverageThreshold": {
       "global": {
         "branches": 100,

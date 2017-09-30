@@ -120,7 +120,9 @@ export class Ok<T, E> implements IResult<T, E> {
    */
   constructor(value: T | null | undefined) {
     if (isVoid(value)) {
-      throw 'Tried to construct `Ok` with `null` or `undefined`';
+      throw new Error(
+        'Tried to construct `Err` with `null` or `undefined`. Maybe you want `Maybe.Nothing`?'
+      );
     }
 
     this.__value = value;
@@ -208,6 +210,12 @@ export class Err<T, E> implements IResult<T, E> {
   private __error: E;
 
   constructor(error: E) {
+    if (isVoid(error)) {
+      throw new Error(
+        'Tried to construct `Err` with `null` or `undefined`. Maybe you want `Maybe.Nothing`?'
+      );
+    }
+
     this.__error = error;
   }
 
