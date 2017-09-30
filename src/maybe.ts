@@ -12,7 +12,7 @@
 
 /** (keep typedoc from getting confused by the imports) */
 import { isVoid } from './utils';
-import { Result, ok, err } from './result';
+import * as Result from './result';
 
 /**
  * Discriminant for the `Just` and `Nothing` variants.
@@ -57,23 +57,17 @@ export interface IMaybe<T> {
   /** Method variant for [`Maybe.andThen`](../modules/_maybe_.html#andthen) */
   andThen<U>(this: Maybe<T>, andThenFn: (t: T) => Maybe<U>): Maybe<U>;
 
-  /**
-   * Method variant for [`Maybe.unwrap`](../modules/_maybe_.html#unwrap)
-   * 
-   * @return {T} The unwrapped value, if `Just`
-   * 
-   * @throws     If `None`.
-   */
+  /** Method variant for [`Maybe.unwrap`](../modules/_maybe_.html#unwrap) */
   unsafelyUnwrap(): T | never;
 
   /** Method variant for [`Maybe.unwrapOrElse`](../modules/_maybe_.html#unwraporelse) */
   unwrapOrElse(this: Maybe<T>, elseFn: (...args: any[]) => T): T;
 
   /** Method variant for [`Maybe.toOkOrErr`](../modules/_maybe_.html#tookorerr) */
-  toOkOrErr<E>(this: Maybe<T>, error: E): Result<T, E>;
+  toOkOrErr<E>(this: Maybe<T>, error: E): Result.Result<T, E>;
 
   /** Method variant for [`Maybe.toOkOrElseErr`](../modules/_maybe_.html#tookorelseerr) */
-  toOkOrElseErr<T, E>(this: Maybe<T>, elseFn: (...args: any[]) => E): Result<T, E>;
+  toOkOrElseErr<T, E>(this: Maybe<T>, elseFn: (...args: any[]) => E): Result.Result<T, E>;
 
   /** Method variant for [`Maybe.toString`](../modules/_maybe_.html#tostring) */
   toString<T>(this: Maybe<T>): string;
@@ -178,12 +172,12 @@ export class Just<T> implements IMaybe<T> {
   }
 
   /** Method variant for [`Maybe.toOkOrErr`](../modules/_maybe_.html#tookorerr) */
-  toOkOrErr<E>(this: Maybe<T>, error: E): Result<T, E> {
+  toOkOrErr<E>(this: Maybe<T>, error: E): Result.Result<T, E> {
     return toOkOrErr(error, this);
   }
 
   /** Method variant for [`Maybe.toOkOrElseErr`](../modules/_maybe_.html#tookorelseerr) */
-  toOkOrElseErr<T, E>(this: Maybe<T>, elseFn: (...args: any[]) => E): Result<T, E> {
+  toOkOrElseErr<T, E>(this: Maybe<T>, elseFn: (...args: any[]) => E): Result.Result<T, E> {
     return toOkOrElseErr(elseFn, this);
   }
 
@@ -257,12 +251,12 @@ export class Nothing<T> implements IMaybe<T> {
   }
 
   /** Method variant for [`Maybe.toOkOrErr`](../modules/_maybe_.html#tookorerr) */
-  toOkOrErr<E>(this: Maybe<T>, error: E): Result<T, E> {
+  toOkOrErr<E>(this: Maybe<T>, error: E): Result.Result<T, E> {
     return toOkOrErr(error, this);
   }
 
   /** Method variant for [`Maybe.toOkOrElseErr`](../modules/_maybe_.html#tookorelseerr) */
-  toOkOrElseErr<T, E>(this: Maybe<T>, elseFn: (...args: any[]) => E): Result<T, E> {
+  toOkOrElseErr<T, E>(this: Maybe<T>, elseFn: (...args: any[]) => E): Result.Result<T, E> {
     return toOkOrElseErr(elseFn, this);
   }
 
@@ -461,10 +455,10 @@ export const unwrapOr = <T>(defaultValue: T, maybe: Maybe<T>): T =>
   isJust(maybe) ? unwrap(maybe) : defaultValue;
 
 /**
-   * Safely get the value out of a `Maybe`.
-   *
-   * Returns the content of a `Just` or `defaultValue` if `Nothing`.
-   */
+ * Safely get the value out of a `Maybe`.
+ *
+ * Returns the content of a `Just` or `defaultValue` if `Nothing`.
+ */
 export const unwrapOrElse = <T>(orElseFn: (...args: any[]) => T, maybe: Maybe<T>): T =>
   isJust(maybe) ? unwrap(maybe) : orElseFn();
 
@@ -475,8 +469,8 @@ export const unwrapOrElse = <T>(orElseFn: (...args: any[]) => T, maybe: Maybe<T>
  * @param error The error value to use if the `Maybe` is `Nothing`.
  * @param maybe The `Maybe` instance to convert.
  */
-export const toOkOrErr = <T, E>(error: E, maybe: Maybe<T>): Result<T, E> =>
-  isJust(maybe) ? ok(unwrap(maybe)) : err(error);
+export const toOkOrErr = <T, E>(error: E, maybe: Maybe<T>): Result.Result<T, E> =>
+  isJust(maybe) ? Result.ok(unwrap(maybe)) : Result.err(error);
 
 /**
  * Transform the [[Maybe]] into a [[Result]], using the wrapped value as the
@@ -487,8 +481,13 @@ export const toOkOrErr = <T, E>(error: E, maybe: Maybe<T>): Result<T, E> =>
  * @param elseFn The function which generates an error of type `E`.
  * @param maybe  The `Maybe` instance to convert.
  */
-export const toOkOrElseErr = <T, E>(elseFn: (...args: any[]) => E, maybe: Maybe<T>): Result<T, E> =>
-  isJust(maybe) ? ok(unwrap(maybe)) : err(elseFn());
+export const toOkOrElseErr = <T, E>(
+  elseFn: (...args: any[]) => E,
+  maybe: Maybe<T>
+): Result.Result<T, E> => (isJust(maybe) ? Result.ok(unwrap(maybe)) : Result.err(elseFn()));
+
+export const fromResult = <T, E>(result: Result.Result<T, E>): Maybe<T> =>
+  Result.isOk(result) ? just(Result.unsafelyUnwrap(result)) : nothing();
 
 /**
    * Create a `String` representation of a `Maybe` instance.

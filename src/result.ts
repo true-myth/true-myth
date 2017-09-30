@@ -20,7 +20,7 @@
 
 /** (keep typedoc from getting confused by the import) */
 import { isVoid } from './utils';
-import { Maybe, just, nothing } from './maybe';
+import { Maybe, just, nothing, isJust, unsafelyUnwrap as unwrapMaybe } from './maybe';
 
 /**
  * Discriminant for `Ok` or `Error`.
@@ -30,8 +30,6 @@ export enum Variant {
   Err = 'Err',
 }
 
-// TODO: `mapErr` and friends.
-
 // Someday Result we'll have `protocol`s and this would just have default
 // implementations for nearly everything in the concrete classes below.
 export interface IResult<T, E> {
@@ -39,6 +37,12 @@ export interface IResult<T, E> {
    * Distinguish between the `Ok` and `Error` variants.
    */
   variant: Variant;
+
+  /** Method variant for [`Result.isOk`](../modules/_result_.html#isok) */
+  isOk(this: Result<T, E>): this is Ok<T, E>;
+
+  /** Method variant for [`Result.isErr`](../modules/_result_.html#iserr) */
+  isErr(this: Result<T, E>): this is Err<T, E>;
 
   /** Method variant for [`Result.map`](../modules/_result_.html#map) */
   map<U>(this: Result<T, E>, mapFn: (t: T) => U): Result<U, E>;
@@ -69,6 +73,9 @@ export interface IResult<T, E> {
 
   /** Method variant for [`Result.unwrapErr`](../modules/_result_.html#unwraperr) */
   unsafelyUnwrapErr(): E | never;
+
+  /** Method variant for [`Result.unwrapOr`](../modules/_result_.html#unwrapor) */
+  unwrapOr<E>(this: Result<T, E>, defaultValue: T): T;
 
   /** Method variant for [`Result.unwrapOrElse`](../modules/_result_.html#unwrapOrElse) */
   unwrapOrElse(this: Result<T, E>, elseFn: (error: E) => T): T;
@@ -117,6 +124,16 @@ export class Ok<T, E> implements IResult<T, E> {
     }
 
     this.__value = value;
+  }
+
+  /** Method variant for [`Result.isOk`](../modules/_result_.html#isok) */
+  isOk(this: Result<T, E>): this is Ok<T, E> {
+    return isOk(this);
+  }
+
+  /** Method variant for [`Result.isErr`](../modules/_result_.html#iserr) */
+  isErr(this: Result<T, E>): this is Err<T, E> {
+    return isErr(this);
   }
 
   /** Method variant for [`Result.map`](../modules/_result_.html#map) */
@@ -169,6 +186,11 @@ export class Ok<T, E> implements IResult<T, E> {
     throw 'Tried to `unwrapErr` an `Ok`';
   }
 
+  /** Method variant for [`Result.unwrapOr`](../modules/_result_.html#unwrapor) */
+  unwrapOr<E>(this: Result<T, E>, defaultValue: T): T {
+    return unwrapOr(defaultValue, this);
+  }
+
   /** Method variant for [`Result.unwrapOrElse`](../modules/_result_.html#unwrapOrElse) */
   unwrapOrElse(this: Result<T, E>, elseFn: (error: E) => T): T {
     return unwrapOrElse(elseFn, this);
@@ -187,6 +209,16 @@ export class Err<T, E> implements IResult<T, E> {
 
   constructor(error: E) {
     this.__error = error;
+  }
+
+  /** Method variant for [`Result.isOk`](../modules/_result_.html#isok) */
+  isOk(this: Result<T, E>): this is Ok<T, E> {
+    return isOk(this);
+  }
+
+  /** Method variant for [`Result.isErr`](../modules/_result_.html#iserr) */
+  isErr(this: Result<T, E>): this is Err<T, E> {
+    return isErr(this);
   }
 
   /** Method variant for [`Result.map`](../modules/_result_.html#map) */
@@ -231,6 +263,11 @@ export class Err<T, E> implements IResult<T, E> {
     return this.__error;
   }
 
+  /** Method variant for [`Result.unwrapOr`](../modules/_result_.html#unwrapor) */
+  unwrapOr<E>(this: Result<T, E>, defaultValue: T): T {
+    return unwrapOr(defaultValue, this);
+  }
+
   unwrapOrElse(this: Result<T, E>, elseFn: (error: E) => T): T {
     return unwrapOrElse(elseFn, this);
   }
@@ -254,7 +291,7 @@ export const isOk = <T, E>(result: Result<T, E>): result is Ok<T, E> =>
  * 
  * In TypeScript, narrows the type from `Result<T, E>` to `Err<T, E>`.
  */
-export const isError = <T, E>(result: Result<T, E>): result is Err<T, E> =>
+export const isErr = <T, E>(result: Result<T, E>): result is Err<T, E> =>
   result.variant === Variant.Err;
 
 /**
@@ -330,7 +367,7 @@ export const orElse = <T, E>(
  * Get the value out of the `Result`.
  * 
  * Returns the content of an `Ok`, but **throws if the `Result` is `Err`.**
- * Prefer to use [[unwrapOrElse]].
+ * Prefer to use [`unwrapOr`](#unwrapor) or [`unwrapOrElse`](#unwraporelse).
  *
  * @throws If the `Result` instance is `Nothing`.
  */
@@ -355,6 +392,9 @@ export const unsafelyUnwrapErr = <T, E>(result: Result<T, E>): E => result.unsaf
 // a bad idea via the name.
 const unwrapErr = unsafelyUnwrapErr;
 
+export const unwrapOr = <T, E>(defaultValue: T, result: Result<T, E>): T =>
+  isOk(result) ? unwrap(result) : defaultValue;
+
 export const unwrapOrElse = <T, E>(orElseFn: (error: E) => T, result: Result<T, E>): T =>
   isOk(result) ? unwrap(result) : orElseFn(unwrapErr(result));
 
@@ -366,3 +406,6 @@ export const unwrapOrElse = <T, E>(orElseFn: (error: E) => T, result: Result<T, 
  */
 export const toMaybe = <T, E>(result: Result<T, E>): Maybe<T> =>
   isOk(result) ? just(unwrap(result)) : nothing();
+
+export const fromMaybe = <T, E>(errValue: E, maybe: Maybe<T>): Result<T, E> =>
+  isJust(maybe) ? ok<T, E>(unwrapMaybe(maybe)) : err<T, E>(errValue);

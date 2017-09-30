@@ -179,6 +179,16 @@ describe('`Maybe` pure functions', () => {
     expect(Maybe.toOkOrElseErr(getErrValue, Maybe.nothing())).toEqual(err(errValue));
   });
 
+  test('`fromResult`', () => {
+    const value = 1000;
+    const anOk = ok(value);
+    expect(Maybe.fromResult(anOk)).toEqual(Maybe.just(value));
+
+    const reason = 'oh teh noes';
+    const anErr = err(reason);
+    expect(Maybe.fromResult(anErr)).toEqual(Maybe.nothing());
+  });
+
   test('`toString`', () => {
     expect(Maybe.toString(Maybe.of(42))).toEqual('Just(42)');
     expect(Maybe.toString(Maybe.nothing())).toEqual('Nothing');
@@ -369,7 +379,7 @@ describe('`Maybe.Nothing` class', () => {
   test('`andThen` method', () => {
     const theNothing = new Maybe.Nothing();
     const theDefaultValue = 'string';
-    const getDefaultValue = () => Maybe.just('string');
+    const getDefaultValue = () => Maybe.just(theDefaultValue);
 
     expect(theNothing.andThen(getDefaultValue)).toEqual(theNothing);
   });
