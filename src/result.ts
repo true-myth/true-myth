@@ -65,7 +65,7 @@ export interface IResult<T, E> {
   andThen<U>(this: Result<T, E>, andThenFn: (t: T) => Result<U, E>): Result<U, E>;
 
   /** Method variant for [`Result.unwrap`](../modules/_result_.html#unwrap) */
-  unwrap(): T | never;
+  unsafelyUnwrap(): T | never;
 
   /** Method variant for [`Result.unwrapErr`](../modules/_result_.html#unwraperr) */
   unwrapErr(): E | never;
@@ -160,7 +160,7 @@ export class Ok<T, E> implements IResult<T, E> {
   }
 
   /** Method variant for [`Result.unwrap`](../modules/_result_.html#unwrap) */
-  unwrap(): T {
+  unsafelyUnwrap(): T {
     return this.__value;
   }
 
@@ -223,7 +223,7 @@ export class Err<T, E> implements IResult<T, E> {
     return andThen(andThenFn, this);
   }
 
-  unwrap(): never {
+  unsafelyUnwrap(): never {
     throw 'Tried to `unwrap(Nothing)`';
   }
 
@@ -334,7 +334,11 @@ export const orElse = <T, E>(
  *
  * @throws If the `Result` instance is `Nothing`.
  */
-export const unwrap = <T, E>(result: Result<T, E>): T => result.unwrap();
+export const unsafelyUnwrap = <T, E>(result: Result<T, E>): T => result.unsafelyUnwrap();
+
+// For internal use; but not exported because we want to emphasize that this is
+// a bad idea via the name.
+const unwrap = unsafelyUnwrap;
 
 /**
  * Get the error value out of the `Result`.

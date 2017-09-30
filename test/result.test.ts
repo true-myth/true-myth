@@ -3,11 +3,30 @@ import * as Result from '../src/result';
 
 describe('`Result` pure functions', () => {
   test('`ok`', () => {
-    expect('to be implemented').toBe(false);
+    const theOk = Result.ok(42);
+    expect(theOk).toBeInstanceOf(Result.Ok);
+    switch (theOk.variant) {
+      case Result.Variant.Ok:
+        expect(theOk.unsafelyUnwrap()).toBe(42);
+        break;
+      case Result.Variant.Err:
+        expect(false).toBe(true); // because this should never happen
+        break;
+    }
   });
 
   test('`err`', () => {
-    expect('to be implemented').toBe(false);
+    const reason = 'oh teh noes';
+    const theErr = Result.err(reason);
+    expect(theErr).toBeInstanceOf(Result.Err);
+    switch (theErr.variant) {
+      case Result.Variant.Ok:
+        expect(true).toBe(false); // because this should never happen
+        break;
+      case Result.Variant.Err:
+        expect(theErr.unwrapErr()).toBe(reason);
+        break;
+    }
   });
 
   test('`map`', () => {
