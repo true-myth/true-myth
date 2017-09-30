@@ -8,10 +8,11 @@ const length = (s: string) => s.length;
 
 describe('`Maybe` pure functions', () => {
   test('`just`', () => {
-    const aJust: Maybe.Maybe<string> = Maybe.of('string');
-    switch (aJust.variant) {
+    const theJust = Maybe.just('string');
+    expect(theJust).toBeInstanceOf(Maybe.Just);
+    switch (theJust.variant) {
       case Maybe.Variant.Just:
-        expect(aJust.unsafelyUnwrap()).toBe('string');
+        expect(theJust.unsafelyUnwrap()).toBe('string');
         break;
       case Maybe.Variant.Nothing:
         expect(false).toBe(true); // because this should never happen
@@ -23,8 +24,9 @@ describe('`Maybe` pure functions', () => {
   });
 
   test('`nothing`', () => {
-    const aNothing = Maybe.nothing();
-    switch (aNothing.variant) {
+    const theNothing = Maybe.nothing();
+    expect(theNothing).toBeInstanceOf(Maybe.Nothing);
+    switch (theNothing.variant) {
       case Maybe.Variant.Just:
         expect(true).toBe(false); // because this should never happen
         break;
