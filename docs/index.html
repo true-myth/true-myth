@@ -69,11 +69,33 @@
 					<a href="https://www.npmjs.com/package/true-myth"><img src="https://img.shields.io/npm/v/true-myth.svg?style=flat-square" alt="npm"></a>
 				<a href="https://github.com/chriskrycho/true-myth/blob/master/LICENSE"><img src="https://img.shields.io/github/license/chriskrycho/true-myth.svg?style=flat-square" alt="license"></a></p>
 				<p>A library for safe functional programming in JavaScript, with first-class
-				support for TypeScript and Flow.</p>
+					support for TypeScript and Flow. <code>Maybe</code> and <code>Result</code> types, supporitng both a
+				functional style and a more traditional method-call style.</p>
 				<ul>
+					<li><a href="#just-the-api-please">Just the API, please</a><ul>
+							<li><a href="#result-with-a-functional-style"><code>Result</code> with a functional style</a></li>
+							<li><a href="#maybe-with-the-method-style"><code>Maybe</code> with the method style</a></li>
+							<li><a href="#constructing-maybe">Constructing <code>Maybe</code></a></li>
+							<li><a href="#safely-getting-at-values">Safely getting at values</a></li>
+						</ul>
+					</li>
 					<li><a href="#what-is-this-for">What is this for?</a><ul>
-							<li><a href="#philosophy">Philosophy</a></li>
-							<li><a href="#whats-with-the-name">What&#39;s with the name?</a></li>
+							<li><a href="#the-problem">The problem</a></li>
+							<li><a href="#the-solution">The solution</a></li>
+						</ul>
+					</li>
+					<li><a href="#design-philosophy">Design philosophy</a><ul>
+							<li><a href="#the-type-names">The type names</a><ul>
+									<li><a href="#maybe"><code>Maybe</code></a><ul>
+											<li><a href="#the-maybe-variants-some-and-nothing">The <code>Maybe</code> variants: <code>Some</code> and <code>Nothing</code></a></li>
+										</ul>
+									</li>
+									<li><a href="#result"><code>Result</code></a><ul>
+											<li><a href="#the-result-variants-ok-and-err">The <code>Result</code> variants: <code>Ok</code> and <code>Err</code></a></li>
+										</ul>
+									</li>
+								</ul>
+							</li>
 						</ul>
 					</li>
 					<li><a href="#setup">Setup</a><ul>
@@ -88,12 +110,97 @@
 							<li><a href="#sanctuary">Sanctuary</a></li>
 						</ul>
 					</li>
+					<li><a href="#whats-with-the-name">What&#39;s with the name?</a></li>
 				</ul>
+				<h2 id="just-the-api-please">Just the API, please</h2>
+				<p>A quick overview of using this library – if you&#39;re unsure of why you would want
+				to use the library, you might jump down to <a href="#what-is-this-for"><strong>What is this for?</strong></a>.</p>
+				<p>These examples don&#39;t cover every corner of the API; it&#39;s just here to show you
+				what a few of the functions are like. <a href="https://chriskrycho.github.io/true-myth/">Full API documentation is available.</a></p>
+				<h3 id="-result-with-a-functional-style"><code>Result</code> with a functional style</h3>
+				<pre><code class="lang-ts"><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">fallibleCheck</span>(<span class="hljs-params">isValid: <span class="hljs-built_in">boolean</span></span>): <span class="hljs-title">Result</span>&lt;<span class="hljs-title">string</span>, </span>{ reason: <span class="hljs-built_in">string</span> }&gt; {
+  <span class="hljs-keyword">return</span> isValid ? ok(<span class="hljs-string">'all fine here'</span>) : { reason: <span class="hljs-string">'was not valid'</span> };
+}
+
+<span class="hljs-keyword">const</span> describe = <span class="hljs-function"><span class="hljs-params">s</span> =&gt;</span> <span class="hljs-string">'The outcome was: '</span> + s;
+
+<span class="hljs-keyword">const</span> wentFine = fallibleCheck(<span class="hljs-literal">true</span>);
+<span class="hljs-keyword">const</span> mappedFine = map(describe, wentFine);
+<span class="hljs-built_in">console</span>.log(toString(mappedFine)); <span class="hljs-comment">// "Ok(The outcome was: all fine here)"</span>
+
+<span class="hljs-keyword">const</span> notGreat = fallibleCheck(<span class="hljs-literal">false</span>);
+<span class="hljs-keyword">const</span> mappedBad = map(describe, notGreat);
+<span class="hljs-built_in">console</span>.log(toString(mappedBad)); <span class="hljs-comment">// "Err({ reason: 'was not valid' })"</span>
+</code></pre>
+				<h3 id="-maybe-with-the-method-style"><code>Maybe</code> with the method style</h3>
+				<pre><code class="lang-ts"><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">safeLength</span>(<span class="hljs-params">mightBeAString: Maybe&lt;<span class="hljs-built_in">string</span>&gt;</span>): <span class="hljs-title">Maybe</span>&lt;<span class="hljs-title">number</span>&gt; </span>{
+  <span class="hljs-keyword">return</span> mightBeAString.map(<span class="hljs-function"><span class="hljs-params">s</span> =&gt;</span> s.length);
+}
+
+<span class="hljs-keyword">const</span> someString = Maybe.just(<span class="hljs-string">'a string'</span>);
+<span class="hljs-keyword">const</span> nothingHere = Maybe.nothing&lt;<span class="hljs-built_in">string</span>&gt;();
+<span class="hljs-built_in">console</span>.log(safeLength(someString).toString()); <span class="hljs-comment">// "Some(8)"</span>
+<span class="hljs-built_in">console</span>.log(safeLength(nothingHere).toString()); <span class="hljs-comment">// "Nothing"</span>
+</code></pre>
+				<h3 id="constructing-maybe-">Constructing <code>Maybe</code></h3>
+				<p>You can use <code>Maybe.of</code> to construct a <code>Maybe</code> from any value. It will return a
+				<code>Nothing</code> if the passed type is <code>null</code> or <code>undefined</code>, or a <code>Just</code> otherwise.</p>
+				<pre><code class="lang-ts"><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">acceptsANullOhNo</span>(<span class="hljs-params">value: <span class="hljs-built_in">number</span> | <span class="hljs-literal">null</span></span>): <span class="hljs-title">Maybe</span>&lt;<span class="hljs-title">string</span>&gt; </span>{
+  <span class="hljs-keyword">const</span> maybeNumber = Maybe.of(value);
+  <span class="hljs-keyword">return</span> mapOr(<span class="hljs-string">"0"</span>, <span class="hljs-function"><span class="hljs-params">n</span> =&gt;</span> n.toString(), maybeNumber);
+}
+</code></pre>
+				<h3 id="safely-getting-at-values">Safely getting at values</h3>
+				<p>Helpers (combinators) are supplied to allow you to get at the values wrapped in
+				the type:</p>
+				<pre><code class="lang-ts"><span class="hljs-keyword">const</span> theAnswer = Result.ok(<span class="hljs-number">42</span>);
+<span class="hljs-keyword">const</span> theAnwerValue = unsafelyUnwrap(theAnswer);
+</code></pre>
+				<p>However, as its name makes explicit <code>unsafelyUnwrap</code> is not a safe operation; if
+					the item being unwrapped is an <code>Err</code>, this will throw an <code>Error</code>. Instead, you
+				can use one of the safe unwrap methods:</p>
+				<pre><code class="lang-ts"><span class="hljs-keyword">const</span> theAnswerValue = unwrapOr(<span class="hljs-number">0</span>, theAnswer);
+</code></pre>
 				<h2 id="what-is-this-for-">What is this for?</h2>
+				<h3 id="the-problem">The problem</h3>
+				<p><code>null</code> and <code>undefined</code> are a curse. Their presence in JavaScript (and similar
+					in many other languages) introduces a host of problems, because they mean that
+					you can never trust that this thing you <em>think</em> is present <em>actually</em> is
+					present. Arguments to functions go missing. Values on objects turn out not to
+				exist. Arrays are absent instead of merely empty.</p>
+				<p>The result is a steady stream not merely of programming frustrations, but of
+					<em>errors</em>. Things that means stuff didn&#39;t work correctly for the user of the
+					software. Imagine a hammer where the head just slipped off every so often, in
+					ways you could compensate for but which made it that much harder to just get the
+				nails into the wood.</p>
+				<p>That&#39;s what <code>null</code> and <code>undefined</code> are. You can program around them. But
+				defensive programming is gross. You write a long of things like this:</p>
+				<pre><code class="lang-js"><span class="hljs-keyword">const</span> isNil = <span class="hljs-function">(<span class="hljs-params">thingToCheck</span>) =&gt;</span>
+  thingToCheck === <span class="hljs-literal">undefined</span> || thingToCheck === <span class="hljs-literal">null</span>;
+
+<span class="hljs-keyword">const</span> doAThing = <span class="hljs-function">(<span class="hljs-params">withAString</span>) =&gt;</span> {
+  <span class="hljs-keyword">if</span> (isNil(withAString)) {
+    withAString = <span class="hljs-string">'some default value'</span>;
+  }
+
+  <span class="hljs-built_in">console</span>.log(withAString.length);
+}
+</code></pre>
+				<p>If you forget that check, or simply assume, &quot;Look, I&#39;ll <em>never</em> call this
+					without including the argument,&quot; eventually you or someone else will get it
+					wrong. Usually somewhere far away from the actual invocation of <code>doAThing</code>, so
+				that it&#39;s not obvious why that value ended up being <code>null</code> there.</p>
+				<p>TypeScript and Flow take us a big step in that direction, so long as our type
+					annotations are good enough. (Use of <code>any</code> will leave us sad, though.) We can
+					specify that type <em>may</em> be present, using the <a href="https://flow.org/en/docs/types/maybe/">maybe</a>/<a href="http://www.typescriptlang.org/docs/handbook/interfaces.html#optional-properties">optional</a> annotation.
+					This at least helps keep us honest. But we still end up writing a ton of
+					repeated boilerplate to deal with this problem. And given <a href="http://www.artima.com/intv/dry.html">DRY</a>, it seems like
+				we should just handle it once and be done with it. Enter <code>Maybe</code> and <code>Result</code>.</p>
+				<h3 id="the-solution">The solution</h3>
 				<ul>
-					<li>[ ] TODO: motivation</li>
+					<li>[ ] TODO: describe how <code>Maybe</code> and <code>Result</code> solve this problem.</li>
 				</ul>
-				<h3 id="philosophy">Philosophy</h3>
+				<h2 id="design-philosophy">Design philosophy</h2>
 				<p>The design aims of this library are:</p>
 				<ul>
 					<li>to be as idiomatic as possible in JavaScript</li>
@@ -141,9 +248,37 @@ const functional = some(&#39;value&#39;);
 					curried functions – unsurprisingly, given they&#39;re uncommon in JavaScript. Using
 					Ramda or lodash to get curried versions of the functions may be a huge win for
 				you in your codebase, though!)</p>
-				<h3 id="what-s-with-the-name-">What&#39;s with the name?</h3>
+				<h3 id="the-type-names">The type names</h3>
+				<h4 id="-maybe-"><code>Maybe</code></h4>
+				<p>The primary options in this space include <code>Option</code>, <code>Optional</code>, and <code>Maybe</code>. You
+					could also point to &quot;nullable,&quot; but that actually means the <em>opposite</em> of what
+				we&#39;re doing here – these represent types which can <em>not</em> be nullable!</p>
+				<p><code>Option</code> implies a choice between several different <em>options</em>; in this case
+					that&#39;s not really what&#39;s going on. It&#39;s also not really a great word for the
+					type in the sense that it&#39;s weird to read aloud: &quot;an Option string&quot; doesn&#39;t make
+				any sense in English.</p>
+				<p><code>Optional</code> is much better than <code>Option</code>. The semantics are much more accurate,
+					in that it captures that the thing is allowed to be absent. It&#39;s also the nicest
+				grammatically: &quot;an Optional string&quot;. On the other hand, it&#39;s also the <em>longest</em>.</p>
+				<p><code>Maybe</code> seems to be the best type name semantically: we&#39;re modeling something
+					which <em>may be</em> there. Grammatically, it&#39;s comparable to &quot;optional&quot;: &quot;a Maybe
+					string&quot; isn&#39;t great – but &quot;maybe a string&quot; is the most natural <em>accurate</em> way to
+				answer the question, &quot;What&#39;s in this field?&quot; It&#39;s also the shortest!</p>
+				<p><code>Optional</code> or <code>Maybe</code> are both good names; <code>Maybe</code> just seemed slightly better.</p>
+				<h5 id="the-maybe-variants-some-and-nothing-">The <code>Maybe</code> variants: <code>Some</code> and <code>Nothing</code></h5>
+				<p>Similar consideration was given to the names of the type variants. Options for
+					the &quot;present&quot; type in other libraries are <code>Some</code> and <code>Just</code>. Options for the
+				&quot;absent&quot; type are <code>None</code> or <code>Nothing</code>.</p>
 				<ul>
-					<li>[ ] TODO: Tolkien/Lewis, also Folktale/FantasyLand/Sanctuary. Nice resonance</li>
+					<li>[ ] TODO: elaborate on reasons for <code>Just</code> and <code>Nothing</code></li>
+				</ul>
+				<h4 id="-result-"><code>Result</code></h4>
+				<ul>
+					<li>[ ] TODO: Explain why <code>Result</code> (and in contrast with <code>Either</code>)</li>
+				</ul>
+				<h5 id="the-result-variants-ok-and-err-">The <code>Result</code> variants: <code>Ok</code> and <code>Err</code></h5>
+				<ul>
+					<li>[ ] TODO: explain why <code>Ok</code> and <code>Err</code> (esp. instead of <code>Error</code>)</li>
 				</ul>
 				<h2 id="setup">Setup</h2>
 				<h3 id="javascript">JavaScript</h3>
@@ -180,35 +315,68 @@ const functional = some(&#39;value&#39;);
 				just use one of them?</p>
 				<h3 id="folktale-">Folktale?</h3>
 				<p>Folktale has an API a lot like this one, as you&#39;ll see when perusing the docs.
-				However, there are two main reasons you might prefer <this library> to Folktale:</p>
+				However, there are two main reasons you might prefer True Myth to Folktale:</p>
 				<ol>
-					<li><p>This is TypeScript-first and Flow-first, which means that it assumes you are
-							using one of those tools if you&#39;re aiming for rigorous type safety. Folktale
-							is a JavaScript-first library, with runtime checking built in for its types;
-							TypeScript support is in-progress but will be quite secondary until a
-						TypeScript rewrite of the whole Folktale library lands... eventually.</p>
+					<li><p>True Myth is TypeScript-first and Flow-first, which means that it assumes
+						you are using TypeScript or Flow if you&#39;re aiming for rigorous type safety.</p>
+						<p>By contrast, Folktale is a JavaScript-first library, with runtime checking
+							built in for its types. Folktale&#39;s TypeScript support is in-progress, but
+							will remain secondary until a TypeScript rewrite of the whole Folktale
+						library lands... eventually.</p>
 						<p>There&#39;s value in both of these approaches, so this library aims to take
-						advantage of the compilers and play in a no-runtime-cost space instead.</p>
+						advantage of the compilers and play in a no-runtime-cost space.</p>
+						<p>If you want a JS-focused (rather than TS- or Flow-focused) library which
+							will help you be safer without a compiler, you should definitely pick
+							Folktale over True Myth. If you&#39;ve already using TS or Flow, True Myth is a
+						bit nicer of an experience.</p>
 					</li>
-					<li><p>This library aims to keep functional programming jargon to a minimum and to
-							use TypeScript/Flow type notation throughout. Folktale is aimed squarely at
-							people who are already pretty comfortable with the world of strongly-typed
-							functional programming languagues. This is particularly evident in the way
-							its type signatures are written out (using the same basic notation you might
-							see in e.g. Haskell), but it&#39;s also there in its heavy use of functional
-						programming terminology throughout its docs.</p>
-						<p>Those type signatures are quite nice, and functional programming jargon is
+					<li><p>True Myth aims to keep functional programming jargon to a minimum and to use
+							TypeScript and Flow type notation throughout its docs as well as in its
+						implementation.</p>
+						<p>Folktale is aimed squarely at people who are already pretty comfortable with
+							the world of strongly-typed functional programming languagues. This is
+							particularly evident in the way its type signatures are written out (using
+							the same basic notation you might see in e.g. Haskell), but it&#39;s also there
+						in its heavy use of functional programming terminology throughout its docs.</p>
+						<p>Haskell-style types are quite nice, and functional programming jargon is
 							very useful. However, they&#39;re also another hump to get over. Again: a
-							tradeoff. By opting for type notation that TS or Flow developers are already
-							familiar with, and by focusing on what various functions <em>do</em> rather than
-							the standard FP names for them, this library aims at people just coming up
-						to speed on these ideas.</p>
+						tradeoff.</p>
+						<p>By opting for type notation that TS or Flow developers are already familiar
+							with, and by focusing on what various functions <em>do</em> rather than the usual
+							FP names for them, this library aims at people just coming up to speed on
+						these ideas.</p>
+						<p>The big win for Folktale over True Myth is <a href="https://github.com/fantasyland/fantasy-land">Fantasy Land</a> compatibility.</p>
 					</li>
 				</ol>
-				<p>There were also a few nitpicky things about Folktale&#39;s API that weren&#39;t to</p>
+				<ol>
+					<li><p>True Myth&#39;s API aims to be more idiomatic as JavaScript/TypeScript, with a
+						couple differences in particular worth calling out:</p>
+						<ul>
+							<li><p><strong>function naming convention:</strong> True Myth uses PascalCase for types and
+									camelCase for functions – so, <code>new Just(5)</code> and <code>just(5)</code>, whereas
+									FolkTale uses the capitals as function names for type constructors, i.e.
+								<code>Just(5)</code>, and does not support <code>new</code>.</p>
+							</li>
+							<li><p><strong>ease of construction from nullable types:</strong> True Myth allows you to
+									construct <code>Maybe</code> types from nullable types with <code>Maybe.of</code>, because JS
+									is <em>full</em> of <code>null</code> and <code>undefined</code>, and allowing <code>Maybe.of</code> to handle
+								them makes it easier to be sure you&#39;re always doing the right thing.</p>
+								<p>Folktale&#39;s <code>Maybe.of</code> only allows the use of non-nullable types, and
+									requires you to use <code>Maybe.fromNullable</code> instead. This isn&#39;t
+									unreasonable, but it dramatically decreases the convenience of
+									integration with existing JS codebases or interfacing with untyped JS
+								libraries.</p>
+							</li>
+						</ul>
+					</li>
+				</ol>
 				<h3 id="sanctuary-">Sanctuary?</h3>
 				<ul>
 					<li>[ ] TODO: kind of the same as Folktale, but add specific details</li>
+				</ul>
+				<h2 id="what-s-with-the-name-">What&#39;s with the name?</h2>
+				<ul>
+					<li>[ ] TODO: Tolkien/Lewis, also Folktale/FantasyLand/Sanctuary. Nice resonance</li>
 				</ul>
 			</div>
 		</div>
