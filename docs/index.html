@@ -317,33 +317,59 @@ const functional = some(&#39;value&#39;);
 				<p>Folktale has an API a lot like this one, as you&#39;ll see when perusing the docs.
 				However, there are two main reasons you might prefer <this library> to Folktale:</p>
 				<ol>
-					<li><p>This is TypeScript-first and Flow-first, which means that it assumes you are
-							using one of those tools if you&#39;re aiming for rigorous type safety. Folktale
-							is a JavaScript-first library, with runtime checking built in for its types;
-							TypeScript support is in-progress but will be quite secondary until a
-						TypeScript rewrite of the whole Folktale library lands... eventually.</p>
+					<li><p>True Myth is TypeScript-first and Flow-first, which means that it assumes
+						you are using TypeScript or Flow if you&#39;re aiming for rigorous type safety.</p>
+						<p>By contrast, Folktale is a JavaScript-first library, with runtime checking
+							built in for its types. Folktale&#39;s TypeScript support is in-progress, but
+							will remain secondary until a TypeScript rewrite of the whole Folktale
+						library lands... eventually.</p>
 						<p>There&#39;s value in both of these approaches, so this library aims to take
-						advantage of the compilers and play in a no-runtime-cost space instead.</p>
+						advantage of the compilers and play in a no-runtime-cost space.</p>
+						<p>If you want a JS-focused (rather than TS- or Flow-focused) library which
+							will help you be safer without a compiler, you should definitely pick
+							Folktale over True Myth. If you&#39;ve already using TS or Flow, True Myth is a
+						bit nicer of an experience.</p>
 					</li>
-					<li><p>This library aims to keep functional programming jargon to a minimum and to
-							use TypeScript/Flow type notation throughout. Folktale is aimed squarely at
-							people who are already pretty comfortable with the world of strongly-typed
-							functional programming languagues. This is particularly evident in the way
-							its type signatures are written out (using the same basic notation you might
-							see in e.g. Haskell), but it&#39;s also there in its heavy use of functional
-						programming terminology throughout its docs.</p>
-						<p>Those type signatures are quite nice, and functional programming jargon is
+					<li><p>True Myth aims to keep functional programming jargon to a minimum and to use
+							TypeScript and Flow type notation throughout its docs as well as in its
+						implementation.</p>
+						<p>Folktale is aimed squarely at people who are already pretty comfortable with
+							the world of strongly-typed functional programming languagues. This is
+							particularly evident in the way its type signatures are written out (using
+							the same basic notation you might see in e.g. Haskell), but it&#39;s also there
+						in its heavy use of functional programming terminology throughout its docs.</p>
+						<p>Haskell-style types are quite nice, and functional programming jargon is
 							very useful. However, they&#39;re also another hump to get over. Again: a
-							tradeoff. By opting for type notation that TS or Flow developers are already
-							familiar with, and by focusing on what various functions <em>do</em> rather than
-							the standard FP names for them, this library aims at people just coming up
-						to speed on these ideas.</p>
+						tradeoff.</p>
+						<p>By opting for type notation that TS or Flow developers are already familiar
+							with, and by focusing on what various functions <em>do</em> rather than the usual
+							FP names for them, this library aims at people just coming up to speed on
+						these ideas.</p>
+						<p>The big win for Folktale over True Myth is [FantasyLand] compatibility.</p>
 					</li>
 				</ol>
-				<p>There were also a few nitpicky things about Folktale&#39;s API that weren&#39;t to</p>
-				<ul>
-					<li>[ ] TODO: finish folktale discussion</li>
-				</ul>
+				<ol>
+					<li><p>True Myth&#39;s API aims to be more idiomatic as JavaScript/TypeScript, with a
+						couple differences in particular worth calling out:</p>
+						<ul>
+							<li><p><strong>function naming convention:</strong> True Myth uses PascalCase for types and
+									camelCase for functions – so, <code>new Just(5)</code> and <code>just(5)</code>, whereas
+									FolkTale uses the capitals as function names for type constructors, i.e.
+								<code>Just(5)</code>, and does not support <code>new</code>.</p>
+							</li>
+							<li><p><strong>ease of construction from nullable types:</strong> True Myth allows you to
+									construct <code>Maybe</code> types from nullable types with <code>Maybe.of</code>, because JS
+									is <em>full</em> of <code>null</code> and <code>undefined</code>, and allowing <code>Maybe.of</code> to handle
+								them makes it easier to be sure you&#39;re always doing the right thing.</p>
+								<p>Folktale&#39;s <code>Maybe.of</code> only allows the use of non-nullable types, and
+									requires you to use <code>Maybe.fromNullable</code> instead. This isn&#39;t
+									unreasonable, but it dramatically decreases the convenience of
+									integration with existing JS codebases or interfacing with untyped JS
+								libraries.</p>
+							</li>
+						</ul>
+					</li>
+				</ol>
 				<h3 id="sanctuary-">Sanctuary?</h3>
 				<ul>
 					<li>[ ] TODO: kind of the same as Folktale, but add specific details</li>
