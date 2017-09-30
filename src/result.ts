@@ -57,10 +57,10 @@ export interface IResult<T, E> {
   mapErr<F>(this: Result<T, E>, mapErrFn: (e: E) => F): Result<T, F>;
 
   /** Method variant for [`Result.or`](../modules/_result_.html#or) */
-  or(this: Result<T, E>, mOr: Result<T, E>): Result<T, E>;
+  or<F>(this: Result<T, E>, orResult: Result<T, F>): Result<T, F>;
 
   /** Method variant for [`Result.orElse`](../modules/_result_.html#orelse) */
-  orElse(this: Result<T, E>, orElseFn: (...args: any[]) => Result<T, E>): Result<T, E>;
+  orElse<F>(this: Result<T, E>, orElseFn: (...args: any[]) => Result<T, F>): Result<T, F>;
 
   /** Method variant for [`Result.and`](../modules/_result_.html#and) */
   and<U>(this: Result<T, E>, mAnd: Result<U, E>): Result<U, E>;
@@ -157,12 +157,12 @@ export class Ok<T, E> implements IResult<T, E> {
   }
 
   /** Method variant for [`Result.or`](../modules/_result_.html#or) */
-  or(this: Result<T, E>, mOr: Result<T, E>): Result<T, E> {
-    return or(mOr, this);
+  or<F>(this: Result<T, E>, orResult: Result<T, F>): Result<T, F> {
+    return or(orResult, this);
   }
 
   /** Method variant for [`Result.orElse`](../modules/_result_.html#orelse) */
-  orElse(this: Result<T, E>, orElseFn: (...args: any[]) => Result<T, E>): Result<T, E> {
+  orElse<F>(this: Result<T, E>, orElseFn: (...args: any[]) => Result<T, F>): Result<T, F> {
     return orElse(orElseFn, this);
   }
 
@@ -239,11 +239,11 @@ export class Err<T, E> implements IResult<T, E> {
     return mapErr(mapErrFn, this);
   }
 
-  or(this: Result<T, E>, mOr: Result<T, E>): Result<T, E> {
-    return or(mOr, this);
+  or<F>(this: Result<T, E>, orResult: Result<T, F>): Result<T, F> {
+    return or(orResult, this);
   }
 
-  orElse(this: Result<T, E>, orElseFn: (...args: any[]) => Result<T, E>): Result<T, E> {
+  orElse<F>(this: Result<T, E>, orElseFn: (...args: any[]) => Result<T, F>): Result<T, F> {
     return orElse(orElseFn, this);
   }
 
@@ -355,13 +355,13 @@ export const andThen = <T, U, E>(
   result: Result<T, E>
 ): Result<U, E> => (isOk(result) ? thenFn(unwrap(result)) : err(unwrapErr(result)));
 
-export const or = <T, E>(orResult: Result<T, E>, result: Result<T, E>): Result<T, E> =>
-  isOk(result) ? result : orResult;
+export const or = <T, E, F>(orResult: Result<T, F>, result: Result<T, E>): Result<T, F> =>
+  isOk(result) ? ok(unwrap(result)) : orResult;
 
-export const orElse = <T, E>(
-  elseFn: (...args: any[]) => Result<T, E>,
+export const orElse = <T, E, F>(
+  elseFn: (...args: any[]) => Result<T, F>,
   result: Result<T, E>
-): Result<T, E> => (isOk(result) ? result : elseFn());
+): Result<T, F> => (isOk(result) ? ok(unwrap(result)) : elseFn());
 
 /**
  * Get the value out of the `Result`.

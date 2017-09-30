@@ -3,6 +3,7 @@ import * as Result from '../src/result';
 import { just, nothing } from '../src/maybe';
 
 const length = (x: { length: number }) => x.length;
+const double = (x: number) => x * 2;
 
 describe('`Result` pure functions', () => {
   test('`ok`', () => {
@@ -49,7 +50,12 @@ describe('`Result` pure functions', () => {
   });
 
   test('`map`', () => {
-    expect('to be implemented').toBe(false);
+    const theValue = 42;
+    const anOk = Result.ok(theValue);
+    expect(Result.map(double, anOk)).toEqual(Result.ok(double(theValue)));
+
+    const anErr = Result.err('some nonsense');
+    expect(Result.map(double, anErr)).toEqual(anErr);
   });
 
   test('`mapOr`', () => {
@@ -98,7 +104,7 @@ describe('`Result` pure functions', () => {
 
   test('`toMaybe`', () => {
     const theValue = 'huzzah';
-    const anOk = Result.ok(TouchEvent);
+    const anOk = Result.ok(theValue);
     expect(Result.toMaybe(anOk)).toEqual(just(theValue));
 
     const anErr = Result.err('uh uh');
@@ -115,63 +121,114 @@ describe('`Result` pure functions', () => {
 
 describe('`Result.Ok` class', () => {
   test('`isOk` method', () => {
-    expect('to be implemented').toBe(false);
+    const theOk = new Result.Ok({});
+    expect(theOk.isOk()).toBe(true);
   });
 
   test('`isErr` method', () => {
-    expect('to be implemented').toBe(false);
+    const theOk = new Result.Ok([]);
+    expect(theOk.isErr()).toBe(false);
   });
 
   test('`map` method', () => {
-    expect('to be implemented').toBe(false);
+    const theValue = 10;
+    const theOk = new Result.Ok(theValue);
+    const okDoubled = new Result.Ok(double(theValue));
+    expect(theOk.map(double)).toEqual(okDoubled);
   });
 
   test('`mapOr` method', () => {
-    expect('to be implemented').toBe(false);
+    const theValue = 'neat';
+    const theOk = new Result.Ok(theValue);
+    const defaultValue = 0;
+    expect(theOk.mapOr(defaultValue, length)).toEqual(length(theValue));
   });
 
   test('`mapOrElse` method', () => {
-    expect('to be implemented').toBe(false);
+    const theValue = ['some', 'things'];
+    const theOk = new Result.Ok(theValue);
+    const getDefault = () => '';
+    const join = (strings: string[]) => strings.join(', ');
+    expect(theOk.mapOrElse(getDefault, join)).toEqual(join(theValue));
   });
 
   test('`mapErr` method', () => {
-    expect('to be implemented').toBe(false);
+    const theOk = new Result.Ok('hey!');
+    const toMoreVerboseErr = s => `Seriously, ${s} was bad.`;
+    expect(theOk.mapErr(toMoreVerboseErr)).toEqual(theOk);
   });
 
   test('`and` method', () => {
-    expect('to be implemented').toBe(false);
+    const theOk = new Result.Ok(100);
+
+    const anotherOk = new Result.Ok({ not: 'a number' });
+    expect(theOk.and(anotherOk)).toBe(anotherOk);
+
+    const anErr = new Result.Err(['yikes', 'bad']);
+    expect(theOk.and(anErr)).toBe(anErr);
   });
 
   test('`andThen` method', () => {
-    expect('to be implemented').toBe(false);
+    const theValue = 'anything will do';
+    const theOk = new Result.Ok(theValue);
+    const lengthResult = s => new Result.Ok(s.length);
+    expect(theOk.andThen(lengthResult)).toEqual(lengthResult(theValue));
+
+    const convertToErr = s => new Result.Err(s.length);
+    expect(theOk.andThen(convertToErr)).toEqual(convertToErr(theValue));
   });
 
   test('`or` method', () => {
-    expect('to be implemented').toBe(false);
+    const theValue = 100;
+    const theOk = new Result.Ok<number, string>(theValue);
+    const anotherOk = new Result.Ok(42);
+    expect(theOk.or(anotherOk)).toEqual(theOk);
+
+    const anErr = new Result.Err<number, string>('something wrong');
+    expect(theOk.or(anErr)).toEqual(theOk);
   });
 
   test('`orElse` method', () => {
-    expect('to be implemented').toBe(false);
+    const theValue = 1;
+    const theOk = new Result.Ok(theValue);
+    const theDefault = [];
+    const getTheDefault = () => new Result.Err<number, string[]>(theDefault);
+    expect(theOk.orElse(getTheDefault)).toEqual(theOk);
   });
 
   test('`unsafelyUnwrap` method', () => {
-    expect('to be implemented').toBe(false);
+    const theValue = 42;
+    const theOk = new Result.Ok(theValue);
+    expect(() => theOk.unsafelyUnwrap()).not.toThrow();
+    expect(theOk.unsafelyUnwrap()).toEqual(theValue);
   });
 
   test('`unsafelyUnwrapErr` method', () => {
-    expect('to be implemented').toBe(false);
+    const theOk = new Result.Ok('anything');
+    expect(() => theOk.unsafelyUnwrapErr()).toThrow();
   });
 
   test('`unwrapOr` method', () => {
-    expect('to be implemented').toBe(false);
+    const theValue = [1, 2, 3];
+    const theOk = new Result.Ok(theValue);
+    const defaultValue = [];
+
+    expect(theOk.unwrapOr(defaultValue)).toBe(theValue);
   });
 
   test('`unwrapOrElse` method', () => {
-    expect('to be implemented').toBe(false);
+    const theValue = [1, 2, 3];
+    const theOk = new Result.Ok(theValue);
+    const defaultValue = [];
+    const getDefault = () => defaultValue;
+
+    expect(theOk.unwrapOrElse(getDefault)).toBe(theValue);
   });
 
   test('`toMaybe` method', () => {
-    expect('to be implemented').toBe(false);
+    const theValue = { something: 'fun' };
+    const theOk = new Result.Ok(theValue);
+    expect(theOk.toMaybe()).toEqual(just(theValue));
   });
 });
 
@@ -244,6 +301,9 @@ describe('`Result.Err` class', () => {
     const theErr = new Result.Err('a shame');
     const anOk = Result.ok<number, string>(42);
     expect(theErr.or(anOk)).toBe(anOk);
+
+    const anotherErr = Result.err<number, number>(10);
+    expect(theErr.or(anotherErr)).toBe(anotherErr);
   });
 
   test('`orElse` method', () => {
@@ -265,6 +325,7 @@ describe('`Result.Err` class', () => {
   test('`unsafelyUnwrapErr` method', () => {
     const theReason = 'phooey';
     const theErr = new Result.Err(theReason);
+    expect(() => theErr.unsafelyUnwrapErr()).not.toThrow();
     expect(theErr.unsafelyUnwrapErr()).toBe(theReason);
   });
 
