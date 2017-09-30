@@ -156,6 +156,10 @@ export class Just<T> implements IMaybe<T> {
     return this.__value;
   }
 
+  unwrapOr(this: Maybe<T>, defaultValue: T): T {
+    return unwrapOr(defaultValue, this);
+  }
+
   unwrapOrElse(this: Maybe<T>, elseFn: (...args: any[]) => T): T {
     return unwrapOrElse(elseFn, this);
   }
@@ -218,6 +222,10 @@ export class Nothing<T> implements IMaybe<T> {
 
   unsafelyUnwrap(): never {
     throw 'Tried to `unsafelyUnwrap(Nothing)`';
+  }
+
+  unwrapOr(this: Maybe<T>, defaultValue: T): T {
+    return unwrapOr(defaultValue, this);
   }
 
   unwrapOrElse(this: Maybe<T>, elseFn: (...args: any[]) => T): T {
@@ -370,7 +378,7 @@ export const mapOrElse = <T, U>(
  *                 if the original `maybe` is `Just`.
  */
 export const and = <T, U>(andMaybe: Maybe<U>, maybe: Maybe<T>): Maybe<U> =>
-  isJust(maybe) ? andMaybe : nothing();
+  isJust(maybe) ? andMaybe : nothing(); // cannot coerce Nothing<T> to Nothing<U>
 
 export const andThen = <T, U>(thenFn: (t: T) => Maybe<U>, maybe: Maybe<T>): Maybe<U> =>
   isJust(maybe) ? thenFn(unwrap(maybe)) : nothing();
