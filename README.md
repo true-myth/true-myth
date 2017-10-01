@@ -68,7 +68,7 @@ function safeLength(mightBeAString: Maybe<string>): Maybe<number> {
 }
 
 const someString = Maybe.just('a string');
-const nothingHere = Maybe.nothing();
+const nothingHere = Maybe.nothing<string>();
 console.log(safeLength(someString).toString()); // "Some(8)"
 console.log(safeLength(nothingHere).toString()); // "Nothing"
 ```

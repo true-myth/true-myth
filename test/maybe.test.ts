@@ -245,7 +245,7 @@ describe('`Maybe.Just` class', () => {
   test('`or` method', () => {
     const theJust = new Maybe.Just({ neat: 'thing' });
     const anotherJust = new Maybe.Just({ neat: 'waffles' });
-    const aNothing = new Maybe.Nothing();
+    const aNothing = new Maybe.Nothing<Neat>();
 
     expect(theJust.or(anotherJust)).toEqual(theJust);
     expect(theJust.or(aNothing)).toEqual(theJust);
@@ -331,8 +331,6 @@ describe('`Maybe.Nothing` class', () => {
   test('constructor', () => {
     const theNothing = new Maybe.Nothing();
     expect(theNothing).toBeInstanceOf(Maybe.Nothing);
-    const anotherNothing = Maybe.nothing();
-    expect(theNothing).toEqual(anotherNothing);
   });
 
   test('`isJust` method', () => {
@@ -346,12 +344,12 @@ describe('`Maybe.Nothing` class', () => {
   });
 
   test('`map` method', () => {
-    const theNothing = new Maybe.Nothing();
+    const theNothing = new Maybe.Nothing<string>();
     expect(theNothing.map(length)).toEqual(theNothing);
   });
 
   test('`mapOr` method', () => {
-    const theNothing = new Maybe.Nothing();
+    const theNothing = new Maybe.Nothing<number>();
     const theDefaultValue = 'yay';
     expect(theNothing.mapOr(theDefaultValue, String)).toEqual(theDefaultValue);
   });
@@ -360,19 +358,19 @@ describe('`Maybe.Nothing` class', () => {
     const theDefaultValue = 'potatoes';
     const getDefaultValue = () => theDefaultValue;
     const getNeat = (x: Neat) => x.neat;
-    const theNothing = new Maybe.Nothing();
+    const theNothing = new Maybe.Nothing<Neat>();
     expect(theNothing.mapOrElse(getDefaultValue, getNeat)).toBe(theDefaultValue);
   });
 
   test('`or` method', () => {
-    const theNothing = new Maybe.Nothing(); // the worst: optional booleans!
+    const theNothing = new Maybe.Nothing<boolean>(); // the worst: optional booleans!
     const theDefaultValue = Maybe.just(false);
 
     expect(theNothing.or(theDefaultValue)).toBe(theDefaultValue);
   });
 
   test('`orElse` method', () => {
-    const theNothing = new Maybe.Nothing();
+    const theNothing = new Maybe.Nothing<{ here: string[] }>();
     const justTheFallback = Maybe.just({ here: ['to', 'see'] });
     const getTheFallback = () => justTheFallback;
 
@@ -380,9 +378,9 @@ describe('`Maybe.Nothing` class', () => {
   });
 
   test('`and` method', () => {
-    const theNothing = new Maybe.Nothing();
+    const theNothing = new Maybe.Nothing<Array<string>>();
     const theConsequentJust = new Maybe.Just('blaster bolts');
-    const anotherNothing = new Maybe.Nothing();
+    const anotherNothing = new Maybe.Nothing<string>();
     expect(theNothing.and(theConsequentJust)).toEqual(theNothing);
     expect(theNothing.and(anotherNothing)).toEqual(theNothing);
   });
@@ -405,7 +403,7 @@ describe('`Maybe.Nothing` class', () => {
   });
 
   test('`unwrapOr` method', () => {
-    const theNothing = new Maybe.Nothing();
+    const theNothing = new Maybe.Nothing<number[]>();
     const theDefaultValue: number[] = [];
     expect(theNothing.unwrapOr(theDefaultValue)).toEqual(theDefaultValue);
   });

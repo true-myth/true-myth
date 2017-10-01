@@ -34,7 +34,7 @@ export interface IMaybe<T> {
   isJust(this: Maybe<T>): this is Just<T>;
 
   /** Method variant for [`Maybe.isNothing`](../modules/_maybe_.html#isnothing) */
-  isNothing(this: Maybe<T>): this is Nothing;
+  isNothing(this: Maybe<T>): this is Nothing<T>;
 
   /** Method variant for [`Maybe.map`](../modules/_maybe_.html#map) */
   map<U>(this: Maybe<T>, mapFn: (t: T) => U): Maybe<U>;
@@ -126,7 +126,7 @@ export class Just<T> implements IMaybe<T> {
   }
 
   /** Method variant for [`Maybe.isNothing`](../modules/_maybe_.html#isnothing) */
-  isNothing(this: Maybe<T>): this is Nothing {
+  isNothing(this: Maybe<T>): this is Nothing<T> {
     return isNothing(this);
   }
 
@@ -167,12 +167,12 @@ export class Just<T> implements IMaybe<T> {
 
   /** Method variant for [`Maybe.chain`](../modules/_maybe_.html#chain) */
   chain<U>(this: Maybe<T>, chainFn: (t: T) => Maybe<U>): Maybe<U> {
-    return chain(chainFn, this);
+    return this.andThen(chainFn);
   }
 
   /** Method variant for [`Maybe.flatMap`](../modules/_maybe_.html#flatmap) */
   flatMap<U>(this: Maybe<T>, flatMapFn: (t: T) => Maybe<U>): Maybe<U> {
-    return flatMap(flatMapFn, this);
+    return this.andThen(flatMapFn);
   }
 
   /** Method variant for [`Maybe.unsafelyUnwrap`](../modules/_maybe_.html#unsafelyunwrap) */
@@ -206,80 +206,62 @@ export class Just<T> implements IMaybe<T> {
   }
 }
 
-/** Private singleton so `Nothing` only ever exists once. */
-let __Nothing: Nothing;
-
-export class Nothing implements IMaybe<never> {
+export class Nothing<T> implements IMaybe<T> {
   variant = Variant.Nothing;
 
-  /**
-   * Construct a `Nothing` instance.
-   * 
-   * Note that `Nothing` is a singleton: there's no reason ever to construct
-   * more than one of it. Accordingly, calling `new Maybe.Nothing()` or
-   * `Maybe.nothing()` is extremely low cost.
-   */
-  constructor() {
-    if (isVoid(__Nothing)) {
-      __Nothing = this;
-    }
-
-    return __Nothing;
-  }
-
   /** Method variant for [`Maybe.isJust`](../modules/_maybe_.html#isjust) */
-  isJust(this: Maybe<never>): this is Just<never> {
+  isJust(this: Maybe<T>): this is Just<T> {
     return isJust(this);
   }
 
   /** Method variant for [`Maybe.isNothing`](../modules/_maybe_.html#isnothing) */
-  isNothing(this: Maybe<never>): this is Nothing {
+  isNothing(this: Maybe<T>): this is Nothing<T> {
     return isNothing(this);
   }
 
   /** Method variant for [`Maybe.map`](../modules/_maybe_.html#map) */
-  map<U>(this: Maybe<never>, mapFn: (t: never) => U): Maybe<U> {
+  map<U>(this: Maybe<T>, mapFn: (t: T) => U): Maybe<U> {
     return map(mapFn, this);
   }
 
   /** Method variant for [`Maybe.mapOr`](../modules/_maybe_.html#mapor) */
-  mapOr<T, U>(this: Maybe<never>, orU: U, mapFn: (t: T) => U): U {
+  mapOr<U>(this: Maybe<T>, orU: U, mapFn: (t: T) => U): U {
     return mapOr(orU, mapFn, this);
   }
 
   /** Method variant for [`Maybe.mapOrElse`](../modules/_maybe_.html#maporelse) */
-  mapOrElse<U>(this: Maybe<never>, orElseFn: (...args: any[]) => U, mapFn: (t: never) => U): U {
+  mapOrElse<U>(this: Maybe<T>, orElseFn: (...args: any[]) => U, mapFn: (t: T) => U): U {
     return mapOrElse(orElseFn, mapFn, this);
   }
 
   /** Method variant for [`Maybe.or`](../modules/_maybe_.html#or) */
-  or<T>(this: Maybe<never>, mOr: Maybe<T>): Maybe<T> {
+  or(this: Maybe<T>, mOr: Maybe<T>): Maybe<T> {
     return or(mOr, this);
   }
 
   /** Method variant for [`Maybe.orElse`](../modules/_maybe_.html#orelse) */
-  orElse<T>(this: Maybe<never>, orElseFn: (...args: any[]) => Maybe<T>): Maybe<T> {
+  orElse(this: Maybe<T>, orElseFn: (...args: any[]) => Maybe<T>): Maybe<T> {
     return orElse(orElseFn, this);
   }
 
   /** Method variant for [`Maybe.and`](../modules/_maybe_.html#and) */
-  and<U>(this: Maybe<never>, mAnd: Maybe<U>): Maybe<U> {
+  and<U>(this: Maybe<T>, mAnd: Maybe<U>): Maybe<U> {
     return and(mAnd, this);
   }
 
   /** Method variant for [`Maybe.andThen`](../modules/_maybe_.html#andthen) */
-  andThen<T, U>(this: Maybe<never>, andThenFn: (t: T) => Maybe<U>): Maybe<U> {
+  andThen<U>(this: Maybe<T>, andThenFn: (t: T) => Maybe<U>): Maybe<U> {
     return andThen(andThenFn, this);
   }
 
   /** Method variant for [`Maybe.chain`](../modules/_maybe_.html#chain) */
-  chain<T, U>(this: Maybe<never>, chainFn: (t: T) => Maybe<U>): Maybe<U> {
-    return chain(chainFn, this);
+  chain<U>(this: Maybe<T>, chainFn: (t: T) => Maybe<U>): Maybe<U> {
+    return this.andThen(chainFn);
   }
 
   /** Method variant for [`Maybe.flatMap`](../modules/_maybe_.html#flatmap) */
-  flatMap<T, U>(this: Maybe<never>, flatMapFn: (t: T) => Maybe<U>): Maybe<U> {
-    return flatMap(flatMapFn, this);
+  flatMap<U>(this: Maybe<T>, flatMapFn: (t: T) => Maybe<U>): Maybe<U> {
+    return this.andThen(flatMapFn);
   }
 
   /** Method variant for [`Maybe.unsafelyUnwrap`](../modules/_maybe_.html#unsafelyunwrap) */
@@ -288,17 +270,17 @@ export class Nothing implements IMaybe<never> {
   }
 
   /** Method variant for [`Maybe.unwrapOr`](../modules/_maybe_.html#unwrapor) */
-  unwrapOr<T>(this: Maybe<never>, defaultValue: T): T {
+  unwrapOr(this: Maybe<T>, defaultValue: T): T {
     return unwrapOr(defaultValue, this);
   }
 
   /** Method variant for [`Maybe.unwrapOrElse`](../modules/_maybe_.html#unwraporelse) */
-  unwrapOrElse<T>(this: Maybe<never>, elseFn: (...args: any[]) => T): T {
+  unwrapOrElse(this: Maybe<T>, elseFn: (...args: any[]) => T): T {
     return unwrapOrElse(elseFn, this);
   }
 
   /** Method variant for [`Maybe.toOkOrErr`](../modules/_maybe_.html#tookorerr) */
-  toOkOrErr<T, E>(this: Maybe<never>, error: E): Result.Result<T, E> {
+  toOkOrErr<E>(this: Maybe<T>, error: E): Result.Result<T, E> {
     return toOkOrErr(error, this);
   }
 
@@ -323,9 +305,9 @@ export const isJust = <T>(maybe: Maybe<T>): maybe is Just<T> => maybe.variant ==
 /**
  * Is this result a `Nothing` instance?
  * 
- * In TypeScript, narrows the type from `Maybe<T>` to `Nothing`.
+ * In TypeScript, narrows the type from `Maybe<T>` to `Nothing<T>`.
  */
-export const isNothing = <T>(maybe: Maybe<T>): maybe is Nothing =>
+export const isNothing = <T>(maybe: Maybe<T>): maybe is Nothing<T> =>
   maybe.variant === Variant.Nothing;
 
 /**
@@ -349,12 +331,12 @@ export const just = <T>(value: T | null | undefined): Maybe<T> => new Just<T>(va
  * value to give it, you can use a type parameter:
  * 
  * ```ts
- * const notString = Maybe.nothing();
+ * const notString = Maybe.nothing<string>();
  * ```
  * 
  * @typeparam T The type of the item contained in the `Maybe`.
  */
-export const nothing = <T>(): Maybe<T> => new Nothing();
+export const nothing = <T>(): Maybe<T> => new Nothing<T>();
 
 /**
  * A value which may (`Just<T>`) or may not (`Nothing`) be present.
@@ -363,7 +345,7 @@ export const nothing = <T>(): Maybe<T> => new Nothing();
  * and bears no runtime overhead other than the very small cost of the container
  * object and some lightweight wrap/unwrap functionality.
  */
-export type Maybe<T> = Just<T> | Nothing;
+export type Maybe<T> = Just<T> | Nothing<T>;
 
 /**
  * Create a `Maybe` from any value.
@@ -388,7 +370,7 @@ export type Maybe<T> = Just<T> | Nothing;
  *              the value passed.
  */
 export const of = <T>(value: T | undefined | null): Maybe<T> =>
-  isVoid(value) ? nothing() : just(value);
+  isVoid(value) ? nothing<T>() : just(value);
 
 /**
  * Map over a `Maybe` instance: apply the function to the wrapped value if the
@@ -403,7 +385,7 @@ export const of = <T>(value: T | undefined | null): Maybe<T> =>
  * const justTheStringLength = map(length, justAString);
  * console.log(justTheStringLength.toString()); // "Just(6)"
  * 
- * const notAString = Maybe.nothing();
+ * const notAString = Maybe.nothing<string>();
  * const notAStringLength = map(length, notAString);
  * console.log(notAStringLength.toString()); // "Nothing"
  * ```
@@ -412,7 +394,7 @@ export const of = <T>(value: T | undefined | null): Maybe<T> =>
  * @param maybe The `Maybe` instance to map over.
  */
 export const map = <T, U>(mapFn: (t: T) => U, maybe: Maybe<T>): Maybe<U> =>
-  isJust(maybe) ? just(mapFn(unwrap(maybe))) : nothing();
+  isJust(maybe) ? just(mapFn(unwrap(maybe))) : nothing<U>();
 
 /**
  * Map over a `Maybe` instance and get out the value, using a default value if
@@ -427,7 +409,7 @@ export const map = <T, U>(mapFn: (t: T) => U, maybe: Maybe<T>): Maybe<U> =>
  * const theStringLength = mapOr(0, length, justAString);
  * console.log(theStringLength); // "6"
  * 
- * const notAString = Maybe.nothing();
+ * const notAString = Maybe.nothing<string>();
  * const notAStringLength = mapOr(0, length, notAString)
  * console.log(notAStringLength); // "0"
  * ```
@@ -453,7 +435,7 @@ export const mapOrElse = <T, U>(
  * ```ts
  * const justA = Maybe.just('A');
  * const justB = Maybe.just('B');
- * const nothing = Maybe.nothing();
+ * const nothing = Maybe.nothing<number>();
  *
  * console.log(and(justB, justA).toString());  // 'Just("B")'
  * console.log(and(justB, nothing).toString());  // 'Nothing'
@@ -467,7 +449,7 @@ export const mapOrElse = <T, U>(
  *                 if the original `maybe` is `Just`.
  */
 export const and = <T, U>(andMaybe: Maybe<U>, maybe: Maybe<T>): Maybe<U> =>
-  isJust(maybe) ? andMaybe : nothing(); // cannot coerce Nothing
+  isJust(maybe) ? andMaybe : nothing(); // cannot coerce Nothing<T> to Nothing<U>
 
 /**
  * Apply a function to the wrapped value if `Just` and return a new `Just`
@@ -507,7 +489,7 @@ export const or = <T>(defaultMaybe: Maybe<T>, maybe: Maybe<T>): Maybe<T> =>
  * Useful for handling failures/empty situations.
  * 
  * @param elseFn The function to apply if `maybe` is `Nothing`
- * @param maybe  The `Maybe` to use if it is `Just`.
+ * @param maybe  The `maybe` to use if it is `Just`.
  * @returns      The `maybe` if it is `Just`, or the `Maybe` returned by
  *               `elseFn` if the `maybe` is `Nothing.
  */
