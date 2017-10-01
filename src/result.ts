@@ -259,26 +259,32 @@ export class Err<T, E> implements IResult<T, E> {
     return mapOr(orU, mapFn, this);
   }
 
+  /** Method variant for [`Result.mapOrElse`](../modules/_result_.html#maporelse) */
   mapOrElse<U>(this: Result<T, E>, orElseFn: (...args: any[]) => U, mapFn: (t: T) => U): U {
     return mapOrElse(orElseFn, mapFn, this);
   }
 
+  /** Method variant for [`Result.mapErr`](../modules/_result_.html#maperr) */
   mapErr<F>(this: Result<T, E>, mapErrFn: (e: E) => F): Result<T, F> {
     return mapErr(mapErrFn, this);
   }
 
+  /** Method variant for [`Result.or`](../modules/_result_.html#or) */
   or<F>(this: Result<T, E>, orResult: Result<T, F>): Result<T, F> {
     return or(orResult, this);
   }
 
+  /** Method variant for [`Result.orElse`](../modules/_result_.html#orelse) */
   orElse<F>(this: Result<T, E>, orElseFn: (...args: any[]) => Result<T, F>): Result<T, F> {
     return orElse(orElseFn, this);
   }
 
+  /** Method variant for [`Result.and`](../modules/_result_.html#and) */
   and<U>(this: Result<T, E>, mAnd: Result<U, E>): Result<U, E> {
     return and(mAnd, this);
   }
 
+  /** Method variant for [`Result.andThen`](../modules/_result_.html#andthen) */
   andThen<U>(this: Result<T, E>, andThenFn: (t: T) => Result<U, E>): Result<U, E> {
     return andThen(andThenFn, this);
   }
@@ -293,10 +299,12 @@ export class Err<T, E> implements IResult<T, E> {
     return this.andThen(flatMapFn);
   }
 
+  /** Method variant for [`Result.unsafelyUnwrap`](../modules/_result_.html#unsafelyunwrap) */
   unsafelyUnwrap(): never {
     throw 'Tried to `unwrap(Nothing)`';
   }
 
+  /** Method variant for [`Result.unsafelyUnwrapErr`](../modules/_result_.html#unsafelyunwraperr) */
   unsafelyUnwrapErr(): E {
     return this.__error;
   }
@@ -306,6 +314,7 @@ export class Err<T, E> implements IResult<T, E> {
     return unwrapOr(defaultValue, this);
   }
 
+  /** Method variant for [`Result.unwrapOrElse`](../modules/_result_.html#unwraporelse) */
   unwrapOrElse(this: Result<T, E>, elseFn: (error: E) => T): T {
     return unwrapOrElse(elseFn, this);
   }

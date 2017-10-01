@@ -469,6 +469,18 @@ export const mapOrElse = <T, U>(
 export const and = <T, U>(andMaybe: Maybe<U>, maybe: Maybe<T>): Maybe<U> =>
   isJust(maybe) ? andMaybe : nothing(); // cannot coerce Nothing
 
+/**
+ * Apply a function to the wrapped value if `Just` and return a new `Just`
+ * containing the resulting value; or return `Nothing` if `Nothing`.
+ * 
+ * Also commonly known as (and therefore aliased as) [`flatMap`] or [`chain`].
+ * 
+ * [`flatMap`]: #flatmap
+ * [`chain`]: #chain
+ * 
+ * @param thenFn The function to apply to the wrapped `T` if `maybe` is `Just`.
+ * @param maybe  The `Maybe` to evaluate and possibly apply a function to.
+ */
 export const andThen = <T, U>(thenFn: (t: T) => Maybe<U>, maybe: Maybe<T>): Maybe<U> =>
   isJust(maybe) ? thenFn(unwrap(maybe)) : nothing();
 
@@ -492,7 +504,7 @@ export const or = <T>(defaultMaybe: Maybe<T>, maybe: Maybe<T>): Maybe<T> =>
  * Useful for handling failures/empty situations.
  * 
  * @param elseFn The function to apply if `maybe` is `Nothing`
- * @param maybe  The `maybe` to use if it is `Just`.
+ * @param maybe  The `Maybe` to use if it is `Just`.
  * @returns      The `maybe` if it is `Just`, or the `Maybe` returned by
  *               `elseFn` if the `maybe` is `Nothing.
  */
