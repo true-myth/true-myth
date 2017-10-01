@@ -68,6 +68,12 @@ export interface IResult<T, E> {
   /** Method variant for [`Result.andThen`](../modules/_result_.html#andthen) */
   andThen<U>(this: Result<T, E>, andThenFn: (t: T) => Result<U, E>): Result<U, E>;
 
+  /** Method variant for [`Result.chain`](../modules/_result_.html#chain) */
+  chain<U>(this: Result<T, E>, chainFn: (t: T) => Result<U, E>): Result<U, E>;
+
+  /** Method variant for [`Result.flatMap`](../modules/_result_.html#flatmap) */
+  flatMap<U>(this: Result<T, E>, chainFn: (t: T) => Result<U, E>): Result<U, E>;
+
   /** Method variant for [`Result.unwrap`](../modules/_result_.html#unwrap) */
   unsafelyUnwrap(): T | never;
 
@@ -85,7 +91,9 @@ export interface IResult<T, E> {
 }
 
 /**
- * The `Ok` variant for [[Result]].
+ * The `Ok` variant for [`Result`].
+ * 
+ * [`Result`]: ../modules/_result_.html#result
  * 
  * An `Ok` instance represents a *successful* `Result`.
  */
@@ -99,7 +107,9 @@ export class Ok<T, E> implements IResult<T, E> {
    * 
    * **Note:** While you *may* create the `Result` type via normal JavaScript
    * class construction, it is not recommended for the functional style for
-   * which the library is intended. Instead, use Result.[[ok]].
+   * which the library is intended. Instead, use [`Result.ok`].
+   * 
+   * [`Result.ok`]: ../modules/_result_.html#ok
    * 
    * ```ts
    * // Avoid:
@@ -176,6 +186,16 @@ export class Ok<T, E> implements IResult<T, E> {
   /** Method variant for [`Result.andThen`](../modules/_result_.html#andthen) */
   andThen<U>(this: Result<T, E>, andThenFn: (t: T) => Result<U, E>): Result<U, E> {
     return andThen(andThenFn, this);
+  }
+
+  /** Method variant for [`Result.chain`](../modules/_result_.html#chain) */
+  chain<U>(this: Result<T, E>, chainFn: (t: T) => Result<U, E>): Result<U, E> {
+    return chain(chainFn, this);
+  }
+
+  /** Method variant for [`Result.flatMap`](../modules/_result_.html#flatmap) */
+  flatMap<U>(this: Result<T, E>, flatMapFn: (t: T) => Result<U, E>): Result<U, E> {
+    return flatMap(flatMapFn, this);
   }
 
   /** Method variant for [`Result.unwrap`](../modules/_result_.html#unwrap) */
@@ -261,6 +281,16 @@ export class Err<T, E> implements IResult<T, E> {
 
   andThen<U>(this: Result<T, E>, andThenFn: (t: T) => Result<U, E>): Result<U, E> {
     return andThen(andThenFn, this);
+  }
+
+  /** Method variant for [`Result.chain`](../modules/_result_.html#chain) */
+  chain<U>(this: Result<T, E>, chainFn: (t: T) => Result<U, E>): Result<U, E> {
+    return chain(chainFn, this);
+  }
+
+  /** Method variant for [`Result.flatMap`](../modules/_result_.html#flatmap) */
+  flatMap<U>(this: Result<T, E>, flatMapFn: (t: T) => Result<U, E>): Result<U, E> {
+    return flatMap(flatMapFn, this);
   }
 
   unsafelyUnwrap(): never {
@@ -363,6 +393,12 @@ export const andThen = <T, U, E>(
   result: Result<T, E>
 ): Result<U, E> => (isOk(result) ? thenFn(unwrap(result)) : err(unwrapErr(result)));
 
+/** Alias for [`andThen`](#andthen). */
+export const chain = andThen;
+
+/** Alias for [`andThen`](#andthen). */
+export const flatMap = andThen;
+
 export const or = <T, E, F>(orResult: Result<T, F>, result: Result<T, E>): Result<T, F> =>
   isOk(result) ? ok(unwrap(result)) : orResult;
 
@@ -389,7 +425,7 @@ const unwrap = unsafelyUnwrap;
  * Get the error value out of the `Result`.
  * 
  * Returns the content of an `Err`, but **throws if the `Result` is `Ok`**.
- * Prefer to use [[unwrapOrElse]].
+ * Prefer to use [`unwrapOrElse`](#unwraporelse).
  *
  * @param result
  * @throws Error If the `Result` instance is `Nothing`.
@@ -407,10 +443,19 @@ export const unwrapOrElse = <T, E>(orElseFn: (error: E) => T, result: Result<T, 
   isOk(result) ? unwrap(result) : orElseFn(unwrapErr(result));
 
 /**
- * Convert a [[Result]] to a [[Maybe]].
+ * Convert a [`Result`](#result) to a [`Maybe`](#../modules/_maybe_.html#maybe).
  * 
- * The converted type will be [[Some]] if the `Result` is [[Ok]] or [[Nothing]]
- * if the `Result` is [[Err]]; the wrapped error value will be discarded.
+ * The converted type will be [`Just`] if the `Result` is [`Ok`] or [`Nothing`]
+ * if the `Result` is [`Err`]; the wrapped error value will be discarded.
+ * 
+ * [`Result`]: #result
+ * [`Just`]: ../classes/_maybe_.just.html
+ * [`Nothing`]: ../classes/_maybe_.nothing.html
+ * [`Ok`]: ../classes/_result_.ok.html
+ * [`Err`]: ../classes/_result_.err.html
+ * 
+ * @param result The `Result` to convert to a `Maybe`
+ * @returns      `Just` the value in `result` if it is `Ok`; otherwise `Nothing`
  */
 export const toMaybe = <T, E>(result: Result<T, E>): Maybe<T> =>
   isOk(result) ? just(unwrap(result)) : nothing();

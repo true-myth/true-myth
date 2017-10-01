@@ -83,8 +83,11 @@ export class Just<T> implements IMaybe<T> {
    * 
    * **Note:** While you *may* create the `Just` type via normal JavaScript
    * class construction, it is not recommended for the functional style for
-   * which the library is intended. Instead, use Maybe.[[of]] (for the general
-   * case) or Maybe.[[just]] for this specific case.
+   * which the library is intended. Instead, use [`Maybe.of`] (for the general
+   * case) or [`Maybe.just`] for this specific case.
+   * 
+   * [`Maybe.of`]: ../modules/_maybe_.html#of
+   * [`Maybe.just`]: ../modules/_maybe_.html#just
    * 
    * ```ts
    * // Avoid:
@@ -424,9 +427,27 @@ export const and = <T, U>(andMaybe: Maybe<U>, maybe: Maybe<T>): Maybe<U> =>
 export const andThen = <T, U>(thenFn: (t: T) => Maybe<U>, maybe: Maybe<T>): Maybe<U> =>
   isJust(maybe) ? thenFn(unwrap(maybe)) : nothing();
 
+/** Alias for [`andThen`](#andthen). */
+export const chain = andThen;
+
 export const or = <T>(defaultMaybe: Maybe<T>, maybe: Maybe<T>): Maybe<T> =>
   isJust(maybe) ? maybe : defaultMaybe;
 
+/**
+ * Like `or`, but using a function to construct the alternative `Maybe`.
+ * 
+ * Sometimes you need to perform an operation using other data in the
+ * environment to construct the fallback value. In these situations, you can
+ * pass a function (which may be a closure) as the `elseFn` to generate the
+ * fallback `Maybe<T>`.
+ * 
+ * Useful for handling failures/empty situations.
+ * 
+ * @param elseFn The function to apply if `maybe` is `Nothing`
+ * @param maybe  The `maybe` to use if it is `Just`.
+ * @returns      The `maybe` if it is `Just`, or the `Maybe` returned by
+ *               `elseFn` if the `maybe` is `Nothing.
+ */
 export const orElse = <T>(elseFn: (...args: any[]) => Maybe<T>, maybe: Maybe<T>): Maybe<T> =>
   isJust(maybe) ? maybe : elseFn();
 
@@ -463,8 +484,11 @@ export const unwrapOrElse = <T>(orElseFn: (...args: any[]) => T, maybe: Maybe<T>
   isJust(maybe) ? unwrap(maybe) : orElseFn();
 
 /**
- * Transform the [[Maybe]] into a [[Result]], using the wrapped value as the
+ * Transform the [`Maybe`] into a [`Result`], using the wrapped value as the
  * `Ok` value if `Just`; otherwise using the supplied `error` value for `Err`.
+ * 
+ * [`Maybe`]: #maybe
+ * [`Result`]: #result
  * 
  * @param error The error value to use if the `Maybe` is `Nothing`.
  * @param maybe The `Maybe` instance to convert.
@@ -473,8 +497,11 @@ export const toOkOrErr = <T, E>(error: E, maybe: Maybe<T>): Result.Result<T, E> 
   isJust(maybe) ? Result.ok(unwrap(maybe)) : Result.err(error);
 
 /**
- * Transform the [[Maybe]] into a [[Result]], using the wrapped value as the
+ * Transform the [`Maybe`] into a [`Result`], using the wrapped value as the
  * `Ok` value if `Just`; otherwise using `elseFn` to generate `Err`.
+ * 
+ * [`Maybe`]: #maybe
+ * [`Result`]: #result
  * 
  * @typeparam T  The wrapped value.
  * @typeparam E  The error type to in the `Result`.

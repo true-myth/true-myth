@@ -117,9 +117,11 @@
 								<li class="tsd-kind-type-alias tsd-parent-kind-external-module"><a href="_result_.html#result" class="tsd-kind-icon">Result</a></li>
 							</ul>
 						</section>
-						<section class="tsd-index-section tsd-is-not-exported">
+						<section class="tsd-index-section ">
 							<h3>Variables</h3>
 							<ul class="tsd-index-list">
+								<li class="tsd-kind-variable tsd-parent-kind-external-module"><a href="_result_.html#chain" class="tsd-kind-icon">chain</a></li>
+								<li class="tsd-kind-variable tsd-parent-kind-external-module"><a href="_result_.html#flatmap" class="tsd-kind-icon">flat<wbr>Map</a></li>
 								<li class="tsd-kind-variable tsd-parent-kind-external-module tsd-is-not-exported"><a href="_result_.html#unwrap" class="tsd-kind-icon">unwrap</a></li>
 								<li class="tsd-kind-variable tsd-parent-kind-external-module tsd-is-not-exported"><a href="_result_.html#unwraperr" class="tsd-kind-icon">unwrap<wbr>Err</a></li>
 							</ul>
@@ -158,7 +160,7 @@
 					<div class="tsd-signature tsd-kind-icon">Result<span class="tsd-signature-symbol">:</span> <a href="../classes/_result_.ok.html" class="tsd-signature-type">Ok</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">E</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> | </span><a href="../classes/_result_.err.html" class="tsd-signature-type">Err</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">E</span><span class="tsd-signature-symbol">&gt;</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in result.ts:339</li>
+							<li>Defined in result.ts:369</li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -170,15 +172,45 @@
 					</div>
 				</section>
 			</section>
-			<section class="tsd-panel-group tsd-member-group tsd-is-not-exported">
+			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Variables</h2>
+				<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-external-module">
+					<a name="chain" class="tsd-anchor"></a>
+					<h3>chain</h3>
+					<div class="tsd-signature tsd-kind-icon">chain<span class="tsd-signature-symbol">:</span> <a href="" class="tsd-signature-type">andThen</a><span class="tsd-signature-symbol"> =&nbsp;andThen</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in result.ts:397</li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Alias for <a href="#andthen"><code>andThen</code></a>.</p>
+						</div>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-external-module">
+					<a name="flatmap" class="tsd-anchor"></a>
+					<h3>flat<wbr>Map</h3>
+					<div class="tsd-signature tsd-kind-icon">flat<wbr>Map<span class="tsd-signature-symbol">:</span> <a href="" class="tsd-signature-type">andThen</a><span class="tsd-signature-symbol"> =&nbsp;andThen</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in result.ts:400</li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Alias for <a href="#andthen"><code>andThen</code></a>.</p>
+						</div>
+					</div>
+				</section>
 				<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-external-module tsd-is-not-exported">
 					<a name="unwrap" class="tsd-anchor"></a>
 					<h3>unwrap</h3>
 					<div class="tsd-signature tsd-kind-icon">unwrap<span class="tsd-signature-symbol">:</span> <a href="" class="tsd-signature-type">unsafelyUnwrap</a><span class="tsd-signature-symbol"> =&nbsp;unsafelyUnwrap</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in result.ts:386</li>
+							<li>Defined in result.ts:422</li>
 						</ul>
 					</aside>
 				</section>
@@ -188,7 +220,7 @@
 					<div class="tsd-signature tsd-kind-icon">unwrap<wbr>Err<span class="tsd-signature-symbol">:</span> <a href="" class="tsd-signature-type">unsafelyUnwrapErr</a><span class="tsd-signature-symbol"> =&nbsp;unsafelyUnwrapErr</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in result.ts:401</li>
+							<li>Defined in result.ts:437</li>
 						</ul>
 					</aside>
 				</section>
@@ -205,7 +237,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in result.ts:358</li>
+									<li>Defined in result.ts:388</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
@@ -243,7 +275,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in result.ts:361</li>
+									<li>Defined in result.ts:391</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
@@ -299,7 +331,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in result.ts:331</li>
+									<li>Defined in result.ts:361</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -344,7 +376,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in result.ts:418</li>
+									<li>Defined in result.ts:463</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
@@ -379,7 +411,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in result.ts:302</li>
+									<li>Defined in result.ts:332</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -417,7 +449,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in result.ts:294</li>
+									<li>Defined in result.ts:324</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -455,7 +487,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in result.ts:343</li>
+									<li>Defined in result.ts:373</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
@@ -511,7 +543,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in result.ts:355</li>
+									<li>Defined in result.ts:385</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
@@ -567,7 +599,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in result.ts:346</li>
+									<li>Defined in result.ts:376</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
@@ -626,7 +658,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in result.ts:349</li>
+									<li>Defined in result.ts:379</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
@@ -703,7 +735,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in result.ts:316</li>
+									<li>Defined in result.ts:346</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -751,7 +783,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in result.ts:366</li>
+									<li>Defined in result.ts:402</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
@@ -789,7 +821,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in result.ts:369</li>
+									<li>Defined in result.ts:405</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
@@ -845,15 +877,15 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in result.ts:415</li>
+									<li>Defined in result.ts:460</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
-									<p>Convert a <a href="_result_.html#result">Result</a> to a <a href="_maybe_.html#maybe">Maybe</a>.</p>
+									<p>Convert a <a href="#result"><code>Result</code></a> to a <a href="#../modules/_maybe_.html#maybe"><code>Maybe</code></a>.</p>
 								</div>
-								<p>The converted type will be [[Some]] if the <code>Result</code> is <a href="../classes/_result_.ok.html">Ok</a> or <a href="../enums/_maybe_.variant.html#nothing">Nothing</a>
-								if the <code>Result</code> is <a href="../classes/_result_.err.html">Err</a>; the wrapped error value will be discarded.</p>
+								<p>The converted type will be <a href="../classes/_maybe_.just.html"><code>Just</code></a> if the <code>Result</code> is <a href="../classes/_result_.ok.html"><code>Ok</code></a> or <a href="../classes/_maybe_.nothing.html"><code>Nothing</code></a>
+								if the <code>Result</code> is <a href="../classes/_result_.err.html"><code>Err</code></a>; the wrapped error value will be discarded.</p>
 							</div>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
 							<ul class="tsd-type-parameters">
@@ -868,9 +900,15 @@
 							<ul class="tsd-parameters">
 								<li>
 									<h5>result: <a href="_result_.html#result" class="tsd-signature-type">Result</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">E</span><span class="tsd-signature-symbol">&gt;</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<div class="lead">
+											<p>The <code>Result</code> to convert to a <code>Maybe</code></p>
+										</div>
+									</div>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <a href="_maybe_.html#maybe" class="tsd-signature-type">Maybe</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span></h4>
+							<p><code>Just</code> the value in <code>result</code> if it is <code>Ok</code>; otherwise <code>Nothing</code></p>
 						</li>
 					</ul>
 				</section>
@@ -884,7 +922,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in result.ts:382</li>
+									<li>Defined in result.ts:418</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -923,7 +961,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in result.ts:397</li>
+									<li>Defined in result.ts:433</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -931,7 +969,7 @@
 									<p>Get the error value out of the <code>Result</code>.</p>
 								</div>
 								<p>Returns the content of an <code>Err</code>, but <strong>throws if the <code>Result</code> is <code>Ok</code></strong>.
-								Prefer to use <a href="_result_.html#unwraporelse">unwrapOrElse</a>.</p>
+								Prefer to use <a href="#unwraporelse"><code>unwrapOrElse</code></a>.</p>
 							</div>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
 							<ul class="tsd-type-parameters">
@@ -962,7 +1000,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in result.ts:403</li>
+									<li>Defined in result.ts:439</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
@@ -997,7 +1035,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in result.ts:406</li>
+									<li>Defined in result.ts:442</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
@@ -1078,6 +1116,12 @@
 					</li>
 					<li class=" tsd-kind-type-alias tsd-parent-kind-external-module">
 						<a href="_result_.html#result" class="tsd-kind-icon">Result</a>
+					</li>
+					<li class=" tsd-kind-variable tsd-parent-kind-external-module">
+						<a href="_result_.html#chain" class="tsd-kind-icon">chain</a>
+					</li>
+					<li class=" tsd-kind-variable tsd-parent-kind-external-module">
+						<a href="_result_.html#flatmap" class="tsd-kind-icon">flat<wbr>Map</a>
 					</li>
 					<li class=" tsd-kind-variable tsd-parent-kind-external-module tsd-is-not-exported">
 						<a href="_result_.html#unwrap" class="tsd-kind-icon">unwrap</a>
