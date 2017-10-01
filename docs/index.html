@@ -69,7 +69,7 @@
 					<a href="https://www.npmjs.com/package/true-myth"><img src="https://img.shields.io/npm/v/true-myth.svg?style=flat-square" alt="npm"></a>
 				<a href="https://github.com/chriskrycho/true-myth/blob/master/LICENSE"><img src="https://img.shields.io/github/license/chriskrycho/true-myth.svg?style=flat-square" alt="license"></a></p>
 				<p>A library for safe functional programming in JavaScript, with first-class
-					support for TypeScript and Flow. <code>Maybe</code> and <code>Result</code> types, supporitng both a
+					support for TypeScript and Flow. <code>Maybe</code> and <code>Result</code> types, supporting both a
 				functional style and a more traditional method-call style.</p>
 				<ul>
 					<li><a href="#just-the-api-please">Just the API, please</a><ul>
@@ -87,7 +87,7 @@
 					<li><a href="#design-philosophy">Design philosophy</a><ul>
 							<li><a href="#the-type-names">The type names</a><ul>
 									<li><a href="#maybe"><code>Maybe</code></a><ul>
-											<li><a href="#the-maybe-variants-some-and-nothing">The <code>Maybe</code> variants: <code>Some</code> and <code>Nothing</code></a></li>
+											<li><a href="#the-maybe-variants-just-and-nothing">The <code>Maybe</code> variants: <code>Just</code> and <code>Nothing</code></a></li>
 										</ul>
 									</li>
 									<li><a href="#result"><code>Result</code></a><ul>
@@ -119,7 +119,7 @@
 				what a few of the functions are like. <a href="https://chriskrycho.github.io/true-myth/">Full API documentation is available.</a></p>
 				<h3 id="-result-with-a-functional-style"><code>Result</code> with a functional style</h3>
 				<pre><code class="lang-ts"><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">fallibleCheck</span>(<span class="hljs-params">isValid: <span class="hljs-built_in">boolean</span></span>): <span class="hljs-title">Result</span>&lt;<span class="hljs-title">string</span>, </span>{ reason: <span class="hljs-built_in">string</span> }&gt; {
-  <span class="hljs-keyword">return</span> isValid ? ok(<span class="hljs-string">'all fine here'</span>) : { reason: <span class="hljs-string">'was not valid'</span> };
+  <span class="hljs-keyword">return</span> isValid ? ok(<span class="hljs-string">'all fine here'</span>) : err({ reason: <span class="hljs-string">'was not valid'</span> });
 }
 
 <span class="hljs-keyword">const</span> describe = <span class="hljs-function"><span class="hljs-params">s</span> =&gt;</span> <span class="hljs-string">'The outcome was: '</span> + s;
@@ -265,7 +265,7 @@ const functional = some(&#39;value&#39;);
 					string&quot; isn&#39;t great – but &quot;maybe a string&quot; is the most natural <em>accurate</em> way to
 				answer the question, &quot;What&#39;s in this field?&quot; It&#39;s also the shortest!</p>
 				<p><code>Optional</code> or <code>Maybe</code> are both good names; <code>Maybe</code> just seemed slightly better.</p>
-				<h5 id="the-maybe-variants-some-and-nothing-">The <code>Maybe</code> variants: <code>Some</code> and <code>Nothing</code></h5>
+				<h5 id="the-maybe-variants-just-and-nothing-">The <code>Maybe</code> variants: <code>Just</code> and <code>Nothing</code></h5>
 				<p>Similar consideration was given to the names of the type variants. Options for
 					the &quot;present&quot; type in other libraries are <code>Some</code> and <code>Just</code>. Options for the
 				&quot;absent&quot; type are <code>None</code> or <code>Nothing</code>.</p>

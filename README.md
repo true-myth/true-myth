@@ -5,7 +5,7 @@
 [![license](https://img.shields.io/github/license/chriskrycho/true-myth.svg?style=flat-square)](https://github.com/chriskrycho/true-myth/blob/master/LICENSE)
 
 A library for safe functional programming in JavaScript, with first-class
-support for TypeScript and Flow. `Maybe` and `Result` types, supporitng both a
+support for TypeScript and Flow. `Maybe` and `Result` types, supporting both a
 functional style and a more traditional method-call style.
 
 - [Just the API, please](#just-the-api-please)
@@ -19,7 +19,7 @@ functional style and a more traditional method-call style.
 - [Design philosophy](#design-philosophy)
     - [The type names](#the-type-names)
         - [`Maybe`](#maybe)
-            - [The `Maybe` variants: `Some` and `Nothing`](#the-maybe-variants-some-and-nothing)
+            - [The `Maybe` variants: `Just` and `Nothing`](#the-maybe-variants-just-and-nothing)
         - [`Result`](#result)
             - [The `Result` variants: `Ok` and `Err`](#the-result-variants-ok-and-err)
 - [Setup](#setup)
@@ -240,7 +240,7 @@ answer the question, "What's in this field?" It's also the shortest!
 
 `Optional` or `Maybe` are both good names; `Maybe` just seemed slightly better.
 
-##### The `Maybe` variants: `Some` and `Nothing`
+##### The `Maybe` variants: `Just` and `Nothing`
 
 Similar consideration was given to the names of the type variants. Options for
 the "present" type in other libraries are `Some` and `Just`. Options for the
