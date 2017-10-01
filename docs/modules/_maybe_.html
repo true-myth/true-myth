@@ -334,9 +334,15 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in maybe.ts:545</li>
+									<li>Defined in maybe.ts:552</li>
 								</ul>
 							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Construct a <code>Maybe</code> from a <code>Result&lt;T, E&gt;</code>, keeping the value of an <code>Ok</code> as
+									the <code>Just</code> term and throwing away the <code>Err</code> value for a `Nothing.</p>
+								</div>
+							</div>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
 							<ul class="tsd-type-parameters">
 								<li>
@@ -350,9 +356,15 @@
 							<ul class="tsd-parameters">
 								<li>
 									<h5>result: <span class="tsd-signature-type">Result.Result</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">E</span><span class="tsd-signature-symbol">&gt;</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<div class="lead">
+											<p>The <code>Result</code> to construct a <code>Maybe</code> from.</p>
+										</div>
+									</div>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <a href="_maybe_.html#maybe" class="tsd-signature-type">Maybe</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span></h4>
+							<p><code>Just</code> if <code>result</code> was <code>Ok</code> or <code>Nothing</code> if it was <code>Err</code>.</p>
 						</li>
 					</ul>
 				</section>
@@ -1044,7 +1056,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in maybe.ts:563</li>
+									<li>Defined in maybe.ts:570</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">

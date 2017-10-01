@@ -542,6 +542,13 @@ export const toOkOrElseErr = <T, E>(
   maybe: Maybe<T>
 ): Result.Result<T, E> => (isJust(maybe) ? Result.ok(unwrap(maybe)) : Result.err(elseFn()));
 
+/**
+ * Construct a `Maybe` from a `Result<T, E>`, keeping the value of an `Ok` as
+ * the `Just` term and throwing away the `Err` value for a `Nothing.
+ * 
+ * @param result The `Result` to construct a `Maybe` from.
+ * @returns      `Just` if `result` was `Ok` or `Nothing` if it was `Err`.
+ */
 export const fromResult = <T, E>(result: Result.Result<T, E>): Maybe<T> =>
   Result.isOk(result) ? just(Result.unsafelyUnwrap(result)) : nothing();
 
