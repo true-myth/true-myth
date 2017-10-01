@@ -138,7 +138,7 @@
 }
 
 <span class="hljs-keyword">const</span> someString = Maybe.just(<span class="hljs-string">'a string'</span>);
-<span class="hljs-keyword">const</span> nothingHere = Maybe.nothing&lt;<span class="hljs-built_in">string</span>&gt;();
+<span class="hljs-keyword">const</span> nothingHere = Maybe.nothing();
 <span class="hljs-built_in">console</span>.log(safeLength(someString).toString()); <span class="hljs-comment">// "Some(8)"</span>
 <span class="hljs-built_in">console</span>.log(safeLength(nothingHere).toString()); <span class="hljs-comment">// "Nothing"</span>
 </code></pre>
