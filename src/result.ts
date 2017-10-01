@@ -397,6 +397,21 @@ export const mapErr = <T, E, F>(mapErrFn: (e: E) => F, result: Result<T, E>): Re
 export const and = <T, U, E>(ru: Result<U, E>, rt: Result<T, E>): Result<U, E> =>
   isOk(rt) ? ru : err(unwrapErr(rt));
 
+/**
+ * Apply a function to the wrapped value if `Ok` and return a new `Ok`
+ * containing the resulting value; or if it is `Err` return it unmodified.
+ * 
+ * This is also commonly known as (and therefore aliased as) [`flatMap`] or
+ * [`chain`]. It is sometimes also known as `bind`, but *not* aliased as such
+ * because [`bind` already means something in JavaScript][bind].
+ * 
+ * [`flatMap`]: #flatmap
+ * [`chain`]: #chain
+ * [bind]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function/bind
+ * 
+ * @param thenFn The function to apply to the wrapped `T` if `maybe` is `Just`.
+ * @param maybe  The `Maybe` to evaluate and possibly apply a function to.
+ */
 export const andThen = <T, U, E>(
   thenFn: (t: T) => Result<U, E>,
   result: Result<T, E>

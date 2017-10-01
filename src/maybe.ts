@@ -473,10 +473,13 @@ export const and = <T, U>(andMaybe: Maybe<U>, maybe: Maybe<T>): Maybe<U> =>
  * Apply a function to the wrapped value if `Just` and return a new `Just`
  * containing the resulting value; or return `Nothing` if `Nothing`.
  * 
- * Also commonly known as (and therefore aliased as) [`flatMap`] or [`chain`].
+ * This is also commonly known as (and therefore aliased as) [`flatMap`] or
+ * [`chain`]. It is sometimes also known as `bind`, but *not* aliased as such
+ * because [`bind` already means something in JavaScript][bind].
  * 
  * [`flatMap`]: #flatmap
  * [`chain`]: #chain
+ * [bind]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function/bind
  * 
  * @param thenFn The function to apply to the wrapped `T` if `maybe` is `Just`.
  * @param maybe  The `Maybe` to evaluate and possibly apply a function to.
