@@ -1,6 +1,7 @@
 import { assertType } from './lib/assert';
 import * as Maybe from '../src/maybe';
 import { ok, err } from '../src/result';
+import { Aliases } from '../src/utils';
 
 type Neat = { neat: string };
 
@@ -109,7 +110,7 @@ describe('`Maybe` pure functions', () => {
     expect(Maybe.and(aNothing, aNothing)).toEqual(aNothing);
   });
 
-  test('`andThen`', () => {
+  const andThenTest = (fn: Aliases.AndThen) => () => {
     const toMaybeNumber = (x: string) => Maybe.just(Number(x));
     const toNothing = (x: string) => Maybe.nothing<number>();
 
@@ -119,11 +120,15 @@ describe('`Maybe` pure functions', () => {
     const noString = Maybe.nothing<string>();
     const noNumber = Maybe.nothing<number>();
 
-    expect(Maybe.andThen(toMaybeNumber, theJust)).toEqual(theExpectedResult);
-    expect(Maybe.andThen(toNothing, theJust)).toEqual(noNumber);
-    expect(Maybe.andThen(toMaybeNumber, noString)).toEqual(noNumber);
-    expect(Maybe.andThen(toNothing, noString)).toEqual(noNumber);
-  });
+    expect(Maybe[fn](toMaybeNumber, theJust)).toEqual(theExpectedResult);
+    expect(Maybe[fn](toNothing, theJust)).toEqual(noNumber);
+    expect(Maybe[fn](toMaybeNumber, noString)).toEqual(noNumber);
+    expect(Maybe[fn](toNothing, noString)).toEqual(noNumber);
+  };
+
+  test('`andThen`', andThenTest('andThen'));
+  test('`chain`', andThenTest('chain'));
+  test('`flatMap`', andThenTest('flatMap'));
 
   test('`or`', () => {
     const someAnswer = Maybe.of('42');
@@ -262,7 +267,7 @@ describe('`Maybe.Just` class', () => {
     expect(theJust.and(aNothing)).toEqual(aNothing);
   });
 
-  test('`andThen` method', () => {
+  const andThenMethodTest = (method: Aliases.AndThen) => () => {
     const theValue = { Jedi: 'Luke Skywalker' };
     const theJust = new Maybe.Just(theValue);
     const toDescription = (dict: { [key: string]: string }) =>
@@ -273,8 +278,12 @@ describe('`Maybe.Just` class', () => {
       );
 
     const theExpectedResult = toDescription(theValue);
-    expect(theJust.andThen(toDescription)).toEqual(theExpectedResult);
-  });
+    expect(theJust[method](toDescription)).toEqual(theExpectedResult);
+  };
+
+  test('`andThen` method', andThenMethodTest('andThen'));
+  test('`chain` method', andThenMethodTest('chain'));
+  test('`flatMap` method', andThenMethodTest('flatMap'));
 
   test('`unwrap` method', () => {
     const theValue = 'value';
@@ -376,13 +385,17 @@ describe('`Maybe.Nothing` class', () => {
     expect(theNothing.and(anotherNothing)).toEqual(theNothing);
   });
 
-  test('`andThen` method', () => {
+  const andThenMethodTest = (method: Aliases.AndThen) => () => {
     const theNothing = new Maybe.Nothing();
     const theDefaultValue = 'string';
     const getDefaultValue = () => Maybe.just(theDefaultValue);
 
-    expect(theNothing.andThen(getDefaultValue)).toEqual(theNothing);
-  });
+    expect(theNothing[method](getDefaultValue)).toEqual(theNothing);
+  };
+
+  test('`andThen` method', andThenMethodTest('andThen'));
+  test('`chain` method', andThenMethodTest('chain'));
+  test('`flatMap` method', andThenMethodTest('flatMap'));
 
   test('`unsafelyUnwrap` method', () => {
     const noStuffAtAll = new Maybe.Nothing();

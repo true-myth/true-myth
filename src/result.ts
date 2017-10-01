@@ -285,12 +285,12 @@ export class Err<T, E> implements IResult<T, E> {
 
   /** Method variant for [`Result.chain`](../modules/_result_.html#chain) */
   chain<U>(this: Result<T, E>, chainFn: (t: T) => Result<U, E>): Result<U, E> {
-    return chain(chainFn, this);
+    return this.andThen(chainFn);
   }
 
   /** Method variant for [`Result.flatMap`](../modules/_result_.html#flatmap) */
   flatMap<U>(this: Result<T, E>, flatMapFn: (t: T) => Result<U, E>): Result<U, E> {
-    return flatMap(flatMapFn, this);
+    return this.andThen(flatMapFn);
   }
 
   unsafelyUnwrap(): never {

@@ -57,6 +57,12 @@ export interface IMaybe<T> {
   /** Method variant for [`Maybe.andThen`](../modules/_maybe_.html#andthen) */
   andThen<U>(this: Maybe<T>, andThenFn: (t: T) => Maybe<U>): Maybe<U>;
 
+  /** Method variant for [`Maybe.chain`](../modules/_maybe_.html#chain) */
+  chain<U>(this: Maybe<T>, chainFn: (t: T) => Maybe<U>): Maybe<U>;
+
+  /** Method variant for [`Maybe.flatMap`](../modules/_maybe_.html#flatmap) */
+  flatMap<U>(this: Maybe<T>, flatMapFn: (t: T) => Maybe<U>): Maybe<U>;
+
   /** Method variant for [`Maybe.unwrap`](../modules/_maybe_.html#unwrap) */
   unsafelyUnwrap(): T | never;
 
@@ -159,6 +165,16 @@ export class Just<T> implements IMaybe<T> {
     return andThen(andThenFn, this);
   }
 
+  /** Method variant for [`Maybe.chain`](../modules/_maybe_.html#chain) */
+  chain<U>(this: Maybe<T>, chainFn: (t: T) => Maybe<U>): Maybe<U> {
+    return this.andThen(chainFn);
+  }
+
+  /** Method variant for [`Maybe.flatMap`](../modules/_maybe_.html#flatmap) */
+  flatMap<U>(this: Maybe<T>, flatMapFn: (t: T) => Maybe<U>): Maybe<U> {
+    return this.andThen(flatMapFn);
+  }
+
   /** Method variant for [`Maybe.unsafelyUnwrap`](../modules/_maybe_.html#unsafelyunwrap) */
   unsafelyUnwrap(): T {
     return this.__value;
@@ -236,6 +252,16 @@ export class Nothing<T> implements IMaybe<T> {
   /** Method variant for [`Maybe.andThen`](../modules/_maybe_.html#andthen) */
   andThen<U>(this: Maybe<T>, andThenFn: (t: T) => Maybe<U>): Maybe<U> {
     return andThen(andThenFn, this);
+  }
+
+  /** Method variant for [`Maybe.chain`](../modules/_maybe_.html#chain) */
+  chain<U>(this: Maybe<T>, chainFn: (t: T) => Maybe<U>): Maybe<U> {
+    return this.andThen(chainFn);
+  }
+
+  /** Method variant for [`Maybe.flatMap`](../modules/_maybe_.html#flatmap) */
+  flatMap<U>(this: Maybe<T>, flatMapFn: (t: T) => Maybe<U>): Maybe<U> {
+    return this.andThen(flatMapFn);
   }
 
   /** Method variant for [`Maybe.unsafelyUnwrap`](../modules/_maybe_.html#unsafelyunwrap) */
@@ -429,6 +455,9 @@ export const andThen = <T, U>(thenFn: (t: T) => Maybe<U>, maybe: Maybe<T>): Mayb
 
 /** Alias for [`andThen`](#andthen). */
 export const chain = andThen;
+
+/** Alias for [`andThen`](#andthen). */
+export const flatMap = andThen;
 
 export const or = <T>(defaultMaybe: Maybe<T>, maybe: Maybe<T>): Maybe<T> =>
   isJust(maybe) ? maybe : defaultMaybe;

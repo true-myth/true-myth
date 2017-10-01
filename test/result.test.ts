@@ -1,6 +1,7 @@
 import { assertType } from './lib/assert';
 import * as Result from '../src/result';
 import { just, nothing } from '../src/maybe';
+import { Aliases } from '../src/utils';
 
 const length = (x: { length: number }) => x.length;
 const double = (x: number) => x * 2;
@@ -106,21 +107,21 @@ describe('`Result` pure functions', () => {
     expect(Result.and(nextErr, anErr)).toEqual(anErr);
   });
 
-  const andThenTest = () => {
+  const andThenTest = (fn: Aliases.AndThen) => () => {
     const theValue = 'a string';
     const toLengthResult = s => Result.ok(length(s));
     const expected = toLengthResult(theValue);
 
     const anOk = Result.ok(theValue);
-    expect(Result.andThen(toLengthResult, anOk)).toEqual(expected);
+    expect(Result[fn](toLengthResult, anOk)).toEqual(expected);
 
     const anErr = Result.err('something wrong');
-    expect(Result.andThen(toLengthResult, anErr)).toEqual(anErr);
+    expect(Result[fn](toLengthResult, anErr)).toEqual(anErr);
   };
 
-  test('`andThen`', andThenTest);
-
-  test('`chain`', andThenTest);
+  test('`andThen`', andThenTest('andThen'));
+  test('`chain`', andThenTest('chain'));
+  test('flatMap', andThenTest('flatMap'));
 
   test('`or`', () => {
     const orOk = Result.ok(0);
@@ -281,7 +282,7 @@ describe('`Result.Ok` class', () => {
     expect(theOk.and(anErr)).toBe(anErr);
   });
 
-  const andThenMethodTest = (method: keyof typeof Result) => () => {
+  const andThenMethodTest = (method: Aliases.AndThen) => () => {
     const theValue = 'anything will do';
     const theOk = new Result.Ok(theValue);
     const lengthResult = s => new Result.Ok(s.length);
@@ -415,7 +416,7 @@ describe('`Result.Err` class', () => {
     expect(theErr.and(anotherErr)).toEqual(theErr);
   });
 
-  const andThenMethodTest = (method: keyof typeof Result) => () => {
+  const andThenMethodTest = (method: Aliases.AndThen) => () => {
     const theErr = new Result.Err<string[], number>(42);
 
     const getAnOk = strings => Result.ok<number, number>(length(strings));
