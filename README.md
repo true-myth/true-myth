@@ -46,7 +46,7 @@ what a few of the functions are like. [Full API documentation is available.][doc
 
 ```ts
 function fallibleCheck(isValid: boolean): Result<string, { reason: string }> {
-  return isValid ? ok('all fine here') : { reason: 'was not valid' };
+  return isValid ? ok('all fine here') : err({ reason: 'was not valid' });
 }
 
 const describe = s => 'The outcome was: ' + s;
