@@ -114,10 +114,11 @@
 					<li><a href="#whats-with-the-name">What&#39;s with the name?</a></li>
 				</ul>
 				<h2 id="just-the-api-please">Just the API, please</h2>
-				<p><em>If you&#39;re unsure of why you would want
-				to use the library, you might jump down to <a href="#what-is-this-for"><strong>What is this for?</strong></a>.</em></p>
+				<p><em>If you&#39;re unsure of why you would want to use the library, you might jump down
+				to <a href="#what-is-this-for"><strong>What is this for?</strong></a>.</em></p>
 				<p>These examples don&#39;t cover every corner of the API; it&#39;s just here to show you
-				what a few of the functions are like. <a href="https://chriskrycho.github.io/true-myth/">Full API documentation is available.</a></p>
+					what a few of the functions are like. <a href="https://chriskrycho.github.io/true-myth/">Full API documentation is
+				available!</a></p>
 				<h3 id="-result-with-a-functional-style"><code>Result</code> with a functional style</h3>
 				<pre><code class="lang-ts"><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">fallibleCheck</span>(<span class="hljs-params">isValid: <span class="hljs-built_in">boolean</span></span>): <span class="hljs-title">Result</span>&lt;<span class="hljs-title">string</span>, </span>{ reason: <span class="hljs-built_in">string</span> }&gt; {
   <span class="hljs-keyword">return</span> isValid ? ok(<span class="hljs-string">'all fine here'</span>) : err({ reason: <span class="hljs-string">'was not valid'</span> });
@@ -152,8 +153,7 @@
 }
 </code></pre>
 				<h3 id="safely-getting-at-values">Safely getting at values</h3>
-				<p>Helpers (combinators) are supplied to allow you to get at the values wrapped in
-				the type:</p>
+				<p>Helpers are supplied to allow you to get at the values wrapped in the type:</p>
 				<pre><code class="lang-ts"><span class="hljs-keyword">const</span> theAnswer = Result.ok(<span class="hljs-number">42</span>);
 <span class="hljs-keyword">const</span> theAnwerValue = unsafelyUnwrap(theAnswer);
 </code></pre>
@@ -180,7 +180,7 @@ myString;</code> or even <code>let myString = undefined;</code>.</p>
 				that takes an integer as a parameter:</p>
 				<pre><code class="lang-js"><span class="hljs-keyword">let</span> myNumber = <span class="hljs-literal">undefined</span>;
 
-<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">myFuncThatTakesAnInteger</span> (<span class="hljs-params">anInteger</span>) </span>{
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">myFuncThatTakesAnInteger</span>(<span class="hljs-params">anInteger</span>) </span>{
   <span class="hljs-keyword">return</span> anInteger.toString();
 }
 
@@ -188,7 +188,7 @@ myFuncThatTakesAnInteger(myNumber); <span class="hljs-comment">// TypeError: anI
 </code></pre>
 				<p>When the function tries to convert the integer to a string, the function blows
 					up because it was written with the assumption that the parameter being passed in
-					a) is defined and b) has a <code>toString</code> method. Neither of these assumptions are
+					(a) is defined and (b) has a <code>toString</code> method. Neither of these assumptions are
 					true when <code>anInteger</code> is <code>null</code> or <code>undefined</code>. This leads JavaScript
 					programmers to program defensively, with <code>if (!anInteger) return;</code> style guard
 					blocks at the top of their functions. This leads to harder-to-read code, and
@@ -203,10 +203,11 @@ myFuncThatTakesAnInteger(myNumber); <span class="hljs-comment">// TypeError: anI
 				but which makes it that much harder to just get the nail into the wood.</p>
 				<p>That&#39;s what <code>null</code> and <code>undefined</code> are. You can program around them. But
 				defensive programming is gross. You write a lot of things like this:</p>
-				<pre><code class="lang-js"><span class="hljs-keyword">const</span> isNil = <span class="hljs-function">(<span class="hljs-params">thingToCheck</span>) =&gt;</span>
-  thingToCheck === <span class="hljs-literal">undefined</span> || thingToCheck === <span class="hljs-literal">null</span>;
+				<pre><code class="lang-js"><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">isNil</span>(<span class="hljs-params">thingToCheck</span>) </span>{
+  <span class="hljs-keyword">return</span> thingToCheck === <span class="hljs-literal">undefined</span> || thingToCheck === <span class="hljs-literal">null</span>;
+}
 
-<span class="hljs-keyword">const</span> doAThing = <span class="hljs-function">(<span class="hljs-params">withAString</span>) =&gt;</span> {
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">doAThing</span>(<span class="hljs-params">withAString</span>) </span>{
   <span class="hljs-keyword">if</span> (isNil(withAString)) {
     withAString = <span class="hljs-string">'some default value'</span>;
   }
@@ -227,32 +228,37 @@ myFuncThatTakesAnInteger(myNumber); <span class="hljs-comment">// TypeError: anI
 					must be constantly vigilant and proactive so that our users don&#39;t get into
 				broken error states. Are you tired of the game yet?</p>
 				<h3 id="the-solution">The solution</h3>
-				<p>The reason programmers reach for libraries and frameworks is because they allow
-					you to tackle a business problem with a whole set of lower-level issues already
-					in the &quot;solved problems&quot; category. What if we could do that with the defensive
-					code we write to avoid <code>null</code>/<code>undefined</code> issues? What if we could write
-				functions with <em>actually safe</em> assumptions about parameter values?</p>
-				<p><code>Maybe</code>s and <code>Result</code>s move precisely that direction by extracting the question,
-					&quot;Does this variable contain a valid value?&quot; to the perimeter of your application
-					rather than needing to ask that question at the head of every function. The way
-					they work is by putting the value into a <em>container</em> which is guaranteed to be
-					safe to act upon, regardless of whether there&#39;s something inside it or not. What
-					is this sorcery? Imagine, for a moment, that you have a variable <code>myArray</code> and
-					you want to map over it and print out every value to the console. You
-					instantiate it as an empty array and then forget to load it up with values
-				before mapping over it:</p>
+				<p><code>Maybe</code> and <code>Result</code> are our escape hatch from all this madness. </p>
+				<p>We reach for libraries precisely so we can solve real business problems
+					while letting lower-level concerns live in the &quot;solved problems&quot; category. True
+					Myth, borrowing ideas from many other languages and libraries, aims to put
+					<em>code written to defend against <code>null</code>/<code>undefined</code> problems</em> in that &quot;solved
+				problems&quot; category.</p>
+				<p><code>Maybe</code> and <code>Result</code> solve this problem <em>once</em>, and <em>in a principled way</em>,
+					instead of in an <em>ad-hoc</em> way throughout your codebase, by putting the value
+					into a <em>container</em> which is guaranteed to be safe to act upon, regardless of
+				whether there&#39;s something inside it or not.</p>
+				<p>These containers let us write functions with <em>actually safe</em> assumptions about
+					parameter values by extracting the question, &quot;Does this variable contain a valid
+					value?&quot; to API boundaries, rather than needing to ask that question at the head
+				of every. single. function.</p>
+				<p>What is this sorcery?</p>
+				<p>It turns out you probably already have a good idea of how this works, if you&#39;ve
+				spent much time writing JavaScript, because this is exactly how arrays work.</p>
+				<p>Imagine, for a moment, that you have a variable <code>myArray</code> and you want to map
+					over it and print out every value to the console. You instantiate it as an empty
+				array and then forget to load it up with values before mapping over it:</p>
 				<pre><code class="lang-js"><span class="hljs-keyword">let</span> myArray = [];
 
 <span class="hljs-comment">// oops, I meant to load up the variable with an array, but I forgot!</span>
 
-myArray.map(<span class="hljs-built_in">console</span>.log); <span class="hljs-comment">// &lt;nothing prints to the screen&gt;</span>
+myArray.forEach(<span class="hljs-function"><span class="hljs-params">n</span> =&gt;</span> <span class="hljs-built_in">console</span>.log(n)); <span class="hljs-comment">// &lt;nothing prints to the screen&gt;</span>
 </code></pre>
 				<p>Even though this doesn&#39;t print anything to the screen, it doesn&#39;t unexpectedly
-					blow up. In other words, it represents the concept of having nothing &quot;inside the
-					box&quot; in a safe manner. If you have an integer, you have no such box around the
-					integer, and you&#39;re right against the metal. What if you could multiply an
-					integer by two, and if your variable was &quot;empty&quot; for one reason or another, it
-				wouldn&#39;t blow up?</p>
+					blow up, either. In other words, it represents the concept of having nothing
+					&quot;inside the box&quot; in a safe manner. By contrast, an integer has no such safe box
+					around it. What if you could multiply an integer by two, and if your variable
+				was &quot;empty&quot; for one reason or another, it wouldn&#39;t blow up?</p>
 				<pre><code class="lang-js"><span class="hljs-keyword">let</span> myInteger = <span class="hljs-literal">undefined</span>;
 
 myInteger * <span class="hljs-number">3</span>; <span class="hljs-comment">// :(</span>
@@ -266,12 +272,16 @@ myInteger.map(<span class="hljs-function"><span class="hljs-params">x</span> =&g
 				<p>We received <code>Nothing</code> back as our value, which isn&#39;t particularly useful, but it
 				also didn&#39;t halt our program in its tracks!</p>
 				<p><code>Result</code> is similar to <code>Maybe</code>, except it packages up the result of an operation
-					(like a network request) whether it&#39;s a success or a failure and lets us unwrap
-					the package at our leisure. Whether you get back a 200 or a 401, you can pass
-					the box around the same either way; the methods and properties it has are not
-				dependent upon whether there is shiny new data or a big red error inside.</p>
+					(like a network request) whether it&#39;s a success (an <code>Ok</code>) or a failure (an
+					<code>Err</code>) and lets us unwrap the package at our leisure. Whether you get back a 200
+					or a 401 for your HTTP request, you can pass the box around the same either way;
+					the methods and properties the container has are not dependent upon whether
+				there is shiny new data or a big red error inside.</p>
+				<ul>
+					<li>[ ] TODO: comments on type safety via TS and Flow</li>
+				</ul>
 				<h2 id="design-philosophy">Design philosophy</h2>
-				<p>The design aims of this library are:</p>
+				<p>The design aims for True Myth are:</p>
 				<ul>
 					<li>to be as idiomatic as possible in JavaScript</li>
 					<li>to support a natural functional programming style</li>
@@ -313,10 +323,10 @@ const functionalNothing = nothing();
 					themselves at home with the style of data-last pure functions. (For a brief
 					discussion of why you want the data last in a functional style, see <a href="http://www.chriskrycho.com/2017/collection-last-auto-curried-functions.html">this blog
 				post</a>.)</p>
-				<p>(As a closely related note: this library does not currently supply curried
-					variants of the functions. There are a <em>lot</em> of good options out there for that;
-					both <a href="https://lodash.com">lodash</a> and <a href="http://ramdajs.com">Ramda</a> have tools for currying existing function definitions.
-					It also profoundly complicates writing the type signatures for these functions,
+				<p>(As a closely related note: True Myth does not currently supply curried variants
+					of the functions. There are a <em>lot</em> of good options out there for that; both
+					<a href="https://lodash.com">lodash</a> and <a href="http://ramdajs.com">Ramda</a> have tools for currying existing function definitions. It
+					also profoundly complicates writing the type signatures for these functions,
 					since neither TypeScript nor Flow can easily represent auto- curried functions –
 					unsurprisingly, given they&#39;re uncommon in JavaScript. Using Ramda or lodash to
 					get curried versions of the functions may be a huge win for you in your
@@ -403,7 +413,7 @@ const functionalNothing = nothing();
 							built in for its types. Folktale&#39;s TypeScript support is in-progress, but
 							will remain secondary until a TypeScript rewrite of the whole Folktale
 						library lands... eventually.</p>
-						<p>There&#39;s value in both of these approaches, so this library aims to take
+						<p>There&#39;s value in both of these approaches, so True Myth aims to take
 						advantage of the compilers and play in a no-runtime-cost space.</p>
 						<p>If you want a JS-focused (rather than TS- or Flow-focused) library which
 							will help you be safer without a compiler, you should definitely pick
@@ -423,7 +433,7 @@ const functionalNothing = nothing();
 						tradeoff.</p>
 						<p>By opting for type notation that TS or Flow developers are already familiar
 							with, and by focusing on what various functions <em>do</em> rather than the usual
-							FP names for them, this library aims at people just coming up to speed on
+							FP names for them, True Myth aims at people just coming up to speed on
 						these ideas.</p>
 						<p>The big win for Folktale over True Myth is <a href="https://github.com/fantasyland/fantasy-land">Fantasy Land</a> compatibility.</p>
 					</li>
@@ -454,7 +464,7 @@ const functionalNothing = nothing();
 				<ul>
 					<li>[ ] TODO: kind of the same as Folktale, but add specific details</li>
 				</ul>
-				<h2 id="migrating-from-existing-libs">Migrating from existing libs</h2>
+				<h2 id="migrating-from-other-libraries">Migrating from other libraries</h2>
 				<ul>
 					<li>[ ] TODO: instructions for migrating from Folktale 1.0/2.0</li>
 					<li>[ ] TODO: instructions for migrating from Sanctuary</li>

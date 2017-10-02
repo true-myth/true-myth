@@ -35,11 +35,12 @@ functional style and a more traditional method-call style.
 
 ## Just the API, please
 
-_If you're unsure of why you would want
-to use the library, you might jump down to [**What is this for?**](#what-is-this-for)._
+_If you're unsure of why you would want to use the library, you might jump down
+to [**What is this for?**](#what-is-this-for)._
 
 These examples don't cover every corner of the API; it's just here to show you
-what a few of the functions are like. [Full API documentation is available.][docs]
+what a few of the functions are like. [Full API documentation is
+available!][docs]
 
 [docs]: https://chriskrycho.github.io/true-myth/
 
@@ -88,8 +89,7 @@ function acceptsANullOhNo(value: number | null): Maybe<string> {
 
 ### Safely getting at values
 
-Helpers (combinators) are supplied to allow you to get at the values wrapped in
-the type:
+Helpers are supplied to allow you to get at the values wrapped in the type:
 
 ```ts
 const theAnswer = Result.ok(42);
@@ -129,7 +129,7 @@ that takes an integer as a parameter:
 ```js
 let myNumber = undefined;
 
-function myFuncThatTakesAnInteger (anInteger) {
+function myFuncThatTakesAnInteger(anInteger) {
   return anInteger.toString();
 }
 
@@ -138,7 +138,7 @@ myFuncThatTakesAnInteger(myNumber); // TypeError: anInteger is undefined
 
 When the function tries to convert the integer to a string, the function blows
 up because it was written with the assumption that the parameter being passed in
-a) is defined and b) has a `toString` method. Neither of these assumptions are
+(a) is defined and (b) has a `toString` method. Neither of these assumptions are
 true when `anInteger` is `null` or `undefined`. This leads JavaScript
 programmers to program defensively, with `if (!anInteger) return;` style guard
 blocks at the top of their functions. This leads to harder-to-read code, and
@@ -157,10 +157,11 @@ That's what `null` and `undefined` are. You can program around them. But
 defensive programming is gross. You write a lot of things like this:
 
 ```js
-const isNil = (thingToCheck) =>
-  thingToCheck === undefined || thingToCheck === null;
+function isNil(thingToCheck) {
+  return thingToCheck === undefined || thingToCheck === null;
+}
 
-const doAThing = (withAString) => {
+function doAThing(withAString) {
   if (isNil(withAString)) {
     withAString = 'some default value';
   }
@@ -188,36 +189,46 @@ broken error states. Are you tired of the game yet?
 
 ### The solution
 
-The reason programmers reach for libraries and frameworks is because they allow
-you to tackle a business problem with a whole set of lower-level issues already
-in the "solved problems" category. What if we could do that with the defensive
-code we write to avoid `null`/`undefined` issues? What if we could write
-functions with *actually safe* assumptions about parameter values?
+`Maybe` and `Result` are our escape hatch from all this madness. 
 
-`Maybe`s and `Result`s move precisely that direction by extracting the question,
-"Does this variable contain a valid value?" to the perimeter of your application
-rather than needing to ask that question at the head of every function. The way
-they work is by putting the value into a *container* which is guaranteed to be
-safe to act upon, regardless of whether there's something inside it or not. What
-is this sorcery? Imagine, for a moment, that you have a variable `myArray` and
-you want to map over it and print out every value to the console. You
-instantiate it as an empty array and then forget to load it up with values
-before mapping over it:
+We reach for libraries precisely so we can solve real business problems
+while letting lower-level concerns live in the "solved problems" category. True
+Myth, borrowing ideas from many other languages and libraries, aims to put
+_code written to defend against `null`/`undefined` problems_ in that "solved
+problems" category.
+
+`Maybe` and `Result` solve this problem *once*, and *in a principled way*,
+instead of in an _ad-hoc_ way throughout your codebase, by putting the value
+into a *container* which is guaranteed to be safe to act upon, regardless of
+whether there's something inside it or not.
+
+These containers let us write functions with *actually safe* assumptions about
+parameter values by extracting the question, "Does this variable contain a valid
+value?" to API boundaries, rather than needing to ask that question at the head
+of every. single. function.
+
+What is this sorcery?
+
+It turns out you probably already have a good idea of how this works, if you've
+spent much time writing JavaScript, because this is exactly how arrays work.
+
+Imagine, for a moment, that you have a variable `myArray` and you want to map
+over it and print out every value to the console. You instantiate it as an empty
+array and then forget to load it up with values before mapping over it:
 
 ```js
 let myArray = [];
 
 // oops, I meant to load up the variable with an array, but I forgot!
 
-myArray.map(console.log); // <nothing prints to the screen>
+myArray.forEach(n => console.log(n)); // <nothing prints to the screen>
 ```
 
 Even though this doesn't print anything to the screen, it doesn't unexpectedly
-blow up. In other words, it represents the concept of having nothing "inside the
-box" in a safe manner. If you have an integer, you have no such box around the
-integer, and you're right against the metal. What if you could multiply an
-integer by two, and if your variable was "empty" for one reason or another, it
-wouldn't blow up?
+blow up, either. In other words, it represents the concept of having nothing
+"inside the box" in a safe manner. By contrast, an integer has no such safe box
+around it. What if you could multiply an integer by two, and if your variable
+was "empty" for one reason or another, it wouldn't blow up?
 
 ```js
 let myInteger = undefined;
@@ -234,18 +245,23 @@ let myInteger = Maybe.of(undefined);
 myInteger.map(x => x * 3); // Nothing
 ```
 
+
+
 We received `Nothing` back as our value, which isn't particularly useful, but it
 also didn't halt our program in its tracks!
 
 `Result` is similar to `Maybe`, except it packages up the result of an operation
-(like a network request) whether it's a success or a failure and lets us unwrap
-the package at our leisure. Whether you get back a 200 or a 401, you can pass
-the box around the same either way; the methods and properties it has are not
-dependent upon whether there is shiny new data or a big red error inside.
+(like a network request) whether it's a success (an `Ok`) or a failure (an
+`Err`) and lets us unwrap the package at our leisure. Whether you get back a 200
+or a 401 for your HTTP request, you can pass the box around the same either way;
+the methods and properties the container has are not dependent upon whether
+there is shiny new data or a big red error inside.
+
+- [ ] TODO: comments on type safety via TS and Flow
 
 ## Design philosophy
 
-The design aims of this library are:
+The design aims for True Myth are:
 
 -   to be as idiomatic as possible in JavaScript
 -   to support a natural functional programming style
@@ -295,10 +311,10 @@ post].)
 
 [this blog post]: http://www.chriskrycho.com/2017/collection-last-auto-curried-functions.html
 
-(As a closely related note: this library does not currently supply curried
-variants of the functions. There are a *lot* of good options out there for that;
-both [lodash] and [Ramda] have tools for currying existing function definitions.
-It also profoundly complicates writing the type signatures for these functions,
+(As a closely related note: True Myth does not currently supply curried variants
+of the functions. There are a *lot* of good options out there for that; both
+[lodash] and [Ramda] have tools for currying existing function definitions. It
+also profoundly complicates writing the type signatures for these functions,
 since neither TypeScript nor Flow can easily represent auto- curried functions –
 unsurprisingly, given they're uncommon in JavaScript. Using Ramda or lodash to
 get curried versions of the functions may be a huge win for you in your
@@ -400,7 +416,7 @@ However, there are two main reasons you might prefer True Myth to Folktale:
     will remain secondary until a TypeScript rewrite of the whole Folktale
     library lands... eventually.
    
-    There's value in both of these approaches, so this library aims to take
+    There's value in both of these approaches, so True Myth aims to take
     advantage of the compilers and play in a no-runtime-cost space.
 
     If you want a JS-focused (rather than TS- or Flow-focused) library which
@@ -424,7 +440,7 @@ However, there are two main reasons you might prefer True Myth to Folktale:
     
     By opting for type notation that TS or Flow developers are already familiar
     with, and by focusing on what various functions *do* rather than the usual
-    FP names for them, this library aims at people just coming up to speed on
+    FP names for them, True Myth aims at people just coming up to speed on
     these ideas.
 
     The big win for Folktale over True Myth is [Fantasy Land] compatibility.
@@ -455,7 +471,7 @@ However, there are two main reasons you might prefer True Myth to Folktale:
 
 - [ ] TODO: kind of the same as Folktale, but add specific details
 
-## Migrating from existing libs
+## Migrating from other libraries
 
  - [ ] TODO: instructions for migrating from Folktale 1.0/2.0
  - [ ] TODO: instructions for migrating from Sanctuary
