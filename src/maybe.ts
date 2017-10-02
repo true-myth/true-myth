@@ -506,9 +506,14 @@ export const and = <T, U>(andMaybe: Maybe<U>, maybe: Maybe<T>): Maybe<U> =>
  * [`chain`]: #chain
  * [bind]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function/bind
  * 
+ * This differs from `map` in that `thenFn` returns another `Maybe`. You can use
+ * `andThen` to combine two functions which *both* create a `Maybe` from an
+ * unwrapped type.
+ * 
  * @typeparam T  The wrapped value.
  * @param thenFn The function to apply to the wrapped `T` if `maybe` is `Just`.
- * @param maybe  The `Maybe` to evaluate and possibly apply a function to.
+ * @param maybe  The `Maybe` to evaluate and possibly apply a function to the
+ *               contents of.
  * @returns      The result of the `thenFn` (a new `Maybe`) if `maybe` is a
  *               `Just`, otherwise `Nothing` if `maybe` is a `Nothing`.
  */
