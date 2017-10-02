@@ -432,3 +432,14 @@ describe('`Maybe.Nothing` class', () => {
     expect(Maybe.nothing().toString()).toEqual('Nothing');
   });
 });
+
+test('`Maybe` classes interacting', () => {
+  const aMaybe: Maybe.Maybe<string> = Maybe.nothing();
+  const mapped = aMaybe.map(length);
+  expect(mapped).toBeInstanceOf(Maybe.Nothing);
+  expect(mapped).not.toBeInstanceOf(Maybe.Just);
+
+  const anotherMaybe: Maybe.Maybe<number> = Maybe.just(10);
+  const anotherMapped = anotherMaybe.mapOr('nada', n => `The number was ${n}`);
+  expect(anotherMapped).toEqual('The number was 10');
+});
