@@ -30,6 +30,7 @@ functional style and a more traditional method-call style.
 - [Why not...](#why-not)
     - [Folktale](#folktale)
     - [Sanctuary](#sanctuary)
+- [Migrating from existing libs](#migrating-from-existing-libs)
 - [What's with the name?](#whats-with-the-name)
 
 ## Just the API, please
