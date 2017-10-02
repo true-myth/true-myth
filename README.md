@@ -5,7 +5,7 @@
 [![license](https://img.shields.io/github/license/chriskrycho/true-myth.svg?style=flat-square)](https://github.com/chriskrycho/true-myth/blob/master/LICENSE)
 
 A library for safe functional programming in JavaScript, with first-class
-support for TypeScript and Flow. `Maybe` and `Result` types, supporting both a
+support for TypeScript and Flow, that has `Maybe` and `Result` types, supporting both a
 functional style and a more traditional method-call style.
 
 - [Just the API, please](#just-the-api-please)
@@ -34,8 +34,8 @@ functional style and a more traditional method-call style.
 
 ## Just the API, please
 
-A quick overview of using this library – if you're unsure of why you would want
-to use the library, you might jump down to [**What is this for?**](#what-is-this-for).
+_If you're unsure of why you would want
+to use the library, you might jump down to [**What is this for?**](#what-is-this-for)._
 
 These examples don't cover every corner of the API; it's just here to show you
 what a few of the functions are like. [Full API documentation is available.][docs]
@@ -105,22 +105,32 @@ const theAnswerValue = unwrapOr(0, theAnswer);
 
 ## What is this for?
 
+### The History
+
+How do you represent the concept of not having anything, programmatically? As a language, JavaScript uses `null` to represent this concept; if you have a variable `myNumber` to store numbers, you might assign the value `null` when you don't have any number at all. If you have a variable `myString`, you might set `myString = null;` when you don't have a string.
+
+Some JavaScript programmers use `undefined` in place of `null` or in addition to `null`, so rather than setting a value to `null` they might just set `let myString;` or even `let myString = undefined;`. 
+
 ### The problem
 
-`null` and `undefined` are a curse. Their presence in JavaScript (and similar
-in many other languages) introduces a host of problems, because they mean that
-you can never trust that this thing you *think* is present *actually* is
-present. Arguments to functions go missing. Values on objects turn out not to
-exist. Arrays are absent instead of merely empty.
+Every language needs a way to express the concept of nothing, but `null` and `undefined` are a curse. Their presence in JavaScript (and in many other languages) introduce a host of problems, because they are not a particularly *safe* way to represent the concept. Say, for a moment, that you have a function that takes an integer as a parameter:  
 
-The result is a steady stream not merely of programming frustrations, but of
-*errors*. Things that means stuff didn't work correctly for the user of the
-software. Imagine a hammer where the head just slipped off every so often, in
-ways you could compensate for but which made it that much harder to just get the
-nails into the wood.
+```js
+let myNumber = undefined;
+
+function myFuncThatTakesAnInteger (anInteger) {
+  return anInteger.toString();
+}
+
+myFuncThatTakesAnInteger(myNumber); // TypeError: anInteger is undefined
+```
+
+When the function tries to convert the integer to a string, the function blows up because it was written with the assumption that the parameter being passed in a) is defined and b) has a `toString` method. Neither of these assumptions are true when `anInteger` is `null` or `undefined`. This leads JavaScript programmers to program defensively, with `if (!anInteger) return;` style guard blocks at the top of their functions. This leads to harder-to-read code, and what's more, *it doesn't actually solve the root problem.* You could imagine this situation playing itself out in a million different ways: arguments to functions go missing. Values on objects turn out not to exist. Arrays are absent instead of merely empty.
+
+The result is a steady stream not merely of programming frustrations, but of *errors*. The program does not function as the programmer intends. That means stuff doesn't work correctly for the user of the software. Imagine a hammer where the head just slips off every so often, in ways you could compensate for but which makes it that much harder to just get the nail into the wood.
 
 That's what `null` and `undefined` are. You can program around them. But
-defensive programming is gross. You write a long of things like this:
+defensive programming is gross. You write a lot of things like this:
 
 ```js
 const isNil = (thingToCheck) =>
@@ -144,16 +154,44 @@ TypeScript and Flow take us a big step in that direction, so long as our type
 annotations are good enough. (Use of `any` will leave us sad, though.) We can
 specify that type *may* be present, using the [maybe]/[optional] annotation.
 This at least helps keep us honest. But we still end up writing a ton of
-repeated boilerplate to deal with this problem. And given [DRY], it seems like
-we should just handle it once and be done with it. Enter `Maybe` and `Result`.
+repeated boilerplate to deal with this problem. Rather than just handling it once and being done with it, we play a never-ending game of whack-a-mole. We must be constantly vigilant and proactive so that our users don't get into broken error states. Are you tired of the game yet?
 
 [maybe]: https://flow.org/en/docs/types/maybe/
 [optional]: http://www.typescriptlang.org/docs/handbook/interfaces.html#optional-properties
-[DRY]: http://www.artima.com/intv/dry.html
 
 ### The solution
 
-- [ ] TODO: describe how `Maybe` and `Result` solve this problem.
+The reason programmers reach for libraries and frameworks is because they allow you to tackle a business problem with a whole set of lower-level issues already in the "solved problems" category. What if we could do that with the defensive code we write to avoid `null`/`undefined` issues? What if we could write functions with *actually safe* assumptions about parameter values?
+
+`Maybe`s and `Result`s move precisely that direction by extracting the question, "Does this variable contain a valid value?" to the perimeter of your application rather than needing to ask that question at the head of every function. The way they work is by putting the value into a *container* which is guaranteed to be safe to act upon, regardless of whether there's something inside it or not. What is this sorcery? Imagine, for a moment, that you have a variable `myArray` and you want to map over it and print out every value to the console. You instantiate it as an empty array and then forget to load it up with values before mapping over it:
+
+```js
+let myArray = [];
+
+// oops, I meant to load up the variable with an array, but I forgot!
+
+myArray.map(console.log); // <nothing prints to the screen>
+```
+
+Even though this doesn't print anything to the screen, it doesn't unexpectedly blow up. In other words, it represents the concept of having nothing "inside the box" in a safe manner. If you have an integer, you have no such box around the integer, and you're right against the metal. What if you could multiply an integer by two, and if your variable was "empty" for one reason or another, it wouldn't blow up?
+
+```js
+let myInteger = undefined;
+
+myInteger * 3; // :(
+```
+
+Let's try that again, but this time let's put the actual value in a container and give ourselves safe access methods:
+
+```js
+let myInteger = Maybe.of(undefined); 
+
+myInteger.map(x => x * 3); // Nothing
+```
+
+We received `Nothing` back as our value, which isn't particularly useful, but it also didn't halt our program in its tracks!
+
+`Result` is similar to `Maybe`, except it packages up the result of an operation (like a network request) whether it's a success or a failure and lets us unwrap the package at our leisure. Whether you get back a 200 or a 401, you can pass the box around the same either way; the methods and properties it has are not dependent upon whether there is shiny new data or a big red error inside.
 
 ## Design philosophy
 
@@ -188,7 +226,7 @@ In practice, that means:
     As this second example suggests, the aim has been to support the most
     idiomatic approach for each style. This means that yes, you might find it a
     bit confusing if you're actively switching between the two of them. (Why
-    would you do that?!!)
+    would you do that?!?)
 
 -   Using the library with TypeScript or Flow will *just work* and will provide
     you with considerable safety out of the box. Using it with JavaScript will
@@ -201,8 +239,8 @@ The overarching themes are flexibility and approachability.
 The hope is that a team just picking up these ideas for the first time can use
 them without adapting their whole style to a "traditional" functional
 programming approach, but a team comfortable with functional idioms will find
-themselves at home with the item-last pure functions. (For a brief discussion
-of why you want the item last in a functional style, see [this blog post].)
+themselves at home with the style of data-last pure functions. (For a brief discussion
+of why you want the data last in a functional style, see [this blog post].)
 
 [this blog post]: http://www.chriskrycho.com/2017/collection-last-auto-curried-functions.html
 
@@ -222,7 +260,7 @@ you in your codebase, though!)
 
 #### `Maybe`
 
-The primary options in this space include `Option`, `Optional`, and `Maybe`. You
+The existing options in this space include `Option`, `Optional`, and `Maybe`. You
 could also point to "nullable," but that actually means the *opposite* of what
 we're doing here – these represent types which can *not* be nullable!
 
@@ -236,7 +274,7 @@ in that it captures that the thing is allowed to be absent. It's also the nicest
 grammatically: "an Optional string". On the other hand, it's also the *longest*.
 
 `Maybe` seems to be the best type name semantically: we're modeling something
-which *may be* there. Grammatically, it's comparable to "optional": "a Maybe
+which *may* be there — or may *not* be there! Grammatically, it's comparable to "optional": "a Maybe
 string" isn't great – but "maybe a string" is the most natural *accurate* way to
 answer the question, "What's in this field?" It's also the shortest!
 
@@ -252,7 +290,7 @@ the "present" type in other libraries are `Some` and `Just`. Options for the
 
 #### `Result`
 
-- [ ] TODO: Explain why `Result` (and in contrast with `Either`)
+- [ ] TODO: Explain why `Result`
 
 ##### The `Result` variants: `Ok` and `Err`
 
@@ -360,6 +398,11 @@ However, there are two main reasons you might prefer True Myth to Folktale:
 ### Sanctuary?
 
 - [ ] TODO: kind of the same as Folktale, but add specific details
+
+## Migrating from existing libs
+
+ - [ ] TODO: instructions for migrating from Folktale 1.0/2.0
+ - [ ] TODO: instructions for migrating from Sanctuary
 
 ## What's with the name?
 
