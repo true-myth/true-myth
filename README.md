@@ -69,7 +69,7 @@ function safeLength(mightBeAString: Maybe<string>): Maybe<number> {
 
 const someString = Maybe.just('a string');
 const nothingHere = Maybe.nothing<string>();
-console.log(safeLength(someString).toString()); // "Some(8)"
+console.log(safeLength(someString).toString()); // "Just(8)"
 console.log(safeLength(nothingHere).toString()); // "Nothing"
 ```
 
@@ -171,8 +171,10 @@ In practice, that means:
     with a pure function:
 
     ```ts
-    const classical = new Some('value');
-    const functional = some('value');
+    const classicalJust = new Just('value');
+    const functionalJust = just('value');
+    const classicalNothing = new Nothing();
+    const functionalNothing = nothing();
     ```
 
 -   Similarly, you can use methods or pure functions:

@@ -139,7 +139,7 @@
 
 <span class="hljs-keyword">const</span> someString = Maybe.just(<span class="hljs-string">'a string'</span>);
 <span class="hljs-keyword">const</span> nothingHere = Maybe.nothing&lt;<span class="hljs-built_in">string</span>&gt;();
-<span class="hljs-built_in">console</span>.log(safeLength(someString).toString()); <span class="hljs-comment">// "Some(8)"</span>
+<span class="hljs-built_in">console</span>.log(safeLength(someString).toString()); <span class="hljs-comment">// "Just(8)"</span>
 <span class="hljs-built_in">console</span>.log(safeLength(nothingHere).toString()); <span class="hljs-comment">// "Nothing"</span>
 </code></pre>
 				<h3 id="constructing-maybe-">Constructing <code>Maybe</code></h3>
@@ -213,8 +213,10 @@
 				<ul>
 					<li><p>You can construct the variant types in the traditional JavaScript way or
 						with a pure function:</p>
-						<pre><code class="lang-ts">const classical = new Some(&#39;value&#39;);
-const functional = some(&#39;value&#39;);
+						<pre><code class="lang-ts">const classicalJust = new Just(&#39;value&#39;);
+const functionalJust = just(&#39;value&#39;);
+const classicalNothing = new Nothing();
+const functionalNothing = nothing();
 </code></pre>
 					</li>
 					<li><p>Similarly, you can use methods or pure functions:</p>
