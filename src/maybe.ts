@@ -400,8 +400,8 @@ export const map = <T, U>(mapFn: (t: T) => U, maybe: Maybe<T>): Maybe<U> =>
   isJust(maybe) ? just(mapFn(unwrap(maybe))) : nothing<U>();
 
 /**
- * Map over a `Maybe` instance and get out the value, using a default value if
- * `maybe` is `Nothing`.
+ * Map over a `Maybe` instance and get out the value if `maybe` is a `Just`, or
+ * return a default value if `maybe` is a `Nothing`.
  * 
  * #### Examples
  * 
@@ -410,11 +410,11 @@ export const map = <T, U>(mapFn: (t: T) => U, maybe: Maybe<T>): Maybe<U> =>
  * 
  * const justAString = Maybe.just('string');
  * const theStringLength = mapOr(0, length, justAString);
- * console.log(theStringLength); // "6"
+ * console.log(theStringLength); // 6
  * 
  * const notAString = Maybe.nothing<string>();
  * const notAStringLength = mapOr(0, length, notAString)
- * console.log(notAStringLength); // "0"
+ * console.log(notAStringLength); // 0
  * ```
  * 
  * @param orU The default value to use if `maybe` is `Nothing`
@@ -424,6 +424,29 @@ export const map = <T, U>(mapFn: (t: T) => U, maybe: Maybe<T>): Maybe<U> =>
 export const mapOr = <T, U>(orU: U, mapFn: (t: T) => U, maybe: Maybe<T>): U =>
   isJust(maybe) ? mapFn(unwrap(maybe)) : orU;
 
+/**
+ * Map over a `Maybe` instance and get out the value if `maybe` is a `Just`,
+ * or use a function to construct a default value if `maybe` is `Nothing`.
+ * 
+ * #### Examples
+ * 
+ * ```ts
+ * const length = (s: string) => s.length;
+ * const getDefault = () => 0;
+ * 
+ * const justAString = Maybe.just('string');
+ * const theStringLength = mapOrElse(getDefault, length, justAString);
+ * console.log(theStringLength); // 6
+ * 
+ * const notAString = Maybe.nothing<string>();
+ * const notAStringLength = mapOrElse(getDefault, length, notAString)
+ * console.log(notAStringLength); // 0
+ * ```
+ * 
+ * @param orElseFn The function to apply if `maybe` is `Nothing`.
+ * @param mapFn    The function to apply to the wrapped value if `maybe` is `Just`
+ * @param maybe    The `Maybe` instance to map over.
+ */
 export const mapOrElse = <T, U>(
   orElseFn: (...args: any[]) => U,
   mapFn: (t: T) => U,

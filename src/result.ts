@@ -33,8 +33,6 @@ export enum Variant {
   Err = 'Err',
 }
 
-// Someday Result we'll have `protocol`s and this would just have default
-// implementations for nearly everything in the concrete classes below.
 export interface IResult<T, E> {
   /** Distinguish between the `Ok` and `Error` variants. */
   variant: Variant;
