@@ -245,7 +245,7 @@ let myInteger = Maybe.of(undefined);
 myInteger.map(x => x * 3); // Nothing
 ```
 
-
+![mind blown](https://user-images.githubusercontent.com/2403023/31098390-5d6573d0-a790-11e7-96f9-361d2e70522b.gif)
 
 We received `Nothing` back as our value, which isn't particularly useful, but it
 also didn't halt our program in its tracks!
