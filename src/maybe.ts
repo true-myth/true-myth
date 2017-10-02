@@ -393,8 +393,12 @@ export const of = <T>(value: T | undefined | null): Maybe<T> =>
  * console.log(notAStringLength.toString()); // "Nothing"
  * ```
  * 
+ * @typeparam T The wrapped value.
+ * @typeparam U The wrapped value of the returned `Maybe`.
  * @param mapFn The function to apply the value to if `Maybe` is `Just`.
  * @param maybe The `Maybe` instance to map over.
+ * @returns     A new `Maybe` with the result of applying `mapFn` to the value
+ *              in a `Just`, or `Nothing` if `maybe` is `Nothing`.
  */
 export const map = <T, U>(mapFn: (t: T) => U, maybe: Maybe<T>): Maybe<U> =>
   isJust(maybe) ? just(mapFn(unwrap(maybe))) : nothing<U>();
@@ -417,7 +421,9 @@ export const map = <T, U>(mapFn: (t: T) => U, maybe: Maybe<T>): Maybe<U> =>
  * console.log(notAStringLength); // 0
  * ```
  * 
- * @param orU The default value to use if `maybe` is `Nothing`
+ * @typeparam T The wrapped value.
+ * @typeparam U The wrapped value of the returned `Maybe`.
+ * @param orU   The default value to use if `maybe` is `Nothing`
  * @param mapFn The function to apply the value to if `Maybe` is `Just`
  * @param maybe The `Maybe` instance to map over.
  */
@@ -443,6 +449,8 @@ export const mapOr = <T, U>(orU: U, mapFn: (t: T) => U, maybe: Maybe<T>): U =>
  * console.log(notAStringLength); // 0
  * ```
  * 
+ * @typeparam T    The wrapped value.
+ * @typeparam U    The wrapped value of the returned `Maybe`.
  * @param orElseFn The function to apply if `maybe` is `Nothing`.
  * @param mapFn    The function to apply to the wrapped value if `maybe` is `Just`
  * @param maybe    The `Maybe` instance to map over.
@@ -469,6 +477,8 @@ export const mapOrElse = <T, U>(
  * console.log(and(nothing, nothing).toString());  // 'Nothing'
  * ```
  * 
+ * @typeparam T    The wrapped value.
+ * @typeparam U    The wrapped value of the returned `Maybe`.
  * @param andMaybe The `Maybe` instance to return if `maybe` is `Just`
  * @param maybe    The `Maybe` instance to check.
  * @return         `Nothing` if the original `maybe` is `Nothing`, or `andMaybe`
@@ -489,8 +499,11 @@ export const and = <T, U>(andMaybe: Maybe<U>, maybe: Maybe<T>): Maybe<U> =>
  * [`chain`]: #chain
  * [bind]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function/bind
  * 
+ * @typeparam T  The wrapped value.
  * @param thenFn The function to apply to the wrapped `T` if `maybe` is `Just`.
  * @param maybe  The `Maybe` to evaluate and possibly apply a function to.
+ * @returns      The result of the `thenFn` (a new `Maybe`) if `maybe` is a
+ *               `Just`, otherwise `Nothing` if `maybe` is a `Nothing`.
  */
 export const andThen = <T, U>(thenFn: (t: T) => Maybe<U>, maybe: Maybe<T>): Maybe<U> =>
   isJust(maybe) ? thenFn(unwrap(maybe)) : nothing();
@@ -506,6 +519,7 @@ export const flatMap = andThen;
  * `maybe` value is a `Just`, returns that `maybe`; otherwise, returns the
  * `defaultMaybe` value.
  * 
+ * @typeparam T        The wrapped value.
  * @param defaultMaybe The `Maybe` to use if `maybe` is a `Nothing`.
  * @param maybe        The `Maybe` instance to evaluate.
  * @returns            `maybe` if it is a `Just`, otherwise `defaultMaybe`.
@@ -523,6 +537,7 @@ export const or = <T>(defaultMaybe: Maybe<T>, maybe: Maybe<T>): Maybe<T> =>
  * 
  * Useful for handling failures/empty situations.
  * 
+ * @typeparam T  The wrapped value.
  * @param elseFn The function to apply if `maybe` is `Nothing`
  * @param maybe  The `maybe` to use if it is `Just`.
  * @returns      The `maybe` if it is `Just`, or the `Maybe` returned by
@@ -537,6 +552,7 @@ export const orElse = <T>(elseFn: (...args: any[]) => Maybe<T>, maybe: Maybe<T>)
  * Returns the content of a `Just`, but **throws if the `Maybe` is `Nothing`**.
  * Prefer to use [`unwrapOr`](#unwrapor) or [`unwrapOrElse`](#unwraporelse).
  *
+ * @typeparam T The wrapped value.
  * @param maybe The value to unwrap
  * @returns     The unwrapped value if the `Maybe` instance is `Just`.
  * @throws      If the `maybe` is `Nothing`.
@@ -551,42 +567,57 @@ const unwrap = unsafelyUnwrap;
  * Safely get the value out of a `Maybe`.
  *
  * Returns the content of a `Just` or `defaultValue` if `Nothing`.
+ * 
+ * @typeparam T        The wrapped value.
+ * @param defaultValue The value to return if `maybe` is a `Nothing`.
+ * @param maybe        The `Maybe` instance to unwrap if it is a `Just`.
+ * @returns            The content of `maybe` if it is a `Just`, otherwise
+ *                     `defaultValue`.
  */
 export const unwrapOr = <T>(defaultValue: T, maybe: Maybe<T>): T =>
   isJust(maybe) ? unwrap(maybe) : defaultValue;
 
 /**
- * Safely get the value out of a `Maybe`.
+ * Safely get the value out of a [`Maybe`](#maybe).
  *
  * Returns the content of a `Just` or `defaultValue` if `Nothing`.
+ * 
+ * @typeparam T  The wrapped value.
+ * @param orElseFn A function used to generate a valid value if `maybe` is a
+ *                 `Nothing`.
+ * @param maybe    The `Maybe` instance to unwrap if it is a `Just`
+ * @returns        Either the content of `maybe` or the value returned from
+ *                 `orElseFn`.
  */
 export const unwrapOrElse = <T>(orElseFn: (...args: any[]) => T, maybe: Maybe<T>): T =>
   isJust(maybe) ? unwrap(maybe) : orElseFn();
 
 /**
- * Transform the [`Maybe`] into a [`Result`], using the wrapped value as the
+ * Transform the [`Maybe`](#maybe) into a
+ * [`Result`](../modules/_result_.html#result), using the wrapped value as the
  * `Ok` value if `Just`; otherwise using the supplied `error` value for `Err`.
  * 
- * [`Maybe`]: #maybe
- * [`Result`]: #result
- * 
+ * @typeparam T  The wrapped value.
+ * @typeparam E  The error type to in the `Result`.
  * @param error The error value to use if the `Maybe` is `Nothing`.
  * @param maybe The `Maybe` instance to convert.
+ * @returns     A `Result` containing the value wrapped in `maybe` in an `Ok`,
+ *              or `error` in an `Err`.
  */
 export const toOkOrErr = <T, E>(error: E, maybe: Maybe<T>): Result.Result<T, E> =>
   isJust(maybe) ? Result.ok(unwrap(maybe)) : Result.err(error);
 
 /**
- * Transform the [`Maybe`] into a [`Result`], using the wrapped value as the
+ * Transform the [`Maybe`](#maybe) into a
+ * [`Result`](../modules/_result_.html#result), using the wrapped value as the
  * `Ok` value if `Just`; otherwise using `elseFn` to generate `Err`.
- * 
- * [`Maybe`]: #maybe
- * [`Result`]: #result
  * 
  * @typeparam T  The wrapped value.
  * @typeparam E  The error type to in the `Result`.
  * @param elseFn The function which generates an error of type `E`.
  * @param maybe  The `Maybe` instance to convert.
+ * @returns     A `Result` containing the value wrapped in `maybe` in an `Ok`,
+ *              or `the value generated by `elseFn` in an `Err`.
  */
 export const toOkOrElseErr = <T, E>(
   elseFn: (...args: any[]) => E,
