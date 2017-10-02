@@ -501,6 +501,15 @@ export const chain = andThen;
 /** Alias for [`andThen`](#andthen). */
 export const flatMap = andThen;
 
+/**
+ * Provide a fallback for a given `Maybe`. Behaves like a logical `or`: if the
+ * `maybe` value is a `Just`, returns that `maybe`; otherwise, returns the
+ * `defaultMaybe` value.
+ * 
+ * @param defaultMaybe The `Maybe` to use if `maybe` is a `Nothing`.
+ * @param maybe        The `Maybe` instance to evaluate.
+ * @returns            `maybe` if it is a `Just`, otherwise `defaultMaybe`.
+ */
 export const or = <T>(defaultMaybe: Maybe<T>, maybe: Maybe<T>): Maybe<T> =>
   isJust(maybe) ? maybe : defaultMaybe;
 
