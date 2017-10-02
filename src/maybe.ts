@@ -28,6 +28,7 @@ export enum Variant {
 // Someday maybe we'll have `protocol`s and this would just have default
 // implementations for nearly everything in the concrete classes below.
 export interface IMaybe<T> {
+  /** Distinguish between the `Just` and `Nothing` [variants](../enums/_maybe_.variant). */
   variant: Variant;
 
   /** Method variant for [`Maybe.isJust`](../modules/_maybe_.html#isjust) */
@@ -82,6 +83,7 @@ export interface IMaybe<T> {
 export class Just<T> implements IMaybe<T> {
   private __value: T;
 
+  /** `Just` is always [`Variant.Just`](../enums/_maybe_.variant#just). */
   variant = Variant.Just;
 
   /**
@@ -207,6 +209,7 @@ export class Just<T> implements IMaybe<T> {
 }
 
 export class Nothing<T> implements IMaybe<T> {
+  /** `Nothing` is always [`Variant.Nothing`](../enums/_maybe_.variant#nothing). */
   variant = Variant.Nothing;
 
   /** Method variant for [`Maybe.isJust`](../modules/_maybe_.html#isjust) */

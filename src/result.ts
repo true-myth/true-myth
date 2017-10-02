@@ -23,7 +23,10 @@ import { isVoid } from './utils';
 import { Maybe, just, nothing, isJust, unsafelyUnwrap as unwrapMaybe } from './maybe';
 
 /**
- * Discriminant for `Ok` or `Error`.
+ * Discriminant for `Ok` and `Err` variants of `Result` type.
+ * 
+ * You can use the discriminant via the `variant` property of `Result` instances
+ * if you need to match explicitly on it.
  */
 export enum Variant {
   Ok = 'Ok',
@@ -33,9 +36,7 @@ export enum Variant {
 // Someday Result we'll have `protocol`s and this would just have default
 // implementations for nearly everything in the concrete classes below.
 export interface IResult<T, E> {
-  /**
-   * Distinguish between the `Ok` and `Error` variants.
-   */
+  /** Distinguish between the `Ok` and `Error` variants. */
   variant: Variant;
 
   /** Method variant for [`Result.isOk`](../modules/_result_.html#isok) */
@@ -100,6 +101,7 @@ export interface IResult<T, E> {
 export class Ok<T, E> implements IResult<T, E> {
   private __value: T;
 
+  /** `Ok` is always [`Variant.Ok`](../enums/_result_.variant#ok). */
   variant = Variant.Ok;
 
   /**
@@ -225,6 +227,7 @@ export class Ok<T, E> implements IResult<T, E> {
 }
 
 export class Err<T, E> implements IResult<T, E> {
+  /** `Err` is always [`Variant.Err`](../enums/_result_.variant#err). */
   variant = Variant.Err;
 
   private __error: E;
