@@ -69,7 +69,7 @@
 					<a href="https://www.npmjs.com/package/true-myth"><img src="https://img.shields.io/npm/v/true-myth.svg?style=flat-square" alt="npm"></a>
 				<a href="https://github.com/chriskrycho/true-myth/blob/master/LICENSE"><img src="https://img.shields.io/github/license/chriskrycho/true-myth.svg?style=flat-square" alt="license"></a></p>
 				<p>A library for safe functional programming in JavaScript, with first-class
-					support for TypeScript and Flow. <code>Maybe</code> and <code>Result</code> types, supporting both a
+					support for TypeScript and Flow, that has <code>Maybe</code> and <code>Result</code> types, supporting both a
 				functional style and a more traditional method-call style.</p>
 				<ul>
 					<li><a href="#just-the-api-please">Just the API, please</a><ul>
@@ -113,8 +113,8 @@
 					<li><a href="#whats-with-the-name">What&#39;s with the name?</a></li>
 				</ul>
 				<h2 id="just-the-api-please">Just the API, please</h2>
-				<p>A quick overview of using this library – if you&#39;re unsure of why you would want
-				to use the library, you might jump down to <a href="#what-is-this-for"><strong>What is this for?</strong></a>.</p>
+				<p><em>If you&#39;re unsure of why you would want
+				to use the library, you might jump down to <a href="#what-is-this-for"><strong>What is this for?</strong></a>.</em></p>
 				<p>These examples don&#39;t cover every corner of the API; it&#39;s just here to show you
 				what a few of the functions are like. <a href="https://chriskrycho.github.io/true-myth/">Full API documentation is available.</a></p>
 				<h3 id="-result-with-a-functional-style"><code>Result</code> with a functional style</h3>
@@ -162,19 +162,23 @@
 				<pre><code class="lang-ts"><span class="hljs-keyword">const</span> theAnswerValue = unwrapOr(<span class="hljs-number">0</span>, theAnswer);
 </code></pre>
 				<h2 id="what-is-this-for-">What is this for?</h2>
+				<h3 id="the-history">The History</h3>
+				<p>How do you represent the concept of not having anything, programmatically? As a language, JavaScript uses <code>null</code> to represent this concept; if you have a variable <code>myNumber</code> to store numbers, you might assign the value <code>null</code> when you don&#39;t have any number at all. If you have a variable <code>myString</code>, you might set <code>myString = null;</code> when you don&#39;t have a string.</p>
+				<p>Some JavaScript programmers use <code>undefined</code> in place of <code>null</code> or in addition to <code>null</code>, so rather than setting a value to <code>null</code> they might just set <code>let myString;</code> or even <code>let myString = undefined;</code>. </p>
 				<h3 id="the-problem">The problem</h3>
-				<p><code>null</code> and <code>undefined</code> are a curse. Their presence in JavaScript (and similar
-					in many other languages) introduces a host of problems, because they mean that
-					you can never trust that this thing you <em>think</em> is present <em>actually</em> is
-					present. Arguments to functions go missing. Values on objects turn out not to
-				exist. Arrays are absent instead of merely empty.</p>
-				<p>The result is a steady stream not merely of programming frustrations, but of
-					<em>errors</em>. Things that means stuff didn&#39;t work correctly for the user of the
-					software. Imagine a hammer where the head just slipped off every so often, in
-					ways you could compensate for but which made it that much harder to just get the
-				nails into the wood.</p>
+				<p>Every language needs a way to express the concept of nothing, but <code>null</code> and <code>undefined</code> are a curse. Their presence in JavaScript (and in many other languages) introduce a host of problems, because they are not a particularly <em>safe</em> way to represent the concept. Say, for a moment, that you have a function that takes an integer as a parameter:  </p>
+				<pre><code class="lang-js"><span class="hljs-keyword">let</span> myNumber = <span class="hljs-literal">undefined</span>;
+
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">myFuncThatTakesAnInteger</span> (<span class="hljs-params">anInteger</span>) </span>{
+  <span class="hljs-keyword">return</span> anInteger.toString();
+}
+
+myFuncThatTakesAnInteger(myNumber); <span class="hljs-comment">// TypeError: anInteger is undefined</span>
+</code></pre>
+				<p>When the function tries to convert the integer to a string, the function blows up because it was written with the assumption that the parameter being passed in a) is defined and b) has a <code>toString</code> method. Neither of these assumptions are true when <code>anInteger</code> is <code>null</code> or <code>undefined</code>. This leads JavaScript programmers to program defensively, with <code>if (!anInteger) return;</code> style guard blocks at the top of their functions. This leads to harder-to-read code, and what&#39;s more, <em>it doesn&#39;t actually solve the root problem.</em> You could imagine this situation playing itself out in a million different ways: arguments to functions go missing. Values on objects turn out not to exist. Arrays are absent instead of merely empty.</p>
+				<p>The result is a steady stream not merely of programming frustrations, but of <em>errors</em>. The program does not function as the programmer intends. That means stuff doesn&#39;t work correctly for the user of the software. Imagine a hammer where the head just slips off every so often, in ways you could compensate for but which makes it that much harder to just get the nail into the wood.</p>
 				<p>That&#39;s what <code>null</code> and <code>undefined</code> are. You can program around them. But
-				defensive programming is gross. You write a long of things like this:</p>
+				defensive programming is gross. You write a lot of things like this:</p>
 				<pre><code class="lang-js"><span class="hljs-keyword">const</span> isNil = <span class="hljs-function">(<span class="hljs-params">thingToCheck</span>) =&gt;</span>
   thingToCheck === <span class="hljs-literal">undefined</span> || thingToCheck === <span class="hljs-literal">null</span>;
 
@@ -194,12 +198,28 @@
 					annotations are good enough. (Use of <code>any</code> will leave us sad, though.) We can
 					specify that type <em>may</em> be present, using the <a href="https://flow.org/en/docs/types/maybe/">maybe</a>/<a href="http://www.typescriptlang.org/docs/handbook/interfaces.html#optional-properties">optional</a> annotation.
 					This at least helps keep us honest. But we still end up writing a ton of
-					repeated boilerplate to deal with this problem. And given <a href="http://www.artima.com/intv/dry.html">DRY</a>, it seems like
-				we should just handle it once and be done with it. Enter <code>Maybe</code> and <code>Result</code>.</p>
+				repeated boilerplate to deal with this problem. Rather than just handling it once and being done with it, we play a never-ending game of whack-a-mole. We must be constantly vigilant and proactive so that our users don&#39;t get into broken error states. Are you tired of the game yet?</p>
 				<h3 id="the-solution">The solution</h3>
-				<ul>
-					<li>[ ] TODO: describe how <code>Maybe</code> and <code>Result</code> solve this problem.</li>
-				</ul>
+				<p>The reason programmers reach for libraries and frameworks is because they allow you to tackle a business problem with a whole set of lower-level issues already in the &quot;solved problems&quot; category. What if we could do that with the defensive code we write to avoid <code>null</code>/<code>undefined</code> issues? What if we could write functions with <em>actually safe</em> assumptions about parameter values?</p>
+				<p><code>Maybe</code>s and <code>Result</code>s move precisely that direction by extracting the question, &quot;Does this variable contain a valid value?&quot; to the perimeter of your application rather than needing to ask that question at the head of every function. The way they work is by putting the value into a <em>container</em> which is guaranteed to be safe to act upon, regardless of whether there&#39;s something inside it or not. What is this sorcery? Imagine, for a moment, that you have a variable <code>myArray</code> and you want to map over it and print out every value to the console. You instantiate it as an empty array and then forget to load it up with values before mapping over it:</p>
+				<pre><code class="lang-js"><span class="hljs-keyword">let</span> myArray = [];
+
+<span class="hljs-comment">// oops, I meant to load up the variable with an array, but I forgot!</span>
+
+myArray.map(<span class="hljs-built_in">console</span>.log); <span class="hljs-comment">// &lt;nothing prints to the screen&gt;</span>
+</code></pre>
+				<p>Even though this doesn&#39;t print anything to the screen, it doesn&#39;t unexpectedly blow up. In other words, it represents the concept of having nothing &quot;inside the box&quot; in a safe manner. If you have an integer, you have no such box around the integer, and you&#39;re right against the metal. What if you could multiply an integer by two, and if your variable was &quot;empty&quot; for one reason or another, it wouldn&#39;t blow up?</p>
+				<pre><code class="lang-js"><span class="hljs-keyword">let</span> myInteger = <span class="hljs-literal">undefined</span>;
+
+myInteger * <span class="hljs-number">3</span>; <span class="hljs-comment">// :(</span>
+</code></pre>
+				<p>Let&#39;s try that again, but this time let&#39;s put the actual value in a container and give ourselves safe access methods:</p>
+				<pre><code class="lang-js"><span class="hljs-keyword">let</span> myInteger = Maybe.of(<span class="hljs-literal">undefined</span>);
+
+myInteger.map(<span class="hljs-function"><span class="hljs-params">x</span> =&gt;</span> x * <span class="hljs-number">3</span>); <span class="hljs-comment">// Nothing</span>
+</code></pre>
+				<p>We received <code>Nothing</code> back as our value, which isn&#39;t particularly useful, but it also didn&#39;t halt our program in its tracks!</p>
+				<p><code>Result</code> is similar to <code>Maybe</code>, except it packages up the result of an operation (like a network request) whether it&#39;s a success or a failure and lets us unwrap the package at our leisure. Whether you get back a 200 or a 401, you can pass the box around the same either way; the methods and properties it has are not dependent upon whether there is shiny new data or a big red error inside.</p>
 				<h2 id="design-philosophy">Design philosophy</h2>
 				<p>The design aims of this library are:</p>
 				<ul>
@@ -227,7 +247,7 @@ const functionalNothing = nothing();
 						<p>As this second example suggests, the aim has been to support the most
 							idiomatic approach for each style. This means that yes, you might find it a
 							bit confusing if you&#39;re actively switching between the two of them. (Why
-						would you do that?!!)</p>
+						would you do that?!?)</p>
 					</li>
 					<li><p>Using the library with TypeScript or Flow will <em>just work</em> and will provide
 							you with considerable safety out of the box. Using it with JavaScript will
@@ -240,8 +260,8 @@ const functionalNothing = nothing();
 				<p>The hope is that a team just picking up these ideas for the first time can use
 					them without adapting their whole style to a &quot;traditional&quot; functional
 					programming approach, but a team comfortable with functional idioms will find
-					themselves at home with the item-last pure functions. (For a brief discussion
-				of why you want the item last in a functional style, see <a href="http://www.chriskrycho.com/2017/collection-last-auto-curried-functions.html">this blog post</a>.)</p>
+					themselves at home with the style of data-last pure functions. (For a brief discussion
+				of why you want the data last in a functional style, see <a href="http://www.chriskrycho.com/2017/collection-last-auto-curried-functions.html">this blog post</a>.)</p>
 				<p>(As a closely related note: this library does not currently supply curried
 					variants of the functions. There are a <em>lot</em> of good options out there for
 					that; both <a href="https://lodash.com">lodash</a> and <a href="http://ramdajs.com">Ramda</a> have tools for currying existing function
@@ -252,7 +272,7 @@ const functionalNothing = nothing();
 				you in your codebase, though!)</p>
 				<h3 id="the-type-names">The type names</h3>
 				<h4 id="-maybe-"><code>Maybe</code></h4>
-				<p>The primary options in this space include <code>Option</code>, <code>Optional</code>, and <code>Maybe</code>. You
+				<p>The existing options in this space include <code>Option</code>, <code>Optional</code>, and <code>Maybe</code>. You
 					could also point to &quot;nullable,&quot; but that actually means the <em>opposite</em> of what
 				we&#39;re doing here – these represent types which can <em>not</em> be nullable!</p>
 				<p><code>Option</code> implies a choice between several different <em>options</em>; in this case
@@ -263,7 +283,7 @@ const functionalNothing = nothing();
 					in that it captures that the thing is allowed to be absent. It&#39;s also the nicest
 				grammatically: &quot;an Optional string&quot;. On the other hand, it&#39;s also the <em>longest</em>.</p>
 				<p><code>Maybe</code> seems to be the best type name semantically: we&#39;re modeling something
-					which <em>may be</em> there. Grammatically, it&#39;s comparable to &quot;optional&quot;: &quot;a Maybe
+					which <em>may</em> be there — or may <em>not</em> be there! Grammatically, it&#39;s comparable to &quot;optional&quot;: &quot;a Maybe
 					string&quot; isn&#39;t great – but &quot;maybe a string&quot; is the most natural <em>accurate</em> way to
 				answer the question, &quot;What&#39;s in this field?&quot; It&#39;s also the shortest!</p>
 				<p><code>Optional</code> or <code>Maybe</code> are both good names; <code>Maybe</code> just seemed slightly better.</p>
@@ -276,7 +296,7 @@ const functionalNothing = nothing();
 				</ul>
 				<h4 id="-result-"><code>Result</code></h4>
 				<ul>
-					<li>[ ] TODO: Explain why <code>Result</code> (and in contrast with <code>Either</code>)</li>
+					<li>[ ] TODO: Explain why <code>Result</code></li>
 				</ul>
 				<h5 id="the-result-variants-ok-and-err-">The <code>Result</code> variants: <code>Ok</code> and <code>Err</code></h5>
 				<ul>
@@ -375,6 +395,11 @@ const functionalNothing = nothing();
 				<h3 id="sanctuary-">Sanctuary?</h3>
 				<ul>
 					<li>[ ] TODO: kind of the same as Folktale, but add specific details</li>
+				</ul>
+				<h2 id="migrating-from-existing-libs">Migrating from existing libs</h2>
+				<ul>
+					<li>[ ] TODO: instructions for migrating from Folktale 1.0/2.0</li>
+					<li>[ ] TODO: instructions for migrating from Sanctuary</li>
 				</ul>
 				<h2 id="what-s-with-the-name-">What&#39;s with the name?</h2>
 				<ul>
