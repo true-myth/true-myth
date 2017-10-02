@@ -347,6 +347,16 @@ export const nothing = <T>(): Maybe<T> => new Nothing<T>();
  * The behavior of this type is checked by TypeScript or Flow at compile time,
  * and bears no runtime overhead other than the very small cost of the container
  * object and some lightweight wrap/unwrap functionality.
+ * 
+ * The `Nothing` variant has a type parameter `<T>` so that type inference works
+ * correctly in TypeScript when operating on `Nothing` instances with functions
+ * which require a `T` to behave properly, e.g. [`map`](#map), which cannot
+ * check that the map function satisies the type constraints for `Maybe<T>`
+ * unless `Nothing` has a parameter `T` to constrain it on invocation.
+ * 
+ * Put simply: if you have a `Nothing` variant of a `Maybe<string>`, and you
+ * pass a function to it which does *not* operate on a `string`, it will still
+ * type check because TypeScript doesn't have enough information to check it.
  */
 export type Maybe<T> = Just<T> | Nothing<T>;
 
