@@ -18,9 +18,10 @@
  * check that the map function satisies the type constraints for `Maybe<T>`
  * unless `Nothing` has a parameter `T` to constrain it on invocation.
  * 
- * Put simply: if you have a `Nothing` variant of a `Maybe<string>`, and you
- * pass a function to it which does *not* operate on a `string`, it will still
- * type check because TypeScript doesn't have enough information to check it.
+ * Put simply: without the type parameter, if you had a `Nothing` variant of a
+ * `Maybe<string>`, and you tried to use it with a function which expected a
+ * `Maybe<number>` it would still type check – because TypeScript doesn't have
+ * enough information to check that it *doesn't* meet the requirements.
  * 
  * ## Using `Maybe`
  * 

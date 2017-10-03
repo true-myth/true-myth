@@ -16,6 +16,7 @@
   "include": ["./src"],
   "typedocOptions": {
     "out": "./docs",
+    "mode": "modules",
     "toc": true,
     "excludePrivate": true,
     "target": "ES6",
