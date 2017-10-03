@@ -1,7 +1,6 @@
 {
   "name": "true-myth",
-  "description":
-    "A library for safe functional programming in JavaScript, with first-class support for TypeScript and Flow",
+  "description": "A library for safe functional programming in JavaScript, with first-class support for TypeScript and Flow",
   "main": "dist/index.js",
   "homepage": "https://chriskrycho.github.io/true-myth",
   "license": "MIT",
@@ -18,6 +17,7 @@
     "jest": "^21.1.0",
     "prettier": "^1.7.0",
     "ts-jest": "^21.0.1",
+    "tslint": "^5.7.0",
     "typedoc": "^0.8.0",
     "typescript": "2.5"
   },
@@ -32,11 +32,21 @@
       "^.+\\.tsx?$": "<rootDir>/node_modules/ts-jest/preprocessor.js"
     },
     "testRegex": "(/__tests__/.*|(\\.|/)(test|spec))\\.(jsx?|tsx?)$",
-    "moduleFileExtensions": ["ts", "tsx", "js", "jsx", "json"],
+    "moduleFileExtensions": [
+      "ts",
+      "tsx",
+      "js",
+      "jsx",
+      "json"
+    ],
     "collectCoverage": true,
     "mapCoverage": true,
-    "collectCoverageFrom": ["src/*"],
-    "coveragePathIgnorePatterns": ["src/index.ts"],
+    "collectCoverageFrom": [
+      "src/*"
+    ],
+    "coveragePathIgnorePatterns": [
+      "src/index.ts"
+    ],
     "coverageThreshold": {
       "global": {
         "branches": 100,
