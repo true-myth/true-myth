@@ -21,6 +21,121 @@
  * Put simply: if you have a `Nothing` variant of a `Maybe<string>`, and you
  * pass a function to it which does *not* operate on a `string`, it will still
  * type check because TypeScript doesn't have enough information to check it.
+ * 
+ * ## Using `Maybe`
+ * 
+ * The library is designed to be used with a functional style, allowing you to
+ * compose operations easily. Thus, standalone pure function versions of every
+ * operation are supplied. However, the same operations also exist on the `Just`
+ * and `Nothing` types directly, so you may also write them in a more
+ * traditional "fluent" object style.
+ * 
+ * ### Examples: functional style
+ * 
+ * ```ts
+ * import * as Maybe from 'true-myth/maybe';
+ * 
+ * // Construct a `Just` where you have a value to use, and the function accepts
+ * // a `Maybe`.
+ * const aKnownNumber = Maybe.just(12);
+ * 
+ * // Construct a `Nothing` where you don't have a value to use, but the
+ * // function requires a value (and accepts a `Maybe`).
+ * const aKnownNothing = Maybe.nothing<string>();
+ * 
+ * // Construct a `Maybe` where you don't know whether the value will exist or
+ * // not, using `of`.
+ * type WhoKnows = { mightBeAThing?: boolean[] }
+ * 
+ * const whoKnows: WhoKnows = {};
+ * const wrappedWhoKnows = Maybe.of(whoKnows.mightBeAThing);
+ * console.log(toString(wrappedWhoKnows));  // Nothing
+ * 
+ * const whoElseKnows: WhoKnows = { mightBeAThing: [true, false] }
+ * const wrappedWhoElseKnows = Maybe.of(whoElseKnows.mightBeAThing);
+ * console.log(toString(wrappedWhoElseKnows));  // "Just(true,false)"
+ * ```
+ * 
+ * ### Examples: fluent object invocation
+ * 
+ * Even in the fluent style, if you are constructing a `Maybe` from an unknown
+ * source, you must use the `of` function, or do the work to check the value
+ * yourself – you can't know at that point whether it's safe to construct a
+ * `Just` without checking, but `of` will always work!
+ * 
+ * ```ts
+ * import { isVoid, Maybe, Just, Nothing } from 'true-myth/maybe';
+ * 
+ * // Construct a `Just` where you have a value to use, and the function accepts
+ * // a `Maybe`.
+ * const aKnownNumber = new Just(12);
+ * 
+ * // Construct a `Nothing` where you don't have a value to use, but the
+ * // function requires a value (and accepts a `Maybe<string>`).
+ * const aKnownNothing = new Nothing();
+ * 
+ * // Construct a `Maybe` where you don't know whether the value will exist or
+ * // not, using `isVoid` to decide which to construct.
+ * type WhoKnows = { mightBeAThing?: boolean[] }
+ * 
+ * const whoKnows: WhoKnows = {};
+ * const wrappedWhoKnows = (!isVoid(whoKnows.mightBeAThing))
+ *   ? new Just(whoKnows.mightBeAThing)
+ *   : new Nothing();
+ * console.log(wrappedWhoKnows.toString());  // Nothing
+ * 
+ * const whoElseKnows: WhoKnows = { mightBeAThing: [true, false] }
+ * const wrappedWhoElseKnows = (!isVoid(whoElseKnows.mightBeAThing))
+ *   ? new Just(whoElseKnows.mightBeAThing)
+ *   : new Nothing();
+ * console.log(wrappedWhoElseKnows.toString());  // "Just(true,false)"
+ * ```
+ * 
+ * As you can see, it's often advantageous to use `Maybe.of` even if you're
+ * otherwise inclined to use the class method approach; it dramatically cuts
+ * down the boilerplate you have to write (since, under the hood, it's doing
+ * exactly this check!).
+ * 
+ * ### Prefer [`Maybe.of`]
+ * 
+ * [`Maybe.of`]: #of
+ * 
+ * In fact, if you're dealing with data you are not constructing directly
+ * yourself, ***always*** prefer to use [`Maybe.of`] to create a new `Maybe`.
+ * If an API lies to you for some reason and hands you an `undefined` or a
+ * `null` (even though you expect it to be an actual `T` in a specific
+ * scenario), the `.of()` function will still construct it correctly for you.
+ * 
+ * By contrast, if you do `Maybe.just(someVariable)` and `someVariable` is
+ * `null` or `undefined`, the program will throw at that point. This is a
+ * simple consequence of the need to make the `new Just()` constructor work; we
+ * cannot construct `Just` safely in a way that excludes a type of `Maybe<null>`
+ * or `Maybe<undefined>` otherwise – and that would defeat the whole purpose of
+ * using a `Maybe`!
+ * 
+ * ### Writing type constraints
+ * 
+ * Especially when constructing a `Nothing`, you may need to specify what *kind*
+ * of `Nothing` it is. The TypeScript and Flow type systems can figure it out
+ * based on the value passed in for a `Just`, but there's no value to use with a
+ * `Nothing`, so you have to specify it. In that case, you can write the type
+ * explicitly:
+ * 
+ * ```ts
+ * import { Maybe, nothing } from 'true-myth/maybe';
+ * 
+ * function takesAMaybeString(thingItTakes: Maybe<string>) {
+ *   console.log(thingItTakes.unwrapOr(""))
+ * }
+ * 
+ * // Via type definition
+ * const nothingHere: Maybe<string> = nothing();
+ * takesAMaybeString(nothingHere);
+ * 
+ * // Via type coercion
+ * const nothingHereEither = nothing<string>();
+ * takesAMaybeString(nothingHereEither);
+ * ```
  */
 
 /** (keep typedoc from getting confused by the imports) */
@@ -385,6 +500,17 @@ export const of = <T>(value: T | undefined | null): Maybe<T> =>
 /**
  * Map over a `Maybe` instance: apply the function to the wrapped value if the
  * instance is `Just`, and return `Nothing` if the instance is `Nothing`.
+ * 
+ * You can think of this as being just like `Array.prototype.map`, but with a
+ * list that is only ever 0 or 1 items long. If you have no items in an array of
+ * numbers named `foo` and call `foo.map(x => x + 1)`, you'll still just have an
+ * array with nothing in it. But if you have a single item in the array (`[2]`),
+ * and you call `foo.map(x => x + 1)` on it, you'll get a new array with that
+ * one value transformed (`[3]`).
+ * 
+ * That's exactly what's happening with `Maybe`: the `Nothing` variant is like
+ * the empty array, and the `Just` variant is like the array with a single item
+ * in it.
  * 
  * #### Examples
  * 
