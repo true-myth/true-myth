@@ -136,6 +136,8 @@ function myFuncThatTakesAnInteger(anInteger) {
 myFuncThatTakesAnInteger(myNumber); // TypeError: anInteger is undefined
 ```
 
+![this is fine](https://user-images.githubusercontent.com/2403023/31154374-ac25ce0e-a874-11e7-9399-73ad99d9d6cb.png)
+
 When the function tries to convert the integer to a string, the function blows
 up because it was written with the assumption that the parameter being passed in
 (a) is defined and (b) has a `toString` method. Neither of these assumptions are
