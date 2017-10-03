@@ -276,7 +276,7 @@ takesAMaybeString(nothingHereEither);
 					<div class="tsd-signature tsd-kind-icon">chain<span class="tsd-signature-symbol">:</span> <a href="" class="tsd-signature-type">andThen</a><span class="tsd-signature-symbol"> =&nbsp;andThen</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in maybe.ts:650</li>
+							<li>Defined in maybe.ts:656</li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -291,7 +291,7 @@ takesAMaybeString(nothingHereEither);
 					<div class="tsd-signature tsd-kind-icon">flat<wbr>Map<span class="tsd-signature-symbol">:</span> <a href="" class="tsd-signature-type">andThen</a><span class="tsd-signature-symbol"> =&nbsp;andThen</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in maybe.ts:653</li>
+							<li>Defined in maybe.ts:659</li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -306,7 +306,7 @@ takesAMaybeString(nothingHereEither);
 					<div class="tsd-signature tsd-kind-icon">unwrap<span class="tsd-signature-symbol">:</span> <a href="" class="tsd-signature-type">unsafelyUnwrap</a><span class="tsd-signature-symbol"> =&nbsp;unsafelyUnwrap</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in maybe.ts:702</li>
+							<li>Defined in maybe.ts:708</li>
 						</ul>
 					</aside>
 				</section>
@@ -323,7 +323,7 @@ takesAMaybeString(nothingHereEither);
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in maybe.ts:620</li>
+									<li>Defined in maybe.ts:626</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -392,7 +392,7 @@ takesAMaybeString(nothingHereEither);
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in maybe.ts:646</li>
+									<li>Defined in maybe.ts:652</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -473,7 +473,7 @@ takesAMaybeString(nothingHereEither);
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in maybe.ts:772</li>
+									<li>Defined in maybe.ts:778</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -632,7 +632,7 @@ takesAMaybeString(nothingHereEither);
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in maybe.ts:536</li>
+									<li>Defined in maybe.ts:542</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -640,15 +640,20 @@ takesAMaybeString(nothingHereEither);
 									<p>Map over a <code>Maybe</code> instance: apply the function to the wrapped value if the
 									instance is <code>Just</code>, and return <code>Nothing</code> if the instance is <code>Nothing</code>.</p>
 								</div>
-								<p>You can think of this as being just like <code>Array.prototype.map</code>, but with a
-									list that is only ever 0 or 1 items long. If you have no items in an array of
+								<p><code>Maybe.map</code> works a lot like <code>Array.prototype.map</code>: <code>Maybe</code> and <code>Array</code> are
+									both <em>containers</em> for other things. If you have no items in an array of
 									numbers named <code>foo</code> and call <code>foo.map(x =&gt; x + 1)</code>, you&#39;ll still just have an
-									array with nothing in it. But if you have a single item in the array (<code>[2]</code>),
-									and you call <code>foo.map(x =&gt; x + 1)</code> on it, you&#39;ll get a new array with that
-								one value transformed (<code>[3]</code>).</p>
-								<p>That&#39;s exactly what&#39;s happening with <code>Maybe</code>: the <code>Nothing</code> variant is like
-									the empty array, and the <code>Just</code> variant is like the array with a single item
-								in it.</p>
+									array with nothing in it. But if you have any items in the array (<code>[2, 3]</code>),
+									and you call <code>foo.map(x =&gt; x + 1)</code> on it, you&#39;ll get a new array with each of
+								those items inside the array &quot;container&quot; transformed (<code>[3, 4]</code>).</p>
+								<p>That&#39;s exactly what&#39;s happening with <code>Maybe.map</code>. If the container is <em>empty</em>
+									– the <code>Nothing</code> variant – you just get back an empty container. If the
+									container has something in it – the <code>Just</code> variant – you get back a container
+								with the item inside transformed.</p>
+								<p>(So... why not just use an array? The biggest reason is that an array can be
+									<em>any</em> length. With a <code>Maybe</code>, we&#39;re capturing the idea of &quot;something or
+									nothing&quot; rather than &quot;0 to n&quot; items. And this lets us implement a whole set
+								of <em>other</em> interfaces )</p>
 								<h4 id="examples">Examples</h4>
 								<pre><code class="lang-ts"><span class="hljs-keyword">const</span> length = <span class="hljs-function">(<span class="hljs-params">s: <span class="hljs-built_in">string</span></span>) =&gt;</span> s.length;
 
@@ -729,7 +734,7 @@ takesAMaybeString(nothingHereEither);
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in maybe.ts:563</li>
+									<li>Defined in maybe.ts:569</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -823,7 +828,7 @@ takesAMaybeString(nothingHereEither);
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in maybe.ts:591</li>
+									<li>Defined in maybe.ts:597</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1027,7 +1032,7 @@ takesAMaybeString(nothingHereEither);
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in maybe.ts:665</li>
+									<li>Defined in maybe.ts:671</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1080,7 +1085,7 @@ takesAMaybeString(nothingHereEither);
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in maybe.ts:684</li>
+									<li>Defined in maybe.ts:690</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1155,7 +1160,7 @@ takesAMaybeString(nothingHereEither);
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in maybe.ts:760</li>
+									<li>Defined in maybe.ts:766</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1233,7 +1238,7 @@ takesAMaybeString(nothingHereEither);
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in maybe.ts:745</li>
+									<li>Defined in maybe.ts:751</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1293,7 +1298,7 @@ takesAMaybeString(nothingHereEither);
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in maybe.ts:790</li>
+									<li>Defined in maybe.ts:796</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1335,7 +1340,7 @@ takesAMaybeString(nothingHereEither);
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in maybe.ts:698</li>
+									<li>Defined in maybe.ts:704</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1380,7 +1385,7 @@ takesAMaybeString(nothingHereEither);
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in maybe.ts:715</li>
+									<li>Defined in maybe.ts:721</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1433,7 +1438,7 @@ takesAMaybeString(nothingHereEither);
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in maybe.ts:730</li>
+									<li>Defined in maybe.ts:736</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">

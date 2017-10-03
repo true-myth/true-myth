@@ -501,16 +501,22 @@ export const of = <T>(value: T | undefined | null): Maybe<T> =>
  * Map over a `Maybe` instance: apply the function to the wrapped value if the
  * instance is `Just`, and return `Nothing` if the instance is `Nothing`.
  * 
- * You can think of this as being just like `Array.prototype.map`, but with a
- * list that is only ever 0 or 1 items long. If you have no items in an array of
+ * `Maybe.map` works a lot like `Array.prototype.map`: `Maybe` and `Array` are
+ * both *containers* for other things. If you have no items in an array of
  * numbers named `foo` and call `foo.map(x => x + 1)`, you'll still just have an
- * array with nothing in it. But if you have a single item in the array (`[2]`),
- * and you call `foo.map(x => x + 1)` on it, you'll get a new array with that
- * one value transformed (`[3]`).
+ * array with nothing in it. But if you have any items in the array (`[2, 3]`),
+ * and you call `foo.map(x => x + 1)` on it, you'll get a new array with each of
+ * those items inside the array "container" transformed (`[3, 4]`).
  * 
- * That's exactly what's happening with `Maybe`: the `Nothing` variant is like
- * the empty array, and the `Just` variant is like the array with a single item
- * in it.
+ * That's exactly what's happening with `Maybe.map`. If the container is *empty*
+ * – the `Nothing` variant – you just get back an empty container. If the
+ * container has something in it – the `Just` variant – you get back a container
+ * with the item inside transformed.
+ * 
+ * (So... why not just use an array? The biggest reason is that an array can be
+ * *any* length. With a `Maybe`, we're capturing the idea of "something or
+ * nothing" rather than "0 to n" items. And this lets us implement a whole set
+ * of *other* interfaces )
  * 
  * #### Examples
  * 
