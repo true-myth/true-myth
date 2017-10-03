@@ -59,21 +59,30 @@
  * 
  * ### Examples: fluent object invocation
  * 
- * Even in the fluent style, if you are constructing a `Maybe` from an unknown
- * source, you must use the `of` function, or do the work to check the value
- * yourself – you can't know at that point whether it's safe to construct a
- * `Just` without checking, but `of` will always work!
+ * **Note:** in the "class"-style, if you are constructing a `Maybe` from an
+ * unknown source, you must either do the work to check the value yourself, or
+ * use `Maybe.of` – you can't know at that point whether it's safe to construct
+ * a `Just` without checking, but `of` will always work correctly!
  * 
  * ```ts
- * import { isVoid, Maybe, Just, Nothing } from 'true-myth/maybe';
+ * import { isVoid } from 'true-myth/utils'
+ * import { Maybe, Just, Nothing } from 'true-myth/maybe';
  * 
  * // Construct a `Just` where you have a value to use, and the function accepts
  * // a `Maybe`.
  * const aKnownNumber = new Just(12);
  * 
+ * // Once the item is constructed, you can apply methods directly on it.
+ * const fromMappedJust = aKnownNumber.map(x => x * 2).unwrapOr(0);
+ * console.log(fromMappedJust);  // 24
+ * 
  * // Construct a `Nothing` where you don't have a value to use, but the
  * // function requires a value (and accepts a `Maybe<string>`).
  * const aKnownNothing = new Nothing();
+ * 
+ * // The same operations will behave safely on a `Nothing` as on a `Just`:
+ * const fromMappedNothing = aKnownNothing.map(x => x * 2).unwrapOr(0);
+ * console.log(fromMappedNothing);  // 0
  * 
  * // Construct a `Maybe` where you don't know whether the value will exist or
  * // not, using `isVoid` to decide which to construct.
@@ -154,8 +163,6 @@ export enum Variant {
   Nothing = 'Nothing',
 }
 
-// Someday maybe we'll have `protocol`s and this would just have default
-// implementations for nearly everything in the concrete classes below.
 export interface IMaybe<T> {
   /** Distinguish between the `Just` and `Nothing` [variants](../enums/_maybe_.variant). */
   variant: Variant;
@@ -604,12 +611,21 @@ export const mapOrElse = <T, U>(
 /**
  * You can think of this like a short-circuiting logical "and" operation on a
  * `Maybe` type. If `maybe` is `Just`, then the result is the `andMaybe`. If
- * `maybe` is `Nothing`, the result is `Nothing`. 
+ * `maybe` is `Nothing`, the result is `Nothing`.
+ * 
+ * This is useful when you have another `Maybe` value you want to provide if and
+ * *only if* you have a `Just` – that is, when you need to make sure that if you
+ * `Nothing`, whatever else you're handing a `Maybe` to *also* gets a `Nothing`.
+ * 
+ * Notice that, unlike in [`map`](#map) or its variants, the original `maybe` is
+ * not involved in constructing the new `Maybe`.
  *
  * ```ts
- * const justA = Maybe.just('A');
- * const justB = Maybe.just('B');
- * const nothing = Maybe.nothing<number>();
+ * import { and, just, nothing, Maybe } from 'true-myth/maybe';
+ * 
+ * const justA = just('A');
+ * const justB = just('B');
+ * const nothing: Maybe<number> = nothing();
  *
  * console.log(and(justB, justA).toString());  // 'Just("B")'
  * console.log(and(justB, nothing).toString());  // 'Nothing'
@@ -631,6 +647,10 @@ export const and = <T, U>(andMaybe: Maybe<U>, maybe: Maybe<T>): Maybe<U> =>
  * Apply a function to the wrapped value if `Just` and return a new `Just`
  * containing the resulting value; or return `Nothing` if `Nothing`.
  * 
+ * This differs from `map` in that `thenFn` returns another `Maybe`. You can use
+ * `andThen` to combine two functions which *both* create a `Maybe` from an
+ * unwrapped type.
+ * 
  * This is also commonly known as (and therefore aliased as) [`flatMap`] or
  * [`chain`]. It is sometimes also known as `bind`, but *not* aliased as such
  * because [`bind` already means something in JavaScript][bind].
@@ -638,10 +658,6 @@ export const and = <T, U>(andMaybe: Maybe<U>, maybe: Maybe<T>): Maybe<U> =>
  * [`flatMap`]: #flatmap
  * [`chain`]: #chain
  * [bind]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function/bind
- * 
- * This differs from `map` in that `thenFn` returns another `Maybe`. You can use
- * `andThen` to combine two functions which *both* create a `Maybe` from an
- * unwrapped type.
  * 
  * @typeparam T  The wrapped value.
  * @param thenFn The function to apply to the wrapped `T` if `maybe` is `Just`.
@@ -663,6 +679,23 @@ export const flatMap = andThen;
  * Provide a fallback for a given `Maybe`. Behaves like a logical `or`: if the
  * `maybe` value is a `Just`, returns that `maybe`; otherwise, returns the
  * `defaultMaybe` value.
+ * 
+ * This is useful when you want to make sure that something which takes a
+ * `Maybe` always ends up getting a `Just` variant, by supplying a default value
+ * for the case that you currently have a nothing.
+ * 
+ * ```ts
+ * import { or, just, nothing, Maybe } from 'true-utils/maybe';
+ * 
+ * const justA = just("a");
+ * const justB = just("b");
+ * const aNothing: Maybe<string> = nothing();
+ * 
+ * console.log(or(justB, justA).toString());  // 'Just("A")'
+ * console.log(or(aNothing, justA).toString());  // 'Just("A")'
+ * console.log(or(justB, aNothing).toString());  // 'Just("B")'
+ * console.log(or(aNothing, aNothing).toString());  // 'Nothing'
+ * ```
  * 
  * @typeparam T        The wrapped value.
  * @param defaultMaybe The `Maybe` to use if `maybe` is a `Nothing`.
