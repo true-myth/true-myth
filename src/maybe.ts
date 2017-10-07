@@ -1,151 +1,191 @@
 /**
- * A [`Maybe<T>`](#maybe) represents a value of type `T` which may, or may not,
- * be present.
- * 
- * If the value is present, it is `Just(value)`. If it's absent, it's `Nothing`.
- * This provides a type-safe container for dealing with the possibility that
- * there's nothing here – a container you can do many of the same things you
- * might with an array – so that you can avoid nasty `null` and `undefined`
- * checks throughout your codebase.
- * 
- * The behavior of this type is checked by TypeScript or Flow at compile time,
- * and bears no runtime overhead other than the very small cost of the container
- * object and some lightweight wrap/unwrap functionality.
- * 
- * The `Nothing` variant has a type parameter `<T>` so that type inference works
- * correctly in TypeScript when operating on `Nothing` instances with functions
- * which require a `T` to behave properly, e.g. [`map`](#map), which cannot
- * check that the map function satisies the type constraints for `Maybe<T>`
- * unless `Nothing` has a parameter `T` to constrain it on invocation.
- * 
- * Put simply: without the type parameter, if you had a `Nothing` variant of a
- * `Maybe<string>`, and you tried to use it with a function which expected a
- * `Maybe<number>` it would still type check – because TypeScript doesn't have
- * enough information to check that it *doesn't* meet the requirements.
- * 
- * ## Using `Maybe`
- * 
- * The library is designed to be used with a functional style, allowing you to
- * compose operations easily. Thus, standalone pure function versions of every
- * operation are supplied. However, the same operations also exist on the `Just`
- * and `Nothing` types directly, so you may also write them in a more
- * traditional "fluent" object style.
- * 
- * ### Examples: functional style
- * 
- * ```ts
- * import * as Maybe from 'true-myth/maybe';
- * 
- * // Construct a `Just` where you have a value to use, and the function accepts
- * // a `Maybe`.
- * const aKnownNumber = Maybe.just(12);
- * 
- * // Construct a `Nothing` where you don't have a value to use, but the
- * // function requires a value (and accepts a `Maybe`).
- * const aKnownNothing = Maybe.nothing<string>();
- * 
- * // Construct a `Maybe` where you don't know whether the value will exist or
- * // not, using `of`.
- * type WhoKnows = { mightBeAThing?: boolean[] }
- * 
- * const whoKnows: WhoKnows = {};
- * const wrappedWhoKnows = Maybe.of(whoKnows.mightBeAThing);
- * console.log(toString(wrappedWhoKnows));  // Nothing
- * 
- * const whoElseKnows: WhoKnows = { mightBeAThing: [true, false] }
- * const wrappedWhoElseKnows = Maybe.of(whoElseKnows.mightBeAThing);
- * console.log(toString(wrappedWhoElseKnows));  // "Just(true,false)"
- * ```
- * 
- * ### Examples: fluent object invocation
- * 
- * **Note:** in the "class"-style, if you are constructing a `Maybe` from an
- * unknown source, you must either do the work to check the value yourself, or
- * use `Maybe.of` – you can't know at that point whether it's safe to construct
- * a `Just` without checking, but `of` will always work correctly!
- * 
- * ```ts
- * import { isVoid } from 'true-myth/utils'
- * import { Maybe, Just, Nothing } from 'true-myth/maybe';
- * 
- * // Construct a `Just` where you have a value to use, and the function accepts
- * // a `Maybe`.
- * const aKnownNumber = new Just(12);
- * 
- * // Once the item is constructed, you can apply methods directly on it.
- * const fromMappedJust = aKnownNumber.map(x => x * 2).unwrapOr(0);
- * console.log(fromMappedJust);  // 24
- * 
- * // Construct a `Nothing` where you don't have a value to use, but the
- * // function requires a value (and accepts a `Maybe<string>`).
- * const aKnownNothing = new Nothing();
- * 
- * // The same operations will behave safely on a `Nothing` as on a `Just`:
- * const fromMappedNothing = aKnownNothing.map(x => x * 2).unwrapOr(0);
- * console.log(fromMappedNothing);  // 0
- * 
- * // Construct a `Maybe` where you don't know whether the value will exist or
- * // not, using `isVoid` to decide which to construct.
- * type WhoKnows = { mightBeAThing?: boolean[] }
- * 
- * const whoKnows: WhoKnows = {};
- * const wrappedWhoKnows = (!isVoid(whoKnows.mightBeAThing))
- *   ? new Just(whoKnows.mightBeAThing)
- *   : new Nothing();
- * console.log(wrappedWhoKnows.toString());  // Nothing
- * 
- * const whoElseKnows: WhoKnows = { mightBeAThing: [true, false] }
- * const wrappedWhoElseKnows = (!isVoid(whoElseKnows.mightBeAThing))
- *   ? new Just(whoElseKnows.mightBeAThing)
- *   : new Nothing();
- * console.log(wrappedWhoElseKnows.toString());  // "Just(true,false)"
- * ```
- * 
- * As you can see, it's often advantageous to use `Maybe.of` even if you're
- * otherwise inclined to use the class method approach; it dramatically cuts
- * down the boilerplate you have to write (since, under the hood, it's doing
- * exactly this check!).
- * 
- * ### Prefer [`Maybe.of`]
- * 
- * [`Maybe.of`]: #of
- * 
- * In fact, if you're dealing with data you are not constructing directly
- * yourself, ***always*** prefer to use [`Maybe.of`] to create a new `Maybe`.
- * If an API lies to you for some reason and hands you an `undefined` or a
- * `null` (even though you expect it to be an actual `T` in a specific
- * scenario), the `.of()` function will still construct it correctly for you.
- * 
- * By contrast, if you do `Maybe.just(someVariable)` and `someVariable` is
- * `null` or `undefined`, the program will throw at that point. This is a
- * simple consequence of the need to make the `new Just()` constructor work; we
- * cannot construct `Just` safely in a way that excludes a type of `Maybe<null>`
- * or `Maybe<undefined>` otherwise – and that would defeat the whole purpose of
- * using a `Maybe`!
- * 
- * ### Writing type constraints
- * 
- * Especially when constructing a `Nothing`, you may need to specify what *kind*
- * of `Nothing` it is. The TypeScript and Flow type systems can figure it out
- * based on the value passed in for a `Just`, but there's no value to use with a
- * `Nothing`, so you have to specify it. In that case, you can write the type
- * explicitly:
- * 
- * ```ts
- * import { Maybe, nothing } from 'true-myth/maybe';
- * 
- * function takesAMaybeString(thingItTakes: Maybe<string>) {
- *   console.log(thingItTakes.unwrapOr(""))
- * }
- * 
- * // Via type definition
- * const nothingHere: Maybe<string> = nothing();
- * takesAMaybeString(nothingHere);
- * 
- * // Via type coercion
- * const nothingHereEither = nothing<string>();
- * takesAMaybeString(nothingHereEither);
- * ```
+  A [`Maybe<T>`](#maybe) represents a value of type `T` which may, or may not,
+  be present.
+  
+  If the value is present, it is `Just(value)`. If it's absent, it's `Nothing`.
+  This provides a type-safe container for dealing with the possibility that
+  there's nothing here – a container you can do many of the same things you
+  might with an array – so that you can avoid nasty `null` and `undefined`
+  checks throughout your codebase.
+  
+  The behavior of this type is checked by TypeScript or Flow at compile time,
+  and bears no runtime overhead other than the very small cost of the container
+  object and some lightweight wrap/unwrap functionality.
+  
+  The `Nothing` variant has a type parameter `<T>` so that type inference works
+  correctly in TypeScript when operating on `Nothing` instances with functions
+  which require a `T` to behave properly, e.g. [`map`](#map), which cannot
+  check that the map function satisies the type constraints for `Maybe<T>`
+  unless `Nothing` has a parameter `T` to constrain it on invocation.
+  
+  Put simply: without the type parameter, if you had a `Nothing` variant of a
+  `Maybe<string>`, and you tried to use it with a function which expected a
+  `Maybe<number>` it would still type check – because TypeScript doesn't have
+  enough information to check that it *doesn't* meet the requirements.
+  
+  ## Using `Maybe`
+  
+  The library is designed to be used with a functional style, allowing you to
+  compose operations easily. Thus, standalone pure function versions of every
+  operation are supplied. However, the same operations also exist on the `Just`
+  and `Nothing` types directly, so you may also write them in a more
+  traditional "fluent" object style.
+  
+  ### Examples: functional style
+  
+  ```ts
+  import * as Maybe from 'true-myth/maybe';
+  
+  // Construct a `Just` where you have a value to use, and the function accepts
+  // a `Maybe`.
+  const aKnownNumber = Maybe.just(12);
+  
+  // Construct a `Nothing` where you don't have a value to use, but the
+  // function requires a value (and accepts a `Maybe`).
+  const aKnownNothing = Maybe.nothing<string>();
+  
+  // Construct a `Maybe` where you don't know whether the value will exist or
+  // not, using `of`.
+  type WhoKnows = { mightBeAThing?: boolean[] }
+  
+  const whoKnows: WhoKnows = {};
+  const wrappedWhoKnows = Maybe.of(whoKnows.mightBeAThing);
+  console.log(toString(wrappedWhoKnows));  // Nothing
+  
+  const whoElseKnows: WhoKnows = { mightBeAThing: [true, false] }
+  const wrappedWhoElseKnows = Maybe.of(whoElseKnows.mightBeAThing);
+  console.log(toString(wrappedWhoElseKnows));  // "Just(true,false)"
+  ```
+  
+  ### Examples: fluent object invocation
+  
+  **Note:** in the "class"-style, if you are constructing a `Maybe` from an
+  unknown source, you must either do the work to check the value yourself, or
+  use `Maybe.of` – you can't know at that point whether it's safe to construct
+  a `Just` without checking, but `of` will always work correctly!
+  
+  ```ts
+  import { isVoid } from 'true-myth/utils'
+  import { Maybe, Just, Nothing } from 'true-myth/maybe';
+  
+  // Construct a `Just` where you have a value to use, and the function accepts
+  // a `Maybe`.
+  const aKnownNumber = new Just(12);
+  
+  // Once the item is constructed, you can apply methods directly on it.
+  const fromMappedJust = aKnownNumber.map(x => x * 2).unwrapOr(0);
+  console.log(fromMappedJust);  // 24
+  
+  // Construct a `Nothing` where you don't have a value to use, but the
+  // function requires a value (and accepts a `Maybe<string>`).
+  const aKnownNothing = new Nothing();
+  
+  // The same operations will behave safely on a `Nothing` as on a `Just`:
+  const fromMappedNothing = aKnownNothing.map(x => x * 2).unwrapOr(0);
+  console.log(fromMappedNothing);  // 0
+  
+  // Construct a `Maybe` where you don't know whether the value will exist or
+  // not, using `isVoid` to decide which to construct.
+  type WhoKnows = { mightBeAThing?: boolean[] }
+  
+  const whoKnows: WhoKnows = {};
+  const wrappedWhoKnows = (!isVoid(whoKnows.mightBeAThing))
+    ? new Just(whoKnows.mightBeAThing)
+    : new Nothing();
+  console.log(wrappedWhoKnows.toString());  // Nothing
+  
+  const whoElseKnows: WhoKnows = { mightBeAThing: [true, false] }
+  const wrappedWhoElseKnows = (!isVoid(whoElseKnows.mightBeAThing))
+    ? new Just(whoElseKnows.mightBeAThing)
+    : new Nothing();
+  console.log(wrappedWhoElseKnows.toString());  // "Just(true,false)"
+  ```
+  
+  As you can see, it's often advantageous to use `Maybe.of` even if you're
+  otherwise inclined to use the class method approach; it dramatically cuts
+  down the boilerplate you have to write (since, under the hood, it's doing
+  exactly this check!).
+  
+  ### Prefer [`Maybe.of`]
+  
+  [`Maybe.of`]: #of
+  
+  In fact, if you're dealing with data you are not constructing directly
+  yourself, ***always*** prefer to use [`Maybe.of`] to create a new `Maybe`.
+  If an API lies to you for some reason and hands you an `undefined` or a
+  `null` (even though you expect it to be an actual `T` in a specific
+  scenario), the `.of()` function will still construct it correctly for you.
+  
+  By contrast, if you do `Maybe.just(someVariable)` and `someVariable` is
+  `null` or `undefined`, the program will throw at that point. This is a
+  simple consequence of the need to make the `new Just()` constructor work; we
+  cannot construct `Just` safely in a way that excludes a type of `Maybe<null>`
+  or `Maybe<undefined>` otherwise – and that would defeat the whole purpose of
+  using a `Maybe`!
+  
+  ### Writing type constraints
+  
+  Especially when constructing a `Nothing`, you may need to specify what *kind*
+  of `Nothing` it is. The TypeScript and Flow type systems can figure it out
+  based on the value passed in for a `Just`, but there's no value to use with a
+  `Nothing`, so you have to specify it. In that case, you can write the type
+  explicitly:
+  
+  ```ts
+  import { Maybe, nothing } from 'true-myth/maybe';
+  
+  function takesAMaybeString(thingItTakes: Maybe<string>) {
+    console.log(thingItTakes.unwrapOr(""))
+  }
+  
+  // Via type definition
+  const nothingHere: Maybe<string> = nothing();
+  takesAMaybeString(nothingHere);
+  
+  // Via type coercion
+  const nothingHereEither = nothing<string>();
+  takesAMaybeString(nothingHereEither);
+  ```
+  
+  ## Using `Maybe` Effectively
+  
+  The best times to create and safely unwrap `Maybe`s are at the *boundaries* of
+  your application. When you are deserializing data from an API, or when you are
+  handling user input, you can use a `Maybe` instance to handle the possibility
+  that there's just nothing there, if there is no good default value to use
+  *everywhere* in the application. Within the business logic of your
+  application, you can then safely deal with the data by using the `Maybe`
+  functions or method until you hit another boundary, and then you can choose
+  how best to handle it at that point.
+  
+  You won't normally need to unwrap it at any point *other* than the boundaries,
+  because you can simply apply any transformations using the helper functions or
+  methods, and be confident that you'll have either correctly transformed data,
+  or a `Nothing`, at the end, depending on your inputs.
+  
+  If you are handing data off to another API, for example, you might convert a
+  `Nothing` right back into a `null` in a JSON payload, as that's a reasonable
+  way to send the data across the wire – the consumer can then decide how to
+  handle it as is appropriate in its own context.
+  
+  If you are rendering a UI, having a `Nothing` when you need to render gives
+  you an opportunity to provide default/fallback content – whether that's an
+  explanation that there's nothing there, or a sensible substitute, or anything
+  else that might be appropriate at that point in your app.
+  
+  You may also be tempted to use `Maybe`s to replace boolean flags or similar
+  approaches for defining branching behavior or output from a function. You
+  should avoid that, in general. Reserve `Maybe` for modeling the possible
+  *absence of data*, and nothing else. Prefer to use `Result` or `Either` for
+  *fallible* or *disjoint* scenarios instead – or construct your own union types
+  if you have more than two boundaries!
+  
+  Finally, and along similar lines, if you find yourself building a data
+  structure with a lot of `Maybe` types in it, you should consider it a "code
+  smell" – something wrong with your model. It usually means you should find a
+  way to refactor the data structure into a union of smaller data structures
+  which more accurately capture the domain you're modeling.
+  
  */
 
 /** (keep typedoc from getting confused by the imports) */
@@ -153,10 +193,10 @@ import { isVoid } from './utils';
 import * as Result from './result';
 
 /**
- * Discriminant for the `Just` and `Nothing` variants.
- * 
- * You can use the discriminant via the `variant` property of `Maybe` instances
- * if you need to match explicitly on it.
+  Discriminant for the `Just` and `Nothing` variants.
+  
+  You can use the discriminant via the `variant` property of `Maybe` instances
+  if you need to match explicitly on it.
  */
 export enum Variant {
   Just = 'Just',
@@ -223,32 +263,32 @@ export class Just<T> implements IMaybe<T> {
   variant = Variant.Just;
 
   /**
-   * Create an instance of `Maybe.Just` with `new`.
-   * 
-   * **Note:** While you *may* create the `Just` type via normal JavaScript
-   * class construction, it is not recommended for the functional style for
-   * which the library is intended. Instead, use [`Maybe.of`] (for the general
-   * case) or [`Maybe.just`] for this specific case.
-   * 
-   * [`Maybe.of`]: ../modules/_maybe_.html#of
-   * [`Maybe.just`]: ../modules/_maybe_.html#just
-   * 
-   * ```ts
-   * // Avoid:
-   * const aString = new Maybe.Just('characters');
-   * 
-   * // Prefer:
-   * const aString = Maybe.just('characters);
-   * ```
-   * 
-   * @param value
-   * The value to wrap in a `Maybe.Just`.
-   * 
-   * `null` and `undefined` are allowed by the type signature so that the
-   * constructor may `throw` on those rather than constructing a type like
-   * `Maybe<undefined>`.
-   * 
-   * @throws      If you pass `null` or `undefined`.
+  Create an instance of `Maybe.Just` with `new`.
+  
+  **Note:** While you *may* create the `Just` type via normal JavaScript
+  class construction, it is not recommended for the functional style for
+  which the library is intended. Instead, use [`Maybe.of`] (for the general
+  case) or [`Maybe.just`] for this specific case.
+  
+  [`Maybe.of`]: ../modules/_maybe_.html#of
+  [`Maybe.just`]: ../modules/_maybe_.html#just
+  
+  ```ts
+  // Avoid:
+  const aString = new Maybe.Just('characters');
+  
+  // Prefer:
+  const aString = Maybe.just('characters);
+  ```
+  
+  @param value
+  The value to wrap in a `Maybe.Just`.
+  
+  `null` and `undefined` are allowed by the type signature so that the
+  constructor may `throw` on those rather than constructing a type like
+  `Maybe<undefined>`.
+  
+  @throws      If you pass `null` or `undefined`.
    */
   constructor(value: T | null | undefined) {
     if (isVoid(value)) {
@@ -435,45 +475,45 @@ export class Nothing<T> implements IMaybe<T> {
 }
 
 /**
- * Is this result a `Just` instance?
- * 
- * In TypeScript, narrows the type from `Maybe<T>` to `Just<T>`.
+  Is this result a `Just` instance?
+  
+  In TypeScript, narrows the type from `Maybe<T>` to `Just<T>`.
  */
 export const isJust = <T>(maybe: Maybe<T>): maybe is Just<T> => maybe.variant === Variant.Just;
 
 /**
- * Is this result a `Nothing` instance?
- * 
- * In TypeScript, narrows the type from `Maybe<T>` to `Nothing<T>`.
+  Is this result a `Nothing` instance?
+  
+  In TypeScript, narrows the type from `Maybe<T>` to `Nothing<T>`.
  */
 export const isNothing = <T>(maybe: Maybe<T>): maybe is Nothing<T> =>
   maybe.variant === Variant.Nothing;
 
 /**
- * Create an instance of `Maybe.Just`.
- * 
- * `null` and `undefined` are allowed by the type signature so that the
- * function may `throw` on those rather than constructing a type like
- * `Maybe<undefined>`.
- * 
- * @typeparam T The type of the item contained in the `Maybe`.
- * @param value The value to wrap in a `Maybe.Just`.
- * @throws      If you pass `null` or `undefined`.
+  Create an instance of `Maybe.Just`.
+  
+  `null` and `undefined` are allowed by the type signature so that the
+  function may `throw` on those rather than constructing a type like
+  `Maybe<undefined>`.
+  
+  @typeparam T The type of the item contained in the `Maybe`.
+  @param value The value to wrap in a `Maybe.Just`.
+  @throws      If you pass `null` or `undefined`.
  */
 export const just = <T>(value: T | null | undefined): Maybe<T> => new Just<T>(value);
 
 /**
- * Create an instance of `Maybe.Nothing`.
- * 
- * If you want to create an instance with a specific type, e.g. for use in a
- * function which expects a `Maybe<T>` where the `<T>` is known but you have no
- * value to give it, you can use a type parameter:
- * 
- * ```ts
- * const notString = Maybe.nothing<string>();
- * ```
- * 
- * @typeparam T The type of the item contained in the `Maybe`.
+  Create an instance of `Maybe.Nothing`.
+  
+  If you want to create an instance with a specific type, e.g. for use in a
+  function which expects a `Maybe<T>` where the `<T>` is known but you have no
+  value to give it, you can use a type parameter:
+  
+  ```ts
+  const notString = Maybe.nothing<string>();
+  ```
+  
+  @typeparam T The type of the item contained in the `Maybe`.
  */
 export const nothing = <T>(): Maybe<T> => new Nothing<T>();
 
@@ -481,126 +521,126 @@ export const nothing = <T>(): Maybe<T> => new Nothing<T>();
 export type Maybe<T> = Just<T> | Nothing<T>;
 
 /**
- * Create a `Maybe` from any value.
- * 
- * To specify that the result should be interpreted as a specific type, you may
- * invoke `Maybe.of` with an explicit type parameter:
- * 
- * ```ts
- * const foo = Maybe.of<string>(null);
- * ```
- * 
- * This is usually only important in two cases:
- * 
- * 1.  If you are intentionally constructing a `Nothing` from a known `null` or
- *     undefined value *which is untyped*.
- * 2.  If you are specifying that the type is more general than the value passed
- *     (since TypeScript can define types as literals).
- * 
- * @typeparam T The type of the item contained in the `Maybe`.
- * @param value The value to wrap in a `Maybe`. If it is `undefined` or `null`,
- *              the result will be `Nothing`; otherwise it will be the type of
- *              the value passed.
+  Create a `Maybe` from any value.
+  
+  To specify that the result should be interpreted as a specific type, you may
+  invoke `Maybe.of` with an explicit type parameter:
+  
+  ```ts
+  const foo = Maybe.of<string>(null);
+  ```
+  
+  This is usually only important in two cases:
+  
+  1.  If you are intentionally constructing a `Nothing` from a known `null` or
+      undefined value *which is untyped*.
+  2.  If you are specifying that the type is more general than the value passed
+      (since TypeScript can define types as literals).
+  
+  @typeparam T The type of the item contained in the `Maybe`.
+  @param value The value to wrap in a `Maybe`. If it is `undefined` or `null`,
+               the result will be `Nothing`; otherwise it will be the type of
+               the value passed.
  */
 export const of = <T>(value: T | undefined | null): Maybe<T> =>
   isVoid(value) ? nothing<T>() : just(value);
 
 /**
- * Map over a `Maybe` instance: apply the function to the wrapped value if the
- * instance is `Just`, and return `Nothing` if the instance is `Nothing`.
- * 
- * `Maybe.map` works a lot like `Array.prototype.map`: `Maybe` and `Array` are
- * both *containers* for other things. If you have no items in an array of
- * numbers named `foo` and call `foo.map(x => x + 1)`, you'll still just have an
- * array with nothing in it. But if you have any items in the array (`[2, 3]`),
- * and you call `foo.map(x => x + 1)` on it, you'll get a new array with each of
- * those items inside the array "container" transformed (`[3, 4]`).
- * 
- * That's exactly what's happening with `Maybe.map`. If the container is *empty*
- * – the `Nothing` variant – you just get back an empty container. If the
- * container has something in it – the `Just` variant – you get back a container
- * with the item inside transformed.
- * 
- * (So... why not just use an array? The biggest reason is that an array can be
- * *any* length. With a `Maybe`, we're capturing the idea of "something or
- * nothing" rather than "0 to n" items. And this lets us implement a whole set
- * of *other* interfaces )
- * 
- * #### Examples
- * 
- * ```ts
- * const length = (s: string) => s.length;
- * 
- * const justAString = Maybe.just('string');
- * const justTheStringLength = map(length, justAString);
- * console.log(justTheStringLength.toString()); // "Just(6)"
- * 
- * const notAString = Maybe.nothing<string>();
- * const notAStringLength = map(length, notAString);
- * console.log(notAStringLength.toString()); // "Nothing"
- * ```
- * 
- * @typeparam T The wrapped value.
- * @typeparam U The wrapped value of the returned `Maybe`.
- * @param mapFn The function to apply the value to if `Maybe` is `Just`.
- * @param maybe The `Maybe` instance to map over.
- * @returns     A new `Maybe` with the result of applying `mapFn` to the value
- *              in a `Just`, or `Nothing` if `maybe` is `Nothing`.
+  Map over a `Maybe` instance: apply the function to the wrapped value if the
+  instance is `Just`, and return `Nothing` if the instance is `Nothing`.
+  
+  `Maybe.map` works a lot like `Array.prototype.map`: `Maybe` and `Array` are
+  both *containers* for other things. If you have no items in an array of
+  numbers named `foo` and call `foo.map(x => x + 1)`, you'll still just have an
+  array with nothing in it. But if you have any items in the array (`[2, 3]`),
+  and you call `foo.map(x => x + 1)` on it, you'll get a new array with each of
+  those items inside the array "container" transformed (`[3, 4]`).
+  
+  That's exactly what's happening with `Maybe.map`. If the container is *empty*
+  – the `Nothing` variant – you just get back an empty container. If the
+  container has something in it – the `Just` variant – you get back a container
+  with the item inside transformed.
+  
+  (So... why not just use an array? The biggest reason is that an array can be
+  *any* length. With a `Maybe`, we're capturing the idea of "something or
+  nothing" rather than "0 to n" items. And this lets us implement a whole set
+  of *other* interfaces )
+  
+  #### Examples
+  
+  ```ts
+  const length = (s: string) => s.length;
+  
+  const justAString = Maybe.just('string');
+  const justTheStringLength = map(length, justAString);
+  console.log(justTheStringLength.toString()); // "Just(6)"
+  
+  const notAString = Maybe.nothing<string>();
+  const notAStringLength = map(length, notAString);
+  console.log(notAStringLength.toString()); // "Nothing"
+  ```
+  
+  @typeparam T The wrapped value.
+  @typeparam U The wrapped value of the returned `Maybe`.
+  @param mapFn The function to apply the value to if `Maybe` is `Just`.
+  @param maybe The `Maybe` instance to map over.
+  @returns     A new `Maybe` with the result of applying `mapFn` to the value
+               in a `Just`, or `Nothing` if `maybe` is `Nothing`.
  */
 export const map = <T, U>(mapFn: (t: T) => U, maybe: Maybe<T>): Maybe<U> =>
   isJust(maybe) ? just(mapFn(unwrap(maybe))) : nothing<U>();
 
 /**
- * Map over a `Maybe` instance and get out the value if `maybe` is a `Just`, or
- * return a default value if `maybe` is a `Nothing`.
- * 
- * #### Examples
- * 
- * ```ts
- * const length = (s: string) => s.length;
- * 
- * const justAString = Maybe.just('string');
- * const theStringLength = mapOr(0, length, justAString);
- * console.log(theStringLength); // 6
- * 
- * const notAString = Maybe.nothing<string>();
- * const notAStringLength = mapOr(0, length, notAString)
- * console.log(notAStringLength); // 0
- * ```
- * 
- * @typeparam T The wrapped value.
- * @typeparam U The wrapped value of the returned `Maybe`.
- * @param orU   The default value to use if `maybe` is `Nothing`
- * @param mapFn The function to apply the value to if `Maybe` is `Just`
- * @param maybe The `Maybe` instance to map over.
+  Map over a `Maybe` instance and get out the value if `maybe` is a `Just`, or
+  return a default value if `maybe` is a `Nothing`.
+  
+  #### Examples
+  
+  ```ts
+  const length = (s: string) => s.length;
+  
+  const justAString = Maybe.just('string');
+  const theStringLength = mapOr(0, length, justAString);
+  console.log(theStringLength); // 6
+  
+  const notAString = Maybe.nothing<string>();
+  const notAStringLength = mapOr(0, length, notAString)
+  console.log(notAStringLength); // 0
+  ```
+  
+  @typeparam T The wrapped value.
+  @typeparam U The wrapped value of the returned `Maybe`.
+  @param orU   The default value to use if `maybe` is `Nothing`
+  @param mapFn The function to apply the value to if `Maybe` is `Just`
+  @param maybe The `Maybe` instance to map over.
  */
 export const mapOr = <T, U>(orU: U, mapFn: (t: T) => U, maybe: Maybe<T>): U =>
   isJust(maybe) ? mapFn(unwrap(maybe)) : orU;
 
 /**
- * Map over a `Maybe` instance and get out the value if `maybe` is a `Just`,
- * or use a function to construct a default value if `maybe` is `Nothing`.
- * 
- * #### Examples
- * 
- * ```ts
- * const length = (s: string) => s.length;
- * const getDefault = () => 0;
- * 
- * const justAString = Maybe.just('string');
- * const theStringLength = mapOrElse(getDefault, length, justAString);
- * console.log(theStringLength); // 6
- * 
- * const notAString = Maybe.nothing<string>();
- * const notAStringLength = mapOrElse(getDefault, length, notAString)
- * console.log(notAStringLength); // 0
- * ```
- * 
- * @typeparam T    The wrapped value.
- * @typeparam U    The wrapped value of the returned `Maybe`.
- * @param orElseFn The function to apply if `maybe` is `Nothing`.
- * @param mapFn    The function to apply to the wrapped value if `maybe` is `Just`
- * @param maybe    The `Maybe` instance to map over.
+  Map over a `Maybe` instance and get out the value if `maybe` is a `Just`,
+  or use a function to construct a default value if `maybe` is `Nothing`.
+  
+  #### Examples
+  
+  ```ts
+  const length = (s: string) => s.length;
+  const getDefault = () => 0;
+  
+  const justAString = Maybe.just('string');
+  const theStringLength = mapOrElse(getDefault, length, justAString);
+  console.log(theStringLength); // 6
+  
+  const notAString = Maybe.nothing<string>();
+  const notAStringLength = mapOrElse(getDefault, length, notAString)
+  console.log(notAStringLength); // 0
+  ```
+  
+  @typeparam T    The wrapped value.
+  @typeparam U    The wrapped value of the returned `Maybe`.
+  @param orElseFn The function to apply if `maybe` is `Nothing`.
+  @param mapFn    The function to apply to the wrapped value if `maybe` is `Just`
+  @param maybe    The `Maybe` instance to map over.
  */
 export const mapOrElse = <T, U>(
   orElseFn: (...args: any[]) => U,
@@ -609,62 +649,90 @@ export const mapOrElse = <T, U>(
 ): U => (isJust(maybe) ? mapFn(unwrap(maybe)) : orElseFn());
 
 /**
- * You can think of this like a short-circuiting logical "and" operation on a
- * `Maybe` type. If `maybe` is `Just`, then the result is the `andMaybe`. If
- * `maybe` is `Nothing`, the result is `Nothing`.
- * 
- * This is useful when you have another `Maybe` value you want to provide if and
- * *only if* you have a `Just` – that is, when you need to make sure that if you
- * `Nothing`, whatever else you're handing a `Maybe` to *also* gets a `Nothing`.
- * 
- * Notice that, unlike in [`map`](#map) or its variants, the original `maybe` is
- * not involved in constructing the new `Maybe`.
- *
- * ```ts
- * import { and, just, nothing, Maybe } from 'true-myth/maybe';
- * 
- * const justA = just('A');
- * const justB = just('B');
- * const nothing: Maybe<number> = nothing();
- *
- * console.log(and(justB, justA).toString());  // 'Just("B")'
- * console.log(and(justB, nothing).toString());  // 'Nothing'
- * console.log(and(nothing, justA).toString());  // 'Nothing'
- * console.log(and(nothing, nothing).toString());  // 'Nothing'
- * ```
- * 
- * @typeparam T    The wrapped value.
- * @typeparam U    The wrapped value of the returned `Maybe`.
- * @param andMaybe The `Maybe` instance to return if `maybe` is `Just`
- * @param maybe    The `Maybe` instance to check.
- * @return         `Nothing` if the original `maybe` is `Nothing`, or `andMaybe`
- *                 if the original `maybe` is `Just`.
+  You can think of this like a short-circuiting logical "and" operation on a
+  `Maybe` type. If `maybe` is `Just`, then the result is the `andMaybe`. If
+  `maybe` is `Nothing`, the result is `Nothing`.
+  
+  This is useful when you have another `Maybe` value you want to provide if and
+  *only if* you have a `Just` – that is, when you need to make sure that if you
+  `Nothing`, whatever else you're handing a `Maybe` to *also* gets a `Nothing`.
+  
+  Notice that, unlike in [`map`](#map) or its variants, the original `maybe` is
+  not involved in constructing the new `Maybe`.
+ 
+  ```ts
+  import { and, just, nothing, Maybe } from 'true-myth/maybe';
+  
+  const justA = just('A');
+  const justB = just('B');
+  const nothing: Maybe<number> = nothing();
+ 
+  console.log(and(justB, justA).toString());  // 'Just("B")'
+  console.log(and(justB, nothing).toString());  // 'Nothing'
+  console.log(and(nothing, justA).toString());  // 'Nothing'
+  console.log(and(nothing, nothing).toString());  // 'Nothing'
+  ```
+  
+  @typeparam T    The wrapped value.
+  @typeparam U    The wrapped value of the returned `Maybe`.
+  @param andMaybe The `Maybe` instance to return if `maybe` is `Just`
+  @param maybe    The `Maybe` instance to check.
+  @return         `Nothing` if the original `maybe` is `Nothing`, or `andMaybe`
+                  if the original `maybe` is `Just`.
  */
 export const and = <T, U>(andMaybe: Maybe<U>, maybe: Maybe<T>): Maybe<U> =>
   isJust(maybe) ? andMaybe : nothing(); // cannot coerce Nothing<T> to Nothing<U>
 
 /**
- * Apply a function to the wrapped value if `Just` and return a new `Just`
- * containing the resulting value; or return `Nothing` if `Nothing`.
- * 
- * This differs from `map` in that `thenFn` returns another `Maybe`. You can use
- * `andThen` to combine two functions which *both* create a `Maybe` from an
- * unwrapped type.
- * 
- * This is also commonly known as (and therefore aliased as) [`flatMap`] or
- * [`chain`]. It is sometimes also known as `bind`, but *not* aliased as such
- * because [`bind` already means something in JavaScript][bind].
- * 
- * [`flatMap`]: #flatmap
- * [`chain`]: #chain
- * [bind]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function/bind
- * 
- * @typeparam T  The wrapped value.
- * @param thenFn The function to apply to the wrapped `T` if `maybe` is `Just`.
- * @param maybe  The `Maybe` to evaluate and possibly apply a function to the
- *               contents of.
- * @returns      The result of the `thenFn` (a new `Maybe`) if `maybe` is a
- *               `Just`, otherwise `Nothing` if `maybe` is a `Nothing`.
+  Apply a function to the wrapped value if `Just` and return a new `Just`
+  containing the resulting value; or return `Nothing` if `Nothing`.
+ 
+  This differs from `map` in that `thenFn` returns another `Maybe`. You can use
+  `andThen` to combine two functions which *both* create a `Maybe` from an
+  unwrapped type.
+ 
+  You may find the `.then` method on an ES6 `Promise` helpful for comparison:
+  if you have a `Promise`, you can pass its `then` method a callback which
+  returns another `Promise`, and the result will not be a *nested* promise, but
+  a single `Promise`. The difference is that `Promise#then` unwraps *all*
+  layers to only ever return a single `Promise` value, whereas `Maybe.andThen`
+  will not unwrap nested `Maybe`s.
+  
+  This is also commonly known as (and therefore aliased as) [`flatMap`] or
+  [`chain`]. It is sometimes also known as `bind`, but *not* aliased as such
+  because [`bind` already means something in JavaScript][bind].
+  
+  [`flatMap`]: #flatmap
+  [`chain`]: #chain
+  [bind]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function/bind
+ 
+  #### Example
+  
+  (This is a somewhat contrived example, but it serves to show the way the
+  function behaves.)
+ 
+  ```ts
+  import * as Maybe from 'true-myth/maybe';
+  
+  // string -> Maybe<number>
+  const toMaybeLength = (s: string): Maybe.Maybe<number> => Maybe.of(s.length);
+
+  // Maybe<string>
+  const aMaybeString = Maybe.of('Hello, there!');
+
+  // Maybe<number>
+  const resultingLength = Maybe.andThen(toMaybeLength, aMaybeString);
+  console.log(toString(resultingLength)); // 'Just(13)'
+  ```
+  
+  Note that the result is not `Just(Just(13))`!
+  
+  @typeparam T  The wrapped value.
+  @param thenFn The function to apply to the wrapped `T` if `maybe` is `Just`.
+  @param maybe  The `Maybe` to evaluate and possibly apply a function to the
+                contents of.
+  @returns      The result of the `thenFn` (a new `Maybe`) if `maybe` is a
+                `Just`, otherwise `Nothing` if `maybe` is a `Nothing`.
  */
 export const andThen = <T, U>(thenFn: (t: T) => Maybe<U>, maybe: Maybe<T>): Maybe<U> =>
   isJust(maybe) ? thenFn(unwrap(maybe)) : nothing();
@@ -676,126 +744,149 @@ export const chain = andThen;
 export const flatMap = andThen;
 
 /**
- * Provide a fallback for a given `Maybe`. Behaves like a logical `or`: if the
- * `maybe` value is a `Just`, returns that `maybe`; otherwise, returns the
- * `defaultMaybe` value.
- * 
- * This is useful when you want to make sure that something which takes a
- * `Maybe` always ends up getting a `Just` variant, by supplying a default value
- * for the case that you currently have a nothing.
- * 
- * ```ts
- * import { or, just, nothing, Maybe } from 'true-utils/maybe';
- * 
- * const justA = just("a");
- * const justB = just("b");
- * const aNothing: Maybe<string> = nothing();
- * 
- * console.log(or(justB, justA).toString());  // 'Just("A")'
- * console.log(or(aNothing, justA).toString());  // 'Just("A")'
- * console.log(or(justB, aNothing).toString());  // 'Just("B")'
- * console.log(or(aNothing, aNothing).toString());  // 'Nothing'
- * ```
- * 
- * @typeparam T        The wrapped value.
- * @param defaultMaybe The `Maybe` to use if `maybe` is a `Nothing`.
- * @param maybe        The `Maybe` instance to evaluate.
- * @returns            `maybe` if it is a `Just`, otherwise `defaultMaybe`.
+  Provide a fallback for a given `Maybe`. Behaves like a logical `or`: if the
+  `maybe` value is a `Just`, returns that `maybe`; otherwise, returns the
+  `defaultMaybe` value.
+  
+  This is useful when you want to make sure that something which takes a
+  `Maybe` always ends up getting a `Just` variant, by supplying a default value
+  for the case that you currently have a nothing.
+  
+  ```ts
+  import { or, just, nothing, Maybe } from 'true-utils/maybe';
+  
+  const justA = just("a");
+  const justB = just("b");
+  const aNothing: Maybe<string> = nothing();
+  
+  console.log(or(justB, justA).toString());  // 'Just("A")'
+  console.log(or(aNothing, justA).toString());  // 'Just("A")'
+  console.log(or(justB, aNothing).toString());  // 'Just("B")'
+  console.log(or(aNothing, aNothing).toString());  // 'Nothing'
+  ```
+  
+  @typeparam T        The wrapped value.
+  @param defaultMaybe The `Maybe` to use if `maybe` is a `Nothing`.
+  @param maybe        The `Maybe` instance to evaluate.
+  @returns            `maybe` if it is a `Just`, otherwise `defaultMaybe`.
  */
 export const or = <T>(defaultMaybe: Maybe<T>, maybe: Maybe<T>): Maybe<T> =>
   isJust(maybe) ? maybe : defaultMaybe;
 
 /**
- * Like `or`, but using a function to construct the alternative `Maybe`.
- * 
- * Sometimes you need to perform an operation using other data in the
- * environment to construct the fallback value. In these situations, you can
- * pass a function (which may be a closure) as the `elseFn` to generate the
- * fallback `Maybe<T>`.
- * 
- * Useful for handling failures/empty situations.
- * 
- * @typeparam T  The wrapped value.
- * @param elseFn The function to apply if `maybe` is `Nothing`
- * @param maybe  The `maybe` to use if it is `Just`.
- * @returns      The `maybe` if it is `Just`, or the `Maybe` returned by
- *               `elseFn` if the `maybe` is `Nothing.
+  Like `or`, but using a function to construct the alternative `Maybe`.
+  
+  Sometimes you need to perform an operation using other data in the
+  environment to construct the fallback value. In these situations, you can
+  pass a function (which may be a closure) as the `elseFn` to generate the
+  fallback `Maybe<T>`.
+  
+  Useful for handling failures/empty situations.
+  
+  @typeparam T  The wrapped value.
+  @param elseFn The function to apply if `maybe` is `Nothing`
+  @param maybe  The `maybe` to use if it is `Just`.
+  @returns      The `maybe` if it is `Just`, or the `Maybe` returned by
+                `elseFn` if the `maybe` is `Nothing.
  */
 export const orElse = <T>(elseFn: (...args: any[]) => Maybe<T>, maybe: Maybe<T>): Maybe<T> =>
   isJust(maybe) ? maybe : elseFn();
 
 /**
- * Get the value out of the `Maybe`.
- *
- * Returns the content of a `Just`, but **throws if the `Maybe` is `Nothing`**.
- * Prefer to use [`unwrapOr`](#unwrapor) or [`unwrapOrElse`](#unwraporelse).
- *
- * @typeparam T The wrapped value.
- * @param maybe The value to unwrap
- * @returns     The unwrapped value if the `Maybe` instance is `Just`.
- * @throws      If the `maybe` is `Nothing`.
+  Get the value out of the `Maybe`.
+ 
+  Returns the content of a `Just`, but **throws if the `Maybe` is `Nothing`**.
+  Prefer to use [`unwrapOr`](#unwrapor) or [`unwrapOrElse`](#unwraporelse).
+ 
+  @typeparam T The wrapped value.
+  @param maybe The value to unwrap
+  @returns     The unwrapped value if the `Maybe` instance is `Just`.
+  @throws      If the `maybe` is `Nothing`.
  */
 export const unsafelyUnwrap = <T>(maybe: Maybe<T>): T => maybe.unsafelyUnwrap();
+
+/** Alias for [`unsafelyUnwrap`](#unsafelyunwrap) */
+export const unsafelyGet = unsafelyUnwrap;
+
+/** Alias for [`unsafelyUnwrap`](#unsafelyunwrap) */
+export const unsafeGet = unsafelyUnwrap;
 
 // For internal use; but not exported because we want to emphasize that this is
 // a bad idea via the name.
 const unwrap = unsafelyUnwrap;
 
 /**
- * Safely get the value out of a `Maybe`.
- *
- * Returns the content of a `Just` or `defaultValue` if `Nothing`.
- * 
- * @typeparam T        The wrapped value.
- * @param defaultValue The value to return if `maybe` is a `Nothing`.
- * @param maybe        The `Maybe` instance to unwrap if it is a `Just`.
- * @returns            The content of `maybe` if it is a `Just`, otherwise
- *                     `defaultValue`.
+  Safely get the value out of a `Maybe`.
+ 
+  Returns the content of a `Just` or `defaultValue` if `Nothing`. This is the
+  recommended way to get a value out of a `Maybe` most of the time.
+  
+  ```ts
+  import { Maybe, just, nothing } from 'true-myth/maybe';
+  
+  const notAString: Maybe<string> = nothing();
+  const isAString = just('look ma! some characters!');
+  
+  console.log(unwrapOr('<empty>', notAString));  // "<empty>"
+  console.log(unwrapOr('<empty>', isAString));  // "look ma! some characters!"
+  ```
+  
+  @typeparam T        The wrapped value.
+  @param defaultValue The value to return if `maybe` is a `Nothing`.
+  @param maybe        The `Maybe` instance to unwrap if it is a `Just`.
+  @returns            The content of `maybe` if it is a `Just`, otherwise
+                      `defaultValue`.
  */
 export const unwrapOr = <T>(defaultValue: T, maybe: Maybe<T>): T =>
   isJust(maybe) ? unwrap(maybe) : defaultValue;
 
+/** Alias for [`unwrapOr`](#unwrapr) */
+export const getOr = unwrapOr;
+
 /**
- * Safely get the value out of a [`Maybe`](#maybe).
- *
- * Returns the content of a `Just` or `defaultValue` if `Nothing`.
- * 
- * @typeparam T  The wrapped value.
- * @param orElseFn A function used to generate a valid value if `maybe` is a
- *                 `Nothing`.
- * @param maybe    The `Maybe` instance to unwrap if it is a `Just`
- * @returns        Either the content of `maybe` or the value returned from
- *                 `orElseFn`.
+  Safely get the value out of a [`Maybe`](#maybe).
+ 
+  Returns the content of a `Just` or `defaultValue` if `Nothing`.
+  
+  @typeparam T  The wrapped value.
+  @param orElseFn A function used to generate a valid value if `maybe` is a
+                  `Nothing`.
+  @param maybe    The `Maybe` instance to unwrap if it is a `Just`
+  @returns        Either the content of `maybe` or the value returned from
+                  `orElseFn`.
  */
 export const unwrapOrElse = <T>(orElseFn: (...args: any[]) => T, maybe: Maybe<T>): T =>
   isJust(maybe) ? unwrap(maybe) : orElseFn();
 
+/** Alias for [`unwrapOrElse`](#unwraporelse) */
+export const getOrElse = unwrapOrElse;
+
 /**
- * Transform the [`Maybe`](#maybe) into a
- * [`Result`](../modules/_result_.html#result), using the wrapped value as the
- * `Ok` value if `Just`; otherwise using the supplied `error` value for `Err`.
- * 
- * @typeparam T  The wrapped value.
- * @typeparam E  The error type to in the `Result`.
- * @param error The error value to use if the `Maybe` is `Nothing`.
- * @param maybe The `Maybe` instance to convert.
- * @returns     A `Result` containing the value wrapped in `maybe` in an `Ok`,
- *              or `error` in an `Err`.
+  Transform the [`Maybe`](#maybe) into a
+  [`Result`](../modules/_result_.html#result), using the wrapped value as the
+  `Ok` value if `Just`; otherwise using the supplied `error` value for `Err`.
+  
+  @typeparam T  The wrapped value.
+  @typeparam E  The error type to in the `Result`.
+  @param error The error value to use if the `Maybe` is `Nothing`.
+  @param maybe The `Maybe` instance to convert.
+  @returns     A `Result` containing the value wrapped in `maybe` in an `Ok`,
+               or `error` in an `Err`.
  */
 export const toOkOrErr = <T, E>(error: E, maybe: Maybe<T>): Result.Result<T, E> =>
   isJust(maybe) ? Result.ok(unwrap(maybe)) : Result.err(error);
 
 /**
- * Transform the [`Maybe`](#maybe) into a
- * [`Result`](../modules/_result_.html#result), using the wrapped value as the
- * `Ok` value if `Just`; otherwise using `elseFn` to generate `Err`.
- * 
- * @typeparam T  The wrapped value.
- * @typeparam E  The error type to in the `Result`.
- * @param elseFn The function which generates an error of type `E`.
- * @param maybe  The `Maybe` instance to convert.
- * @returns     A `Result` containing the value wrapped in `maybe` in an `Ok`,
- *              or `the value generated by `elseFn` in an `Err`.
+  Transform the [`Maybe`](#maybe) into a
+  [`Result`](../modules/_result_.html#result), using the wrapped value as the
+  `Ok` value if `Just`; otherwise using `elseFn` to generate `Err`.
+  
+  @typeparam T  The wrapped value.
+  @typeparam E  The error type to in the `Result`.
+  @param elseFn The function which generates an error of type `E`.
+  @param maybe  The `Maybe` instance to convert.
+  @returns     A `Result` containing the value wrapped in `maybe` in an `Ok`,
+               or `the value generated by `elseFn` in an `Err`.
  */
 export const toOkOrElseErr = <T, E>(
   elseFn: (...args: any[]) => E,
@@ -803,30 +894,30 @@ export const toOkOrElseErr = <T, E>(
 ): Result.Result<T, E> => (isJust(maybe) ? Result.ok(unwrap(maybe)) : Result.err(elseFn()));
 
 /**
- * Construct a `Maybe` from a `Result<T, E>`, keeping the value of an `Ok` as
- * the `Just` term and throwing away the `Err` value for a `Nothing.
- * 
- * @param result The `Result` to construct a `Maybe` from.
- * @returns      `Just` if `result` was `Ok` or `Nothing` if it was `Err`.
+  Construct a `Maybe` from a `Result<T, E>`, keeping the value of an `Ok` as
+  the `Just` term and throwing away the `Err` value for a `Nothing.
+  
+  @param result The `Result` to construct a `Maybe` from.
+  @returns      `Just` if `result` was `Ok` or `Nothing` if it was `Err`.
  */
 export const fromResult = <T, E>(result: Result.Result<T, E>): Maybe<T> =>
   Result.isOk(result) ? just(Result.unsafelyUnwrap(result)) : nothing();
 
 /**
-   * Create a `String` representation of a `Maybe` instance.
-   * 
-   * `Just` will print out as `"Just(<the value>)"`, where `<the value>` will be
-   * printed as its own `toString` representation. For example:
-   * 
-   * -   `toString(Maybe.of(42))` is `"Just(42)"`
-   * -   `toString(Maybe.of([1, 2, 3]))` is `"Just(1,2,3)"`
-   * -   `toString(Maybe.of({ an: 'object' }))` is `"Just([object Object])"`
-   * 
-   * `Nothing` instances will always be printed as `"Nothing"`.
-   * 
-   * @param maybe 
-   * @returns 
-   */
+  Create a `String` representation of a `Maybe` instance.
+  
+  `Just` will print out as `"Just(<the value>)"`, where `<the value>` will be
+  printed as its own `toString` representation. For example:
+  
+  -   `toString(Maybe.of(42))` is `"Just(42)"`
+  -   `toString(Maybe.of([1, 2, 3]))` is `"Just(1,2,3)"`
+  -   `toString(Maybe.of({ an: 'object' }))` is `"Just([object Object])"`
+  
+  `Nothing` instances will always be printed as `"Nothing"`.
+  
+  @param maybe 
+  @returns 
+ */
 export const toString = <T>(maybe: Maybe<T>): string =>
   isJust(maybe) ? `Just(${unwrap(maybe).toString()})` : `Nothing`;
 
