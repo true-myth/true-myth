@@ -206,7 +206,7 @@ into a *container* which is guaranteed to be safe to act upon, regardless of
 whether there's something inside it or not.
 
 These containers let us write functions with *actually safe* assumptions about
-parameter values by extracting the question, "Does this variable contain a valid
+
 value?" to API boundaries, rather than needing to ask that question at the head
 of every. single. function.
 
@@ -303,6 +303,18 @@ In practice, that means:
     make sure you don't `unwrap()` a `Maybe` without checking that it's safe to
     do so.
 
+-   Because there are no runtime checks, you *should* make use of the type
+    systems if you want the benefits of the system. Many of the functions simply
+    assume that the types are checked, and *will* error if you pass in items of
+    the wrong type.
+    
+    For example, if you pass a non-`Maybe` instance to many functions, they will
+    simply fail – even the basic helpers like `isJust` and `isNothing`. These
+    assumptions have been made precisely *because* this is a TypeScript- and
+    Flow-first library. (See the discussion below comparing True Myth to
+    Folktale and Sanctuary if you aren't using TypeScript or Flow and need
+    runtime checking.)
+
 The overarching themes are flexibility and approachability.
 
 The hope is that a team just picking up these ideas for the first time can use
@@ -385,9 +397,9 @@ the "present" type in other libraries are `Some` and `Just`. Options for the
 
 Before this hits 1.0, I will do:
 
-- [ ] `Maybe`
+- [x] `Maybe`
     - [x] add aliases for the standard names, e.g. `bind`, `chain`, etc.
-    - [ ] finish documentation
+    - [x] finish documentation
 
 - [ ] `Result`
     - [x] implement
