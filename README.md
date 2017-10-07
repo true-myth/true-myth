@@ -303,7 +303,8 @@ In practice, that means:
     make sure you don't `unwrap()` a `Maybe` without checking that it's safe to
     do so.
 
--   Because there are no runtime checks, you *should* make use of the type
+-   Since this is a TypeScript- and Flow-first library, we intentionally leave
+    out any runtime type checking. As such, you *should* make use of the type
     systems if you want the benefits of the system. Many of the functions simply
     assume that the types are checked, and *will* error if you pass in items of
     the wrong type.
