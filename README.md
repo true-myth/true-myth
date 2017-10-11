@@ -206,7 +206,7 @@ into a *container* which is guaranteed to be safe to act upon, regardless of
 whether there's something inside it or not.
 
 These containers let us write functions with *actually safe* assumptions about
-
+parameter values by extracting the question, "Does this variable contain a valid
 value?" to API boundaries, rather than needing to ask that question at the head
 of every. single. function.
 

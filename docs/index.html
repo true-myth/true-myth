@@ -318,6 +318,18 @@ const functionalNothing = nothing();
 							make sure you don&#39;t <code>unwrap()</code> a <code>Maybe</code> without checking that it&#39;s safe to
 						do so.</p>
 					</li>
+					<li><p>Since this is a TypeScript- and Flow-first library, we intentionally leave
+							out any runtime type checking. As such, you <em>should</em> make use of the type
+							systems if you want the benefits of the system. Many of the functions simply
+							assume that the types are checked, and <em>will</em> error if you pass in items of
+						the wrong type.</p>
+						<p>For example, if you pass a non-<code>Maybe</code> instance to many functions, they will
+							simply fail – even the basic helpers like <code>isJust</code> and <code>isNothing</code>. These
+							assumptions have been made precisely <em>because</em> this is a TypeScript- and
+							Flow-first library. (See the discussion below comparing True Myth to
+							Folktale and Sanctuary if you aren&#39;t using TypeScript or Flow and need
+						runtime checking.)</p>
+					</li>
 				</ul>
 				<p>The overarching themes are flexibility and approachability.</p>
 				<p>The hope is that a team just picking up these ideas for the first time can use
@@ -383,10 +395,10 @@ const functionalNothing = nothing();
 				<h2 id="roadmap">Roadmap</h2>
 				<p>Before this hits 1.0, I will do:</p>
 				<ul>
-					<li><p>[ ] <code>Maybe</code></p>
+					<li><p>[x] <code>Maybe</code></p>
 						<ul>
 							<li>[x] add aliases for the standard names, e.g. <code>bind</code>, <code>chain</code>, etc.</li>
-							<li>[ ] finish documentation</li>
+							<li>[x] finish documentation</li>
 						</ul>
 					</li>
 					<li><p>[ ] <code>Result</code></p>
