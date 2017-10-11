@@ -19,6 +19,7 @@
     "mode": "modules",
     "toc": true,
     "excludePrivate": true,
+    "includes": "./src",
     "target": "ES6",
     "theme": "default",
     "name": "True Myth"
