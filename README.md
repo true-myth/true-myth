@@ -6,7 +6,6 @@
 ![Stability](https://img.shields.io/badge/stability-experimental-purple.svg?style=flat-square&colorB=b28cd9)
 [![Gitter](https://img.shields.io/gitter/room/nwjs/nw.js.svg?style=flat-square)](https://gitter.im/true-myth/Lobby)
 [![license](https://img.shields.io/github/license/chriskrycho/true-myth.svg?style=flat-square)](https://github.com/chriskrycho/true-myth/blob/master/LICENSE)
-[![Open GitHub Issues](https://img.shields.io/github/issues-raw/badges/shields.svg?style=flat-square)](http://github.com/chriskrycho/true-myth/issues)
 [![Gratipay](https://img.shields.io/gratipay/project/true-myth.svg?style=flat-square)](https://gratipay.com/true-myth/)
 
 A library for safe functional programming in JavaScript, with first-class
