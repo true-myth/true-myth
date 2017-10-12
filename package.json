@@ -11,6 +11,9 @@
     "type": "git",
     "url": "https://github.com/chriskrycho/true-myth"
   },
+  "bugs": {
+    "url": "https://github.com/chriskrycho/true-myth/issues"
+  },
   "license": "MIT",
   "version": "0.3.2",
   "author": {
