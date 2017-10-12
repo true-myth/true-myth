@@ -69,6 +69,7 @@
 			<section class="tsd-panel tsd-comment">
 				<div class="tsd-comment tsd-typography">
 					<div class="lead">
+						<h1 id="maybe">Maybe</h1>
 						<p>A <a href="#maybe"><code>Maybe&lt;T&gt;</code></a> represents a value of type <code>T</code> which may, or may not,
 						be present.</p>
 						<p>If the value is present, it is <code>Just(value)</code>. If it&#39;s absent, it&#39;s <code>Nothing</code>.
@@ -81,7 +82,7 @@
 						object and some lightweight wrap/unwrap functionality.</p>
 						<p>The <code>Nothing</code> variant has a type parameter <code>&lt;T&gt;</code> so that type inference works
 							correctly in TypeScript when operating on <code>Nothing</code> instances with functions
-							which require a <code>T</code> to behave properly, e.g. <a href="#map"><code>map</code></a>, which cannot
+							which require a <code>T</code> to behave properly, e.g. <a href="https://chriskrycho.github.io/true-myth/modules/_maybe_.html#map"><code>map</code></a>, which cannot
 							check that the map function satisies the type constraints for <code>Maybe&lt;T&gt;</code>
 						unless <code>Nothing</code> has a parameter <code>T</code> to constrain it on invocation.</p>
 						<p>Put simply: without the type parameter, if you had a <code>Nothing</code> variant of a

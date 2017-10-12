@@ -70,22 +70,127 @@
 				<div class="tsd-comment tsd-typography">
 					<div class="lead">
 						<h1 id="result">Result</h1>
+						<p>A <code>Result&lt;T, E&gt;</code> is a type representing the value result of an operation which
+						may fail, with a successful value of type <code>T</code> or an error of type <code>E</code>.</p>
+						<p>If the value is present, it is <code>Ok(value)</code>. If it&#39;s absent, it&#39;s
+							<code>Error(reason)</code>. This provides a type-safe container for dealing with the
+							possibility that an error occurred, without needing to scatter <code>try</code>/<code>catch</code>
+						blocks throughout your codebase. This has two major advantages:</p>
+						<ol>
+							<li>You <em>know</em> when an item may have a failure case, unlike exceptions
+								(which may be thrown from any function with no warning and no help from
+							the type system).</li>
+							<li>The error scenario is a first-class citizen, and the provided helper
+								functions and methods allow you to deal with the type in much the same
+								way as you might an array – transforming values if present, or dealing
+							with errors instead if necessary.</li>
+						</ol>
+						<p>Having the possibility of an error handed to you as part of the type of an item
+							gives you the flexibility to do the same kinds of things with it that you might
+							with any other nice container type. For example, you can use <a href="https://chriskrycho.github.io/true-myth/modules/_result_.html#map"><code>map</code></a> to
+							apply a transformation if the item represents a succesful outcome, and even if
+						the result was actually an error, it won&#39;t break under you.</p>
+						<p>To make that concrete, let&#39;s look at an example. In normal JavaScript, you might
+						have something like this:</p>
+						<pre><code class="lang-js"><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">mightSucceed</span>(<span class="hljs-params">doesSucceed</span>) </span>{
+    <span class="hljs-keyword">if</span> (!doesSucceed) {
+        <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">Error</span>(<span class="hljs-string">'something went wrong!'</span>);
+    }
+
+    <span class="hljs-keyword">return</span> <span class="hljs-number">42</span>;
+}
+
+<span class="hljs-keyword">const</span> doubleTheAnswer = mightSucceed(<span class="hljs-literal">true</span>) * <span class="hljs-number">2</span>;
+<span class="hljs-built_in">console</span>.log(doubleTheAnswer);  <span class="hljs-comment">// 84; this is fine</span>
+
+<span class="hljs-keyword">const</span> doubleAnError = mightSucceed(<span class="hljs-literal">false</span>) * <span class="hljs-number">2</span>;  <span class="hljs-comment">// throws an uncaught exception</span>
+<span class="hljs-built_in">console</span>.log(doubleAnErr);  <span class="hljs-comment">// never even gets here because of the exception</span>
+</code></pre>
+						<p>If we wanted to <em>handle</em> that error, we&#39;d need to first of all know that the
+							function could throw an error. Assuming we knew that – probably we&#39;d figure it
+							out via painful discovery at runtime, or by documenting it in our JSDoc – then
+						we&#39;d need to wrap it up in a <code>try</code>/<code>catch</code> block:</p>
+						<pre><code class="lang-js"><span class="hljs-keyword">try</span> {
+    <span class="hljs-keyword">const</span> doubleTheAnswer = mightSucceed(<span class="hljs-literal">true</span>) * <span class="hljs-number">2</span>;
+    <span class="hljs-built_in">console</span>.log(doubleTheAnswer);
+
+    <span class="hljs-keyword">const</span> doubleAnError = mightSucceed(<span class="hljs-literal">false</span>) * <span class="hljs-number">2</span>;
+} <span class="hljs-keyword">catch</span> (ex) {
+    <span class="hljs-built_in">console</span>.log(ex.message);
+}
+</code></pre>
+						<p>This is a pain to work with!</p>
+						<p>The next thing we might try is returning an error code and mutating an object
+							passed in. (This is the standard pattern for non-exception-based error handling
+						in C, C++, Java, and C#, for example.) But that has a few problems:</p>
+						<ul>
+							<li><p>You have to mutate an object. This doesn&#39;t work for simple items like
+									numbers, and it can also be pretty unexpected behavior at times – you want
+									to <em>know</em> when something is going to change, and mutating freely throughout
+								a library or application makes that impossible.</p>
+							</li>
+							<li><p>You have to make sure to actually check the return code to make sure it&#39;s.
+									In theory, we&#39;re all displined enough to always do that. In practice, we
+									often end up reasoning, <em>Well, this particular call can never fail...</em> (but
+								of course, it probably can, just not in a way we expect).</p>
+							</li>
+							<li><p>We don&#39;t have a good way to return a <em>reason</em> for the error. We end up
+									needing to introduce another parameter, designed to be mutated, to make sure
+								that&#39;s possible.</p>
+							</li>
+							<li><p>Even if you go to all the trouble of doing all of that, you need to make
+									sure – every time – that you use only the error value if the return code
+									specified an error, and only the success value if the return code specified
+								that it succeeded.</p>
+							</li>
+						</ul>
+						<p>(Note that in slightly varied form, this is also basically what the Node.js
+							callback pattern gives you. It&#39;s just a conventional way of needing to check for
+							an error on every callback invocation, since you don&#39;t actually have a return
+						code in that case.)</p>
+						<p>Our way out is <code>Result</code>. It lets us just return one thing from a function, which
+						encapsulates the possibility of failure in the very thing we return. We get:</p>
+						<ul>
+							<li>the simplicity of just dealing with the return value of a function (no
+							<code>try</code>/<code>catch</code> to worry about!)</li>
+							<li>the ease of expressing an error we got with throwing an exception</li>
+							<li>the explicitness about success or failure that we got with a return code</li>
+						</ul>
+						<p>Here&#39;s what that same example from above would look like using <code>Result</code>:</p>
+						<pre><code class="lang-ts"><span class="hljs-keyword">import</span> { Result, Variant, ok, err, map, toString } <span class="hljs-keyword">from</span> <span class="hljs-string">'true-myth/result'</span>;
+
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">mightSucceed</span>(<span class="hljs-params">doesSucceed: <span class="hljs-built_in">boolean</span></span>): <span class="hljs-title">Result</span>&lt;<span class="hljs-title">number</span>, <span class="hljs-title">string</span>&gt; </span>{
+    <span class="hljs-keyword">return</span> doesSucceed ? ok(<span class="hljs-number">42</span>): err(<span class="hljs-string">'something went wrong!'</span>);
+}
+
+<span class="hljs-keyword">const</span> double = <span class="hljs-function">(<span class="hljs-params">x: <span class="hljs-built_in">number</span></span>) =&gt;</span> x * <span class="hljs-number">2</span>;
+
+<span class="hljs-keyword">const</span> doubleTheAnswer = map(double, mightSucceed(<span class="hljs-literal">true</span>));
+<span class="hljs-built_in">console</span>.log(toString(doubleTheAnswer));  <span class="hljs-comment">// `Ok(84)`</span>
+
+<span class="hljs-keyword">const</span> doubleAnErr = map(double, mightSucceed(<span class="hljs-literal">false</span>));
+<span class="hljs-built_in">console</span>.log(toString(doubleAnErr));  <span class="hljs-comment">// `Err('something went wrong')`</span>
+</code></pre>
+						<p>Note that if we tried to call <code>mightSucceed(true) * 2</code> here, we&#39;d get a type
+							error – this wouldn&#39;t make it past the compile step. Instead, we need to use one
+						of the helper functions (or methods) to manipulate the value in a safe way.</p>
+						<h2 id="using-result-">Using <code>Result</code></h2>
+						<ul>
+							<li>[ ] TODO</li>
+						</ul>
+						<h3 id="examples-functional-style">Examples: functional style</h3>
+						<ul>
+							<li>[ ] TODO</li>
+						</ul>
+						<h3 id="examples-fluent-object-invocation">Examples: fluent object invocation</h3>
+						<ul>
+							<li>[ ] TODO</li>
+						</ul>
+						<h3 id="writing-type-constraints">Writing type constraints</h3>
+						<ul>
+							<li>[ ] TODO</li>
+						</ul>
 					</div>
-					<p>A <code>Result</code> is a type representing the value result of an operation which may
-					fail, with a successful value of type <code>T</code> or an error of type <code>E</code>.</p>
-					<p>If the value is present, it is <code>Ok(value)</code>. If it&#39;s absent, it&#39;s
-						<code>Error(reason)</code>. This provides a type-safe container for dealing with the
-						possibility that an error occurred, without needing to scatter <code>try</code>/<code>catch</code>
-					blocks throughout your codebase. This has two major advantages:</p>
-					<ol>
-						<li>You <em>know</em> when an item may have a failure case, unlike exceptions
-							(which may be thrown from any function with no warning and no help from
-						the type system).</li>
-						<li>The error scenario is a first-class citizen, and the provided helper
-							functions and methods allow you to deal with the type in much the same
-							way as you might an array – transforming values if present, or dealing
-						with errors instead if necessary.</li>
-					</ol>
 				</div>
 			</section>
 			<section class="tsd-panel-group tsd-index-group">
@@ -161,7 +266,7 @@
 					<div class="tsd-signature tsd-kind-icon">Result<span class="tsd-signature-symbol">:</span> <a href="../classes/_result_.ok.html" class="tsd-signature-type">Ok</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">E</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> | </span><a href="../classes/_result_.err.html" class="tsd-signature-type">Err</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">E</span><span class="tsd-signature-symbol">&gt;</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in result.ts:392</li>
+							<li>Defined in result.ts:374</li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -181,7 +286,7 @@
 					<div class="tsd-signature tsd-kind-icon">chain<span class="tsd-signature-symbol">:</span> <a href="" class="tsd-signature-type">andThen</a><span class="tsd-signature-symbol"> =&nbsp;andThen</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in result.ts:435</li>
+							<li>Defined in result.ts:417</li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -196,7 +301,7 @@
 					<div class="tsd-signature tsd-kind-icon">flat<wbr>Map<span class="tsd-signature-symbol">:</span> <a href="" class="tsd-signature-type">andThen</a><span class="tsd-signature-symbol"> =&nbsp;andThen</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in result.ts:438</li>
+							<li>Defined in result.ts:420</li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -211,7 +316,7 @@
 					<div class="tsd-signature tsd-kind-icon">unwrap<span class="tsd-signature-symbol">:</span> <a href="" class="tsd-signature-type">unsafelyUnwrap</a><span class="tsd-signature-symbol"> =&nbsp;unsafelyUnwrap</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in result.ts:460</li>
+							<li>Defined in result.ts:442</li>
 						</ul>
 					</aside>
 				</section>
@@ -221,7 +326,7 @@
 					<div class="tsd-signature tsd-kind-icon">unwrap<wbr>Err<span class="tsd-signature-symbol">:</span> <a href="" class="tsd-signature-type">unsafelyUnwrapErr</a><span class="tsd-signature-symbol"> =&nbsp;unsafelyUnwrapErr</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in result.ts:475</li>
+							<li>Defined in result.ts:457</li>
 						</ul>
 					</aside>
 				</section>
@@ -238,7 +343,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in result.ts:411</li>
+									<li>Defined in result.ts:393</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
@@ -276,7 +381,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in result.ts:429</li>
+									<li>Defined in result.ts:411</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -346,7 +451,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in result.ts:384</li>
+									<li>Defined in result.ts:366</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -391,7 +496,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in result.ts:501</li>
+									<li>Defined in result.ts:483</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
@@ -426,7 +531,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in result.ts:355</li>
+									<li>Defined in result.ts:337</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -464,7 +569,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in result.ts:347</li>
+									<li>Defined in result.ts:329</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -502,7 +607,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in result.ts:396</li>
+									<li>Defined in result.ts:378</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
@@ -558,7 +663,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in result.ts:408</li>
+									<li>Defined in result.ts:390</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
@@ -614,7 +719,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in result.ts:399</li>
+									<li>Defined in result.ts:381</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
@@ -673,7 +778,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in result.ts:402</li>
+									<li>Defined in result.ts:384</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
@@ -750,7 +855,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in result.ts:369</li>
+									<li>Defined in result.ts:351</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -798,7 +903,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in result.ts:440</li>
+									<li>Defined in result.ts:422</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
@@ -836,7 +941,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in result.ts:443</li>
+									<li>Defined in result.ts:425</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
@@ -892,7 +997,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in result.ts:498</li>
+									<li>Defined in result.ts:480</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -937,7 +1042,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in result.ts:555</li>
+									<li>Defined in result.ts:537</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1019,7 +1124,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in result.ts:456</li>
+									<li>Defined in result.ts:438</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1058,7 +1163,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in result.ts:471</li>
+									<li>Defined in result.ts:453</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1097,7 +1202,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in result.ts:477</li>
+									<li>Defined in result.ts:459</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
@@ -1132,7 +1237,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in result.ts:480</li>
+									<li>Defined in result.ts:462</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>

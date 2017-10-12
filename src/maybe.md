@@ -1,3 +1,5 @@
+# Maybe
+
 A [`Maybe<T>`](#maybe) represents a value of type `T` which may, or may not,
 be present.
 
@@ -13,9 +15,11 @@ object and some lightweight wrap/unwrap functionality.
 
 The `Nothing` variant has a type parameter `<T>` so that type inference works
 correctly in TypeScript when operating on `Nothing` instances with functions
-which require a `T` to behave properly, e.g. [`map`](#map), which cannot
+which require a `T` to behave properly, e.g. [`map`][map], which cannot
 check that the map function satisies the type constraints for `Maybe<T>`
 unless `Nothing` has a parameter `T` to constrain it on invocation.
+
+[map]: https://chriskrycho.github.io/true-myth/modules/_maybe_.html#map
 
 Put simply: without the type parameter, if you had a `Nothing` variant of a
 `Maybe<string>`, and you tried to use it with a function which expected a

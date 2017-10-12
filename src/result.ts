@@ -1,32 +1,14 @@
-/**
- * # Result
- * 
- * A `Result` is a type representing the value result of an operation which may
- * fail, with a successful value of type `T` or an error of type `E`.
- * 
- * If the value is present, it is `Ok(value)`. If it's absent, it's
- * `Error(reason)`. This provides a type-safe container for dealing with the
- * possibility that an error occurred, without needing to scatter `try`/`catch`
- * blocks throughout your codebase. This has two major advantages:
- * 
- * 1.  You *know* when an item may have a failure case, unlike exceptions
- *     (which may be thrown from any function with no warning and no help from
- *     the type system).
- * 2.  The error scenario is a first-class citizen, and the provided helper
- *     functions and methods allow you to deal with the type in much the same
- *     way as you might an array – transforming values if present, or dealing
- *     with errors instead if necessary.
- */
+/** [[include:result.md]] */
 
 /** (keep typedoc from getting confused by the import) */
 import { isVoid } from './utils';
 import { Maybe, some, nothing, isSome, unsafelyUnwrap as unwrapMaybe } from './maybe';
 
 /**
- * Discriminant for `Ok` and `Err` variants of `Result` type.
- * 
- * You can use the discriminant via the `variant` property of `Result` instances
- * if you need to match explicitly on it.
+  Discriminant for `Ok` and `Err` variants of `Result` type.
+  
+  You can use the discriminant via the `variant` property of `Result` instances
+  if you need to match explicitly on it.
  */
 export enum Variant {
   Ok = 'Ok',
@@ -93,11 +75,11 @@ export interface IResult<T, E> {
 }
 
 /**
- * The `Ok` variant for [`Result`].
- * 
- * [`Result`]: ../modules/_result_.html#result
- * 
- * An `Ok` instance represents a *successful* `Result`.
+  The `Ok` variant for [`Result`].
+  
+  [`Result`]: ../modules/_result_.html#result
+  
+  An `Ok` instance represents a *successful* `Result`.
  */
 export class Ok<T, E> implements IResult<T, E> {
   private __value: T;
@@ -340,17 +322,17 @@ export class Err<T, E> implements IResult<T, E> {
 }
 
 /**
- * Is this result an `Ok` instance?
- * 
- * In TypeScript, narrows the type from `Result<T, E>` to `Ok<T, E>`.
+  Is this result an `Ok` instance?
+  
+  In TypeScript, narrows the type from `Result<T, E>` to `Ok<T, E>`.
  */
 export const isOk = <T, E>(result: Result<T, E>): result is Ok<T, E> =>
   result.variant === Variant.Ok;
 
 /**
- * Is this result an `Err` instance?
- * 
- * In TypeScript, narrows the type from `Result<T, E>` to `Err<T, E>`.
+  Is this result an `Err` instance?
+  
+  In TypeScript, narrows the type from `Result<T, E>` to `Err<T, E>`.
  */
 export const isErr = <T, E>(result: Result<T, E>): result is Err<T, E> =>
   result.variant === Variant.Err;
@@ -412,19 +394,19 @@ export const and = <T, U, E>(ru: Result<U, E>, rt: Result<T, E>): Result<U, E> =
   isOk(rt) ? ru : err(unwrapErr(rt));
 
 /**
- * Apply a function to the wrapped value if `Ok` and return a new `Ok`
- * containing the resulting value; or if it is `Err` return it unmodified.
- * 
- * This is also commonly known as (and therefore aliased as) [`flatMap`] or
- * [`chain`]. It is sometimes also known as `bind`, but *not* aliased as such
- * because [`bind` already means something in JavaScript][bind].
- * 
- * [`flatMap`]: #flatmap
- * [`chain`]: #chain
- * [bind]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function/bind
- * 
- * @param thenFn The function to apply to the wrapped `T` if `maybe` is `Some`.
- * @param maybe  The `Maybe` to evaluate and possibly apply a function to.
+  Apply a function to the wrapped value if `Ok` and return a new `Ok`
+  containing the resulting value; or if it is `Err` return it unmodified.
+  
+  This is also commonly known as (and therefore aliased as) [`flatMap`] or
+  [`chain`]. It is sometimes also known as `bind`, but *not* aliased as such
+  because [`bind` already means something in JavaScript][bind].
+  
+  [`flatMap`]: #flatmap
+  [`chain`]: #chain
+  [bind]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function/bind
+  
+  @param thenFn The function to apply to the wrapped `T` if `maybe` is `Some`.
+  @param maybe  The `Maybe` to evaluate and possibly apply a function to.
  */
 export const andThen = <T, U, E>(
   thenFn: (t: T) => Result<U, E>,
@@ -446,12 +428,12 @@ export const orElse = <T, E, F>(
 ): Result<T, F> => (isOk(result) ? ok(unwrap(result)) : elseFn());
 
 /**
- * Get the value out of the `Result`.
- * 
- * Returns the content of an `Ok`, but **throws if the `Result` is `Err`.**
- * Prefer to use [`unwrapOr`](#unwrapor) or [`unwrapOrElse`](#unwraporelse).
- *
- * @throws If the `Result` instance is `Nothing`.
+  Get the value out of the `Result`.
+  
+  Returns the content of an `Ok`, but **throws if the `Result` is `Err`.**
+  Prefer to use [`unwrapOr`](#unwrapor) or [`unwrapOrElse`](#unwraporelse).
+ 
+  @throws If the `Result` instance is `Nothing`.
  */
 export const unsafelyUnwrap = <T, E>(result: Result<T, E>): T => result.unsafelyUnwrap();
 
@@ -460,13 +442,13 @@ export const unsafelyUnwrap = <T, E>(result: Result<T, E>): T => result.unsafely
 const unwrap = unsafelyUnwrap;
 
 /**
- * Get the error value out of the `Result`.
- * 
- * Returns the content of an `Err`, but **throws if the `Result` is `Ok`**.
- * Prefer to use [`unwrapOrElse`](#unwraporelse).
- *
- * @param result
- * @throws Error If the `Result` instance is `Nothing`.
+  Get the error value out of the `Result`.
+  
+  Returns the content of an `Err`, but **throws if the `Result` is `Ok`**.
+  Prefer to use [`unwrapOrElse`](#unwraporelse).
+ 
+  @param result
+  @throws Error If the `Result` instance is `Nothing`.
  */
 export const unsafelyUnwrapErr = <T, E>(result: Result<T, E>): E => result.unsafelyUnwrapErr();
 
@@ -481,19 +463,19 @@ export const unwrapOrElse = <T, E>(orElseFn: (error: E) => T, result: Result<T, 
   isOk(result) ? unwrap(result) : orElseFn(unwrapErr(result));
 
 /**
- * Convert a [`Result`](#result) to a [`Maybe`](#../modules/_maybe_.html#maybe).
- * 
- * The converted type will be [`Some`] if the `Result` is [`Ok`] or [`Nothing`]
- * if the `Result` is [`Err`]; the wrapped error value will be discarded.
- * 
- * [`Result`]: #result
- * [`Some`]: ../classes/_maybe_.some.html
- * [`Nothing`]: ../classes/_maybe_.nothing.html
- * [`Ok`]: ../classes/_result_.ok.html
- * [`Err`]: ../classes/_result_.err.html
- * 
- * @param result The `Result` to convert to a `Maybe`
- * @returns      `Some` the value in `result` if it is `Ok`; otherwise `Nothing`
+  Convert a [`Result`](#result) to a [`Maybe`](#../modules/_maybe_.html#maybe).
+  
+  The converted type will be [`Some`] if the `Result` is [`Ok`] or [`Nothing`]
+  if the `Result` is [`Err`]; the wrapped error value will be discarded.
+  
+  [`Result`]: #result
+  [`Some`]: ../classes/_maybe_.some.html
+  [`Nothing`]: ../classes/_maybe_.nothing.html
+  [`Ok`]: ../classes/_result_.ok.html
+  [`Err`]: ../classes/_result_.err.html
+  
+  @param result The `Result` to convert to a `Maybe`
+  @returns      `Some` the value in `result` if it is `Ok`; otherwise `Nothing`
  */
 export const toMaybe = <T, E>(result: Result<T, E>): Maybe<T> =>
   isOk(result) ? some(unwrap(result)) : nothing();
