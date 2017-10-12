@@ -1,6 +1,6 @@
 import { assertType } from './lib/assert';
 import * as Result from '../src/result';
-import { just, nothing } from '../src/maybe';
+import { some, nothing } from '../src/maybe';
 import { Aliases } from '../src/utils';
 
 const length = (x: { length: number }) => x.length;
@@ -202,7 +202,7 @@ describe('`Result` pure functions', () => {
   test('`toMaybe`', () => {
     const theValue = 'huzzah';
     const anOk = Result.ok(theValue);
-    expect(Result.toMaybe(anOk)).toEqual(just(theValue));
+    expect(Result.toMaybe(anOk)).toEqual(some(theValue));
 
     const anErr = Result.err('uh uh');
     expect(Result.toMaybe(anErr)).toEqual(nothing());
@@ -212,7 +212,7 @@ describe('`Result` pure functions', () => {
     const theValue = 'something';
     const errValue = 'what happened?';
 
-    const aJust = just(theValue);
+    const aJust = some(theValue);
     const anOk = Result.ok(theValue);
     expect(Result.fromMaybe(errValue, aJust)).toEqual(anOk);
 
@@ -346,7 +346,7 @@ describe('`Result.Ok` class', () => {
   test('`toMaybe` method', () => {
     const theValue = { something: 'fun' };
     const theOk = new Result.Ok(theValue);
-    expect(theOk.toMaybe()).toEqual(just(theValue));
+    expect(theOk.toMaybe()).toEqual(some(theValue));
   });
 });
 

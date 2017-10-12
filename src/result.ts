@@ -20,7 +20,7 @@
 
 /** (keep typedoc from getting confused by the import) */
 import { isVoid } from './utils';
-import { Maybe, just, nothing, isJust, unsafelyUnwrap as unwrapMaybe } from './maybe';
+import { Maybe, some, nothing, isSome, unsafelyUnwrap as unwrapMaybe } from './maybe';
 
 /**
  * Discriminant for `Ok` and `Err` variants of `Result` type.
@@ -410,7 +410,7 @@ export const and = <T, U, E>(ru: Result<U, E>, rt: Result<T, E>): Result<U, E> =
  * [`chain`]: #chain
  * [bind]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function/bind
  * 
- * @param thenFn The function to apply to the wrapped `T` if `maybe` is `Just`.
+ * @param thenFn The function to apply to the wrapped `T` if `maybe` is `Some`.
  * @param maybe  The `Maybe` to evaluate and possibly apply a function to.
  */
 export const andThen = <T, U, E>(
@@ -470,20 +470,20 @@ export const unwrapOrElse = <T, E>(orElseFn: (error: E) => T, result: Result<T, 
 /**
  * Convert a [`Result`](#result) to a [`Maybe`](#../modules/_maybe_.html#maybe).
  * 
- * The converted type will be [`Just`] if the `Result` is [`Ok`] or [`Nothing`]
+ * The converted type will be [`Some`] if the `Result` is [`Ok`] or [`Nothing`]
  * if the `Result` is [`Err`]; the wrapped error value will be discarded.
  * 
  * [`Result`]: #result
- * [`Just`]: ../classes/_maybe_.just.html
+ * [`Some`]: ../classes/_maybe_.some.html
  * [`Nothing`]: ../classes/_maybe_.nothing.html
  * [`Ok`]: ../classes/_result_.ok.html
  * [`Err`]: ../classes/_result_.err.html
  * 
  * @param result The `Result` to convert to a `Maybe`
- * @returns      `Just` the value in `result` if it is `Ok`; otherwise `Nothing`
+ * @returns      `Some` the value in `result` if it is `Ok`; otherwise `Nothing`
  */
 export const toMaybe = <T, E>(result: Result<T, E>): Maybe<T> =>
-  isOk(result) ? just(unwrap(result)) : nothing();
+  isOk(result) ? some(unwrap(result)) : nothing();
 
 export const fromMaybe = <T, E>(errValue: E, maybe: Maybe<T>): Result<T, E> =>
-  isJust(maybe) ? ok<T, E>(unwrapMaybe(maybe)) : err<T, E>(errValue);
+  isSome(maybe) ? ok<T, E>(unwrapMaybe(maybe)) : err<T, E>(errValue);

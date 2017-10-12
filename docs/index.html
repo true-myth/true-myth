@@ -88,7 +88,7 @@
 					<li><a href="#design-philosophy">Design philosophy</a><ul>
 							<li><a href="#the-type-names">The type names</a><ul>
 									<li><a href="#maybe"><code>Maybe</code></a><ul>
-											<li><a href="#the-maybe-variants-just-and-nothing">The <code>Maybe</code> variants: <code>Just</code> and <code>Nothing</code></a></li>
+											<li><a href="#the-maybe-variants-some-and-nothing">The <code>Maybe</code> variants: <code>Some</code> and <code>Nothing</code></a></li>
 										</ul>
 									</li>
 									<li><a href="#result"><code>Result</code></a><ul>
@@ -140,14 +140,14 @@
   <span class="hljs-keyword">return</span> mightBeAString.map(<span class="hljs-function"><span class="hljs-params">s</span> =&gt;</span> s.length);
 }
 
-<span class="hljs-keyword">const</span> someString = Maybe.just(<span class="hljs-string">'a string'</span>);
+<span class="hljs-keyword">const</span> someString = Maybe.some(<span class="hljs-string">'a string'</span>);
 <span class="hljs-keyword">const</span> nothingHere = Maybe.nothing&lt;<span class="hljs-built_in">string</span>&gt;();
-<span class="hljs-built_in">console</span>.log(safeLength(someString).toString()); <span class="hljs-comment">// "Just(8)"</span>
+<span class="hljs-built_in">console</span>.log(safeLength(someString).toString()); <span class="hljs-comment">// "Some(8)"</span>
 <span class="hljs-built_in">console</span>.log(safeLength(nothingHere).toString()); <span class="hljs-comment">// "Nothing"</span>
 </code></pre>
 				<h3 id="constructing-maybe-">Constructing <code>Maybe</code></h3>
 				<p>You can use <code>Maybe.of</code> to construct a <code>Maybe</code> from any value. It will return a
-				<code>Nothing</code> if the passed type is <code>null</code> or <code>undefined</code>, or a <code>Just</code> otherwise.</p>
+				<code>Nothing</code> if the passed type is <code>null</code> or <code>undefined</code>, or a <code>Some</code> otherwise.</p>
 				<pre><code class="lang-ts"><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">acceptsANullOhNo</span>(<span class="hljs-params">value: <span class="hljs-built_in">number</span> | <span class="hljs-literal">null</span></span>): <span class="hljs-title">Maybe</span>&lt;<span class="hljs-title">string</span>&gt; </span>{
   <span class="hljs-keyword">const</span> maybeNumber = Maybe.of(value);
   <span class="hljs-keyword">return</span> mapOr(<span class="hljs-string">"0"</span>, <span class="hljs-function"><span class="hljs-params">n</span> =&gt;</span> n.toString(), maybeNumber);
@@ -296,8 +296,8 @@ myInteger.map(<span class="hljs-function"><span class="hljs-params">x</span> =&g
 				<ul>
 					<li><p>You can construct the variant types in the traditional JavaScript way or
 						with a pure function:</p>
-						<pre><code class="lang-ts">const classicalJust = new Just(&#39;value&#39;);
-const functionalJust = just(&#39;value&#39;);
+						<pre><code class="lang-ts">const classicalSome = new Some(&#39;value&#39;);
+const functionalSome = some(&#39;value&#39;);
 const classicalNothing = new Nothing();
 const functionalNothing = nothing();
 </code></pre>
@@ -324,7 +324,7 @@ const functionalNothing = nothing();
 							assume that the types are checked, and <em>will</em> error if you pass in items of
 						the wrong type.</p>
 						<p>For example, if you pass a non-<code>Maybe</code> instance to many functions, they will
-							simply fail – even the basic helpers like <code>isJust</code> and <code>isNothing</code>. These
+							simply fail – even the basic helpers like <code>isSome</code> and <code>isNothing</code>. These
 							assumptions have been made precisely <em>because</em> this is a TypeScript- and
 							Flow-first library. (See the discussion below comparing True Myth to
 							Folktale and Sanctuary if you aren&#39;t using TypeScript or Flow and need
@@ -364,12 +364,12 @@ const functionalNothing = nothing();
 					natural <em>accurate</em> way to answer the question, &quot;What&#39;s in this field?&quot; It&#39;s also
 				the shortest!</p>
 				<p><code>Optional</code> or <code>Maybe</code> are both good names; <code>Maybe</code> just seemed slightly better.</p>
-				<h5 id="the-maybe-variants-just-and-nothing-">The <code>Maybe</code> variants: <code>Just</code> and <code>Nothing</code></h5>
+				<h5 id="the-maybe-variants-some-and-nothing-">The <code>Maybe</code> variants: <code>Some</code> and <code>Nothing</code></h5>
 				<p>Similar consideration was given to the names of the type variants. Options for
 					the &quot;present&quot; type in other libraries are <code>Some</code> and <code>Just</code>. Options for the
 				&quot;absent&quot; type are <code>None</code> or <code>Nothing</code>.</p>
 				<ul>
-					<li>[ ] TODO: elaborate on reasons for <code>Just</code> and <code>Nothing</code></li>
+					<li>[ ] TODO: elaborate on reasons for <code>Some</code> and <code>Nothing</code></li>
 				</ul>
 				<h4 id="-result-"><code>Result</code></h4>
 				<ul>
@@ -458,9 +458,9 @@ const functionalNothing = nothing();
 						couple differences in particular worth calling out:</p>
 						<ul>
 							<li><p><strong>function naming convention:</strong> True Myth uses PascalCase for types and
-									camelCase for functions – so, <code>new Just(5)</code> and <code>just(5)</code>, whereas
+									camelCase for functions – so, <code>new Some(5)</code> and <code>some(5)</code>, whereas
 									FolkTale uses the capitals as function names for type constructors, i.e.
-								<code>Just(5)</code>, and does not support <code>new</code>.</p>
+								<code>Some(5)</code>, and does not support <code>new</code>.</p>
 							</li>
 							<li><p><strong>ease of construction from nullable types:</strong> True Myth allows you to
 									construct <code>Maybe</code> types from nullable types with <code>Maybe.of</code>, because JS
