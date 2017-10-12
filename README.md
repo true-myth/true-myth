@@ -2,7 +2,6 @@
 
 [![Travis `master`](https://img.shields.io/travis/chriskrycho/true-myth/master.svg?style=flat-square)](https://travis-ci.org/chriskrycho/true-myth)
 [![npm](https://img.shields.io/npm/v/true-myth.svg?style=flat-square)](https://www.npmjs.com/package/true-myth)
-[![GitHub tag](https://img.shields.io/github/tag/expressjs/express.svg?style=flat-square)](https://github.com/chriskrycho/true-myth/releases)
 ![Stability](https://img.shields.io/badge/stability-experimental-purple.svg?style=flat-square&colorB=b28cd9)
 [![Gitter](https://img.shields.io/gitter/room/nwjs/nw.js.svg?style=flat-square)](https://gitter.im/true-myth/Lobby)
 [![license](https://img.shields.io/github/license/chriskrycho/true-myth.svg?style=flat-square)](https://github.com/chriskrycho/true-myth/blob/master/LICENSE)
