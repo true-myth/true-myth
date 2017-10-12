@@ -406,10 +406,10 @@ Before this hits 1.0, I will do:
     - [x] implement
     - [ ] document
 
-- [ ] *All* the exports
-    - [ ] UMD
-    - [ ] ES modules
-    - [ ] CommonJS modules
+- [x] *All* the exports
+    - [x] AMD
+    - [x] ES modules
+    - [x] CommonJS modules
 
 - [ ] Ember CLI integration
 

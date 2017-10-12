@@ -1,11 +1,6 @@
 {
   "name": "true-myth",
   "description": "A library for safe functional programming in JavaScript, with first-class support for TypeScript and Flow",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
-  "files": [
-    "dist"
-  ],
   "homepage": "https://chriskrycho.github.io/true-myth",
   "repository": {
     "type": "git",
@@ -21,21 +16,35 @@
     "email": "chris@chriskrycho.com",
     "url": "http://www.chriskrycho.com"
   },
+  "files": [
+    "dist",
+    "src"
+  ],
+  "scripts": {
+    "build": "yarn run build:commonjs && yarn run build:es && yarn run build:amd",
+    "build:es": "tsc -p tsconfig/es.json",
+    "build:amd": "tsc -p tsconfig/amd.json",
+    "build:commonjs": "tsc -p tsconfig/commonjs.json",
+    "clean": "rimraf dist",
+    "test": "jest",
+    "doc": "./build-docs",
+    "precommit": "./build-docs && git add docs",
+    "version": "tsc && ./build-docs && git add docs"
+  },
+  "main": "dist/commonjs/index.js",
+  "types": "dist/commonjs/index.d.ts",
+  "module": "dist/es/index.js",
+  "jsnext:main": "dist/es/index.js",
   "devDependencies": {
     "@types/jest": "^21.1.0",
     "husky": "^0.14.3",
     "jest": "^21.1.0",
     "prettier": "^1.7.0",
+    "rimraf": "^2.6.2",
     "ts-jest": "^21.0.1",
     "tslint": "^5.7.0",
     "typedoc": "^0.8.0",
     "typescript": "2.5"
-  },
-  "scripts": {
-    "test": "jest",
-    "doc": "./build-docs",
-    "precommit": "./build-docs && git add docs",
-    "version": "tsc && ./build-docs && git add docs"
   },
   "jest": {
     "transform": {
