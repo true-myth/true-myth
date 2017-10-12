@@ -406,10 +406,6 @@ Before this hits 1.0, I will do:
     - [x] implement
     - [ ] document
 
-- [ ] `Either`
-    - [ ] implement
-    - [ ] document
-
 If you think another type should be in this list, please [open an issue]!
 
 [open an issue]: https://github.com/chriskrycho/true-myth/issues
