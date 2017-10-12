@@ -766,7 +766,9 @@ export const fromResult = <T, E>(result: Result.Result<T, E>): Maybe<T> =>
   @param maybe The value to convert to a string.
   @returns     The string representation of the `Maybe`.
  */
-export const toString = <T>(maybe: Maybe<T>): string =>
-  isSome(maybe) ? `Some(${unwrap(maybe).toString()})` : `Nothing`;
+export const toString = <T>(maybe: Maybe<T>): string => {
+  const body = isSome(maybe) ? `(${unwrap(maybe).toString()})` : '';
+  return `${maybe.variant}${body}`;
+};
 
 export default Maybe;

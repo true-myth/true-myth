@@ -212,13 +212,23 @@ describe('`Result` pure functions', () => {
     const theValue = 'something';
     const errValue = 'what happened?';
 
-    const aJust = some(theValue);
+    const aSome = some(theValue);
     const anOk = Result.ok(theValue);
-    expect(Result.fromMaybe(errValue, aJust)).toEqual(anOk);
+    expect(Result.fromMaybe(errValue, aSome)).toEqual(anOk);
 
     const aNothing = nothing();
     const anErr = Result.err(errValue);
     expect(Result.fromMaybe(errValue, aNothing)).toEqual(anErr);
+  });
+
+  test('toString', () => {
+    const theValue = { thisIsReally: 'something' };
+    const anOk = Result.ok(theValue);
+    expect(Result.toString(anOk)).toEqual(`Ok(${theValue.toString()})`);
+
+    const errValue = ['oh', 'no'];
+    const anErr = Result.err(errValue);
+    expect(Result.toString(anErr)).toEqual(`Err(${errValue.toString()})`);
   });
 });
 
@@ -347,6 +357,12 @@ describe('`Result.Ok` class', () => {
     const theValue = { something: 'fun' };
     const theOk = new Result.Ok(theValue);
     expect(theOk.toMaybe()).toEqual(some(theValue));
+  });
+
+  test('`toString` method', () => {
+    const theValue = 42;
+    const theOk = new Result.Ok(theValue);
+    expect(theOk.toString()).toEqual(`Ok(${theValue.toString()})`);
   });
 });
 
@@ -487,5 +503,11 @@ describe('`Result.Err` class', () => {
   test('`toMaybe` method', () => {
     const theErr = new Result.Err('so sad');
     expect(theErr.toMaybe()).toEqual(nothing());
+  });
+
+  test('`toString` method', () => {
+    const theErrValue = { something: 'sad' };
+    const theErr = new Result.Err(theErrValue);
+    expect(theErr.toString()).toEqual(`Err(${theErrValue.toString()})`);
   });
 });

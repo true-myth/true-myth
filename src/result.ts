@@ -87,6 +87,9 @@ export interface IResult<T, E> {
 
   /** Method variant for [`Result.toMaybe`](../modules/_result_.html#tomaybe) */
   toMaybe(this: Result<T, E>): Maybe<T>;
+
+  /** Method variant for [`Result.toString`](../modules/_result_.html#tostring) */
+  toString(this: Result<T, E>): string;
 }
 
 /**
@@ -222,6 +225,11 @@ export class Ok<T, E> implements IResult<T, E> {
   toMaybe(this: Result<T, E>): Maybe<T> {
     return toMaybe(this);
   }
+
+  /** Method variant for [`Result.toString`](../modules/_result_.html#tostring) */
+  toString(this: Result<T, E>): string {
+    return toString(this);
+  }
 }
 
 export class Err<T, E> implements IResult<T, E> {
@@ -323,6 +331,11 @@ export class Err<T, E> implements IResult<T, E> {
   /** Method variant for [`Result.toMaybe`](../modules/_result_.html#tomaybe) */
   toMaybe(this: Result<T, E>): Maybe<T> {
     return toMaybe(this);
+  }
+
+  /** Method variant for [`Result.toString`](../modules/_result_.html#tostring) */
+  toString(this: Result<T, E>): string {
+    return toString(this);
   }
 }
 
@@ -487,3 +500,59 @@ export const toMaybe = <T, E>(result: Result<T, E>): Maybe<T> =>
 
 export const fromMaybe = <T, E>(errValue: E, maybe: Maybe<T>): Result<T, E> =>
   isSome(maybe) ? ok<T, E>(unwrapMaybe(maybe)) : err<T, E>(errValue);
+
+/**
+  Create a `String` representation of a `result` instance.
+  
+  An `Ok` instance will be printed as `"Ok(<representation of the value>)"`, and
+  an `Err` instance will be printed as `"Err(<representation of the error>)"`,
+  where the representation of the value or error is simply the value or error's
+  own `toString` representation. For example:
+  
+  <table>
+    <thead>
+      <tr>
+        <td>call</td>
+        <td>output</td>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code>toString(ok(42))</code></td>
+        <td><code>"Ok(42)"</code></td>
+      </tr>
+      <tr>
+        <td><code>toString(ok([1, 2, 3]))</code></td>
+        <td><code>"Ok(1,2,3)"</code></td>
+      </tr>
+      <tr>
+        <td><code>toString(ok({ an: 'object' }))</code></td>
+        <td><code>"Ok([object Object])"</code>
+      </tr>
+      <tbody>
+      <tr>
+        <td><code>toString(err(42))</code></td>
+        <td><code>"Err(42)"</code></td>
+      </tr>
+      <tr>
+        <td><code>toString(err([1, 2, 3]))</code></td>
+        <td><code>"Err(1,2,3)"</code></td>
+      </tr>
+      <tr>
+        <td><code>toString(err({ an: 'object' }))</code></td>
+        <td><code>"Err([object Object])"</code>
+      </tr>
+    </tbody>
+  </table>
+  
+  `Nothing` instances will always be printed as `"Nothing"`.
+  
+  @typeparam T The type of the wrapped value; its own `.toString` will be used
+               to print the interior contents of the `Some` variant.
+  @param maybe The value to convert to a string.
+  @returns     The string representation of the `Maybe`.
+ */
+export const toString = <T, E>(result: Result<T, E>): string => {
+  const body = (isOk(result) ? unwrap(result) : unwrapErr(result)).toString();
+  return `${result.variant}(${body})`;
+};
