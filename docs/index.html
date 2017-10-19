@@ -282,9 +282,21 @@ myInteger.map(<span class="hljs-function"><span class="hljs-params">x</span> =&g
 					or a 401 for your HTTP request, you can pass the box around the same either way;
 					the methods and properties the container has are not dependent upon whether
 				there is shiny new data or a big red error inside.</p>
-				<ul>
-					<li>[ ] TODO: comments on type safety via TS and Flow</li>
-				</ul>
+				<p>Best of all, when you use these with libraries like TypeScript or Flow, you can
+					lean on their type systems to check aggressively for <code>null</code> and <code>undefined</code>, and
+					actually <em>eliminate</em> those from your codebase by replacing anywhere you would
+				have used them with <code>Maybe</code>.</p>
+				<p>Likewise, you can replace functions which take polymorphic arguments or have
+					polymorphic return values in order to try to handle scenarios where something
+				may be a success or an error with functions using <code>Result</code>.</p>
+				<p>Any place you try to treat them as just the underlying value rather than the
+					container, the type systems will complain, of course. And you&#39;ll also get help
+					from smart editors with suggestions about what kinds of values (including
+					functions) you need to interact with any given helper or method, since the type
+				definitions are supplied.</p>
+				<p>By leaning on TypeScript or Flow to handle the checking, we also get all these
+					benefits with <em>no</em> runtime overhead other than the cost of constructing the
+				actual container objects (which is to say: <em>very</em> low!).</p>
 				<h2 id="design-philosophy">Design philosophy</h2>
 				<p>The design aims for True Myth are:</p>
 				<ul>

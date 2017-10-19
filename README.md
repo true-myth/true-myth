@@ -262,7 +262,24 @@ or a 401 for your HTTP request, you can pass the box around the same either way;
 the methods and properties the container has are not dependent upon whether
 there is shiny new data or a big red error inside.
 
-- [ ] TODO: comments on type safety via TS and Flow
+Best of all, when you use these with libraries like TypeScript or Flow, you can
+lean on their type systems to check aggressively for `null` and `undefined`, and
+actually *eliminate* those from your codebase by replacing anywhere you would
+have used them with `Maybe`.
+
+Likewise, you can replace functions which take polymorphic arguments or have
+polymorphic return values in order to try to handle scenarios where something
+may be a success or an error with functions using `Result`.
+
+Any place you try to treat them as just the underlying value rather than the
+container, the type systems will complain, of course. And you'll also get help
+from smart editors with suggestions about what kinds of values (including
+functions) you need to interact with any given helper or method, since the type
+definitions are supplied.
+
+By leaning on TypeScript or Flow to handle the checking, we also get all these
+benefits with *no* runtime overhead other than the cost of constructing the
+actual container objects (which is to say: *very* low!).
 
 ## Design philosophy
 
