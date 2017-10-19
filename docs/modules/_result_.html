@@ -286,7 +286,7 @@
 					<div class="tsd-signature tsd-kind-icon">chain<span class="tsd-signature-symbol">:</span> <a href="" class="tsd-signature-type">andThen</a><span class="tsd-signature-symbol"> =&nbsp;andThen</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in result.ts:527</li>
+							<li>Defined in result.ts:557</li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -301,7 +301,7 @@
 					<div class="tsd-signature tsd-kind-icon">flat<wbr>Map<span class="tsd-signature-symbol">:</span> <a href="" class="tsd-signature-type">andThen</a><span class="tsd-signature-symbol"> =&nbsp;andThen</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in result.ts:530</li>
+							<li>Defined in result.ts:560</li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -316,7 +316,7 @@
 					<div class="tsd-signature tsd-kind-icon">unwrap<span class="tsd-signature-symbol">:</span> <a href="" class="tsd-signature-type">unsafelyUnwrap</a><span class="tsd-signature-symbol"> =&nbsp;unsafelyUnwrap</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in result.ts:552</li>
+							<li>Defined in result.ts:582</li>
 						</ul>
 					</aside>
 				</section>
@@ -326,7 +326,7 @@
 					<div class="tsd-signature tsd-kind-icon">unwrap<wbr>Err<span class="tsd-signature-symbol">:</span> <a href="" class="tsd-signature-type">unsafelyUnwrapErr</a><span class="tsd-signature-symbol"> =&nbsp;unsafelyUnwrapErr</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in result.ts:567</li>
+							<li>Defined in result.ts:597</li>
 						</ul>
 					</aside>
 				</section>
@@ -343,7 +343,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in result.ts:503</li>
+									<li>Defined in result.ts:533</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
@@ -381,7 +381,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in result.ts:521</li>
+									<li>Defined in result.ts:551</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -496,7 +496,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in result.ts:593</li>
+									<li>Defined in result.ts:623</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
@@ -723,25 +723,62 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in result.ts:500</li>
+									<li>Defined in result.ts:530</li>
 								</ul>
 							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Map over a <code>Result</code>, exactly as in <a href="#map"><code>map</code></a>, but operating on the value
+										wrapped in an <code>Err</code> instead of the value wrapped in the <code>Ok</code>. This is handy
+										for when you need to line up a bunch of different types of errors, or if you
+										need an error of one shape to be in a different shape to use somewhere else in
+									your codebase.</p>
+								</div>
+								<h4 id="examples">Examples</h4>
+								<pre><code class="lang-ts"><span class="hljs-keyword">import</span> { ok, err, mapErr, toString } <span class="hljs-keyword">from</span> <span class="hljs-string">'true-myth/result'</span>;
+
+<span class="hljs-keyword">const</span> reason = <span class="hljs-function">(<span class="hljs-params">err: { code: <span class="hljs-built_in">number</span>, reason: <span class="hljs-built_in">string</span> }</span>) =&gt;</span> err.reason;
+
+<span class="hljs-keyword">const</span> anOk = ok(<span class="hljs-number">12</span>);
+<span class="hljs-keyword">const</span> mappedOk = mapErr(reason, anOk);
+<span class="hljs-built_in">console</span>.log(toString(mappedOk));  <span class="hljs-comment">// Ok(12)</span>
+
+<span class="hljs-keyword">const</span> anErr = err({ code: <span class="hljs-number">101</span>, reason: <span class="hljs-string">'bad file'</span> });
+<span class="hljs-keyword">const</span> mappedErr = mapErr(reason, anErr);
+<span class="hljs-built_in">console</span>.log(toString(mappedErr));  <span class="hljs-comment">// Err(bad file)</span>
+</code></pre>
+							</div>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
 							<ul class="tsd-type-parameters">
 								<li>
 									<h4>T</h4>
+									<div class="tsd-comment tsd-typography">
+										<p>The type of the value wrapped in the <code>Ok</code> of the <code>Result</code>.</p>
+									</div>
 								</li>
 								<li>
 									<h4>E</h4>
+									<div class="tsd-comment tsd-typography">
+										<p>The type of the value wrapped in the <code>Err</code> of the <code>Result</code>.</p>
+									</div>
 								</li>
 								<li>
 									<h4>F</h4>
+									<div class="tsd-comment tsd-typography">
+										<p>The type of the value wrapped in the <code>Err</code> of a new <code>Result</code>,
+										returned by the <code>mapErrFn</code>.</p>
+									</div>
 								</li>
 							</ul>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
 									<h5>mapErrFn: <span class="tsd-signature-type">function</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<div class="lead">
+											<p>The function to apply to the value wrapped in <code>Err</code> if <code>result</code> is an <code>Err</code>.</p>
+										</div>
+									</div>
 									<ul class="tsd-parameters">
 										<li class="tsd-parameter-siganture">
 											<ul class="tsd-signatures tsd-kind-type-literal tsd-is-not-exported">
@@ -763,6 +800,11 @@
 								</li>
 								<li>
 									<h5>result: <a href="_result_.html#result" class="tsd-signature-type">Result</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">E</span><span class="tsd-signature-symbol">&gt;</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<div class="lead">
+											<p>The <code>Result</code> instance to map over an error case for.</p>
+										</div>
+									</div>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <a href="_result_.html#result" class="tsd-signature-type">Result</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">F</span><span class="tsd-signature-symbol">&gt;</span></h4>
@@ -1046,7 +1088,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in result.ts:532</li>
+									<li>Defined in result.ts:562</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
@@ -1084,7 +1126,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in result.ts:535</li>
+									<li>Defined in result.ts:565</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
@@ -1140,7 +1182,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in result.ts:590</li>
+									<li>Defined in result.ts:620</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1185,7 +1227,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in result.ts:647</li>
+									<li>Defined in result.ts:677</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1267,7 +1309,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in result.ts:548</li>
+									<li>Defined in result.ts:578</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1306,7 +1348,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in result.ts:563</li>
+									<li>Defined in result.ts:593</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1345,7 +1387,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in result.ts:569</li>
+									<li>Defined in result.ts:599</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
@@ -1380,7 +1422,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in result.ts:572</li>
+									<li>Defined in result.ts:602</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>

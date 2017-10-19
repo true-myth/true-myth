@@ -497,6 +497,36 @@ export const mapOrElse = <T, U, E>(
   result: Result<T, E>
 ): U => (isOk(result) ? mapFn(unwrap(result)) : orElseFn(unwrapErr(result)));
 
+/**
+  Map over a `Result`, exactly as in [`map`](#map), but operating on the value
+  wrapped in an `Err` instead of the value wrapped in the `Ok`. This is handy
+  for when you need to line up a bunch of different types of errors, or if you
+  need an error of one shape to be in a different shape to use somewhere else in
+  your codebase.
+
+  #### Examples
+
+  ```ts
+  import { ok, err, mapErr, toString } from 'true-myth/result';
+
+  const reason = (err: { code: number, reason: string }) => err.reason;
+
+  const anOk = ok(12);
+  const mappedOk = mapErr(reason, anOk);
+  console.log(toString(mappedOk));  // Ok(12)
+
+  const anErr = err({ code: 101, reason: 'bad file' });
+  const mappedErr = mapErr(reason, anErr);
+  console.log(toString(mappedErr));  // Err(bad file)
+  ```
+
+  @typeparam T    The type of the value wrapped in the `Ok` of the `Result`.
+  @typeparam E    The type of the value wrapped in the `Err` of the `Result`.
+  @typeparam F    The type of the value wrapped in the `Err` of a new `Result`,
+                  returned by the `mapErrFn`.
+  @param mapErrFn The function to apply to the value wrapped in `Err` if `result` is an `Err`.
+  @param result   The `Result` instance to map over an error case for.
+ */
 export const mapErr = <T, E, F>(mapErrFn: (e: E) => F, result: Result<T, E>): Result<T, F> =>
   isOk(result) ? ok(unwrap(result)) : err(mapErrFn(unwrapErr(result)));
 
