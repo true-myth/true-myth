@@ -371,7 +371,19 @@ const functionalNothing = nothing();
 					the &quot;present&quot; type in other libraries are <code>Some</code> and <code>Just</code>. Options for the
 				&quot;absent&quot; type are <code>None</code> or <code>Nothing</code>.</p>
 				<h6 id="why-just-">Why <code>Just</code>?</h6>
-				<p>Both <code>Just</code> and <code>Some</code> are reasonable choices for </p>
+				<p>Both <code>Just</code> and <code>Some</code> are reasonable choices for this, and both have things to
+				recommend them semantically:</p>
+				<ul>
+					<li>When talking about the <em>type</em> of given item, &quot;some&quot; makes a lot of sense:
+						&quot;What&#39;s in this field? Some number.&quot; You can get the same idea across with
+					&quot;just&quot; but it&#39;s a bit less clear: &quot;What&#39;s in this field? Just a number.&quot;</li>
+					<li>On the other hand, when talking about or constructing a given <em>value</em>,
+						&quot;just&quot; makes more sense: &quot;What is this? It&#39;s just 12.&quot; When you try to use
+					&quot;some&quot; there, it reads oddly: &quot;What is this? It&#39;s some 12.&quot;</li>
+				</ul>
+				<p>Given that &quot;just a number&quot; <em>works</em> (even if it&#39;s strictly a little less nice
+					than &quot;some number&quot;) and that &quot;just 12&quot; works but &quot;some 12&quot; doesn&#39;t, <code>Just</code> seems
+				to be a slightly better option.</p>
 				<h6 id="why-nothing-">Why <code>Nothing</code>?</h6>
 				<p>Given the choice between <code>None</code> and <code>Nothing</code>, the consideration just came down
 					to the most natural <em>language</em> choice. &quot;What&#39;s here? Nothing!&quot; makes sense,

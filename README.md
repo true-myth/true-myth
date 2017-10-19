@@ -374,7 +374,19 @@ the "present" type in other libraries are `Some` and `Just`. Options for the
 
 ###### Why `Just`?
 
-Both `Just` and `Some` are reasonable choices for 
+Both `Just` and `Some` are reasonable choices for this, and both have things to
+recommend them semantically:
+
+-   When talking about the *type* of given item, "some" makes a lot of sense:
+    "What's in this field? Some number." You can get the same idea across with
+    "just" but it's a bit less clear: "What's in this field? Just a number."
+-   On the other hand, when talking about or constructing a given *value*,
+    "just" makes more sense: "What is this? It's just 12." When you try to use
+    "some" there, it reads oddly: "What is this? It's some 12."
+
+Given that "just a number" *works* (even if it's strictly a little less nice
+than "some number") and that "just 12" works but "some 12" doesn't, `Just` seems
+to be a slightly better option.
 
 ###### Why `Nothing`?
 
