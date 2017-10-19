@@ -88,8 +88,8 @@
 			<section class="tsd-panel">
 				<h3>Implemented by</h3>
 				<ul class="tsd-hierarchy">
+					<li><a href="../classes/_maybe_.just.html" class="tsd-signature-type">Just</a></li>
 					<li><a href="../classes/_maybe_.nothing.html" class="tsd-signature-type">Nothing</a></li>
-					<li><a href="../classes/_maybe_.some.html" class="tsd-signature-type">Some</a></li>
 				</ul>
 			</section>
 			<section class="tsd-panel-group tsd-index-group">
@@ -109,8 +109,8 @@
 								<li class="tsd-kind-method tsd-parent-kind-interface tsd-has-type-parameter"><a href="_maybe_.imaybe.html#andthen" class="tsd-kind-icon">and<wbr>Then</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-interface tsd-has-type-parameter"><a href="_maybe_.imaybe.html#chain" class="tsd-kind-icon">chain</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-interface tsd-has-type-parameter"><a href="_maybe_.imaybe.html#flatmap" class="tsd-kind-icon">flat<wbr>Map</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="_maybe_.imaybe.html#isjust" class="tsd-kind-icon">is<wbr>Just</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="_maybe_.imaybe.html#isnothing" class="tsd-kind-icon">is<wbr>Nothing</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="_maybe_.imaybe.html#issome" class="tsd-kind-icon">is<wbr>Some</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-interface tsd-has-type-parameter"><a href="_maybe_.imaybe.html#map" class="tsd-kind-icon">map</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-interface tsd-has-type-parameter"><a href="_maybe_.imaybe.html#mapor" class="tsd-kind-icon">map<wbr>Or</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-interface tsd-has-type-parameter"><a href="_maybe_.imaybe.html#maporelse" class="tsd-kind-icon">map<wbr>OrElse</a></li>
@@ -131,7 +131,7 @@
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
 					<a name="variant" class="tsd-anchor"></a>
 					<h3>variant</h3>
-					<div class="tsd-signature tsd-kind-icon">variant<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">"Some"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"Nothing"</span></div>
+					<div class="tsd-signature tsd-kind-icon">variant<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">"Just"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"Nothing"</span></div>
 					<aside class="tsd-sources">
 						<ul>
 							<li>Defined in maybe.ts:20</li>
@@ -139,7 +139,7 @@
 					</aside>
 					<div class="tsd-comment tsd-typography">
 						<div class="lead">
-							<p>Distinguish between the <code>Some</code> and <code>Nothing</code> <a href="../enums/_maybe_.variant">variants</a>.</p>
+							<p>Distinguish between the <code>Just</code> and <code>Nothing</code> <a href="../enums/_maybe_.variant">variants</a>.</p>
 						</div>
 					</div>
 				</section>
@@ -349,6 +349,34 @@
 					</ul>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface">
+					<a name="isjust" class="tsd-anchor"></a>
+					<h3>is<wbr>Just</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface">
+						<li class="tsd-signature tsd-kind-icon">is<wbr>Just<span class="tsd-signature-symbol">(</span>this<span class="tsd-signature-symbol">: </span><a href="../modules/_maybe_.html#maybe" class="tsd-signature-type">Maybe</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in maybe.ts:23</li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Method variant for <a href="../modules/_maybe_.html#isjust"><code>Maybe.isJust</code></a></p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>this: <a href="../modules/_maybe_.html#maybe" class="tsd-signature-type">Maybe</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface">
 					<a name="isnothing" class="tsd-anchor"></a>
 					<h3>is<wbr>Nothing</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface">
@@ -364,34 +392,6 @@
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
 									<p>Method variant for <a href="../modules/_maybe_.html#isnothing"><code>Maybe.isNothing</code></a></p>
-								</div>
-							</div>
-							<h4 class="tsd-parameters-title">Parameters</h4>
-							<ul class="tsd-parameters">
-								<li>
-									<h5>this: <a href="../modules/_maybe_.html#maybe" class="tsd-signature-type">Maybe</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span></h5>
-								</li>
-							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
-						</li>
-					</ul>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface">
-					<a name="issome" class="tsd-anchor"></a>
-					<h3>is<wbr>Some</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface">
-						<li class="tsd-signature tsd-kind-icon">is<wbr>Some<span class="tsd-signature-symbol">(</span>this<span class="tsd-signature-symbol">: </span><a href="../modules/_maybe_.html#maybe" class="tsd-signature-type">Maybe</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span></li>
-					</ul>
-					<ul class="tsd-descriptions">
-						<li class="tsd-description">
-							<aside class="tsd-sources">
-								<ul>
-									<li>Defined in maybe.ts:23</li>
-								</ul>
-							</aside>
-							<div class="tsd-comment tsd-typography">
-								<div class="lead">
-									<p>Method variant for <a href="../modules/_maybe_.html#issome"><code>Maybe.isSome</code></a></p>
 								</div>
 							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -904,10 +904,10 @@
 						<a href="../enums/_maybe_.variant.html" class="tsd-kind-icon">Variant</a>
 					</li>
 					<li class=" tsd-kind-class tsd-parent-kind-external-module tsd-has-type-parameter">
-						<a href="../classes/_maybe_.nothing.html" class="tsd-kind-icon">Nothing</a>
+						<a href="../classes/_maybe_.just.html" class="tsd-kind-icon">Just</a>
 					</li>
 					<li class=" tsd-kind-class tsd-parent-kind-external-module tsd-has-type-parameter">
-						<a href="../classes/_maybe_.some.html" class="tsd-kind-icon">Some</a>
+						<a href="../classes/_maybe_.nothing.html" class="tsd-kind-icon">Nothing</a>
 					</li>
 				</ul>
 				<ul class="current">
@@ -930,10 +930,10 @@
 								<a href="_maybe_.imaybe.html#flatmap" class="tsd-kind-icon">flat<wbr>Map</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-interface">
-								<a href="_maybe_.imaybe.html#isnothing" class="tsd-kind-icon">is<wbr>Nothing</a>
+								<a href="_maybe_.imaybe.html#isjust" class="tsd-kind-icon">is<wbr>Just</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-interface">
-								<a href="_maybe_.imaybe.html#issome" class="tsd-kind-icon">is<wbr>Some</a>
+								<a href="_maybe_.imaybe.html#isnothing" class="tsd-kind-icon">is<wbr>Nothing</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-interface tsd-has-type-parameter">
 								<a href="_maybe_.imaybe.html#map" class="tsd-kind-icon">map</a>
@@ -1003,10 +1003,13 @@
 						<a href="../modules/_maybe_.html#fromresult" class="tsd-kind-icon">from<wbr>Result</a>
 					</li>
 					<li class=" tsd-kind-function tsd-parent-kind-external-module tsd-has-type-parameter">
+						<a href="../modules/_maybe_.html#isjust" class="tsd-kind-icon">is<wbr>Just</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-external-module tsd-has-type-parameter">
 						<a href="../modules/_maybe_.html#isnothing" class="tsd-kind-icon">is<wbr>Nothing</a>
 					</li>
 					<li class=" tsd-kind-function tsd-parent-kind-external-module tsd-has-type-parameter">
-						<a href="../modules/_maybe_.html#issome" class="tsd-kind-icon">is<wbr>Some</a>
+						<a href="../modules/_maybe_.html#just-1" class="tsd-kind-icon">just</a>
 					</li>
 					<li class=" tsd-kind-function tsd-parent-kind-external-module tsd-has-type-parameter">
 						<a href="../modules/_maybe_.html#map" class="tsd-kind-icon">map</a>
@@ -1028,9 +1031,6 @@
 					</li>
 					<li class=" tsd-kind-function tsd-parent-kind-external-module tsd-has-type-parameter">
 						<a href="../modules/_maybe_.html#orelse" class="tsd-kind-icon">or<wbr>Else</a>
-					</li>
-					<li class=" tsd-kind-function tsd-parent-kind-external-module tsd-has-type-parameter">
-						<a href="../modules/_maybe_.html#some-1" class="tsd-kind-icon">some</a>
 					</li>
 					<li class=" tsd-kind-function tsd-parent-kind-external-module tsd-has-type-parameter">
 						<a href="../modules/_maybe_.html#tookorelseerr" class="tsd-kind-icon">to<wbr>OkOr<wbr>Else<wbr>Err</a>

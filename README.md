@@ -22,7 +22,7 @@ functional style and a more traditional method-call style.
 - [Design philosophy](#design-philosophy)
     - [The type names](#the-type-names)
         - [`Maybe`](#maybe)
-            - [The `Maybe` variants: `Some` and `Nothing`](#the-maybe-variants-some-and-nothing)
+            - [The `Maybe` variants: `Just` and `Nothing`](#the-maybe-variants-just-and-nothing)
         - [`Result`](#result)
             - [The `Result` variants: `Ok` and `Err`](#the-result-variants-ok-and-err)
 - [Setup](#setup)
@@ -72,16 +72,16 @@ function safeLength(mightBeAString: Maybe<string>): Maybe<number> {
   return mightBeAString.map(s => s.length);
 }
 
-const someString = Maybe.some('a string');
+const justAString = Maybe.just('a string');
 const nothingHere = Maybe.nothing<string>();
-console.log(safeLength(someString).toString()); // "Some(8)"
-console.log(safeLength(nothingHere).toString()); // "Nothing"
+console.log(safeLength(justAString).toString()); // Just(8)
+console.log(safeLength(nothingHere).toString()); // Nothing
 ```
 
 ### Constructing `Maybe`
 
 You can use `Maybe.of` to construct a `Maybe` from any value. It will return a
-`Nothing` if the passed type is `null` or `undefined`, or a `Some` otherwise.
+`Nothing` if the passed type is `null` or `undefined`, or a `Just` otherwise.
 
 ```ts
 function acceptsANullOhNo(value: number | null): Maybe<string> {
@@ -280,8 +280,8 @@ In practice, that means:
     with a pure function:
 
     ```ts
-    const classicalSome = new Some('value');
-    const functionalSome = some('value');
+    const classicalJust = new Just('value');
+    const functionalJust = just('value');
     const classicalNothing = new Nothing();
     const functionalNothing = nothing();
     ```
@@ -312,7 +312,7 @@ In practice, that means:
     the wrong type.
     
     For example, if you pass a non-`Maybe` instance to many functions, they will
-    simply fail – even the basic helpers like `isSome` and `isNothing`. These
+    simply fail – even the basic helpers like `isJust` and `isNothing`. These
     assumptions have been made precisely *because* this is a TypeScript- and
     Flow-first library. (See the discussion below comparing True Myth to
     Folktale and Sanctuary if you aren't using TypeScript or Flow and need
@@ -366,15 +366,15 @@ the shortest!
 
 `Optional` or `Maybe` are both good names; `Maybe` just seemed slightly better.
 
-##### The `Maybe` variants: `Some` and `Nothing`
+##### The `Maybe` variants: `Just` and `Nothing`
 
 Similar consideration was given to the names of the type variants. Options for
 the "present" type in other libraries are `Some` and `Just`. Options for the
 "absent" type are `None` or `Nothing`.
 
-###### Why `Some`?
+###### Why `Just`?
 
-- [ ] TODO: Why `Some`
+Both `Just` and `Some` are reasonable choices for 
 
 ###### Why `Nothing`?
 
@@ -384,7 +384,6 @@ while "What's here? None" does not. `None` also implies that there might be
 more than one of the items. It's entirely unnatural to say "There is none of a
 number here"; you'd normally say "there is no number here" or "there is nothing
 here" instead. So `Nothing` it is!
-
 
 #### `Result`
 
@@ -533,9 +532,9 @@ However, there are two main reasons you might prefer True Myth to Folktale:
     couple differences in particular worth calling out:
 
     -   **function naming convention:** True Myth uses PascalCase for types and
-        camelCase for functions – so, `new Some(5)` and `some(5)`, whereas
+        camelCase for functions – so, `new Just(5)` and `just(5)`, whereas
         FolkTale uses the capitals as function names for type constructors, i.e.
-        `Some(5)`, and does not support `new`.
+        `Just(5)`, and does not support `new`.
     
     -   **ease of construction from nullable types:** True Myth allows you to
         construct `Maybe` types from nullable types with `Maybe.of`, because JS

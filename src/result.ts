@@ -2,7 +2,7 @@
 
 /** (keep typedoc from getting confused by the import) */
 import { isVoid } from './utils';
-import { Maybe, some, nothing, isSome, unsafelyUnwrap as unwrapMaybe } from './maybe';
+import { Maybe, just, nothing, isJust, unsafelyUnwrap as unwrapMaybe } from './maybe';
 
 /**
   Discriminant for `Ok` and `Err` variants of `Result` type.
@@ -456,7 +456,7 @@ export const and = <T, U, E>(ru: Result<U, E>, rt: Result<T, E>): Result<U, E> =
   [`chain`]: #chain
   [bind]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function/bind
   
-  @param thenFn The function to apply to the wrapped `T` if `maybe` is `Some`.
+  @param thenFn The function to apply to the wrapped `T` if `maybe` is `Just`.
   @param maybe  The `Maybe` to evaluate and possibly apply a function to.
  */
 export const andThen = <T, U, E>(
@@ -516,23 +516,23 @@ export const unwrapOrElse = <T, E>(orElseFn: (error: E) => T, result: Result<T, 
 /**
   Convert a [`Result`](#result) to a [`Maybe`](#../modules/_maybe_.html#maybe).
   
-  The converted type will be [`Some`] if the `Result` is [`Ok`] or [`Nothing`]
+  The converted type will be [`Just`] if the `Result` is [`Ok`] or [`Nothing`]
   if the `Result` is [`Err`]; the wrapped error value will be discarded.
   
   [`Result`]: #result
-  [`Some`]: ../classes/_maybe_.some.html
+  [`Just`]: ../classes/_maybe_.just.html
   [`Nothing`]: ../classes/_maybe_.nothing.html
   [`Ok`]: ../classes/_result_.ok.html
   [`Err`]: ../classes/_result_.err.html
   
   @param result The `Result` to convert to a `Maybe`
-  @returns      `Some` the value in `result` if it is `Ok`; otherwise `Nothing`
+  @returns      `Just` the value in `result` if it is `Ok`; otherwise `Nothing`
  */
 export const toMaybe = <T, E>(result: Result<T, E>): Maybe<T> =>
-  isOk(result) ? some(unwrap(result)) : nothing();
+  isOk(result) ? just(unwrap(result)) : nothing();
 
 export const fromMaybe = <T, E>(errValue: E, maybe: Maybe<T>): Result<T, E> =>
-  isSome(maybe) ? ok<T, E>(unwrapMaybe(maybe)) : err<T, E>(errValue);
+  isJust(maybe) ? ok<T, E>(unwrapMaybe(maybe)) : err<T, E>(errValue);
 
 /**
   Create a `String` representation of a `result` instance.
@@ -581,7 +581,7 @@ export const fromMaybe = <T, E>(errValue: E, maybe: Maybe<T>): Result<T, E> =>
   `Nothing` instances will always be printed as `"Nothing"`.
   
   @typeparam T The type of the wrapped value; its own `.toString` will be used
-               to print the interior contents of the `Some` variant.
+               to print the interior contents of the `Just` variant.
   @param maybe The value to convert to a string.
   @returns     The string representation of the `Maybe`.
  */
