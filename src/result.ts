@@ -111,7 +111,7 @@ export class Ok<T, E> implements IResult<T, E> {
     constructor may `throw` on those rather than constructing a type like
     `Result<undefined>`.
     
-    @throws      If you pass `null` or `undefined`.
+    @throws If you pass `null` or `undefined`.
    */
   constructor(value: T | null | undefined) {
     if (isVoid(value)) {
@@ -189,8 +189,8 @@ export class Ok<T, E> implements IResult<T, E> {
   }
 
   /** Method variant for [`Result.unwrapErr`](../modules/_result_.html#unwraperr) */
-  unsafelyUnwrapErr(): E | never {
-    throw 'Tried to `unwrapErr` an `Ok`';
+  unsafelyUnwrapErr(): never {
+    throw 'Tried to `unsafelyUnwrapErr` an `Ok`';
   }
 
   /** Method variant for [`Result.unwrapOr`](../modules/_result_.html#unwrapor) */
@@ -292,7 +292,7 @@ export class Err<T, E> implements IResult<T, E> {
 
   /** Method variant for [`Result.unsafelyUnwrap`](../modules/_result_.html#unsafelyunwrap) */
   unsafelyUnwrap(): never {
-    throw 'Tried to `unwrap(Nothing)`';
+    throw new Error('Tried to `unsafelyUnwrap an Err`');
   }
 
   /** Method variant for [`Result.unsafelyUnwrapErr`](../modules/_result_.html#unsafelyunwraperr) */
@@ -427,7 +427,7 @@ export default Result;
                 instance.
  */
 export const map = <T, U, E>(mapFn: (t: T) => U, result: Result<T, E>): Result<U, E> =>
-  isOk(result) ? ok(mapFn(unwrap(result))) : err<U, E>(unwrapErr(result));
+  isOk(result) ? ok(mapFn(unwrap(result))) : result as Result<any, E>;
 
 /**
   Map over a `Result` instance as in [`map`](#map) and get out the value
@@ -528,7 +528,7 @@ export const mapOrElse = <T, U, E>(
   @param result   The `Result` instance to map over an error case for.
  */
 export const mapErr = <T, E, F>(mapErrFn: (e: E) => F, result: Result<T, E>): Result<T, F> =>
-  isOk(result) ? ok(unwrap(result)) : err(mapErrFn(unwrapErr(result)));
+  isOk(result) ? result as Ok<T, any> : err(mapErrFn(unwrapErr(result)));
 
 /**
   You can think of this like a short-circuiting logical "and" operation on a
@@ -566,7 +566,7 @@ export const mapErr = <T, E, F>(mapErrFn: (e: E) => F, result: Result<T, E>): Re
   @param amdResult The `Result` instance to check.
  */
 export const and = <T, U, E>(andResult: Result<U, E>, result: Result<T, E>): Result<U, E> =>
-  isOk(result) ? andResult : err(unwrapErr(result));
+  isOk(result) ? andResult : result as Err<any, E>;
 
 /**
   Apply a function to the wrapped value if `Ok` and return a new `Ok`
@@ -617,7 +617,7 @@ export const and = <T, U, E>(andResult: Result<U, E>, result: Result<T, E>): Res
 export const andThen = <T, U, E>(
   thenFn: (t: T) => Result<U, E>,
   result: Result<T, E>
-): Result<U, E> => (isOk(result) ? thenFn(unwrap(result)) : err(unwrapErr(result)));
+): Result<U, E> => (isOk(result) ? thenFn(unwrap(result)) : result as Err<any, E>);
 
 /** Alias for [`andThen`](#andthen). */
 export const chain = andThen;
@@ -626,12 +626,12 @@ export const chain = andThen;
 export const flatMap = andThen;
 
 export const or = <T, E, F>(orResult: Result<T, F>, result: Result<T, E>): Result<T, F> =>
-  isOk(result) ? ok(unwrap(result)) : orResult;
+  isOk(result) ? result as Ok<T, any> : orResult;
 
 export const orElse = <T, E, F>(
   elseFn: (...args: any[]) => Result<T, F>,
   result: Result<T, E>
-): Result<T, F> => (isOk(result) ? ok(unwrap(result)) : elseFn());
+): Result<T, F> => (isOk(result) ? result as Ok<T, any> : elseFn());
 
 /**
   Get the value out of the `Result`.
