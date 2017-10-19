@@ -88,30 +88,30 @@ export class Ok<T, E> implements IResult<T, E> {
   variant = Variant.Ok;
 
   /**
-   * Create an instance of `Result.Ok` with `new`.
-   * 
-   * **Note:** While you *may* create the `Result` type via normal JavaScript
-   * class construction, it is not recommended for the functional style for
-   * which the library is intended. Instead, use [`Result.ok`].
-   * 
-   * [`Result.ok`]: ../modules/_result_.html#ok
-   * 
-   * ```ts
-   * // Avoid:
-   * const aString = new Result.Ok('characters');
-   * 
-   * // Prefer:
-   * const aString = Result.ok('characters);
-   * ```
-   * 
-   * @param value
-   * The value to wrap in a `Result.Ok`.
-   * 
-   * `null` and `undefined` are allowed by the type signature so that the
-   * constructor may `throw` on those rather than constructing a type like
-   * `Result<undefined>`.
-   * 
-   * @throws      If you pass `null` or `undefined`.
+    Create an instance of `Result.Ok` with `new`.
+    
+    **Note:** While you *may* create the `Result` type via normal JavaScript
+    class construction, it is not recommended for the functional style for
+    which the library is intended. Instead, use [`Result.ok`].
+    
+    [`Result.ok`]: ../modules/_result_.html#ok
+    
+    ```ts
+    // Avoid:
+    const aString = new Result.Ok('characters');
+    
+    // Prefer:
+    const aString = Result.ok('characters);
+    ```
+    
+    @param value
+    The value to wrap in a `Result.Ok`.
+    
+    `null` and `undefined` are allowed by the type signature so that the
+    constructor may `throw` on those rather than constructing a type like
+    `Result<undefined>`.
+    
+    @throws      If you pass `null` or `undefined`.
    */
   constructor(value: T | null | undefined) {
     if (isVoid(value)) {
@@ -322,7 +322,7 @@ export class Err<T, E> implements IResult<T, E> {
 }
 
 /**
-  Is this result an `Ok` instance?
+  Is this `Result` an `Ok` instance?
   
   In TypeScript, narrows the type from `Result<T, E>` to `Ok<T, E>`.
  */
@@ -330,7 +330,7 @@ export const isOk = <T, E>(result: Result<T, E>): result is Ok<T, E> =>
   result.variant === Variant.Ok;
 
 /**
-  Is this result an `Err` instance?
+  Is this `Result` an `Err` instance?
   
   In TypeScript, narrows the type from `Result<T, E>` to `Err<T, E>`.
  */
@@ -338,43 +338,94 @@ export const isErr = <T, E>(result: Result<T, E>): result is Err<T, E> =>
   result.variant === Variant.Err;
 
 /**
-* Create an instance of `Result.Ok`.
-* 
-* `null` and `undefined` are allowed by the type signature so that the
-* function may `throw` on those rather than constructing a type like
-* `Result<undefined>`.
-* 
-* @typeparam T The type of the item contained in the `Result`.
-* @param value The value to wrap in a `Result.Ok`.
-* @throws      If you pass `null` or `undefined`.
-*/
+  Create an instance of `Result.Ok`.
+  
+  `null` and `undefined` are allowed by the type signature so that the function
+  may `throw` on those rather than constructing a type like `Result<undefined>`.
+  
+  @typeparam T The type of the item contained in the `Result`.
+  @param value The value to wrap in a `Result.Ok`.
+  @throws      If you pass `null` or `undefined`.
+ */
 export const ok = <T, E>(value: T | null | undefined): Result<T, E> => new Ok<T, E>(value);
 
 /**
-* Create an instance of `Result.Error`.
-* 
-* If you want to create an instance with a specific type, e.g. for use in a
-* function which expects a `Result<T, E>` where the `<T, E>` is known but you have no
-* value to give it, you can use a type parameter:
-* 
-* ```ts
-* const notString = Result.error<string>();
-* ```
-* 
-* @typeparam T The type of the item contained in the `Result`.
-*/
+  Create an instance of `Result.Error`.
+  
+  If you want to create an instance with a specific type, e.g. for use in a
+  function which expects a `Result<T, E>` where the `<T, E>` is known but you have no
+  value to give it, you can use a type parameter:
+  
+  ```ts
+  const notString = Result.error<string>();
+  ```
+  
+  @typeparam T The type of the item contained in the `Result`.
+ */
 export const err = <T, E>(error: E): Result<T, E> => new Err<T, E>(error);
 
 /**
-* A value which may (`Ok`) or may not (`Error`) be present.
-* 
-* The behavior of this type is checked by TypeScript at compile time, and bears
-* no runtime overhead other than the very small cost of the container object.
-*/
+  A value which may (`Ok`) or may not (`Error`) be present.
+  
+  The behavior of this type is checked by TypeScript at compile time, and bears
+  no runtime overhead other than the very small cost of the container object.
+ */
 export type Result<T, E> = Ok<T, E> | Err<T, E>;
 
 export default Result;
 
+/**
+  Map over a `Result` instance: apply the function to the wrapped value if the
+  instance is `Ok`, and return the wrapped error value wrapped as a new `Err` of
+  the correct type (`Result<U, E>`) if the instance is `Err`.
+
+  `Result.map` works a lot like `Array.prototype.map`, but with one important
+  difference. Both `Result` and `Array` are containers for other kinds of items,
+  but where `Array.prototype.map` has 0 to _n_ items, a `Result` always has
+  exactly one item, which is *either* a success or an error instance.
+  
+  Where `Array.prototype.map` will apply the mapping function to every item in
+  the array (if there are any), `Result.map` will only apply the mapping
+  function to the (single) element if an `Ok` instance, if there is one.
+
+  If you have no items in an array of
+  numbers named `foo` and call `foo.map(x => x + 1)`, you'll still some have an
+  array with nothing in it. But if you have any items in the array (`[2, 3]`),
+  and you call `foo.map(x => x + 1)` on it, you'll get a new array with each of
+  those items inside the array "container" transformed (`[3, 4]`).
+
+  With `Result.map`, the `Err` variant is treated *by the `map` function* kind
+  of the same way as the empty array case: it's just ignored, and you get back a
+  new `Result` that is still just the same `Err` instance. But if you have an
+  `Ok` variant, the map function is applied to it, and you get back a new
+  `Result` with the value transformed, and still wrapped in an `Ok`.
+
+  #### Examples
+
+  ```ts
+  import { ok, err, map, toString } from 'true-myth/result';
+  const double = n => n * 2;
+
+  const anOk = ok(12);
+  const mappedOk = map(double, anOk);
+  console.log(toString(mappedOk)); // Ok(24)
+
+  const anErr = err("nothing here!");
+  const mappedErr = map(double, anErr);
+  console.log(toString(mappedOk)); // Err(nothing here!)
+  ```
+
+  @typeparam T  The type of the value wrapped in an `Ok` instance, and taken as
+                the argument to the `mapFn`.
+  @typeparam U  The type of the value wrapped in the new `Ok` instance after
+                applying `mapFn`, that is, the type returned by `mapFn`.
+  @typeparam E  The type of the value wrapped in an `Err` instance.
+  @param mapFn  The function to apply the value to if `result` is `Ok`.
+  @param result The `Result` instance to map over.
+  @returns      A new `Result` with the result of applying `mapFn` to the value
+                in an `Ok`, or else the original `Err` value wrapped in the new
+                instance.
+ */
 export const map = <T, U, E>(mapFn: (t: T) => U, result: Result<T, E>): Result<U, E> =>
   isOk(result) ? ok(mapFn(unwrap(result))) : err<U, E>(unwrapErr(result));
 

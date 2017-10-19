@@ -370,9 +370,17 @@ const functionalNothing = nothing();
 				<p>Similar consideration was given to the names of the type variants. Options for
 					the &quot;present&quot; type in other libraries are <code>Some</code> and <code>Just</code>. Options for the
 				&quot;absent&quot; type are <code>None</code> or <code>Nothing</code>.</p>
+				<h6 id="why-some-">Why <code>Some</code>?</h6>
 				<ul>
-					<li>[ ] TODO: elaborate on reasons for <code>Some</code> and <code>Nothing</code></li>
+					<li>[ ] TODO: Why <code>Some</code></li>
 				</ul>
+				<h6 id="why-nothing-">Why <code>Nothing</code>?</h6>
+				<p>Given the choice between <code>None</code> and <code>Nothing</code>, the consideration just came down
+					to the most natural <em>language</em> choice. &quot;What&#39;s here? Nothing!&quot; makes sense,
+					while &quot;What&#39;s here? None&quot; does not. <code>None</code> also implies that there might be
+					more than one of the items. It&#39;s entirely unnatural to say &quot;There is none of a
+					number here&quot;; you&#39;d normally say &quot;there is no number here&quot; or &quot;there is nothing
+				here&quot; instead. So <code>Nothing</code> it is!</p>
 				<h4 id="-result-"><code>Result</code></h4>
 				<ul>
 					<li>[ ] TODO: Explain why <code>Result</code></li>
@@ -382,14 +390,55 @@ const functionalNothing = nothing();
 					<li>[ ] TODO: explain why <code>Ok</code> and <code>Err</code> (esp. instead of <code>Error</code>)</li>
 				</ul>
 				<h2 id="setup">Setup</h2>
-				<h3 id="javascript">JavaScript</h3>
+				<p>Add True Myth to your dependencies:</p>
 				<ul>
-					<li>[ ] TODO: JS setup</li>
+					<li><p>with Yarn:</p>
+						<pre><code class="lang-sh">yarn add <span class="hljs-literal">true</span>-myth
+</code></pre>
+					</li>
+					<li><p>with npm:</p>
+						<pre><code class="lang-sh">npm install <span class="hljs-literal">true</span>-myth
+</code></pre>
+					</li>
 				</ul>
-				<h3 id="typescript">TypeScript</h3>
-				<ul>
-					<li>[ ] TODO: TS setup</li>
-				</ul>
+				<p>Each of CommonJS, AMD, and ES modules are shipped, so you may reference them
+					directly from their installation in the <code>node_modules</code> directory. (This may be
+					helpful for using the library in different contexts, with the ES modules being
+				supplied especially so you can do tree-shaking with e.g. Rollup.)</p>
+				<pre><code>node_modules/
+  true-myth/
+    dist/
+      amd/
+        index<span class="hljs-selector-class">.js</span>
+        index<span class="hljs-selector-class">.d</span><span class="hljs-selector-class">.ts</span>
+        index<span class="hljs-selector-class">.js</span><span class="hljs-selector-class">.map</span>
+        index<span class="hljs-selector-class">.js</span><span class="hljs-selector-class">.flow</span>
+      commonjs/
+        index<span class="hljs-selector-class">.js</span>
+        index<span class="hljs-selector-class">.d</span><span class="hljs-selector-class">.ts</span>
+        index<span class="hljs-selector-class">.js</span><span class="hljs-selector-class">.map</span>
+        index<span class="hljs-selector-class">.js</span><span class="hljs-selector-class">.flow</span>
+      es/
+        index<span class="hljs-selector-class">.js</span>
+        index<span class="hljs-selector-class">.d</span><span class="hljs-selector-class">.ts</span>
+        index<span class="hljs-selector-class">.js</span><span class="hljs-selector-class">.flow</span>
+        index<span class="hljs-selector-class">.js</span><span class="hljs-selector-class">.map</span>
+        maybe<span class="hljs-selector-class">.js</span>
+        maybe<span class="hljs-selector-class">.d</span><span class="hljs-selector-class">.ts</span>
+        maybe<span class="hljs-selector-class">.js</span><span class="hljs-selector-class">.flow</span>
+        maybe<span class="hljs-selector-class">.js</span><span class="hljs-selector-class">.map</span>
+        result<span class="hljs-selector-class">.js</span>
+        result<span class="hljs-selector-class">.d</span><span class="hljs-selector-class">.ts</span>
+        result<span class="hljs-selector-class">.js</span><span class="hljs-selector-class">.flow</span>
+        result<span class="hljs-selector-class">.js</span><span class="hljs-selector-class">.map</span>
+        utils<span class="hljs-selector-class">.js</span>
+        utils<span class="hljs-selector-class">.d</span><span class="hljs-selector-class">.ts</span>
+        utils<span class="hljs-selector-class">.js</span><span class="hljs-selector-class">.flow</span>
+        utils<span class="hljs-selector-class">.js</span><span class="hljs-selector-class">.map</span>
+</code></pre><h3 id="typescript">TypeScript</h3>
+				<p>TypeScript consumers will <em>just work</em>. You can simply use the module as a normal
+					ES6-style module import, whether working in Node or using something like Webpack
+				or Ember CLI for bundling.</p>
 				<h3 id="flow">Flow</h3>
 				<ul>
 					<li>[ ] TODO: Flow setup</li>

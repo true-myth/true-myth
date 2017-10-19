@@ -372,7 +372,19 @@ Similar consideration was given to the names of the type variants. Options for
 the "present" type in other libraries are `Some` and `Just`. Options for the
 "absent" type are `None` or `Nothing`.
 
-- [ ] TODO: elaborate on reasons for `Some` and `Nothing`
+###### Why `Some`?
+
+- [ ] TODO: Why `Some`
+
+###### Why `Nothing`?
+
+Given the choice between `None` and `Nothing`, the consideration just came down
+to the most natural *language* choice. "What's here? Nothing!" makes sense,
+while "What's here? None" does not. `None` also implies that there might be
+more than one of the items. It's entirely unnatural to say "There is none of a
+number here"; you'd normally say "there is no number here" or "there is nothing
+here" instead. So `Nothing` it is!
+
 
 #### `Result`
 
@@ -384,13 +396,63 @@ the "present" type in other libraries are `Some` and `Just`. Options for the
 
 ## Setup
 
-### JavaScript
+Add True Myth to your dependencies:
 
-- [ ] TODO: JS setup
+-   with Yarn:
+
+    ```sh
+    yarn add true-myth
+    ```
+
+-   with npm:
+
+    ```sh
+    npm install true-myth
+    ```
+
+Each of CommonJS, AMD, and ES modules are shipped, so you may reference them
+directly from their installation in the `node_modules` directory. (This may be
+helpful for using the library in different contexts, with the ES modules being
+supplied especially so you can do tree-shaking with e.g. Rollup.)
+
+```
+node_modules/
+  true-myth/
+    dist/
+      amd/
+        index.js
+        index.d.ts
+        index.js.map
+        index.js.flow
+      commonjs/
+        index.js
+        index.d.ts
+        index.js.map
+        index.js.flow
+      es/
+        index.js
+        index.d.ts
+        index.js.flow
+        index.js.map
+        maybe.js
+        maybe.d.ts
+        maybe.js.flow
+        maybe.js.map
+        result.js
+        result.d.ts
+        result.js.flow
+        result.js.map
+        utils.js
+        utils.d.ts
+        utils.js.flow
+        utils.js.map
+```
 
 ### TypeScript
 
-- [ ] TODO: TS setup
+TypeScript consumers will *just work*. You can simply use the module as a normal
+ES6-style module import, whether working in Node or using something like Webpack
+or Ember CLI for bundling.
 
 ### Flow
 
