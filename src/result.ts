@@ -557,6 +557,11 @@ export const mapErr = <T, E, F>(mapErrFn: (e: E) => F, result: Result<T, E>): Re
   console.log(toString(and(anErr, anErr)));  // Err([object Object])
   ```
 
+  @typeparam T    The type of the value wrapped in the `Ok` of the `Result`.
+  @typeparam U    The type of the value wrapped in the `Ok` of the `andResult`,
+                  i.e. the success type of the `Result` present if the checked
+                  `Result` is `Ok`.
+  @typeparam E    The type of the value wrapped in the `Err` of the `Result`.
   @param andResult The `Result` instance to return if `result` is `Err`.
   @param amdResult The `Result` instance to check.
  */
@@ -566,6 +571,17 @@ export const and = <T, U, E>(andResult: Result<U, E>, result: Result<T, E>): Res
 /**
   Apply a function to the wrapped value if `Ok` and return a new `Ok`
   containing the resulting value; or if it is `Err` return it unmodified.
+
+  This differs from `map` in that `thenFn` returns another `Result`. You can use
+  `andThen` to combine two functions which *both* create a `Result` from an
+  unwrapped type.
+ 
+  You may find the `.then` method on an ES6 `Promise` helpful for comparison:
+  if you have a `Promise`, you can pass its `then` method a callback which
+  returns another `Promise`, and the result will not be a *nested* promise, but
+  a single `Promise`. The difference is that `Promise#then` unwraps *all*
+  layers to only ever return a single `Promise` value, whereas `Result.andThen`
+  will not unwrap nested `Result`s.
   
   This is also commonly known as (and therefore aliased as) [`flatMap`] or
   [`chain`]. It is sometimes also known as `bind`, but *not* aliased as such
@@ -574,7 +590,27 @@ export const and = <T, U, E>(andResult: Result<U, E>, result: Result<T, E>): Res
   [`flatMap`]: #flatmap
   [`chain`]: #chain
   [bind]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function/bind
+
+  #### Examples
+
+  ```ts
+  import { ok, err, andThen, toString } from 'true-myth/result';
+
+  const toLengthAsResult = (s: string) => ok(s.length);
+
+  const anOk = ok('just a string');
+  const lengthAsResult = andThen(toLengthAsResult, anOk);
+  console.log(toString(lengthAsResult));  // Ok(13)
+
+  const anErr = err(['srsly', 'whatever']);
+  const notLengthAsResult = andThen(toLengthAsResult, anErr);
+  console.log(toString(notLengthAsResult));  // Err(srsly,whatever)
+  ```
   
+  @typeparam T    The type of the value wrapped in the `Ok` of the `Result`.
+  @typeparam U    The type of the value wrapped in the `Ok` of the `Result`
+                  returned by the `thenFn`.
+  @typeparam E    The type of the value wrapped in the `Err` of the `Result`.
   @param thenFn The function to apply to the wrapped `T` if `maybe` is `Just`.
   @param maybe  The `Maybe` to evaluate and possibly apply a function to.
  */

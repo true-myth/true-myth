@@ -479,6 +479,8 @@ export const mapOrElse = <T, U>(
   
   Notice that, unlike in [`map`](#map) or its variants, the original `maybe` is
   not involved in constructing the new `Maybe`.
+
+  #### Examples
  
   ```ts
   import { and, just, nothing, Maybe } from 'true-myth/maybe';
@@ -548,6 +550,7 @@ export const and = <T, U>(andMaybe: Maybe<U>, maybe: Maybe<T>): Maybe<U> =>
   Note that the result is not `(Just(13))`, but `13`!
   
   @typeparam T  The type of the wrapped value.
+  @typeparam T  The type of the wrapped value in the resulting `Maybe`.
   @param thenFn The function to apply to the wrapped `T` if `maybe` is `Just`.
   @param maybe  The `Maybe` to evaluate and possibly apply a function to the
                 contents of.
