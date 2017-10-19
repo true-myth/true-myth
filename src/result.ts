@@ -429,14 +429,73 @@ export default Result;
 export const map = <T, U, E>(mapFn: (t: T) => U, result: Result<T, E>): Result<U, E> =>
   isOk(result) ? ok(mapFn(unwrap(result))) : err<U, E>(unwrapErr(result));
 
+/**
+  Map over a `Result` instance as in [`map`](#map) and get out the value
+  if `result` is an `Ok`, or return a default value if `result` is an `Err`.
+
+  #### Examples
+
+  ```ts
+  import { ok, err, mapOr } from 'true-myth/result';
+
+  const length = (s: string) => s.length;
+
+  const anOkString = ok('a string');
+  const theStringLength = mapOr(0, anOkString);
+  console.log(theStringLength);  // 8
+  
+  const anErr = err('uh oh');
+  const anErrMapped = mapOr(0, anErr);
+  console.log(anErrMapped);  // 0
+  ```
+  
+  @param orU The default value to use if `result` is an `Err`.
+  @param mapFn The function to apply the value to if `result` is an `Ok`.
+  @param result The `Result` instance to map over.
+ */
 export const mapOr = <T, U, E>(orU: U, mapFn: (t: T) => U, result: Result<T, E>): U =>
   isOk(result) ? mapFn(unwrap(result)) : orU;
 
+/**
+  Map over a `Result` instance as in [`map`](#map) and get out the value if
+  `result` is `Ok`, or apply a function (`orElseFn`) to the value wrapped in
+  the `Err` to get a default value.
+  
+  Like [`mapOr`](#mapor) but using a function to transform the error into a
+  usable value instead of simply using a default value.
+
+  #### Examples
+
+  ```ts
+  import { ok, err, mapOrElse } from 'true-myth/result';
+
+  const summarize = (s: string) => `The response was: '${s}'`;
+  const getReason = (err: { code: number, reason: string }) => err.reason;
+
+  const okResponse = ok("Things are grand here.");
+  const mappedOkAndUnwrapped = mapOrElse(getReason, summarize, okResponse);
+  console.log(mappedOkAndUnwrapped);  // The response was: 'Things are grand here.'
+
+  const errResponse = err({ code: 500, reason: 'Nothing at this endpoint!' });
+  const mappedErrAndUnwrapped = mapOrElse(getReason, summarize, errResponse);
+  console.log(mappedErrAndUnwrapped);  // Nothing at this endpoint!
+  ```
+  
+  @typeparam T    The type of the wrapped `Ok` value.
+  @typeparam U    The type of the resulting value from applying `mapFn` to the
+                  `Ok` value or `orElseFn` to the `Err` value.
+  @typeparam E    The type of the wrapped `Err` value.
+  @param orElseFn The function to apply to the wrapped `Err` value to get a
+                  usable value if `result` is an `Err`.
+  @param mapFn    The function to apply to the wrapped `Ok` value if `result` is
+                  an `Ok`.
+  @param result   The `Result` instance to map over.
+ */
 export const mapOrElse = <T, U, E>(
-  orElseFn: (...args: any[]) => U,
+  orElseFn: (err: E) => U,
   mapFn: (t: T) => U,
   result: Result<T, E>
-): U => (isOk(result) ? mapFn(unwrap(result)) : orElseFn());
+): U => (isOk(result) ? mapFn(unwrap(result)) : orElseFn(unwrapErr(result)));
 
 export const mapErr = <T, E, F>(mapErrFn: (e: E) => F, result: Result<T, E>): Result<T, F> =>
   isOk(result) ? ok(unwrap(result)) : err(mapErrFn(unwrapErr(result)));

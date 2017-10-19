@@ -74,14 +74,15 @@ describe('`Result` pure functions', () => {
   });
 
   test('`mapOrElse`', () => {
-    const theDefault = 'that was not good';
-    const getDefault = () => theDefault;
+    const description = 'that was not good';
+    const getDefault = reason => `${description}: ${reason}`;
 
     const anOk = Result.ok(5);
     expect(Result.mapOrElse(getDefault, String, anOk)).toEqual(String(5));
 
+    const errValue = 10;
     const anErr = Result.err(10);
-    expect(Result.mapOrElse(getDefault, String, anErr)).toEqual(theDefault);
+    expect(Result.mapOrElse(getDefault, String, anErr)).toEqual(`${description}: ${errValue}`);
   });
 
   test('`mapErr`', () => {
@@ -271,7 +272,7 @@ describe('`Result.Ok` class', () => {
   test('`mapOrElse` method', () => {
     const theValue = ['some', 'things'];
     const theOk = new Result.Ok(theValue);
-    const getDefault = () => '';
+    const getDefault = reason => `reason being, ${reason}`;
     const join = (strings: string[]) => strings.join(', ');
     expect(theOk.mapOrElse(getDefault, join)).toEqual(join(theValue));
   });
@@ -407,10 +408,10 @@ describe('`Result.Err` class', () => {
     const errValue = 42;
     const theErr = new Result.Err(errValue);
     const theDefault = 'victory!';
-    const getDefault = () => theDefault;
+    const getDefault = valueFromErr => `whoa: ${valueFromErr}`;
     const describe = (code: number) => `The error code was ${code}`;
 
-    expect(theErr.mapOrElse(getDefault, describe)).toEqual(theDefault);
+    expect(theErr.mapOrElse(getDefault, describe)).toEqual(`whoa: ${errValue}`);
   });
 
   test('`mapErr` method', () => {
