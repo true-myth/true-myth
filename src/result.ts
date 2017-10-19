@@ -530,8 +530,38 @@ export const mapOrElse = <T, U, E>(
 export const mapErr = <T, E, F>(mapErrFn: (e: E) => F, result: Result<T, E>): Result<T, F> =>
   isOk(result) ? ok(unwrap(result)) : err(mapErrFn(unwrapErr(result)));
 
-export const and = <T, U, E>(ru: Result<U, E>, rt: Result<T, E>): Result<U, E> =>
-  isOk(rt) ? ru : err(unwrapErr(rt));
+/**
+  You can think of this like a short-circuiting logical "and" operation on a
+  `Result` type. If `result` is `Ok`, then the result is the `andResult`. If
+  `result` is `Err`, the result is the `Err`.
+  
+  This is useful when you have another `Result` value you want to provide if and
+  *only if* you have an `Ok` – that is, when you need to make sure that if you
+  `Err`, whatever else you're handing a `Result` to *also* gets that `Err`.
+  
+  Notice that, unlike in [`map`](#map) or its variants, the original `result` is
+  not involved in constructing the new `Result`.
+ 
+  #### Examples
+ 
+  ```ts
+  import { and, ok, err, toString } from 'true-myth/result';
+  
+  const okA = ok('A');
+  const okB = ok('B');
+  const anErr = err({ so: 'bad' });
+ 
+  console.log(toString(and(okB, okA)));  // Ok(B)
+  console.log(toString(and(okB, anErr)));  // Err([object Object])
+  console.log(toString(and(anErr, okA)));  // Err([object Object])
+  console.log(toString(and(anErr, anErr)));  // Err([object Object])
+  ```
+
+  @param andResult The `Result` instance to return if `result` is `Err`.
+  @param amdResult The `Result` instance to check.
+ */
+export const and = <T, U, E>(andResult: Result<U, E>, result: Result<T, E>): Result<U, E> =>
+  isOk(result) ? andResult : err(unwrapErr(result));
 
 /**
   Apply a function to the wrapped value if `Ok` and return a new `Ok`
