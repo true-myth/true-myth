@@ -3,7 +3,7 @@
     "module": "amd",
     "declaration": true,
     "sourceMap": true,
-    "outFile": "../dist/amd.js",
+    "outFile": "../dist/amd/index.js",
 
     "strict": true,
 
