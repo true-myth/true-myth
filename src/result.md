@@ -3,18 +3,18 @@
 A `Result<T, E>` is a type representing the value result of an operation which
 may fail, with a successful value of type `T` or an error of type `E`.
 
-If the value is present, it is `Ok(value)`. If it's absent, it's
-`Error(reason)`. This provides a type-safe container for dealing with the
-possibility that an error occurred, without needing to scatter `try`/`catch`
-blocks throughout your codebase. This has two major advantages:
+If the value is present, it is `Ok(value)`. If it's absent, it's `Err(reason)`.
+This provides a type-safe container for dealing with the possibility that an
+error occurred, without needing to scatter `try`/`catch` blocks throughout your
+codebase. This has two major advantages:
 
-1.  You *know* when an item may have a failure case, unlike exceptions
-    (which may be thrown from any function with no warning and no help from
-    the type system).
+1.  You *know* when an item may have a failure case, unlike exceptions (which
+    may be thrown from any function with no warning and no help from the type
+    system).
 2.  The error scenario is a first-class citizen, and the provided helper
-    functions and methods allow you to deal with the type in much the same
-    way as you might an array – transforming values if present, or dealing
-    with errors instead if necessary.
+    functions and methods allow you to deal with the type in much the same way
+    as you might an array – transforming values if present, or dealing with
+    errors instead if necessary.
 
 Having the possibility of an error handed to you as part of the type of an item
 gives you the flexibility to do the same kinds of things with it that you might
