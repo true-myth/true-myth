@@ -129,8 +129,55 @@ of the helper functions (or methods) to manipulate the value in a safe way.
 
 ### Examples: fluent object invocation
 
-- [ ] TODO
+You can also use a "fluent" method chaining style to apply the various helper
+functions to a `Result` instance:
+
+```ts
+import { ok, err } from 'true-myth/result';
+
+const length = (s: string) => s.length;
+
+const hooray = ok('yay');
+const okLen = hooray.map(length).unwrapOr(0);  // okLen = 3
+
+const muySad = err('oh no');
+const errLen = hooray.map(length).unwrapOr(0);  // errLen = 0
+```
 
 ### Writing type constraints
 
-- [ ] TODO
+When creating a `Result` instance, you'll nearly always be using *either* the
+`Ok` *or* the `Err` type, so the type system won't necessarily be able to infer
+the other type parameter.
+
+```ts
+import { ok, err } from 'true-myth/result';
+
+const anOk = ok(12); // TypeScript infers: `Result<number, {}>`
+const anErr = err('sad') // TypeScript infers: `Result<{}, string>`
+```
+
+In TypeScript, because of the direction type inference happens, you will need to
+specify the type at declaration to make it type check when returning values from
+a function with a specified type. Note that this *only* applies when the
+instance is declared in its own statement and returned separately, *not* when it
+is the expression value of a single-expression arrow function or the explicit
+return value of any function.
+
+```ts
+import { Result, ok } from 'true-myth/maybe';
+
+// ERROR: Type 'Result<number, {}>' is not assignable to type 'Result<number, string>'.
+const getAResult = (): Result<number, string> => {
+  const theResult = ok(12);
+  return theResult;
+}
+
+// Succeeds
+const getAResult = (): Result<number, string> => ok(12);
+
+// Succeedss
+const getAResult = (): Result<number, string> => {
+    return ok(12);
+};
+```

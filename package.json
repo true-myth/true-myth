@@ -27,7 +27,9 @@
     "build:commonjs": "tsc -p tsconfig/commonjs.json",
     "clean": "rimraf dist",
     "test": "jest",
-    "doc": "./build-docs"
+    "doc": "./build-docs",
+    "precommit": "./build-docs && git add docs",
+    "version": "yarn run build"
   },
   "main": "dist/commonjs/index.js",
   "types": "dist/commonjs/index.d.ts",

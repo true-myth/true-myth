@@ -131,13 +131,13 @@ a `Maybe`!
 Especially when constructing a `Nothing`, you may need to specify what *kind* of
 `Nothing` it is. The TypeScript and Flow type systems can figure it out based on
 the value passed in for a `Just`, but there's no value to use with a `Nothing`,
-so you have to specify it. In that case, you can write the type explicitly:
+so you may have to specify it. In that case, you can write the type explicitly:
 
 ```ts
 import { Maybe, nothing } from 'true-myth/maybe';
 
 function takesAMaybeString(thingItTakes: Maybe<string>) {
-console.log(thingItTakes.unwrapOr(""))
+  console.log(thingItTakes.unwrapOr(""));
 }
 
 // Via type definition
@@ -147,6 +147,26 @@ takesAMaybeString(nothingHere);
 // Via type coercion
 const nothingHereEither = nothing<string>();
 takesAMaybeString(nothingHereEither);
+```
+
+Note that this *is* necessary if you declare the `Maybe` in a statement inside a
+function, but is *not* necessary when you have an expression-bodied arrow
+function or when you return the item directly:
+
+```ts
+import { Maybe, nothing } from 'true-myth/maybe';
+
+// ERROR: Type 'Maybe<{}>' is not assignable to type 'Maybe<number>'.
+const getAMaybe = (): Maybe<number> => {
+  const theMaybe = nothing();
+  return theMaybe;
+}
+
+// Succeeds
+const getAMaybe = (shouldBeJust: boolean): Maybe<number> => nothing();
+const getAMaybe = (shouldBeJust: boolean): Maybe<number> => {
+  return nothing();
+};
 ```
 
 ## Using `Maybe` Effectively
