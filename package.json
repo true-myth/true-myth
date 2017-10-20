@@ -47,7 +47,7 @@
     "transform": {
       "^.+\\.tsx?$": "<rootDir>/node_modules/ts-jest/preprocessor.js"
     },
-    "testRegex": ".*\\.test\\.ts",
+    "testRegex": "(/__tests__/.*|(\\.|/)(test|spec))\\.(jsx?|tsx?)$",
     "moduleFileExtensions": [
       "ts",
       "tsx",
@@ -61,8 +61,7 @@
       "src/*"
     ],
     "coveragePathIgnorePatterns": [
-      "src/index.ts",
-      "src/*.test.ts"
+      "src/index.ts"
     ],
     "coverageThreshold": {
       "global": {

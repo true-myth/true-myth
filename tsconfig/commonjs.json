@@ -12,6 +12,5 @@
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true
   },
-  "include": ["../src"],
-  "exclude": ["../src/lib"]
+  "include": ["../src"]
 }
