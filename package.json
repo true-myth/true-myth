@@ -38,14 +38,13 @@
   "devDependencies": {
     "@types/jest": "^21.1.0",
     "husky": "^0.14.3",
-    "jest": "^21.1.0",
+    "jest": "^21.2.1",
     "prettier": "^1.7.0",
     "rimraf": "^2.6.2",
     "ts-jest": "^21.0.1",
     "tslint": "^5.7.0",
     "typedoc": "^0.8.0",
-    "typescript": "2.5",
-    "flowgen": "^1.2.0"
+    "typescript": "2.5"
   },
   "jest": {
     "transform": {
@@ -75,5 +74,6 @@
         "lines": 100
       }
     }
-  }
+  },
+  "dependencies": {}
 }
