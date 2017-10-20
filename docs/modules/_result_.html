@@ -175,13 +175,24 @@
 							error – this wouldn&#39;t make it past the compile step. Instead, we need to use one
 						of the helper functions (or methods) to manipulate the value in a safe way.</p>
 						<h2 id="using-result-">Using <code>Result</code></h2>
-						<ul>
-							<li>[ ] TODO</li>
-						</ul>
+						<p>The library is designed to be used with a functional style, allowing you to
+							compose operations easily. Thus, standalone pure function versions of every
+							operation are supplied. However, the same operations also exist on the <code>Ok</code> and
+							<code>Err</code> types directly, so you may also write them in a more traditional &quot;fluent&quot;
+						object style.</p>
 						<h3 id="examples-functional-style">Examples: functional style</h3>
-						<ul>
-							<li>[ ] TODO</li>
-						</ul>
+						<pre><code class="lang-ts"><span class="hljs-keyword">import</span> { Result, ok, err, map, toString } <span class="hljs-keyword">from</span> <span class="hljs-string">'true-myth/result'</span>;
+
+<span class="hljs-keyword">const</span> length = <span class="hljs-function">(<span class="hljs-params">s: <span class="hljs-built_in">string</span></span>) =&gt;</span> s.length;
+
+<span class="hljs-keyword">const</span> anOk = ok(<span class="hljs-string">'some string'</span>);
+<span class="hljs-keyword">const</span> okLength = map(length, anOk);
+<span class="hljs-built_in">console</span>.log(toString(okLength)); <span class="hljs-comment">// Ok(11)</span>
+
+<span class="hljs-keyword">const</span> anErr = err(<span class="hljs-string">'gah!'</span>);
+<span class="hljs-keyword">const</span> errLength = map(length, anErr);
+<span class="hljs-built_in">console</span>.log(toString(errLength)); <span class="hljs-comment">// Err(gah!)</span>
+</code></pre>
 						<h3 id="examples-fluent-object-invocation">Examples: fluent object invocation</h3>
 						<p>You can also use a &quot;fluent&quot; method chaining style to apply the various helper
 						functions to a <code>Result</code> instance:</p>

@@ -121,11 +121,27 @@ of the helper functions (or methods) to manipulate the value in a safe way.
 
 ## Using `Result`
 
-- [ ] TODO
+The library is designed to be used with a functional style, allowing you to
+compose operations easily. Thus, standalone pure function versions of every
+operation are supplied. However, the same operations also exist on the `Ok` and
+`Err` types directly, so you may also write them in a more traditional "fluent"
+object style.
 
 ### Examples: functional style
 
-- [ ] TODO
+```ts
+import { Result, ok, err, map, toString } from 'true-myth/result';
+
+const length = (s: string) => s.length;
+
+const anOk = ok('some string');
+const okLength = map(length, anOk);
+console.log(toString(okLength)); // Ok(11)
+
+const anErr = err('gah!');
+const errLength = map(length, anErr);
+console.log(toString(errLength)); // Err(gah!)
+```
 
 ### Examples: fluent object invocation
 
