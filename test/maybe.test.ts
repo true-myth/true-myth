@@ -63,7 +63,38 @@ describe('`Maybe` pure functions', () => {
       const aNothing = Maybe.of<Neat>(null);
       assertType<Maybe.Maybe<Neat>>(aNothing);
 
-      const justANumber = Maybe.just(42);
+      const justANumber = Maybe.of(42);
+      assertType<Maybe.Maybe<number>>(justANumber);
+      expect(Maybe.isJust(justANumber)).toBe(true);
+      expect(Maybe.isNothing(justANumber)).toBe(false);
+      expect(Maybe.unsafelyUnwrap(justANumber)).toBe(42);
+    });
+  });
+  
+  describe('`fromNullable`', () => {
+    test('with `null', () => {
+      const nothingFromNull = Maybe.fromNullable<string>(null);
+      assertType<Maybe.Maybe<string>>(nothingFromNull);
+      expect(Maybe.isJust(nothingFromNull)).toBe(false);
+      expect(Maybe.isNothing(nothingFromNull)).toBe(true);
+      expect(() => Maybe.unsafelyUnwrap(nothingFromNull)).toThrow();
+    });
+
+    test('with `undefined`', () => {
+      const nothingFromUndefined = Maybe.fromNullable<number>(undefined);
+      assertType<Maybe.Maybe<number>>(nothingFromUndefined);
+      expect(Maybe.isJust(nothingFromUndefined)).toBe(false);
+      expect(Maybe.isNothing(nothingFromUndefined)).toBe(true);
+      expect(() => Maybe.unsafelyUnwrap(nothingFromUndefined)).toThrow();
+    });
+
+    test('with values', () => {
+      const aJust = Maybe.fromNullable<Neat>({ neat: 'strings' });
+      assertType<Maybe.Maybe<Neat>>(aJust);
+      const aNothing = Maybe.fromNullable<Neat>(null);
+      assertType<Maybe.Maybe<Neat>>(aNothing);
+
+      const justANumber = Maybe.fromNullable(42);
       assertType<Maybe.Maybe<number>>(justANumber);
       expect(Maybe.isJust(justANumber)).toBe(true);
       expect(Maybe.isNothing(justANumber)).toBe(false);

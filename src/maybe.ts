@@ -365,6 +365,9 @@ export type Maybe<T> = Just<T> | Nothing<T>;
 export const of = <T>(value: T | undefined | null): Maybe<T> =>
   isVoid(value) ? nothing<T>() : just(value);
 
+/** Alias for [`of`](#of), primarily for compatibility with Folktale. */
+export const fromNullable = of;
+
 /**
   Map over a `Maybe` instance: apply the function to the wrapped value if the
   instance is `Just`, and return `Nothing` if the instance is `Nothing`.
