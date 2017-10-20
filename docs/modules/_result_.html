@@ -72,18 +72,18 @@
 						<h1 id="result">Result</h1>
 						<p>A <code>Result&lt;T, E&gt;</code> is a type representing the value result of an operation which
 						may fail, with a successful value of type <code>T</code> or an error of type <code>E</code>.</p>
-						<p>If the value is present, it is <code>Ok(value)</code>. If it&#39;s absent, it&#39;s
-							<code>Error(reason)</code>. This provides a type-safe container for dealing with the
-							possibility that an error occurred, without needing to scatter <code>try</code>/<code>catch</code>
-						blocks throughout your codebase. This has two major advantages:</p>
+						<p>If the value is present, it is <code>Ok(value)</code>. If it&#39;s absent, it&#39;s <code>Err(reason)</code>.
+							This provides a type-safe container for dealing with the possibility that an
+							error occurred, without needing to scatter <code>try</code>/<code>catch</code> blocks throughout your
+						codebase. This has two major advantages:</p>
 						<ol>
-							<li>You <em>know</em> when an item may have a failure case, unlike exceptions
-								(which may be thrown from any function with no warning and no help from
-							the type system).</li>
+							<li>You <em>know</em> when an item may have a failure case, unlike exceptions (which
+								may be thrown from any function with no warning and no help from the type
+							system).</li>
 							<li>The error scenario is a first-class citizen, and the provided helper
-								functions and methods allow you to deal with the type in much the same
-								way as you might an array – transforming values if present, or dealing
-							with errors instead if necessary.</li>
+								functions and methods allow you to deal with the type in much the same way
+								as you might an array – transforming values if present, or dealing with
+							errors instead if necessary.</li>
 						</ol>
 						<p>Having the possibility of an error handed to you as part of the type of an item
 							gives you the flexibility to do the same kinds of things with it that you might
