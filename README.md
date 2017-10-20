@@ -678,7 +678,11 @@ the same, and the behavior of many of the functions is as well.
 
 #### Folktale 1.0
 
+- [ ] TODO: migration path from Folktale 1.0
+
 #### Folktale 2.0
+
+- [ ] TODO: migration path from Folktale 2.0
 
 ### Sanctuary
 
@@ -687,6 +691,21 @@ the same, and the behavior of many of the functions is as well.
     + `Right`: `Ok`
 - `S.toMaybe`: `Maybe.of`
 
+<!-- break that list -->
+
+- [ ] TODO: migration path from Sanctuary
+
 ## What's with the name?
 
-- [ ] TODO: Tolkien/Lewis, also Folktale/FantasyLand/Sanctuary. Nice resonance
+For slightly quirky [historical reasons], libraries which borrow ideas from
+typed functional programming in JavaScript often use names related to the phrase
+"fantasy land" – especially [Fantasy Land] itself and [Folktale].
+
+[historical reasons]: https://github.com/promises-aplus/promises-spec/issues/94#issuecomment-16176966
+
+"True Myth" leans on that history (and serves, hopefully, as a respectful nod to
+Folktale in particular, as both Folktale and Sanctuary are huge inspirations for
+this library), and borrows an idea from J.R.R. Tolkien and C.S. Lewis: what if
+all myths appeal to us because they point ultimately at something true – and
+what if some story with the structure of a myth *were* true in history? It's a
+beautiful idea, and the name of this library was picked as an homage to it.
