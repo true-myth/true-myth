@@ -416,11 +416,39 @@ here" instead. So `Nothing` it is!
 
 #### `Result`
 
-- [ ] TODO: Explain why `Result`
+In some languages and libraries, a more general type named `Either` is used
+instead of the more specific `Result` name. The two are equivalent in
+functionality – both provide two variants, each of which wraps a value. In the
+`Either` implementations, those are usually named `Left` and `Right`. In the
+`Result` implementations (both here and in other libraries and languages), they
+are named `Ok` and `Err`.
+
+The main difference between `Either` and `Result` is precisely that question of
+generality. `Either` can meaningfully capture *any* scenario where there are two
+possible values resulting from a given function application, or applicable as
+arguments to a function. `Result` *only* captures the idea of something
+succeeding or failing. In that sense, `Either` might seem to be better: it can
+capture what `Result` captures (traditionally with `Left` being the error case
+and `Right` being the success, or *right*, case), and many more besides.
+
+However, in practice, the idea of a result is far and away the most common case
+for using an `Either`, and it's also the easiest to explain. (An `Either`
+implementation would also be valuable, though, and it might be a later addition
+to the library.)
 
 ##### The `Result` variants: `Ok` and `Err`
 
-- [ ] TODO: explain why `Ok` and `Err` (esp. instead of `Error`)
+Given a "result" type, we need to be able to express the idea of "success" and
+"failure." The most obvious names here would be `Success` and `Failure`. Those
+are actually really good names with a single problem: they're *long*. Needing to
+write `success(12)` or `failure({ oh: 'no' })` is a *lot* to write over and over
+again. Especially when there some options which *also* work well: `Ok` and
+`Err`.
+
+Both `Ok` and `Err` could be written out long-form: `Okay` and `Error`. But in
+this case, the longer names don't add any particular clarity; they require more
+typing; and the `Error` case also overloads the existing name of the base
+exception type in JavaScript. So: `Ok` and `Err` it is.
 
 ## Setup
 
