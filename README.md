@@ -614,6 +614,8 @@ languages. Its API and True Myth's are much *less* similar than Folktale and
 True Myth's are, as a result – the underlying details are often similar, but the
 names are nearly all different. A few of the major contrasts:
 
+[Sanctuary]: https://sanctuary.js.org
+
 1.  True Myth is TypeScript-first and Flow-first, which means that it assumes
     you are using TypeScript or Flow if you're aiming for rigorous type safety.
     
