@@ -1,7 +1,7 @@
 import { assertType } from './lib/assert';
-import * as Maybe from '../src/maybe';
-import { ok, err } from '../src/result';
-import { Aliases } from '../src/utils';
+import * as Maybe from './maybe';
+import { ok, err } from './result';
+import { Aliases } from './utils';
 
 type Neat = { neat: string };
 
@@ -70,7 +70,7 @@ describe('`Maybe` pure functions', () => {
       expect(Maybe.unsafelyUnwrap(justANumber)).toBe(42);
     });
   });
-  
+
   describe('`fromNullable`', () => {
     test('with `null', () => {
       const nothingFromNull = Maybe.fromNullable<string>(null);
@@ -143,7 +143,7 @@ describe('`Maybe` pure functions', () => {
 
   const andThenTest = (fn: Aliases.AndThen) => () => {
     const toMaybeNumber = (x: string) => Maybe.just(Number(x));
-    const toNothing = (x: string) => Maybe.nothing<number>();
+    const toNothing = (_x: string) => Maybe.nothing<number>();
 
     const theValue = '42';
     const theJust = Maybe.just(theValue);
@@ -248,7 +248,7 @@ describe('`Maybe.Just` class', () => {
   });
 
   test('`map` method', () => {
-    const plus2 = x => x + 2;
+    const plus2 = (x: number) => x + 2;
     const theValue = 12;
     const theJust = new Maybe.Just(theValue);
     const theResult = new Maybe.Just(plus2(theValue));
@@ -260,7 +260,7 @@ describe('`Maybe.Just` class', () => {
     const theValue = 42;
     const theJust = new Maybe.Just(42);
     const theDefault = 1;
-    const double = x => x * 2;
+    const double = (x: number) => x * 2;
 
     expect(theJust.mapOr(theDefault, double)).toEqual(double(theValue));
   });

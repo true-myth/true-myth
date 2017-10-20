@@ -6,8 +6,6 @@ import { Aliases } from '../src/utils';
 const length = (x: { length: number }) => x.length;
 const double = (x: number) => x * 2;
 
-const compose = <X, Y, Z>(f: (y: Y) => Z, g: (x: X) => Y) => x => f(g(x));
-
 describe('`Result` pure functions', () => {
   test('`ok`', () => {
     const theOk = Result.ok(42);
@@ -75,7 +73,7 @@ describe('`Result` pure functions', () => {
 
   test('`mapOrElse`', () => {
     const description = 'that was not good';
-    const getDefault = reason => `${description}: ${reason}`;
+    const getDefault = (reason: any) => `${description}: ${reason}`;
 
     const anOk = Result.ok(5);
     expect(Result.mapOrElse(getDefault, String, anOk)).toEqual(String(5));
@@ -110,7 +108,7 @@ describe('`Result` pure functions', () => {
 
   const andThenTest = (fn: Aliases.AndThen) => () => {
     const theValue = 'a string';
-    const toLengthResult = s => Result.ok(length(s));
+    const toLengthResult = (s: string) => Result.ok(length(s));
     const expected = toLengthResult(theValue);
 
     const anOk = Result.ok(theValue);
@@ -272,14 +270,14 @@ describe('`Result.Ok` class', () => {
   test('`mapOrElse` method', () => {
     const theValue = ['some', 'things'];
     const theOk = new Result.Ok(theValue);
-    const getDefault = reason => `reason being, ${reason}`;
+    const getDefault = (reason: any) => `reason being, ${reason}`;
     const join = (strings: string[]) => strings.join(', ');
     expect(theOk.mapOrElse(getDefault, join)).toEqual(join(theValue));
   });
 
   test('`mapErr` method', () => {
     const theOk = new Result.Ok('hey!');
-    const toMoreVerboseErr = s => `Seriously, ${s} was bad.`;
+    const toMoreVerboseErr = (s: string) => `Seriously, ${s} was bad.`;
     expect(theOk.mapErr(toMoreVerboseErr)).toEqual(theOk);
   });
 
@@ -296,10 +294,10 @@ describe('`Result.Ok` class', () => {
   const andThenMethodTest = (method: Aliases.AndThen) => () => {
     const theValue = 'anything will do';
     const theOk = new Result.Ok(theValue);
-    const lengthResult = s => new Result.Ok(s.length);
+    const lengthResult = (s: string) => new Result.Ok(s.length);
     expect(theOk[method](lengthResult)).toEqual(lengthResult(theValue));
 
-    const convertToErr = s => new Result.Err(s.length);
+    const convertToErr = (s: string) => new Result.Err(s.length);
     expect(theOk[method](convertToErr)).toEqual(convertToErr(theValue));
   };
 
@@ -320,7 +318,7 @@ describe('`Result.Ok` class', () => {
   test('`orElse` method', () => {
     const theValue = 1;
     const theOk = new Result.Ok(theValue);
-    const theDefault = [];
+    const theDefault: string[] = [];
     const getTheDefault = () => new Result.Err<number, string[]>(theDefault);
     expect(theOk.orElse(getTheDefault)).toEqual(theOk);
   });
@@ -340,7 +338,7 @@ describe('`Result.Ok` class', () => {
   test('`unwrapOr` method', () => {
     const theValue = [1, 2, 3];
     const theOk = new Result.Ok(theValue);
-    const defaultValue = [];
+    const defaultValue: number[] = [];
 
     expect(theOk.unwrapOr(defaultValue)).toBe(theValue);
   });
@@ -348,7 +346,7 @@ describe('`Result.Ok` class', () => {
   test('`unwrapOrElse` method', () => {
     const theValue = [1, 2, 3];
     const theOk = new Result.Ok(theValue);
-    const defaultValue = [];
+    const defaultValue: number[] = [];
     const getDefault = () => defaultValue;
 
     expect(theOk.unwrapOrElse(getDefault)).toBe(theValue);
@@ -407,8 +405,7 @@ describe('`Result.Err` class', () => {
   test('`mapOrElse` method', () => {
     const errValue = 42;
     const theErr = new Result.Err(errValue);
-    const theDefault = 'victory!';
-    const getDefault = valueFromErr => `whoa: ${valueFromErr}`;
+    const getDefault = (valueFromErr: any) => `whoa: ${valueFromErr}`;
     const describe = (code: number) => `The error code was ${code}`;
 
     expect(theErr.mapOrElse(getDefault, describe)).toEqual(`whoa: ${errValue}`);
@@ -417,7 +414,7 @@ describe('`Result.Err` class', () => {
   test('`mapErr` method', () => {
     const errValue = 'fubar';
     const theErr = new Result.Err(errValue);
-    const elaborate = reason => `The problem was: ${reason}`;
+    const elaborate = (reason: string) => `The problem was: ${reason}`;
     const expected = new Result.Err(elaborate(errValue));
 
     expect(theErr.mapErr(elaborate)).toEqual(expected);
@@ -436,7 +433,7 @@ describe('`Result.Err` class', () => {
   const andThenMethodTest = (method: Aliases.AndThen) => () => {
     const theErr = new Result.Err<string[], number>(42);
 
-    const getAnOk = strings => Result.ok<number, number>(length(strings));
+    const getAnOk = (strings: string[]) => Result.ok<number, number>(length(strings));
     expect(theErr[method](getAnOk)).toEqual(theErr);
 
     const getAnErr = () => Result.err(0);
@@ -450,7 +447,7 @@ describe('`Result.Err` class', () => {
   test('`chain` method', () => {
     const theErr = new Result.Err<string[], number>(42);
 
-    const getAnOk = strings => Result.ok<number, number>(length(strings));
+    const getAnOk = (strings: string[]) => Result.ok<number, number>(length(strings));
     expect(theErr.chain(getAnOk)).toEqual(theErr);
 
     const getAnErr = () => Result.err(0);
