@@ -123,7 +123,9 @@
 					what a few of the functions are like. <a href="https://chriskrycho.github.io/true-myth/">Full API documentation is
 				available!</a></p>
 				<h3 id="-result-with-a-functional-style"><code>Result</code> with a functional style</h3>
-				<pre><code class="lang-ts"><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">fallibleCheck</span>(<span class="hljs-params">isValid: <span class="hljs-built_in">boolean</span></span>): <span class="hljs-title">Result</span>&lt;<span class="hljs-title">string</span>, </span>{ reason: <span class="hljs-built_in">string</span> }&gt; {
+				<pre><code class="lang-ts"><span class="hljs-keyword">import</span> { Result, map toString } <span class="hljs-keyword">from</span> <span class="hljs-string">'true-myth/result'</span>;
+
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">fallibleCheck</span>(<span class="hljs-params">isValid: <span class="hljs-built_in">boolean</span></span>): <span class="hljs-title">Result</span>&lt;<span class="hljs-title">string</span>, </span>{ reason: <span class="hljs-built_in">string</span> }&gt; {
   <span class="hljs-keyword">return</span> isValid ? ok(<span class="hljs-string">'all fine here'</span>) : err({ reason: <span class="hljs-string">'was not valid'</span> });
 }
 
@@ -138,32 +140,41 @@
 <span class="hljs-built_in">console</span>.log(toString(mappedBad)); <span class="hljs-comment">// "Err({ reason: 'was not valid' })"</span>
 </code></pre>
 				<h3 id="-maybe-with-the-method-style"><code>Maybe</code> with the method style</h3>
-				<pre><code class="lang-ts"><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">safeLength</span>(<span class="hljs-params">mightBeAString: Maybe&lt;<span class="hljs-built_in">string</span>&gt;</span>): <span class="hljs-title">Maybe</span>&lt;<span class="hljs-title">number</span>&gt; </span>{
+				<pre><code class="lang-ts"><span class="hljs-keyword">import</span> { Maybe, Just, Nothing } <span class="hljs-keyword">from</span> <span class="hljs-string">'true-myth/maybe'</span>;
+
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">safeLength</span>(<span class="hljs-params">mightBeAString: Maybe&lt;<span class="hljs-built_in">string</span>&gt;</span>): <span class="hljs-title">Maybe</span>&lt;<span class="hljs-title">number</span>&gt; </span>{
   <span class="hljs-keyword">return</span> mightBeAString.map(<span class="hljs-function"><span class="hljs-params">s</span> =&gt;</span> s.length);
 }
 
-<span class="hljs-keyword">const</span> justAString = Maybe.just(<span class="hljs-string">'a string'</span>);
-<span class="hljs-keyword">const</span> nothingHere = Maybe.nothing&lt;<span class="hljs-built_in">string</span>&gt;();
+<span class="hljs-keyword">const</span> justAString = <span class="hljs-keyword">new</span> Just(<span class="hljs-string">'a string'</span>);
+<span class="hljs-keyword">const</span> nothingHere = <span class="hljs-keyword">new</span> Nothing&lt;<span class="hljs-built_in">string</span>&gt;();
 <span class="hljs-built_in">console</span>.log(safeLength(justAString).toString()); <span class="hljs-comment">// Just(8)</span>
 <span class="hljs-built_in">console</span>.log(safeLength(nothingHere).toString()); <span class="hljs-comment">// Nothing</span>
 </code></pre>
 				<h3 id="constructing-maybe-">Constructing <code>Maybe</code></h3>
 				<p>You can use <code>Maybe.of</code> to construct a <code>Maybe</code> from any value. It will return a
 				<code>Nothing</code> if the passed type is <code>null</code> or <code>undefined</code>, or a <code>Just</code> otherwise.</p>
-				<pre><code class="lang-ts"><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">acceptsANullOhNo</span>(<span class="hljs-params">value: <span class="hljs-built_in">number</span> | <span class="hljs-literal">null</span></span>): <span class="hljs-title">Maybe</span>&lt;<span class="hljs-title">string</span>&gt; </span>{
-  <span class="hljs-keyword">const</span> maybeNumber = Maybe.of(value);
+				<pre><code class="lang-ts"><span class="hljs-keyword">import</span> { of <span class="hljs-keyword">as</span> maybeOf, Maybe } <span class="hljs-keyword">from</span> <span class="hljs-string">'true-myth/maybe'</span>;
+
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">acceptsANullOhNo</span>(<span class="hljs-params">value: <span class="hljs-built_in">number</span> | <span class="hljs-literal">null</span></span>): <span class="hljs-title">Maybe</span>&lt;<span class="hljs-title">string</span>&gt; </span>{
+  <span class="hljs-keyword">const</span> maybeNumber = maybeOf(value);
   <span class="hljs-keyword">return</span> mapOr(<span class="hljs-string">"0"</span>, <span class="hljs-function"><span class="hljs-params">n</span> =&gt;</span> n.toString(), maybeNumber);
 }
 </code></pre>
 				<h3 id="safely-getting-at-values">Safely getting at values</h3>
 				<p>Helpers are supplied to allow you to get at the values wrapped in the type:</p>
-				<pre><code class="lang-ts"><span class="hljs-keyword">const</span> theAnswer = Result.ok(<span class="hljs-number">42</span>);
+				<pre><code class="lang-ts"><span class="hljs-keyword">import</span> { ok, unsafelyUnwrap } <span class="hljs-keyword">from</span> <span class="hljs-string">'true-myth/result'</span>;
+
+<span class="hljs-keyword">const</span> theAnswer = ok(<span class="hljs-number">42</span>);
 <span class="hljs-keyword">const</span> theAnwerValue = unsafelyUnwrap(theAnswer);
 </code></pre>
 				<p>However, as its name makes explicit <code>unsafelyUnwrap</code> is not a safe operation; if
 					the item being unwrapped is an <code>Err</code>, this will throw an <code>Error</code>. Instead, you
 				can use one of the safe unwrap methods:</p>
-				<pre><code class="lang-ts"><span class="hljs-keyword">const</span> theAnswerValue = unwrapOr(<span class="hljs-number">0</span>, theAnswer);
+				<pre><code class="lang-ts"><span class="hljs-keyword">import</span> { ok, unwrapOr } <span class="hljs-keyword">from</span> <span class="hljs-string">'true-myth/result'</span>;
+
+<span class="hljs-keyword">const</span> theAnswer = ok(<span class="hljs-number">42</span>);
+<span class="hljs-keyword">const</span> theAnswerValue = unwrapOr(<span class="hljs-number">0</span>, theAnswer);
 </code></pre>
 				<h2 id="what-is-this-for-">What is this for?</h2>
 				<h3 id="the-history">The History</h3>
@@ -265,12 +276,13 @@ myArray.forEach(<span class="hljs-function"><span class="hljs-params">n</span> =
 				was &quot;empty&quot; for one reason or another, it wouldn&#39;t blow up?</p>
 				<pre><code class="lang-js"><span class="hljs-keyword">let</span> myInteger = <span class="hljs-literal">undefined</span>;
 
-myInteger * <span class="hljs-number">3</span>; <span class="hljs-comment">// :(</span>
+myInteger * <span class="hljs-number">3</span>; <span class="hljs-comment">// 😢</span>
 </code></pre>
 				<p>Let&#39;s try that again, but this time let&#39;s put the actual value in a container
 				and give ourselves safe access methods:</p>
-				<pre><code class="lang-js"><span class="hljs-keyword">let</span> myInteger = Maybe.of(<span class="hljs-literal">undefined</span>);
+				<pre><code class="lang-js"><span class="hljs-keyword">import</span> * <span class="hljs-keyword">as</span> Maybe <span class="hljs-keyword">from</span> <span class="hljs-string">'true-myth/maybe'</span>;
 
+<span class="hljs-keyword">let</span> myInteger = Maybe.of(<span class="hljs-literal">undefined</span>); 
 myInteger.map(<span class="hljs-function"><span class="hljs-params">x</span> =&gt;</span> x * <span class="hljs-number">3</span>); <span class="hljs-comment">// Nothing</span>
 </code></pre>
 				<p><img src="https://user-images.githubusercontent.com/2403023/31098390-5d6573d0-a790-11e7-96f9-361d2e70522b.gif" alt="mind blown"></p>
@@ -310,14 +322,19 @@ myInteger.map(<span class="hljs-function"><span class="hljs-params">x</span> =&g
 				<ul>
 					<li><p>You can construct the variant types in the traditional JavaScript way or
 						with a pure function:</p>
-						<pre><code class="lang-ts">const classicalJust = new Just(&#39;value&#39;);
-const functionalJust = just(&#39;value&#39;);
+						<pre><code class="lang-ts">import { Just, just, Nothing, nothing } from &#39;true-myth/maybe&#39;;
+
+const classicalJust = new Just(&#39;value&#39;);
 const classicalNothing = new Nothing();
+
+const functionalJust = just(&#39;value&#39;);
 const functionalNothing = nothing();
 </code></pre>
 					</li>
 					<li><p>Similarly, you can use methods or pure functions:</p>
-						<pre><code class="lang-ts"><span class="hljs-keyword">const</span> numberResult = ok(<span class="hljs-number">42</span>);
+						<pre><code class="lang-ts"><span class="hljs-keyword">import</span> { ok, map } <span class="hljs-keyword">from</span> <span class="hljs-string">'true-myth/result'</span>;
+
+<span class="hljs-keyword">const</span> numberResult = ok(<span class="hljs-number">42</span>);
 <span class="hljs-keyword">const</span> ok84 = numberResult.map(<span class="hljs-function"><span class="hljs-params">x</span> =&gt;</span> x * <span class="hljs-number">2</span>);
 <span class="hljs-keyword">const</span> ok21 = map(<span class="hljs-function"><span class="hljs-params">x</span> =&gt;</span> x / <span class="hljs-number">2</span>, numberResult);
 </code></pre>
@@ -404,13 +421,34 @@ const functionalNothing = nothing();
 					number here&quot;; you&#39;d normally say &quot;there is no number here&quot; or &quot;there is nothing
 				here&quot; instead. So <code>Nothing</code> it is!</p>
 				<h4 id="-result-"><code>Result</code></h4>
-				<ul>
-					<li>[ ] TODO: Explain why <code>Result</code></li>
-				</ul>
+				<p>In some languages and libraries, a more general type named <code>Either</code> is used
+					instead of the more specific <code>Result</code> name. The two are equivalent in
+					functionality – both provide two variants, each of which wraps a value. In the
+					<code>Either</code> implementations, those are usually named <code>Left</code> and <code>Right</code>. In the
+					<code>Result</code> implementations (both here and in other libraries and languages), they
+				are named <code>Ok</code> and <code>Err</code>.</p>
+				<p>The main difference between <code>Either</code> and <code>Result</code> is precisely that question of
+					generality. <code>Either</code> can meaningfully capture <em>any</em> scenario where there are two
+					possible values resulting from a given function application, or applicable as
+					arguments to a function. <code>Result</code> <em>only</em> captures the idea of something
+					succeeding or failing. In that sense, <code>Either</code> might seem to be better: it can
+					capture what <code>Result</code> captures (traditionally with <code>Left</code> being the error case
+				and <code>Right</code> being the success, or <em>right</em>, case), and many more besides.</p>
+				<p>However, in practice, the idea of a result is far and away the most common case
+					for using an <code>Either</code>, and it&#39;s also the easiest to explain. (An <code>Either</code>
+					implementation would also be valuable, though, and it might be a later addition
+				to the library.)</p>
 				<h5 id="the-result-variants-ok-and-err-">The <code>Result</code> variants: <code>Ok</code> and <code>Err</code></h5>
-				<ul>
-					<li>[ ] TODO: explain why <code>Ok</code> and <code>Err</code> (esp. instead of <code>Error</code>)</li>
-				</ul>
+				<p>Given a &quot;result&quot; type, we need to be able to express the idea of &quot;success&quot; and
+					&quot;failure.&quot; The most obvious names here would be <code>Success</code> and <code>Failure</code>. Those
+					are actually really good names with a single problem: they&#39;re <em>long</em>. Needing to
+					write <code>success(12)</code> or <code>failure({ oh: &#39;no&#39; })</code> is a <em>lot</em> to write over and over
+					again. Especially when there some options which <em>also</em> work well: <code>Ok</code> and
+				<code>Err</code>.</p>
+				<p>Both <code>Ok</code> and <code>Err</code> could be written out long-form: <code>Okay</code> and <code>Error</code>. But in
+					this case, the longer names don&#39;t add any particular clarity; they require more
+					typing; and the <code>Error</code> case also overloads the existing name of the base
+				exception type in JavaScript. So: <code>Ok</code> and <code>Err</code> it is.</p>
 				<h2 id="setup">Setup</h2>
 				<p>Add True Myth to your dependencies:</p>
 				<ul>
@@ -457,14 +495,10 @@ const functionalNothing = nothing();
         utils<span class="hljs-selector-class">.d</span><span class="hljs-selector-class">.ts</span>
         utils<span class="hljs-selector-class">.js</span><span class="hljs-selector-class">.flow</span>
         utils<span class="hljs-selector-class">.js</span><span class="hljs-selector-class">.map</span>
-</code></pre><h3 id="typescript">TypeScript</h3>
-				<p>TypeScript consumers will <em>just work</em>. You can simply use the module as a normal
+</code></pre><h3 id="typescript-and-flow">TypeScript and Flow</h3>
+				<p>TypeScript and Flow should <em>just work</em>. You can simply use the module as a normal
 					ES6-style module import, whether working in Node or using something like Webpack
 				or Ember CLI for bundling.</p>
-				<h3 id="flow">Flow</h3>
-				<ul>
-					<li>[ ] TODO: Flow setup</li>
-				</ul>
 				<h2 id="roadmap">Roadmap</h2>
 				<p>Before this hits 1.0, I will do:</p>
 				<ul>
@@ -494,6 +528,9 @@ const functionalNothing = nothing();
 				<h2 id="why-not-">Why not...</h2>
 				<p>There are other great functional programming libraries out there... so why not
 				just use one of them?</p>
+				<p>Note that much of the content between these sections is the same; it&#39;s presented
+					as is so you can simply read the section appropriate to the library you&#39;re
+				comparing it with.</p>
 				<h3 id="folktale-">Folktale?</h3>
 				<p>Folktale has an API a lot like this one, as you&#39;ll see when perusing the docs.
 				However, there are two main reasons you might prefer True Myth to Folktale:</p>
@@ -515,7 +552,7 @@ const functionalNothing = nothing();
 							TypeScript and Flow type notation throughout its docs as well as in its
 						implementation.</p>
 						<p>Folktale is aimed squarely at people who are already pretty comfortable with
-							the world of strongly-typed functional programming languagues. This is
+							the world of strongly-typed functional programming languages. This is
 							particularly evident in the way its type signatures are written out (using
 							the same basic notation you might see in e.g. Haskell), but it&#39;s also there
 						in its heavy use of functional programming terminology throughout its docs.</p>
@@ -552,18 +589,94 @@ const functionalNothing = nothing();
 					</li>
 				</ol>
 				<h3 id="sanctuary-">Sanctuary?</h3>
-				<ul>
-					<li>[ ] TODO: kind of the same as Folktale, but add specific details</li>
-				</ul>
+				<p><a href="https://sanctuary.js.org">Sanctuary</a> has many of the same goals as True Myth, but is much more focused on
+					the expectations and patterns you&#39;d see in Haskell or PureScript or similar
+					languages. Its API and True Myth&#39;s are much <em>less</em> similar than Folktale and
+					True Myth&#39;s are, as a result – the underlying details are often similar, but the
+				names are nearly all different. A few of the major contrasts:</p>
+				<ol>
+					<li><p>True Myth is TypeScript-first and Flow-first, which means that it assumes
+						you are using TypeScript or Flow if you&#39;re aiming for rigorous type safety.</p>
+						<p>By contrast, Sanctuary is a JavaScript-first library, with runtime checking
+							built in for its types. Sanctuary&#39;s TypeScript support is <a href="https://github.com/sanctuary-js/sanctuary/pull/431">in progress</a>,
+							but will for the foreseeable future remain add-on rather than first-class.
+							(Sanctuary <em>does</em> allow you to create a version of the module without the
+						runtime checking, but it requires you to do this yourself.)</p>
+						<p>There&#39;s value in both of these approaches, so True Myth aims to take
+						advantage of the compilers and play in a no-runtime-cost space.</p>
+						<p>If you want a JS-focused (rather than TS- or Flow-focused) library which
+							will help you be safer without a compiler, you should definitely pick
+							Sanctuary over True Myth. If you&#39;ve already using TS or Flow, True Myth is a
+						bit nicer of an experience.</p>
+					</li>
+					<li><p>True Myth aims to keep functional programming jargon to a minimum and to use
+							TypeScript and Flow type notation throughout its docs as well as in its
+						implementation.</p>
+						<p>Sanctuary is aimed squarely at people who are already extremely comfortable
+							the world of strongly-typed, pure functional programming languages. This is
+							particularly evident in the way its type signatures are written out (using
+							the same notation you would see in Haskell or PureScript), but it&#39;s also
+							present in Sanctuary&#39;s heavy use of functional programming terminology
+						throughout its docs.</p>
+						<p>Haskell- and Purescript-style types are quite nice, and the functional
+							programming jargon is very useful. However, they&#39;re also another hump to get
+						over. Again: a tradeoff.</p>
+						<p>By opting for type notation that TS or Flow developers are already familiar
+							with, and by focusing on what various functions <em>do</em> rather than the usual
+							FP names for them, True Myth aims at people just coming up to speed on
+						these ideas.</p>
+						<p>The big win for Sanctuary over True Myth is <a href="https://github.com/fantasyland/fantasy-land">Fantasy Land</a> compatibility, or
+						familiarity if coming from a language like Haskell or PureScript.</p>
+					</li>
+					<li><p>True Myth&#39;s API aims to be more idiomatic as JavaScript/TypeScript, with a
+							one difference in particular worth calling out: the <strong>function naming
+							convention.</strong> True Myth uses PascalCase for types and camelCase for
+							functions – so, <code>new Just(5)</code> and <code>just(5)</code>, whereas Sanctuary uses the
+							capitals as function names for type constructors, i.e. <code>S.Just(5)</code>, and does
+						not support <code>new</code>.</p>
+					</li>
+					<li><p>Sanctuary also aims to provide a much larger suite of functions, more like
+							<a href="http://ramdajs.com">Ramda</a> but with Haskell- or PureScript-inspired type safety and
+							sophistication. True Myth intentionally punts on those concerns, assuming
+							that most consumers are already using a library like Lodash or Ramda and
+						aiming to be easy to integrate with those instead.</p>
+					</li>
+				</ol>
 				<h2 id="migrating-from-other-libraries">Migrating from other libraries</h2>
+				<h3 id="folktale">Folktale</h3>
+				<p>Migrating from Folktale should be <em>very</em> straightforward: many of the names are
+				the same, and the behavior of many of the functions is as well.</p>
+				<h4 id="folktale-1-0">Folktale 1.0</h4>
 				<ul>
-					<li>[ ] TODO: instructions for migrating from Folktale 1.0/2.0</li>
-					<li>[ ] TODO: instructions for migrating from Sanctuary</li>
+					<li>[ ] TODO: migration path from Folktale 1.0</li>
+				</ul>
+				<h4 id="folktale-2-0">Folktale 2.0</h4>
+				<ul>
+					<li>[ ] TODO: migration path from Folktale 2.0</li>
+				</ul>
+				<h3 id="sanctuary">Sanctuary</h3>
+				<ul>
+					<li><code>S.Either</code>: <code>Result</code><ul>
+							<li><code>Left</code>: <code>Err</code></li>
+							<li><code>Right</code>: <code>Ok</code></li>
+						</ul>
+					</li>
+					<li><code>S.toMaybe</code>: <code>Maybe.of</code></li>
+				</ul>
+				<!-- break that list -->
+				<ul>
+					<li>[ ] TODO: migration path from Sanctuary</li>
 				</ul>
 				<h2 id="what-s-with-the-name-">What&#39;s with the name?</h2>
-				<ul>
-					<li>[ ] TODO: Tolkien/Lewis, also Folktale/FantasyLand/Sanctuary. Nice resonance</li>
-				</ul>
+				<p>For slightly quirky <a href="https://github.com/promises-aplus/promises-spec/issues/94#issuecomment-16176966">historical reasons</a>, libraries which borrow ideas from
+					typed functional programming in JavaScript often use names related to the phrase
+				&quot;fantasy land&quot; – especially <a href="https://github.com/fantasyland/fantasy-land">Fantasy Land</a> itself and [Folktale].</p>
+				<p>&quot;True Myth&quot; leans on that history (and serves, hopefully, as a respectful nod to
+					Folktale in particular, as both Folktale and Sanctuary are huge inspirations for
+					this library), and borrows an idea from J.R.R. Tolkien and C.S. Lewis: what if
+					all myths appeal to us because they point ultimately at something true – and
+					what if some story with the structure of a myth <em>were</em> true in history? It&#39;s a
+				beautiful idea, and the name of this library was picked as an homage to it.</p>
 			</div>
 		</div>
 		<div class="col-4 col-menu menu-sticky-wrap menu-highlight">

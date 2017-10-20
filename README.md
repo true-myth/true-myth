@@ -50,6 +50,8 @@ available!][docs]
 ### `Result` with a functional style
 
 ```ts
+import { Result, map toString } from 'true-myth/result';
+
 function fallibleCheck(isValid: boolean): Result<string, { reason: string }> {
   return isValid ? ok('all fine here') : err({ reason: 'was not valid' });
 }
@@ -68,12 +70,14 @@ console.log(toString(mappedBad)); // "Err({ reason: 'was not valid' })"
 ### `Maybe` with the method style
 
 ```ts
+import { Maybe, Just, Nothing } from 'true-myth/maybe';
+
 function safeLength(mightBeAString: Maybe<string>): Maybe<number> {
   return mightBeAString.map(s => s.length);
 }
 
-const justAString = Maybe.just('a string');
-const nothingHere = Maybe.nothing<string>();
+const justAString = new Just('a string');
+const nothingHere = new Nothing<string>();
 console.log(safeLength(justAString).toString()); // Just(8)
 console.log(safeLength(nothingHere).toString()); // Nothing
 ```
@@ -84,8 +88,10 @@ You can use `Maybe.of` to construct a `Maybe` from any value. It will return a
 `Nothing` if the passed type is `null` or `undefined`, or a `Just` otherwise.
 
 ```ts
+import { of as maybeOf, Maybe } from 'true-myth/maybe';
+
 function acceptsANullOhNo(value: number | null): Maybe<string> {
-  const maybeNumber = Maybe.of(value);
+  const maybeNumber = maybeOf(value);
   return mapOr("0", n => n.toString(), maybeNumber);
 }
 ```
@@ -95,7 +101,9 @@ function acceptsANullOhNo(value: number | null): Maybe<string> {
 Helpers are supplied to allow you to get at the values wrapped in the type:
 
 ```ts
-const theAnswer = Result.ok(42);
+import { ok, unsafelyUnwrap } from 'true-myth/result';
+
+const theAnswer = ok(42);
 const theAnwerValue = unsafelyUnwrap(theAnswer);
 ```
 
@@ -104,6 +112,9 @@ the item being unwrapped is an `Err`, this will throw an `Error`. Instead, you
 can use one of the safe unwrap methods:
 
 ```ts
+import { ok, unwrapOr } from 'true-myth/result';
+
+const theAnswer = ok(42);
 const theAnswerValue = unwrapOr(0, theAnswer);
 ```
 
@@ -238,15 +249,16 @@ was "empty" for one reason or another, it wouldn't blow up?
 ```js
 let myInteger = undefined;
 
-myInteger * 3; // :(
+myInteger * 3; // 😢
 ```
 
 Let's try that again, but this time let's put the actual value in a container
 and give ourselves safe access methods:
 
 ```js
-let myInteger = Maybe.of(undefined); 
+import * as Maybe from 'true-myth/maybe';
 
+let myInteger = Maybe.of(undefined); 
 myInteger.map(x => x * 3); // Nothing
 ```
 
@@ -297,15 +309,20 @@ In practice, that means:
     with a pure function:
 
     ```ts
+    import { Just, just, Nothing, nothing } from 'true-myth/maybe';
+
     const classicalJust = new Just('value');
-    const functionalJust = just('value');
     const classicalNothing = new Nothing();
+    
+    const functionalJust = just('value');
     const functionalNothing = nothing();
     ```
 
 -   Similarly, you can use methods or pure functions:
 
     ```ts
+    import { ok, map } from 'true-myth/result';
+
     const numberResult = ok(42);
     const ok84 = numberResult.map(x => x * 2);
     const ok21 = map(x => x / 2, numberResult);
