@@ -504,15 +504,11 @@ node_modules/
         utils.js.map
 ```
 
-### TypeScript
+### TypeScript and Flow
 
-TypeScript consumers will *just work*. You can simply use the module as a normal
+TypeScript and Flow should *just work*. You can simply use the module as a normal
 ES6-style module import, whether working in Node or using something like Webpack
 or Ember CLI for bundling.
-
-### Flow
-
-- [ ] TODO: Flow setup
 
 ## Roadmap
 
@@ -542,6 +538,10 @@ If you think another type should be in this list, please [open an issue]!
 There are other great functional programming libraries out there... so why not
 just use one of them?
 
+Note that much of the content between these sections is the same; it's presented
+as is so you can simply read the section appropriate to the library you're
+comparing it with.
+
 ### Folktale?
 
 Folktale has an API a lot like this one, as you'll see when perusing the docs.
@@ -568,7 +568,7 @@ However, there are two main reasons you might prefer True Myth to Folktale:
     implementation.
     
     Folktale is aimed squarely at people who are already pretty comfortable with
-    the world of strongly-typed functional programming languagues. This is
+    the world of strongly-typed functional programming languages. This is
     particularly evident in the way its type signatures are written out (using
     the same basic notation you might see in e.g. Haskell), but it's also there
     in its heavy use of functional programming terminology throughout its docs.
@@ -608,12 +608,84 @@ However, there are two main reasons you might prefer True Myth to Folktale:
 
 ### Sanctuary?
 
-- [ ] TODO: kind of the same as Folktale, but add specific details
+[Sanctuary] has many of the same goals as True Myth, but is much more focused on
+the expectations and patterns you'd see in Haskell or PureScript or similar
+languages. Its API and True Myth's are much *less* similar than Folktale and
+True Myth's are, as a result – the underlying details are often similar, but the
+names are nearly all different. A few of the major contrasts:
+
+1.  True Myth is TypeScript-first and Flow-first, which means that it assumes
+    you are using TypeScript or Flow if you're aiming for rigorous type safety.
+    
+    By contrast, Sanctuary is a JavaScript-first library, with runtime checking
+    built in for its types. Sanctuary's TypeScript support is [in progress][s-ts],
+    but will for the foreseeable future remain add-on rather than first-class.
+    (Sanctuary *does* allow you to create a version of the module without the
+    runtime checking, but it requires you to do this yourself.)
+   
+    There's value in both of these approaches, so True Myth aims to take
+    advantage of the compilers and play in a no-runtime-cost space.
+
+    If you want a JS-focused (rather than TS- or Flow-focused) library which
+    will help you be safer without a compiler, you should definitely pick
+    Sanctuary over True Myth. If you've already using TS or Flow, True Myth is a
+    bit nicer of an experience.
+
+2.  True Myth aims to keep functional programming jargon to a minimum and to use
+    TypeScript and Flow type notation throughout its docs as well as in its
+    implementation.
+    
+    Sanctuary is aimed squarely at people who are already extremely comfortable
+    the world of strongly-typed, pure functional programming languages. This is
+    particularly evident in the way its type signatures are written out (using
+    the same notation you would see in Haskell or PureScript), but it's also
+    present in Sanctuary's heavy use of functional programming terminology
+    throughout its docs.
+
+    Haskell- and Purescript-style types are quite nice, and the functional
+    programming jargon is very useful. However, they're also another hump to get
+    over. Again: a tradeoff.
+    
+    By opting for type notation that TS or Flow developers are already familiar
+    with, and by focusing on what various functions *do* rather than the usual
+    FP names for them, True Myth aims at people just coming up to speed on
+    these ideas.
+
+    The big win for Sanctuary over True Myth is [Fantasy Land] compatibility, or
+    familiarity if coming from a language like Haskell or PureScript.
+
+3.  True Myth's API aims to be more idiomatic as JavaScript/TypeScript, with a
+    one difference in particular worth calling out: the **function naming
+    convention.** True Myth uses PascalCase for types and camelCase for
+    functions – so, `new Just(5)` and `just(5)`, whereas Sanctuary uses the
+    capitals as function names for type constructors, i.e. `S.Just(5)`, and does
+    not support `new`.
+
+4.  Sanctuary also aims to provide a much larger suite of functions, more like
+    [Ramda] but with Haskell- or PureScript-inspired type safety and
+    sophistication. True Myth intentionally punts on those concerns, assuming
+    that most consumers are already using a library like Lodash or Ramda and
+    aiming to be easy to integrate with those instead.
+
+[s-ts]: https://github.com/sanctuary-js/sanctuary/pull/431
 
 ## Migrating from other libraries
 
- - [ ] TODO: instructions for migrating from Folktale 1.0/2.0
- - [ ] TODO: instructions for migrating from Sanctuary
+### Folktale
+
+Migrating from Folktale should be *very* straightforward: many of the names are
+the same, and the behavior of many of the functions is as well.
+
+#### Folktale 1.0
+
+#### Folktale 2.0
+
+### Sanctuary
+
+- `S.Either`: `Result`
+    + `Left`: `Err`
+    + `Right`: `Ok`
+- `S.toMaybe`: `Maybe.of`
 
 ## What's with the name?
 
