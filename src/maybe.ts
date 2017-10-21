@@ -648,7 +648,7 @@ const unwrap = unsafelyUnwrap;
   recommended way to get a value out of a `Maybe` most of the time.
   
   ```ts
-  import { Maybe, just, nothing } from 'true-myth/maybe';
+  import { Maybe, just, nothing, unwrapOr } from 'true-myth/maybe';
   
   const notAString: Maybe<string> = nothing();
   const isAString = just('look ma! some characters!');
@@ -670,9 +670,12 @@ export const unwrapOr = <T>(defaultValue: T, maybe: Maybe<T>): T =>
 export const getOr = unwrapOr;
 
 /**
-  Safely get the value out of a [`Maybe`](#maybe).
- 
-  Returns the content of a `Just` or `defaultValue` if `Nothing`.
+  Safely get the value out of a [`Maybe`](#maybe) by returning the wrapped
+  value if it is `Just`, or by applying `orElseFn` if it is `Nothing`.
+
+  This is useful when you need to *generate* a value (e.g. by using current
+  values in the environment – whether preloaded or by local closure) instead of
+  having a single default value available (as in [`unwrapOr`](#unwrapor)).
   
   @typeparam T  The wrapped value.
   @param orElseFn A function used to generate a valid value if `maybe` is a

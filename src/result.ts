@@ -695,7 +695,7 @@ export const unsafelyUnwrap = <T, E>(result: Result<T, E>): T => result.unsafely
 const unwrap = unsafelyUnwrap;
 
 /**
-  Get the error value out of the `Result`.
+  Get the error value out of the [`Result`](#result).
   
   Returns the content of an `Err`, but **throws if the `Result` is `Ok`**.
   Prefer to use [`unwrapOrElse`](#unwraporelse).
@@ -710,7 +710,7 @@ export const unsafelyUnwrapErr = <T, E>(result: Result<T, E>): E => result.unsaf
 const unwrapErr = unsafelyUnwrapErr;
 
 /**
-  Safely get the value out of the `Ok` variant of a `Result`.
+  Safely get the value out of the `Ok` variant of a [`Result`](#result).
 
   This is the recommended way to get a value out of a `Result` most of the time.
 
@@ -734,6 +734,35 @@ const unwrapErr = unsafelyUnwrapErr;
 export const unwrapOr = <T, E>(defaultValue: T, result: Result<T, E>): T =>
   isOk(result) ? unwrap(result) : defaultValue;
 
+/**
+  Safely get the value out of a [`Result`](#result) by returning the wrapped
+  value if it is `Ok`, or by applying `orElseFn` to the value in the `Err`.
+
+  This is useful when you need to *generate* a value (e.g. by using current
+  values in the environment – whether preloaded or by local closure) instead of
+  having a single default value available (as in [`unwrapOr`](#unwrapor)).
+
+  ```ts
+  import { Result, ok, err, unwrapOrElse } from 'true-myth/result';
+
+  const someOtherValue = 2;
+  const handleErr = (errValue: string) => errValue.length + someOtherValue;
+  
+  const anOk = ok<number, string>(42);
+  console.log(unwrapOrElse(handleErr, anOk));  // 42
+  
+  const anErr = ok<number, string>('oh teh noes');
+  console.log(unwrapOrElse(handleErr, anErr));  // 13
+  ```
+  
+  @typeparam T    The value wrapped in the `Ok`.
+  @typeparam E    The value wrapped in the `Err`.
+  @param orElseFn A function applied to the value wrapped in `result` if it is
+                  an `Err`, to generate the final value.
+  @param result   The `result` to unwrap if it is an `Ok`.
+  @returns        The value wrapped in `result` if it is `Ok` or the value
+                  returned by `orElseFn` applied to the value in `Err`.
+ */
 export const unwrapOrElse = <T, E>(orElseFn: (error: E) => T, result: Result<T, E>): T =>
   isOk(result) ? unwrap(result) : orElseFn(unwrapErr(result));
 

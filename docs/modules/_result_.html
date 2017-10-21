@@ -625,7 +625,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in result.ts:758</li>
+									<li>Defined in result.ts:787</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
@@ -1377,7 +1377,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in result.ts:755</li>
+									<li>Defined in result.ts:784</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1422,7 +1422,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in result.ts:812</li>
+									<li>Defined in result.ts:841</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1548,7 +1548,7 @@
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
-									<p>Get the error value out of the <code>Result</code>.</p>
+									<p>Get the error value out of the <a href="#result"><code>Result</code></a>.</p>
 								</div>
 								<p>Returns the content of an <code>Err</code>, but <strong>throws if the <code>Result</code> is <code>Ok</code></strong>.
 								Prefer to use <a href="#unwraporelse"><code>unwrapOrElse</code></a>.</p>
@@ -1587,7 +1587,7 @@
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
-									<p>Safely get the value out of the <code>Ok</code> variant of a <code>Result</code>.</p>
+									<p>Safely get the value out of the <code>Ok</code> variant of a <a href="#result"><code>Result</code></a>.</p>
 								</div>
 								<p>This is the recommended way to get a value out of a <code>Result</code> most of the time.</p>
 								<pre><code class="lang-ts"><span class="hljs-keyword">import</span> { Result, ok, err, unwrapOr } <span class="hljs-keyword">from</span> <span class="hljs-string">'true-myth/result'</span>;
@@ -1649,22 +1649,54 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in result.ts:737</li>
+									<li>Defined in result.ts:766</li>
 								</ul>
 							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Safely get the value out of a <a href="#result"><code>Result</code></a> by returning the wrapped
+									value if it is <code>Ok</code>, or by applying <code>orElseFn</code> to the value in the <code>Err</code>.</p>
+								</div>
+								<p>This is useful when you need to <em>generate</em> a value (e.g. by using current
+									values in the environment – whether preloaded or by local closure) instead of
+								having a single default value available (as in <a href="#unwrapor"><code>unwrapOr</code></a>).</p>
+								<pre><code class="lang-ts"><span class="hljs-keyword">import</span> { Result, ok, err, unwrapOrElse } <span class="hljs-keyword">from</span> <span class="hljs-string">'true-myth/result'</span>;
+
+<span class="hljs-keyword">const</span> someOtherValue = <span class="hljs-number">2</span>;
+<span class="hljs-keyword">const</span> handleErr = <span class="hljs-function">(<span class="hljs-params">errValue: <span class="hljs-built_in">string</span></span>) =&gt;</span> errValue.length + someOtherValue;
+
+<span class="hljs-keyword">const</span> anOk = ok&lt;<span class="hljs-built_in">number</span>, <span class="hljs-built_in">string</span>&gt;(<span class="hljs-number">42</span>);
+<span class="hljs-built_in">console</span>.log(unwrapOrElse(handleErr, anOk));  <span class="hljs-comment">// 42</span>
+
+<span class="hljs-keyword">const</span> anErr = ok&lt;<span class="hljs-built_in">number</span>, <span class="hljs-built_in">string</span>&gt;(<span class="hljs-string">'oh teh noes'</span>);
+<span class="hljs-built_in">console</span>.log(unwrapOrElse(handleErr, anErr));  <span class="hljs-comment">// 13</span>
+</code></pre>
+							</div>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
 							<ul class="tsd-type-parameters">
 								<li>
 									<h4>T</h4>
+									<div class="tsd-comment tsd-typography">
+										<p>The value wrapped in the <code>Ok</code>.</p>
+									</div>
 								</li>
 								<li>
 									<h4>E</h4>
+									<div class="tsd-comment tsd-typography">
+										<p>The value wrapped in the <code>Err</code>.</p>
+									</div>
 								</li>
 							</ul>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
 									<h5>orElseFn: <span class="tsd-signature-type">function</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<div class="lead">
+											<p>A function applied to the value wrapped in <code>result</code> if it is
+											an <code>Err</code>, to generate the final value.</p>
+										</div>
+									</div>
 									<ul class="tsd-parameters">
 										<li class="tsd-parameter-siganture">
 											<ul class="tsd-signatures tsd-kind-type-literal tsd-is-not-exported">
@@ -1686,9 +1718,16 @@
 								</li>
 								<li>
 									<h5>result: <a href="_result_.html#result" class="tsd-signature-type">Result</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">E</span><span class="tsd-signature-symbol">&gt;</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<div class="lead">
+											<p>The <code>result</code> to unwrap if it is an <code>Ok</code>.</p>
+										</div>
+									</div>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">T</span></h4>
+							<p>The value wrapped in <code>result</code> if it is <code>Ok</code> or the value
+							returned by <code>orElseFn</code> applied to the value in <code>Err</code>.</p>
 						</li>
 					</ul>
 				</section>

@@ -400,7 +400,7 @@ takesAMaybeString(nothingHereEither);
 					<div class="tsd-signature tsd-kind-icon">get<wbr>OrElse<span class="tsd-signature-symbol">:</span> <a href="" class="tsd-signature-type">unwrapOrElse</a><span class="tsd-signature-symbol"> =&nbsp;unwrapOrElse</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in maybe.ts:688</li>
+							<li>Defined in maybe.ts:691</li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -642,7 +642,7 @@ takesAMaybeString(nothingHereEither);
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in maybe.ts:735</li>
+									<li>Defined in maybe.ts:738</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1372,7 +1372,7 @@ takesAMaybeString(nothingHereEither);
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in maybe.ts:717</li>
+									<li>Defined in maybe.ts:720</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1450,7 +1450,7 @@ takesAMaybeString(nothingHereEither);
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in maybe.ts:702</li>
+									<li>Defined in maybe.ts:705</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1510,7 +1510,7 @@ takesAMaybeString(nothingHereEither);
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in maybe.ts:775</li>
+									<li>Defined in maybe.ts:778</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1634,7 +1634,7 @@ takesAMaybeString(nothingHereEither);
 								</div>
 								<p>Returns the content of a <code>Just</code> or <code>defaultValue</code> if <code>Nothing</code>. This is the
 								recommended way to get a value out of a <code>Maybe</code> most of the time.</p>
-								<pre><code class="lang-ts"><span class="hljs-keyword">import</span> { Maybe, just, nothing } <span class="hljs-keyword">from</span> <span class="hljs-string">'true-myth/maybe'</span>;
+								<pre><code class="lang-ts"><span class="hljs-keyword">import</span> { Maybe, just, nothing, unwrapOr } <span class="hljs-keyword">from</span> <span class="hljs-string">'true-myth/maybe'</span>;
 
 <span class="hljs-keyword">const</span> notAString: Maybe&lt;<span class="hljs-built_in">string</span>&gt; = nothing();
 <span class="hljs-keyword">const</span> isAString = just(<span class="hljs-string">'look ma! some characters!'</span>);
@@ -1687,14 +1687,17 @@ takesAMaybeString(nothingHereEither);
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in maybe.ts:684</li>
+									<li>Defined in maybe.ts:687</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
-									<p>Safely get the value out of a <a href="#maybe"><code>Maybe</code></a>.</p>
+									<p>Safely get the value out of a <a href="#maybe"><code>Maybe</code></a> by returning the wrapped
+									value if it is <code>Just</code>, or by applying <code>orElseFn</code> if it is <code>Nothing</code>.</p>
 								</div>
-								<p>Returns the content of a <code>Just</code> or <code>defaultValue</code> if <code>Nothing</code>.</p>
+								<p>This is useful when you need to <em>generate</em> a value (e.g. by using current
+									values in the environment – whether preloaded or by local closure) instead of
+								having a single default value available (as in <a href="#unwrapor"><code>unwrapOr</code></a>).</p>
 							</div>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
 							<ul class="tsd-type-parameters">
