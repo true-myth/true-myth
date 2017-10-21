@@ -401,10 +401,11 @@ anObjectToWrap.desc.push('.');
 console.log(unsafelyUnwrap(updated).desc);  // ["this", " ", "is a string", "."]
 ```
 
-In other words: you *must* use other tools along with True Myth if you're doing
-want to do mutation on objects you've wrapped. True Myth will work quite nicely
-with [lodash], [Ramda], [Immutable-JS], etc., so you can use whatever tools you
-like to handle this problem
+In other words: you *must* use other tools along with True Myth if you're going
+to mutate objects you're wrapping in `Maybe` or `Result`.
+
+True Myth will work quite nicely with [lodash], [Ramda], [Immutable-JS], etc.,
+so you can use whatever tools you like to handle this problem.
 
 [Immutable-JS]: http://facebook.github.io/immutable-js/
 

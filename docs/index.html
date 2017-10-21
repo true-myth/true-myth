@@ -399,10 +399,10 @@ anObjectToWrap.desc.push(<span class="hljs-string">'.'</span>);
 <span class="hljs-comment">// And… 😱 we've mutated the new one, too:</span>
 <span class="hljs-built_in">console</span>.log(unsafelyUnwrap(updated).desc);  <span class="hljs-comment">// ["this", " ", "is a string", "."]</span>
 </code></pre>
-				<p>In other words: you <em>must</em> use other tools along with True Myth if you&#39;re doing
-					want to do mutation on objects you&#39;ve wrapped. True Myth will work quite nicely
-					with <a href="https://lodash.com">lodash</a>, <a href="http://ramdajs.com">Ramda</a>, <a href="http://facebook.github.io/immutable-js/">Immutable-JS</a>, etc., so you can use whatever tools you
-				like to handle this problem</p>
+				<p>In other words: you <em>must</em> use other tools along with True Myth if you&#39;re going
+				to mutate objects you&#39;re wrapping in <code>Maybe</code> or <code>Result</code>.</p>
+				<p>True Myth will work quite nicely with <a href="https://lodash.com">lodash</a>, <a href="http://ramdajs.com">Ramda</a>, <a href="http://facebook.github.io/immutable-js/">Immutable-JS</a>, etc.,
+				so you can use whatever tools you like to handle this problem.</p>
 				<h3 id="the-type-names">The type names</h3>
 				<h4 id="-maybe-"><code>Maybe</code></h4>
 				<p>The existing options in this space include <code>Option</code>, <code>Optional</code>, and <code>Maybe</code>.
