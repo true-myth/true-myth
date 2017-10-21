@@ -658,6 +658,23 @@ export const flatMap = andThen;
 export const or = <T, E, F>(defaultResult: Result<T, F>, result: Result<T, E>): Result<T, F> =>
   isOk(result) ? result as Ok<T, any> : defaultResult;
 
+/**
+  Like `or`, but using a function to construct the alternative `Result`.
+  
+  Sometimes you need to perform an operation using other data in the
+  environment to construct the fallback value. In these situations, you can
+  pass a function (which may be a closure) as the `elseFn` to generate the
+  fallback `Result<T>`. It can then transform the data in the `Err` to something
+  usable as an `Ok`, or generate a new `Err` instance as appropriate.
+  
+  Useful for transforming failures to usable data.
+  
+  @param elseFn The function to apply to the contents of the `Err` if `result`
+                is an `Err`, to create a new `Result`.
+  @param result The `Result` to use if it is an `Ok`.
+  @returns      The `result` if it is `Ok`, or the `Result` returned by `elseFn`
+                if `result` is an `Err.
+ */
 export const orElse = <T, E, F>(
   elseFn: (...args: any[]) => Result<T, F>,
   result: Result<T, E>

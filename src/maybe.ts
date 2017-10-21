@@ -607,7 +607,7 @@ export const or = <T>(defaultMaybe: Maybe<T>, maybe: Maybe<T>): Maybe<T> =>
   pass a function (which may be a closure) as the `elseFn` to generate the
   fallback `Maybe<T>`.
   
-  Useful for handling failures/empty situations.
+  Useful for transforming empty scenarios based on values in context.
   
   @typeparam T  The type of the wrapped value.
   @param elseFn The function to apply if `maybe` is `Nothing`

@@ -363,7 +363,7 @@
 					<div class="tsd-signature tsd-kind-icon">unwrap<span class="tsd-signature-symbol">:</span> <a href="" class="tsd-signature-type">unsafelyUnwrap</a><span class="tsd-signature-symbol"> =&nbsp;unsafelyUnwrap</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in result.ts:678</li>
+							<li>Defined in result.ts:695</li>
 						</ul>
 					</aside>
 				</section>
@@ -373,7 +373,7 @@
 					<div class="tsd-signature tsd-kind-icon">unwrap<wbr>Err<span class="tsd-signature-symbol">:</span> <a href="" class="tsd-signature-type">unsafelyUnwrapErr</a><span class="tsd-signature-symbol"> =&nbsp;unsafelyUnwrapErr</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in result.ts:693</li>
+							<li>Defined in result.ts:710</li>
 						</ul>
 					</aside>
 				</section>
@@ -625,7 +625,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in result.ts:719</li>
+									<li>Defined in result.ts:736</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
@@ -1297,9 +1297,20 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in result.ts:661</li>
+									<li>Defined in result.ts:678</li>
 								</ul>
 							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Like <code>or</code>, but using a function to construct the alternative <code>Result</code>.</p>
+								</div>
+								<p>Sometimes you need to perform an operation using other data in the
+									environment to construct the fallback value. In these situations, you can
+									pass a function (which may be a closure) as the <code>elseFn</code> to generate the
+									fallback <code>Result&lt;T&gt;</code>. It can then transform the data in the <code>Err</code> to something
+								usable as an <code>Ok</code>, or generate a new <code>Err</code> instance as appropriate.</p>
+								<p>Useful for transforming failures to usable data.</p>
+							</div>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
 							<ul class="tsd-type-parameters">
 								<li>
@@ -1316,6 +1327,12 @@
 							<ul class="tsd-parameters">
 								<li>
 									<h5>elseFn: <span class="tsd-signature-type">function</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<div class="lead">
+											<p>The function to apply to the contents of the <code>Err</code> if <code>result</code>
+											is an <code>Err</code>, to create a new <code>Result</code>.</p>
+										</div>
+									</div>
 									<ul class="tsd-parameters">
 										<li class="tsd-parameter-siganture">
 											<ul class="tsd-signatures tsd-kind-type-literal tsd-is-not-exported">
@@ -1337,9 +1354,16 @@
 								</li>
 								<li>
 									<h5>result: <a href="_result_.html#result" class="tsd-signature-type">Result</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">E</span><span class="tsd-signature-symbol">&gt;</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<div class="lead">
+											<p>The <code>Result</code> to use if it is an <code>Ok</code>.</p>
+										</div>
+									</div>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <a href="_result_.html#result" class="tsd-signature-type">Result</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">F</span><span class="tsd-signature-symbol">&gt;</span></h4>
+							<p>The <code>result</code> if it is <code>Ok</code>, or the <code>Result</code> returned by <code>elseFn</code>
+							if <code>result</code> is an `Err.</p>
 						</li>
 					</ul>
 				</section>
@@ -1353,7 +1377,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in result.ts:716</li>
+									<li>Defined in result.ts:733</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1398,7 +1422,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in result.ts:773</li>
+									<li>Defined in result.ts:790</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1480,7 +1504,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in result.ts:674</li>
+									<li>Defined in result.ts:691</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1519,7 +1543,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in result.ts:689</li>
+									<li>Defined in result.ts:706</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1558,7 +1582,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in result.ts:695</li>
+									<li>Defined in result.ts:712</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
@@ -1593,7 +1617,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in result.ts:698</li>
+									<li>Defined in result.ts:715</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
