@@ -709,6 +709,28 @@ export const unsafelyUnwrapErr = <T, E>(result: Result<T, E>): E => result.unsaf
 // a bad idea via the name.
 const unwrapErr = unsafelyUnwrapErr;
 
+/**
+  Safely get the value out of the `Ok` variant of a `Result`.
+
+  This is the recommended way to get a value out of a `Result` most of the time.
+
+  ```ts
+  import { Result, ok, err, unwrapOr } from 'true-myth/result';
+
+  const anOk = ok<number, string>(12);
+  console.log(unwrapOr(0, anOk));  // 12
+  
+  const anErr = err<number, string>('nooooo');
+  console.log(unwrapOr(0, anErr));  // 0
+  ```
+
+  @typeparam T        The value wrapped in the `Ok`.
+  @typeparam E        The value wrapped in the `Err`.
+  @param defaultValue The value to use if `result` is an `Err`.
+  @param result       The `Result` instance to unwrap if it is an `Ok`.
+  @returns            The content of `result` if it is an `Ok`, otherwise
+                      `defaultValue`.
+ */
 export const unwrapOr = <T, E>(defaultValue: T, result: Result<T, E>): T =>
   isOk(result) ? unwrap(result) : defaultValue;
 

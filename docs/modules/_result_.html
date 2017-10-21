@@ -625,7 +625,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in result.ts:736</li>
+									<li>Defined in result.ts:758</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
@@ -1377,7 +1377,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in result.ts:733</li>
+									<li>Defined in result.ts:755</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1422,7 +1422,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in result.ts:790</li>
+									<li>Defined in result.ts:812</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1582,28 +1582,60 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in result.ts:712</li>
+									<li>Defined in result.ts:734</li>
 								</ul>
 							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Safely get the value out of the <code>Ok</code> variant of a <code>Result</code>.</p>
+								</div>
+								<p>This is the recommended way to get a value out of a <code>Result</code> most of the time.</p>
+								<pre><code class="lang-ts"><span class="hljs-keyword">import</span> { Result, ok, err, unwrapOr } <span class="hljs-keyword">from</span> <span class="hljs-string">'true-myth/result'</span>;
+
+<span class="hljs-keyword">const</span> anOk = ok&lt;<span class="hljs-built_in">number</span>, <span class="hljs-built_in">string</span>&gt;(<span class="hljs-number">12</span>);
+<span class="hljs-built_in">console</span>.log(unwrapOr(<span class="hljs-number">0</span>, anOk));  <span class="hljs-comment">// 12</span>
+
+<span class="hljs-keyword">const</span> anErr = err&lt;<span class="hljs-built_in">number</span>, <span class="hljs-built_in">string</span>&gt;(<span class="hljs-string">'nooooo'</span>);
+<span class="hljs-built_in">console</span>.log(unwrapOr(<span class="hljs-number">0</span>, anErr));  <span class="hljs-comment">// 0</span>
+</code></pre>
+							</div>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
 							<ul class="tsd-type-parameters">
 								<li>
 									<h4>T</h4>
+									<div class="tsd-comment tsd-typography">
+										<p>The value wrapped in the <code>Ok</code>.</p>
+									</div>
 								</li>
 								<li>
 									<h4>E</h4>
+									<div class="tsd-comment tsd-typography">
+										<p>The value wrapped in the <code>Err</code>.</p>
+									</div>
 								</li>
 							</ul>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
 									<h5>defaultValue: <span class="tsd-signature-type">T</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<div class="lead">
+											<p>The value to use if <code>result</code> is an <code>Err</code>.</p>
+										</div>
+									</div>
 								</li>
 								<li>
 									<h5>result: <a href="_result_.html#result" class="tsd-signature-type">Result</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">E</span><span class="tsd-signature-symbol">&gt;</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<div class="lead">
+											<p>The <code>Result</code> instance to unwrap if it is an <code>Ok</code>.</p>
+										</div>
+									</div>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">T</span></h4>
+							<p>The content of <code>result</code> if it is an <code>Ok</code>, otherwise
+							<code>defaultValue</code>.</p>
 						</li>
 					</ul>
 				</section>
@@ -1617,7 +1649,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in result.ts:715</li>
+									<li>Defined in result.ts:737</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
