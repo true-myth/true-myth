@@ -16,7 +16,7 @@ export enum Variant {
 }
 
 export interface IResult<T, E> {
-  /** Distinguish between the `Ok` and `Error` variants. */
+  /** Distinguish between the `Ok` and `Err` variants. */
   variant: Variant;
 
   /** Method variant for [`Result.isOk`](../modules/_result_.html#isok) */
@@ -365,7 +365,7 @@ export const ok = <T, E>(value: T | null | undefined): Result<T, E> => new Ok<T,
 export const err = <T, E>(error: E): Result<T, E> => new Err<T, E>(error);
 
 /**
-  A value which may (`Ok`) or may not (`Error`) be present.
+  A value which may (`Ok`) or may not (`Err`) be present.
   
   The behavior of this type is checked by TypeScript at compile time, and bears
   no runtime overhead other than the very small cost of the container object.
@@ -576,8 +576,8 @@ export const and = <T, U, E>(andResult: Result<U, E>, result: Result<T, E>): Res
   `andThen` to combine two functions which *both* create a `Result` from an
   unwrapped type.
  
-  You may find the `.then` method on an ES6 `Promise` helpful for comparison:
-  if you have a `Promise`, you can pass its `then` method a callback which
+  You may find the `.then` method on an ES6 `Promise` helpful for comparison: if
+  you have a `Promise`, you can pass its `then` method a callback which
   returns another `Promise`, and the result will not be a *nested* promise, but
   a single `Promise`. The difference is that `Promise#then` unwraps *all*
   layers to only ever return a single `Promise` value, whereas `Result.andThen`
@@ -661,11 +661,11 @@ export const or = <T, E, F>(defaultResult: Result<T, F>, result: Result<T, E>): 
 /**
   Like `or`, but using a function to construct the alternative `Result`.
   
-  Sometimes you need to perform an operation using other data in the
-  environment to construct the fallback value. In these situations, you can
-  pass a function (which may be a closure) as the `elseFn` to generate the
-  fallback `Result<T>`. It can then transform the data in the `Err` to something
-  usable as an `Ok`, or generate a new `Err` instance as appropriate.
+  Sometimes you need to perform an operation using other data in the environment
+  to construct the fallback value. In these situations, you can pass a function
+  (which may be a closure) as the `elseFn` to generate the fallback `Result<T>`.
+  It can then transform the data in the `Err` to something usable as an `Ok`, or
+  generate a new `Err` instance as appropriate.
   
   Useful for transforming failures to usable data.
   

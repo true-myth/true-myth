@@ -323,7 +323,7 @@
 					</aside>
 					<div class="tsd-comment tsd-typography">
 						<div class="lead">
-							<p>A value which may (<code>Ok</code>) or may not (<code>Error</code>) be present.</p>
+							<p>A value which may (<code>Ok</code>) or may not (<code>Err</code>) be present.</p>
 						</div>
 						<p>The behavior of this type is checked by TypeScript at compile time, and bears
 						no runtime overhead other than the very small cost of the container object.</p>
@@ -564,8 +564,8 @@
 								<p>This differs from <code>map</code> in that <code>thenFn</code> returns another <code>Result</code>. You can use
 									<code>andThen</code> to combine two functions which <em>both</em> create a <code>Result</code> from an
 								unwrapped type.</p>
-								<p>You may find the <code>.then</code> method on an ES6 <code>Promise</code> helpful for comparison:
-									if you have a <code>Promise</code>, you can pass its <code>then</code> method a callback which
+								<p>You may find the <code>.then</code> method on an ES6 <code>Promise</code> helpful for comparison: if
+									you have a <code>Promise</code>, you can pass its <code>then</code> method a callback which
 									returns another <code>Promise</code>, and the result will not be a <em>nested</em> promise, but
 									a single <code>Promise</code>. The difference is that <code>Promise#then</code> unwraps <em>all</em>
 									layers to only ever return a single <code>Promise</code> value, whereas <code>Result.andThen</code>
@@ -1401,11 +1401,11 @@
 								<div class="lead">
 									<p>Like <code>or</code>, but using a function to construct the alternative <code>Result</code>.</p>
 								</div>
-								<p>Sometimes you need to perform an operation using other data in the
-									environment to construct the fallback value. In these situations, you can
-									pass a function (which may be a closure) as the <code>elseFn</code> to generate the
-									fallback <code>Result&lt;T&gt;</code>. It can then transform the data in the <code>Err</code> to something
-								usable as an <code>Ok</code>, or generate a new <code>Err</code> instance as appropriate.</p>
+								<p>Sometimes you need to perform an operation using other data in the environment
+									to construct the fallback value. In these situations, you can pass a function
+									(which may be a closure) as the <code>elseFn</code> to generate the fallback <code>Result&lt;T&gt;</code>.
+									It can then transform the data in the <code>Err</code> to something usable as an <code>Ok</code>, or
+								generate a new <code>Err</code> instance as appropriate.</p>
 								<p>Useful for transforming failures to usable data.</p>
 							</div>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
