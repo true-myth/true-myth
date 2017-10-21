@@ -20,15 +20,15 @@ functional style and a more traditional method-call style.
     - [The problem](#the-problem)
     - [The solution](#the-solution)
 - [Design philosophy](#design-philosophy)
+    - [A note on reference types: no deep copies here!](#a-note-on-reference-types-no-deep-copies-here)
     - [The type names](#the-type-names)
         - [`Maybe`](#maybe)
             - [The `Maybe` variants: `Just` and `Nothing`](#the-maybe-variants-just-and-nothing)
         - [`Result`](#result)
             - [The `Result` variants: `Ok` and `Err`](#the-result-variants-ok-and-err)
+    - [Inspiration](#inspiration)
 - [Setup](#setup)
-    - [JavaScript](#javascript)
-    - [TypeScript](#typescript)
-    - [Flow](#flow)
+    - [TypeScript and Flow](#typescript-and-flow)
 - [Roadmap](#roadmap)
 - [Why not...](#why-not)
     - [Folktale](#folktale)
@@ -198,7 +198,7 @@ This at least helps keep us honest. But we still end up writing a ton of
 repeated boilerplate to deal with this problem. Rather than just handling it
 once and being done with it, we play a never-ending game of whack-a-mole. We
 must be constantly vigilant and proactive so that our users don't get into
-broken error states. Are you tired of the game yet?
+broken error states.
 
 [maybe]: https://flow.org/en/docs/types/maybe/
 [optional]: http://www.typescriptlang.org/docs/handbook/interfaces.html#optional-properties
@@ -223,7 +223,7 @@ parameter values by extracting the question, "Does this variable contain a valid
 value?" to API boundaries, rather than needing to ask that question at the head
 of every. single. function.
 
-What is this sorcery?
+*What is this sorcery?*
 
 It turns out you probably already have a good idea of how this works, if you've
 spent much time writing JavaScript, because this is exactly how arrays work.
@@ -375,6 +375,39 @@ codebase, though!)
 [Ramda]: http://ramdajs.com
 [lodash]: https://lodash.com
 
+### A note on reference types: no deep copies here!
+
+One important note: True Myth does *not* attempt to deeply-clone the wrapped
+values when performing operations on them. Instead, the library assumes that you
+will *not* mutate those objects in place. (Doing more than this would require
+taking on a dependency on e.g. [lodash]). If you violate that constraint, you
+can and will see surprising outcomes. Accordingly, you should take care not to
+mutate reference types, or to use deep cloning yourself when e.g. mapping over
+reference types.
+
+```ts
+import { just, map, unsafelyUnwrap } from 'true-myth/maybe';
+
+const anObjectToWrap = { desc: ['this', ' ', 'is a string'], val: 42 };
+const wrapped = just(anObjectToWrap);
+const updated = map(obj => ({...obj, val: 92 }), wrapped);
+
+console.log(unsafelyUnwrap(updated).val);  // 92
+
+// Now mutate the original
+anObjectToWrap.desc.push('.');
+
+// And… 😱 we've mutated the new one, too:
+console.log(unsafelyUnwrap(updated).desc);  // ["this", " ", "is a string", "."]
+```
+
+In other words: you *must* use other tools along with True Myth if you're doing
+want to do mutation on objects you've wrapped. True Myth will work quite nicely
+with [lodash], [Ramda], [Immutable-JS], etc., so you can use whatever tools you
+like to handle this problem
+
+[Immutable-JS]: http://facebook.github.io/immutable-js/
+
 ### The type names
 
 #### `Maybe`
@@ -467,6 +500,26 @@ this case, the longer names don't add any particular clarity; they require more
 typing; and the `Error` case also overloads the existing name of the base
 exception type in JavaScript. So: `Ok` and `Err` it is.
 
+### Inspiration
+
+The design of True Myth draws heavily on prior art; essentially nothing of this
+is original – *perhaps* excepting the choice to make `Maybe.of` handle `null`
+and `undefined` in constructing the types. In particular, however, True Myth
+draws particular inspiration from:
+
+-   Rust's [`Option`][rs-option] and [`Result`][rs-result] types and their
+    associated methods
+-   Folktale's [`Maybe`][ft-maybe] and [`Result`][ft-result] implementations
+-   Elm's [`Maybe`][elm-maybe] and [`Result`][elm-result] types and their
+    associated functions
+
+[rs-option]: https://doc.rust-lang.org/stable/std/option/
+[rs-result]: https://doc.rust-lang.org/stable/std/result/
+[ft-maybe]: http://folktale.origamitower.com/api/v2.0.0/en/folktale.maybe.html
+[ft-result]: http://folktale.origamitower.com/api/v2.0.0/en/folktale.result.html
+[elm-maybe]: http://package.elm-lang.org/packages/elm-lang/core/5.1.1/Maybe
+[elm-result]: http://package.elm-lang.org/packages/elm-lang/core/5.1.1/Result
+
 ## Setup
 
 Add True Myth to your dependencies:
@@ -527,6 +580,10 @@ TypeScript and Flow should *just work*. You can simply use the module as a norma
 ES6-style module import, whether working in Node or using something like Webpack
 or Ember CLI for bundling.
 
+Moreover, type defs are provided for both in each of the specific formats (as
+you can see in the listing above), so you can reference them directly if you
+need to.
+
 ## Roadmap
 
 Before this hits 1.0, I will do:
@@ -561,8 +618,10 @@ comparing it with.
 
 ### Folktale?
 
-Folktale has an API a lot like this one, as you'll see when perusing the docs.
+[Folktale] has an API a lot like this one, as you'll see when perusing the docs.
 However, there are two main reasons you might prefer True Myth to Folktale:
+
+[Folktale]: http://folktale.origamitower.com
 
 1.  True Myth is TypeScript-first and Flow-first, which means that it assumes
     you are using TypeScript or Flow if you're aiming for rigorous type safety.
