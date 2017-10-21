@@ -400,7 +400,7 @@ takesAMaybeString(nothingHereEither);
 					<div class="tsd-signature tsd-kind-icon">get<wbr>OrElse<span class="tsd-signature-symbol">:</span> <a href="" class="tsd-signature-type">unwrapOrElse</a><span class="tsd-signature-symbol"> =&nbsp;unwrapOrElse</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in maybe.ts:691</li>
+							<li>Defined in maybe.ts:705</li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -642,7 +642,7 @@ takesAMaybeString(nothingHereEither);
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in maybe.ts:738</li>
+									<li>Defined in maybe.ts:752</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1372,7 +1372,7 @@ takesAMaybeString(nothingHereEither);
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in maybe.ts:720</li>
+									<li>Defined in maybe.ts:734</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1450,7 +1450,7 @@ takesAMaybeString(nothingHereEither);
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in maybe.ts:705</li>
+									<li>Defined in maybe.ts:719</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1510,7 +1510,7 @@ takesAMaybeString(nothingHereEither);
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in maybe.ts:778</li>
+									<li>Defined in maybe.ts:792</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1687,7 +1687,7 @@ takesAMaybeString(nothingHereEither);
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in maybe.ts:687</li>
+									<li>Defined in maybe.ts:701</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1698,6 +1698,18 @@ takesAMaybeString(nothingHereEither);
 								<p>This is useful when you need to <em>generate</em> a value (e.g. by using current
 									values in the environment – whether preloaded or by local closure) instead of
 								having a single default value available (as in <a href="#unwrapor"><code>unwrapOr</code></a>).</p>
+								<pre><code class="lang-ts"><span class="hljs-keyword">import</span> { Maybe, just, nothing, unwrapOrElse } <span class="hljs-keyword">from</span> <span class="hljs-string">'true-myth/maybe'</span>;
+
+<span class="hljs-comment">// You can imagine that someOtherValue might be dynamic.</span>
+<span class="hljs-keyword">const</span> someOtherValue = <span class="hljs-number">99</span>;
+<span class="hljs-keyword">const</span> handleNothing = <span class="hljs-function"><span class="hljs-params">()</span> =&gt;</span> someOtherValue;
+
+<span class="hljs-keyword">const</span> aJust = just(<span class="hljs-number">42</span>);
+<span class="hljs-built_in">console</span>.log(unwrapOrElse(handleNothing, aJust));  <span class="hljs-comment">// 42</span>
+
+<span class="hljs-keyword">const</span> aNothing = nothing&lt;<span class="hljs-built_in">number</span>&gt;();
+<span class="hljs-built_in">console</span>.log(unwrapOrElse(handleNothing, aNothing)); <span class="hljs-comment">// 99</span>
+</code></pre>
 							</div>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
 							<ul class="tsd-type-parameters">

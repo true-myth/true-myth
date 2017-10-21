@@ -745,6 +745,7 @@ export const unwrapOr = <T, E>(defaultValue: T, result: Result<T, E>): T =>
   ```ts
   import { Result, ok, err, unwrapOrElse } from 'true-myth/result';
 
+  // You can imagine that someOtherValue might be dynamic.
   const someOtherValue = 2;
   const handleErr = (errValue: string) => errValue.length + someOtherValue;
   

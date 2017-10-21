@@ -676,6 +676,20 @@ export const getOr = unwrapOr;
   This is useful when you need to *generate* a value (e.g. by using current
   values in the environment – whether preloaded or by local closure) instead of
   having a single default value available (as in [`unwrapOr`](#unwrapor)).
+
+  ```ts
+  import { Maybe, just, nothing, unwrapOrElse } from 'true-myth/maybe';
+
+  // You can imagine that someOtherValue might be dynamic.
+  const someOtherValue = 99;
+  const handleNothing = () => someOtherValue;
+  
+  const aJust = just(42);
+  console.log(unwrapOrElse(handleNothing, aJust));  // 42
+
+  const aNothing = nothing<number>();
+  console.log(unwrapOrElse(handleNothing, aNothing)); // 99
+  ```
   
   @typeparam T  The wrapped value.
   @param orElseFn A function used to generate a valid value if `maybe` is a
