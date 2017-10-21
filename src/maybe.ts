@@ -648,9 +648,9 @@ const unwrap = unsafelyUnwrap;
   recommended way to get a value out of a `Maybe` most of the time.
   
   ```ts
-  import { Maybe, just, nothing, unwrapOr } from 'true-myth/maybe';
+  import { just, nothing, unwrapOr } from 'true-myth/maybe';
   
-  const notAString: Maybe<string> = nothing();
+  const notAString = nothing<string>();
   const isAString = just('look ma! some characters!');
   
   console.log(unwrapOr('<empty>', notAString));  // "<empty>"
@@ -678,7 +678,7 @@ export const getOr = unwrapOr;
   having a single default value available (as in [`unwrapOr`](#unwrapor)).
 
   ```ts
-  import { Maybe, just, nothing, unwrapOrElse } from 'true-myth/maybe';
+  import { just, nothing, unwrapOrElse } from 'true-myth/maybe';
 
   // You can imagine that someOtherValue might be dynamic.
   const someOtherValue = 99;

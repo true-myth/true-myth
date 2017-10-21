@@ -1634,9 +1634,9 @@ takesAMaybeString(nothingHereEither);
 								</div>
 								<p>Returns the content of a <code>Just</code> or <code>defaultValue</code> if <code>Nothing</code>. This is the
 								recommended way to get a value out of a <code>Maybe</code> most of the time.</p>
-								<pre><code class="lang-ts"><span class="hljs-keyword">import</span> { Maybe, just, nothing, unwrapOr } <span class="hljs-keyword">from</span> <span class="hljs-string">'true-myth/maybe'</span>;
+								<pre><code class="lang-ts"><span class="hljs-keyword">import</span> { just, nothing, unwrapOr } <span class="hljs-keyword">from</span> <span class="hljs-string">'true-myth/maybe'</span>;
 
-<span class="hljs-keyword">const</span> notAString: Maybe&lt;<span class="hljs-built_in">string</span>&gt; = nothing();
+<span class="hljs-keyword">const</span> notAString = nothing&lt;<span class="hljs-built_in">string</span>&gt;();
 <span class="hljs-keyword">const</span> isAString = just(<span class="hljs-string">'look ma! some characters!'</span>);
 
 <span class="hljs-built_in">console</span>.log(unwrapOr(<span class="hljs-string">'&lt;empty&gt;'</span>, notAString));  <span class="hljs-comment">// "&lt;empty&gt;"</span>
@@ -1698,7 +1698,7 @@ takesAMaybeString(nothingHereEither);
 								<p>This is useful when you need to <em>generate</em> a value (e.g. by using current
 									values in the environment – whether preloaded or by local closure) instead of
 								having a single default value available (as in <a href="#unwrapor"><code>unwrapOr</code></a>).</p>
-								<pre><code class="lang-ts"><span class="hljs-keyword">import</span> { Maybe, just, nothing, unwrapOrElse } <span class="hljs-keyword">from</span> <span class="hljs-string">'true-myth/maybe'</span>;
+								<pre><code class="lang-ts"><span class="hljs-keyword">import</span> { just, nothing, unwrapOrElse } <span class="hljs-keyword">from</span> <span class="hljs-string">'true-myth/maybe'</span>;
 
 <span class="hljs-comment">// You can imagine that someOtherValue might be dynamic.</span>
 <span class="hljs-keyword">const</span> someOtherValue = <span class="hljs-number">99</span>;

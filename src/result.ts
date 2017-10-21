@@ -715,7 +715,7 @@ const unwrapErr = unsafelyUnwrapErr;
   This is the recommended way to get a value out of a `Result` most of the time.
 
   ```ts
-  import { Result, ok, err, unwrapOr } from 'true-myth/result';
+  import { ok, err, unwrapOr } from 'true-myth/result';
 
   const anOk = ok<number, string>(12);
   console.log(unwrapOr(0, anOk));  // 12
@@ -743,7 +743,7 @@ export const unwrapOr = <T, E>(defaultValue: T, result: Result<T, E>): T =>
   having a single default value available (as in [`unwrapOr`](#unwrapor)).
 
   ```ts
-  import { Result, ok, err, unwrapOrElse } from 'true-myth/result';
+  import { ok, err, unwrapOrElse } from 'true-myth/result';
 
   // You can imagine that someOtherValue might be dynamic.
   const someOtherValue = 2;
