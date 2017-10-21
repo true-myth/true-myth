@@ -690,6 +690,12 @@ export const orElse = <T, E, F>(
  */
 export const unsafelyUnwrap = <T, E>(result: Result<T, E>): T => result.unsafelyUnwrap();
 
+/** Alias for [`unsafelyUnwrap`](#unsafelyunwrap) */
+export const unsafelyGet = unsafelyUnwrap;
+
+/** Alias for [`unsafelyUnwrap`](#unsafelyunwrap) */
+export const unsafeGet = unsafelyUnwrap;
+
 // For internal use; but not exported because we want to emphasize that this is
 // a bad idea via the name.
 const unwrap = unsafelyUnwrap;
@@ -704,6 +710,9 @@ const unwrap = unsafelyUnwrap;
   @throws Error If the `Result` instance is `Nothing`.
  */
 export const unsafelyUnwrapErr = <T, E>(result: Result<T, E>): E => result.unsafelyUnwrapErr();
+
+/** Alias for [`unsafelyUnwrapErr`](#unsafelyunwraperr) */
+export const unsafelyGetErr = unsafelyUnwrapErr;
 
 // For internal use; but not exported because we want to emphasize that this is
 // a bad idea via the name.
@@ -733,6 +742,9 @@ const unwrapErr = unsafelyUnwrapErr;
  */
 export const unwrapOr = <T, E>(defaultValue: T, result: Result<T, E>): T =>
   isOk(result) ? unwrap(result) : defaultValue;
+
+/** Alias for [`unwrapOr`](#unwrapor) */
+export const getOr = unwrapOr;
 
 /**
   Safely get the value out of a [`Result`](#result) by returning the wrapped
@@ -766,6 +778,9 @@ export const unwrapOr = <T, E>(defaultValue: T, result: Result<T, E>): T =>
  */
 export const unwrapOrElse = <T, E>(orElseFn: (error: E) => T, result: Result<T, E>): T =>
   isOk(result) ? unwrap(result) : orElseFn(unwrapErr(result));
+
+/** Alias for [`unwrapOrElse`](#unwraporelse) */
+export const getOrElse = unwrapOrElse;
 
 /**
   Convert a [`Result`](#result) to a [`Maybe`](#../modules/_maybe_.html#maybe).

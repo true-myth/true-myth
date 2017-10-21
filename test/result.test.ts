@@ -6,8 +6,6 @@ import { Aliases } from '../src/utils';
 const length = (x: { length: number }) => x.length;
 const double = (x: number) => x * 2;
 
-const compose = <X, Y, Z>(f: (y: Y) => Z, g: (x: X) => Y) => x => f(g(x));
-
 describe('`Result` pure functions', () => {
   test('`ok`', () => {
     const theOk = Result.ok(42);
@@ -407,7 +405,6 @@ describe('`Result.Err` class', () => {
   test('`mapOrElse` method', () => {
     const errValue = 42;
     const theErr = new Result.Err(errValue);
-    const theDefault = 'victory!';
     const getDefault = valueFromErr => `whoa: ${valueFromErr}`;
     const describe = (code: number) => `The error code was ${code}`;
 
