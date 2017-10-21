@@ -535,9 +535,9 @@ Before this hits 1.0, I will do:
     - [x] add aliases for the standard names, e.g. `bind`, `chain`, etc.
     - [x] finish documentation
 
-- [ ] `Result`
+- [x] `Result`
     - [x] implement
-    - [ ] document
+    - [x] document
 
 - [x] *All* the exports
     - [x] AMD
