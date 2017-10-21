@@ -88,31 +88,31 @@ export class Ok<T, E> implements IResult<T, E> {
   variant = Variant.Ok;
 
   /**
-    Create an instance of `Result.Ok` with `new`.
-    
-    **Note:** While you *may* create the `Result` type via normal JavaScript
-    class construction, it is not recommended for the functional style for
-    which the library is intended. Instead, use [`Result.ok`].
-    
-    [`Result.ok`]: ../modules/_result_.html#ok
-    
-    ```ts
-    // Avoid:
-    const aString = new Result.Ok('characters');
-    
-    // Prefer:
-    const aString = Result.ok('characters);
-    ```
-    
-    @param value
-    The value to wrap in a `Result.Ok`.
-    
-    `null` and `undefined` are allowed by the type signature so that the
-    constructor may `throw` on those rather than constructing a type like
-    `Result<undefined>`.
-    
-    @throws If you pass `null` or `undefined`.
-   */
+      Create an instance of `Result.Ok` with `new`.
+      
+      **Note:** While you *may* create the `Result` type via normal JavaScript
+      class construction, it is not recommended for the functional style for
+      which the library is intended. Instead, use [`Result.ok`].
+      
+      [`Result.ok`]: ../modules/_result_.html#ok
+      
+      ```ts
+      // Avoid:
+      const aString = new Result.Ok('characters');
+      
+      // Prefer:
+      const aString = Result.ok('characters);
+      ```
+      
+      @param value
+      The value to wrap in a `Result.Ok`.
+      
+      `null` and `undefined` are allowed by the type signature so that the
+      constructor may `throw` on those rather than constructing a type like
+      `Result<undefined>`.
+      
+      @throws If you pass `null` or `undefined`.
+     */
   constructor(value: T | null | undefined) {
     if (isVoid(value)) {
       throw new Error(
@@ -353,11 +353,11 @@ export const ok = <T, E>(value: T | null | undefined): Result<T, E> => new Ok<T,
   Create an instance of `Result.Error`.
   
   If you want to create an instance with a specific type, e.g. for use in a
-  function which expects a `Result<T, E>` where the `<T, E>` is known but you have no
-  value to give it, you can use a type parameter:
+  function which expects a `Result<T, E>` where the `<T, E>` is known but you
+  have no value to give it, you can use a type parameter:
   
   ```ts
-  const notString = Result.error<string>();
+  const notString = Result.err<number, string>('something went wrong');
   ```
   
   @typeparam T The type of the item contained in the `Result`.
@@ -557,13 +557,13 @@ export const mapErr = <T, E, F>(mapErrFn: (e: E) => F, result: Result<T, E>): Re
   console.log(toString(and(anErr, anErr)));  // Err([object Object])
   ```
 
-  @typeparam T    The type of the value wrapped in the `Ok` of the `Result`.
-  @typeparam U    The type of the value wrapped in the `Ok` of the `andResult`,
-                  i.e. the success type of the `Result` present if the checked
-                  `Result` is `Ok`.
-  @typeparam E    The type of the value wrapped in the `Err` of the `Result`.
+  @typeparam T     The type of the value wrapped in the `Ok` of the `Result`.
+  @typeparam U     The type of the value wrapped in the `Ok` of the `andResult`,
+                   i.e. the success type of the `Result` present if the checked
+                   `Result` is `Ok`.
+  @typeparam E     The type of the value wrapped in the `Err` of the `Result`.
   @param andResult The `Result` instance to return if `result` is `Err`.
-  @param amdResult The `Result` instance to check.
+  @param result    The `Result` instance to check.
  */
 export const and = <T, U, E>(andResult: Result<U, E>, result: Result<T, E>): Result<U, E> =>
   isOk(result) ? andResult : result as Err<any, E>;
@@ -607,12 +607,12 @@ export const and = <T, U, E>(andResult: Result<U, E>, result: Result<T, E>): Res
   console.log(toString(notLengthAsResult));  // Err(srsly,whatever)
   ```
   
-  @typeparam T    The type of the value wrapped in the `Ok` of the `Result`.
-  @typeparam U    The type of the value wrapped in the `Ok` of the `Result`
-                  returned by the `thenFn`.
-  @typeparam E    The type of the value wrapped in the `Err` of the `Result`.
-  @param thenFn The function to apply to the wrapped `T` if `maybe` is `Just`.
-  @param maybe  The `Maybe` to evaluate and possibly apply a function to.
+  @typeparam T   The type of the value wrapped in the `Ok` of the `Result`.
+  @typeparam U   The type of the value wrapped in the `Ok` of the `Result`
+                 returned by the `thenFn`.
+  @typeparam E   The type of the value wrapped in the `Err` of the `Result`.
+  @param thenFn  The function to apply to the wrapped `T` if `maybe` is `Just`.
+  @param result  The `Maybe` to evaluate and possibly apply a function to.
  */
 export const andThen = <T, U, E>(
   thenFn: (t: T) => Result<U, E>,
@@ -625,8 +625,38 @@ export const chain = andThen;
 /** Alias for [`andThen`](#andthen). */
 export const flatMap = andThen;
 
-export const or = <T, E, F>(orResult: Result<T, F>, result: Result<T, E>): Result<T, F> =>
-  isOk(result) ? result as Ok<T, any> : orResult;
+/**
+  Provide a fallback for a given `Result`. Behaves like a logical `or`: if the
+  `result` value is an `Ok`, returns that `result`; otherwise, returns the
+  `defaultResult` value.
+
+  This is useful when you want to make sure that something which takes a
+  `Result` always ends up getting an `Ok` variant, by supplying a default value
+  for the case that you currently have an `Err`.
+  
+  ```ts
+  import { ok, err, Result, or } from 'true-utils/result';
+  
+  const okA = ok<string, string>('a');
+  const okB = ok<string, string>('b');
+  const anErr = err<string, string>(':wat:');
+  const anotherErr = err<string, string>(':headdesk:');
+  
+  console.log(or(okB, okA).toString());  // Ok(A)
+  console.log(or(anErr, okA).toString());  // Ok(A)
+  console.log(or(okB, anErr).toString());  // Ok(B)
+  console.log(or(anotherErr, anErr).toString());  // Err(:headdesk:)
+  ```
+
+  @typeparam T          The type wrapped in the `Ok` case of `result`.
+  @typeparam E          The type wrapped in the `Err` case of `result`. 
+  @typeparam F          The type wrapped in the `Err` case of `defaultResult`.
+  @param defaultResult  The `Result` to use if `result` is an `Err`.
+  @param result         The `Result` instance to check.
+  @returns              `result` if it is an `Ok`, otherwise `defaultResult`.
+ */
+export const or = <T, E, F>(defaultResult: Result<T, F>, result: Result<T, E>): Result<T, F> =>
+  isOk(result) ? result as Ok<T, any> : defaultResult;
 
 export const orElse = <T, E, F>(
   elseFn: (...args: any[]) => Result<T, F>,

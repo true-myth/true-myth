@@ -363,7 +363,7 @@
 					<div class="tsd-signature tsd-kind-icon">unwrap<span class="tsd-signature-symbol">:</span> <a href="" class="tsd-signature-type">unsafelyUnwrap</a><span class="tsd-signature-symbol"> =&nbsp;unsafelyUnwrap</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in result.ts:648</li>
+							<li>Defined in result.ts:678</li>
 						</ul>
 					</aside>
 				</section>
@@ -373,7 +373,7 @@
 					<div class="tsd-signature tsd-kind-icon">unwrap<wbr>Err<span class="tsd-signature-symbol">:</span> <a href="" class="tsd-signature-type">unsafelyUnwrapErr</a><span class="tsd-signature-symbol"> =&nbsp;unsafelyUnwrapErr</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in result.ts:663</li>
+							<li>Defined in result.ts:693</li>
 						</ul>
 					</aside>
 				</section>
@@ -452,6 +452,11 @@
 								</li>
 								<li>
 									<h5>result: <a href="_result_.html#result" class="tsd-signature-type">Result</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">E</span><span class="tsd-signature-symbol">&gt;</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<div class="lead">
+											<p>The <code>Result</code> instance to check.</p>
+										</div>
+									</div>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <a href="_result_.html#result" class="tsd-signature-type">Result</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">U</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">E</span><span class="tsd-signature-symbol">&gt;</span></h4>
@@ -554,6 +559,11 @@
 								</li>
 								<li>
 									<h5>result: <a href="_result_.html#result" class="tsd-signature-type">Result</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">E</span><span class="tsd-signature-symbol">&gt;</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<div class="lead">
+											<p>The <code>Maybe</code> to evaluate and possibly apply a function to.</p>
+										</div>
+									</div>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <a href="_result_.html#result" class="tsd-signature-type">Result</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">U</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">E</span><span class="tsd-signature-symbol">&gt;</span></h4>
@@ -578,9 +588,9 @@
 									<p>Create an instance of <code>Result.Error</code>.</p>
 								</div>
 								<p>If you want to create an instance with a specific type, e.g. for use in a
-									function which expects a <code>Result&lt;T, E&gt;</code> where the <code>&lt;T, E&gt;</code> is known but you have no
-								value to give it, you can use a type parameter:</p>
-								<pre><code class="lang-ts"><span class="hljs-keyword">const</span> notString = Result.error&lt;<span class="hljs-built_in">string</span>&gt;();
+									function which expects a <code>Result&lt;T, E&gt;</code> where the <code>&lt;T, E&gt;</code> is known but you
+								have no value to give it, you can use a type parameter:</p>
+								<pre><code class="lang-ts"><span class="hljs-keyword">const</span> notString = Result.err&lt;<span class="hljs-built_in">number</span>, <span class="hljs-built_in">string</span>&gt;(<span class="hljs-string">'something went wrong'</span>);
 </code></pre>
 							</div>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
@@ -615,7 +625,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in result.ts:689</li>
+									<li>Defined in result.ts:719</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
@@ -1201,37 +1211,79 @@
 					<a name="or" class="tsd-anchor"></a>
 					<h3>or</h3>
 					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-external-module tsd-has-type-parameter">
-						<li class="tsd-signature tsd-kind-icon">or&lt;T, E, F&gt;<span class="tsd-signature-symbol">(</span>orResult<span class="tsd-signature-symbol">: </span><a href="_result_.html#result" class="tsd-signature-type">Result</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">F</span><span class="tsd-signature-symbol">&gt;</span>, result<span class="tsd-signature-symbol">: </span><a href="_result_.html#result" class="tsd-signature-type">Result</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">E</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_result_.html#result" class="tsd-signature-type">Result</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">F</span><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon">or&lt;T, E, F&gt;<span class="tsd-signature-symbol">(</span>defaultResult<span class="tsd-signature-symbol">: </span><a href="_result_.html#result" class="tsd-signature-type">Result</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">F</span><span class="tsd-signature-symbol">&gt;</span>, result<span class="tsd-signature-symbol">: </span><a href="_result_.html#result" class="tsd-signature-type">Result</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">E</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_result_.html#result" class="tsd-signature-type">Result</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">F</span><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in result.ts:628</li>
+									<li>Defined in result.ts:658</li>
 								</ul>
 							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Provide a fallback for a given <code>Result</code>. Behaves like a logical <code>or</code>: if the
+										<code>result</code> value is an <code>Ok</code>, returns that <code>result</code>; otherwise, returns the
+									<code>defaultResult</code> value.</p>
+								</div>
+								<p>This is useful when you want to make sure that something which takes a
+									<code>Result</code> always ends up getting an <code>Ok</code> variant, by supplying a default value
+								for the case that you currently have an <code>Err</code>.</p>
+								<pre><code class="lang-ts"><span class="hljs-keyword">import</span> { ok, err, Result, or } <span class="hljs-keyword">from</span> <span class="hljs-string">'true-utils/result'</span>;
+
+<span class="hljs-keyword">const</span> okA = ok&lt;<span class="hljs-built_in">string</span>, <span class="hljs-built_in">string</span>&gt;(<span class="hljs-string">'a'</span>);
+<span class="hljs-keyword">const</span> okB = ok&lt;<span class="hljs-built_in">string</span>, <span class="hljs-built_in">string</span>&gt;(<span class="hljs-string">'b'</span>);
+<span class="hljs-keyword">const</span> anErr = err&lt;<span class="hljs-built_in">string</span>, <span class="hljs-built_in">string</span>&gt;(<span class="hljs-string">':wat:'</span>);
+<span class="hljs-keyword">const</span> anotherErr = err&lt;<span class="hljs-built_in">string</span>, <span class="hljs-built_in">string</span>&gt;(<span class="hljs-string">':headdesk:'</span>);
+
+<span class="hljs-built_in">console</span>.log(or(okB, okA).toString());  <span class="hljs-comment">// Ok(A)</span>
+<span class="hljs-built_in">console</span>.log(or(anErr, okA).toString());  <span class="hljs-comment">// Ok(A)</span>
+<span class="hljs-built_in">console</span>.log(or(okB, anErr).toString());  <span class="hljs-comment">// Ok(B)</span>
+<span class="hljs-built_in">console</span>.log(or(anotherErr, anErr).toString());  <span class="hljs-comment">// Err(:headdesk:)</span>
+</code></pre>
+							</div>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
 							<ul class="tsd-type-parameters">
 								<li>
 									<h4>T</h4>
+									<div class="tsd-comment tsd-typography">
+										<p>The type wrapped in the <code>Ok</code> case of <code>result</code>.</p>
+									</div>
 								</li>
 								<li>
 									<h4>E</h4>
+									<div class="tsd-comment tsd-typography">
+										<p>The type wrapped in the <code>Err</code> case of <code>result</code>.</p>
+									</div>
 								</li>
 								<li>
 									<h4>F</h4>
+									<div class="tsd-comment tsd-typography">
+										<p>The type wrapped in the <code>Err</code> case of <code>defaultResult</code>.</p>
+									</div>
 								</li>
 							</ul>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>orResult: <a href="_result_.html#result" class="tsd-signature-type">Result</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">F</span><span class="tsd-signature-symbol">&gt;</span></h5>
+									<h5>defaultResult: <a href="_result_.html#result" class="tsd-signature-type">Result</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">F</span><span class="tsd-signature-symbol">&gt;</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<div class="lead">
+											<p>The <code>Result</code> to use if <code>result</code> is an <code>Err</code>.</p>
+										</div>
+									</div>
 								</li>
 								<li>
 									<h5>result: <a href="_result_.html#result" class="tsd-signature-type">Result</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">E</span><span class="tsd-signature-symbol">&gt;</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<div class="lead">
+											<p>The <code>Result</code> instance to check.</p>
+										</div>
+									</div>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <a href="_result_.html#result" class="tsd-signature-type">Result</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">F</span><span class="tsd-signature-symbol">&gt;</span></h4>
+							<p><code>result</code> if it is an <code>Ok</code>, otherwise <code>defaultResult</code>.</p>
 						</li>
 					</ul>
 				</section>
@@ -1245,7 +1297,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in result.ts:631</li>
+									<li>Defined in result.ts:661</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
@@ -1301,7 +1353,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in result.ts:686</li>
+									<li>Defined in result.ts:716</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1346,7 +1398,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in result.ts:743</li>
+									<li>Defined in result.ts:773</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1428,7 +1480,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in result.ts:644</li>
+									<li>Defined in result.ts:674</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1467,7 +1519,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in result.ts:659</li>
+									<li>Defined in result.ts:689</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1506,7 +1558,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in result.ts:665</li>
+									<li>Defined in result.ts:695</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
@@ -1541,7 +1593,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in result.ts:668</li>
+									<li>Defined in result.ts:698</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
