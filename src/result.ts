@@ -783,12 +783,11 @@ export const unwrapOrElse = <T, E>(orElseFn: (error: E) => T, result: Result<T, 
 export const getOrElse = unwrapOrElse;
 
 /**
-  Convert a [`Result`](#result) to a [`Maybe`](#../modules/_maybe_.html#maybe).
+  Convert a [`Result`](#result) to a [`Maybe`](../modules/_maybe_.html#maybe).
   
   The converted type will be [`Just`] if the `Result` is [`Ok`] or [`Nothing`]
   if the `Result` is [`Err`]; the wrapped error value will be discarded.
   
-  [`Result`]: #result
   [`Just`]: ../classes/_maybe_.just.html
   [`Nothing`]: ../classes/_maybe_.nothing.html
   [`Ok`]: ../classes/_result_.ok.html
@@ -800,54 +799,39 @@ export const getOrElse = unwrapOrElse;
 export const toMaybe = <T, E>(result: Result<T, E>): Maybe<T> =>
   isOk(result) ? just(unwrap(result)) : nothing();
 
+/**
+  Transform a [`Maybe`](../modules/_maybe_.html#maybe) into a [`Result`](#result).
+  
+  If the `Maybe` is a [`Just`], its value will be wrapped in the [`Ok`] variant;
+  if it is a [`Nothing`] the `errValue` will be wrapped in the [`Err`] variant.
+  
+  [`Just`]: ../classes/_maybe_.just.html
+  [`Nothing`]: ../classes/_maybe_.nothing.html
+  [`Ok`]: ../classes/_result_.ok.html
+  [`Err`]: ../classes/_result_.err.html
+
+  @param errValue A value to wrap in an `Err` if `maybe` is a `Nothing`.
+  @param maybe    The `Maybe` to convert to a `Result`.
+ */
 export const fromMaybe = <T, E>(errValue: E, maybe: Maybe<T>): Result<T, E> =>
   isJust(maybe) ? ok<T, E>(unwrapMaybe(maybe)) : err<T, E>(errValue);
 
 /**
   Create a `String` representation of a `result` instance.
   
-  An `Ok` instance will be printed as `"Ok(<representation of the value>)"`, and
-  an `Err` instance will be printed as `"Err(<representation of the error>)"`,
+  An `Ok` instance will be printed as `Ok(<representation of the value>)`, and
+  an `Err` instance will be printed as `Err(<representation of the error>)`,
   where the representation of the value or error is simply the value or error's
   own `toString` representation. For example:
-  
-  <table>
-    <thead>
-      <tr>
-        <td>call</td>
-        <td>output</td>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><code>toString(ok(42))</code></td>
-        <td><code>"Ok(42)"</code></td>
-      </tr>
-      <tr>
-        <td><code>toString(ok([1, 2, 3]))</code></td>
-        <td><code>"Ok(1,2,3)"</code></td>
-      </tr>
-      <tr>
-        <td><code>toString(ok({ an: 'object' }))</code></td>
-        <td><code>"Ok([object Object])"</code>
-      </tr>
-      <tbody>
-      <tr>
-        <td><code>toString(err(42))</code></td>
-        <td><code>"Err(42)"</code></td>
-      </tr>
-      <tr>
-        <td><code>toString(err([1, 2, 3]))</code></td>
-        <td><code>"Err(1,2,3)"</code></td>
-      </tr>
-      <tr>
-        <td><code>toString(err({ an: 'object' }))</code></td>
-        <td><code>"Err([object Object])"</code>
-      </tr>
-    </tbody>
-  </table>
-  
-  `Nothing` instances will always be printed as `"Nothing"`.
+
+  call                              | output
+  ----------------------------------|------------------------
+  `toString(ok(42))`                | `Ok(42)`
+  `toString(ok([1, 2, 3]))`         | `Ok(1,2,3)`
+  `toString(ok({ an: 'object' }))`  | `Ok([object Object])`n
+  `toString(err(42))`               | `Err(42)`
+  `toString(err([1, 2, 3]))`        | `Err(1,2,3)`
+  `toString(err({ an: 'object' }))` | `Err([object Object])`
   
   @typeparam T The type of the wrapped value; its own `.toString` will be used
                to print the interior contents of the `Just` variant.

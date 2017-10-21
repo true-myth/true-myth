@@ -1510,7 +1510,7 @@ takesAMaybeString(nothingHereEither);
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in maybe.ts:792</li>
+									<li>Defined in maybe.ts:774</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1523,8 +1523,8 @@ takesAMaybeString(nothingHereEither);
 								<table>
 									<thead>
 										<tr>
-											<td>call</td>
-											<td>output</td>
+											<th>call</th>
+											<th>output</th>
 										</tr>
 									</thead>
 									<tbody>
@@ -1538,11 +1538,14 @@ takesAMaybeString(nothingHereEither);
 										</tr>
 										<tr>
 											<td><code>toString(Maybe.of({ an: &#39;object&#39; }))</code></td>
-											<td><code>Just([object Object])</code>
+											<td><code>Just([object Object])</code></td>
+										</tr>
+										<tr>
+											<td><code>toString(Maybe.nothing())</code></td>
+											<td><code>Nothing</code></td>
 										</tr>
 									</tbody>
 								</table>
-								<p><code>Nothing</code> instances will always be printed as <code>&quot;Nothing&quot;</code>.</p>
 							</div>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
 							<ul class="tsd-type-parameters">

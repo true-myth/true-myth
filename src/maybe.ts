@@ -759,30 +759,12 @@ export const fromResult = <T, E>(result: Result.Result<T, E>): Maybe<T> =>
   where the representation of the value is simply the value's own `toString`
   representation. For example:
   
-  <table>
-    <thead>
-      <tr>
-        <td>call</td>
-        <td>output</td>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><code>toString(Maybe.of(42))</code></td>
-        <td><code>Just(42)</code></td>
-      </tr>
-      <tr>
-        <td><code>toString(Maybe.of([1, 2, 3]))</code></td>
-        <td><code>Just(1,2,3)</code></td>
-      </tr>
-      <tr>
-        <td><code>toString(Maybe.of({ an: 'object' }))</code></td>
-        <td><code>Just([object Object])</code>
-      </tr>
-    </tbody>
-  </table>
-  
-  `Nothing` instances will always be printed as `"Nothing"`.
+  | call                                   | output                  |
+  |----------------------------------------|-------------------------|
+  | `toString(Maybe.of(42))`               | `Just(42)`              |
+  | `toString(Maybe.of([1, 2, 3]))`        | `Just(1,2,3)`           |
+  | `toString(Maybe.of({ an: 'object' }))` | `Just([object Object])` |
+  | `toString(Maybe.nothing())`            | `Nothing`               |
   
   @typeparam T The type of the wrapped value; its own `.toString` will be used
                to print the interior contents of the `Just` variant.

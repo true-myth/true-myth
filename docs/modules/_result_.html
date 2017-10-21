@@ -705,9 +705,16 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in result.ts:803</li>
+									<li>Defined in result.ts:816</li>
 								</ul>
 							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Transform a <a href="../modules/_maybe_.html#maybe"><code>Maybe</code></a> into a <a href="#result"><code>Result</code></a>.</p>
+								</div>
+								<p>If the <code>Maybe</code> is a <a href="../classes/_maybe_.just.html"><code>Just</code></a>, its value will be wrapped in the <a href="../classes/_result_.ok.html"><code>Ok</code></a> variant;
+								if it is a <a href="../classes/_maybe_.nothing.html"><code>Nothing</code></a> the <code>errValue</code> will be wrapped in the <a href="../classes/_result_.err.html"><code>Err</code></a> variant.</p>
+							</div>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
 							<ul class="tsd-type-parameters">
 								<li>
@@ -721,9 +728,19 @@
 							<ul class="tsd-parameters">
 								<li>
 									<h5>errValue: <span class="tsd-signature-type">E</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<div class="lead">
+											<p>A value to wrap in an <code>Err</code> if <code>maybe</code> is a <code>Nothing</code>.</p>
+										</div>
+									</div>
 								</li>
 								<li>
 									<h5>maybe: <a href="_maybe_.html#maybe" class="tsd-signature-type">Maybe</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<div class="lead">
+											<p>The <code>Maybe</code> to convert to a <code>Result</code>.</p>
+										</div>
+									</div>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <a href="_result_.html#result" class="tsd-signature-type">Result</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">E</span><span class="tsd-signature-symbol">&gt;</span></h4>
@@ -1457,12 +1474,12 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in result.ts:800</li>
+									<li>Defined in result.ts:799</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
-									<p>Convert a <a href="#result"><code>Result</code></a> to a <a href="#../modules/_maybe_.html#maybe"><code>Maybe</code></a>.</p>
+									<p>Convert a <a href="#result"><code>Result</code></a> to a <a href="../modules/_maybe_.html#maybe"><code>Maybe</code></a>.</p>
 								</div>
 								<p>The converted type will be <a href="../classes/_maybe_.just.html"><code>Just</code></a> if the <code>Result</code> is <a href="../classes/_result_.ok.html"><code>Ok</code></a> or <a href="../classes/_maybe_.nothing.html"><code>Nothing</code></a>
 								if the <code>Result</code> is <a href="../classes/_result_.err.html"><code>Err</code></a>; the wrapped error value will be discarded.</p>
@@ -1502,53 +1519,51 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in result.ts:857</li>
+									<li>Defined in result.ts:841</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
 									<p>Create a <code>String</code> representation of a <code>result</code> instance.</p>
 								</div>
-								<p>An <code>Ok</code> instance will be printed as <code>&quot;Ok(&lt;representation of the value&gt;)&quot;</code>, and
-									an <code>Err</code> instance will be printed as <code>&quot;Err(&lt;representation of the error&gt;)&quot;</code>,
+								<p>An <code>Ok</code> instance will be printed as <code>Ok(&lt;representation of the value&gt;)</code>, and
+									an <code>Err</code> instance will be printed as <code>Err(&lt;representation of the error&gt;)</code>,
 									where the representation of the value or error is simply the value or error&#39;s
 								own <code>toString</code> representation. For example:</p>
 								<table>
 									<thead>
 										<tr>
-											<td>call</td>
-											<td>output</td>
+											<th>call</th>
+											<th>output</th>
 										</tr>
 									</thead>
 									<tbody>
 										<tr>
 											<td><code>toString(ok(42))</code></td>
-											<td><code>&quot;Ok(42)&quot;</code></td>
+											<td><code>Ok(42)</code></td>
 										</tr>
 										<tr>
 											<td><code>toString(ok([1, 2, 3]))</code></td>
-											<td><code>&quot;Ok(1,2,3)&quot;</code></td>
+											<td><code>Ok(1,2,3)</code></td>
 										</tr>
 										<tr>
 											<td><code>toString(ok({ an: &#39;object&#39; }))</code></td>
-											<td><code>&quot;Ok([object Object])&quot;</code>
+											<td><code>Ok([object Object])</code>n</td>
 										</tr>
-										<tbody>
-											<tr>
-												<td><code>toString(err(42))</code></td>
-												<td><code>&quot;Err(42)&quot;</code></td>
-											</tr>
-											<tr>
-												<td><code>toString(err([1, 2, 3]))</code></td>
-												<td><code>&quot;Err(1,2,3)&quot;</code></td>
-											</tr>
-											<tr>
-												<td><code>toString(err({ an: &#39;object&#39; }))</code></td>
-												<td><code>&quot;Err([object Object])&quot;</code>
-											</tr>
-										</tbody>
+										<tr>
+											<td><code>toString(err(42))</code></td>
+											<td><code>Err(42)</code></td>
+										</tr>
+										<tr>
+											<td><code>toString(err([1, 2, 3]))</code></td>
+											<td><code>Err(1,2,3)</code></td>
+										</tr>
+										<tr>
+											<td><code>toString(err({ an: &#39;object&#39; }))</code></td>
+											<td><code>Err([object Object])</code></td>
+										</tr>
+									</tbody>
 								</table>
-								<p><code>Nothing</code> instances will always be printed as <code>&quot;Nothing&quot;</code>.</p>
 							</div>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
 							<ul class="tsd-type-parameters">
