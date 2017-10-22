@@ -764,7 +764,7 @@ export const getOr = unwrapOr;
   const anOk = ok<number, string>(42);
   console.log(unwrapOrElse(handleErr, anOk));  // 42
   
-  const anErr = ok<number, string>('oh teh noes');
+  const anErr = err<number, string>('oh teh noes');
   console.log(unwrapOrElse(handleErr, anErr));  // 13
   ```
   

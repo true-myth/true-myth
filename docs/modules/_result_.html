@@ -1764,7 +1764,7 @@
 <span class="hljs-keyword">const</span> anOk = ok&lt;<span class="hljs-built_in">number</span>, <span class="hljs-built_in">string</span>&gt;(<span class="hljs-number">42</span>);
 <span class="hljs-built_in">console</span>.log(unwrapOrElse(handleErr, anOk));  <span class="hljs-comment">// 42</span>
 
-<span class="hljs-keyword">const</span> anErr = ok&lt;<span class="hljs-built_in">number</span>, <span class="hljs-built_in">string</span>&gt;(<span class="hljs-string">'oh teh noes'</span>);
+<span class="hljs-keyword">const</span> anErr = err&lt;<span class="hljs-built_in">number</span>, <span class="hljs-built_in">string</span>&gt;(<span class="hljs-string">'oh teh noes'</span>);
 <span class="hljs-built_in">console</span>.log(unwrapOrElse(handleErr, anErr));  <span class="hljs-comment">// 13</span>
 </code></pre>
 							</div>
