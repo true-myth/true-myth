@@ -479,9 +479,9 @@
 										<code>Result</code> type. If <code>result</code> is <code>Ok</code>, then the result is the <code>andResult</code>. If
 									<code>result</code> is <code>Err</code>, the result is the <code>Err</code>.</p>
 								</div>
-								<p>This is useful when you have another <code>Result</code> value you want to provide if and
-									only if<em> you have an <code>Ok</code> – that is, when you need to make sure that if you
-								<code>Err</code>, whatever else you&#39;re handing a <code>Result</code> to </em>also* gets that <code>Err</code>.</p>
+								<p>This is useful when you have another <code>Result</code> value you want to provide if
+									and <em>only if</em> you have an <code>Ok</code> – that is, when you need to make sure that if you
+								<code>Err</code>, whatever else you&#39;re handing a <code>Result</code> to <em>also</em> gets that <code>Err</code>.</p>
 								<p>Notice that, unlike in <a href="#map"><code>map</code></a> or its variants, the original <code>result</code> is
 								not involved in constructing the new <code>Result</code>.</p>
 								<h4 id="examples">Examples</h4>

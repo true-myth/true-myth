@@ -535,8 +535,8 @@ export const mapErr = <T, E, F>(mapErrFn: (e: E) => F, result: Result<T, E>): Re
   `Result` type. If `result` is `Ok`, then the result is the `andResult`. If
   `result` is `Err`, the result is the `Err`.
   
-  This is useful when you have another `Result` value you want to provide if and
-  *only if* you have an `Ok` – that is, when you need to make sure that if you
+  This is useful when you have another `Result` value you want to provide if
+  and *only if* you have an `Ok` – that is, when you need to make sure that if you
   `Err`, whatever else you're handing a `Result` to *also* gets that `Err`.
   
   Notice that, unlike in [`map`](#map) or its variants, the original `result` is
