@@ -219,9 +219,8 @@ export class Ok<T, E> implements IResult<T, E> {
 /**
   An `Err` instance is the *failure* variant instance of the
   [`Result`](../modules/_result_.html#result) type, representing a failure
-  outcome from an operation which may fail.
-
-  For a full discussion, see [the module docs](../modules/_result_.html).
+  outcome from an operation which may fail. For a full discussion, see [the
+  module docs](../modules/_result_.html).
 
   @typeparam T The type which would be wrapped in an `Ok` variant of `Result`.
   @typeparam E The type wrapped in this `Err` variant of `Result`.

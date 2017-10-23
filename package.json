@@ -19,11 +19,18 @@
   "files": [
     "dist"
   ],
+  "ember-addon": {
+    "main": "ember-addon.js"
+  },
+  "keywords": [
+    "ember-addon", "typescript"
+  ],
   "scripts": {
     "build": "yarn run build:commonjs && yarn run build:es && yarn run build:amd",
     "build:es": "tsc -p tsconfig/es.json",
     "build:amd": "tsc -p tsconfig/amd.json",
     "build:commonjs": "tsc -p tsconfig/commonjs.json",
+    "build:types": "tsc -p tsconfig/types.json --declaration",
     "clean": "rimraf dist",
     "test": "jest",
     "doc": "./build-docs",
@@ -31,7 +38,7 @@
     "version": "yarn run build"
   },
   "main": "dist/commonjs/index.js",
-  "types": "dist/commonjs/index.d.ts",
+  "types": "dist/types/index.d.ts",
   "module": "dist/es/index.js",
   "jsnext:main": "dist/es/index.js",
   "devDependencies": {
@@ -41,9 +48,10 @@
     "prettier": "^1.7.0",
     "rimraf": "^2.6.2",
     "ts-jest": "^21.0.1",
-    "tslint": "^5.7.0",
+    "tslint": "^5.8.0",
     "typedoc": "^0.8.0",
-    "typescript": "2.5"
+    "typescript": "2.5",
+    "ember-cli": "^2.16.2"
   },
   "jest": {
     "transform": {

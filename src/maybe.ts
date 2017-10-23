@@ -71,9 +71,8 @@ export interface IMaybe<T> {
 /**
   A `Just` instance is the *present* variant instance of the
   [`Maybe`](../modules/_maybe_.html#maybe) type, representing the presence of a
-  value which may be absent.
-
-  For a full discussion, see [the module docs](../modules/_maybe_.html).
+  value which may be absent. For a full discussion, see [the module
+  docs](../modules/_maybe_.html).
 
   @typeparam T The type wrapped in this `Just` variant of `Maybe`.
  */
@@ -208,9 +207,8 @@ export class Just<T> implements IMaybe<T> {
 /**
   A `Nothing` instance is the *absent* variant instance of the
   [`Maybe`](../modules/_maybe_.html#maybe) type, representing the presence of a
-  value which may be absent.
-
-  For a full discussion, see [the module docs](../modules/_maybe_.html).
+  value which may be absent. For a full discussion, see [the module
+  docs](../modules/_maybe_.html).
 
   @typeparam T The type which would be wrapped in a `Just` variant of `Maybe`.
  */

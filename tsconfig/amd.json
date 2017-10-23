@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "module": "amd",
-    "declaration": true,
+    "declaration": false,
     "sourceMap": true,
     "outFile": "../dist/amd/index.js",
 
