@@ -1,11 +1,20 @@
-# True Myth
+<h1 align="center"><a href='https://github.com/chriskrycho/true-myth'>True Myth</a></h1>
+
+<p align="center">A library for safe functional programming in JavaScript, with first-class support for TypeScript and Flow.</p>
+
+<p align="center">
 
 [![Travis `master`](https://img.shields.io/travis/chriskrycho/true-myth/master.svg?style=flat-square)](https://travis-ci.org/chriskrycho/true-myth)
 [![npm](https://img.shields.io/npm/v/true-myth.svg?style=flat-square)](https://www.npmjs.com/package/true-myth)
 ![Stability](https://img.shields.io/badge/stability-experimental-purple.svg?style=flat-square&colorB=b28cd9)
 [![Gitter](https://img.shields.io/gitter/room/nwjs/nw.js.svg?style=flat-square)](https://gitter.im/true-myth/Lobby)
 [![license](https://img.shields.io/github/license/chriskrycho/true-myth.svg?style=flat-square)](https://github.com/chriskrycho/true-myth/blob/master/LICENSE)
+![test coverage](https://img.shields.io/badge/Jest-100%25-0da300.svg?style=flat-square)
 [![Gratipay](https://img.shields.io/gratipay/project/true-myth.svg?style=flat-square)](https://gratipay.com/true-myth/)
+[![](https://img.shields.io/badge/js.org-dns-ffb400.svg?style=flat-square)](https://js.org)
+[![docs via TypeDoc](https://img.shields.io/badge/docs-TypeDoc-blue.svg?style=flat-square)](http://typedoc.org)
+
+</p>
 
 A library for safe functional programming in JavaScript, with first-class
 support for TypeScript and Flow, that has `Maybe` and `Result` types, supporting both a
