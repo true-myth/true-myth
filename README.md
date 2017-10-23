@@ -1,8 +1,11 @@
 <h1 align="center"><a href='https://github.com/chriskrycho/true-myth'>True Myth</a></h1>
 
-<p align="center">A library for safe functional programming in JavaScript, with first-class support for TypeScript and Flow.</p>
+<p align="center">A library for safe functional programming in JavaScript, with
+first-class support for TypeScript and Flow, that has `Maybe` and `Result`
+types,supporting both a functional style and a more traditional method-call
+style.</p>
 
-<p align="center">
+***
 
 [![Travis `master`](https://img.shields.io/travis/chriskrycho/true-myth/master.svg?style=flat-square)](https://travis-ci.org/chriskrycho/true-myth)
 [![npm](https://img.shields.io/npm/v/true-myth.svg?style=flat-square)](https://www.npmjs.com/package/true-myth)
@@ -14,11 +17,7 @@
 [![](https://img.shields.io/badge/js.org-dns-ffb400.svg?style=flat-square)](https://js.org)
 [![docs via TypeDoc](https://img.shields.io/badge/docs-TypeDoc-blue.svg?style=flat-square)](http://typedoc.org)
 
-</p>
-
-A library for safe functional programming in JavaScript, with first-class
-support for TypeScript and Flow, that has `Maybe` and `Result` types, supporting both a
-functional style and a more traditional method-call style.
+***
 
 - [Just the API, please](#just-the-api-please)
     - [`Result` with a functional style](#result-with-a-functional-style)
