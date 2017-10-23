@@ -5,19 +5,15 @@ first-class support for TypeScript and Flow, that has `Maybe` and `Result`
 types,supporting both a functional style and a more traditional method-call
 style.</p>
 
-***
-
 [![Travis `master`](https://img.shields.io/travis/chriskrycho/true-myth/master.svg?style=flat-square)](https://travis-ci.org/chriskrycho/true-myth)
 [![npm](https://img.shields.io/npm/v/true-myth.svg?style=flat-square)](https://www.npmjs.com/package/true-myth)
 ![Stability](https://img.shields.io/badge/stability-experimental-purple.svg?style=flat-square&colorB=b28cd9)
-[![Gitter](https://img.shields.io/gitter/room/nwjs/nw.js.svg?style=flat-square)](https://gitter.im/true-myth/Lobby)
+[![Gitter](https://img.shields.io/gitter/room/true-myth/Lobby.svg?style=flat-square)](https://gitter.im/true-myth/Lobby)
 [![license](https://img.shields.io/github/license/chriskrycho/true-myth.svg?style=flat-square)](https://github.com/chriskrycho/true-myth/blob/master/LICENSE)
 ![test coverage](https://img.shields.io/badge/Jest-100%25-0da300.svg?style=flat-square)
 [![Gratipay](https://img.shields.io/gratipay/project/true-myth.svg?style=flat-square)](https://gratipay.com/true-myth/)
 [![](https://img.shields.io/badge/js.org-dns-ffb400.svg?style=flat-square)](https://js.org)
-[![docs via TypeDoc](https://img.shields.io/badge/docs-TypeDoc-blue.svg?style=flat-square)](http://typedoc.org)
-
-***
+[![docs built with TypeDoc](https://img.shields.io/badge/documented-with_TypeDoc-009fb5.svg?style=flat-square)](http://true-myth.js.org)
 
 - [Just the API, please](#just-the-api-please)
     - [`Result` with a functional style](#result-with-a-functional-style)
