@@ -47,9 +47,10 @@ to [**What is this for?**](#what-is-this-for)._
 
 These examples don't cover every corner of the API; it's just here to show you
 what a few of the functions are like. [Full API documentation is
-available!][docs]
+available!][docs] You can also [view the source][source] if you prefer.
 
 [docs]: https://chriskrycho.github.io/true-myth/
+[source]: https://github.com/chriskrycho/true-myth/
 
 ### `Result` with a functional style
 
@@ -209,7 +210,7 @@ broken error states.
 
 ### The solution
 
-`Maybe` and `Result` are our escape hatch from all this madness. 
+`Maybe` and `Result` are our escape hatch from all this madness.
 
 We reach for libraries precisely so we can solve real business problems
 while letting lower-level concerns live in the "solved problems" category. True
@@ -262,7 +263,7 @@ and give ourselves safe access methods:
 ```js
 import * as Maybe from 'true-myth/maybe';
 
-let myInteger = Maybe.of(undefined); 
+let myInteger = Maybe.of(undefined);
 myInteger.map(x => x * 3); // Nothing
 ```
 
@@ -317,7 +318,7 @@ In practice, that means:
 
     const classicalJust = new Just('value');
     const classicalNothing = new Nothing();
-    
+
     const functionalJust = just('value');
     const functionalNothing = nothing();
     ```
@@ -348,7 +349,7 @@ In practice, that means:
     systems if you want the benefits of the system. Many of the functions simply
     assume that the types are checked, and *will* error if you pass in items of
     the wrong type.
-    
+
     For example, if you pass a non-`Maybe` instance to many functions, they will
     simply fail – even the basic helpers like `isJust` and `isNothing`. These
     assumptions have been made precisely *because* this is a TypeScript- and
@@ -630,12 +631,12 @@ However, there are two main reasons you might prefer True Myth to Folktale:
 
 1.  True Myth is TypeScript-first and Flow-first, which means that it assumes
     you are using TypeScript or Flow if you're aiming for rigorous type safety.
-    
+
     By contrast, Folktale is a JavaScript-first library, with runtime checking
     built in for its types. Folktale's TypeScript support is in-progress, but
     will remain secondary until a TypeScript rewrite of the whole Folktale
     library lands... eventually.
-   
+
     There's value in both of these approaches, so True Myth aims to take
     advantage of the compilers and play in a no-runtime-cost space.
 
@@ -647,7 +648,7 @@ However, there are two main reasons you might prefer True Myth to Folktale:
 2.  True Myth aims to keep functional programming jargon to a minimum and to use
     TypeScript and Flow type notation throughout its docs as well as in its
     implementation.
-    
+
     Folktale is aimed squarely at people who are already pretty comfortable with
     the world of strongly-typed functional programming languages. This is
     particularly evident in the way its type signatures are written out (using
@@ -657,7 +658,7 @@ However, there are two main reasons you might prefer True Myth to Folktale:
     Haskell-style types are quite nice, and functional programming jargon is
     very useful. However, they're also another hump to get over. Again: a
     tradeoff.
-    
+
     By opting for type notation that TS or Flow developers are already familiar
     with, and by focusing on what various functions *do* rather than the usual
     FP names for them, True Myth aims at people just coming up to speed on
@@ -673,12 +674,12 @@ However, there are two main reasons you might prefer True Myth to Folktale:
         camelCase for functions – so, `new Just(5)` and `just(5)`, whereas
         FolkTale uses the capitals as function names for type constructors, i.e.
         `Just(5)`, and does not support `new`.
-    
+
     -   **ease of construction from nullable types:** True Myth allows you to
         construct `Maybe` types from nullable types with `Maybe.of`, because JS
         is *full* of `null` and `undefined`, and allowing `Maybe.of` to handle
         them makes it easier to be sure you're always doing the right thing.
-        
+
         Folktale's `Maybe.of` only allows the use of non-nullable types, and
         requires you to use `Maybe.fromNullable` instead. This isn't
         unreasonable, but it dramatically decreases the convenience of
@@ -699,13 +700,13 @@ names are nearly all different. A few of the major contrasts:
 
 1.  True Myth is TypeScript-first and Flow-first, which means that it assumes
     you are using TypeScript or Flow if you're aiming for rigorous type safety.
-    
+
     By contrast, Sanctuary is a JavaScript-first library, with runtime checking
     built in for its types. Sanctuary's TypeScript support is [in progress][s-ts],
     but will for the foreseeable future remain add-on rather than first-class.
     (Sanctuary *does* allow you to create a version of the module without the
     runtime checking, but it requires you to do this yourself.)
-   
+
     There's value in both of these approaches, so True Myth aims to take
     advantage of the compilers and play in a no-runtime-cost space.
 
@@ -717,7 +718,7 @@ names are nearly all different. A few of the major contrasts:
 2.  True Myth aims to keep functional programming jargon to a minimum and to use
     TypeScript and Flow type notation throughout its docs as well as in its
     implementation.
-    
+
     Sanctuary is aimed squarely at people who are already extremely comfortable
     the world of strongly-typed, pure functional programming languages. This is
     particularly evident in the way its type signatures are written out (using
@@ -728,7 +729,7 @@ names are nearly all different. A few of the major contrasts:
     Haskell- and Purescript-style types are quite nice, and the functional
     programming jargon is very useful. However, they're also another hump to get
     over. Again: a tradeoff.
-    
+
     By opting for type notation that TS or Flow developers are already familiar
     with, and by focusing on what various functions *do* rather than the usual
     FP names for them, True Myth aims at people just coming up to speed on
