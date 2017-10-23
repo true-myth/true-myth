@@ -47,7 +47,7 @@ to [**What is this for?**](#what-is-this-for)._
 
 These examples don't cover every corner of the API; it's just here to show you
 what a few of the functions are like. [Full API documentation is
-available!][docs] You can also [view the source](source) if you prefer.
+available!][docs] You can also [view the source][source] if you prefer.
 
 [docs]: https://chriskrycho.github.io/true-myth/
 [source]: https://github.com/chriskrycho/true-myth/
