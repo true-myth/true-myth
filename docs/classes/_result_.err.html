@@ -69,14 +69,34 @@
 <div class="container container-main">
 	<div class="row">
 		<div class="col-8 col-content">
+			<section class="tsd-panel tsd-comment">
+				<div class="tsd-comment tsd-typography">
+					<div class="lead">
+						<p>An <code>Err</code> instance is the <em>failure</em> variant instance of the
+							<a href="../modules/_result_.html#result"><code>Result</code></a> type, representing a failure
+						outcome from an operation which may fail.</p>
+					</div>
+					<p>For a full discussion, see <a href="../modules/_result_.html">the module docs</a>.</p>
+				</div>
+			</section>
 			<section class="tsd-panel tsd-type-parameters">
 				<h3>Type parameters</h3>
 				<ul class="tsd-type-parameters">
 					<li>
 						<h4>T</h4>
+						<div class="tsd-comment tsd-typography">
+							<div class="lead">
+								<p>The type which would be wrapped in an <code>Ok</code> variant of <code>Result</code>.</p>
+							</div>
+						</div>
 					</li>
 					<li>
 						<h4>E</h4>
+						<div class="tsd-comment tsd-typography">
+							<div class="lead">
+								<p>The type wrapped in this <code>Err</code> variant of <code>Result</code>.</p>
+							</div>
+						</div>
 					</li>
 				</ul>
 			</section>
@@ -142,19 +162,46 @@
 					<a name="constructor" class="tsd-anchor"></a>
 					<h3>constructor</h3>
 					<ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">new <wbr>Err<span class="tsd-signature-symbol">(</span>error<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">E</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_result_.err.html" class="tsd-signature-type">Err</a></li>
+						<li class="tsd-signature tsd-kind-icon">new <wbr>Err<span class="tsd-signature-symbol">(</span>error<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">E</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_result_.err.html" class="tsd-signature-type">Err</a></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in result.ts:221</li>
+									<li>Defined in result.ts:233</li>
 								</ul>
 							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Create an instance of <code>Result.Err</code> with <code>new</code>.</p>
+								</div>
+								<p><!----><strong>Note:</strong> While you <em>may</em> create the <code>Result</code> type via normal
+									JavaScript class construction, it is not recommended for the functional
+								style for which the library is intended. Instead, use <a href="../modules/_result_.html#err"><code>Result.err</code></a>.</p>
+								<pre><code class="lang-ts"><span class="hljs-comment">// Avoid:</span>
+<span class="hljs-keyword">const</span> anErr = <span class="hljs-keyword">new</span> Result.Err(<span class="hljs-string">'alas, failure'</span>);
+
+<span class="hljs-comment">// Prefer:</span>
+<span class="hljs-keyword">const</span> anErr = Result.err(<span class="hljs-string">'alas, failure'</span>);
+</code></pre>
+								<dl class="tsd-comment-tags">
+									<dt>throws</dt>
+									<dd><p>If you pass <code>null</code> or <code>undefined</code>.</p>
+									</dd>
+								</dl>
+							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>error: <span class="tsd-signature-type">E</span></h5>
+									<h5>error: <span class="tsd-signature-type">E</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">undefined</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<div class="lead">
+											<p>The value to wrap in a <code>Result.Err</code>.</p>
+											<p><code>null</code> and <code>undefined</code> are allowed by the type signature so that the
+												constructor may <code>throw</code> on those rather than constructing a type like
+											<code>Result&lt;undefined&gt;</code>.</p>
+										</div>
+									</div>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <a href="_result_.err.html" class="tsd-signature-type">Err</a></h4>
@@ -171,7 +218,7 @@
 					<aside class="tsd-sources">
 						<p>Implementation of <a href="../interfaces/_result_.iresult.html">IResult</a>.<a href="../interfaces/_result_.iresult.html#variant">variant</a></p>
 						<ul>
-							<li>Defined in result.ts:219</li>
+							<li>Defined in result.ts:231</li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -194,7 +241,7 @@
 							<aside class="tsd-sources">
 								<p>Implementation of <a href="../interfaces/_result_.iresult.html">IResult</a>.<a href="../interfaces/_result_.iresult.html#and">and</a></p>
 								<ul>
-									<li>Defined in result.ts:274</li>
+									<li>Defined in result.ts:312</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -231,7 +278,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in result.ts:279</li>
+									<li>Defined in result.ts:317</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -286,7 +333,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in result.ts:284</li>
+									<li>Defined in result.ts:322</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -341,7 +388,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in result.ts:289</li>
+									<li>Defined in result.ts:327</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -397,7 +444,7 @@
 							<aside class="tsd-sources">
 								<p>Implementation of <a href="../interfaces/_result_.iresult.html">IResult</a>.<a href="../interfaces/_result_.iresult.html#iserr">isErr</a></p>
 								<ul>
-									<li>Defined in result.ts:239</li>
+									<li>Defined in result.ts:277</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -426,7 +473,7 @@
 							<aside class="tsd-sources">
 								<p>Implementation of <a href="../interfaces/_result_.iresult.html">IResult</a>.<a href="../interfaces/_result_.iresult.html#isok">isOk</a></p>
 								<ul>
-									<li>Defined in result.ts:234</li>
+									<li>Defined in result.ts:272</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -454,7 +501,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in result.ts:244</li>
+									<li>Defined in result.ts:282</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -509,7 +556,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in result.ts:259</li>
+									<li>Defined in result.ts:297</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -564,7 +611,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in result.ts:249</li>
+									<li>Defined in result.ts:287</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -622,7 +669,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in result.ts:254</li>
+									<li>Defined in result.ts:292</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -699,7 +746,7 @@
 							<aside class="tsd-sources">
 								<p>Implementation of <a href="../interfaces/_result_.iresult.html">IResult</a>.<a href="../interfaces/_result_.iresult.html#or">or</a></p>
 								<ul>
-									<li>Defined in result.ts:264</li>
+									<li>Defined in result.ts:302</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -736,7 +783,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in result.ts:269</li>
+									<li>Defined in result.ts:307</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -792,7 +839,7 @@
 							<aside class="tsd-sources">
 								<p>Implementation of <a href="../interfaces/_result_.iresult.html">IResult</a>.<a href="../interfaces/_result_.iresult.html#tomaybe">toMaybe</a></p>
 								<ul>
-									<li>Defined in result.ts:314</li>
+									<li>Defined in result.ts:352</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -821,7 +868,7 @@
 							<aside class="tsd-sources">
 								<p>Implementation of <a href="../interfaces/_result_.iresult.html">IResult</a>.<a href="../interfaces/_result_.iresult.html#tostring">toString</a></p>
 								<ul>
-									<li>Defined in result.ts:319</li>
+									<li>Defined in result.ts:357</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -850,7 +897,7 @@
 							<aside class="tsd-sources">
 								<p>Implementation of <a href="../interfaces/_result_.iresult.html">IResult</a>.<a href="../interfaces/_result_.iresult.html#unsafelyunwrap">unsafelyUnwrap</a></p>
 								<ul>
-									<li>Defined in result.ts:294</li>
+									<li>Defined in result.ts:332</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -873,7 +920,7 @@
 							<aside class="tsd-sources">
 								<p>Implementation of <a href="../interfaces/_result_.iresult.html">IResult</a>.<a href="../interfaces/_result_.iresult.html#unsafelyunwraperr">unsafelyUnwrapErr</a></p>
 								<ul>
-									<li>Defined in result.ts:299</li>
+									<li>Defined in result.ts:337</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -896,7 +943,7 @@
 							<aside class="tsd-sources">
 								<p>Implementation of <a href="../interfaces/_result_.iresult.html">IResult</a>.<a href="../interfaces/_result_.iresult.html#unwrapor">unwrapOr</a></p>
 								<ul>
-									<li>Defined in result.ts:304</li>
+									<li>Defined in result.ts:342</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -933,7 +980,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in result.ts:309</li>
+									<li>Defined in result.ts:347</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">

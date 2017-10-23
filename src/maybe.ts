@@ -68,6 +68,15 @@ export interface IMaybe<T> {
   toString<T>(this: Maybe<T>): string;
 }
 
+/**
+  A `Just` instance is the *present* variant instance of the
+  [`Maybe`](../modules/_maybe_.html#maybe) type, representing the presence of a
+  value which may be absent.
+
+  For a full discussion, see [the module docs](../modules/_maybe_.html).
+
+  @typeparam T The type wrapped in this `Just` variant of `Maybe`.
+ */
 export class Just<T> implements IMaybe<T> {
   private __value: T;
 
@@ -75,32 +84,32 @@ export class Just<T> implements IMaybe<T> {
   variant = Variant.Just;
 
   /**
-  Create an instance of `Maybe.Just` with `new`.
-  
-  **Note:** While you *may* create the `Just` type via normal JavaScript
-  class construction, it is not recommended for the functional style for
-  which the library is intended. Instead, use [`Maybe.of`] (for the general
-  case) or [`Maybe.just`] for this specific case.
-  
-  [`Maybe.of`]: ../modules/_maybe_.html#of
-  [`Maybe.just`]: ../modules/_maybe_.html#just
-  
-  ```ts
-  // Avoid:
-  const aString = new Maybe.Just('characters');
-  
-  // Prefer:
-  const aString = Maybe.just('characters);
-  ```
-  
-  @param value
-  The value to wrap in a `Maybe.Just`.
-  
-  `null` and `undefined` are allowed by the type signature so that the
-  constructor may `throw` on those rather than constructing a type like
-  `Maybe<undefined>`.
-  
-  @throws      If you pass `null` or `undefined`.
+    Create an instance of `Maybe.Just` with `new`.
+    
+    **Note:** While you *may* create the `Just` type via normal JavaScript
+    class construction, it is not recommended for the functional style for
+    which the library is intended. Instead, use [`Maybe.of`] (for the general
+    case) or [`Maybe.just`] for this specific case.
+    
+    [`Maybe.of`]: ../modules/_maybe_.html#of
+    [`Maybe.just`]: ../modules/_maybe_.html#just
+    
+    ```ts
+    // Avoid:
+    const aString = new Maybe.Just('characters');
+    
+    // Prefer:
+    const aString = Maybe.just('characters);
+    ```
+    
+    @param value
+    The value to wrap in a `Maybe.Just`.
+    
+    `null` and `undefined` are allowed by the type signature so that the
+    constructor may `throw` on those rather than constructing a type like
+    `Maybe<undefined>`.
+    
+    @throws      If you pass `null` or `undefined`.
    */
   constructor(value: T | null | undefined) {
     if (isVoid(value)) {
@@ -196,6 +205,15 @@ export class Just<T> implements IMaybe<T> {
   }
 }
 
+/**
+  A `Nothing` instance is the *absent* variant instance of the
+  [`Maybe`](../modules/_maybe_.html#maybe) type, representing the presence of a
+  value which may be absent.
+
+  For a full discussion, see [the module docs](../modules/_maybe_.html).
+
+  @typeparam T The type which would be wrapped in a `Just` variant of `Maybe`.
+ */
 export class Nothing<T> implements IMaybe<T> {
   /** `Nothing` is always [`Variant.Nothing`](../enums/_maybe_.variant#nothing). */
   variant = Variant.Nothing;

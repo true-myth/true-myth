@@ -75,11 +75,13 @@ export interface IResult<T, E> {
 }
 
 /**
-  The `Ok` variant for [`Result`].
-  
-  [`Result`]: ../modules/_result_.html#result
-  
-  An `Ok` instance represents a *successful* `Result`.
+  An `Ok` instance is the *successful* variant instance of the
+  [`Result`](../modules/_result_.html#result) type, representing a successful
+  outcome from an operation which may fail. For a full discussion, see [the
+  module docs](../modules/_result_.html).
+
+  @typeparam T The type wrapped in this `Ok` variant of `Result`.
+  @typeparam E The type which would be wrapped in an `Err` variant of `Result`.
  */
 export class Ok<T, E> implements IResult<T, E> {
   private __value: T;
@@ -88,31 +90,31 @@ export class Ok<T, E> implements IResult<T, E> {
   variant = Variant.Ok;
 
   /**
-      Create an instance of `Result.Ok` with `new`.
-      
-      **Note:** While you *may* create the `Result` type via normal JavaScript
-      class construction, it is not recommended for the functional style for
-      which the library is intended. Instead, use [`Result.ok`].
-      
-      [`Result.ok`]: ../modules/_result_.html#ok
-      
-      ```ts
-      // Avoid:
-      const aString = new Result.Ok('characters');
-      
-      // Prefer:
-      const aString = Result.ok('characters);
-      ```
-      
-      @param value
-      The value to wrap in a `Result.Ok`.
-      
-      `null` and `undefined` are allowed by the type signature so that the
-      constructor may `throw` on those rather than constructing a type like
-      `Result<undefined>`.
-      
-      @throws If you pass `null` or `undefined`.
-     */
+    Create an instance of `Result.Ok` with `new`.
+    
+    <!---->**Note:** While you *may* create the `Result` type via normal
+    JavaScript class construction, it is not recommended for the functional
+    style for which the library is intended. Instead, use [`Result.ok`].
+    
+    [`Result.ok`]: ../modules/_result_.html#ok
+    
+    ```ts
+    // Avoid:
+    const aString = new Result.Ok('characters');
+    
+    // Prefer:
+    const aString = Result.ok('characters);
+    ```
+    
+    @param value
+    The value to wrap in a `Result.Ok`.
+    
+    `null` and `undefined` are allowed by the type signature so that the
+    constructor may `throw` on those rather than constructing a type like
+    `Result<undefined>`.
+    
+    @throws If you pass `null` or `undefined`.
+    */
   constructor(value: T | null | undefined) {
     if (isVoid(value)) {
       throw new Error(
@@ -214,13 +216,49 @@ export class Ok<T, E> implements IResult<T, E> {
   }
 }
 
+/**
+  An `Err` instance is the *failure* variant instance of the
+  [`Result`](../modules/_result_.html#result) type, representing a failure
+  outcome from an operation which may fail.
+
+  For a full discussion, see [the module docs](../modules/_result_.html).
+
+  @typeparam T The type which would be wrapped in an `Ok` variant of `Result`.
+  @typeparam E The type wrapped in this `Err` variant of `Result`.
+  */
 export class Err<T, E> implements IResult<T, E> {
   /** `Err` is always [`Variant.Err`](../enums/_result_.variant#err). */
   variant = Variant.Err;
 
   private __error: E;
 
-  constructor(error: E) {
+  /**
+    Create an instance of `Result.Err` with `new`.
+    
+    <!---->**Note:** While you *may* create the `Result` type via normal
+    JavaScript class construction, it is not recommended for the functional
+    style for which the library is intended. Instead, use [`Result.err`].
+    
+    [`Result.err`]: ../modules/_result_.html#err
+    
+    ```ts
+    // Avoid:
+    const anErr = new Result.Err('alas, failure');
+    
+    // Prefer:
+    const anErr = Result.err('alas, failure');
+    ```
+    
+    @param error
+    The value to wrap in a `Result.Err`.
+    
+    `null` and `undefined` are allowed by the type signature so that the
+    constructor may `throw` on those rather than constructing a type like
+    `Result<undefined>`.
+    
+    @throws If you pass `null` or `undefined`.
+    */
+  constructor(error: E | null | undefined) {
     if (isVoid(error)) {
       throw new Error(
         'Tried to construct `Err` with `null` or `undefined`. Maybe you want `Maybe.Nothing`?'
