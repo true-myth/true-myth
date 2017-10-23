@@ -29,11 +29,11 @@ have something like this:
 
 ```js
 function mightSucceed(doesSucceed) {
-    if (!doesSucceed) {
-        throw new Error('something went wrong!');
-    }
+  if (!doesSucceed) {
+    throw new Error('something went wrong!');
+  }
 
-    return 42;
+  return 42;
 }
 
 const doubleTheAnswer = mightSucceed(true) * 2;
@@ -50,12 +50,12 @@ we'd need to wrap it up in a `try`/`catch` block:
 
 ```js
 try {
-    const doubleTheAnswer = mightSucceed(true) * 2;
-    console.log(doubleTheAnswer);
+  const doubleTheAnswer = mightSucceed(true) * 2;
+  console.log(doubleTheAnswer);
 
-    const doubleAnError = mightSucceed(false) * 2;
+  const doubleAnError = mightSucceed(false) * 2;
 } catch (ex) {
-    console.log(ex.message);
+  console.log(ex.message);
 }
 ```
 
@@ -103,7 +103,7 @@ Here's what that same example from above would look like using `Result`:
 import { Result, Variant, ok, err, map, toString } from 'true-myth/result';
 
 function mightSucceed(doesSucceed: boolean): Result<number, string> {
-    return doesSucceed ? ok(42): err('something went wrong!');
+  return doesSucceed ? ok(42): err('something went wrong!');
 }
 
 const double = (x: number) => x * 2;
@@ -194,6 +194,6 @@ const getAResult = (): Result<number, string> => ok(12);
 
 // Succeedss
 const getAResult = (): Result<number, string> => {
-    return ok(12);
+  return ok(12);
 };
 ```

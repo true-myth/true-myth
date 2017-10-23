@@ -70,7 +70,7 @@ describe('`Maybe` pure functions', () => {
       expect(Maybe.unsafelyUnwrap(justANumber)).toBe(42);
     });
   });
-  
+
   describe('`fromNullable`', () => {
     test('with `null', () => {
       const nothingFromNull = Maybe.fromNullable<string>(null);

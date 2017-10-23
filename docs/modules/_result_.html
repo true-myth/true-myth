@@ -93,11 +93,11 @@
 						<p>To make that concrete, let&#39;s look at an example. In normal JavaScript, you might
 						have something like this:</p>
 						<pre><code class="lang-js"><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">mightSucceed</span>(<span class="hljs-params">doesSucceed</span>) </span>{
-    <span class="hljs-keyword">if</span> (!doesSucceed) {
-        <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">Error</span>(<span class="hljs-string">'something went wrong!'</span>);
-    }
+  <span class="hljs-keyword">if</span> (!doesSucceed) {
+    <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">Error</span>(<span class="hljs-string">'something went wrong!'</span>);
+  }
 
-    <span class="hljs-keyword">return</span> <span class="hljs-number">42</span>;
+  <span class="hljs-keyword">return</span> <span class="hljs-number">42</span>;
 }
 
 <span class="hljs-keyword">const</span> doubleTheAnswer = mightSucceed(<span class="hljs-literal">true</span>) * <span class="hljs-number">2</span>;
@@ -111,12 +111,12 @@
 							out via painful discovery at runtime, or by documenting it in our JSDoc – then
 						we&#39;d need to wrap it up in a <code>try</code>/<code>catch</code> block:</p>
 						<pre><code class="lang-js"><span class="hljs-keyword">try</span> {
-    <span class="hljs-keyword">const</span> doubleTheAnswer = mightSucceed(<span class="hljs-literal">true</span>) * <span class="hljs-number">2</span>;
-    <span class="hljs-built_in">console</span>.log(doubleTheAnswer);
+  <span class="hljs-keyword">const</span> doubleTheAnswer = mightSucceed(<span class="hljs-literal">true</span>) * <span class="hljs-number">2</span>;
+  <span class="hljs-built_in">console</span>.log(doubleTheAnswer);
 
-    <span class="hljs-keyword">const</span> doubleAnError = mightSucceed(<span class="hljs-literal">false</span>) * <span class="hljs-number">2</span>;
+  <span class="hljs-keyword">const</span> doubleAnError = mightSucceed(<span class="hljs-literal">false</span>) * <span class="hljs-number">2</span>;
 } <span class="hljs-keyword">catch</span> (ex) {
-    <span class="hljs-built_in">console</span>.log(ex.message);
+  <span class="hljs-built_in">console</span>.log(ex.message);
 }
 </code></pre>
 						<p>This is a pain to work with!</p>
@@ -160,7 +160,7 @@
 						<pre><code class="lang-ts"><span class="hljs-keyword">import</span> { Result, Variant, ok, err, map, toString } <span class="hljs-keyword">from</span> <span class="hljs-string">'true-myth/result'</span>;
 
 <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">mightSucceed</span>(<span class="hljs-params">doesSucceed: <span class="hljs-built_in">boolean</span></span>): <span class="hljs-title">Result</span>&lt;<span class="hljs-title">number</span>, <span class="hljs-title">string</span>&gt; </span>{
-    <span class="hljs-keyword">return</span> doesSucceed ? ok(<span class="hljs-number">42</span>): err(<span class="hljs-string">'something went wrong!'</span>);
+  <span class="hljs-keyword">return</span> doesSucceed ? ok(<span class="hljs-number">42</span>): err(<span class="hljs-string">'something went wrong!'</span>);
 }
 
 <span class="hljs-keyword">const</span> double = <span class="hljs-function">(<span class="hljs-params">x: <span class="hljs-built_in">number</span></span>) =&gt;</span> x * <span class="hljs-number">2</span>;
@@ -234,7 +234,7 @@
 
 <span class="hljs-comment">// Succeedss</span>
 <span class="hljs-keyword">const</span> getAResult = (): Result&lt;<span class="hljs-built_in">number</span>, <span class="hljs-built_in">string</span>&gt; =&gt; {
-    <span class="hljs-keyword">return</span> ok(<span class="hljs-number">12</span>);
+  <span class="hljs-keyword">return</span> ok(<span class="hljs-number">12</span>);
 };
 </code></pre>
 					</div>
