@@ -129,10 +129,10 @@
 									to <em>know</em> when something is going to change, and mutating freely throughout
 								a library or application makes that impossible.</p>
 							</li>
-							<li><p>You have to make sure to actually check the return code to make sure it&#39;s.
-									In theory, we&#39;re all displined enough to always do that. In practice, we
-									often end up reasoning, <em>Well, this particular call can never fail...</em> (but
-								of course, it probably can, just not in a way we expect).</p>
+							<li><p>You have to make sure to actually check the return code to make sure it&#39;s
+									valid. In theory, we&#39;re all displined enough to always do that. In practice,
+									we often end up reasoning, <em>Well, this particular call can never fail...</em>
+								(but of course, it probably can, just not in a way we expect).</p>
 							</li>
 							<li><p>We don&#39;t have a good way to return a <em>reason</em> for the error. We end up
 									needing to introduce another parameter, designed to be mutated, to make sure

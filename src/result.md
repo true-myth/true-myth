@@ -70,10 +70,10 @@ in C, C++, Java, and C#, for example.) But that has a few problems:
     to *know* when something is going to change, and mutating freely throughout
     a library or application makes that impossible.
 
--   You have to make sure to actually check the return code to make sure it's.
-    In theory, we're all displined enough to always do that. In practice, we
-    often end up reasoning, _Well, this particular call can never fail..._ (but
-    of course, it probably can, just not in a way we expect).
+-   You have to make sure to actually check the return code to make sure it's
+    valid. In theory, we're all displined enough to always do that. In practice,
+    we often end up reasoning, _Well, this particular call can never fail..._
+    (but of course, it probably can, just not in a way we expect).
 
 -   We don't have a good way to return a *reason* for the error. We end up
     needing to introduce another parameter, designed to be mutated, to make sure
