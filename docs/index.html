@@ -125,9 +125,9 @@
 				to <a href="#what-is-this-for"><strong>What is this for?</strong></a>.</em></p>
 				<p>These examples don&#39;t cover every corner of the API; it&#39;s just here to show you
 					what a few of the functions are like. <a href="https://chriskrycho.github.io/true-myth/">Full API documentation is
-				available!</a></p>
+				available!</a> You can also <a href="https://github.com/chriskrycho/true-myth/">view the source</a> if you prefer.</p>
 				<h3 id="-result-with-a-functional-style"><code>Result</code> with a functional style</h3>
-				<pre><code class="lang-ts"><span class="hljs-keyword">import</span> { Result, map toString } <span class="hljs-keyword">from</span> <span class="hljs-string">'true-myth/result'</span>;
+				<pre><code class="lang-ts"><span class="hljs-keyword">import</span> { Result, map, toString } <span class="hljs-keyword">from</span> <span class="hljs-string">'true-myth/result'</span>;
 
 <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">fallibleCheck</span>(<span class="hljs-params">isValid: <span class="hljs-built_in">boolean</span></span>): <span class="hljs-title">Result</span>&lt;<span class="hljs-title">string</span>, </span>{ reason: <span class="hljs-built_in">string</span> }&gt; {
   <span class="hljs-keyword">return</span> isValid ? ok(<span class="hljs-string">'all fine here'</span>) : err({ reason: <span class="hljs-string">'was not valid'</span> });
@@ -247,7 +247,7 @@ myFuncThatTakesAnInteger(myNumber); <span class="hljs-comment">// TypeError: anI
 					must be constantly vigilant and proactive so that our users don&#39;t get into
 				broken error states.</p>
 				<h3 id="the-solution">The solution</h3>
-				<p><code>Maybe</code> and <code>Result</code> are our escape hatch from all this madness. </p>
+				<p><code>Maybe</code> and <code>Result</code> are our escape hatch from all this madness.</p>
 				<p>We reach for libraries precisely so we can solve real business problems
 					while letting lower-level concerns live in the &quot;solved problems&quot; category. True
 					Myth, borrowing ideas from many other languages and libraries, aims to put
@@ -286,7 +286,7 @@ myInteger * <span class="hljs-number">3</span>; <span class="hljs-comment">// ðŸ
 				and give ourselves safe access methods:</p>
 				<pre><code class="lang-js"><span class="hljs-keyword">import</span> * <span class="hljs-keyword">as</span> Maybe <span class="hljs-keyword">from</span> <span class="hljs-string">'true-myth/maybe'</span>;
 
-<span class="hljs-keyword">let</span> myInteger = Maybe.of(<span class="hljs-literal">undefined</span>); 
+<span class="hljs-keyword">let</span> myInteger = Maybe.of(<span class="hljs-literal">undefined</span>);
 myInteger.map(<span class="hljs-function"><span class="hljs-params">x</span> =&gt;</span> x * <span class="hljs-number">3</span>); <span class="hljs-comment">// Nothing</span>
 </code></pre>
 				<p><img src="https://user-images.githubusercontent.com/2403023/31098390-5d6573d0-a790-11e7-96f9-361d2e70522b.gif" alt="mind blown"></p>

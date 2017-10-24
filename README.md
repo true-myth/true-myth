@@ -55,7 +55,7 @@ available!][docs] You can also [view the source][source] if you prefer.
 ### `Result` with a functional style
 
 ```ts
-import { Result, map toString } from 'true-myth/result';
+import { Result, map, toString } from 'true-myth/result';
 
 function fallibleCheck(isValid: boolean): Result<string, { reason: string }> {
   return isValid ? ok('all fine here') : err({ reason: 'was not valid' });
