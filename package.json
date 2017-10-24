@@ -1,7 +1,7 @@
 {
   "name": "true-myth",
   "description": "A library for safe functional programming in JavaScript, with first-class support for TypeScript and Flow",
-  "homepage": "https://chriskrycho.github.io/true-myth",
+  "homepage": "https://true-myth.js.org",
   "repository": {
     "type": "git",
     "url": "https://github.com/chriskrycho/true-myth"
