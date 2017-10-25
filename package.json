@@ -14,13 +14,10 @@
   "bugs": {
     "url": "https://github.com/chriskrycho/true-myth/issues"
   },
-  "version": "0.8.0",
+  "version": "0.8.1",
   "main": "dist/commonjs/src/index.js",
   "module": "dist/modules/src/index.js",
   "types": "dist/types/src/index.d.ts",
-  "files": [
-    "dist"
-  ],
   "ember-addon": {
     "main": "ember-addon.js"
   },
