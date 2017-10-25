@@ -6,5 +6,4 @@ ember-cli-build.js
 scripts
 test
 tmp
-tsconfig.json
 tslint.json
