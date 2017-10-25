@@ -590,9 +590,9 @@ your `tsconfig.json`:
 ```json
 {
   "compilerOptions": {
-    "paths": [
+    "paths": {
       "true-myth/*": ["node_modules/true-myth/dist/types/src/*"],
-    ]
+    }
   }
 }
 ```
