@@ -562,19 +562,21 @@ node_modules/
           utils.js
           utils.js.flow
       modules/
-        index.js
-        index.js.flow
-        maybe.js
-        maybe.js.flow
-        result.js
-        result.js.flow
-        utils.js
-        utils.js.flow
+        src/
+          index.js
+          index.js.flow
+          maybe.js
+          maybe.js.flow
+          result.js
+          result.js.flow
+          utils.js
+          utils.js.flow
       types/
-        index.d.ts
-        maybe.d.ts
-        result.d.ts
-        utils.d.ts
+        src/
+          index.d.ts
+          maybe.d.ts
+          result.d.ts
+          utils.d.ts
 ```
 
 ### TypeScript and Flow
