@@ -2,6 +2,11 @@
   "name": "true-myth",
   "description": "A library for safe functional programming in JavaScript, with first-class support for TypeScript and Flow",
   "homepage": "https://true-myth.js.org",
+  "author": {
+    "name": "Chris Krycho",
+    "email": "chris@chriskrycho.com",
+    "url": "http://www.chriskrycho.com"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/chriskrycho/true-myth"
@@ -9,13 +14,10 @@
   "bugs": {
     "url": "https://github.com/chriskrycho/true-myth/issues"
   },
-  "license": "MIT",
   "version": "0.7.0",
-  "author": {
-    "name": "Chris Krycho",
-    "email": "chris@chriskrycho.com",
-    "url": "http://www.chriskrycho.com"
-  },
+  "main": "dist/commonjs/src/index.js",
+  "module": "dist/modules/src/index.js",
+  "types": "dist/types/src/index.d.ts",
   "files": [
     "dist"
   ],
@@ -26,32 +28,30 @@
     "ember-addon", "typescript"
   ],
   "scripts": {
-    "build": "yarn run build:commonjs && yarn run build:es && yarn run build:amd",
-    "build:es": "tsc -p tsconfig/es.json",
-    "build:amd": "tsc -p tsconfig/amd.json",
-    "build:commonjs": "tsc -p tsconfig/commonjs.json",
-    "build:types": "tsc -p tsconfig/types.json --declaration",
     "clean": "rimraf dist",
-    "test": "jest",
     "doc": "./build-docs",
     "precommit": "./build-docs && git add docs",
-    "version": "yarn run build"
+    "problems": "node ./scripts/problems.js",
+    "preversion": "yarn run test",
+    "prepack": "ember build -prod",
+    "build": "ember build -prod",
+    "test": "jest",
+    "tdd": "jest --watch"
   },
-  "main": "dist/commonjs/index.js",
-  "types": "dist/types/index.d.ts",
-  "module": "dist/es/index.js",
-  "jsnext:main": "dist/es/index.js",
+  "license": "MIT",
   "devDependencies": {
     "@types/jest": "^21.1.0",
     "husky": "^0.14.3",
+    "ember-cli": "^2.16.2",
     "jest": "^21.2.1",
+    "libkit": "^0.5.17",
     "prettier": "^1.7.0",
     "rimraf": "^2.6.2",
+    "shelljs": "^0.7.8",
     "ts-jest": "^21.0.1",
     "tslint": "^5.8.0",
     "typedoc": "^0.8.0",
-    "typescript": "2.5",
-    "ember-cli": "^2.16.2"
+    "typescript": "2.5"
   },
   "jest": {
     "transform": {

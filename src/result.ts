@@ -1,12 +1,12 @@
 /** [[include:result.md]] */
 
 /** (keep typedoc from getting confused by the import) */
+import { Maybe, isJust, just, nothing, unsafelyUnwrap as unwrapMaybe } from './maybe';
 import { isVoid } from './utils';
-import { Maybe, just, nothing, isJust, unsafelyUnwrap as unwrapMaybe } from './maybe';
 
 /**
   Discriminant for `Ok` and `Err` variants of `Result` type.
-  
+
   You can use the discriminant via the `variant` property of `Result` instances
   if you need to match explicitly on it.
  */
@@ -15,7 +15,7 @@ export enum Variant {
   Err = 'Err',
 }
 
-export interface IResult<T, E> {
+export interface ResultClasses<T, E> {
   /** Distinguish between the `Ok` and `Err` variants. */
   variant: Variant;
 
@@ -62,7 +62,7 @@ export interface IResult<T, E> {
   unsafelyUnwrapErr(): E | never;
 
   /** Method variant for [`Result.unwrapOr`](../modules/_result_.html#unwrapor) */
-  unwrapOr<E>(this: Result<T, E>, defaultValue: T): T;
+  unwrapOr(this: Result<T, E>, defaultValue: T): T;
 
   /** Method variant for [`Result.unwrapOrElse`](../modules/_result_.html#unwrapOrElse) */
   unwrapOrElse(this: Result<T, E>, elseFn: (error: E) => T): T;
@@ -83,36 +83,36 @@ export interface IResult<T, E> {
   @typeparam T The type wrapped in this `Ok` variant of `Result`.
   @typeparam E The type which would be wrapped in an `Err` variant of `Result`.
  */
-export class Ok<T, E> implements IResult<T, E> {
-  private __value: T;
-
+export class Ok<T, E> implements ResultClasses<T, E> {
   /** `Ok` is always [`Variant.Ok`](../enums/_result_.variant#ok). */
   variant = Variant.Ok;
 
+  private value: T;
+
   /**
     Create an instance of `Result.Ok` with `new`.
-    
+
     <!---->**Note:** While you *may* create the `Result` type via normal
     JavaScript class construction, it is not recommended for the functional
     style for which the library is intended. Instead, use [`Result.ok`].
-    
+
     [`Result.ok`]: ../modules/_result_.html#ok
-    
+
     ```ts
     // Avoid:
     const aString = new Result.Ok('characters');
-    
+
     // Prefer:
     const aString = Result.ok('characters);
     ```
-    
+
     @param value
     The value to wrap in a `Result.Ok`.
-    
+
     `null` and `undefined` are allowed by the type signature so that the
     constructor may `throw` on those rather than constructing a type like
     `Result<undefined>`.
-    
+
     @throws If you pass `null` or `undefined`.
     */
   constructor(value: T | null | undefined) {
@@ -122,7 +122,7 @@ export class Ok<T, E> implements IResult<T, E> {
       );
     }
 
-    this.__value = value;
+    this.value = value;
   }
 
   /** Method variant for [`Result.isOk`](../modules/_result_.html#isok) */
@@ -187,16 +187,16 @@ export class Ok<T, E> implements IResult<T, E> {
 
   /** Method variant for [`Result.unwrap`](../modules/_result_.html#unwrap) */
   unsafelyUnwrap(): T {
-    return this.__value;
+    return this.value;
   }
 
   /** Method variant for [`Result.unwrapErr`](../modules/_result_.html#unwraperr) */
   unsafelyUnwrapErr(): never {
-    throw 'Tried to `unsafelyUnwrapErr` an `Ok`';
+    throw new Error('Tried to `unsafelyUnwrapErr` an `Ok`');
   }
 
   /** Method variant for [`Result.unwrapOr`](../modules/_result_.html#unwrapor) */
-  unwrapOr<E>(this: Result<T, E>, defaultValue: T): T {
+  unwrapOr(this: Result<T, E>, defaultValue: T): T {
     return unwrapOr(defaultValue, this);
   }
 
@@ -225,36 +225,36 @@ export class Ok<T, E> implements IResult<T, E> {
   @typeparam T The type which would be wrapped in an `Ok` variant of `Result`.
   @typeparam E The type wrapped in this `Err` variant of `Result`.
   */
-export class Err<T, E> implements IResult<T, E> {
+export class Err<T, E> implements ResultClasses<T, E> {
   /** `Err` is always [`Variant.Err`](../enums/_result_.variant#err). */
   variant = Variant.Err;
 
-  private __error: E;
+  private error: E;
 
   /**
     Create an instance of `Result.Err` with `new`.
-    
+
     <!---->**Note:** While you *may* create the `Result` type via normal
     JavaScript class construction, it is not recommended for the functional
     style for which the library is intended. Instead, use [`Result.err`].
-    
+
     [`Result.err`]: ../modules/_result_.html#err
-    
+
     ```ts
     // Avoid:
     const anErr = new Result.Err('alas, failure');
-    
+
     // Prefer:
     const anErr = Result.err('alas, failure');
     ```
-    
+
     @param error
     The value to wrap in a `Result.Err`.
-    
+
     `null` and `undefined` are allowed by the type signature so that the
     constructor may `throw` on those rather than constructing a type like
     `Result<undefined>`.
-    
+
     @throws If you pass `null` or `undefined`.
     */
   constructor(error: E | null | undefined) {
@@ -264,7 +264,7 @@ export class Err<T, E> implements IResult<T, E> {
       );
     }
 
-    this.__error = error;
+    this.error = error;
   }
 
   /** Method variant for [`Result.isOk`](../modules/_result_.html#isok) */
@@ -334,11 +334,11 @@ export class Err<T, E> implements IResult<T, E> {
 
   /** Method variant for [`Result.unsafelyUnwrapErr`](../modules/_result_.html#unsafelyunwraperr) */
   unsafelyUnwrapErr(): E {
-    return this.__error;
+    return this.error;
   }
 
   /** Method variant for [`Result.unwrapOr`](../modules/_result_.html#unwrapor) */
-  unwrapOr<E>(this: Result<T, E>, defaultValue: T): T {
+  unwrapOr(this: Result<T, E>, defaultValue: T): T {
     return unwrapOr(defaultValue, this);
   }
 
@@ -360,7 +360,7 @@ export class Err<T, E> implements IResult<T, E> {
 
 /**
   Is this `Result` an `Ok` instance?
-  
+
   In TypeScript, narrows the type from `Result<T, E>` to `Ok<T, E>`.
  */
 export const isOk = <T, E>(result: Result<T, E>): result is Ok<T, E> =>
@@ -368,7 +368,7 @@ export const isOk = <T, E>(result: Result<T, E>): result is Ok<T, E> =>
 
 /**
   Is this `Result` an `Err` instance?
-  
+
   In TypeScript, narrows the type from `Result<T, E>` to `Err<T, E>`.
  */
 export const isErr = <T, E>(result: Result<T, E>): result is Err<T, E> =>
@@ -376,10 +376,10 @@ export const isErr = <T, E>(result: Result<T, E>): result is Err<T, E> =>
 
 /**
   Create an instance of `Result.Ok`.
-  
+
   `null` and `undefined` are allowed by the type signature so that the function
   may `throw` on those rather than constructing a type like `Result<undefined>`.
-  
+
   @typeparam T The type of the item contained in the `Result`.
   @param value The value to wrap in a `Result.Ok`.
   @throws      If you pass `null` or `undefined`.
@@ -388,22 +388,22 @@ export const ok = <T, E>(value: T | null | undefined): Result<T, E> => new Ok<T,
 
 /**
   Create an instance of `Result.Error`.
-  
+
   If you want to create an instance with a specific type, e.g. for use in a
   function which expects a `Result<T, E>` where the `<T, E>` is known but you
   have no value to give it, you can use a type parameter:
-  
+
   ```ts
   const notString = Result.err<number, string>('something went wrong');
   ```
-  
+
   @typeparam T The type of the item contained in the `Result`.
  */
 export const err = <T, E>(error: E): Result<T, E> => new Err<T, E>(error);
 
 /**
   A value which may (`Ok`) or may not (`Err`) be present.
-  
+
   The behavior of this type is checked by TypeScript at compile time, and bears
   no runtime overhead other than the very small cost of the container object.
  */
@@ -420,7 +420,7 @@ export default Result;
   difference. Both `Result` and `Array` are containers for other kinds of items,
   but where `Array.prototype.map` has 0 to _n_ items, a `Result` always has
   exactly one item, which is *either* a success or an error instance.
-  
+
   Where `Array.prototype.map` will apply the mapping function to every item in
   the array (if there are any), `Result.map` will only apply the mapping
   function to the (single) element if an `Ok` instance, if there is one.
@@ -480,12 +480,12 @@ export const map = <T, U, E>(mapFn: (t: T) => U, result: Result<T, E>): Result<U
   const anOkString = ok('a string');
   const theStringLength = mapOr(0, anOkString);
   console.log(theStringLength);  // 8
-  
+
   const anErr = err('uh oh');
   const anErrMapped = mapOr(0, anErr);
   console.log(anErrMapped);  // 0
   ```
-  
+
   @param orU The default value to use if `result` is an `Err`.
   @param mapFn The function to apply the value to if `result` is an `Ok`.
   @param result The `Result` instance to map over.
@@ -497,7 +497,7 @@ export const mapOr = <T, U, E>(orU: U, mapFn: (t: T) => U, result: Result<T, E>)
   Map over a `Result` instance as in [`map`](#map) and get out the value if
   `result` is `Ok`, or apply a function (`orElseFn`) to the value wrapped in
   the `Err` to get a default value.
-  
+
   Like [`mapOr`](#mapor) but using a function to transform the error into a
   usable value instead of simply using a default value.
 
@@ -517,7 +517,7 @@ export const mapOr = <T, U, E>(orU: U, mapFn: (t: T) => U, result: Result<T, E>)
   const mappedErrAndUnwrapped = mapOrElse(getReason, summarize, errResponse);
   console.log(mappedErrAndUnwrapped);  // Nothing at this endpoint!
   ```
-  
+
   @typeparam T    The type of the wrapped `Ok` value.
   @typeparam U    The type of the resulting value from applying `mapFn` to the
                   `Ok` value or `orElseFn` to the `Err` value.
@@ -571,23 +571,23 @@ export const mapErr = <T, E, F>(mapErrFn: (e: E) => F, result: Result<T, E>): Re
   You can think of this like a short-circuiting logical "and" operation on a
   `Result` type. If `result` is `Ok`, then the result is the `andResult`. If
   `result` is `Err`, the result is the `Err`.
-  
+
   This is useful when you have another `Result` value you want to provide if
   and *only if* you have an `Ok` – that is, when you need to make sure that if you
   `Err`, whatever else you're handing a `Result` to *also* gets that `Err`.
-  
+
   Notice that, unlike in [`map`](#map) or its variants, the original `result` is
   not involved in constructing the new `Result`.
- 
+
   #### Examples
- 
+
   ```ts
   import { and, ok, err, toString } from 'true-myth/result';
-  
+
   const okA = ok('A');
   const okB = ok('B');
   const anErr = err({ so: 'bad' });
- 
+
   console.log(toString(and(okB, okA)));  // Ok(B)
   console.log(toString(and(okB, anErr)));  // Err([object Object])
   console.log(toString(and(anErr, okA)));  // Err([object Object])
@@ -612,18 +612,18 @@ export const and = <T, U, E>(andResult: Result<U, E>, result: Result<T, E>): Res
   This differs from `map` in that `thenFn` returns another `Result`. You can use
   `andThen` to combine two functions which *both* create a `Result` from an
   unwrapped type.
- 
+
   You may find the `.then` method on an ES6 `Promise` helpful for comparison: if
   you have a `Promise`, you can pass its `then` method a callback which
   returns another `Promise`, and the result will not be a *nested* promise, but
   a single `Promise`. The difference is that `Promise#then` unwraps *all*
   layers to only ever return a single `Promise` value, whereas `Result.andThen`
   will not unwrap nested `Result`s.
-  
+
   This is also commonly known as (and therefore aliased as) [`flatMap`] or
   [`chain`]. It is sometimes also known as `bind`, but *not* aliased as such
   because [`bind` already means something in JavaScript][bind].
-  
+
   [`flatMap`]: #flatmap
   [`chain`]: #chain
   [bind]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function/bind
@@ -643,7 +643,7 @@ export const and = <T, U, E>(andResult: Result<U, E>, result: Result<T, E>): Res
   const notLengthAsResult = andThen(toLengthAsResult, anErr);
   console.log(toString(notLengthAsResult));  // Err(srsly,whatever)
   ```
-  
+
   @typeparam T   The type of the value wrapped in the `Ok` of the `Result`.
   @typeparam U   The type of the value wrapped in the `Ok` of the `Result`
                  returned by the `thenFn`.
@@ -670,15 +670,15 @@ export const flatMap = andThen;
   This is useful when you want to make sure that something which takes a
   `Result` always ends up getting an `Ok` variant, by supplying a default value
   for the case that you currently have an `Err`.
-  
+
   ```ts
   import { ok, err, Result, or } from 'true-utils/result';
-  
+
   const okA = ok<string, string>('a');
   const okB = ok<string, string>('b');
   const anErr = err<string, string>(':wat:');
   const anotherErr = err<string, string>(':headdesk:');
-  
+
   console.log(or(okB, okA).toString());  // Ok(A)
   console.log(or(anErr, okA).toString());  // Ok(A)
   console.log(or(okB, anErr).toString());  // Ok(B)
@@ -686,7 +686,7 @@ export const flatMap = andThen;
   ```
 
   @typeparam T          The type wrapped in the `Ok` case of `result`.
-  @typeparam E          The type wrapped in the `Err` case of `result`. 
+  @typeparam E          The type wrapped in the `Err` case of `result`.
   @typeparam F          The type wrapped in the `Err` case of `defaultResult`.
   @param defaultResult  The `Result` to use if `result` is an `Err`.
   @param result         The `Result` instance to check.
@@ -697,15 +697,15 @@ export const or = <T, E, F>(defaultResult: Result<T, F>, result: Result<T, E>): 
 
 /**
   Like `or`, but using a function to construct the alternative `Result`.
-  
+
   Sometimes you need to perform an operation using other data in the environment
   to construct the fallback value. In these situations, you can pass a function
   (which may be a closure) as the `elseFn` to generate the fallback `Result<T>`.
   It can then transform the data in the `Err` to something usable as an `Ok`, or
   generate a new `Err` instance as appropriate.
-  
+
   Useful for transforming failures to usable data.
-  
+
   @param elseFn The function to apply to the contents of the `Err` if `result`
                 is an `Err`, to create a new `Result`.
   @param result The `Result` to use if it is an `Ok`.
@@ -719,10 +719,10 @@ export const orElse = <T, E, F>(
 
 /**
   Get the value out of the `Result`.
-  
+
   Returns the content of an `Ok`, but **throws if the `Result` is `Err`.**
   Prefer to use [`unwrapOr`](#unwrapor) or [`unwrapOrElse`](#unwraporelse).
- 
+
   @throws If the `Result` instance is `Nothing`.
  */
 export const unsafelyUnwrap = <T, E>(result: Result<T, E>): T => result.unsafelyUnwrap();
@@ -739,10 +739,10 @@ const unwrap = unsafelyUnwrap;
 
 /**
   Get the error value out of the [`Result`](#result).
-  
+
   Returns the content of an `Err`, but **throws if the `Result` is `Ok`**.
   Prefer to use [`unwrapOrElse`](#unwraporelse).
- 
+
   @param result
   @throws Error If the `Result` instance is `Nothing`.
  */
@@ -765,7 +765,7 @@ const unwrapErr = unsafelyUnwrapErr;
 
   const anOk = ok<number, string>(12);
   console.log(unwrapOr(0, anOk));  // 12
-  
+
   const anErr = err<number, string>('nooooo');
   console.log(unwrapOr(0, anErr));  // 0
   ```
@@ -797,14 +797,14 @@ export const getOr = unwrapOr;
   // You can imagine that someOtherValue might be dynamic.
   const someOtherValue = 2;
   const handleErr = (errValue: string) => errValue.length + someOtherValue;
-  
+
   const anOk = ok<number, string>(42);
   console.log(unwrapOrElse(handleErr, anOk));  // 42
-  
+
   const anErr = err<number, string>('oh teh noes');
   console.log(unwrapOrElse(handleErr, anErr));  // 13
   ```
-  
+
   @typeparam T    The value wrapped in the `Ok`.
   @typeparam E    The value wrapped in the `Err`.
   @param orElseFn A function applied to the value wrapped in `result` if it is
@@ -821,15 +821,15 @@ export const getOrElse = unwrapOrElse;
 
 /**
   Convert a [`Result`](#result) to a [`Maybe`](../modules/_maybe_.html#maybe).
-  
+
   The converted type will be [`Just`] if the `Result` is [`Ok`] or [`Nothing`]
   if the `Result` is [`Err`]; the wrapped error value will be discarded.
-  
+
   [`Just`]: ../classes/_maybe_.just.html
   [`Nothing`]: ../classes/_maybe_.nothing.html
   [`Ok`]: ../classes/_result_.ok.html
   [`Err`]: ../classes/_result_.err.html
-  
+
   @param result The `Result` to convert to a `Maybe`
   @returns      `Just` the value in `result` if it is `Ok`; otherwise `Nothing`
  */
@@ -838,10 +838,10 @@ export const toMaybe = <T, E>(result: Result<T, E>): Maybe<T> =>
 
 /**
   Transform a [`Maybe`](../modules/_maybe_.html#maybe) into a [`Result`](#result).
-  
+
   If the `Maybe` is a [`Just`], its value will be wrapped in the [`Ok`] variant;
   if it is a [`Nothing`] the `errValue` will be wrapped in the [`Err`] variant.
-  
+
   [`Just`]: ../classes/_maybe_.just.html
   [`Nothing`]: ../classes/_maybe_.nothing.html
   [`Ok`]: ../classes/_result_.ok.html
@@ -855,7 +855,7 @@ export const fromMaybe = <T, E>(errValue: E, maybe: Maybe<T>): Result<T, E> =>
 
 /**
   Create a `String` representation of a `result` instance.
-  
+
   An `Ok` instance will be printed as `Ok(<representation of the value>)`, and
   an `Err` instance will be printed as `Err(<representation of the error>)`,
   where the representation of the value or error is simply the value or error's
@@ -869,7 +869,7 @@ export const fromMaybe = <T, E>(errValue: E, maybe: Maybe<T>): Result<T, E> =>
   `toString(err(42))`               | `Err(42)`
   `toString(err([1, 2, 3]))`        | `Err(1,2,3)`
   `toString(err({ an: 'object' }))` | `Err([object Object])`
-  
+
   @typeparam T The type of the wrapped value; its own `.toString` will be used
                to print the interior contents of the `Just` variant.
   @param maybe The value to convert to a string.

@@ -1,7 +1,7 @@
-import { assertType } from './lib/assert';
 import * as Maybe from '../src/maybe';
-import { ok, err } from '../src/result';
+import { err, ok } from '../src/result';
 import { Aliases } from '../src/utils';
+import { assertType } from './lib/assert';
 
 type Neat = { neat: string };
 
@@ -409,7 +409,7 @@ describe('`Maybe.Nothing` class', () => {
   });
 
   test('`and` method', () => {
-    const theNothing = new Maybe.Nothing<Array<string>>();
+    const theNothing = new Maybe.Nothing<string[]>();
     const theConsequentJust = new Maybe.Just('blaster bolts');
     const anotherNothing = new Maybe.Nothing<string>();
     expect(theNothing.and(theConsequentJust)).toEqual(theNothing);

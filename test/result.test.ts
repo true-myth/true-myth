@@ -1,7 +1,7 @@
-import { assertType } from './lib/assert';
-import * as Result from '../src/result';
 import { just, nothing } from '../src/maybe';
+import * as Result from '../src/result';
 import { Aliases } from '../src/utils';
+import { assertType } from './lib/assert';
 
 const length = (x: { length: number }) => x.length;
 const double = (x: number) => x * 2;

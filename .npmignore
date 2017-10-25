@@ -1,0 +1,10 @@
+.vscode
+.travis.yml
+dist/**/test
+dist/**/node_modules
+ember-cli-build.js
+scripts
+test
+tmp
+tsconfig.json
+tslint.json
