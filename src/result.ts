@@ -34,6 +34,9 @@ export interface ResultClasses<T, E> {
   /** Method variant for [`Result.mapOrElse`](../modules/_result_.html#maporelse) */
   mapOrElse<U>(this: Result<T, E>, orElseFn: (...args: any[]) => U, mapFn: (t: T) => U): U;
 
+  /** Method variant for [`Result.match`](../modules/_result_.html#match) */
+  match<T, U>(this: Result<T, E>, matchObj: Matcher<T, E, U>): U;
+
   /** Method variant for [`Result.mapErr`](../modules/_result_.html#maperr) */
   mapErr<F>(this: Result<T, E>, mapErrFn: (e: E) => F): Result<T, F>;
 
@@ -148,6 +151,11 @@ export class Ok<T, E> implements ResultClasses<T, E> {
   /** Method variant for [`Result.mapOrElse`](../modules/_result_.html#maporelse) */
   mapOrElse<U>(this: Result<T, E>, orElseFn: (...args: any[]) => U, mapFn: (t: T) => U): U {
     return mapOrElse(orElseFn, mapFn, this);
+  }
+
+  /** Method variant for [`Result.match`](../modules/_result_.html#match) */
+  match<T, U>(this: Result<T, E>, matchObj: Matcher<T, E, U>): U {
+    return mapOrElse(matchObj.Err, matchObj.Ok, this);
   }
 
   /** Method variant for [`Result.mapErr`](../modules/_result_.html#maperr) */
@@ -290,6 +298,11 @@ export class Err<T, E> implements ResultClasses<T, E> {
   /** Method variant for [`Result.mapOrElse`](../modules/_result_.html#maporelse) */
   mapOrElse<U>(this: Result<T, E>, orElseFn: (...args: any[]) => U, mapFn: (t: T) => U): U {
     return mapOrElse(orElseFn, mapFn, this);
+  }
+
+  /** Method variant for [`Result.match`](../modules/_result_.html#match) */
+  match<T, U>(this: Result<T, E>, matchObj: Matcher<T, E, U>): U {
+    return match(matchObj, this);
   }
 
   /** Method variant for [`Result.mapErr`](../modules/_result_.html#maperr) */
@@ -879,7 +892,7 @@ export const toString = <T, E>(result: Result<T, E>): string => {
 };
 
 /** A lightweight object defining how to handle each variant of a Maybe. */
-type Matcher<T, E, A> = {
+export type Matcher<T, E, A> = {
   Ok: (value: T) => A;
   Err: (error: E) => A;
 };

@@ -34,6 +34,9 @@ export interface MaybeClasses<T> {
   /** Method variant for [`Maybe.mapOrElse`](../modules/_maybe_.html#maporelse) */
   mapOrElse<U>(this: Maybe<T>, orElseFn: (...args: any[]) => U, mapFn: (t: T) => U): U;
 
+  /** Method variant for [`Maybe.match`](../modules/_maybe_.html#match) */
+  match<T, U>(this: Maybe<T>, matchObj: Matcher<T, U>): U;
+
   /** Method variant for [`Maybe.or`](../modules/_maybe_.html#or) */
   or(this: Maybe<T>, mOr: Maybe<T>): Maybe<T>;
 
@@ -143,6 +146,11 @@ export class Just<T> implements MaybeClasses<T> {
     return mapOrElse(orElseFn, mapFn, this);
   }
 
+  /** Method variant for [`Maybe.match`](../modules/_maybe_.html#match) */
+  match<T, U>(this: Maybe<T>, matchObj: Matcher<T, U>): U {
+    return mapOrElse(matchObj.Nothing, matchObj.Just, this);
+  }
+
   /** Method variant for [`Maybe.or`](../modules/_maybe_.html#or) */
   or(this: Maybe<T>, mOr: Maybe<T>): Maybe<T> {
     return or(mOr, this);
@@ -239,6 +247,11 @@ export class Nothing<T> implements MaybeClasses<T> {
   /** Method variant for [`Maybe.mapOrElse`](../modules/_maybe_.html#maporelse) */
   mapOrElse<U>(this: Maybe<T>, orElseFn: (...args: any[]) => U, mapFn: (t: T) => U): U {
     return mapOrElse(orElseFn, mapFn, this);
+  }
+
+  /** Method variant for [`Maybe.match`](../modules/_maybe_.html#match) */
+  match<T, U>(this: Maybe<T>, matchObj: Matcher<T, U>): U {
+    return match(matchObj, this);
   }
 
   /** Method variant for [`Maybe.or`](../modules/_maybe_.html#or) */
@@ -793,7 +806,7 @@ export const toString = <T>(maybe: Maybe<T>): string => {
 };
 
 /** A lightweight object defining how to handle each variant of a Maybe. */
-type Matcher<T, A> = {
+export type Matcher<T, A> = {
   Just: (value: T) => A;
   Nothing: () => A;
 };
