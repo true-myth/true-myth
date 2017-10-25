@@ -792,4 +792,42 @@ export const toString = <T>(maybe: Maybe<T>): string => {
   return `${maybe.variant}${body}`;
 };
 
+/** A lightweight object defining how to handle each variant of a Maybe. */
+type Matcher<T, A> = {
+  Just: (value: T) => A;
+  Nothing: () => A;
+};
+
+/**
+  Performs the same basic functionality as `getOrElse`, but instead of simply
+  unwrapping the value if it is `Just` and applying a value to generate the same
+  default type if it is `Nothing`, lets you supply functions which may transform
+  the wrapped type if it is `Just` or get a default value for `Nothing`.
+
+  This is kind of like a poor-man's version of pattern matching, which
+  JavaScript currently lacks.
+
+  ```ts
+  import { match, just, nothing } from 'true-myth/maybe';
+
+  const double = (n: number) => n * 2;
+  const zero = () => 0;
+
+  const aJust = just(12);
+  console.log(match({ Just: double, Nothing: zero }, aJust));  // 24
+
+  const aNothing = nothing<number>();
+  console.log(match({ Just: double, Nothing: zero }, aNothing));  // 0
+  ```
+
+  @param matcher A lightweight object defining what to do in the case of each
+                 variant.
+  @param maybe   The `maybe` instance to check.
+ */
+export const match = <T, A>(matcher: Matcher<T, A>, maybe: Maybe<T>): A =>
+  isJust(maybe) ? matcher.Just(unwrap(maybe)) : matcher.Nothing();
+
+/** Alias for [`match`](#match) */
+export const cata = match;
+
 export default Maybe;
