@@ -1,9 +1,10 @@
 import * as Maybe from '../src/maybe';
 import { err, ok } from '../src/result';
-import { Aliases } from '../src/utils';
 import { assertType } from './lib/assert';
 
 type Neat = { neat: string };
+
+type AndThenAliases = 'andThen' | 'chain' | 'flatMap';
 
 const length = (s: string) => s.length;
 
@@ -141,7 +142,7 @@ describe('`Maybe` pure functions', () => {
     expect(Maybe.and(aNothing, aNothing)).toEqual(aNothing);
   });
 
-  const andThenTest = (fn: Aliases.AndThen) => () => {
+  const andThenTest = (fn: AndThenAliases) => () => {
     const toMaybeNumber = (x: string) => Maybe.just(Number(x));
     const toNothing = (x: string) => Maybe.nothing<number>();
 
@@ -298,7 +299,7 @@ describe('`Maybe.Just` class', () => {
     expect(theJust.and(aNothing)).toEqual(aNothing);
   });
 
-  const andThenMethodTest = (method: Aliases.AndThen) => () => {
+  const andThenMethodTest = (method: AndThenAliases) => () => {
     const theValue = { Jedi: 'Luke Skywalker' };
     const theJust = new Maybe.Just(theValue);
     const toDescription = (dict: { [key: string]: string }) =>
@@ -416,7 +417,7 @@ describe('`Maybe.Nothing` class', () => {
     expect(theNothing.and(anotherNothing)).toEqual(theNothing);
   });
 
-  const andThenMethodTest = (method: Aliases.AndThen) => () => {
+  const andThenMethodTest = (method: AndThenAliases) => () => {
     const theNothing = new Maybe.Nothing();
     const theDefaultValue = 'string';
     const getDefaultValue = () => Maybe.just(theDefaultValue);

@@ -1,4 +1,4 @@
-/** [[include:maybe.md]] */
+/** [[include:doc/maybe.md]] */
 
 /** (keep typedoc from getting confused by the imports) */
 import * as Result from './result';

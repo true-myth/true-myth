@@ -79,6 +79,11 @@
 					<a href="https://js.org"><img src="https://img.shields.io/badge/js.org-dns-ffb400.svg?style=flat-square" alt=""></a>
 				<a href="http://true-myth.js.org"><img src="https://img.shields.io/badge/documented-with_TypeDoc-009fb5.svg?style=flat-square" alt="docs built with TypeDoc"></a></p>
 				<ul>
+					<li><a href="#setup">Setup</a><ul>
+							<li><a href="#typescript-and-flow">TypeScript and Flow</a></li>
+						</ul>
+					</li>
+					<li><a href="#roadmap">Roadmap</a></li>
 					<li><a href="#just-the-api-please">Just the API, please</a><ul>
 							<li><a href="#result-with-a-functional-style"><code>Result</code> with a functional style</a></li>
 							<li><a href="#maybe-with-the-method-style"><code>Maybe</code> with the method style</a></li>
@@ -107,11 +112,6 @@
 							<li><a href="#inspiration">Inspiration</a></li>
 						</ul>
 					</li>
-					<li><a href="#setup">Setup</a><ul>
-							<li><a href="#typescript-and-flow">TypeScript and Flow</a></li>
-						</ul>
-					</li>
-					<li><a href="#roadmap">Roadmap</a></li>
 					<li><a href="#why-not">Why not...</a><ul>
 							<li><a href="#folktale">Folktale</a></li>
 							<li><a href="#sanctuary">Sanctuary</a></li>
@@ -120,6 +120,95 @@
 					<li><a href="#migrating-from-existing-libs">Migrating from existing libs</a></li>
 					<li><a href="#whats-with-the-name">What&#39;s with the name?</a></li>
 				</ul>
+				<h2 id="setup">Setup</h2>
+				<p>Add True Myth to your dependencies:</p>
+				<ul>
+					<li><p>with Yarn:</p>
+						<pre><code class="lang-sh">yarn add <span class="hljs-literal">true</span>-myth
+</code></pre>
+					</li>
+					<li><p>with npm:</p>
+						<pre><code class="lang-sh">npm install <span class="hljs-literal">true</span>-myth
+</code></pre>
+					</li>
+				</ul>
+				<p>Each of CommonJS, AMD, and ES modules are shipped, so you may reference them
+					directly from their installation in the <code>node_modules</code> directory. (This may be
+					helpful for using the library in different contexts, with the ES modules being
+				supplied especially so you can do tree-shaking with e.g. Rollup.)</p>
+				<details>
+					<summary>Distributed package layout</summary>
+					<code>node_modules/
+  true-myth/
+    dist/
+      commonjs/
+        src/
+          index.js
+          index.js.flow
+          maybe.js
+          maybe.js.flow
+          result.js
+          result.js.flow
+          utils.js
+          utils.js.flow
+      modules/
+        src/
+          index.js
+          index.js.flow
+          maybe.js
+          maybe.js.flow
+          result.js
+          result.js.flow
+          utils.js
+          utils.js.flow
+      types/
+        src/
+          index.d.ts
+          maybe.d.ts
+          result.d.ts
+          utils.d.ts</code>
+				</details>
+				<h3 id="typescript-and-flow">TypeScript and Flow</h3>
+				<p>Flow should <em>just work</em>. You can simply use the module as a normal ES6-style
+				module import, whether working in Node or using something like Webpack.</p>
+				<p>For TypeScript, whether using Webpack or Ember CLI or something else for your
+					bundling, you will be able to import the root module directly but will not be
+					able to import the more useful modules. To do so, you&#39;ll need to add this to
+				your <code>tsconfig.json</code>:</p>
+				<pre><code class="lang-json">{
+  <span class="hljs-attr">"compilerOptions"</span>: {
+    <span class="hljs-attr">"paths"</span>: {
+      <span class="hljs-attr">"true-myth/*"</span>: [<span class="hljs-string">"node_modules/true-myth/dist/types/src/*"</span>],
+    }
+  }
+}
+</code></pre>
+				<h2 id="roadmap">Roadmap</h2>
+				<p>Before this hits 1.0, I will do:</p>
+				<ul>
+					<li><p>[x] <code>Maybe</code></p>
+						<ul>
+							<li>[x] add aliases for the standard names, e.g. <code>bind</code>, <code>chain</code>, etc.</li>
+							<li>[x] finish documentation</li>
+						</ul>
+					</li>
+					<li><p>[x] <code>Result</code></p>
+						<ul>
+							<li>[x] implement</li>
+							<li>[x] document</li>
+						</ul>
+					</li>
+					<li><p>[x] <em>All</em> the exports</p>
+						<ul>
+							<li>[x] AMD</li>
+							<li>[x] ES modules</li>
+							<li>[x] CommonJS modules</li>
+						</ul>
+					</li>
+					<li><p>[x] Ember CLI integration</p>
+					</li>
+				</ul>
+				<p>If you think another type should be in this list, please <a href="https://github.com/chriskrycho/true-myth/issues">open an issue</a>!</p>
 				<h2 id="just-the-api-please">Just the API, please</h2>
 				<p><em>If you&#39;re unsure of why you would want to use the library, you might jump down
 				to <a href="#what-is-this-for"><strong>What is this for?</strong></a>.</em></p>
@@ -491,92 +580,6 @@ anObjectToWrap.desc.push(<span class="hljs-string">'.'</span>);
 					<li>Elm&#39;s <a href="http://package.elm-lang.org/packages/elm-lang/core/5.1.1/Maybe"><code>Maybe</code></a> and <a href="http://package.elm-lang.org/packages/elm-lang/core/5.1.1/Result"><code>Result</code></a> types and their
 					associated functions</li>
 				</ul>
-				<h2 id="setup">Setup</h2>
-				<p>Add True Myth to your dependencies:</p>
-				<ul>
-					<li><p>with Yarn:</p>
-						<pre><code class="lang-sh">yarn add <span class="hljs-literal">true</span>-myth
-</code></pre>
-					</li>
-					<li><p>with npm:</p>
-						<pre><code class="lang-sh">npm install <span class="hljs-literal">true</span>-myth
-</code></pre>
-					</li>
-				</ul>
-				<p>Each of CommonJS, AMD, and ES modules are shipped, so you may reference them
-					directly from their installation in the <code>node_modules</code> directory. (This may be
-					helpful for using the library in different contexts, with the ES modules being
-				supplied especially so you can do tree-shaking with e.g. Rollup.)</p>
-				<pre><code>node_modules/
-  true-myth/
-    dist/
-      commonjs/
-        src/
-          index<span class="hljs-selector-class">.js</span>
-          index<span class="hljs-selector-class">.js</span><span class="hljs-selector-class">.flow</span>
-          maybe<span class="hljs-selector-class">.js</span>
-          maybe<span class="hljs-selector-class">.js</span><span class="hljs-selector-class">.flow</span>
-          result<span class="hljs-selector-class">.js</span>
-          result<span class="hljs-selector-class">.js</span><span class="hljs-selector-class">.flow</span>
-          utils<span class="hljs-selector-class">.js</span>
-          utils<span class="hljs-selector-class">.js</span><span class="hljs-selector-class">.flow</span>
-      modules/
-        src/
-          index<span class="hljs-selector-class">.js</span>
-          index<span class="hljs-selector-class">.js</span><span class="hljs-selector-class">.flow</span>
-          maybe<span class="hljs-selector-class">.js</span>
-          maybe<span class="hljs-selector-class">.js</span><span class="hljs-selector-class">.flow</span>
-          result<span class="hljs-selector-class">.js</span>
-          result<span class="hljs-selector-class">.js</span><span class="hljs-selector-class">.flow</span>
-          utils<span class="hljs-selector-class">.js</span>
-          utils<span class="hljs-selector-class">.js</span><span class="hljs-selector-class">.flow</span>
-      types/
-        src/
-          index<span class="hljs-selector-class">.d</span><span class="hljs-selector-class">.ts</span>
-          maybe<span class="hljs-selector-class">.d</span><span class="hljs-selector-class">.ts</span>
-          result<span class="hljs-selector-class">.d</span><span class="hljs-selector-class">.ts</span>
-          utils<span class="hljs-selector-class">.d</span><span class="hljs-selector-class">.ts</span>
-</code></pre><h3 id="typescript-and-flow">TypeScript and Flow</h3>
-				<p>Flow should <em>just work</em>. You can simply use the module as a normal ES6-style
-				module import, whether working in Node or using something like Webpack.</p>
-				<p>For TypeScript, whether using Webpack or Ember CLI or something else for your
-					bundling, you will be able to import the root module directly but will not be
-					able to import the more useful modules. To do so, you&#39;ll need to add this to
-				your <code>tsconfig.json</code>:</p>
-				<pre><code class="lang-json">{
-  <span class="hljs-attr">"compilerOptions"</span>: {
-    <span class="hljs-attr">"paths"</span>: {
-      <span class="hljs-attr">"true-myth/*"</span>: [<span class="hljs-string">"node_modules/true-myth/dist/types/src/*"</span>],
-    }
-  }
-}
-</code></pre>
-				<h2 id="roadmap">Roadmap</h2>
-				<p>Before this hits 1.0, I will do:</p>
-				<ul>
-					<li><p>[x] <code>Maybe</code></p>
-						<ul>
-							<li>[x] add aliases for the standard names, e.g. <code>bind</code>, <code>chain</code>, etc.</li>
-							<li>[x] finish documentation</li>
-						</ul>
-					</li>
-					<li><p>[x] <code>Result</code></p>
-						<ul>
-							<li>[x] implement</li>
-							<li>[x] document</li>
-						</ul>
-					</li>
-					<li><p>[x] <em>All</em> the exports</p>
-						<ul>
-							<li>[x] AMD</li>
-							<li>[x] ES modules</li>
-							<li>[x] CommonJS modules</li>
-						</ul>
-					</li>
-					<li><p>[x] Ember CLI integration</p>
-					</li>
-				</ul>
-				<p>If you think another type should be in this list, please <a href="https://github.com/chriskrycho/true-myth/issues">open an issue</a>!</p>
 				<h2 id="why-not-">Why not...</h2>
 				<p>There are other great functional programming libraries out there... so why not
 				just use one of them?</p>

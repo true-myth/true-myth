@@ -15,6 +15,9 @@ style.</p>
 [![](https://img.shields.io/badge/js.org-dns-ffb400.svg?style=flat-square)](https://js.org)
 [![docs built with TypeDoc](https://img.shields.io/badge/documented-with_TypeDoc-009fb5.svg?style=flat-square)](http://true-myth.js.org)
 
+- [Setup](#setup)
+    - [TypeScript and Flow](#typescript-and-flow)
+- [Roadmap](#roadmap)
 - [Just the API, please](#just-the-api-please)
     - [`Result` with a functional style](#result-with-a-functional-style)
     - [`Maybe` with the method style](#maybe-with-the-method-style)
@@ -31,14 +34,112 @@ style.</p>
         - [`Result`](#result)
             - [The `Result` variants: `Ok` and `Err`](#the-result-variants-ok-and-err)
     - [Inspiration](#inspiration)
-- [Setup](#setup)
-    - [TypeScript and Flow](#typescript-and-flow)
-- [Roadmap](#roadmap)
 - [Why not...](#why-not)
     - [Folktale](#folktale)
     - [Sanctuary](#sanctuary)
 - [Migrating from existing libs](#migrating-from-existing-libs)
 - [What's with the name?](#whats-with-the-name)
+
+## Setup
+
+Add True Myth to your dependencies:
+
+-   with Yarn:
+
+    ```sh
+    yarn add true-myth
+    ```
+
+-   with npm:
+
+    ```sh
+    npm install true-myth
+    ```
+
+Each of CommonJS, AMD, and ES modules are shipped, so you may reference them
+directly from their installation in the `node_modules` directory. (This may be
+helpful for using the library in different contexts, with the ES modules being
+supplied especially so you can do tree-shaking with e.g. Rollup.)
+
+<details>
+<summary>Distributed package layout</summary>
+
+```
+node_modules/
+  true-myth/
+    dist/
+      commonjs/
+        src/
+          index.js
+          index.js.flow
+          maybe.js
+          maybe.js.flow
+          result.js
+          result.js.flow
+          utils.js
+          utils.js.flow
+      modules/
+        src/
+          index.js
+          index.js.flow
+          maybe.js
+          maybe.js.flow
+          result.js
+          result.js.flow
+          utils.js
+          utils.js.flow
+      types/
+        src/
+          index.d.ts
+          maybe.d.ts
+          result.d.ts
+          utils.d.ts
+```
+
+</details>
+
+### TypeScript and Flow
+
+Flow should *just work*. You can simply use the module as a normal ES6-style
+module import, whether working in Node or using something like Webpack.
+
+For TypeScript, whether using Webpack or Ember CLI or something else for your
+bundling, you will be able to import the root module directly but will not be
+able to import the more useful modules. To do so, you'll need to add this to
+your `tsconfig.json`:
+
+```json
+{
+  "compilerOptions": {
+    "paths": {
+      "true-myth/*": ["node_modules/true-myth/dist/types/src/*"],
+    }
+  }
+}
+```
+
+## Roadmap
+
+Before this hits 1.0, I will do:
+
+- [x] `Maybe`
+    - [x] add aliases for the standard names, e.g. `bind`, `chain`, etc.
+    - [x] finish documentation
+
+- [x] `Result`
+    - [x] implement
+    - [x] document
+
+- [x] *All* the exports
+    - [x] AMD
+    - [x] ES modules
+    - [x] CommonJS modules
+
+- [x] Ember CLI integration
+
+If you think another type should be in this list, please [open an issue]!
+
+[open an issue]: https://github.com/chriskrycho/true-myth/issues
 
 ## Just the API, please
 
@@ -525,102 +626,6 @@ draws particular inspiration from:
 [ft-result]: http://folktale.origamitower.com/api/v2.0.0/en/folktale.result.html
 [elm-maybe]: http://package.elm-lang.org/packages/elm-lang/core/5.1.1/Maybe
 [elm-result]: http://package.elm-lang.org/packages/elm-lang/core/5.1.1/Result
-
-## Setup
-
-Add True Myth to your dependencies:
-
--   with Yarn:
-
-    ```sh
-    yarn add true-myth
-    ```
-
--   with npm:
-
-    ```sh
-    npm install true-myth
-    ```
-
-Each of CommonJS, AMD, and ES modules are shipped, so you may reference them
-directly from their installation in the `node_modules` directory. (This may be
-helpful for using the library in different contexts, with the ES modules being
-supplied especially so you can do tree-shaking with e.g. Rollup.)
-
-```
-node_modules/
-  true-myth/
-    dist/
-      commonjs/
-        src/
-          index.js
-          index.js.flow
-          maybe.js
-          maybe.js.flow
-          result.js
-          result.js.flow
-          utils.js
-          utils.js.flow
-      modules/
-        src/
-          index.js
-          index.js.flow
-          maybe.js
-          maybe.js.flow
-          result.js
-          result.js.flow
-          utils.js
-          utils.js.flow
-      types/
-        src/
-          index.d.ts
-          maybe.d.ts
-          result.d.ts
-          utils.d.ts
-```
-
-### TypeScript and Flow
-
-Flow should *just work*. You can simply use the module as a normal ES6-style
-module import, whether working in Node or using something like Webpack.
-
-For TypeScript, whether using Webpack or Ember CLI or something else for your
-bundling, you will be able to import the root module directly but will not be
-able to import the more useful modules. To do so, you'll need to add this to
-your `tsconfig.json`:
-
-```json
-{
-  "compilerOptions": {
-    "paths": {
-      "true-myth/*": ["node_modules/true-myth/dist/types/src/*"],
-    }
-  }
-}
-```
-
-## Roadmap
-
-Before this hits 1.0, I will do:
-
-- [x] `Maybe`
-    - [x] add aliases for the standard names, e.g. `bind`, `chain`, etc.
-    - [x] finish documentation
-
-- [x] `Result`
-    - [x] implement
-    - [x] document
-
-- [x] *All* the exports
-    - [x] AMD
-    - [x] ES modules
-    - [x] CommonJS modules
-
-- [x] Ember CLI integration
-
-If you think another type should be in this list, please [open an issue]!
-
-[open an issue]: https://github.com/chriskrycho/true-myth/issues
 
 ## Why not...
 

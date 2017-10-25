@@ -1,4 +1,4 @@
-/** [[include:result.md]] */
+/** [[include:doc/result.md]] */
 
 /** (keep typedoc from getting confused by the import) */
 import { Maybe, isJust, just, nothing, unsafelyUnwrap as unwrapMaybe } from './maybe';
