@@ -25,7 +25,8 @@
     "main": "ember-addon.js"
   },
   "keywords": [
-    "ember-addon", "typescript"
+    "ember-addon",
+    "typescript"
   ],
   "scripts": {
     "clean": "rimraf dist",
@@ -33,7 +34,7 @@
     "precommit": "./build-docs && git add docs",
     "problems": "node ./scripts/problems.js",
     "preversion": "yarn run test",
-    "prepack": "ember build -prod",
+    "prepack": "ember build -prod && cp ./src/flow/* ./dist/modules/src && cp ./src/flow/* ./dist/commonjs/src",
     "build": "ember build -prod",
     "test": "jest",
     "tdd": "jest --watch"
@@ -41,8 +42,9 @@
   "license": "MIT",
   "devDependencies": {
     "@types/jest": "^21.1.0",
-    "husky": "^0.14.3",
     "ember-cli": "^2.16.2",
+    "flow-bin": "^0.57.3",
+    "husky": "^0.14.3",
     "jest": "^21.2.1",
     "libkit": "^0.5.17",
     "prettier": "^1.7.0",
