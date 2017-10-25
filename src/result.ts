@@ -34,6 +34,9 @@ export interface ResultClasses<T, E> {
   /** Method variant for [`Result.mapOrElse`](../modules/_result_.html#maporelse) */
   mapOrElse<U>(this: Result<T, E>, orElseFn: (...args: any[]) => U, mapFn: (t: T) => U): U;
 
+  /** Method variant for [`Result.match`](../modules/_result_.html#match) */
+  match<T, U>(this: Result<T, E>, matchObj: { Ok: (value: T) => U, Err: (err: E) => U }): U;
+
   /** Method variant for [`Result.mapErr`](../modules/_result_.html#maperr) */
   mapErr<F>(this: Result<T, E>, mapErrFn: (e: E) => F): Result<T, F>;
 
@@ -148,6 +151,11 @@ export class Ok<T, E> implements ResultClasses<T, E> {
   /** Method variant for [`Result.mapOrElse`](../modules/_result_.html#maporelse) */
   mapOrElse<U>(this: Result<T, E>, orElseFn: (...args: any[]) => U, mapFn: (t: T) => U): U {
     return mapOrElse(orElseFn, mapFn, this);
+  }
+
+  /** Method variant for [`Result.match`](../modules/_result_.html#match) */
+  match<T, U>(this: Result<T, E>, matchObj: { Ok: (value: T) => U, Err: (err: E) => U }): U {
+    return mapOrElse(matchObj.Err, matchObj.Ok, this);
   }
 
   /** Method variant for [`Result.mapErr`](../modules/_result_.html#maperr) */
@@ -290,6 +298,11 @@ export class Err<T, E> implements ResultClasses<T, E> {
   /** Method variant for [`Result.mapOrElse`](../modules/_result_.html#maporelse) */
   mapOrElse<U>(this: Result<T, E>, orElseFn: (...args: any[]) => U, mapFn: (t: T) => U): U {
     return mapOrElse(orElseFn, mapFn, this);
+  }
+
+  /** Method variant for [`Result.match`](../modules/_result_.html#match) */
+  match<T, U>(this: Result<T, E>, matchObj: { Ok: (value: T) => U, Err: (err: E) => U }): U {
+    return mapOrElse(matchObj.Err, matchObj.Ok, this);
   }
 
   /** Method variant for [`Result.mapErr`](../modules/_result_.html#maperr) */
