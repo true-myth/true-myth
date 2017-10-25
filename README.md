@@ -551,44 +551,51 @@ supplied especially so you can do tree-shaking with e.g. Rollup.)
 node_modules/
   true-myth/
     dist/
-      amd/
-        index.js
-        index.d.ts
-        index.js.map
-        index.js.flow
       commonjs/
+        src/
+          index.js
+          index.js.flow
+          maybe.js
+          maybe.js.flow
+          result.js
+          result.js.flow
+          utils.js
+          utils.js.flow
+      modules/
         index.js
-        index.d.ts
-        index.js.map
         index.js.flow
-      es/
-        index.js
-        index.d.ts
-        index.js.flow
-        index.js.map
         maybe.js
-        maybe.d.ts
         maybe.js.flow
-        maybe.js.map
         result.js
-        result.d.ts
         result.js.flow
-        result.js.map
         utils.js
-        utils.d.ts
         utils.js.flow
-        utils.js.map
+      types/
+        index.d.ts
+        maybe.d.ts
+        result.d.ts
+        utils.d.ts
 ```
 
 ### TypeScript and Flow
 
-TypeScript and Flow should *just work*. You can simply use the module as a normal
-ES6-style module import, whether working in Node or using something like Webpack
-or Ember CLI for bundling.
+Flow should *just work*. You can simply use the module as a normal ES6-style
+module import, whether working in Node or using something like Webpack.
 
-Moreover, type defs are provided for both in each of the specific formats (as
-you can see in the listing above), so you can reference them directly if you
-need to.
+For TypeScript, whether using Webpack or Ember CLI or something else for your
+bundling, you will be able to import the root module directly but will not be
+able to import the more useful modules. To do so, you'll need to add this to
+your `tsconfig.json`:
+
+```json
+{
+  "compilerOptions": {
+    "paths": [
+      "true-myth/*": ["node_modules/true-myth/dist/types/src/*"],
+    ]
+  }
+}
+```
 
 ## Roadmap
 
@@ -607,7 +614,7 @@ Before this hits 1.0, I will do:
     - [x] ES modules
     - [x] CommonJS modules
 
-- [ ] Ember CLI integration
+- [x] Ember CLI integration
 
 If you think another type should be in this list, please [open an issue]!
 

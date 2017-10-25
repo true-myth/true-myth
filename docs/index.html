@@ -510,40 +510,45 @@ anObjectToWrap.desc.push(<span class="hljs-string">'.'</span>);
 				<pre><code>node_modules/
   true-myth/
     dist/
-      amd/
-        index<span class="hljs-selector-class">.js</span>
-        index<span class="hljs-selector-class">.d</span><span class="hljs-selector-class">.ts</span>
-        index<span class="hljs-selector-class">.js</span><span class="hljs-selector-class">.map</span>
-        index<span class="hljs-selector-class">.js</span><span class="hljs-selector-class">.flow</span>
       commonjs/
+        src/
+          index<span class="hljs-selector-class">.js</span>
+          index<span class="hljs-selector-class">.js</span><span class="hljs-selector-class">.flow</span>
+          maybe<span class="hljs-selector-class">.js</span>
+          maybe<span class="hljs-selector-class">.js</span><span class="hljs-selector-class">.flow</span>
+          result<span class="hljs-selector-class">.js</span>
+          result<span class="hljs-selector-class">.js</span><span class="hljs-selector-class">.flow</span>
+          utils<span class="hljs-selector-class">.js</span>
+          utils<span class="hljs-selector-class">.js</span><span class="hljs-selector-class">.flow</span>
+      modules/
         index<span class="hljs-selector-class">.js</span>
-        index<span class="hljs-selector-class">.d</span><span class="hljs-selector-class">.ts</span>
-        index<span class="hljs-selector-class">.js</span><span class="hljs-selector-class">.map</span>
         index<span class="hljs-selector-class">.js</span><span class="hljs-selector-class">.flow</span>
-      es/
-        index<span class="hljs-selector-class">.js</span>
-        index<span class="hljs-selector-class">.d</span><span class="hljs-selector-class">.ts</span>
-        index<span class="hljs-selector-class">.js</span><span class="hljs-selector-class">.flow</span>
-        index<span class="hljs-selector-class">.js</span><span class="hljs-selector-class">.map</span>
         maybe<span class="hljs-selector-class">.js</span>
-        maybe<span class="hljs-selector-class">.d</span><span class="hljs-selector-class">.ts</span>
         maybe<span class="hljs-selector-class">.js</span><span class="hljs-selector-class">.flow</span>
-        maybe<span class="hljs-selector-class">.js</span><span class="hljs-selector-class">.map</span>
         result<span class="hljs-selector-class">.js</span>
-        result<span class="hljs-selector-class">.d</span><span class="hljs-selector-class">.ts</span>
         result<span class="hljs-selector-class">.js</span><span class="hljs-selector-class">.flow</span>
-        result<span class="hljs-selector-class">.js</span><span class="hljs-selector-class">.map</span>
         utils<span class="hljs-selector-class">.js</span>
-        utils<span class="hljs-selector-class">.d</span><span class="hljs-selector-class">.ts</span>
         utils<span class="hljs-selector-class">.js</span><span class="hljs-selector-class">.flow</span>
-        utils<span class="hljs-selector-class">.js</span><span class="hljs-selector-class">.map</span>
+      types/
+        index<span class="hljs-selector-class">.d</span><span class="hljs-selector-class">.ts</span>
+        maybe<span class="hljs-selector-class">.d</span><span class="hljs-selector-class">.ts</span>
+        result<span class="hljs-selector-class">.d</span><span class="hljs-selector-class">.ts</span>
+        utils<span class="hljs-selector-class">.d</span><span class="hljs-selector-class">.ts</span>
 </code></pre><h3 id="typescript-and-flow">TypeScript and Flow</h3>
-				<p>TypeScript and Flow should <em>just work</em>. You can simply use the module as a normal
-					ES6-style module import, whether working in Node or using something like Webpack
-				or Ember CLI for bundling.</p>
-				<p>Moreover, type defs are provided for both in each of the specific formats (as
-					you can see in the listing above), so you can reference them directly if you
-				need to.</p>
+				<p>Flow should <em>just work</em>. You can simply use the module as a normal ES6-style
+				module import, whether working in Node or using something like Webpack.</p>
+				<p>For TypeScript, whether using Webpack or Ember CLI or something else for your
+					bundling, you will be able to import the root module directly but will not be
+					able to import the more useful modules. To do so, you&#39;ll need to add this to
+				your <code>tsconfig.json</code>:</p>
+				<pre><code class="lang-json">{
+  <span class="hljs-attr">"compilerOptions"</span>: {
+    <span class="hljs-attr">"paths"</span>: [
+      <span class="hljs-string">"true-myth/*"</span>: [<span class="hljs-string">"node_modules/true-myth/dist/types/src/*"</span>],
+    ]
+  }
+}
+</code></pre>
 				<h2 id="roadmap">Roadmap</h2>
 				<p>Before this hits 1.0, I will do:</p>
 				<ul>
@@ -566,7 +571,7 @@ anObjectToWrap.desc.push(<span class="hljs-string">'.'</span>);
 							<li>[x] CommonJS modules</li>
 						</ul>
 					</li>
-					<li><p>[ ] Ember CLI integration</p>
+					<li><p>[x] Ember CLI integration</p>
 					</li>
 				</ul>
 				<p>If you think another type should be in this list, please <a href="https://github.com/chriskrycho/true-myth/issues">open an issue</a>!</p>
