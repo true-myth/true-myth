@@ -111,6 +111,12 @@
 				<section class="tsd-panel tsd-index-panel">
 					<div class="tsd-index-content">
 						<section class="tsd-index-section ">
+							<h3>Constructors</h3>
+							<ul class="tsd-index-list">
+								<li class="tsd-kind-constructor tsd-parent-kind-class"><a href="_maybe_.nothing.html#constructor" class="tsd-kind-icon">constructor</a></li>
+							</ul>
+						</section>
+						<section class="tsd-index-section ">
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-property tsd-parent-kind-class"><a href="_maybe_.nothing.html#variant" class="tsd-kind-icon">variant</a></li>
@@ -140,6 +146,57 @@
 							</ul>
 						</section>
 					</div>
+				</section>
+			</section>
+			<section class="tsd-panel-group tsd-member-group ">
+				<h2>Constructors</h2>
+				<section class="tsd-panel tsd-member tsd-kind-constructor tsd-parent-kind-class">
+					<a name="constructor" class="tsd-anchor"></a>
+					<h3>constructor</h3>
+					<ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">new <wbr>Nothing<span class="tsd-signature-symbol">(</span>_value<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_maybe_.nothing.html" class="tsd-signature-type">Nothing</a></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in maybe.ts:225</li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Create an instance of <code>Maybe.Nothing</code> with <code>new</code>.</p>
+								</div>
+								<dl class="tsd-comment-tags">
+									<dt>note</dt>
+									<dd><p>While you <em>may</em> create the <code>Nothing</code> type via normal JavaScript
+											class construction, it is not recommended for the functional style for
+											which the library is intended. Instead, use <a href="../modules/_maybe_.html#of"><code>Maybe.of</code></a> (for the general
+										case) or <a href="../modules/_maybe_.html#nothing"><code>Maybe.nothing</code></a> for this specific case.</p>
+										<pre><code class="lang-ts"><span class="hljs-comment">// Avoid:</span>
+<span class="hljs-keyword">const</span> aNothing = <span class="hljs-keyword">new</span> Maybe.Err();
+
+<span class="hljs-comment">// Prefer:</span>
+<span class="hljs-keyword">const</span> aNothing = Maybe.nothing();
+</code></pre>
+										<p><code>null</code> and <code>undefined</code> are allowed so that you may explicitly construct the
+											<code>Err</code> type with a known <code>null</code> or <code>undefined</code> value. (This maybe helpful
+										primarily when transitioning a codebase to the use of <code>Maybe</code>.)</p>
+									</dd>
+									<dt>throws</dt>
+									<dd><p>If you pass <code>null</code> or <code>undefined</code>.</p>
+									</dd>
+								</dl>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5><span class="tsd-flag ts-flagOptional">Optional</span> _value: <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <a href="_maybe_.nothing.html" class="tsd-signature-type">Nothing</a></h4>
+						</li>
+					</ul>
 				</section>
 			</section>
 			<section class="tsd-panel-group tsd-member-group ">
@@ -174,7 +231,7 @@
 							<aside class="tsd-sources">
 								<p>Implementation of <a href="../interfaces/_maybe_.maybeclasses.html">MaybeClasses</a>.<a href="../interfaces/_maybe_.maybeclasses.html#and">and</a></p>
 								<ul>
-									<li>Defined in maybe.ts:268</li>
+									<li>Defined in maybe.ts:297</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -211,7 +268,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in maybe.ts:273</li>
+									<li>Defined in maybe.ts:302</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -266,7 +323,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in maybe.ts:278</li>
+									<li>Defined in maybe.ts:307</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -321,7 +378,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in maybe.ts:283</li>
+									<li>Defined in maybe.ts:312</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -377,7 +434,7 @@
 							<aside class="tsd-sources">
 								<p>Implementation of <a href="../interfaces/_maybe_.maybeclasses.html">MaybeClasses</a>.<a href="../interfaces/_maybe_.maybeclasses.html#isjust">isJust</a></p>
 								<ul>
-									<li>Defined in maybe.ts:228</li>
+									<li>Defined in maybe.ts:257</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -406,7 +463,7 @@
 							<aside class="tsd-sources">
 								<p>Implementation of <a href="../interfaces/_maybe_.maybeclasses.html">MaybeClasses</a>.<a href="../interfaces/_maybe_.maybeclasses.html#isnothing">isNothing</a></p>
 								<ul>
-									<li>Defined in maybe.ts:233</li>
+									<li>Defined in maybe.ts:262</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -434,7 +491,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in maybe.ts:238</li>
+									<li>Defined in maybe.ts:267</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -489,7 +546,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in maybe.ts:243</li>
+									<li>Defined in maybe.ts:272</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -547,7 +604,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in maybe.ts:248</li>
+									<li>Defined in maybe.ts:277</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -617,14 +674,14 @@
 					<a name="match" class="tsd-anchor"></a>
 					<h3>match</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-has-type-parameter">
-						<li class="tsd-signature tsd-kind-icon">match&lt;T, U&gt;<span class="tsd-signature-symbol">(</span>this<span class="tsd-signature-symbol">: </span><a href="../modules/_maybe_.html#maybe" class="tsd-signature-type">Maybe</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span>, matchObj<span class="tsd-signature-symbol">: </span><a href="../modules/_maybe_.html#matcher" class="tsd-signature-type">Matcher</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">U</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">U</span></li>
+						<li class="tsd-signature tsd-kind-icon">match&lt;U&gt;<span class="tsd-signature-symbol">(</span>this<span class="tsd-signature-symbol">: </span><a href="../modules/_maybe_.html#maybe" class="tsd-signature-type">Maybe</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span>, matcher<span class="tsd-signature-symbol">: </span><a href="../modules/_maybe_.html#matcher" class="tsd-signature-type">Matcher</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">U</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">U</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<p>Implementation of <a href="../interfaces/_maybe_.maybeclasses.html">MaybeClasses</a>.<a href="../interfaces/_maybe_.maybeclasses.html#match">match</a></p>
 								<ul>
-									<li>Defined in maybe.ts:253</li>
+									<li>Defined in maybe.ts:282</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -635,9 +692,6 @@
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
 							<ul class="tsd-type-parameters">
 								<li>
-									<h4>T</h4>
-								</li>
-								<li>
 									<h4>U</h4>
 								</li>
 							</ul>
@@ -647,7 +701,7 @@
 									<h5>this: <a href="../modules/_maybe_.html#maybe" class="tsd-signature-type">Maybe</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span></h5>
 								</li>
 								<li>
-									<h5>matchObj: <a href="../modules/_maybe_.html#matcher" class="tsd-signature-type">Matcher</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">U</span><span class="tsd-signature-symbol">&gt;</span></h5>
+									<h5>matcher: <a href="../modules/_maybe_.html#matcher" class="tsd-signature-type">Matcher</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">U</span><span class="tsd-signature-symbol">&gt;</span></h5>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">U</span></h4>
@@ -665,7 +719,7 @@
 							<aside class="tsd-sources">
 								<p>Implementation of <a href="../interfaces/_maybe_.maybeclasses.html">MaybeClasses</a>.<a href="../interfaces/_maybe_.maybeclasses.html#or">or</a></p>
 								<ul>
-									<li>Defined in maybe.ts:258</li>
+									<li>Defined in maybe.ts:287</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -696,7 +750,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in maybe.ts:263</li>
+									<li>Defined in maybe.ts:292</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -745,7 +799,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in maybe.ts:308</li>
+									<li>Defined in maybe.ts:337</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -801,7 +855,7 @@
 							<aside class="tsd-sources">
 								<p>Implementation of <a href="../interfaces/_maybe_.maybeclasses.html">MaybeClasses</a>.<a href="../interfaces/_maybe_.maybeclasses.html#tookorerr">toOkOrErr</a></p>
 								<ul>
-									<li>Defined in maybe.ts:303</li>
+									<li>Defined in maybe.ts:332</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -839,7 +893,7 @@
 							<aside class="tsd-sources">
 								<p>Implementation of <a href="../interfaces/_maybe_.maybeclasses.html">MaybeClasses</a>.<a href="../interfaces/_maybe_.maybeclasses.html#tostring">toString</a></p>
 								<ul>
-									<li>Defined in maybe.ts:313</li>
+									<li>Defined in maybe.ts:342</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -868,7 +922,7 @@
 							<aside class="tsd-sources">
 								<p>Implementation of <a href="../interfaces/_maybe_.maybeclasses.html">MaybeClasses</a>.<a href="../interfaces/_maybe_.maybeclasses.html#unsafelyunwrap">unsafelyUnwrap</a></p>
 								<ul>
-									<li>Defined in maybe.ts:288</li>
+									<li>Defined in maybe.ts:317</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -890,7 +944,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in maybe.ts:293</li>
+									<li>Defined in maybe.ts:322</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -921,7 +975,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in maybe.ts:298</li>
+									<li>Defined in maybe.ts:327</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -995,6 +1049,9 @@
 					<li class="current tsd-kind-class tsd-parent-kind-external-module tsd-has-type-parameter">
 						<a href="_maybe_.nothing.html" class="tsd-kind-icon">Nothing</a>
 						<ul>
+							<li class=" tsd-kind-constructor tsd-parent-kind-class">
+								<a href="_maybe_.nothing.html#constructor" class="tsd-kind-icon">constructor</a>
+							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class">
 								<a href="_maybe_.nothing.html#variant" class="tsd-kind-icon">variant</a>
 							</li>

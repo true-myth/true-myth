@@ -95,7 +95,7 @@ export class Ok<T, E> implements ResultClasses<T, E> {
   /**
     Create an instance of `Result.Ok` with `new`.
 
-    <!---->**Note:** While you *may* create the `Result` type via normal
+    Note: While you *may* create the `Result` type via normal
     JavaScript class construction, it is not recommended for the functional
     style for which the library is intended. Instead, use [`Result.ok`].
 
@@ -112,13 +112,13 @@ export class Ok<T, E> implements ResultClasses<T, E> {
     @param value
     The value to wrap in a `Result.Ok`.
 
-    `null` and `undefined` are allowed by the type signature so that the
+    Note: `null` and `undefined` are allowed by the type signature so that the
     constructor may `throw` on those rather than constructing a type like
     `Result<undefined>`.
 
     @throws If you pass `null` or `undefined`.
     */
-  constructor(value: T | null | undefined) {
+  constructor(value?: T | null) {
     if (isVoid(value)) {
       throw new Error(
         'Tried to construct `Err` with `null` or `undefined`. Maybe you want `Maybe.Nothing`?'
@@ -242,7 +242,7 @@ export class Err<T, E> implements ResultClasses<T, E> {
   /**
     Create an instance of `Result.Err` with `new`.
 
-    <!---->**Note:** While you *may* create the `Result` type via normal
+    Note: While you *may* create the `Result` type via normal
     JavaScript class construction, it is not recommended for the functional
     style for which the library is intended. Instead, use [`Result.err`].
 
@@ -259,13 +259,13 @@ export class Err<T, E> implements ResultClasses<T, E> {
     @param error
     The value to wrap in a `Result.Err`.
 
-    `null` and `undefined` are allowed by the type signature so that the
+    `Note: null` and `undefined` are allowed by the type signature so that the
     constructor may `throw` on those rather than constructing a type like
-    `Result<undefined>`.
+    `Result<number, undefined>`.
 
     @throws If you pass `null` or `undefined`.
     */
-  constructor(error: E | null | undefined) {
+  constructor(error?: E | null) {
     if (isVoid(error)) {
       throw new Error(
         'Tried to construct `Err` with `null` or `undefined`. Maybe you want `Maybe.Nothing`?'
@@ -390,14 +390,15 @@ export const isErr = <T, E>(result: Result<T, E>): result is Err<T, E> =>
 /**
   Create an instance of `Result.Ok`.
 
-  `null` and `undefined` are allowed by the type signature so that the function
-  may `throw` on those rather than constructing a type like `Result<undefined>`.
+  Note: `null` and `undefined` are allowed by the type signature so that the
+  function may `throw` on those rather than constructing a type like
+  `Result<undefined, string>`.
 
   @typeparam T The type of the item contained in the `Result`.
   @param value The value to wrap in a `Result.Ok`.
   @throws      If you pass `null` or `undefined`.
  */
-export const ok = <T, E>(value: T | null | undefined): Result<T, E> => new Ok<T, E>(value);
+export const ok = <T, E>(value?: T | null): Result<T, E> => new Ok<T, E>(value);
 
 /**
   Create an instance of `Result.Error`.
@@ -410,9 +411,13 @@ export const ok = <T, E>(value: T | null | undefined): Result<T, E> => new Ok<T,
   const notString = Result.err<number, string>('something went wrong');
   ```
 
+  Note: `null` and `undefined` are allowed by the type signature so that the
+  function may `throw` on those rather than constructing a type like
+  `Result<number, undefined>`.
+
   @typeparam T The type of the item contained in the `Result`.
  */
-export const err = <T, E>(error: E): Result<T, E> => new Err<T, E>(error);
+export const err = <T, E>(error?: E | null): Result<T, E> => new Err<T, E>(error);
 
 /**
   A value which may (`Ok`) or may not (`Err`) be present.

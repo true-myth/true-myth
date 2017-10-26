@@ -88,7 +88,7 @@ export class Just<T> implements MaybeClasses<T> {
   /**
     Create an instance of `Maybe.Just` with `new`.
 
-    **Note:** While you *may* create the `Just` type via normal JavaScript
+    @note While you *may* create the `Just` type via normal JavaScript
     class construction, it is not recommended for the functional style for
     which the library is intended. Instead, use [`Maybe.of`] (for the general
     case) or [`Maybe.just`] for this specific case.
@@ -113,7 +113,7 @@ export class Just<T> implements MaybeClasses<T> {
 
     @throws      If you pass `null` or `undefined`.
    */
-  constructor(value: T | null | undefined) {
+  constructor(value?: T | null) {
     if (isVoid(value)) {
       throw new Error('Tried to construct `Just` with `null` or `undefined`');
     }
@@ -223,6 +223,35 @@ export class Just<T> implements MaybeClasses<T> {
 export class Nothing<T> implements MaybeClasses<T> {
   /** `Nothing` is always [`Variant.Nothing`](../enums/_maybe_.variant#nothing). */
   variant = Variant.Nothing;
+
+  /**
+    Create an instance of `Maybe.Nothing` with `new`.
+
+    @note While you *may* create the `Nothing` type via normal JavaScript
+    class construction, it is not recommended for the functional style for
+    which the library is intended. Instead, use [`Maybe.of`] (for the general
+    case) or [`Maybe.nothing`] for this specific case.
+
+    [`Maybe.of`]: ../modules/_maybe_.html#of
+    [`Maybe.nothing`]: ../modules/_maybe_.html#nothing
+
+    ```ts
+    // Avoid:
+    const aNothing = new Maybe.Err();
+
+    // Prefer:
+    const aNothing = Maybe.nothing();
+    ```
+
+    `null` and `undefined` are allowed so that you may explicitly construct the
+    `Err` type with a known `null` or `undefined` value. (This maybe helpful
+    primarily when transitioning a codebase to the use of `Maybe`.)
+
+    @throws      If you pass `null` or `undefined`.
+   */
+  constructor(_value?: null) {
+    /* nothing to do */
+  }
 
   /** Method variant for [`Maybe.isJust`](../modules/_maybe_.html#isjust) */
   isJust(this: Maybe<T>): this is Just<T> {
@@ -348,7 +377,7 @@ export const isNothing = <T>(maybe: Maybe<T>): maybe is Nothing<T> =>
   @returns     An instance of `Maybe.Just<T>`.
   @throws      If you pass `null` or `undefined`.
  */
-export const just = <T>(value: T | null | undefined): Maybe<T> => new Just<T>(value);
+export const just = <T>(value?: T | null): Maybe<T> => new Just<T>(value);
 
 /**
   Create an instance of `Maybe.Nothing`.
@@ -364,7 +393,7 @@ export const just = <T>(value: T | null | undefined): Maybe<T> => new Just<T>(va
   @typeparam T The type of the item contained in the `Maybe`.
   @returns     An instance of `Maybe.Nothing<T>`.
  */
-export const nothing = <T>(): Maybe<T> => new Nothing<T>();
+export const nothing = <T>(_value?: null): Maybe<T> => new Nothing<T>(_value);
 
 /** A value which may (`Just<T>`) or may not (`Nothing`) be present. */
 export type Maybe<T> = Just<T> | Nothing<T>;
@@ -391,8 +420,7 @@ export type Maybe<T> = Just<T> | Nothing<T>;
                the result will be `Nothing`; otherwise it will be the type of
                the value passed.
  */
-export const of = <T>(value: T | undefined | null): Maybe<T> =>
-  isVoid(value) ? nothing<T>() : just(value);
+export const of = <T>(value?: T | null): Maybe<T> => (isVoid(value) ? nothing<T>() : just(value));
 
 /** Alias for [`of`](#of), primarily for compatibility with Folktale. */
 export const fromNullable = of;
