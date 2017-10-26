@@ -130,6 +130,21 @@ describe('`Maybe` pure functions', () => {
     expect(Maybe.mapOrElse(toDefault, length, aNothing)).toBe(theDefault);
   });
 
+  test('`match`', () => {
+    const theValue = 'a string';
+    const adjust = Maybe.just(theValue);
+    const aNothing = Maybe.nothing();
+
+    expect(Maybe.match({
+      Just: (val) => val + ', yo',
+      Nothing: () => 'rats, nothing'
+    }, adjust)).toEqual('a string, yo');
+    expect(Maybe.match({
+      Just: (val) => val + ', yo',
+      Nothing: () => 'rats, nothing'
+    }, aNothing)).toEqual('rats, nothing');
+  });
+
   test('`and`', () => {
     const aJust = Maybe.just(42);
     const anotherJust = Maybe.just('a string');
@@ -274,6 +289,16 @@ describe('`Maybe.Just` class', () => {
     expect(theJust.mapOrElse(aDefault, length)).toEqual(length(theValue));
   });
 
+  test('`match` method', () => {
+    const theValue = 'this is a string';
+    const theJust = new Maybe.Just(theValue);
+
+    expect(theJust.match({
+      Just: (val) => val + ', yo',
+      Nothing: () => 'rats, nothing'
+    })).toEqual('this is a string, yo');
+  });
+
   test('`or` method', () => {
     const theJust = new Maybe.Just({ neat: 'thing' });
     const anotherJust = new Maybe.Just({ neat: 'waffles' });
@@ -392,6 +417,17 @@ describe('`Maybe.Nothing` class', () => {
     const getNeat = (x: Neat) => x.neat;
     const theNothing = new Maybe.Nothing<Neat>();
     expect(theNothing.mapOrElse(getDefaultValue, getNeat)).toBe(theDefaultValue);
+  });
+
+  test('`match` method', () => {
+    const theValue = 'this is a string';
+    const nietzsche = new Maybe.Nothing();
+    const soDeepMan = 'Whoever fights monsters should see to it that in the process he does not become a monster. And if you gaze long enough into an abyss, the abyss will gaze back into you.';
+
+    expect(nietzsche.match({
+      Just: (val) => val + ', yo',
+      Nothing: () => soDeepMan
+    })).toBe(soDeepMan);
   });
 
   test('`or` method', () => {
