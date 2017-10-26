@@ -34,6 +34,9 @@ export interface ResultClasses<T, E> {
   /** Method variant for [`Result.mapOrElse`](../modules/_result_.html#maporelse) */
   mapOrElse<U>(this: Result<T, E>, orElseFn: (...args: any[]) => U, mapFn: (t: T) => U): U;
 
+  /** Method variant for [`Result.match`](../modules/_result_.html#match) */
+  match<T, U>(this: Result<T, E>, matchObj: Matcher<T, E, U>): U;
+
   /** Method variant for [`Result.mapErr`](../modules/_result_.html#maperr) */
   mapErr<F>(this: Result<T, E>, mapErrFn: (e: E) => F): Result<T, F>;
 
@@ -148,6 +151,11 @@ export class Ok<T, E> implements ResultClasses<T, E> {
   /** Method variant for [`Result.mapOrElse`](../modules/_result_.html#maporelse) */
   mapOrElse<U>(this: Result<T, E>, orElseFn: (...args: any[]) => U, mapFn: (t: T) => U): U {
     return mapOrElse(orElseFn, mapFn, this);
+  }
+
+  /** Method variant for [`Result.match`](../modules/_result_.html#match) */
+  match<T, U>(this: Result<T, E>, matchObj: Matcher<T, E, U>): U {
+    return mapOrElse(matchObj.Err, matchObj.Ok, this);
   }
 
   /** Method variant for [`Result.mapErr`](../modules/_result_.html#maperr) */
@@ -292,6 +300,11 @@ export class Err<T, E> implements ResultClasses<T, E> {
     return mapOrElse(orElseFn, mapFn, this);
   }
 
+  /** Method variant for [`Result.match`](../modules/_result_.html#match) */
+  match<T, U>(this: Result<T, E>, matchObj: Matcher<T, E, U>): U {
+    return match(matchObj, this);
+  }
+
   /** Method variant for [`Result.mapErr`](../modules/_result_.html#maperr) */
   mapErr<F>(this: Result<T, E>, mapErrFn: (e: E) => F): Result<T, F> {
     return mapErr(mapErrFn, this);
@@ -408,8 +421,6 @@ export const err = <T, E>(error: E): Result<T, E> => new Err<T, E>(error);
   no runtime overhead other than the very small cost of the container object.
  */
 export type Result<T, E> = Ok<T, E> | Err<T, E>;
-
-export default Result;
 
 /**
   Map over a `Result` instance: apply the function to the wrapped value if the
@@ -879,3 +890,43 @@ export const toString = <T, E>(result: Result<T, E>): string => {
   const body = (isOk(result) ? unwrap(result) : unwrapErr(result)).toString();
   return `${result.variant}(${body})`;
 };
+
+/** A lightweight object defining how to handle each variant of a Maybe. */
+export type Matcher<T, E, A> = {
+  Ok: (value: T) => A;
+  Err: (error: E) => A;
+};
+
+/**
+  Performs the same basic functionality as `getOrElse`, but instead of simply
+  unwrapping the value if it is `Ok` and applying a value to generate the same
+  default type if it is `Nothing`, lets you supply functions which may transform
+  the wrapped type if it is `Ok` or get a default value for `Nothing`.
+
+  This is kind of like a poor-man's version of pattern matching, which
+  JavaScript currently lacks.
+
+  ```ts
+  import { match, ok, err } from 'true-myth/result';
+
+  const double = (n: number) => n * 2;
+  const length = (s: string) => s.length;
+
+  const anOk = ok<number, string>(12);
+  console.log(match({ Ok: double, Err: length }, anOk)); // 24
+
+  const anErr = err<number, string>('oh no');
+  console.log(match({ Ok: double, Err: length }, anErr)); // 0
+  ```
+
+  @param matcher A lightweight object defining what to do in the case of each
+                 variant.
+  @param maybe   The `maybe` instance to check.
+ */
+export const match = <T, E, A>(matcher: Matcher<T, E, A>, result: Result<T, E>): A =>
+  isOk(result) ? matcher.Ok(unwrap(result)) : matcher.Err(unwrapErr(result));
+
+/** Alias for [`match`](#match) */
+export const cata = match;
+
+export default Result;

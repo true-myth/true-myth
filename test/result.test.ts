@@ -83,6 +83,20 @@ describe('`Result` pure functions', () => {
     expect(Result.mapOrElse(getDefault, String, anErr)).toEqual(`${description}: ${errValue}`);
   });
 
+  test('`match`', () => {
+    const nobody = Result.ok('ok');
+    const toErrIs = Result.err('human');
+
+    expect(Result.match({
+      Ok: (val) => val,
+      Err: (err) => err
+    }, nobody)).toBe('ok');
+    expect(Result.match({
+      Ok: (val) => val,
+      Err: (err) => err
+    }, toErrIs)).toBe('human');
+  });
+
   test('`mapErr`', () => {
     const anOk = Result.ok(10);
     expect(Result.mapErr(double, anOk)).toEqual(anOk);
@@ -275,6 +289,16 @@ describe('`Result.Ok` class', () => {
     expect(theOk.mapOrElse(getDefault, join)).toEqual(join(theValue));
   });
 
+  test('`match` method', () => {
+    const theValue = 'ok';
+    const nobody = new Result.Ok(theValue);
+
+    expect(nobody.match({
+      Ok: (val) => val,
+      Err: (err) => err
+    })).toBe('ok');
+  });
+
   test('`mapErr` method', () => {
     const theOk = new Result.Ok('hey!');
     const toMoreVerboseErr = s => `Seriously, ${s} was bad.`;
@@ -409,6 +433,16 @@ describe('`Result.Err` class', () => {
     const describe = (code: number) => `The error code was ${code}`;
 
     expect(theErr.mapOrElse(getDefault, describe)).toEqual(`whoa: ${errValue}`);
+  });
+
+  test('`match` method', () => {
+    const human = 'human';
+    const toErrIs = new Result.Err(human);
+
+    expect(toErrIs.match({
+      Ok: (val) => val,
+      Err: (err) => err
+    })).toBe(human);
   });
 
   test('`mapErr` method', () => {

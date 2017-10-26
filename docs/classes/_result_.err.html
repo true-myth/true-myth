@@ -143,6 +143,7 @@
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-has-type-parameter"><a href="_result_.err.html#maperr" class="tsd-kind-icon">map<wbr>Err</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-has-type-parameter"><a href="_result_.err.html#mapor" class="tsd-kind-icon">map<wbr>Or</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-has-type-parameter"><a href="_result_.err.html#maporelse" class="tsd-kind-icon">map<wbr>OrElse</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-has-type-parameter"><a href="_result_.err.html#match" class="tsd-kind-icon">match</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-has-type-parameter"><a href="_result_.err.html#or" class="tsd-kind-icon">or</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-has-type-parameter"><a href="_result_.err.html#orelse" class="tsd-kind-icon">or<wbr>Else</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_result_.err.html#tomaybe" class="tsd-kind-icon">to<wbr>Maybe</a></li>
@@ -168,7 +169,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in result.ts:232</li>
+									<li>Defined in result.ts:240</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -218,7 +219,7 @@
 					<aside class="tsd-sources">
 						<p>Implementation of <a href="../interfaces/_result_.resultclasses.html">ResultClasses</a>.<a href="../interfaces/_result_.resultclasses.html#variant">variant</a></p>
 						<ul>
-							<li>Defined in result.ts:230</li>
+							<li>Defined in result.ts:238</li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -241,7 +242,7 @@
 							<aside class="tsd-sources">
 								<p>Implementation of <a href="../interfaces/_result_.resultclasses.html">ResultClasses</a>.<a href="../interfaces/_result_.resultclasses.html#and">and</a></p>
 								<ul>
-									<li>Defined in result.ts:311</li>
+									<li>Defined in result.ts:324</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -278,7 +279,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in result.ts:316</li>
+									<li>Defined in result.ts:329</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -333,7 +334,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in result.ts:321</li>
+									<li>Defined in result.ts:334</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -388,7 +389,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in result.ts:326</li>
+									<li>Defined in result.ts:339</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -444,7 +445,7 @@
 							<aside class="tsd-sources">
 								<p>Implementation of <a href="../interfaces/_result_.resultclasses.html">ResultClasses</a>.<a href="../interfaces/_result_.resultclasses.html#iserr">isErr</a></p>
 								<ul>
-									<li>Defined in result.ts:276</li>
+									<li>Defined in result.ts:284</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -473,7 +474,7 @@
 							<aside class="tsd-sources">
 								<p>Implementation of <a href="../interfaces/_result_.resultclasses.html">ResultClasses</a>.<a href="../interfaces/_result_.resultclasses.html#isok">isOk</a></p>
 								<ul>
-									<li>Defined in result.ts:271</li>
+									<li>Defined in result.ts:279</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -501,7 +502,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in result.ts:281</li>
+									<li>Defined in result.ts:289</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -556,7 +557,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in result.ts:296</li>
+									<li>Defined in result.ts:309</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -611,7 +612,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in result.ts:286</li>
+									<li>Defined in result.ts:294</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -669,7 +670,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in result.ts:291</li>
+									<li>Defined in result.ts:299</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -736,6 +737,47 @@
 					</ul>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-has-type-parameter">
+					<a name="match" class="tsd-anchor"></a>
+					<h3>match</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-has-type-parameter">
+						<li class="tsd-signature tsd-kind-icon">match&lt;T, U&gt;<span class="tsd-signature-symbol">(</span>this<span class="tsd-signature-symbol">: </span><a href="../modules/_result_.html#result" class="tsd-signature-type">Result</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">E</span><span class="tsd-signature-symbol">&gt;</span>, matchObj<span class="tsd-signature-symbol">: </span><a href="../modules/_result_.html#matcher" class="tsd-signature-type">Matcher</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">E</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">U</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">U</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Implementation of <a href="../interfaces/_result_.resultclasses.html">ResultClasses</a>.<a href="../interfaces/_result_.resultclasses.html#match">match</a></p>
+								<ul>
+									<li>Defined in result.ts:304</li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Method variant for <a href="../modules/_result_.html#match"><code>Result.match</code></a></p>
+								</div>
+							</div>
+							<h4 class="tsd-type-parameters-title">Type parameters</h4>
+							<ul class="tsd-type-parameters">
+								<li>
+									<h4>T</h4>
+								</li>
+								<li>
+									<h4>U</h4>
+								</li>
+							</ul>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>this: <a href="../modules/_result_.html#result" class="tsd-signature-type">Result</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">E</span><span class="tsd-signature-symbol">&gt;</span></h5>
+								</li>
+								<li>
+									<h5>matchObj: <a href="../modules/_result_.html#matcher" class="tsd-signature-type">Matcher</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">E</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">U</span><span class="tsd-signature-symbol">&gt;</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">U</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-has-type-parameter">
 					<a name="or" class="tsd-anchor"></a>
 					<h3>or</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-has-type-parameter">
@@ -746,7 +788,7 @@
 							<aside class="tsd-sources">
 								<p>Implementation of <a href="../interfaces/_result_.resultclasses.html">ResultClasses</a>.<a href="../interfaces/_result_.resultclasses.html#or">or</a></p>
 								<ul>
-									<li>Defined in result.ts:301</li>
+									<li>Defined in result.ts:314</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -783,7 +825,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in result.ts:306</li>
+									<li>Defined in result.ts:319</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -839,7 +881,7 @@
 							<aside class="tsd-sources">
 								<p>Implementation of <a href="../interfaces/_result_.resultclasses.html">ResultClasses</a>.<a href="../interfaces/_result_.resultclasses.html#tomaybe">toMaybe</a></p>
 								<ul>
-									<li>Defined in result.ts:351</li>
+									<li>Defined in result.ts:364</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -868,7 +910,7 @@
 							<aside class="tsd-sources">
 								<p>Implementation of <a href="../interfaces/_result_.resultclasses.html">ResultClasses</a>.<a href="../interfaces/_result_.resultclasses.html#tostring">toString</a></p>
 								<ul>
-									<li>Defined in result.ts:356</li>
+									<li>Defined in result.ts:369</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -897,7 +939,7 @@
 							<aside class="tsd-sources">
 								<p>Implementation of <a href="../interfaces/_result_.resultclasses.html">ResultClasses</a>.<a href="../interfaces/_result_.resultclasses.html#unsafelyunwrap">unsafelyUnwrap</a></p>
 								<ul>
-									<li>Defined in result.ts:331</li>
+									<li>Defined in result.ts:344</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -920,7 +962,7 @@
 							<aside class="tsd-sources">
 								<p>Implementation of <a href="../interfaces/_result_.resultclasses.html">ResultClasses</a>.<a href="../interfaces/_result_.resultclasses.html#unsafelyunwraperr">unsafelyUnwrapErr</a></p>
 								<ul>
-									<li>Defined in result.ts:336</li>
+									<li>Defined in result.ts:349</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -943,7 +985,7 @@
 							<aside class="tsd-sources">
 								<p>Implementation of <a href="../interfaces/_result_.resultclasses.html">ResultClasses</a>.<a href="../interfaces/_result_.resultclasses.html#unwrapor">unwrapOr</a></p>
 								<ul>
-									<li>Defined in result.ts:341</li>
+									<li>Defined in result.ts:354</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -974,7 +1016,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in result.ts:346</li>
+									<li>Defined in result.ts:359</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1082,6 +1124,9 @@
 								<a href="_result_.err.html#maporelse" class="tsd-kind-icon">map<wbr>OrElse</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-has-type-parameter">
+								<a href="_result_.err.html#match" class="tsd-kind-icon">match</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-has-type-parameter">
 								<a href="_result_.err.html#or" class="tsd-kind-icon">or</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-has-type-parameter">
@@ -1116,7 +1161,13 @@
 						<a href="../interfaces/_result_.resultclasses.html" class="tsd-kind-icon">Result<wbr>Classes</a>
 					</li>
 					<li class=" tsd-kind-type-alias tsd-parent-kind-external-module">
+						<a href="../modules/_result_.html#matcher" class="tsd-kind-icon">Matcher</a>
+					</li>
+					<li class=" tsd-kind-type-alias tsd-parent-kind-external-module">
 						<a href="../modules/_result_.html#result" class="tsd-kind-icon">Result</a>
+					</li>
+					<li class=" tsd-kind-variable tsd-parent-kind-external-module">
+						<a href="../modules/_result_.html#cata" class="tsd-kind-icon">cata</a>
 					</li>
 					<li class=" tsd-kind-variable tsd-parent-kind-external-module">
 						<a href="../modules/_result_.html#chain" class="tsd-kind-icon">chain</a>
@@ -1152,7 +1203,7 @@
 						<a href="../modules/_result_.html#andthen" class="tsd-kind-icon">and<wbr>Then</a>
 					</li>
 					<li class=" tsd-kind-function tsd-parent-kind-external-module tsd-has-type-parameter">
-						<a href="../modules/_result_.html#err-1" class="tsd-kind-icon">err</a>
+						<a href="../modules/_result_.html#err-2" class="tsd-kind-icon">err</a>
 					</li>
 					<li class=" tsd-kind-function tsd-parent-kind-external-module tsd-has-type-parameter">
 						<a href="../modules/_result_.html#frommaybe" class="tsd-kind-icon">from<wbr>Maybe</a>
@@ -1176,7 +1227,10 @@
 						<a href="../modules/_result_.html#maporelse" class="tsd-kind-icon">map<wbr>OrElse</a>
 					</li>
 					<li class=" tsd-kind-function tsd-parent-kind-external-module tsd-has-type-parameter">
-						<a href="../modules/_result_.html#ok-1" class="tsd-kind-icon">ok</a>
+						<a href="../modules/_result_.html#match" class="tsd-kind-icon">match</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-external-module tsd-has-type-parameter">
+						<a href="../modules/_result_.html#ok-2" class="tsd-kind-icon">ok</a>
 					</li>
 					<li class=" tsd-kind-function tsd-parent-kind-external-module tsd-has-type-parameter">
 						<a href="../modules/_result_.html#or" class="tsd-kind-icon">or</a>
