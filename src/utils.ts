@@ -4,3 +4,5 @@
  */
 export const isVoid = (value: any): value is undefined | null =>
   typeof value === 'undefined' || value === null;
+
+export type AndThenAliases = 'andThen' | 'chain' | 'flatMap';

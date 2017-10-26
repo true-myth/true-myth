@@ -73,6 +73,9 @@ declare export class Ok<T, E> {
      */
   mapOrElse<U>(orElseFn: (...args: any[]) => U, mapFn: (t: T) => U): U;
 
+  /** Method variant for [`Result.match`](../modules/_result_.html#match) */
+  match<U>(matcher: Matcher<T, E, U>): U;
+
   /**
      * Method variant for [`Result.mapErr`](../modules/_result_.html#maperr) 
      */
@@ -201,6 +204,9 @@ declare export class Err<T, E> {
      */
   mapOrElse<U>(orElseFn: (...args: any[]) => U, mapFn: (t: T) => U): U;
 
+  /** Method variant for [`Result.match`](../modules/_result_.html#match) */
+  match<U>(matcher: Matcher<T, E, U>): U;
+
   /**
      * Method variant for [`Result.mapErr`](../modules/_result_.html#maperr) 
      */
@@ -267,6 +273,10 @@ declare export class Err<T, E> {
   toString(): string;
 }
 export type Result<T, E> = Ok<T, E> | Err<T, E>;
+export type Matcher<T, E, A> = {
+  Ok: (value: T) => A,
+  Err: (error: E) => A,
+};
 declare export var isOk: <T, E>(result: Result<T, E>) => boolean;
 declare export var isErr: <T, E>(result: Result<T, E>) => boolean;
 declare export var ok: <T, E>(value: T | null | void) => Result<T, E>;
@@ -278,6 +288,8 @@ declare export var mapOrElse: <T, U, E>(
   mapFn: (t: T) => U,
   result: Result<T, E>
 ) => U;
+declare export var match: <T, E, A>(matcher: Matcher<T, E, A>, result: Result<T, E>) => A;
+declare export var cata: <T, E, A>(matcher: Matcher<T, E, A>, result: Result<T, E>) => A;
 declare export var mapErr: <T, E, F>(mapErrFn: (e: E) => F, result: Result<T, E>) => Result<T, F>;
 declare export var and: <T, U, E>(andResult: Result<U, E>, result: Result<T, E>) => Result<U, E>;
 declare export var andThen: <T, U, E>(

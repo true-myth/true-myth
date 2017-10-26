@@ -35,7 +35,7 @@ export interface ResultClasses<T, E> {
   mapOrElse<U>(this: Result<T, E>, orElseFn: (...args: any[]) => U, mapFn: (t: T) => U): U;
 
   /** Method variant for [`Result.match`](../modules/_result_.html#match) */
-  match<T, U>(this: Result<T, E>, matchObj: Matcher<T, E, U>): U;
+  match<U>(this: Result<T, E>, matcher: Matcher<T, E, U>): U;
 
   /** Method variant for [`Result.mapErr`](../modules/_result_.html#maperr) */
   mapErr<F>(this: Result<T, E>, mapErrFn: (e: E) => F): Result<T, F>;
@@ -154,8 +154,8 @@ export class Ok<T, E> implements ResultClasses<T, E> {
   }
 
   /** Method variant for [`Result.match`](../modules/_result_.html#match) */
-  match<T, U>(this: Result<T, E>, matchObj: Matcher<T, E, U>): U {
-    return mapOrElse(matchObj.Err, matchObj.Ok, this);
+  match<U>(this: Result<T, E>, matcher: Matcher<T, E, U>): U {
+    return match(matcher, this);
   }
 
   /** Method variant for [`Result.mapErr`](../modules/_result_.html#maperr) */
@@ -301,7 +301,7 @@ export class Err<T, E> implements ResultClasses<T, E> {
   }
 
   /** Method variant for [`Result.match`](../modules/_result_.html#match) */
-  match<T, U>(this: Result<T, E>, matchObj: Matcher<T, E, U>): U {
+  match<U>(this: Result<T, E>, matchObj: Matcher<T, E, U>): U {
     return match(matchObj, this);
   }
 
@@ -908,28 +908,51 @@ export type Matcher<T, E, A> = {
   default type if it is `Nothing`, lets you supply functions which may transform
   the wrapped type if it is `Ok` or get a default value for `Nothing`.
 
-  This is kind of like a poor-man's version of pattern matching, which
+  This is kind of like a poor man's version of pattern matching, which
   JavaScript currently lacks.
 
+  Instead of code like this:
+
   ```ts
-  import { match, ok, err } from 'true-myth/result';
+  import { Result, isOk, match } from 'true-myth/maybe';
 
-  const double = (n: number) => n * 2;
-  const length = (s: string) => s.length;
-
-  const anOk = ok<number, string>(12);
-  console.log(match({ Ok: double, Err: length }, anOk)); // 24
-
-  const anErr = err<number, string>('oh no');
-  console.log(match({ Ok: double, Err: length }, anErr)); // 0
+  const logValue = (mightBeANumber: Result<number, string>) => {
+    console.log(
+      isOk(mightBeANumber)
+        ? unsafelyUnwrap(mightBeANumber).toString()
+        : `There was an error: ${unsafelyGetErr(mightBeANumber)}`
+    );
+  };
   ```
+
+  ...we can write code like this:
+
+  ```ts
+  import { Result, match } from 'true-myth/maybe';
+
+  const logValue = (mightBeANumber: Result<number, string>) => {
+    const value = match(
+      {
+        Ok: n => n.toString(),
+        Err: e => `There was an error: ${e}`,
+      },
+      mightBeANumber
+    );
+    console.log(value);
+  };
+  ```
+
+  This is slightly longer to write, but clearer: the more complex the resulting
+  expression, the hairer it is to understand the ternary. Thus, this is
+  especially convenient for times when there is a complex result, e.g. when
+  rendering part of a React component inline in JSX/TSX.
 
   @param matcher A lightweight object defining what to do in the case of each
                  variant.
   @param maybe   The `maybe` instance to check.
  */
 export const match = <T, E, A>(matcher: Matcher<T, E, A>, result: Result<T, E>): A =>
-  isOk(result) ? matcher.Ok(unwrap(result)) : matcher.Err(unwrapErr(result));
+  mapOrElse(matcher.Err, matcher.Ok, result);
 
 /** Alias for [`match`](#match) */
 export const cata = match;

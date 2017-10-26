@@ -35,7 +35,7 @@ export interface MaybeClasses<T> {
   mapOrElse<U>(this: Maybe<T>, orElseFn: (...args: any[]) => U, mapFn: (t: T) => U): U;
 
   /** Method variant for [`Maybe.match`](../modules/_maybe_.html#match) */
-  match<T, U>(this: Maybe<T>, matchObj: Matcher<T, U>): U;
+  match<U>(this: Maybe<T>, matcher: Matcher<T, U>): U;
 
   /** Method variant for [`Maybe.or`](../modules/_maybe_.html#or) */
   or(this: Maybe<T>, mOr: Maybe<T>): Maybe<T>;
@@ -147,8 +147,8 @@ export class Just<T> implements MaybeClasses<T> {
   }
 
   /** Method variant for [`Maybe.match`](../modules/_maybe_.html#match) */
-  match<T, U>(this: Maybe<T>, matchObj: Matcher<T, U>): U {
-    return mapOrElse(matchObj.Nothing, matchObj.Just, this);
+  match<U>(this: Maybe<T>, matcher: Matcher<T, U>): U {
+    return match(matcher, this);
   }
 
   /** Method variant for [`Maybe.or`](../modules/_maybe_.html#or) */
@@ -279,8 +279,8 @@ export class Nothing<T> implements MaybeClasses<T> {
   }
 
   /** Method variant for [`Maybe.match`](../modules/_maybe_.html#match) */
-  match<T, U>(this: Maybe<T>, matchObj: Matcher<T, U>): U {
-    return match(matchObj, this);
+  match<U>(this: Maybe<T>, matcher: Matcher<T, U>): U {
+    return match(matcher, this);
   }
 
   /** Method variant for [`Maybe.or`](../modules/_maybe_.html#or) */
@@ -845,28 +845,52 @@ export type Matcher<T, A> = {
   default type if it is `Nothing`, lets you supply functions which may transform
   the wrapped type if it is `Just` or get a default value for `Nothing`.
 
-  This is kind of like a poor-man's version of pattern matching, which
+  This is kind of like a poor man's version of pattern matching, which
   JavaScript currently lacks.
 
+  Instead of code like this:
+
   ```ts
-  import { match, just, nothing } from 'true-myth/maybe';
+  import { Maybe, isJust, match } from 'true-myth/maybe';
 
-  const double = (n: number) => n * 2;
-  const zero = () => 0;
+  const logValue = (mightBeANumber: Maybe<number>) => {
+    const valueToLog = isJust(mightBeANumber)
+      ? unsafelyUnwrap(mightBeANumber).toString()
+      : 'Nothing to log.';
 
-  const aJust = just(12);
-  console.log(match({ Just: double, Nothing: zero }, aJust));  // 24
-
-  const aNothing = nothing<number>();
-  console.log(match({ Just: double, Nothing: zero }, aNothing));  // 0
+    console.log(valueToLog);
+  };
   ```
+
+  ...we can write code like this:
+
+  ```ts
+  import { Maybe, match } from 'true-myth/maybe';
+
+  const logValue = (mightBeANumber: Maybe<number>) => {
+    const value = match(
+      {
+        Just: n => n.toString(),
+        Nothing: () => 'Nothing to log.',
+      },
+      mightBeANumber
+    );
+
+    console.log(value);
+  };
+  ```
+
+  This is slightly longer to write, but clearer: the more complex the resulting
+  expression, the hairer it is to understand the ternary. Thus, this is
+  especially convenient for times when there is a complex result, e.g. when
+  rendering part of a React component inline in JSX/TSX.
 
   @param matcher A lightweight object defining what to do in the case of each
                  variant.
   @param maybe   The `maybe` instance to check.
  */
 export const match = <T, A>(matcher: Matcher<T, A>, maybe: Maybe<T>): A =>
-  isJust(maybe) ? matcher.Just(unwrap(maybe)) : matcher.Nothing();
+  mapOrElse(matcher.Nothing, matcher.Just, maybe);
 
 /** Alias for [`match`](#match) */
 export const cata = match;
