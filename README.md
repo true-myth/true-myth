@@ -226,10 +226,22 @@ const theAnswerValue = unwrapOr(0, theAnswer);
 
 ## What is this for?
 
-### The History
+True Myth provides standard, type-safe wrappers and helper functions to help
+help you with two *extremely* common cases in programming:
 
-How do you represent the concept of not having anything, programmatically? As a
-language, JavaScript uses `null` to represent this concept; if you have a
+-   not having a value
+-   having a *result* where you need to deal with either success or failure
+
+You could implement all of these yourself – it's not hard! – but it's much
+easier to just have one extremely well-tested library you can use everywhere to
+solve this problem once and for all.
+
+### The Problem
+
+#### `null` and `undefined`
+
+How do you represent the concept of *not having anything*, programmatically? As
+a language, JavaScript uses `null` to represent this concept; if you have a
 variable `myNumber` to store numbers, you might assign the value `null` when you
 don't have any number at all. If you have a variable `myString`, you might set
 `myString = null;` when you don't have a string.
@@ -237,8 +249,6 @@ don't have any number at all. If you have a variable `myString`, you might set
 Some JavaScript programmers use `undefined` in place of `null` or in addition to
 `null`, so rather than setting a value to `null` they might just set `let
 myString;` or even `let myString = undefined;`.
-
-### The problem
 
 Every language needs a way to express the concept of nothing, but `null` and
 `undefined` are a curse. Their presence in JavaScript (and in many other
@@ -309,6 +319,90 @@ broken error states.
 [maybe]: https://flow.org/en/docs/types/maybe/
 [optional]: http://www.typescriptlang.org/docs/handbook/interfaces.html#optional-properties
 
+#### Error handling: callbacks and exceptions
+
+Similarly, you often have functions whose result represents an operation might
+fail in some way, or which have to deal with the result of such operations. Many patterns
+exist to work around the fact that you can't very easily return two things
+together in JavaScript. Node has a callback pattern with an error as the first
+argument to every callback, set to `null` if there was no error. Client-side
+JavaScript usually just doesn't have a single pattern for handling this.
+
+In both cases, you might use exceptions – but often an exception feels like the
+wrong thing because the possibility of failure is built into the kind of thing
+you're doing – querying an API, or checking the validity of some date, and so on.
+
+In Node.js, the callback pattern encourages a style where literally every
+function starts with the exact same code:
+
+```js
+const doSomething = (err, data) => {
+  if (err) {
+    return handleErr(err);
+  }
+  
+  // do whatever the *actual* point of the function is
+}
+```
+
+There are two major problems with this:
+
+1.  It's incredibly repetitive – the very opposite of "Don't Repeat Yourself".
+    We wouldn't do this with *anything* else in our codebase!
+
+2.  It puts the error-handling right up front and *not in a good way.* While we
+    want to have a failure case in mind when designing the behavior of our
+    functions, it's not usually the *point* of most functions – things like
+    `handleErr` in the above example being the exception and not the rule. The
+    actual meat of the function is always after the error handling.
+
+Meanwhile, in client-side code, if we're not using some similar kind of callback
+pattern, we usually resort to exceptions. But exceptions are unpredictable: you
+can't know whether a given function invocation is going to throw an exception
+until runtime as someone calling the function. No big deal if it's a small
+application and one person wrote all the code, but with even a few thousand lines
+of code or two developers, it's very easy to miss that. And then this happens:
+
+```js
+// in one part of the codebase
+const getMeAValue = (url) => {
+  if (isMalformed(url)) {
+    throw new Error(`The url `${url}` is malformed!`);
+  }
+  
+  // do something else to load data from the URL
+}
+
+// somewhere else in the codebase
+const value getMeAValue('http:/www.google.com');  // missing slash
+```
+
+Notice: there's no way for the caller to know that the function will throw.
+Perhaps you're very disciplined an write a good docstring for every function
+*and* everyone's editor shows it to them *and* they pay attention to that
+briefly available popover. More likely, though, this exception throws at runtime
+and probably as a result of user-entered data – and then you're chasing down the
+problem through error logs.
+
+More, if you *do* want to account for the reality that any function anywhere in
+JavaScript might actually throw, you're going to write something like this:
+
+```js
+try {
+  getMeAValue('http:/www.google.com');  // missing slash
+} catch (e) {
+  handleErr(e);
+}
+```
+
+This is like the Node example *but even worse* for repetition!
+
+Nor can TypeScript and Flow help you here! They don't have type signatures to
+say "This throws an exception!" (TypeScript's `never` might come to mind, but it
+might mean lots of things, not just exception-throwing.)
+
+Neither callbacks nor exceptions are good solutions here.
+
 ### The solution
 
 `Maybe` and `Result` are our escape hatch from all this madness.
@@ -364,7 +458,7 @@ and give ourselves safe access methods:
 ```js
 import * as Maybe from 'true-myth/maybe';
 
-let myInteger = Maybe.of(undefined);
+const myInteger = Maybe.of(undefined);
 myInteger.map(x => x * 3); // Nothing
 ```
 
@@ -373,6 +467,11 @@ myInteger.map(x => x * 3); // Nothing
 We received `Nothing` back as our value, which isn't particularly useful, but it
 also didn't halt our program in its tracks!
 
+Best of all, when you use these with libraries like TypeScript or Flow, you can
+lean on their type systems to check aggressively for `null` and `undefined`, and
+actually *eliminate* those from your codebase by replacing anywhere you would
+have used them with `Maybe`.
+
 `Result` is similar to `Maybe`, except it packages up the result of an operation
 (like a network request) whether it's a success (an `Ok`) or a failure (an
 `Err`) and lets us unwrap the package at our leisure. Whether you get back a 200
@@ -380,20 +479,25 @@ or a 401 for your HTTP request, you can pass the box around the same either way;
 the methods and properties the container has are not dependent upon whether
 there is shiny new data or a big red error inside.
 
-Best of all, when you use these with libraries like TypeScript or Flow, you can
-lean on their type systems to check aggressively for `null` and `undefined`, and
-actually *eliminate* those from your codebase by replacing anywhere you would
-have used them with `Maybe`.
+```ts
+import { Result, ok, err } from 'true-myth/result';
 
-Likewise, you can replace functions which take polymorphic arguments or have
-polymorphic return values in order to try to handle scenarios where something
-may be a success or an error with functions using `Result`.
+const myNumber = ok<number, string>(12);
+const myNumberErr = err<number, string>("oh no");
 
-Any place you try to treat them as just the underlying value rather than the
-container, the type systems will complain, of course. And you'll also get help
-from smart editors with suggestions about what kinds of values (including
-functions) you need to interact with any given helper or method, since the type
-definitions are supplied.
+console.log(myNumber.map(n => n * 2)); // Ok(24)
+console.log(myNumberErr.map(n => n * 2)); // Err(oh no)
+```
+
+Thus, you can replace functions which take polymorphic arguments or have
+polymorphic return values to try to handle scenarios where something may be a
+success or an error with functions using `Result`.
+
+Any place you try to treat either a `Maybe` or a `Result` as just the underlying
+value rather than the container, the type systems will complain, of course. And
+you'll also get help from smart editors with suggestions about what kinds of values
+(includingfunctions) you need to interact with any given helper or method, since the
+type definitions are supplied.
 
 By leaning on TypeScript or Flow to handle the checking, we also get all these
 benefits with *no* runtime overhead other than the cost of constructing the
