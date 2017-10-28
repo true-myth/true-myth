@@ -25,6 +25,8 @@ style.</p>
     - [Safely getting at values](#safely-getting-at-values)
 - [What is this for?](#what-is-this-for)
     - [The problem](#the-problem)
+        + [Nothingness: `null` and `undefined`](#nothingness-null-and-undefined)
+        + [Error handling: callbacks and exceptions](#error-handling-callbacks-and-exceptions)
     - [The solution](#the-solution)
 - [Design philosophy](#design-philosophy)
     - [A note on reference types: no deep copies here!](#a-note-on-reference-types-no-deep-copies-here)
@@ -238,7 +240,7 @@ solve this problem once and for all.
 
 ### The Problem
 
-#### `null` and `undefined`
+#### Nothingness: `null` and `undefined`
 
 How do you represent the concept of *not having anything*, programmatically? As
 a language, JavaScript uses `null` to represent this concept; if you have a
