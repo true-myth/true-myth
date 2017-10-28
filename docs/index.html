@@ -501,6 +501,8 @@ anObjectToWrap.desc.push(<span class="hljs-string">'.'</span>);
 							</li>
 						</ul>
 					</li>
+					<li><p>Folktale also aims to provide a larger suite of types and functions to use – though much smaller than <a href="https://lodash.com">lodash</a> – including a number of <a href="http://folktale.origamitower.com/api/v2.0.0/en/folktale.core.html">general functions</a>, <a href="http://folktale.origamitower.com/api/v2.0.0/en/folktale.concurrency.html">concurrency</a>, <a href="http://folktale.origamitower.com/api/v2.0.0/en/folktale.adt.html">general union types</a>, and more. True Myth intentionally punts on those concerns, assuming that most consumers are already using a library like Lodash or Ramda, and are comfortable with or prefer using e.g. <code>Promise</code>s for concurrency, and aiming to be easy to integrate with those instead.</p>
+					</li>
 				</ol>
 				<h3 id="sanctuary-">Sanctuary?</h3>
 				<p><a href="https://sanctuary.js.org">Sanctuary</a> has many of the same goals as True Myth, but is much more focused on the expectations and patterns you&#39;d see in Haskell or PureScript or similar languages. Its API and True Myth&#39;s are much <em>less</em> similar than Folktale and True Myth&#39;s are, as a result – the underlying details are often similar, but the names are nearly all different. A few of the major contrasts:</p>
@@ -518,19 +520,44 @@ anObjectToWrap.desc.push(<span class="hljs-string">'.'</span>);
 					</li>
 					<li><p>True Myth&#39;s API aims to be more idiomatic as JavaScript/TypeScript, with a one difference in particular worth calling out: the <strong>function naming convention.</strong> True Myth uses PascalCase for types and camelCase for functions – so, <code>new Just(5)</code> and <code>just(5)</code>, whereas Sanctuary uses the capitals as function names for type constructors, i.e. <code>S.Just(5)</code>, and does not support <code>new</code>.</p>
 					</li>
-					<li><p>Sanctuary also aims to provide a much larger suite of functions, more like <a href="http://ramdajs.com">Ramda</a> but with Haskell- or PureScript-inspired type safety and sophistication. True Myth intentionally punts on those concerns, assuming that most consumers are already using a library like Lodash or Ramda and aiming to be easy to integrate with those instead.</p>
+					<li><p>Sanctuary also aims to provide a much larger suite of functions, more like <a href="http://ramdajs.com">Ramda</a>, but with Haskell- or PureScript-inspired type safety and sophistication. True Myth intentionally punts on those concerns, assuming that most consumers are already using a library like Lodash or Ramda and aiming to be easy to integrate with those instead.</p>
 					</li>
 				</ol>
 				<h2 id="migrating-from-other-libraries">Migrating from other libraries</h2>
 				<h3 id="folktale">Folktale</h3>
 				<p>Migrating from Folktale should be <em>very</em> straightforward: many of the names are the same, and the behavior of many of the functions is as well.</p>
 				<h4 id="folktale-1-0">Folktale 1.0</h4>
+				<p>In many cases, you can simple rename your imports and some of the function invocations for Folktale to switch to True Myth – several imports are supplied with exactly that pattern in mind. If a given item is not mentioned, you can assume no change other than the import is required.</p>
 				<ul>
 					<li>[ ] TODO: migration path from Folktale 1.0</li>
 				</ul>
 				<h4 id="folktale-2-0">Folktale 2.0</h4>
+				<p>In many cases, you can simple rename your imports and some of the function invocations for Folktale to switch to True Myth – several imports are supplied with exactly that pattern in mind. If a given item is not mentioned, you can assume no change other than the import is required.</p>
 				<ul>
-					<li>[ ] TODO: migration path from Folktale 2.0</li>
+					<li><p>[ ] TODO: migration path from Folktale 2.0</p>
+					</li>
+					<li><p><code>Maybe</code> ⟹ <code>Maybe</code></p>
+						<ul>
+							<li><code>Maybe.hasInstance</code> ⟹ no equivalent</li>
+							<li><code>Maybe.empty</code> ⟹ <code>Maybe.nothing</code></li>
+							<li><code>Maybe.of</code> ⟹ <code>Maybe.just</code> – note that because True Myth&#39;s <code>Maybe.of</code> correctly handles, you <em>can</em> simply keep using <code>Maybe.of</code>, but the semantics will be somewhat different.</li>
+							<li><code>Maybe.fromNullable</code> ⟹ <code>Maybe.of</code></li>
+							<li><code>Maybe.fromResult</code> ⟹ <code>Maybe.fromResult</code></li>
+							<li><code>Maybe.fromValidation</code> ⟹ no equivalent; but you can use <code>Maybe.fromResult</code> as type-signature equivalent</li>
+							<li><code>Maybe.fromJSON</code> ⟹ no equivalent</li>
+							<li><code>Maybe.Just</code> ⟹ <code>Maybe.just</code> or <code>new Maybe.Just</code></li>
+							<li><code>Maybe.Nothing</code> ⟹ <code>Maybe.nothing</code> or <code>new Maybe.Nothing</code></li>
+							<li><code>Maybe.matchWith</code> or <code>Maybe.cata</code> ⟹ <code>Maybe.match</code> or <code>Maybe.cata</code>, but with the value unwrapped, i.e. you do not need to do <code>item.value</code>, merely <code>item</code> in True Myth.</li>
+							<li><code>(Just|Nothing)#inspect</code> ⟹ <code>(Maybe|Just|Nothing)#toString</code></li>
+							<li><code>(Just|Nothing)#tag</code> ⟹ <code>(Just|Nothing)#variant</code></li>
+							<li><code>(Just|Nothing)#type</code> ⟹ no equivalent</li>
+							<li><code>(Just|Nothing)#concat</code> ⟹ no equivalent</li>
+							<li><code>(Just|Nothing)#equals</code> ⟹ no equivalent (consider using e.g. <a href="https://lodash.com/docs/4.17.4#isEqual"><code>_.isEqual</code></a> or <a href="http://ramdajs.com/docs/#equals"><code>R.equals</code></a>)</li>
+							<li></li>
+						</ul>
+					</li>
+					<li><code>Result</code>: <code>Result</code></li>
+					<li><code>Validation</code> ⟹ use <code>Result</code> instead: a <code>Validation&lt;Success, Failure&gt;</code> has identical semantics to <code>Result&lt;T, E&gt;</code></li>
 				</ul>
 				<h3 id="sanctuary">Sanctuary</h3>
 				<ul>

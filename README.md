@@ -579,7 +579,12 @@ Note that much of the content between these sections is the same; it's presented
 
         Folktale's `Maybe.of` only allows the use of non-nullable types, and requires you to use `Maybe.fromNullable` instead. This isn't unreasonable, but it dramatically decreases the convenience of integration with existing JS codebases or interfacing with untyped JS libraries.
 
+4.  Folktale also aims to provide a larger suite of types and functions to use – though much smaller than [lodash] – including a number of [general functions][folktale-core], [concurrency][folktale-concurrency], [general union types][folktale-adt], and more. True Myth intentionally punts on those concerns, assuming that most consumers are already using a library like Lodash or Ramda, and are comfortable with or prefer using e.g. `Promise`s for concurrency, and aiming to be easy to integrate with those instead.
+
 [Fantasy Land]: https://github.com/fantasyland/fantasy-land
+[folktale-core]: http://folktale.origamitower.com/api/v2.0.0/en/folktale.core.html
+[folktale-concurrency]: http://folktale.origamitower.com/api/v2.0.0/en/folktale.concurrency.html
+[folktale-adt]: http://folktale.origamitower.com/api/v2.0.0/en/folktale.adt.html
 
 ### Sanctuary?
 
@@ -607,7 +612,7 @@ Note that much of the content between these sections is the same; it's presented
 
 3.  True Myth's API aims to be more idiomatic as JavaScript/TypeScript, with a one difference in particular worth calling out: the **function naming convention.** True Myth uses PascalCase for types and camelCase for functions – so, `new Just(5)` and `just(5)`, whereas Sanctuary uses the capitals as function names for type constructors, i.e. `S.Just(5)`, and does not support `new`.
 
-4.  Sanctuary also aims to provide a much larger suite of functions, more like [Ramda] but with Haskell- or PureScript-inspired type safety and sophistication. True Myth intentionally punts on those concerns, assuming that most consumers are already using a library like Lodash or Ramda and aiming to be easy to integrate with those instead.
+4.  Sanctuary also aims to provide a much larger suite of functions, more like [Ramda], but with Haskell- or PureScript-inspired type safety and sophistication. True Myth intentionally punts on those concerns, assuming that most consumers are already using a library like Lodash or Ramda and aiming to be easy to integrate with those instead.
 
 [s-ts]: https://github.com/sanctuary-js/sanctuary/pull/431
 
