@@ -70,28 +70,14 @@
 				<div class="tsd-comment tsd-typography">
 					<div class="lead">
 						<h1 id="result">Result</h1>
-						<p>A <code>Result&lt;T, E&gt;</code> is a type representing the value result of an operation which
-						may fail, with a successful value of type <code>T</code> or an error of type <code>E</code>.</p>
-						<p>If the value is present, it is <code>Ok(value)</code>. If it&#39;s absent, it&#39;s <code>Err(reason)</code>.
-							This provides a type-safe container for dealing with the possibility that an
-							error occurred, without needing to scatter <code>try</code>/<code>catch</code> blocks throughout your
-						codebase. This has two major advantages:</p>
+						<p>A <code>Result&lt;T, E&gt;</code> is a type representing the value result of an operation which may fail, with a successful value of type <code>T</code> or an error of type <code>E</code>.</p>
+						<p>If the value is present, it is <code>Ok(value)</code>. If it&#39;s absent, it&#39;s <code>Err(reason)</code>. This provides a type-safe container for dealing with the possibility that an error occurred, without needing to scatter <code>try</code>/<code>catch</code> blocks throughout your codebase. This has two major advantages:</p>
 						<ol>
-							<li>You <em>know</em> when an item may have a failure case, unlike exceptions (which
-								may be thrown from any function with no warning and no help from the type
-							system).</li>
-							<li>The error scenario is a first-class citizen, and the provided helper
-								functions and methods allow you to deal with the type in much the same way
-								as you might an array – transforming values if present, or dealing with
-							errors instead if necessary.</li>
+							<li>You <em>know</em> when an item may have a failure case, unlike exceptions (which may be thrown from any function with no warning and no help from the type system).</li>
+							<li>The error scenario is a first-class citizen, and the provided helper functions and methods allow you to deal with the type in much the same way as you might an array – transforming values if present, or dealing with errors instead if necessary.</li>
 						</ol>
-						<p>Having the possibility of an error handed to you as part of the type of an item
-							gives you the flexibility to do the same kinds of things with it that you might
-							with any other nice container type. For example, you can use <a href="https://chriskrycho.github.io/true-myth/modules/_result_.html#map"><code>map</code></a> to
-							apply a transformation if the item represents a succesful outcome, and even if
-						the result was actually an error, it won&#39;t break under you.</p>
-						<p>To make that concrete, let&#39;s look at an example. In normal JavaScript, you might
-						have something like this:</p>
+						<p>Having the possibility of an error handed to you as part of the type of an item gives you the flexibility to do the same kinds of things with it that you might with any other nice container type. For example, you can use <a href="https://chriskrycho.github.io/true-myth/modules/_result_.html#map"><code>map</code></a> to apply a transformation if the item represents a succesful outcome, and even if the result was actually an error, it won&#39;t break under you.</p>
+						<p>To make that concrete, let&#39;s look at an example. In normal JavaScript, you might have something like this:</p>
 						<pre><code class="lang-js"><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">mightSucceed</span>(<span class="hljs-params">doesSucceed</span>) </span>{
   <span class="hljs-keyword">if</span> (!doesSucceed) {
     <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">Error</span>(<span class="hljs-string">'something went wrong!'</span>);
@@ -106,10 +92,7 @@
 <span class="hljs-keyword">const</span> doubleAnError = mightSucceed(<span class="hljs-literal">false</span>) * <span class="hljs-number">2</span>;  <span class="hljs-comment">// throws an uncaught exception</span>
 <span class="hljs-built_in">console</span>.log(doubleAnErr);  <span class="hljs-comment">// never even gets here because of the exception</span>
 </code></pre>
-						<p>If we wanted to <em>handle</em> that error, we&#39;d need to first of all know that the
-							function could throw an error. Assuming we knew that – probably we&#39;d figure it
-							out via painful discovery at runtime, or by documenting it in our JSDoc – then
-						we&#39;d need to wrap it up in a <code>try</code>/<code>catch</code> block:</p>
+						<p>If we wanted to <em>handle</em> that error, we&#39;d need to first of all know that the function could throw an error. Assuming we knew that – probably we&#39;d figure it out via painful discovery at runtime, or by documenting it in our JSDoc – then we&#39;d need to wrap it up in a <code>try</code>/<code>catch</code> block:</p>
 						<pre><code class="lang-js"><span class="hljs-keyword">try</span> {
   <span class="hljs-keyword">const</span> doubleTheAnswer = mightSucceed(<span class="hljs-literal">true</span>) * <span class="hljs-number">2</span>;
   <span class="hljs-built_in">console</span>.log(doubleTheAnswer);
@@ -120,39 +103,21 @@
 }
 </code></pre>
 						<p>This is a pain to work with!</p>
-						<p>The next thing we might try is returning an error code and mutating an object
-							passed in. (This is the standard pattern for non-exception-based error handling
-						in C, C++, Java, and C#, for example.) But that has a few problems:</p>
+						<p>The next thing we might try is returning an error code and mutating an object passed in. (This is the standard pattern for non-exception-based error handling in C, C++, Java, and C#, for example.) But that has a few problems:</p>
 						<ul>
-							<li><p>You have to mutate an object. This doesn&#39;t work for simple items like
-									numbers, and it can also be pretty unexpected behavior at times – you want
-									to <em>know</em> when something is going to change, and mutating freely throughout
-								a library or application makes that impossible.</p>
+							<li><p>You have to mutate an object. This doesn&#39;t work for simple items like numbers, and it can also be pretty unexpected behavior at times – you want to <em>know</em> when something is going to change, and mutating freely throughout a library or application makes that impossible.</p>
 							</li>
-							<li><p>You have to make sure to actually check the return code to make sure it&#39;s
-									valid. In theory, we&#39;re all displined enough to always do that. In practice,
-									we often end up reasoning, <em>Well, this particular call can never fail...</em>
-								(but of course, it probably can, just not in a way we expect).</p>
+							<li><p>You have to make sure to actually check the return code to make sure it&#39;s valid. In theory, we&#39;re all displined enough to always do that. In practice, we often end up reasoning, <em>Well, this particular call can never fail...</em> (but of course, it probably can, just not in a way we expect).</p>
 							</li>
-							<li><p>We don&#39;t have a good way to return a <em>reason</em> for the error. We end up
-									needing to introduce another parameter, designed to be mutated, to make sure
-								that&#39;s possible.</p>
+							<li><p>We don&#39;t have a good way to return a <em>reason</em> for the error. We end up needing to introduce another parameter, designed to be mutated, to make sure that&#39;s possible.</p>
 							</li>
-							<li><p>Even if you go to all the trouble of doing all of that, you need to make
-									sure – every time – that you use only the error value if the return code
-									specified an error, and only the success value if the return code specified
-								that it succeeded.</p>
+							<li><p>Even if you go to all the trouble of doing all of that, you need to make sure – every time – that you use only the error value if the return code specified an error, and only the success value if the return code specified that it succeeded.</p>
 							</li>
 						</ul>
-						<p>(Note that in slightly varied form, this is also basically what the Node.js
-							callback pattern gives you. It&#39;s just a conventional way of needing to check for
-							an error on every callback invocation, since you don&#39;t actually have a return
-						code in that case.)</p>
-						<p>Our way out is <code>Result</code>. It lets us just return one thing from a function, which
-						encapsulates the possibility of failure in the very thing we return. We get:</p>
+						<p>(Note that in slightly varied form, this is also basically what the Node.js callback pattern gives you. It&#39;s just a conventional way of needing to check for an error on every callback invocation, since you don&#39;t actually have a return code in that case.)</p>
+						<p>Our way out is <code>Result</code>. It lets us just return one thing from a function, which encapsulates the possibility of failure in the very thing we return. We get:</p>
 						<ul>
-							<li>the simplicity of just dealing with the return value of a function (no
-							<code>try</code>/<code>catch</code> to worry about!)</li>
+							<li>the simplicity of just dealing with the return value of a function (no <code>try</code>/<code>catch</code> to worry about!)</li>
 							<li>the ease of expressing an error we got with throwing an exception</li>
 							<li>the explicitness about success or failure that we got with a return code</li>
 						</ul>
@@ -171,15 +136,9 @@
 <span class="hljs-keyword">const</span> doubleAnErr = map(double, mightSucceed(<span class="hljs-literal">false</span>));
 <span class="hljs-built_in">console</span>.log(toString(doubleAnErr));  <span class="hljs-comment">// `Err('something went wrong')`</span>
 </code></pre>
-						<p>Note that if we tried to call <code>mightSucceed(true) * 2</code> here, we&#39;d get a type
-							error – this wouldn&#39;t make it past the compile step. Instead, we need to use one
-						of the helper functions (or methods) to manipulate the value in a safe way.</p>
+						<p>Note that if we tried to call <code>mightSucceed(true) * 2</code> here, we&#39;d get a type error – this wouldn&#39;t make it past the compile step. Instead, we need to use one of the helper functions (or methods) to manipulate the value in a safe way.</p>
 						<h2 id="using-result-">Using <code>Result</code></h2>
-						<p>The library is designed to be used with a functional style, allowing you to
-							compose operations easily. Thus, standalone pure function versions of every
-							operation are supplied. However, the same operations also exist on the <code>Ok</code> and
-							<code>Err</code> types directly, so you may also write them in a more traditional &quot;fluent&quot;
-						object style.</p>
+						<p>The library is designed to be used with a functional style, allowing you to compose operations easily. Thus, standalone pure function versions of every operation are supplied. However, the same operations also exist on the <code>Ok</code> and <code>Err</code> types directly, so you may also write them in a more traditional &quot;fluent&quot; object style.</p>
 						<h3 id="examples-functional-style">Examples: functional style</h3>
 						<pre><code class="lang-ts"><span class="hljs-keyword">import</span> { Result, ok, err, map, toString } <span class="hljs-keyword">from</span> <span class="hljs-string">'true-myth/result'</span>;
 
@@ -194,8 +153,7 @@
 <span class="hljs-built_in">console</span>.log(toString(errLength)); <span class="hljs-comment">// Err(gah!)</span>
 </code></pre>
 						<h3 id="examples-fluent-object-invocation">Examples: fluent object invocation</h3>
-						<p>You can also use a &quot;fluent&quot; method chaining style to apply the various helper
-						functions to a <code>Result</code> instance:</p>
+						<p>You can also use a &quot;fluent&quot; method chaining style to apply the various helper functions to a <code>Result</code> instance:</p>
 						<pre><code class="lang-ts"><span class="hljs-keyword">import</span> { ok, err } <span class="hljs-keyword">from</span> <span class="hljs-string">'true-myth/result'</span>;
 
 <span class="hljs-keyword">const</span> length = <span class="hljs-function">(<span class="hljs-params">s: <span class="hljs-built_in">string</span></span>) =&gt;</span> s.length;
@@ -207,20 +165,13 @@
 <span class="hljs-keyword">const</span> errLen = hooray.map(length).unwrapOr(<span class="hljs-number">0</span>);  <span class="hljs-comment">// errLen = 0</span>
 </code></pre>
 						<h3 id="writing-type-constraints">Writing type constraints</h3>
-						<p>When creating a <code>Result</code> instance, you&#39;ll nearly always be using <em>either</em> the
-							<code>Ok</code> <em>or</em> the <code>Err</code> type, so the type system won&#39;t necessarily be able to infer
-						the other type parameter.</p>
+						<p>When creating a <code>Result</code> instance, you&#39;ll nearly always be using <em>either</em> the <code>Ok</code> <em>or</em> the <code>Err</code> type, so the type system won&#39;t necessarily be able to infer the other type parameter.</p>
 						<pre><code class="lang-ts"><span class="hljs-keyword">import</span> { ok, err } <span class="hljs-keyword">from</span> <span class="hljs-string">'true-myth/result'</span>;
 
 <span class="hljs-keyword">const</span> anOk = ok(<span class="hljs-number">12</span>); <span class="hljs-comment">// TypeScript infers: `Result&lt;number, {}&gt;`</span>
 <span class="hljs-keyword">const</span> anErr = err(<span class="hljs-string">'sad'</span>) <span class="hljs-comment">// TypeScript infers: `Result&lt;{}, string&gt;`</span>
 </code></pre>
-						<p>In TypeScript, because of the direction type inference happens, you will need to
-							specify the type at declaration to make it type check when returning values from
-							a function with a specified type. Note that this <em>only</em> applies when the
-							instance is declared in its own statement and returned separately, <em>not</em> when it
-							is the expression value of a single-expression arrow function or the explicit
-						return value of any function.</p>
+						<p>In TypeScript, because of the direction type inference happens, you will need to specify the type at declaration to make it type check when returning values from a function with a specified type. Note that this <em>only</em> applies when the instance is declared in its own statement and returned separately, <em>not</em> when it is the expression value of a single-expression arrow function or the explicit return value of any function.</p>
 						<pre><code class="lang-ts"><span class="hljs-keyword">import</span> { Result, ok } <span class="hljs-keyword">from</span> <span class="hljs-string">'true-myth/maybe'</span>;
 
 <span class="hljs-comment">// ERROR: Type 'Result&lt;number, {}&gt;' is not assignable to type 'Result&lt;number, string&gt;'.</span>

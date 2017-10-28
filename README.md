@@ -17,15 +17,12 @@ style.</p>
 
 ## Overview
 
-True Myth provides standard, type-safe wrappers and helper functions to help
-help you with two *extremely* common cases in programming:
+True Myth provides standard, type-safe wrappers and helper functions to help help you with two *extremely* common cases in programming:
 
 -   not having a value
 -   having a *result* where you need to deal with either success or failure
 
-You could implement all of these yourself – it's not hard! – but it's much
-easier to just have one extremely well-tested library you can use everywhere to
-solve this problem once and for all.
+You could implement all of these yourself – it's not hard! – but it's much easier to just have one extremely well-tested library you can use everywhere to solve this problem once and for all.
 
 - [Overview](#overview)
 - [Setup](#setup)
@@ -72,10 +69,7 @@ Add True Myth to your dependencies:
     npm install true-myth
     ```
 
-Each of CommonJS, AMD, and ES modules are shipped, so you may reference them
-directly from their installation in the `node_modules` directory. (This may be
-helpful for using the library in different contexts, with the ES modules being
-supplied especially so you can do tree-shaking with e.g. Rollup.)
+Each of CommonJS, AMD, and ES modules are shipped, so you may reference them directly from their installation in the `node_modules` directory. (This may be helpful for using the library in different contexts, with the ES modules being supplied especially so you can do tree-shaking with e.g. Rollup.)
 
 <details>
 <summary>Distributed package layout</summary>
@@ -116,13 +110,9 @@ node_modules/
 
 ### TypeScript and Flow
 
-Flow should *just work*. You can simply use the module as a normal ES6-style
-module import, whether working in Node or using something like Webpack.
+Flow should *just work*. You can simply use the module as a normal ES6-style module import, whether working in Node or using something like Webpack.
 
-For TypeScript, whether using Webpack or Ember CLI or something else for your
-bundling, you will be able to import the root module directly but will not be
-able to import the more useful modules. To do so, you'll need to add this to
-your `tsconfig.json`:
+For TypeScript, whether using Webpack or Ember CLI or something else for your bundling, you will be able to import the root module directly but will not be able to import the more useful modules. To do so, you'll need to add this to your `tsconfig.json`:
 
 ```json
 {
@@ -159,12 +149,9 @@ If you think another type should be in this list, please [open an issue]!
 
 ## Just the API, please
 
-_If you're unsure of why you would want to use the library, you might jump down
-to [**Why do I need this?**](#why-do-i-need-this)._
+_If you're unsure of why you would want to use the library, you might jump down to [**Why do I need this?**](#why-do-i-need-this)._
 
-These examples don't cover every corner of the API; it's just here to show you
-what a few of the functions are like. [Full API documentation is
-available!][docs] You can also [view the source][source] if you prefer.
+These examples don't cover every corner of the API; it's just here to show you what a few of the functions are like. [Full API documentation is available!][docs] You can also [view the source][source] if you prefer.
 
 [docs]: https://chriskrycho.github.io/true-myth/
 [source]: https://github.com/chriskrycho/true-myth/
@@ -206,8 +193,7 @@ console.log(safeLength(nothingHere).toString()); // Nothing
 
 ### Constructing `Maybe`
 
-You can use `Maybe.of` to construct a `Maybe` from any value. It will return a
-`Nothing` if the passed type is `null` or `undefined`, or a `Just` otherwise.
+You can use `Maybe.of` to construct a `Maybe` from any value. It will return a `Nothing` if the passed type is `null` or `undefined`, or a `Just` otherwise.
 
 ```ts
 import { of as maybeOf, Maybe } from 'true-myth/maybe';
@@ -229,9 +215,7 @@ const theAnswer = ok(42);
 const theAnwerValue = unsafelyUnwrap(theAnswer);
 ```
 
-However, as its name makes explicit `unsafelyUnwrap` is not a safe operation; if
-the item being unwrapped is an `Err`, this will throw an `Error`. Instead, you
-can use one of the safe unwrap methods:
+However, as its name makes explicit `unsafelyUnwrap` is not a safe operation; if the item being unwrapped is an `Err`, this will throw an `Error`. Instead, you can use one of the safe unwrap methods:
 
 ```ts
 import { ok, unwrapOr } from 'true-myth/result';
@@ -246,21 +230,11 @@ There are two motivating problems for True Myth (and other libraries like it): d
 
 ### 1. Nothingness: `null` and `undefined`
 
-How do you represent the concept of *not having anything*, programmatically? As
-a language, JavaScript uses `null` to represent this concept; if you have a
-variable `myNumber` to store numbers, you might assign the value `null` when you
-don't have any number at all. If you have a variable `myString`, you might set
-`myString = null;` when you don't have a string.
+How do you represent the concept of *not having anything*, programmatically? As a language, JavaScript uses `null` to represent this concept; if you have a variable `myNumber` to store numbers, you might assign the value `null` when you don't have any number at all. If you have a variable `myString`, you might set `myString = null;` when you don't have a string.
 
-Some JavaScript programmers use `undefined` in place of `null` or in addition to
-`null`, so rather than setting a value to `null` they might just set `let
-myString;` or even `let myString = undefined;`.
+Some JavaScript programmers use `undefined` in place of `null` or in addition to `null`, so rather than setting a value to `null` they might just set `let myString;` or even `let myString = undefined;`.
 
-Every language needs a way to express the concept of nothing, but `null` and
-`undefined` are a curse. Their presence in JavaScript (and in many other
-languages) introduce a host of problems, because they are not a particularly
-*safe* way to represent the concept. Say, for a moment, that you have a function
-that takes an integer as a parameter:
+Every language needs a way to express the concept of nothing, but `null` and `undefined` are a curse. Their presence in JavaScript (and in many other languages) introduce a host of problems, because they are not a particularly *safe* way to represent the concept. Say, for a moment, that you have a function that takes an integer as a parameter:
 
 ```js
 let myNumber = undefined;
@@ -274,25 +248,11 @@ myFuncThatTakesAnInteger(myNumber); // TypeError: anInteger is undefined
 
 ![this is fine](https://user-images.githubusercontent.com/2403023/31154374-ac25ce0e-a874-11e7-9399-73ad99d9d6cb.png)
 
-When the function tries to convert the integer to a string, the function blows
-up because it was written with the assumption that the parameter being passed in
-(a) is defined and (b) has a `toString` method. Neither of these assumptions are
-true when `anInteger` is `null` or `undefined`. This leads JavaScript
-programmers to program defensively, with `if (!anInteger) return;` style guard
-blocks at the top of their functions. This leads to harder-to-read code, and
-what's more, *it doesn't actually solve the root problem.* You could imagine
-this situation playing itself out in a million different ways: arguments to
-functions go missing. Values on objects turn out not to exist. Arrays are absent
-instead of merely empty.
+When the function tries to convert the integer to a string, the function blows up because it was written with the assumption that the parameter being passed in (a) is defined and (b) has a `toString` method. Neither of these assumptions are true when `anInteger` is `null` or `undefined`. This leads JavaScript programmers to program defensively, with `if (!anInteger) return;` style guard blocks at the top of their functions. This leads to harder-to-read code, and what's more, *it doesn't actually solve the root problem.* You could imagine this situation playing itself out in a million different ways: arguments to functions go missing. Values on objects turn out not to exist. Arrays are absent instead of merely empty.
 
-The result is a steady stream not merely of programming frustrations, but of
-*errors*. The program does not function as the programmer intends. That means
-stuff doesn't work correctly for the user of the software. Imagine a hammer
-where the head just slips off every so often, in ways you could compensate for
-but which makes it that much harder to just get the nail into the wood.
+The result is a steady stream not merely of programming frustrations, but of *errors*. The program does not function as the programmer intends. That means stuff doesn't work correctly for the user of the software. Imagine a hammer where the head just slips off every so often, in ways you could compensate for but which makes it that much harder to just get the nail into the wood.
 
-That's what `null` and `undefined` are. You can program around them. But
-defensive programming is gross. You write a lot of things like this:
+That's what `null` and `undefined` are. You can program around them. But defensive programming is gross. You write a lot of things like this:
 
 ```js
 function isNil(thingToCheck) {
@@ -308,38 +268,20 @@ function doAThing(withAString) {
 }
 ```
 
-If you forget that check, or simply assume, "Look, I'll *never* call this
-without including the argument," eventually you or someone else will get it
-wrong. Usually somewhere far away from the actual invocation of `doAThing`, so
-that it's not obvious why that value ended up being `null` there.
+If you forget that check, or simply assume, "Look, I'll *never* call this without including the argument," eventually you or someone else will get it wrong. Usually somewhere far away from the actual invocation of `doAThing`, so that it's not obvious why that value ended up being `null` there.
 
-TypeScript and Flow take us a big step in that direction, so long as our type
-annotations are good enough. (Use of `any` will leave us sad, though.) We can
-specify that type *may* be present, using the [maybe]/[optional] annotation.
-This at least helps keep us honest. But we still end up writing a ton of
-repeated boilerplate to deal with this problem. Rather than just handling it
-once and being done with it, we play a never-ending game of whack-a-mole. We
-must be constantly vigilant and proactive so that our users don't get into
-broken error states.
+TypeScript and Flow take us a big step in that direction, so long as our type annotations are good enough. (Use of `any` will leave us sad, though.) We can specify that type *may* be present, using the [maybe]/[optional] annotation. This at least helps keep us honest. But we still end up writing a ton of repeated boilerplate to deal with this problem. Rather than just handling it once and being done with it, we play a never-ending game of whack-a-mole. We must be constantly vigilant and proactive so that our users don't get into broken error states.
 
 [maybe]: https://flow.org/en/docs/types/maybe/
 [optional]: http://www.typescriptlang.org/docs/handbook/interfaces.html#optional-properties
 
 ### 2. Failure handling: callbacks and exceptions
 
-Similarly, you often have functions whose result represents an operation might
-fail in some way, or which have to deal with the result of such operations. Many patterns
-exist to work around the fact that you can't very easily return two things
-together in JavaScript. Node has a callback pattern with an error as the first
-argument to every callback, set to `null` if there was no error. Client-side
-JavaScript usually just doesn't have a single pattern for handling this.
+Similarly, you often have functions whose result represents an operation might fail in some way, or which have to deal with the result of such operations. Many patterns exist to work around the fact that you can't very easily return two things together in JavaScript. Node has a callback pattern with an error as the first argument to every callback, set to `null` if there was no error. Client-side JavaScript usually just doesn't have a single pattern for handling this.
 
-In both cases, you might use exceptions – but often an exception feels like the
-wrong thing because the possibility of failure is built into the kind of thing
-you're doing – querying an API, or checking the validity of some date, and so on.
+In both cases, you might use exceptions – but often an exception feels like the wrong thing because the possibility of failure is built into the kind of thing you're doing – querying an API, or checking the validity of some date, and so on.
 
-In Node.js, the callback pattern encourages a style where literally every
-function starts with the exact same code:
+In Node.js, the callback pattern encourages a style where literally every function starts with the exact same code:
 
 ```js
 const doSomething = (err, data) => {
@@ -353,21 +295,11 @@ const doSomething = (err, data) => {
 
 There are two major problems with this:
 
-1.  It's incredibly repetitive – the very opposite of "Don't Repeat Yourself".
-    We wouldn't do this with *anything* else in our codebase!
+1.  It's incredibly repetitive – the very opposite of "Don't Repeat Yourself". We wouldn't do this with *anything* else in our codebase!
 
-2.  It puts the error-handling right up front and *not in a good way.* While we
-    want to have a failure case in mind when designing the behavior of our
-    functions, it's not usually the *point* of most functions – things like
-    `handleErr` in the above example being the exception and not the rule. The
-    actual meat of the function is always after the error handling.
+2.  It puts the error-handling right up front and *not in a good way.* While we want to have a failure case in mind when designing the behavior of our functions, it's not usually the *point* of most functions – things like `handleErr` in the above example being the exception and not the rule. The actual meat of the function is always after the error handling.
 
-Meanwhile, in client-side code, if we're not using some similar kind of callback
-pattern, we usually resort to exceptions. But exceptions are unpredictable: you
-can't know whether a given function invocation is going to throw an exception
-until runtime as someone calling the function. No big deal if it's a small
-application and one person wrote all the code, but with even a few thousand lines
-of code or two developers, it's very easy to miss that. And then this happens:
+Meanwhile, in client-side code, if we're not using some similar kind of callback pattern, we usually resort to exceptions. But exceptions are unpredictable: you can't know whether a given function invocation is going to throw an exception until runtime as someone calling the function. No big deal if it's a small application and one person wrote all the code, but with even a few thousand lines of code or two developers, it's very easy to miss that. And then this happens:
 
 ```js
 // in one part of the codebase
@@ -383,15 +315,9 @@ const getMeAValue = (url) => {
 const value getMeAValue('http:/www.google.com');  // missing slash
 ```
 
-Notice: there's no way for the caller to know that the function will throw.
-Perhaps you're very disciplined an write a good docstring for every function
-*and* everyone's editor shows it to them *and* they pay attention to that
-briefly available popover. More likely, though, this exception throws at runtime
-and probably as a result of user-entered data – and then you're chasing down the
-problem through error logs.
+Notice: there's no way for the caller to know that the function will throw. Perhaps you're very disciplined an write a good docstring for every function *and* everyone's editor shows it to them *and* they pay attention to that briefly available popover. More likely, though, this exception throws at runtime and probably as a result of user-entered data – and then you're chasing down the problem through error logs.
 
-More, if you *do* want to account for the reality that any function anywhere in
-JavaScript might actually throw, you're going to write something like this:
+More, if you *do* want to account for the reality that any function anywhere in JavaScript might actually throw, you're going to write something like this:
 
 ```js
 try {
@@ -403,9 +329,7 @@ try {
 
 This is like the Node example *but even worse* for repetition!
 
-Nor can TypeScript and Flow help you here! They don't have type signatures to
-say "This throws an exception!" (TypeScript's `never` might come to mind, but it
-might mean lots of things, not just exception-throwing.)
+Nor can TypeScript and Flow help you here! They don't have type signatures to say "This throws an exception!" (TypeScript's `never` might come to mind, but it might mean lots of things, not just exception-throwing.)
 
 Neither callbacks nor exceptions are good solutions here.
 
@@ -413,32 +337,19 @@ Neither callbacks nor exceptions are good solutions here.
 
 `Maybe` and `Result` are our escape hatch from all this madness.
 
-We reach for libraries precisely so we can solve real business problems
-while letting lower-level concerns live in the "solved problems" category. True
-Myth, borrowing ideas from many other languages and libraries, aims to put
-_code written to defend against `null`/`undefined` problems_ in that "solved
-problems" category.
+We reach for libraries precisely so we can solve real business problems while letting lower-level concerns live in the "solved problems" category. True Myth, borrowing ideas from many other languages and libraries, aims to put _code written to defend against `null`/`undefined` problems_ in that "solved problems" category.
 
-`Maybe` and `Result` solve this problem *once*, and *in a principled way*,
-instead of in an _ad-hoc_ way throughout your codebase, by putting the value
-into a *container* which is guaranteed to be safe to act upon, regardless of
-whether there's something inside it or not.
+`Maybe` and `Result` solve this problem *once*, and *in a principled way*, instead of in an _ad-hoc_ way throughout your codebase, by putting the value into a *container* which is guaranteed to be safe to act upon, regardless of whether there's something inside it or not.
 
-These containers let us write functions with *actually safe* assumptions about
-parameter values by extracting the question, "Does this variable contain a valid
-value?" to API boundaries, rather than needing to ask that question at the head
-of every. single. function.
+These containers let us write functions with *actually safe* assumptions about parameter values by extracting the question, "Does this variable contain a valid value?" to API boundaries, rather than needing to ask that question at the head of every. single. function.
 
 *What is this sorcery?*
 
 ### How it works: `Maybe`
 
-It turns out you probably already have a good idea of how this works, if you've
-spent much time writing JavaScript, because this is exactly how arrays work.
+It turns out you probably already have a good idea of how this works, if you've spent much time writing JavaScript, because this is exactly how arrays work.
 
-Imagine, for a moment, that you have a variable `myArray` and you want to map
-over it and print out every value to the console. You instantiate it as an empty
-array and then forget to load it up with values before mapping over it:
+Imagine, for a moment, that you have a variable `myArray` and you want to map over it and print out every value to the console. You instantiate it as an empty array and then forget to load it up with values before mapping over it:
 
 ```js
 let myArray = [];
@@ -448,11 +359,7 @@ let myArray = [];
 myArray.forEach(n => console.log(n)); // <nothing prints to the screen>
 ```
 
-Even though this doesn't print anything to the screen, it doesn't unexpectedly
-blow up, either. In other words, it represents the concept of having nothing
-"inside the box" in a safe manner. By contrast, an integer has no such safe box
-around it. What if you could multiply an integer by two, and if your variable
-was "empty" for one reason or another, it wouldn't blow up?
+Even though this doesn't print anything to the screen, it doesn't unexpectedly blow up, either. In other words, it represents the concept of having nothing "inside the box" in a safe manner. By contrast, an integer has no such safe box around it. What if you could multiply an integer by two, and if your variable was "empty" for one reason or another, it wouldn't blow up?
 
 ```js
 let myInteger = undefined;
@@ -460,8 +367,7 @@ let myInteger = undefined;
 myInteger * 3; // 😢
 ```
 
-Let's try that again, but this time let's put the actual value in a container
-and give ourselves safe access methods:
+Let's try that again, but this time let's put the actual value in a container and give ourselves safe access methods:
 
 ```js
 import * as Maybe from 'true-myth/maybe';
@@ -472,22 +378,13 @@ myInteger.map(x => x * 3); // Nothing
 
 ![mind blown](https://user-images.githubusercontent.com/2403023/31098390-5d6573d0-a790-11e7-96f9-361d2e70522b.gif)
 
-We received `Nothing` back as our value, which isn't particularly useful, but it
-also didn't halt our program in its tracks!
+We received `Nothing` back as our value, which isn't particularly useful, but it also didn't halt our program in its tracks!
 
-Best of all, when you use these with libraries like TypeScript or Flow, you can
-lean on their type systems to check aggressively for `null` and `undefined`, and
-actually *eliminate* those from your codebase by replacing anywhere you would
-have used them with `Maybe`.
+Best of all, when you use these with libraries like TypeScript or Flow, you can lean on their type systems to check aggressively for `null` and `undefined`, and actually *eliminate* those from your codebase by replacing anywhere you would have used them with `Maybe`.
 
 ### How it works: `Result`
 
-`Result` is similar to `Maybe`, except it packages up the result of an operation
-(like a network request) whether it's a success (an `Ok`) or a failure (an
-`Err`) and lets us unwrap the package at our leisure. Whether you get back a 200
-or a 401 for your HTTP request, you can pass the box around the same either way;
-the methods and properties the container has are not dependent upon whether
-there is shiny new data or a big red error inside.
+`Result` is similar to `Maybe`, except it packages up the result of an operation (like a network request) whether it's a success (an `Ok`) or a failure (an `Err`) and lets us unwrap the package at our leisure. Whether you get back a 200 or a 401 for your HTTP request, you can pass the box around the same either way; the methods and properties the container has are not dependent upon whether there is shiny new data or a big red error inside.
 
 ```ts
 import { Result, ok, err } from 'true-myth/result';
@@ -499,19 +396,11 @@ console.log(myNumber.map(n => n * 2)); // Ok(24)
 console.log(myNumberErr.map(n => n * 2)); // Err(oh no)
 ```
 
-Thus, you can replace functions which take polymorphic arguments or have
-polymorphic return values to try to handle scenarios where something may be a
-success or an error with functions using `Result`.
+Thus, you can replace functions which take polymorphic arguments or have polymorphic return values to try to handle scenarios where something may be a success or an error with functions using `Result`.
 
-Any place you try to treat either a `Maybe` or a `Result` as just the underlying
-value rather than the container, the type systems will complain, of course. And
-you'll also get help from smart editors with suggestions about what kinds of values
-(includingfunctions) you need to interact with any given helper or method, since the
-type definitions are supplied.
+Any place you try to treat either a `Maybe` or a `Result` as just the underlying value rather than the container, the type systems will complain, of course. And you'll also get help from smart editors with suggestions about what kinds of values (includingfunctions) you need to interact with any given helper or method, since the type definitions are supplied.
 
-By leaning on TypeScript or Flow to handle the checking, we also get all these
-benefits with *no* runtime overhead other than the cost of constructing the
-actual container objects (which is to say: *very* low!).
+By leaning on TypeScript or Flow to handle the checking, we also get all these benefits with *no* runtime overhead other than the cost of constructing the actual container objects (which is to say: *very* low!).
 
 ## Design philosophy
 
@@ -519,14 +408,12 @@ The design aims for True Myth are:
 
 -   to be as idiomatic as possible in JavaScript
 -   to support a natural functional programming style
--   to have zero runtime cost beyond simple object construction and function
-    invocation
+-   to have zero runtime cost beyond simple object construction and function invocation
 -   to lean heavily on TypeScript and Flow to enable all of the above
 
 In practice, that means:
 
--   You can construct the variant types in the traditional JavaScript way or
-    with a pure function:
+-   You can construct the variant types in the traditional JavaScript way or with a pure function:
 
     ```ts
     import { Just, just, Nothing, nothing } from 'true-myth/maybe';
@@ -548,62 +435,28 @@ In practice, that means:
     const ok21 = map(x => x / 2, numberResult);
     ```
 
-    As this second example suggests, the aim has been to support the most
-    idiomatic approach for each style. This means that yes, you might find it a
-    bit confusing if you're actively switching between the two of them. (Why
-    would you do that?!?)
+    As this second example suggests, the aim has been to support the most idiomatic approach for each style. This means that yes, you might find it a bit confusing if you're actively switching between the two of them. (Why would you do that?!?)
 
--   Using the library with TypeScript or Flow will *just work* and will provide
-    you with considerable safety out of the box. Using it with JavaScript will
-    work just fine, but there is no runtime checking, and you're responsible to
-    make sure you don't `unwrap()` a `Maybe` without checking that it's safe to
-    do so.
+-   Using the library with TypeScript or Flow will *just work* and will provide you with considerable safety out of the box. Using it with JavaScript will work just fine, but there is no runtime checking, and you're responsible to make sure you don't `unwrap()` a `Maybe` without checking that it's safe to do so.
 
--   Since this is a TypeScript- and Flow-first library, we intentionally leave
-    out any runtime type checking. As such, you *should* make use of the type
-    systems if you want the benefits of the system. Many of the functions simply
-    assume that the types are checked, and *will* error if you pass in items of
-    the wrong type.
+-   Since this is a TypeScript- and Flow-first library, we intentionally leave out any runtime type checking. As such, you *should* make use of the type systems if you want the benefits of the system. Many of the functions simply assume that the types are checked, and *will* error if you pass in items of the wrong type.
 
-    For example, if you pass a non-`Maybe` instance to many functions, they will
-    simply fail – even the basic helpers like `isJust` and `isNothing`. These
-    assumptions have been made precisely *because* this is a TypeScript- and
-    Flow-first library. (See the discussion below comparing True Myth to
-    Folktale and Sanctuary if you aren't using TypeScript or Flow and need
-    runtime checking.)
+    For example, if you pass a non-`Maybe` instance to many functions, they will simply fail – even the basic helpers like `isJust` and `isNothing`. These assumptions have been made precisely *because* this is a TypeScript- and Flow-first library. (See the discussion below comparing True Myth to Folktale and Sanctuary if you aren't using TypeScript or Flow and need runtime checking.)
 
 The overarching themes are flexibility and approachability.
 
-The hope is that a team just picking up these ideas for the first time can use
-them without adapting their whole style to a "traditional" functional
-programming approach, but a team comfortable with functional idioms will find
-themselves at home with the style of data-last pure functions. (For a brief
-discussion of why you want the data last in a functional style, see [this blog
-post].)
+The hope is that a team just picking up these ideas for the first time can use them without adapting their whole style to a "traditional" functional programming approach, but a team comfortable with functional idioms will find themselves at home with the style of data-last pure functions. (For a brief discussion of why you want the data last in a functional style, see [this blog post].)
 
 [this blog post]: http://www.chriskrycho.com/2017/collection-last-auto-curried-functions.html
 
-(As a closely related note: True Myth does not currently supply curried variants
-of the functions. There are a *lot* of good options out there for that; both
-[lodash] and [Ramda] have tools for currying existing function definitions. It
-also profoundly complicates writing the type signatures for these functions,
-since neither TypeScript nor Flow can easily represent auto- curried functions –
-unsurprisingly, given they're uncommon in JavaScript. Using Ramda or lodash to
-get curried versions of the functions may be a huge win for you in your
-codebase, though!)
+(As a closely related note: True Myth does not currently supply curried variants of the functions. There are a *lot* of good options out there for that; both [lodash] and [Ramda] have tools for currying existing function definitions. It also profoundly complicates writing the type signatures for these functions, since neither TypeScript nor Flow can easily represent auto- curried functions – unsurprisingly, given they're uncommon in JavaScript. Using Ramda or lodash to get curried versions of the functions may be a huge win for you in your codebase, though!)
 
 [Ramda]: http://ramdajs.com
 [lodash]: https://lodash.com
 
 ### A note on reference types: no deep copies here!
 
-One important note: True Myth does *not* attempt to deeply-clone the wrapped
-values when performing operations on them. Instead, the library assumes that you
-will *not* mutate those objects in place. (Doing more than this would require
-taking on a dependency on e.g. [lodash]). If you violate that constraint, you
-can and will see surprising outcomes. Accordingly, you should take care not to
-mutate reference types, or to use deep cloning yourself when e.g. mapping over
-reference types.
+One important note: True Myth does *not* attempt to deeply-clone the wrapped values when performing operations on them. Instead, the library assumes that you will *not* mutate those objects in place. (Doing more than this would require taking on a dependency on e.g. [lodash]). If you violate that constraint, you can and will see surprising outcomes. Accordingly, you should take care not to mutate reference types, or to use deep cloning yourself when e.g. mapping over reference types.
 
 ```ts
 import { just, map, unsafelyUnwrap } from 'true-myth/maybe';
@@ -621,11 +474,9 @@ anObjectToWrap.desc.push('.');
 console.log(unsafelyUnwrap(updated).desc);  // ["this", " ", "is a string", "."]
 ```
 
-In other words: you *must* use other tools along with True Myth if you're going
-to mutate objects you're wrapping in `Maybe` or `Result`.
+In other words: you *must* use other tools along with True Myth if you're going to mutate objects you're wrapping in `Maybe` or `Result`.
 
-True Myth will work quite nicely with [lodash], [Ramda], [Immutable-JS], etc.,
-so you can use whatever tools you like to handle this problem.
+True Myth will work quite nicely with [lodash], [Ramda], [Immutable-JS], etc., so you can use whatever tools you like to handle this problem.
 
 [Immutable-JS]: http://facebook.github.io/immutable-js/
 
@@ -633,103 +484,52 @@ so you can use whatever tools you like to handle this problem.
 
 #### `Maybe`
 
-The existing options in this space include `Option`, `Optional`, and `Maybe`.
-You could also point to "nullable," but that actually means the *opposite* of
-what we're doing here – these represent types which can *not* be nullable!
+The existing options in this space include `Option`, `Optional`, and `Maybe`. You could also point to "nullable," but that actually means the *opposite* of what we're doing here – these represent types which can *not* be nullable!
 
-`Option` implies a choice between several different *options*; in this case
-that's not really what's going on. It's also not really a great word for the
-type in the sense that it's weird to read aloud: "an Option string" doesn't make
-any sense in English.
+`Option` implies a choice between several different *options*; in this case that's not really what's going on. It's also not really a great word for the type in the sense that it's weird to read aloud: "an Option string" doesn't make any sense in English.
 
-`Optional` is much better than `Option`. The semantics are much more accurate,
-in that it captures that the thing is allowed to be absent. It's also the nicest
-grammatically: "an Optional string". On the other hand, it's also the *longest*.
+`Optional` is much better than `Option`. The semantics are much more accurate, in that it captures that the thing is allowed to be absent. It's also the nicest grammatically: "an Optional string". On the other hand, it's also the *longest*.
 
-`Maybe` seems to be the best type name semantically: we're modeling something
-which *may* be there – or may *not* be there! Grammatically, it's comparable to
-"optional": "a Maybe string" isn't great – but "maybe a string" is the most
-natural *accurate* way to answer the question, "What's in this field?" It's also
-the shortest!
+`Maybe` seems to be the best type name semantically: we're modeling something which *may* be there – or may *not* be there! Grammatically, it's comparable to "optional": "a Maybe string" isn't great – but "maybe a string" is the most natural *accurate* way to answer the question, "What's in this field?" It's also the shortest!
 
 `Optional` or `Maybe` are both good names; `Maybe` just seemed slightly better.
 
 ##### The `Maybe` variants: `Just` and `Nothing`
 
-Similar consideration was given to the names of the type variants. Options for
-the "present" type in other libraries are `Some` and `Just`. Options for the
-"absent" type are `None` or `Nothing`.
+Similar consideration was given to the names of the type variants. Options for the "present" type in other libraries are `Some` and `Just`. Options for the "absent" type are `None` or `Nothing`.
 
 ###### Why `Just`?
 
-Both `Just` and `Some` are reasonable choices for this, and both have things to
-recommend them semantically:
+Both `Just` and `Some` are reasonable choices for this, and both have things to recommend them semantically:
 
--   When talking about the *type* of given item, "some" makes a lot of sense:
-    "What's in this field? Some number." You can get the same idea across with
-    "just" but it's a bit less clear: "What's in this field? Just a number."
--   On the other hand, when talking about or constructing a given *value*,
-    "just" makes more sense: "What is this? It's just 12." When you try to use
-    "some" there, it reads oddly: "What is this? It's some 12."
+-   When talking about the *type* of given item, "some" makes a lot of sense: "What's in this field? Some number." You can get the same idea across with "just" but it's a bit less clear: "What's in this field? Just a number."
+-   On the other hand, when talking about or constructing a given *value*, "just" makes more sense: "What is this? It's just 12." When you try to use "some" there, it reads oddly: "What is this? It's some 12."
 
-Given that "just a number" *works* (even if it's strictly a little less nice
-than "some number") and that "just 12" works but "some 12" doesn't, `Just` seems
-to be a slightly better option.
+Given that "just a number" *works* (even if it's strictly a little less nice than "some number") and that "just 12" works but "some 12" doesn't, `Just` seems to be a slightly better option.
 
 ###### Why `Nothing`?
 
-Given the choice between `None` and `Nothing`, the consideration just came down
-to the most natural *language* choice. "What's here? Nothing!" makes sense,
-while "What's here? None" does not. `None` also implies that there might be
-more than one of the items. It's entirely unnatural to say "There is none of a
-number here"; you'd normally say "there is no number here" or "there is nothing
-here" instead. So `Nothing` it is!
+Given the choice between `None` and `Nothing`, the consideration just came down to the most natural *language* choice. "What's here? Nothing!" makes sense, while "What's here? None" does not. `None` also implies that there might be more than one of the items. It's entirely unnatural to say "There is none of a number here"; you'd normally say "there is no number here" or "there is nothing here" instead. So `Nothing` it is!
 
 #### `Result`
 
-In some languages and libraries, a more general type named `Either` is used
-instead of the more specific `Result` name. The two are equivalent in
-functionality – both provide two variants, each of which wraps a value. In the
-`Either` implementations, those are usually named `Left` and `Right`. In the
-`Result` implementations (both here and in other libraries and languages), they
-are named `Ok` and `Err`.
+In some languages and libraries, a more general type named `Either` is used instead of the more specific `Result` name. The two are equivalent in functionality – both provide two variants, each of which wraps a value. In the `Either` implementations, those are usually named `Left` and `Right`. In the `Result` implementations (both here and in other libraries and languages), they are named `Ok` and `Err`.
 
-The main difference between `Either` and `Result` is precisely that question of
-generality. `Either` can meaningfully capture *any* scenario where there are two
-possible values resulting from a given function application, or applicable as
-arguments to a function. `Result` *only* captures the idea of something
-succeeding or failing. In that sense, `Either` might seem to be better: it can
-capture what `Result` captures (traditionally with `Left` being the error case
-and `Right` being the success, or *right*, case), and many more besides.
+The main difference between `Either` and `Result` is precisely that question of generality. `Either` can meaningfully capture *any* scenario where there are two possible values resulting from a given function application, or applicable as arguments to a function. `Result` *only* captures the idea of something succeeding or failing. In that sense, `Either` might seem to be better: it can capture what `Result` captures (traditionally with `Left` being the error case and `Right` being the success, or *right*, case), and many more besides.
 
-However, in practice, the idea of a result is far and away the most common case
-for using an `Either`, and it's also the easiest to explain. (An `Either`
-implementation would also be valuable, though, and it might be a later addition
-to the library.)
+However, in practice, the idea of a result is far and away the most common case for using an `Either`, and it's also the easiest to explain. (An `Either` implementation would also be valuable, though, and it might be a later addition to the library.)
 
 ##### The `Result` variants: `Ok` and `Err`
 
-Given a "result" type, we need to be able to express the idea of "success" and
-"failure." The most obvious names here would be `Success` and `Failure`. Those
-are actually really good names with a single problem: they're *long*. Needing to
-write `success(12)` or `failure({ oh: 'no' })` is a *lot* to write over and over
-again. Especially when there some options which *also* work well: `Ok` and
-`Err`.
+Given a "result" type, we need to be able to express the idea of "success" and "failure." The most obvious names here would be `Success` and `Failure`. Those are actually really good names with a single problem: they're *long*. Needing to write `success(12)` or `failure({ oh: 'no' })` is a *lot* to write over and over again. Especially when there some options which *also* work well: `Ok` and `Err`.
 
-Both `Ok` and `Err` could be written out long-form: `Okay` and `Error`. But in
-this case, the longer names don't add any particular clarity; they require more
-typing; and the `Error` case also overloads the existing name of the base
-exception type in JavaScript. So: `Ok` and `Err` it is.
+Both `Ok` and `Err` could be written out long-form: `Okay` and `Error`. But in this case, the longer names don't add any particular clarity; they require more typing; and the `Error` case also overloads the existing name of the base exception type in JavaScript. So: `Ok` and `Err` it is.
 
 ### Inspiration
 
-The design of True Myth draws heavily on prior art; essentially nothing of this
-is original – *perhaps* excepting the choice to make `Maybe.of` handle `null`
-and `undefined` in constructing the types. In particular, however, True Myth
-draws particular inspiration from:
+The design of True Myth draws heavily on prior art; essentially nothing of this is original – *perhaps* excepting the choice to make `Maybe.of` handle `null` and `undefined` in constructing the types. In particular, however, True Myth draws particular inspiration from:
 
--   Rust's [`Option`][rs-option] and [`Result`][rs-result] types and their
-    associated methods
+-   Rust's [`Option`][rs-option] and [`Result`][rs-result] types and their associated methods
 -   Folktale's [`Maybe`][ft-maybe] and [`Result`][ft-result] implementations
 -   Elm's [`Maybe`][elm-maybe] and [`Result`][elm-result] types and their
     associated functions
@@ -743,141 +543,71 @@ draws particular inspiration from:
 
 ## Why not...
 
-There are other great functional programming libraries out there... so why not
-just use one of them?
+There are other great functional programming libraries out there... so why not just use one of them?
 
-Note that much of the content between these sections is the same; it's presented
-as is so you can simply read the section appropriate to the library you're
-comparing it with.
+Note that much of the content between these sections is the same; it's presented as is so you can simply read the section appropriate to the library you're comparing it with.
 
 ### Folktale?
 
-[Folktale] has an API a lot like this one, as you'll see when perusing the docs.
-However, there are two main reasons you might prefer True Myth to Folktale:
+[Folktale] has an API a lot like this one, as you'll see when perusing the docs. However, there are two main reasons you might prefer True Myth to Folktale:
 
 [Folktale]: http://folktale.origamitower.com
 
-1.  True Myth is TypeScript-first and Flow-first, which means that it assumes
-    you are using TypeScript or Flow if you're aiming for rigorous type safety.
+1.  True Myth is TypeScript-first and Flow-first, which means that it assumes you are using TypeScript or Flow if you're aiming for rigorous type safety.
 
-    By contrast, Folktale is a JavaScript-first library, with runtime checking
-    built in for its types. Folktale's TypeScript support is in-progress, but
-    will remain secondary until a TypeScript rewrite of the whole Folktale
-    library lands... eventually.
+    By contrast, Folktale is a JavaScript-first library, with runtime checking built in for its types. Folktale's TypeScript support is in-progress, but will remain secondary until a TypeScript rewrite of the whole Folktale library lands... eventually.
 
-    There's value in both of these approaches, so True Myth aims to take
-    advantage of the compilers and play in a no-runtime-cost space.
+    There's value in both of these approaches, so True Myth aims to take advantage of the compilers and play in a no-runtime-cost space.
 
-    If you want a JS-focused (rather than TS- or Flow-focused) library which
-    will help you be safer without a compiler, you should definitely pick
-    Folktale over True Myth. If you've already using TS or Flow, True Myth is a
-    bit nicer of an experience.
+    If you want a JS-focused (rather than TS- or Flow-focused) library which will help you be safer without a compiler, you should definitely pick Folktale over True Myth. If you've already using TS or Flow, True Myth is a bit nicer of an experience.
 
-2.  True Myth aims to keep functional programming jargon to a minimum and to use
-    TypeScript and Flow type notation throughout its docs as well as in its
-    implementation.
+2.  True Myth aims to keep functional programming jargon to a minimum and to use TypeScript and Flow type notation throughout its docs as well as in its implementation.
 
-    Folktale is aimed squarely at people who are already pretty comfortable with
-    the world of strongly-typed functional programming languages. This is
-    particularly evident in the way its type signatures are written out (using
-    the same basic notation you might see in e.g. Haskell), but it's also there
-    in its heavy use of functional programming terminology throughout its docs.
+    Folktale is aimed squarely at people who are already pretty comfortable with the world of strongly-typed functional programming languages. This is particularly evident in the way its type signatures are written out (using the same basic notation you might see in e.g. Haskell), but it's also there in its heavy use of functional programming terminology throughout its docs.
 
-    Haskell-style types are quite nice, and functional programming jargon is
-    very useful. However, they're also another hump to get over. Again: a
-    tradeoff.
+    Haskell-style types are quite nice, and functional programming jargon is very useful. However, they're also another hump to get over. Again: a tradeoff.
 
-    By opting for type notation that TS or Flow developers are already familiar
-    with, and by focusing on what various functions *do* rather than the usual
-    FP names for them, True Myth aims at people just coming up to speed on
-    these ideas.
+    By opting for type notation that TS or Flow developers are already familiar with, and by focusing on what various functions *do* rather than the usual FP names for them, True Myth aims at people just coming up to speed on these ideas.
 
     The big win for Folktale over True Myth is [Fantasy Land] compatibility.
 
+3.  True Myth's API aims to be more idiomatic as JavaScript/TypeScript, with a couple differences in particular worth calling out:
 
-3.  True Myth's API aims to be more idiomatic as JavaScript/TypeScript, with a
-    couple differences in particular worth calling out:
+    -   **function naming convention:** True Myth uses PascalCase for types and camelCase for functions – so, `new Just(5)` and `just(5)`, whereas FolkTale uses the capitals as function names for type constructors, i.e. `Just(5)`, and does not support `new`.
 
-    -   **function naming convention:** True Myth uses PascalCase for types and
-        camelCase for functions – so, `new Just(5)` and `just(5)`, whereas
-        FolkTale uses the capitals as function names for type constructors, i.e.
-        `Just(5)`, and does not support `new`.
+    -   **ease of construction from nullable types:** True Myth allows you to construct `Maybe` types from nullable types with `Maybe.of`, because JS is *full* of `null` and `undefined`, and allowing `Maybe.of` to handle them makes it easier to be sure you're always doing the right thing.
 
-    -   **ease of construction from nullable types:** True Myth allows you to
-        construct `Maybe` types from nullable types with `Maybe.of`, because JS
-        is *full* of `null` and `undefined`, and allowing `Maybe.of` to handle
-        them makes it easier to be sure you're always doing the right thing.
-
-        Folktale's `Maybe.of` only allows the use of non-nullable types, and
-        requires you to use `Maybe.fromNullable` instead. This isn't
-        unreasonable, but it dramatically decreases the convenience of
-        integration with existing JS codebases or interfacing with untyped JS
-        libraries.
+        Folktale's `Maybe.of` only allows the use of non-nullable types, and requires you to use `Maybe.fromNullable` instead. This isn't unreasonable, but it dramatically decreases the convenience of integration with existing JS codebases or interfacing with untyped JS libraries.
 
 [Fantasy Land]: https://github.com/fantasyland/fantasy-land
 
 ### Sanctuary?
 
-[Sanctuary] has many of the same goals as True Myth, but is much more focused on
-the expectations and patterns you'd see in Haskell or PureScript or similar
-languages. Its API and True Myth's are much *less* similar than Folktale and
-True Myth's are, as a result – the underlying details are often similar, but the
-names are nearly all different. A few of the major contrasts:
+[Sanctuary] has many of the same goals as True Myth, but is much more focused on the expectations and patterns you'd see in Haskell or PureScript or similar languages. Its API and True Myth's are much *less* similar than Folktale and True Myth's are, as a result – the underlying details are often similar, but the names are nearly all different. A few of the major contrasts:
 
 [Sanctuary]: https://sanctuary.js.org
 
-1.  True Myth is TypeScript-first and Flow-first, which means that it assumes
-    you are using TypeScript or Flow if you're aiming for rigorous type safety.
+1.  True Myth is TypeScript-first and Flow-first, which means that it assumes you are using TypeScript or Flow if you're aiming for rigorous type safety.
 
-    By contrast, Sanctuary is a JavaScript-first library, with runtime checking
-    built in for its types. Sanctuary's TypeScript support is [in progress][s-ts],
-    but will for the foreseeable future remain add-on rather than first-class.
-    (Sanctuary *does* allow you to create a version of the module without the
-    runtime checking, but it requires you to do this yourself.)
+    By contrast, Sanctuary is a JavaScript-first library, with runtime checking built in for its types. Sanctuary's TypeScript support is [in progress][s-ts], but will for the foreseeable future remain add-on rather than first-class. (Sanctuary *does* allow you to create a version of the module without the runtime checking, but it requires you to do this yourself.)
 
-    There's value in both of these approaches, so True Myth aims to take
-    advantage of the compilers and play in a no-runtime-cost space.
+    There's value in both of these approaches, so True Myth aims to take advantage of the compilers and play in a no-runtime-cost space.
 
-    If you want a JS-focused (rather than TS- or Flow-focused) library which
-    will help you be safer without a compiler, you should definitely pick
-    Sanctuary over True Myth. If you've already using TS or Flow, True Myth is a
-    bit nicer of an experience.
+    If you want a JS-focused (rather than TS- or Flow-focused) library which will help you be safer without a compiler, you should definitely pick Sanctuary over True Myth. If you've already using TS or Flow, True Myth is a bit nicer of an experience.
 
-2.  True Myth aims to keep functional programming jargon to a minimum and to use
-    TypeScript and Flow type notation throughout its docs as well as in its
-    implementation.
+2.  True Myth aims to keep functional programming jargon to a minimum and to use TypeScript and Flow type notation throughout its docs as well as in its implementation.
 
-    Sanctuary is aimed squarely at people who are already extremely comfortable
-    the world of strongly-typed, pure functional programming languages. This is
-    particularly evident in the way its type signatures are written out (using
-    the same notation you would see in Haskell or PureScript), but it's also
-    present in Sanctuary's heavy use of functional programming terminology
-    throughout its docs.
+    Sanctuary is aimed squarely at people who are already extremely comfortable the world of strongly-typed, pure functional programming languages. This is particularly evident in the way its type signatures are written out (using the same notation you would see in Haskell or PureScript), but it's also present in Sanctuary's heavy use of functional programming terminology throughout its docs.
 
-    Haskell- and Purescript-style types are quite nice, and the functional
-    programming jargon is very useful. However, they're also another hump to get
-    over. Again: a tradeoff.
+    Haskell- and Purescript-style types are quite nice, and the functional programming jargon is very useful. However, they're also another hump to get over. Again: a tradeoff.
 
-    By opting for type notation that TS or Flow developers are already familiar
-    with, and by focusing on what various functions *do* rather than the usual
-    FP names for them, True Myth aims at people just coming up to speed on
-    these ideas.
+    By opting for type notation that TS or Flow developers are already familiar with, and by focusing on what various functions *do* rather than the usual FP names for them True Myth aims at people just coming up to speed on these ideas.
 
-    The big win for Sanctuary over True Myth is [Fantasy Land] compatibility, or
-    familiarity if coming from a language like Haskell or PureScript.
+    The big win for Sanctuary over True Myth is [Fantasy Land] compatibility, or familiarity if coming from a language like Haskell or PureScript.
 
-3.  True Myth's API aims to be more idiomatic as JavaScript/TypeScript, with a
-    one difference in particular worth calling out: the **function naming
-    convention.** True Myth uses PascalCase for types and camelCase for
-    functions – so, `new Just(5)` and `just(5)`, whereas Sanctuary uses the
-    capitals as function names for type constructors, i.e. `S.Just(5)`, and does
-    not support `new`.
+3.  True Myth's API aims to be more idiomatic as JavaScript/TypeScript, with a one difference in particular worth calling out: the **function naming convention.** True Myth uses PascalCase for types and camelCase for functions – so, `new Just(5)` and `just(5)`, whereas Sanctuary uses the capitals as function names for type constructors, i.e. `S.Just(5)`, and does not support `new`.
 
-4.  Sanctuary also aims to provide a much larger suite of functions, more like
-    [Ramda] but with Haskell- or PureScript-inspired type safety and
-    sophistication. True Myth intentionally punts on those concerns, assuming
-    that most consumers are already using a library like Lodash or Ramda and
-    aiming to be easy to integrate with those instead.
+4.  Sanctuary also aims to provide a much larger suite of functions, more like [Ramda] but with Haskell- or PureScript-inspired type safety and sophistication. True Myth intentionally punts on those concerns, assuming that most consumers are already using a library like Lodash or Ramda and aiming to be easy to integrate with those instead.
 
 [s-ts]: https://github.com/sanctuary-js/sanctuary/pull/431
 
@@ -885,8 +615,7 @@ names are nearly all different. A few of the major contrasts:
 
 ### Folktale
 
-Migrating from Folktale should be *very* straightforward: many of the names are
-the same, and the behavior of many of the functions is as well.
+Migrating from Folktale should be *very* straightforward: many of the names are the same, and the behavior of many of the functions is as well.
 
 #### Folktale 1.0
 
@@ -909,15 +638,8 @@ the same, and the behavior of many of the functions is as well.
 
 ## What's with the name?
 
-For slightly quirky [historical reasons], libraries which borrow ideas from
-typed functional programming in JavaScript often use names related to the phrase
-"fantasy land" – especially [Fantasy Land] itself and [Folktale].
+For slightly quirky [historical reasons], libraries which borrow ideas from typed functional programming in JavaScript often use names related to the phrase "fantasy land" – especially [Fantasy Land] itself and [Folktale].
 
 [historical reasons]: https://github.com/promises-aplus/promises-spec/issues/94#issuecomment-16176966
 
-"True Myth" leans on that history (and serves, hopefully, as a respectful nod to
-Folktale in particular, as both Folktale and Sanctuary are huge inspirations for
-this library), and borrows an idea from J.R.R. Tolkien and C.S. Lewis: what if
-all myths appeal to us because they point ultimately at something true – and
-what if some story with the structure of a myth *were* true in history? It's a
-beautiful idea, and the name of this library was picked as an homage to it.
+"True Myth" leans on that history (and serves, hopefully, as a respectful nod to Folktale in particular, as both Folktale and Sanctuary are huge inspirations for this library), and borrows an idea from J.R.R. Tolkien and C.S. Lewis: what if all myths appeal to us because they point ultimately at something true – and what if some story with the structure of a myth *were* true in history? It's a beautiful idea, and the name of this library was picked as an homage to it.

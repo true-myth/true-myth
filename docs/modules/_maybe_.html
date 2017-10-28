@@ -70,31 +70,13 @@
 				<div class="tsd-comment tsd-typography">
 					<div class="lead">
 						<h1 id="maybe">Maybe</h1>
-						<p>A <a href="#maybe"><code>Maybe&lt;T&gt;</code></a> represents a value of type <code>T</code> which may, or may not, be
-						present.</p>
-						<p>If the value is present, it is <code>Just(value)</code>. If it&#39;s absent, it&#39;s <code>Nothing</code>.
-							This provides a type-safe container for dealing with the possibility that
-							there&#39;s nothing here – a container you can do many of the same things you might
-							with an array – so that you can avoid nasty <code>null</code> and <code>undefined</code> checks
-						throughout your codebase.</p>
-						<p>The behavior of this type is checked by TypeScript or Flow at compile time, and
-							bears no runtime overhead other than the very small cost of the container object
-						and some lightweight wrap/unwrap functionality.</p>
-						<p>The <code>Nothing</code> variant has a type parameter <code>&lt;T&gt;</code> so that type inference works
-							correctly in TypeScript when operating on <code>Nothing</code> instances with functions
-							which require a <code>T</code> to behave properly, e.g. <a href="https://chriskrycho.github.io/true-myth/modules/_maybe_.html#map"><code>map</code></a>, which cannot check
-							that the map function satisies the type constraints for <code>Maybe&lt;T&gt;</code> unless
-						<code>Nothing</code> has a parameter <code>T</code> to constrain it on invocation.</p>
-						<p>Put simply: without the type parameter, if you had a <code>Nothing</code> variant of a
-							<code>Maybe&lt;string&gt;</code>, and you tried to use it with a function which expected a
-							<code>Maybe&lt;number&gt;</code> it would still type check – because TypeScript doesn&#39;t have
-						enough information to check that it <em>doesn&#39;t</em> meet the requirements.</p>
+						<p>A <a href="#maybe"><code>Maybe&lt;T&gt;</code></a> represents a value of type <code>T</code> which may, or may not, be present.</p>
+						<p>If the value is present, it is <code>Just(value)</code>. If it&#39;s absent, it&#39;s <code>Nothing</code>. This provides a type-safe container for dealing with the possibility that there&#39;s nothing here – a container you can do many of the same things you might with an array – so that you can avoid nasty <code>null</code> and <code>undefined</code> checks throughout your codebase.</p>
+						<p>The behavior of this type is checked by TypeScript or Flow at compile time, and bears no runtime overhead other than the very small cost of the container object and some lightweight wrap/unwrap functionality.</p>
+						<p>The <code>Nothing</code> variant has a type parameter <code>&lt;T&gt;</code> so that type inference works correctly in TypeScript when operating on <code>Nothing</code> instances with functions which require a <code>T</code> to behave properly, e.g. <a href="https://chriskrycho.github.io/true-myth/modules/_maybe_.html#map"><code>map</code></a>, which cannot check that the map function satisies the type constraints for <code>Maybe&lt;T&gt;</code> unless <code>Nothing</code> has a parameter <code>T</code> to constrain it on invocation.</p>
+						<p>Put simply: without the type parameter, if you had a <code>Nothing</code> variant of a <code>Maybe&lt;string&gt;</code>, and you tried to use it with a function which expected a <code>Maybe&lt;number&gt;</code> it would still type check – because TypeScript doesn&#39;t have enough information to check that it <em>doesn&#39;t</em> meet the requirements.</p>
 						<h2 id="using-maybe-">Using <code>Maybe</code></h2>
-						<p>The library is designed to be used with a functional style, allowing you to
-							compose operations easily. Thus, standalone pure function versions of every
-							operation are supplied. However, the same operations also exist on the <code>Just</code>
-							and <code>Nothing</code> types directly, so you may also write them in a more traditional
-						&quot;fluent&quot; object style.</p>
+						<p>The library is designed to be used with a functional style, allowing you to compose operations easily. Thus, standalone pure function versions of every operation are supplied. However, the same operations also exist on the <code>Just</code> and <code>Nothing</code> types directly, so you may also write them in a more traditional &quot;fluent&quot; object style.</p>
 						<h3 id="examples-functional-style">Examples: functional style</h3>
 						<pre><code class="lang-ts"><span class="hljs-keyword">import</span> * <span class="hljs-keyword">as</span> Maybe <span class="hljs-keyword">from</span> <span class="hljs-string">'true-myth/maybe'</span>;
 
@@ -119,10 +101,7 @@
 <span class="hljs-built_in">console</span>.log(toString(wrappedWhoElseKnows));  <span class="hljs-comment">// "Just(true,false)"</span>
 </code></pre>
 						<h3 id="examples-fluent-object-invocation">Examples: fluent object invocation</h3>
-						<p><strong>Note:</strong> in the &quot;class&quot;-style, if you are constructing a <code>Maybe</code> from an
-							unknown source, you must either do the work to check the value yourself, or use
-							<code>Maybe.of</code> – you can&#39;t know at that point whether it&#39;s safe to construct a
-						<code>Just</code> without checking, but <code>of</code> will always work correctly!</p>
+						<p><strong>Note:</strong> in the &quot;class&quot;-style, if you are constructing a <code>Maybe</code> from an unknown source, you must either do the work to check the value yourself, or use <code>Maybe.of</code> – you can&#39;t know at that point whether it&#39;s safe to construct a <code>Just</code> without checking, but <code>of</code> will always work correctly!</p>
 						<pre><code class="lang-ts"><span class="hljs-keyword">import</span> { isVoid } <span class="hljs-keyword">from</span> <span class="hljs-string">'true-myth/utils'</span>
 <span class="hljs-keyword">import</span> { Maybe, Just, Nothing } <span class="hljs-keyword">from</span> <span class="hljs-string">'true-myth/maybe'</span>;
 
@@ -158,27 +137,12 @@
 : <span class="hljs-keyword">new</span> Nothing();
 <span class="hljs-built_in">console</span>.log(wrappedWhoElseKnows.toString());  <span class="hljs-comment">// "Just(true,false)"</span>
 </code></pre>
-						<p>As you can see, it&#39;s often advantageous to use <code>Maybe.of</code> even if you&#39;re
-							otherwise inclined to use the class method approach; it dramatically cuts down
-							the boilerplate you have to write (since, under the hood, it&#39;s doing exactly
-						this check!).</p>
+						<p>As you can see, it&#39;s often advantageous to use <code>Maybe.of</code> even if you&#39;re otherwise inclined to use the class method approach; it dramatically cuts down the boilerplate you have to write (since, under the hood, it&#39;s doing exactly this check!).</p>
 						<h3 id="prefer-maybe-of-of-">Prefer <a href="https://chriskrycho.github.io/true-myth/modules/_maybe_.html#of"><code>Maybe.of</code></a></h3>
-						<p>In fact, if you&#39;re dealing with data you are not constructing directly yourself,
-							<strong><em>always</em></strong> prefer to use [<code>Maybe.of</code>] to create a new <code>Maybe</code>. If an API lies
-							to you for some reason and hands you an <code>undefined</code> or a <code>null</code> (even though you
-							expect it to be an actual <code>T</code> in a specific scenario), the <code>.of()</code> function will
-						still construct it correctly for you.</p>
-						<p>By contrast, if you do <code>Maybe.just(someVariable)</code> and <code>someVariable</code> is <code>null</code>
-							or <code>undefined</code>, the program will throw at that point. This is a simple
-							consequence of the need to make the <code>new Just()</code> constructor work; we cannot
-							construct <code>Just</code> safely in a way that excludes a type of <code>Maybe&lt;null&gt;</code> or
-							<code>Maybe&lt;undefined&gt;</code> otherwise – and that would defeat the whole purpose of using
-						a <code>Maybe</code>!</p>
+						<p>In fact, if you&#39;re dealing with data you are not constructing directly yourself, <strong><em>always</em></strong> prefer to use [<code>Maybe.of</code>] to create a new <code>Maybe</code>. If an API lies to you for some reason and hands you an <code>undefined</code> or a <code>null</code> (even though you expect it to be an actual <code>T</code> in a specific scenario), the <code>.of()</code> function will still construct it correctly for you.</p>
+						<p>By contrast, if you do <code>Maybe.just(someVariable)</code> and <code>someVariable</code> is <code>null</code> or <code>undefined</code>, the program will throw at that point. This is a simple consequence of the need to make the <code>new Just()</code> constructor work; we cannot construct <code>Just</code> safely in a way that excludes a type of <code>Maybe&lt;null&gt;</code> or <code>Maybe&lt;undefined&gt;</code> otherwise – and that would defeat the whole purpose of using a <code>Maybe</code>!</p>
 						<h3 id="writing-type-constraints">Writing type constraints</h3>
-						<p>Especially when constructing a <code>Nothing</code>, you may need to specify what <em>kind</em> of
-							<code>Nothing</code> it is. The TypeScript and Flow type systems can figure it out based on
-							the value passed in for a <code>Just</code>, but there&#39;s no value to use with a <code>Nothing</code>,
-						so you may have to specify it. In that case, you can write the type explicitly:</p>
+						<p>Especially when constructing a <code>Nothing</code>, you may need to specify what <em>kind</em> of <code>Nothing</code> it is. The TypeScript and Flow type systems can figure it out based on the value passed in for a <code>Just</code>, but there&#39;s no value to use with a <code>Nothing</code>, so you may have to specify it. In that case, you can write the type explicitly:</p>
 						<pre><code class="lang-ts"><span class="hljs-keyword">import</span> { Maybe, nothing } <span class="hljs-keyword">from</span> <span class="hljs-string">'true-myth/maybe'</span>;
 
 <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">takesAMaybeString</span>(<span class="hljs-params">thingItTakes: Maybe&lt;<span class="hljs-built_in">string</span>&gt;</span>) </span>{
@@ -193,9 +157,7 @@ takesAMaybeString(nothingHere);
 <span class="hljs-keyword">const</span> nothingHereEither = nothing&lt;<span class="hljs-built_in">string</span>&gt;();
 takesAMaybeString(nothingHereEither);
 </code></pre>
-						<p>Note that this <em>is</em> necessary if you declare the <code>Maybe</code> in a statement inside a
-							function, but is <em>not</em> necessary when you have an expression-bodied arrow
-						function or when you return the item directly:</p>
+						<p>Note that this <em>is</em> necessary if you declare the <code>Maybe</code> in a statement inside a function, but is <em>not</em> necessary when you have an expression-bodied arrow function or when you return the item directly:</p>
 						<pre><code class="lang-ts"><span class="hljs-keyword">import</span> { Maybe, nothing } <span class="hljs-keyword">from</span> <span class="hljs-string">'true-myth/maybe'</span>;
 
 <span class="hljs-comment">// ERROR: Type 'Maybe&lt;{}&gt;' is not assignable to type 'Maybe&lt;number&gt;'.</span>
@@ -211,37 +173,12 @@ takesAMaybeString(nothingHereEither);
 };
 </code></pre>
 						<h2 id="using-maybe-effectively">Using <code>Maybe</code> Effectively</h2>
-						<p>The best times to create and safely unwrap <code>Maybe</code>s are at the <em>boundaries</em> of
-							your application. When you are deserializing data from an API, or when you are
-							handling user input, you can use a <code>Maybe</code> instance to handle the possibility
-							that there&#39;s just nothing there, if there is no good default value to use
-							<em>everywhere</em> in the application. Within the business logic of your application,
-							you can then safely deal with the data by using the <code>Maybe</code> functions or method
-							until you hit another boundary, and then you can choose how best to handle it at
-						that point.</p>
-						<p>You won&#39;t normally need to unwrap it at any point <em>other</em> than the boundaries,
-							because you can simply apply any transformations using the helper functions or
-							methods, and be confident that you&#39;ll have either correctly transformed data, or
-						a <code>Nothing</code>, at the end, depending on your inputs.</p>
-						<p>If you are handing data off to another API, for example, you might convert a
-							<code>Nothing</code> right back into a <code>null</code> in a JSON payload, as that&#39;s a reasonable way
-							to send the data across the wire – the consumer can then decide how to handle it
-						as is appropriate in its own context.</p>
-						<p>If you are rendering a UI, having a <code>Nothing</code> when you need to render gives you
-							an opportunity to provide default/fallback content – whether that&#39;s an
-							explanation that there&#39;s nothing there, or a sensible substitute, or anything
-						else that might be appropriate at that point in your app.</p>
-						<p>You may also be tempted to use <code>Maybe</code>s to replace boolean flags or similar
-							approaches for defining branching behavior or output from a function. You should
-							avoid that, in general. Reserve <code>Maybe</code> for modeling the possible <em>absence of
-							data</em>, and nothing else. Prefer to use <code>Result</code> or <code>Either</code> for <em>fallible</em> or
-							<em>disjoint</em> scenarios instead – or construct your own union types if you have
-						more than two boundaries!</p>
-						<p>Finally, and along similar lines, if you find yourself building a data structure
-							with a lot of <code>Maybe</code> types in it, you should consider it a &quot;code smell&quot; –
-							something wrong with your model. It usually means you should find a way to
-							refactor the data structure into a union of smaller data structures which more
-						accurately capture the domain you&#39;re modeling.</p>
+						<p>The best times to create and safely unwrap <code>Maybe</code>s are at the <em>boundaries</em> of your application. When you are deserializing data from an API, or when you are handling user input, you can use a <code>Maybe</code> instance to handle the possibility that there&#39;s just nothing there, if there is no good default value to use <em>everywhere</em> in the application. Within the business logic of your application, you can then safely deal with the data by using the <code>Maybe</code> functions or method until you hit another boundary, and then you can choose how best to handle it at that point.</p>
+						<p>You won&#39;t normally need to unwrap it at any point <em>other</em> than the boundaries, because you can simply apply any transformations using the helper functions or methods, and be confident that you&#39;ll have either correctly transformed data, or a <code>Nothing</code>, at the end, depending on your inputs.</p>
+						<p>If you are handing data off to another API, for example, you might convert a <code>Nothing</code> right back into a <code>null</code> in a JSON payload, as that&#39;s a reasonable way to send the data across the wire – the consumer can then decide how to handle it as is appropriate in its own context.</p>
+						<p>If you are rendering a UI, having a <code>Nothing</code> when you need to render gives you an opportunity to provide default/fallback content – whether that&#39;s an explanation that there&#39;s nothing there, or a sensible substitute, or anything else that might be appropriate at that point in your app.</p>
+						<p>You may also be tempted to use <code>Maybe</code>s to replace boolean flags or similar approaches for defining branching behavior or output from a function. You should avoid that, in general. Reserve <code>Maybe</code> for modeling the possible <em>absence of data</em>, and nothing else. Prefer to use <code>Result</code> or <code>Either</code> for <em>fallible</em> or <em>disjoint</em> scenarios instead – or construct your own union types if you have more than two boundaries!</p>
+						<p>Finally, and along similar lines, if you find yourself building a data structure with a lot of <code>Maybe</code> types in it, you should consider it a &quot;code smell&quot; – something wrong with your model. It usually means you should find a way to refactor the data structure into a union of smaller data structures which more accurately capture the domain you&#39;re modeling.</p>
 					</div>
 				</div>
 			</section>
