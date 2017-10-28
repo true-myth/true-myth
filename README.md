@@ -15,6 +15,19 @@ style.</p>
 [![](https://img.shields.io/badge/js.org-dns-ffb400.svg?style=flat-square)](https://js.org)
 [![docs built with TypeDoc](https://img.shields.io/badge/documented-with_TypeDoc-009fb5.svg?style=flat-square)](http://true-myth.js.org)
 
+## Overview
+
+True Myth provides standard, type-safe wrappers and helper functions to help
+help you with two *extremely* common cases in programming:
+
+-   not having a value
+-   having a *result* where you need to deal with either success or failure
+
+You could implement all of these yourself – it's not hard! – but it's much
+easier to just have one extremely well-tested library you can use everywhere to
+solve this problem once and for all.
+
+- [Overview](#overview)
 - [Setup](#setup)
     - [TypeScript and Flow](#typescript-and-flow)
 - [Roadmap](#roadmap)
@@ -23,11 +36,12 @@ style.</p>
     - [`Maybe` with the method style](#maybe-with-the-method-style)
     - [Constructing `Maybe`](#constructing-maybe)
     - [Safely getting at values](#safely-getting-at-values)
-- [What is this for?](#what-is-this-for)
-    - [The problem](#the-problem)
-        + [Nothingness: `null` and `undefined`](#nothingness-null-and-undefined)
-        + [Error handling: callbacks and exceptions](#error-handling-callbacks-and-exceptions)
-    - [The solution](#the-solution)
+- [Why do I need this?](#why-do-i-need-this)
+    - [1. Nothingness: `null` and `undefined`](#1-nothingness-null-and-undefined)
+    - [2. Failure handling: callbacks and exceptions](#2-failure-handling-callbacks-and-exceptions)
+- [Solutions: `Maybe` and `Result`](#solutions-maybe-and-result)
+    - [How it works: `Maybe`](#how-it-works-maybe)
+    - [How it works: `Result`](#how-it-works-result)
 - [Design philosophy](#design-philosophy)
     - [A note on reference types: no deep copies here!](#a-note-on-reference-types-no-deep-copies-here)
     - [The type names](#the-type-names)
@@ -146,7 +160,7 @@ If you think another type should be in this list, please [open an issue]!
 ## Just the API, please
 
 _If you're unsure of why you would want to use the library, you might jump down
-to [**What is this for?**](#what-is-this-for)._
+to [**Why do I need this?**](#why-do-i-need-this)._
 
 These examples don't cover every corner of the API; it's just here to show you
 what a few of the functions are like. [Full API documentation is
@@ -226,21 +240,11 @@ const theAnswer = ok(42);
 const theAnswerValue = unwrapOr(0, theAnswer);
 ```
 
-## What is this for?
+## Why do I need this?
 
-True Myth provides standard, type-safe wrappers and helper functions to help
-help you with two *extremely* common cases in programming:
+There are two motivating problems for True Myth (and other libraries like it): dealing with *nothingness* and dealing with *operations which can fail*.
 
--   not having a value
--   having a *result* where you need to deal with either success or failure
-
-You could implement all of these yourself – it's not hard! – but it's much
-easier to just have one extremely well-tested library you can use everywhere to
-solve this problem once and for all.
-
-### The Problem
-
-#### Nothingness: `null` and `undefined`
+### 1. Nothingness: `null` and `undefined`
 
 How do you represent the concept of *not having anything*, programmatically? As
 a language, JavaScript uses `null` to represent this concept; if you have a
@@ -321,7 +325,7 @@ broken error states.
 [maybe]: https://flow.org/en/docs/types/maybe/
 [optional]: http://www.typescriptlang.org/docs/handbook/interfaces.html#optional-properties
 
-#### Error handling: callbacks and exceptions
+### 2. Failure handling: callbacks and exceptions
 
 Similarly, you often have functions whose result represents an operation might
 fail in some way, or which have to deal with the result of such operations. Many patterns
@@ -405,7 +409,7 @@ might mean lots of things, not just exception-throwing.)
 
 Neither callbacks nor exceptions are good solutions here.
 
-### The solution
+## Solutions: `Maybe` and `Result`
 
 `Maybe` and `Result` are our escape hatch from all this madness.
 
@@ -426,6 +430,8 @@ value?" to API boundaries, rather than needing to ask that question at the head
 of every. single. function.
 
 *What is this sorcery?*
+
+### How it works: `Maybe`
 
 It turns out you probably already have a good idea of how this works, if you've
 spent much time writing JavaScript, because this is exactly how arrays work.
@@ -473,6 +479,8 @@ Best of all, when you use these with libraries like TypeScript or Flow, you can
 lean on their type systems to check aggressively for `null` and `undefined`, and
 actually *eliminate* those from your codebase by replacing anywhere you would
 have used them with `Maybe`.
+
+### How it works: `Result`
 
 `Result` is similar to `Maybe`, except it packages up the result of an operation
 (like a network request) whether it's a success (an `Ok`) or a failure (an

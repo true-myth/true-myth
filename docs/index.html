@@ -78,7 +78,18 @@
 					<a href="https://gratipay.com/true-myth/"><img src="https://img.shields.io/gratipay/project/true-myth.svg?style=flat-square" alt="Gratipay"></a>
 					<a href="https://js.org"><img src="https://img.shields.io/badge/js.org-dns-ffb400.svg?style=flat-square" alt=""></a>
 				<a href="http://true-myth.js.org"><img src="https://img.shields.io/badge/documented-with_TypeDoc-009fb5.svg?style=flat-square" alt="docs built with TypeDoc"></a></p>
+				<h2 id="overview">Overview</h2>
+				<p>True Myth provides standard, type-safe wrappers and helper functions to help
+				help you with two <em>extremely</em> common cases in programming:</p>
 				<ul>
+					<li>not having a value</li>
+					<li>having a <em>result</em> where you need to deal with either success or failure</li>
+				</ul>
+				<p>You could implement all of these yourself – it&#39;s not hard! – but it&#39;s much
+					easier to just have one extremely well-tested library you can use everywhere to
+				solve this problem once and for all.</p>
+				<ul>
+					<li><a href="#overview">Overview</a></li>
 					<li><a href="#setup">Setup</a><ul>
 							<li><a href="#typescript-and-flow">TypeScript and Flow</a></li>
 						</ul>
@@ -91,9 +102,14 @@
 							<li><a href="#safely-getting-at-values">Safely getting at values</a></li>
 						</ul>
 					</li>
-					<li><a href="#what-is-this-for">What is this for?</a><ul>
-							<li><a href="#the-problem">The problem</a></li>
-							<li><a href="#the-solution">The solution</a></li>
+					<li><a href="#why-do-i-need-this">Why do I need this?</a><ul>
+							<li><a href="#1-nothingness-null-and-undefined">1. Nothingness: <code>null</code> and <code>undefined</code></a></li>
+							<li><a href="#2-failure-handling-callbacks-and-exceptions">2. Failure handling: callbacks and exceptions</a></li>
+						</ul>
+					</li>
+					<li><a href="#solutions-maybe-and-result">Solutions: <code>Maybe</code> and <code>Result</code></a><ul>
+							<li><a href="#how-it-works-maybe">How it works: <code>Maybe</code></a></li>
+							<li><a href="#how-it-works-result">How it works: <code>Result</code></a></li>
 						</ul>
 					</li>
 					<li><a href="#design-philosophy">Design philosophy</a><ul>
@@ -211,7 +227,7 @@
 				<p>If you think another type should be in this list, please <a href="https://github.com/chriskrycho/true-myth/issues">open an issue</a>!</p>
 				<h2 id="just-the-api-please">Just the API, please</h2>
 				<p><em>If you&#39;re unsure of why you would want to use the library, you might jump down
-				to <a href="#what-is-this-for"><strong>What is this for?</strong></a>.</em></p>
+				to <a href="#why-do-i-need-this"><strong>Why do I need this?</strong></a>.</em></p>
 				<p>These examples don&#39;t cover every corner of the API; it&#39;s just here to show you
 					what a few of the functions are like. <a href="https://chriskrycho.github.io/true-myth/">Full API documentation is
 				available!</a> You can also <a href="https://github.com/chriskrycho/true-myth/">view the source</a> if you prefer.</p>
@@ -269,17 +285,17 @@
 <span class="hljs-keyword">const</span> theAnswer = ok(<span class="hljs-number">42</span>);
 <span class="hljs-keyword">const</span> theAnswerValue = unwrapOr(<span class="hljs-number">0</span>, theAnswer);
 </code></pre>
-				<h2 id="what-is-this-for-">What is this for?</h2>
-				<h3 id="the-history">The History</h3>
-				<p>How do you represent the concept of not having anything, programmatically? As a
-					language, JavaScript uses <code>null</code> to represent this concept; if you have a
+				<h2 id="why-do-i-need-this-">Why do I need this?</h2>
+				<p>There are two motivating problems for True Myth (and other libraries like it): dealing with <em>nothingness</em> and dealing with <em>operations which can fail</em>.</p>
+				<h3 id="1-nothingness-null-and-undefined-">1. Nothingness: <code>null</code> and <code>undefined</code></h3>
+				<p>How do you represent the concept of <em>not having anything</em>, programmatically? As
+					a language, JavaScript uses <code>null</code> to represent this concept; if you have a
 					variable <code>myNumber</code> to store numbers, you might assign the value <code>null</code> when you
 					don&#39;t have any number at all. If you have a variable <code>myString</code>, you might set
 				<code>myString = null;</code> when you don&#39;t have a string.</p>
 				<p>Some JavaScript programmers use <code>undefined</code> in place of <code>null</code> or in addition to
 					<code>null</code>, so rather than setting a value to <code>null</code> they might just set <code>let
 myString;</code> or even <code>let myString = undefined;</code>.</p>
-				<h3 id="the-problem">The problem</h3>
 				<p>Every language needs a way to express the concept of nothing, but <code>null</code> and
 					<code>undefined</code> are a curse. Their presence in JavaScript (and in many other
 					languages) introduce a host of problems, because they are not a particularly
@@ -335,7 +351,76 @@ myFuncThatTakesAnInteger(myNumber); <span class="hljs-comment">// TypeError: anI
 					once and being done with it, we play a never-ending game of whack-a-mole. We
 					must be constantly vigilant and proactive so that our users don&#39;t get into
 				broken error states.</p>
-				<h3 id="the-solution">The solution</h3>
+				<h3 id="2-failure-handling-callbacks-and-exceptions">2. Failure handling: callbacks and exceptions</h3>
+				<p>Similarly, you often have functions whose result represents an operation might
+					fail in some way, or which have to deal with the result of such operations. Many patterns
+					exist to work around the fact that you can&#39;t very easily return two things
+					together in JavaScript. Node has a callback pattern with an error as the first
+					argument to every callback, set to <code>null</code> if there was no error. Client-side
+				JavaScript usually just doesn&#39;t have a single pattern for handling this.</p>
+				<p>In both cases, you might use exceptions – but often an exception feels like the
+					wrong thing because the possibility of failure is built into the kind of thing
+				you&#39;re doing – querying an API, or checking the validity of some date, and so on.</p>
+				<p>In Node.js, the callback pattern encourages a style where literally every
+				function starts with the exact same code:</p>
+				<pre><code class="lang-js"><span class="hljs-keyword">const</span> doSomething = <span class="hljs-function">(<span class="hljs-params">err, data</span>) =&gt;</span> {
+  <span class="hljs-keyword">if</span> (err) {
+    <span class="hljs-keyword">return</span> handleErr(err);
+  }
+
+  <span class="hljs-comment">// do whatever the *actual* point of the function is</span>
+}
+</code></pre>
+				<p>There are two major problems with this:</p>
+				<ol>
+					<li><p>It&#39;s incredibly repetitive – the very opposite of &quot;Don&#39;t Repeat Yourself&quot;.
+						We wouldn&#39;t do this with <em>anything</em> else in our codebase!</p>
+					</li>
+					<li><p>It puts the error-handling right up front and <em>not in a good way.</em> While we
+							want to have a failure case in mind when designing the behavior of our
+							functions, it&#39;s not usually the <em>point</em> of most functions – things like
+							<code>handleErr</code> in the above example being the exception and not the rule. The
+						actual meat of the function is always after the error handling.</p>
+					</li>
+				</ol>
+				<p>Meanwhile, in client-side code, if we&#39;re not using some similar kind of callback
+					pattern, we usually resort to exceptions. But exceptions are unpredictable: you
+					can&#39;t know whether a given function invocation is going to throw an exception
+					until runtime as someone calling the function. No big deal if it&#39;s a small
+					application and one person wrote all the code, but with even a few thousand lines
+				of code or two developers, it&#39;s very easy to miss that. And then this happens:</p>
+				<pre><code class="lang-js"><span class="hljs-comment">// in one part of the codebase</span>
+<span class="hljs-keyword">const</span> getMeAValue = <span class="hljs-function">(<span class="hljs-params">url</span>) =&gt;</span> {
+  <span class="hljs-keyword">if</span> (isMalformed(url)) {
+    <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">Error</span>(<span class="hljs-string">`The url `</span>${url}<span class="hljs-string">` is malformed!`</span>);
+  }
+
+  <span class="hljs-comment">// do something else to load data from the URL</span>
+}
+
+<span class="hljs-comment">// somewhere else in the codebase</span>
+<span class="hljs-keyword">const</span> value getMeAValue(<span class="hljs-string">'http:/www.google.com'</span>);  <span class="hljs-comment">// missing slash</span>
+</code></pre>
+				<p>Notice: there&#39;s no way for the caller to know that the function will throw.
+					Perhaps you&#39;re very disciplined an write a good docstring for every function
+					<em>and</em> everyone&#39;s editor shows it to them <em>and</em> they pay attention to that
+					briefly available popover. More likely, though, this exception throws at runtime
+					and probably as a result of user-entered data – and then you&#39;re chasing down the
+				problem through error logs.</p>
+				<p>More, if you <em>do</em> want to account for the reality that any function anywhere in
+				JavaScript might actually throw, you&#39;re going to write something like this:</p>
+				<pre><code class="lang-js"><span class="hljs-keyword">try</span> {
+  getMeAValue(<span class="hljs-string">'http:/www.google.com'</span>);  <span class="hljs-comment">// missing slash</span>
+} <span class="hljs-keyword">catch</span> (e) {
+  handleErr(e);
+}
+</code></pre>
+				<p>This is like the Node example <em>but even worse</em> for repetition!</p>
+				<p>Nor can TypeScript and Flow help you here! They don&#39;t have type signatures to
+					say &quot;This throws an exception!&quot; (TypeScript&#39;s <code>never</code> might come to mind, but it
+				might mean lots of things, not just exception-throwing.)</p>
+				<p>Neither callbacks nor exceptions are good solutions here.</p>
+				<h2 id="solutions-maybe-and-result-">Solutions: <code>Maybe</code> and <code>Result</code></h2>
 				<p><code>Maybe</code> and <code>Result</code> are our escape hatch from all this madness.</p>
 				<p>We reach for libraries precisely so we can solve real business problems
 					while letting lower-level concerns live in the &quot;solved problems&quot; category. True
@@ -351,6 +436,7 @@ myFuncThatTakesAnInteger(myNumber); <span class="hljs-comment">// TypeError: anI
 					value?&quot; to API boundaries, rather than needing to ask that question at the head
 				of every. single. function.</p>
 				<p><em>What is this sorcery?</em></p>
+				<h3 id="how-it-works-maybe-">How it works: <code>Maybe</code></h3>
 				<p>It turns out you probably already have a good idea of how this works, if you&#39;ve
 				spent much time writing JavaScript, because this is exactly how arrays work.</p>
 				<p>Imagine, for a moment, that you have a variable <code>myArray</code> and you want to map
@@ -375,30 +461,39 @@ myInteger * <span class="hljs-number">3</span>; <span class="hljs-comment">// �
 				and give ourselves safe access methods:</p>
 				<pre><code class="lang-js"><span class="hljs-keyword">import</span> * <span class="hljs-keyword">as</span> Maybe <span class="hljs-keyword">from</span> <span class="hljs-string">'true-myth/maybe'</span>;
 
-<span class="hljs-keyword">let</span> myInteger = Maybe.of(<span class="hljs-literal">undefined</span>);
+<span class="hljs-keyword">const</span> myInteger = Maybe.of(<span class="hljs-literal">undefined</span>);
 myInteger.map(<span class="hljs-function"><span class="hljs-params">x</span> =&gt;</span> x * <span class="hljs-number">3</span>); <span class="hljs-comment">// Nothing</span>
 </code></pre>
 				<p><img src="https://user-images.githubusercontent.com/2403023/31098390-5d6573d0-a790-11e7-96f9-361d2e70522b.gif" alt="mind blown"></p>
 				<p>We received <code>Nothing</code> back as our value, which isn&#39;t particularly useful, but it
 				also didn&#39;t halt our program in its tracks!</p>
+				<p>Best of all, when you use these with libraries like TypeScript or Flow, you can
+					lean on their type systems to check aggressively for <code>null</code> and <code>undefined</code>, and
+					actually <em>eliminate</em> those from your codebase by replacing anywhere you would
+				have used them with <code>Maybe</code>.</p>
+				<h3 id="how-it-works-result-">How it works: <code>Result</code></h3>
 				<p><code>Result</code> is similar to <code>Maybe</code>, except it packages up the result of an operation
 					(like a network request) whether it&#39;s a success (an <code>Ok</code>) or a failure (an
 					<code>Err</code>) and lets us unwrap the package at our leisure. Whether you get back a 200
 					or a 401 for your HTTP request, you can pass the box around the same either way;
 					the methods and properties the container has are not dependent upon whether
 				there is shiny new data or a big red error inside.</p>
-				<p>Best of all, when you use these with libraries like TypeScript or Flow, you can
-					lean on their type systems to check aggressively for <code>null</code> and <code>undefined</code>, and
-					actually <em>eliminate</em> those from your codebase by replacing anywhere you would
-				have used them with <code>Maybe</code>.</p>
-				<p>Likewise, you can replace functions which take polymorphic arguments or have
-					polymorphic return values in order to try to handle scenarios where something
-				may be a success or an error with functions using <code>Result</code>.</p>
-				<p>Any place you try to treat them as just the underlying value rather than the
-					container, the type systems will complain, of course. And you&#39;ll also get help
-					from smart editors with suggestions about what kinds of values (including
-					functions) you need to interact with any given helper or method, since the type
-				definitions are supplied.</p>
+				<pre><code class="lang-ts"><span class="hljs-keyword">import</span> { Result, ok, err } <span class="hljs-keyword">from</span> <span class="hljs-string">'true-myth/result'</span>;
+
+<span class="hljs-keyword">const</span> myNumber = ok&lt;<span class="hljs-built_in">number</span>, <span class="hljs-built_in">string</span>&gt;(<span class="hljs-number">12</span>);
+<span class="hljs-keyword">const</span> myNumberErr = err&lt;<span class="hljs-built_in">number</span>, <span class="hljs-built_in">string</span>&gt;(<span class="hljs-string">"oh no"</span>);
+
+<span class="hljs-built_in">console</span>.log(myNumber.map(<span class="hljs-function"><span class="hljs-params">n</span> =&gt;</span> n * <span class="hljs-number">2</span>)); <span class="hljs-comment">// Ok(24)</span>
+<span class="hljs-built_in">console</span>.log(myNumberErr.map(<span class="hljs-function"><span class="hljs-params">n</span> =&gt;</span> n * <span class="hljs-number">2</span>)); <span class="hljs-comment">// Err(oh no)</span>
+</code></pre>
+				<p>Thus, you can replace functions which take polymorphic arguments or have
+					polymorphic return values to try to handle scenarios where something may be a
+				success or an error with functions using <code>Result</code>.</p>
+				<p>Any place you try to treat either a <code>Maybe</code> or a <code>Result</code> as just the underlying
+					value rather than the container, the type systems will complain, of course. And
+					you&#39;ll also get help from smart editors with suggestions about what kinds of values
+					(includingfunctions) you need to interact with any given helper or method, since the
+				type definitions are supplied.</p>
 				<p>By leaning on TypeScript or Flow to handle the checking, we also get all these
 					benefits with <em>no</em> runtime overhead other than the cost of constructing the
 				actual container objects (which is to say: <em>very</em> low!).</p>
