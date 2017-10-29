@@ -6,4 +6,5 @@
  * Repo: http://github.com/joarwilk/flowgen
  */
 
-declare export var isVoid: (value: any) => null | void;
+declare export var isVoid: (value: any) => boolean;
+declare export type AndThenAliases = 'andThen' | 'chain' | 'flatMap';

@@ -6,7 +6,7 @@
  * Repo: http://github.com/joarwilk/flowgen
  */
 
-import Maybe from './maybe';
+import * as Maybe from './maybe';
 
 type Variant = 'Ok' | 'Err';
 
@@ -272,11 +272,13 @@ declare export class Err<T, E> {
      */
   toString(): string;
 }
-export type Result<T, E> = Ok<T, E> | Err<T, E>;
 export type Matcher<T, E, A> = {
   Ok: (value: T) => A,
   Err: (error: E) => A,
 };
+
+export type Result<T, E> = Ok<T, E> | Err<T, E>;
+
 declare export var isOk: <T, E>(result: Result<T, E>) => boolean;
 declare export var isErr: <T, E>(result: Result<T, E>) => boolean;
 declare export var ok: <T, E>(value: T | null | void) => Result<T, E>;
@@ -321,3 +323,36 @@ declare export var getOrElse: <T, E>(orElseFn: (error: E) => T, result: Result<T
 declare export var toMaybe: <T, E>(result: Result<T, E>) => Maybe<T>;
 declare export var fromMaybe: <T, E>(errValue: E, maybe: Maybe<T>) => Result<T, E>;
 declare export var toString: <T, E>(result: Result<T, E>) => string;
+declare export default {
+  Variant: Variant,
+  Ok: typeof Ok,
+  Err: typeof Err,
+  isOk: <T, E>(result: Result<T, E>) => boolean,
+  isErr: <T, E>(result: Result<T, E>) => boolean,
+  ok: <T, E>(value?: T | null | void) => Result<T, E>,
+  err: <T, E>(error?: E | null | void) => Result<T, E>,
+  map: <T, U, E>(mapFn: (t: T) => U, result: Result<T, E>) => Result<U, E>,
+  mapOr: <T, U, E>(orU: U, mapFn: (t: T) => U, result: Result<T, E>) => U,
+  mapOrElse: <T, U, E>(orElseFn: (err: E) => U, mapFn: (t: T) => U, result: Result<T, E>) => U,
+  mapErr: <T, E, F>(mapErrFn: (e: E) => F, result: Result<T, E>) => Result<T, F>,
+  and: <T, U, E>(andResult: Result<U, E>, result: Result<T, E>) => Result<U, E>,
+  andThen: <T, U, E>(thenFn: (t: T) => Result<U, E>, result: Result<T, E>) => Result<U, E>,
+  chain: <T, U, E>(thenFn: (t: T) => Result<U, E>, result: Result<T, E>) => Result<U, E>,
+  flatMap: <T, U, E>(thenFn: (t: T) => Result<U, E>, result: Result<T, E>) => Result<U, E>,
+  or: <T, E, F>(defaultResult: Result<T, F>, result: Result<T, E>) => Result<T, F>,
+  orElse: <T, E, F>(elseFn: (...args: any[]) => Result<T, F>, result: Result<T, E>) => Result<T, F>,
+  unsafelyUnwrap: <T, E>(result: Result<T, E>) => T,
+  unsafelyGet: <T, E>(result: Result<T, E>) => T,
+  unsafeGet: <T, E>(result: Result<T, E>) => T,
+  unsafelyUnwrapErr: <T, E>(result: Result<T, E>) => E,
+  unsafelyGetErr: <T, E>(result: Result<T, E>) => E,
+  unwrapOr: <T, E>(defaultValue: T, result: Result<T, E>) => T,
+  getOr: <T, E>(defaultValue: T, result: Result<T, E>) => T,
+  unwrapOrElse: <T, E>(orElseFn: (error: E) => T, result: Result<T, E>) => T,
+  getOrElse: <T, E>(orElseFn: (error: E) => T, result: Result<T, E>) => T,
+  toMaybe: <T, E>(result: Result<T, E>) => Maybe<T>,
+  fromMaybe: <T, E>(errValue: E, maybe: Maybe<T>) => Result<T, E>,
+  toString: <T, E>(result: Result<T, E>) => string,
+  match: <T, E, A>(matcher: Matcher<T, E, A>, result: Result<T, E>) => A,
+  cata: <T, E, A>(matcher: Matcher<T, E, A>, result: Result<T, E>) => A,
+}
