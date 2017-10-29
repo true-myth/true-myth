@@ -19,7 +19,7 @@
   "module": "dist/modules/src/index.js",
   "types": "dist/types/src/index.d.ts",
   "ember-addon": {
-    "main": "ember-addon.js"
+    "main": "scripts/ember-addon.js"
   },
   "keywords": [
     "ember-addon",
@@ -30,8 +30,8 @@
   ],
   "scripts": {
     "clean": "rimraf dist",
-    "doc": "./build-docs",
-    "precommit": "./build-docs && git add docs",
+    "doc": "./scripts/build-docs",
+    "precommit": "./scripts/build-docs && git add docs",
     "problems": "node ./scripts/problems.js",
     "preversion": "yarn run test",
     "prepack": "ember build -prod && cp ./src/flow/* ./dist/modules/src && cp ./src/flow/* ./dist/commonjs/src",
