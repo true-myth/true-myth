@@ -304,7 +304,9 @@ TypeScript and Flow take us a big step in that direction, so long as our type an
 
 ### 2. Failure handling: callbacks and exceptions
 
-Similarly, you often have functions whose result represents an operation might fail in some way, or which have to deal with the result of such operations. Many patterns exist to work around the fact that you can't very easily return two things together in JavaScript. Node has a callback pattern with an error as the first argument to every callback, set to `null` if there was no error. Client-side JavaScript usually just doesn't have a single pattern for handling this.
+Similarly, you often have functions whose return value represents an operation which might fail in some way. We also often have functions which have to deal with the result of operations which might fail.
+
+Many patterns exist to work around the fact that you can't very easily return two things together in JavaScript. Node has a callback pattern with an error as the first argument to every callback, set to `null` if there was no error. Client-side JavaScript usually just doesn't have a single pattern for handling this.
 
 In both cases, you might use exceptions – but often an exception feels like the wrong thing because the possibility of failure is built into the kind of thing you're doing – querying an API, or checking the validity of some date, and so on.
 
