@@ -1,7 +1,7 @@
 /** [[include:doc/maybe.md]] */
 
 /** (keep typedoc from getting confused by the imports) */
-import * as Result from './result';
+import Result, { err, isOk, ok } from './result';
 import { isVoid } from './utils';
 
 /**
@@ -15,7 +15,7 @@ export enum Variant {
   Nothing = 'Nothing',
 }
 
-export interface MaybeClasses<T> {
+export interface MaybeShape<T> {
   /** Distinguish between the `Just` and `Nothing` [variants](../enums/_maybe_.variant). */
   variant: Variant;
 
@@ -62,10 +62,10 @@ export interface MaybeClasses<T> {
   unwrapOrElse(this: Maybe<T>, elseFn: (...args: any[]) => T): T;
 
   /** Method variant for [`Maybe.toOkOrErr`](../modules/_maybe_.html#tookorerr) */
-  toOkOrErr<E>(this: Maybe<T>, error: E): Result.Result<T, E>;
+  toOkOrErr<E>(this: Maybe<T>, error: E): Result<T, E>;
 
   /** Method variant for [`Maybe.toOkOrElseErr`](../modules/_maybe_.html#tookorelseerr) */
-  toOkOrElseErr<E>(this: Maybe<T>, elseFn: (...args: any[]) => E): Result.Result<T, E>;
+  toOkOrElseErr<E>(this: Maybe<T>, elseFn: (...args: any[]) => E): Result<T, E>;
 
   /** Method variant for [`Maybe.toString`](../modules/_maybe_.html#tostring) */
   toString(this: Maybe<T>): string;
@@ -79,7 +79,7 @@ export interface MaybeClasses<T> {
 
   @typeparam T The type wrapped in this `Just` variant of `Maybe`.
  */
-export class Just<T> implements MaybeClasses<T> {
+export class Just<T> implements MaybeShape<T> {
   /** `Just` is always [`Variant.Just`](../enums/_maybe_.variant#just). */
   variant = Variant.Just;
 
@@ -197,12 +197,12 @@ export class Just<T> implements MaybeClasses<T> {
   }
 
   /** Method variant for [`Maybe.toOkOrErr`](../modules/_maybe_.html#tookorerr) */
-  toOkOrErr<E>(this: Maybe<T>, error: E): Result.Result<T, E> {
+  toOkOrErr<E>(this: Maybe<T>, error: E): Result<T, E> {
     return toOkOrErr(error, this);
   }
 
   /** Method variant for [`Maybe.toOkOrElseErr`](../modules/_maybe_.html#tookorelseerr) */
-  toOkOrElseErr<E>(this: Maybe<T>, elseFn: (...args: any[]) => E): Result.Result<T, E> {
+  toOkOrElseErr<E>(this: Maybe<T>, elseFn: (...args: any[]) => E): Result<T, E> {
     return toOkOrElseErr(elseFn, this);
   }
 
@@ -220,7 +220,7 @@ export class Just<T> implements MaybeClasses<T> {
 
   @typeparam T The type which would be wrapped in a `Just` variant of `Maybe`.
  */
-export class Nothing<T> implements MaybeClasses<T> {
+export class Nothing<T> implements MaybeShape<T> {
   /** `Nothing` is always [`Variant.Nothing`](../enums/_maybe_.variant#nothing). */
   variant = Variant.Nothing;
 
@@ -329,12 +329,12 @@ export class Nothing<T> implements MaybeClasses<T> {
   }
 
   /** Method variant for [`Maybe.toOkOrErr`](../modules/_maybe_.html#tookorerr) */
-  toOkOrErr<E>(this: Maybe<T>, error: E): Result.Result<T, E> {
+  toOkOrErr<E>(this: Maybe<T>, error: E): Result<T, E> {
     return toOkOrErr(error, this);
   }
 
   /** Method variant for [`Maybe.toOkOrElseErr`](../modules/_maybe_.html#tookorelseerr) */
-  toOkOrElseErr<E>(this: Maybe<T>, elseFn: (...args: any[]) => E): Result.Result<T, E> {
+  toOkOrElseErr<E>(this: Maybe<T>, elseFn: (...args: any[]) => E): Result<T, E> {
     return toOkOrElseErr(elseFn, this);
   }
 
@@ -394,9 +394,6 @@ export const just = <T>(value?: T | null): Maybe<T> => new Just<T>(value);
   @returns     An instance of `Maybe.Nothing<T>`.
  */
 export const nothing = <T>(_value?: null): Maybe<T> => new Nothing<T>(_value);
-
-/** A value which may (`Just<T>`) or may not (`Nothing`) be present. */
-export type Maybe<T> = Just<T> | Nothing<T>;
 
 /**
   Create a `Maybe` from any value.
@@ -543,16 +540,16 @@ export const mapOrElse = <T, U>(
   #### Examples
 
   ```ts
-  import { and, just, nothing, Maybe } from 'true-myth/maybe';
+  import Maybe from 'true-myth/maybe';
 
-  const justA = just('A');
-  const justB = just('B');
+  const justA = Maybe.just('A');
+  const justB = Maybe.just('B');
   const nothing: Maybe<number> = nothing();
 
-  console.log(and(justB, justA).toString());  // Just(B)
-  console.log(and(justB, nothing).toString());  // Nothing
-  console.log(and(nothing, justA).toString());  // Nothing
-  console.log(and(nothing, nothing).toString());  // Nothing
+  console.log(Maybe.and(justB, justA).toString());  // Just(B)
+  console.log(Maybe.and(justB, nothing).toString());  // Nothing
+  console.log(Maybe.and(nothing, justA).toString());  // Nothing
+  console.log(Maybe.and(nothing, nothing).toString());  // Nothing
   ```
 
   @typeparam T    The type of the initial wrapped value.
@@ -594,17 +591,17 @@ export const and = <T, U>(andMaybe: Maybe<U>, maybe: Maybe<T>): Maybe<U> =>
   function behaves.)
 
   ```ts
-  import * as Maybe from 'true-myth/maybe';
+  import Maybe from 'true-myth/maybe';
 
   // string -> Maybe<number>
-  const toMaybeLength = (s: string): Maybe.Maybe<number> => Maybe.of(s.length);
+  const toMaybeLength = (s: string): Maybe<number> => Maybe.of(s.length);
 
   // Maybe<string>
   const aMaybeString = Maybe.of('Hello, there!');
 
   // Maybe<number>
   const resultingLength = Maybe.andThen(toMaybeLength, aMaybeString);
-  console.log(toString(resultingLength)); // 13
+  console.log(Maybe.toString(resultingLength)); // 13
   ```
 
   Note that the result is not `(Just(13))`, but `13`!
@@ -636,16 +633,16 @@ export const flatMap = andThen;
   for the case that you currently have a nothing.
 
   ```ts
-  import { or, just, nothing, Maybe } from 'true-utils/maybe';
+  import Maybe from 'true-utils/maybe';
 
-  const justA = just("a");
-  const justB = just("b");
+  const justA = Maybe.just("a");
+  const justB = Maybe.just("b");
   const aNothing: Maybe<string> = nothing();
 
-  console.log(or(justB, justA).toString());  // Just(A)
-  console.log(or(aNothing, justA).toString());  // Just(A)
-  console.log(or(justB, aNothing).toString());  // Just(B)
-  console.log(or(aNothing, aNothing).toString());  // Nothing
+  console.log(Maybe.or(justB, justA).toString());  // Just(A)
+  console.log(Maybe.or(aNothing, justA).toString());  // Just(A)
+  console.log(Maybe.or(justB, aNothing).toString());  // Just(B)
+  console.log(Maybe.or(aNothing, aNothing).toString());  // Nothing
   ```
 
   @typeparam T        The type of the wrapped value.
@@ -705,13 +702,13 @@ const unwrap = unsafelyUnwrap;
   recommended way to get a value out of a `Maybe` most of the time.
 
   ```ts
-  import { just, nothing, unwrapOr } from 'true-myth/maybe';
+  import Maybe from 'true-myth/maybe';
 
-  const notAString = nothing<string>();
-  const isAString = just('look ma! some characters!');
+  const notAString = Maybe.nothing<string>();
+  const isAString = Maybe.just('look ma! some characters!');
 
-  console.log(unwrapOr('<empty>', notAString));  // "<empty>"
-  console.log(unwrapOr('<empty>', isAString));  // "look ma! some characters!"
+  console.log(Maybe.unwrapOr('<empty>', notAString));  // "<empty>"
+  console.log(Maybe.unwrapOr('<empty>', isAString));  // "look ma! some characters!"
   ```
 
   @typeparam T        The type of the wrapped value.
@@ -735,17 +732,17 @@ export const getOr = unwrapOr;
   having a single default value available (as in [`unwrapOr`](#unwrapor)).
 
   ```ts
-  import { just, nothing, unwrapOrElse } from 'true-myth/maybe';
+  import Maybe from 'true-myth/maybe';
 
   // You can imagine that someOtherValue might be dynamic.
   const someOtherValue = 99;
   const handleNothing = () => someOtherValue;
 
-  const aJust = just(42);
-  console.log(unwrapOrElse(handleNothing, aJust));  // 42
+  const aJust = Maybe.just(42);
+  console.log(Maybe.unwrapOrElse(handleNothing, aJust));  // 42
 
   const aNothing = nothing<number>();
-  console.log(unwrapOrElse(handleNothing, aNothing)); // 99
+  console.log(Maybe.unwrapOrElse(handleNothing, aNothing)); // 99
   ```
 
   @typeparam T  The wrapped value.
@@ -773,8 +770,8 @@ export const getOrElse = unwrapOrElse;
   @returns     A `Result` containing the value wrapped in `maybe` in an `Ok`,
                or `error` in an `Err`.
  */
-export const toOkOrErr = <T, E>(error: E, maybe: Maybe<T>): Result.Result<T, E> =>
-  isJust(maybe) ? Result.ok(unwrap(maybe)) : Result.err(error);
+export const toOkOrErr = <T, E>(error: E, maybe: Maybe<T>): Result<T, E> =>
+  isJust(maybe) ? ok(unwrap(maybe)) : err(error);
 
 /**
   Transform the [`Maybe`](#maybe) into a
@@ -788,10 +785,8 @@ export const toOkOrErr = <T, E>(error: E, maybe: Maybe<T>): Result.Result<T, E> 
   @returns     A `Result` containing the value wrapped in `maybe` in an `Ok`,
                or `the value generated by `elseFn` in an `Err`.
  */
-export const toOkOrElseErr = <T, E>(
-  elseFn: (...args: any[]) => E,
-  maybe: Maybe<T>
-): Result.Result<T, E> => (isJust(maybe) ? Result.ok(unwrap(maybe)) : Result.err(elseFn()));
+export const toOkOrElseErr = <T, E>(elseFn: (...args: any[]) => E, maybe: Maybe<T>): Result<T, E> =>
+  isJust(maybe) ? ok(unwrap(maybe)) : err(elseFn());
 
 /**
   Construct a `Maybe<T>` from a `Result<T, E>`.
@@ -806,8 +801,8 @@ export const toOkOrElseErr = <T, E>(
   @param result The `Result` to construct a `Maybe` from.
   @returns      `Just` if `result` was `Ok` or `Nothing` if it was `Err`.
  */
-export const fromResult = <T, E>(result: Result.Result<T, E>): Maybe<T> =>
-  Result.isOk(result) ? just(Result.unsafelyUnwrap(result)) : nothing();
+export const fromResult = <T, E>(result: Result<T, E>): Maybe<T> =>
+  isOk(result) ? just(Result.unsafelyUnwrap(result)) : nothing();
 
 /**
   Create a `String` representation of a `Maybe` instance.
@@ -851,11 +846,11 @@ export type Matcher<T, A> = {
   Instead of code like this:
 
   ```ts
-  import { Maybe, isJust, match } from 'true-myth/maybe';
+  import Maybe from 'true-myth/maybe';
 
   const logValue = (mightBeANumber: Maybe<number>) => {
-    const valueToLog = isJust(mightBeANumber)
-      ? unsafelyUnwrap(mightBeANumber).toString()
+    const valueToLog = Maybe.isJust(mightBeANumber)
+      ? Maybe.unsafelyUnwrap(mightBeANumber).toString()
       : 'Nothing to log.';
 
     console.log(valueToLog);
@@ -865,10 +860,10 @@ export type Matcher<T, A> = {
   ...we can write code like this:
 
   ```ts
-  import { Maybe, match } from 'true-myth/maybe';
+  import Maybe from 'true-myth/maybe';
 
   const logValue = (mightBeANumber: Maybe<number>) => {
-    const value = match(
+    const value = Maybe.match(
       {
         Just: n => n.toString(),
         Nothing: () => 'Nothing to log.',
@@ -894,5 +889,41 @@ export const match = <T, A>(matcher: Matcher<T, A>, maybe: Maybe<T>): A =>
 
 /** Alias for [`match`](#match) */
 export const cata = match;
+
+/** A value which may (`Just<T>`) or may not (`Nothing`) be present. */
+export type Maybe<T> = Just<T> | Nothing<T>;
+export const Maybe = {
+  Variant,
+  Just,
+  Nothing,
+  isJust,
+  isNothing,
+  just,
+  nothing,
+  of,
+  fromNullable,
+  map,
+  mapOr,
+  mapOrElse,
+  and,
+  andThen,
+  chain,
+  flatMap,
+  or,
+  orElse,
+  unsafelyUnwrap,
+  unsafelyGet,
+  unsafeGet,
+  unwrapOr,
+  getOr,
+  unwrapOrElse,
+  getOrElse,
+  toOkOrErr,
+  toOkOrElseErr,
+  fromResult,
+  toString,
+  match,
+  cata,
+};
 
 export default Maybe;

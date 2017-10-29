@@ -4,7 +4,7 @@
  */
 
 /** (keep typedoc from getting confused by the imports) */
-import * as Maybe from './maybe';
-import * as Result from './result';
+import Maybe from './maybe';
+import Result from './result';
 
 export { Maybe, Result };

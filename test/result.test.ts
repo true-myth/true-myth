@@ -1,6 +1,6 @@
 import { just, nothing } from '../src/maybe';
-import * as Result from '../src/result';
-import { Aliases } from '../src/utils';
+import Result from '../src/result';
+import { AndThenAliases } from '../src/utils';
 import { assertType } from './lib/assert';
 
 const length = (x: { length: number }) => x.length;
@@ -73,7 +73,7 @@ describe('`Result` pure functions', () => {
 
   test('`mapOrElse`', () => {
     const description = 'that was not good';
-    const getDefault = reason => `${description}: ${reason}`;
+    const getDefault = (reason: number) => `${description}: ${reason}`;
 
     const anOk = Result.ok(5);
     expect(Result.mapOrElse(getDefault, String, anOk)).toEqual(String(5));
@@ -87,14 +87,24 @@ describe('`Result` pure functions', () => {
     const nobody = Result.ok('ok');
     const toErrIs = Result.err('human');
 
-    expect(Result.match({
-      Ok: (val) => val,
-      Err: (err) => err
-    }, nobody)).toBe('ok');
-    expect(Result.match({
-      Ok: (val) => val,
-      Err: (err) => err
-    }, toErrIs)).toBe('human');
+    expect(
+      Result.match(
+        {
+          Ok: val => val,
+          Err: err => err,
+        },
+        nobody
+      )
+    ).toBe('ok');
+    expect(
+      Result.match(
+        {
+          Ok: val => val,
+          Err: err => err,
+        },
+        toErrIs
+      )
+    ).toBe('human');
   });
 
   test('`mapErr`', () => {
@@ -120,9 +130,9 @@ describe('`Result` pure functions', () => {
     expect(Result.and(nextErr, anErr)).toEqual(anErr);
   });
 
-  const andThenTest = (fn: Aliases.AndThen) => () => {
+  const andThenTest = (fn: AndThenAliases) => () => {
     const theValue = 'a string';
-    const toLengthResult = s => Result.ok(length(s));
+    const toLengthResult = (s: string) => Result.ok(length(s));
     const expected = toLengthResult(theValue);
 
     const anOk = Result.ok(theValue);
@@ -248,10 +258,10 @@ describe('`Result` pure functions', () => {
 describe('`Result.Ok` class', () => {
   test('constructor', () => {
     const fullyQualifiedOk = new Result.Ok<number, string>(42);
-    assertType<Result.Result<number, string>>(fullyQualifiedOk);
+    assertType<Result<number, string>>(fullyQualifiedOk);
 
     const unqualifiedOk = new Result.Ok('string');
-    assertType<Result.Result<string, any>>(unqualifiedOk);
+    assertType<Result<string, any>>(unqualifiedOk);
 
     expect(() => new Result.Ok(null)).toThrow();
     expect(() => new Result.Ok(undefined)).toThrow();
@@ -284,7 +294,7 @@ describe('`Result.Ok` class', () => {
   test('`mapOrElse` method', () => {
     const theValue = ['some', 'things'];
     const theOk = new Result.Ok(theValue);
-    const getDefault = reason => `reason being, ${reason}`;
+    const getDefault = (reason: string) => `reason being, ${reason}`;
     const join = (strings: string[]) => strings.join(', ');
     expect(theOk.mapOrElse(getDefault, join)).toEqual(join(theValue));
   });
@@ -293,15 +303,17 @@ describe('`Result.Ok` class', () => {
     const theValue = 'ok';
     const nobody = new Result.Ok(theValue);
 
-    expect(nobody.match({
-      Ok: (val) => val,
-      Err: (err) => err
-    })).toBe('ok');
+    expect(
+      nobody.match({
+        Ok: val => val,
+        Err: err => err,
+      })
+    ).toBe('ok');
   });
 
   test('`mapErr` method', () => {
     const theOk = new Result.Ok('hey!');
-    const toMoreVerboseErr = s => `Seriously, ${s} was bad.`;
+    const toMoreVerboseErr = (s: string) => `Seriously, ${s} was bad.`;
     expect(theOk.mapErr(toMoreVerboseErr)).toEqual(theOk);
   });
 
@@ -315,13 +327,13 @@ describe('`Result.Ok` class', () => {
     expect(theOk.and(anErr)).toBe(anErr);
   });
 
-  const andThenMethodTest = (method: Aliases.AndThen) => () => {
+  const andThenMethodTest = (method: AndThenAliases) => () => {
     const theValue = 'anything will do';
     const theOk = new Result.Ok(theValue);
-    const lengthResult = s => new Result.Ok(s.length);
+    const lengthResult = (s: string) => new Result.Ok(s.length);
     expect(theOk[method](lengthResult)).toEqual(lengthResult(theValue));
 
-    const convertToErr = s => new Result.Err(s.length);
+    const convertToErr = (s: string) => new Result.Err(s.length);
     expect(theOk[method](convertToErr)).toEqual(convertToErr(theValue));
   };
 
@@ -342,7 +354,7 @@ describe('`Result.Ok` class', () => {
   test('`orElse` method', () => {
     const theValue = 1;
     const theOk = new Result.Ok(theValue);
-    const theDefault = [];
+    const theDefault: string[] = [];
     const getTheDefault = () => new Result.Err<number, string[]>(theDefault);
     expect(theOk.orElse(getTheDefault)).toEqual(theOk);
   });
@@ -362,7 +374,7 @@ describe('`Result.Ok` class', () => {
   test('`unwrapOr` method', () => {
     const theValue = [1, 2, 3];
     const theOk = new Result.Ok(theValue);
-    const defaultValue = [];
+    const defaultValue: typeof theValue = [];
 
     expect(theOk.unwrapOr(defaultValue)).toBe(theValue);
   });
@@ -370,7 +382,7 @@ describe('`Result.Ok` class', () => {
   test('`unwrapOrElse` method', () => {
     const theValue = [1, 2, 3];
     const theOk = new Result.Ok(theValue);
-    const defaultValue = [];
+    const defaultValue: typeof theValue = [];
     const getDefault = () => defaultValue;
 
     expect(theOk.unwrapOrElse(getDefault)).toBe(theValue);
@@ -392,10 +404,10 @@ describe('`Result.Ok` class', () => {
 describe('`Result.Err` class', () => {
   test('constructor', () => {
     const fullyQualifiedErr = new Result.Err<string, number>(42);
-    assertType<Result.Result<string, number>>(fullyQualifiedErr);
+    assertType<Result<string, number>>(fullyQualifiedErr);
 
     const unqualifiedErr = new Result.Err('string');
-    assertType<Result.Result<any, string>>(unqualifiedErr);
+    assertType<Result<any, string>>(unqualifiedErr);
 
     expect(() => new Result.Err(null)).toThrow();
     expect(() => new Result.Err(undefined)).toThrow();
@@ -429,7 +441,7 @@ describe('`Result.Err` class', () => {
   test('`mapOrElse` method', () => {
     const errValue = 42;
     const theErr = new Result.Err(errValue);
-    const getDefault = valueFromErr => `whoa: ${valueFromErr}`;
+    const getDefault = (valueFromErr: typeof errValue) => `whoa: ${valueFromErr}`;
     const describe = (code: number) => `The error code was ${code}`;
 
     expect(theErr.mapOrElse(getDefault, describe)).toEqual(`whoa: ${errValue}`);
@@ -439,16 +451,18 @@ describe('`Result.Err` class', () => {
     const human = 'human';
     const toErrIs = new Result.Err(human);
 
-    expect(toErrIs.match({
-      Ok: (val) => val,
-      Err: (err) => err
-    })).toBe(human);
+    expect(
+      toErrIs.match({
+        Ok: val => val,
+        Err: err => err,
+      })
+    ).toBe(human);
   });
 
   test('`mapErr` method', () => {
     const errValue = 'fubar';
     const theErr = new Result.Err(errValue);
-    const elaborate = reason => `The problem was: ${reason}`;
+    const elaborate = (reason: typeof errValue) => `The problem was: ${reason}`;
     const expected = new Result.Err(elaborate(errValue));
 
     expect(theErr.mapErr(elaborate)).toEqual(expected);
@@ -464,13 +478,13 @@ describe('`Result.Err` class', () => {
     expect(theErr.and(anotherErr)).toEqual(theErr);
   });
 
-  const andThenMethodTest = (method: Aliases.AndThen) => () => {
+  const andThenMethodTest = (method: AndThenAliases) => () => {
     const theErr = new Result.Err<string[], number>(42);
 
-    const getAnOk = strings => Result.ok<number, number>(length(strings));
+    const getAnOk = (strings: string[]) => Result.ok<number, number>(length(strings));
     expect(theErr[method](getAnOk)).toEqual(theErr);
 
-    const getAnErr = () => Result.err(0);
+    const getAnErr = (_: any) => Result.err(0);
     expect(theErr[method](getAnErr)).toEqual(theErr);
   };
 
@@ -481,7 +495,7 @@ describe('`Result.Err` class', () => {
   test('`chain` method', () => {
     const theErr = new Result.Err<string[], number>(42);
 
-    const getAnOk = strings => Result.ok<number, number>(length(strings));
+    const getAnOk = (strings: string[]) => Result.ok<number, number>(length(strings));
     expect(theErr.chain(getAnOk)).toEqual(theErr);
 
     const getAnErr = () => Result.err(0);

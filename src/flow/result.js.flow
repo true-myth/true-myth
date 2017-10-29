@@ -6,7 +6,7 @@
  * Repo: http://github.com/joarwilk/flowgen
  */
 
-import * as Maybe from './maybe';
+import Maybe from './maybe';
 
 type Variant = 'Ok' | 'Err';
 

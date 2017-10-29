@@ -28,6 +28,8 @@ You could implement all of these yourself – it's not hard! – but it's much 
 - [Setup](#setup)
     - [TypeScript and Flow](#typescript-and-flow)
 - [Roadmap](#roadmap)
+    - [1.0 commitments](#10-c–ommitments)
+    - [Post-1.0 ideas](#post-10-ideas)
 - [Just the API, please](#just-the-api-please)
     - [`Result` with a functional style](#result-with-a-functional-style)
     - [`Maybe` with the method style](#maybe-with-the-method-style)
@@ -69,7 +71,24 @@ Add True Myth to your dependencies:
     npm install true-myth
     ```
 
-Each of CommonJS, AMD, and ES modules are shipped, so you may reference them directly from their installation in the `node_modules` directory. (This may be helpful for using the library in different contexts, with the ES modules being supplied especially so you can do tree-shaking with e.g. Rollup.)
+For ES6-module-friendly consumers, you can import the modules directly, or import them from the root module:
+
+```typescript
+// this works:
+import Maybe from 'true-myth/maybe';
+import Result from 'true-myth/result';
+
+// this also works:
+import { Maybe, Result } from 'true-myth';
+```
+
+In Node.js, the TypeScript-generated CommonJS package cannot be imported as nested modules, but the modules still can be imported directly from the top-level module:
+
+```typescript
+const { Maybe, Result } = require('true-myth');
+```
+
+The build includes both ES6 modules and CommonJS modules, so you may reference them directly from their installation in the `node_modules` directory. (This may be helpful for using the library in different contexts, with the ES modules being supplied especially so you can do tree-shaking with e.g. Rollup.)
 
 <details>
 <summary>Distributed package layout</summary>
@@ -126,7 +145,7 @@ For TypeScript, whether using Webpack or Ember CLI or something else for your bu
 
 ## Roadmap
 
-Before this hits 1.0, I will do:
+### 1.0 commitments
 
 - [x] `Maybe`
     - [x] add aliases for the standard names, e.g. `bind`, `chain`, etc.
@@ -147,19 +166,27 @@ If you think another type should be in this list, please [open an issue]!
 
 [open an issue]: https://github.com/chriskrycho/true-myth/issues
 
+### Post-1.0 ideas
+
+- [ ] Curried variants (probably at `'true-myth/curried/maybe'` and `'true-myth/curried/result'`)
+- [ ] Static types that can work with `Maybe` *or* `Result` (and possibly also other e.g. mappable types), inspired by [this approach](https://medium.com/@gcanti/higher-kinded-types-in-typescript-static-and-fantasy-land-d41c361d0dbe)
+- More types
+    - `Either`?
+    - `Task`?
+
 ## Just the API, please
 
 _If you're unsure of why you would want to use the library, you might jump down to [**Why do I need this?**](#why-do-i-need-this)._
 
 These examples don't cover every corner of the API; it's just here to show you what a few of the functions are like. [Full API documentation is available!][docs] You can also [view the source][source] if you prefer.
 
-[docs]: https://chriskrycho.github.io/true-myth/
-[source]: https://github.com/chriskrycho/true-myth/
+[docs]: https://true-myth.js.org
+[source]: https://github.com/chriskrycho/true-myth
 
 ### `Result` with a functional style
 
-```ts
-import { Result, map, toString } from 'true-myth/result';
+```typescript
+import Result, { err, map, ok, toString } from 'true-myth/result';
 
 function fallibleCheck(isValid: boolean): Result<string, { reason: string }> {
   return isValid ? ok('all fine here') : err({ reason: 'was not valid' });
@@ -178,8 +205,8 @@ console.log(toString(mappedBad)); // "Err({ reason: 'was not valid' })"
 
 ### `Maybe` with the method style
 
-```ts
-import { Maybe, Just, Nothing } from 'true-myth/maybe';
+```typescript
+import Maybe, { Just, Nothing } from 'true-myth/maybe';
 
 function safeLength(mightBeAString: Maybe<string>): Maybe<number> {
   return mightBeAString.map(s => s.length);
@@ -195,8 +222,8 @@ console.log(safeLength(nothingHere).toString()); // Nothing
 
 You can use `Maybe.of` to construct a `Maybe` from any value. It will return a `Nothing` if the passed type is `null` or `undefined`, or a `Just` otherwise.
 
-```ts
-import { of as maybeOf, Maybe } from 'true-myth/maybe';
+```typescript
+import Maybe from 'true-myth/maybe';
 
 function acceptsANullOhNo(value: number | null): Maybe<string> {
   const maybeNumber = maybeOf(value);
@@ -208,16 +235,16 @@ function acceptsANullOhNo(value: number | null): Maybe<string> {
 
 Helpers are supplied to allow you to get at the values wrapped in the type:
 
-```ts
+```typescript
 import { ok, unsafelyUnwrap } from 'true-myth/result';
 
 const theAnswer = ok(42);
-const theAnwerValue = unsafelyUnwrap(theAnswer);
+const theAnswerValue = unsafelyUnwrap(theAnswer);
 ```
 
 However, as its name makes explicit `unsafelyUnwrap` is not a safe operation; if the item being unwrapped is an `Err`, this will throw an `Error`. Instead, you can use one of the safe unwrap methods:
 
-```ts
+```typescript
 import { ok, unwrapOr } from 'true-myth/result';
 
 const theAnswer = ok(42);
@@ -370,7 +397,7 @@ myInteger * 3; // 😢
 Let's try that again, but this time let's put the actual value in a container and give ourselves safe access methods:
 
 ```js
-import * as Maybe from 'true-myth/maybe';
+import Maybe from 'true-myth/maybe';
 
 const myInteger = Maybe.of(undefined);
 myInteger.map(x => x * 3); // Nothing
@@ -386,8 +413,8 @@ Best of all, when you use these with libraries like TypeScript or Flow, you can 
 
 `Result` is similar to `Maybe`, except it packages up the result of an operation (like a network request) whether it's a success (an `Ok`) or a failure (an `Err`) and lets us unwrap the package at our leisure. Whether you get back a 200 or a 401 for your HTTP request, you can pass the box around the same either way; the methods and properties the container has are not dependent upon whether there is shiny new data or a big red error inside.
 
-```ts
-import { Result, ok, err } from 'true-myth/result';
+```typescript
+import { ok, err } from 'true-myth/result';
 
 const myNumber = ok<number, string>(12);
 const myNumberErr = err<number, string>("oh no");
@@ -415,7 +442,7 @@ In practice, that means:
 
 -   You can construct the variant types in the traditional JavaScript way or with a pure function:
 
-    ```ts
+    ```typescript
     import { Just, just, Nothing, nothing } from 'true-myth/maybe';
 
     const classicalJust = new Just('value');
@@ -427,7 +454,7 @@ In practice, that means:
 
 -   Similarly, you can use methods or pure functions:
 
-    ```ts
+    ```typescript
     import { ok, map } from 'true-myth/result';
 
     const numberResult = ok(42);
@@ -458,19 +485,27 @@ The hope is that a team just picking up these ideas for the first time can use t
 
 One important note: True Myth does *not* attempt to deeply-clone the wrapped values when performing operations on them. Instead, the library assumes that you will *not* mutate those objects in place. (Doing more than this would require taking on a dependency on e.g. [lodash]). If you violate that constraint, you can and will see surprising outcomes. Accordingly, you should take care not to mutate reference types, or to use deep cloning yourself when e.g. mapping over reference types.
 
-```ts
+```typescript
 import { just, map, unsafelyUnwrap } from 'true-myth/maybe';
 
-const anObjectToWrap = { desc: ['this', ' ', 'is a string'], val: 42 };
+const anObjectToWrap = {
+  desc: ['this', ' ', 'is a string'],
+  val: 42,
+};
+
 const wrapped = just(anObjectToWrap);
 const updated = map(obj => ({...obj, val: 92 }), wrapped);
 
+console.log(unsafelyUnwrap(anObjectToWrap).val);  // 42
 console.log(unsafelyUnwrap(updated).val);  // 92
+console.log(unsafelyUnwrap(anObjectToWrap).desc);  // ["this", " ", "is a string"]
+console.log(unsafelyUnwrap(updated).desc);  // ["this", " ", "is a string"]
 
 // Now mutate the original
 anObjectToWrap.desc.push('.');
 
 // And… 😱 we've mutated the new one, too:
+console.log(unsafelyUnwrap(anObjectToWrap).desc);  // ["this", " ", "is a string", "."]
 console.log(unsafelyUnwrap(updated).desc);  // ["this", " ", "is a string", "."]
 ```
 
@@ -638,7 +673,7 @@ In many cases, you can simple rename your imports and some of the function invoc
     - `Maybe.hasInstance` ⟹ no equivalent
     - `Maybe.empty` ⟹ `Maybe.nothing`
     - `Maybe.of` ⟹ `Maybe.just` – note that because True Myth's `Maybe.of` correctly handles, you *can* simply keep using `Maybe.of`, but the semantics will be somewhat different.
-    - `Maybe.fromNullable` ⟹ `Maybe.of`
+    - `Maybe.fromNullable` ⟹ `Maybe.of` – note that `Maybe.fromNullable` also exists and accordingly you do not *need* to migrate.
     - `Maybe.fromResult` ⟹ `Maybe.fromResult`
     - `Maybe.fromValidation` ⟹ no equivalent; but you can use `Maybe.fromResult` as type-signature equivalent
     - `Maybe.fromJSON` ⟹ no equivalent

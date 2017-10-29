@@ -6,7 +6,7 @@
  * Repo: http://github.com/joarwilk/flowgen
  */
 
-import * as Result from './result';
+import Result from './result';
 
 export type Variant = 'Just' | 'Nothing';
 

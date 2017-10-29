@@ -1,4 +1,4 @@
-import * as Maybe from '../src/maybe';
+import Maybe from '../src/maybe';
 import { err, ok } from '../src/result';
 import { assertType } from './lib/assert';
 
@@ -38,13 +38,13 @@ describe('`Maybe` pure functions', () => {
     }
 
     const nothingOnType = Maybe.nothing<string>();
-    assertType<Maybe.Maybe<string>>(nothingOnType);
+    assertType<Maybe<string>>(nothingOnType);
   });
 
   describe('`of`', () => {
     test('with `null', () => {
       const nothingFromNull = Maybe.of<string>(null);
-      assertType<Maybe.Maybe<string>>(nothingFromNull);
+      assertType<Maybe<string>>(nothingFromNull);
       expect(Maybe.isJust(nothingFromNull)).toBe(false);
       expect(Maybe.isNothing(nothingFromNull)).toBe(true);
       expect(() => Maybe.unsafelyUnwrap(nothingFromNull)).toThrow();
@@ -52,7 +52,7 @@ describe('`Maybe` pure functions', () => {
 
     test('with `undefined`', () => {
       const nothingFromUndefined = Maybe.of<number>(undefined);
-      assertType<Maybe.Maybe<number>>(nothingFromUndefined);
+      assertType<Maybe<number>>(nothingFromUndefined);
       expect(Maybe.isJust(nothingFromUndefined)).toBe(false);
       expect(Maybe.isNothing(nothingFromUndefined)).toBe(true);
       expect(() => Maybe.unsafelyUnwrap(nothingFromUndefined)).toThrow();
@@ -60,12 +60,12 @@ describe('`Maybe` pure functions', () => {
 
     test('with values', () => {
       const aJust = Maybe.of<Neat>({ neat: 'strings' });
-      assertType<Maybe.Maybe<Neat>>(aJust);
+      assertType<Maybe<Neat>>(aJust);
       const aNothing = Maybe.of<Neat>(null);
-      assertType<Maybe.Maybe<Neat>>(aNothing);
+      assertType<Maybe<Neat>>(aNothing);
 
       const justANumber = Maybe.of(42);
-      assertType<Maybe.Maybe<number>>(justANumber);
+      assertType<Maybe<number>>(justANumber);
       expect(Maybe.isJust(justANumber)).toBe(true);
       expect(Maybe.isNothing(justANumber)).toBe(false);
       expect(Maybe.unsafelyUnwrap(justANumber)).toBe(42);
@@ -75,7 +75,7 @@ describe('`Maybe` pure functions', () => {
   describe('`fromNullable`', () => {
     test('with `null', () => {
       const nothingFromNull = Maybe.fromNullable<string>(null);
-      assertType<Maybe.Maybe<string>>(nothingFromNull);
+      assertType<Maybe<string>>(nothingFromNull);
       expect(Maybe.isJust(nothingFromNull)).toBe(false);
       expect(Maybe.isNothing(nothingFromNull)).toBe(true);
       expect(() => Maybe.unsafelyUnwrap(nothingFromNull)).toThrow();
@@ -83,7 +83,7 @@ describe('`Maybe` pure functions', () => {
 
     test('with `undefined`', () => {
       const nothingFromUndefined = Maybe.fromNullable<number>(undefined);
-      assertType<Maybe.Maybe<number>>(nothingFromUndefined);
+      assertType<Maybe<number>>(nothingFromUndefined);
       expect(Maybe.isJust(nothingFromUndefined)).toBe(false);
       expect(Maybe.isNothing(nothingFromUndefined)).toBe(true);
       expect(() => Maybe.unsafelyUnwrap(nothingFromUndefined)).toThrow();
@@ -91,12 +91,12 @@ describe('`Maybe` pure functions', () => {
 
     test('with values', () => {
       const aJust = Maybe.fromNullable<Neat>({ neat: 'strings' });
-      assertType<Maybe.Maybe<Neat>>(aJust);
+      assertType<Maybe<Neat>>(aJust);
       const aNothing = Maybe.fromNullable<Neat>(null);
-      assertType<Maybe.Maybe<Neat>>(aNothing);
+      assertType<Maybe<Neat>>(aNothing);
 
       const justANumber = Maybe.fromNullable(42);
-      assertType<Maybe.Maybe<number>>(justANumber);
+      assertType<Maybe<number>>(justANumber);
       expect(Maybe.isJust(justANumber)).toBe(true);
       expect(Maybe.isNothing(justANumber)).toBe(false);
       expect(Maybe.unsafelyUnwrap(justANumber)).toBe(42);
@@ -106,12 +106,12 @@ describe('`Maybe` pure functions', () => {
   test('`map`', () => {
     const justAString = Maybe.just('string');
     const itsLength = Maybe.map(length, justAString);
-    assertType<Maybe.Maybe<number>>(itsLength);
+    assertType<Maybe<number>>(itsLength);
     expect(itsLength).toEqual(Maybe.just('string'.length));
 
     const none = Maybe.nothing<string>();
     const noLength = Maybe.map(length, none);
-    assertType<Maybe.Maybe<string>>(none);
+    assertType<Maybe<string>>(none);
     expect(noLength).toEqual(Maybe.nothing());
   });
 
@@ -135,14 +135,24 @@ describe('`Maybe` pure functions', () => {
     const adjust = Maybe.just(theValue);
     const aNothing = Maybe.nothing();
 
-    expect(Maybe.match({
-      Just: (val) => val + ', yo',
-      Nothing: () => 'rats, nothing'
-    }, adjust)).toEqual('a string, yo');
-    expect(Maybe.match({
-      Just: (val) => val + ', yo',
-      Nothing: () => 'rats, nothing'
-    }, aNothing)).toEqual('rats, nothing');
+    expect(
+      Maybe.match(
+        {
+          Just: val => val + ', yo',
+          Nothing: () => 'rats, nothing',
+        },
+        adjust
+      )
+    ).toEqual('a string, yo');
+    expect(
+      Maybe.match(
+        {
+          Just: val => val + ', yo',
+          Nothing: () => 'rats, nothing',
+        },
+        aNothing
+      )
+    ).toEqual('rats, nothing');
   });
 
   test('`and`', () => {
@@ -159,7 +169,7 @@ describe('`Maybe` pure functions', () => {
 
   const andThenTest = (fn: AndThenAliases) => () => {
     const toMaybeNumber = (x: string) => Maybe.just(Number(x));
-    const toNothing = (x: string) => Maybe.nothing<number>();
+    const toNothing = (_: string) => Maybe.nothing<number>();
 
     const theValue = '42';
     const theJust = Maybe.just(theValue);
@@ -264,7 +274,7 @@ describe('`Maybe.Just` class', () => {
   });
 
   test('`map` method', () => {
-    const plus2 = x => x + 2;
+    const plus2 = (x: number) => x + 2;
     const theValue = 12;
     const theJust = new Maybe.Just(theValue);
     const theResult = new Maybe.Just(plus2(theValue));
@@ -276,7 +286,7 @@ describe('`Maybe.Just` class', () => {
     const theValue = 42;
     const theJust = new Maybe.Just(42);
     const theDefault = 1;
-    const double = x => x * 2;
+    const double = (n: number) => n * 2;
 
     expect(theJust.mapOr(theDefault, double)).toEqual(double(theValue));
   });
@@ -293,10 +303,12 @@ describe('`Maybe.Just` class', () => {
     const theValue = 'this is a string';
     const theJust = new Maybe.Just(theValue);
 
-    expect(theJust.match({
-      Just: (val) => val + ', yo',
-      Nothing: () => 'rats, nothing'
-    })).toEqual('this is a string, yo');
+    expect(
+      theJust.match({
+        Just: val => val + ', yo',
+        Nothing: () => 'rats, nothing',
+      })
+    ).toEqual('this is a string, yo');
   });
 
   test('`or` method', () => {
@@ -420,14 +432,18 @@ describe('`Maybe.Nothing` class', () => {
   });
 
   test('`match` method', () => {
-    const theValue = 'this is a string';
-    const nietzsche = new Maybe.Nothing();
-    const soDeepMan = 'Whoever fights monsters should see to it that in the process he does not become a monster. And if you gaze long enough into an abyss, the abyss will gaze back into you.';
+    const nietzsche = Maybe.nothing();
+    const soDeepMan = [
+      'Whoever fights monsters should see to it that in the process he does not become a monster.',
+      'And if you gaze long enough into an abyss, the abyss will gaze back into you.',
+    ].join(' ');
 
-    expect(nietzsche.match({
-      Just: (val) => val + ', yo',
-      Nothing: () => soDeepMan
-    })).toBe(soDeepMan);
+    expect(
+      nietzsche.match({
+        Just: s => s + ', yo',
+        Nothing: () => soDeepMan,
+      })
+    ).toBe(soDeepMan);
   });
 
   test('`or` method', () => {
@@ -502,12 +518,12 @@ describe('`Maybe.Nothing` class', () => {
 });
 
 test('`Maybe` classes interacting', () => {
-  const aMaybe: Maybe.Maybe<string> = Maybe.nothing();
+  const aMaybe: Maybe<string> = Maybe.nothing();
   const mapped = aMaybe.map(length);
   expect(mapped).toBeInstanceOf(Maybe.Nothing);
   expect(mapped).not.toBeInstanceOf(Maybe.Just);
 
-  const anotherMaybe: Maybe.Maybe<number> = Maybe.just(10);
+  const anotherMaybe: Maybe<number> = Maybe.just(10);
   const anotherMapped = anotherMaybe.mapOr('nada', n => `The number was ${n}`);
   expect(anotherMapped).toEqual('The number was 10');
 });

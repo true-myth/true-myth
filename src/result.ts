@@ -1,7 +1,7 @@
 /** [[include:doc/result.md]] */
 
 /** (keep typedoc from getting confused by the import) */
-import { Maybe, isJust, just, nothing, unsafelyUnwrap as unwrapMaybe } from './maybe';
+import Maybe, { isJust, just, nothing } from './maybe';
 import { isVoid } from './utils';
 
 /**
@@ -15,7 +15,7 @@ export enum Variant {
   Err = 'Err',
 }
 
-export interface ResultClasses<T, E> {
+export interface ResultShape<T, E> {
   /** Distinguish between the `Ok` and `Err` variants. */
   variant: Variant;
 
@@ -86,7 +86,7 @@ export interface ResultClasses<T, E> {
   @typeparam T The type wrapped in this `Ok` variant of `Result`.
   @typeparam E The type which would be wrapped in an `Err` variant of `Result`.
  */
-export class Ok<T, E> implements ResultClasses<T, E> {
+export class Ok<T, E> implements ResultShape<T, E> {
   /** `Ok` is always [`Variant.Ok`](../enums/_result_.variant#ok). */
   variant = Variant.Ok;
 
@@ -233,7 +233,7 @@ export class Ok<T, E> implements ResultClasses<T, E> {
   @typeparam T The type which would be wrapped in an `Ok` variant of `Result`.
   @typeparam E The type wrapped in this `Err` variant of `Result`.
   */
-export class Err<T, E> implements ResultClasses<T, E> {
+export class Err<T, E> implements ResultShape<T, E> {
   /** `Err` is always [`Variant.Err`](../enums/_result_.variant#err). */
   variant = Variant.Err;
 
@@ -418,14 +418,6 @@ export const ok = <T, E>(value?: T | null): Result<T, E> => new Ok<T, E>(value);
   @typeparam T The type of the item contained in the `Result`.
  */
 export const err = <T, E>(error?: E | null): Result<T, E> => new Err<T, E>(error);
-
-/**
-  A value which may (`Ok`) or may not (`Err`) be present.
-
-  The behavior of this type is checked by TypeScript at compile time, and bears
-  no runtime overhead other than the very small cost of the container object.
- */
-export type Result<T, E> = Ok<T, E> | Err<T, E>;
 
 /**
   Map over a `Result` instance: apply the function to the wrapped value if the
@@ -867,7 +859,7 @@ export const toMaybe = <T, E>(result: Result<T, E>): Maybe<T> =>
   @param maybe    The `Maybe` to convert to a `Result`.
  */
 export const fromMaybe = <T, E>(errValue: E, maybe: Maybe<T>): Result<T, E> =>
-  isJust(maybe) ? ok<T, E>(unwrapMaybe(maybe)) : err<T, E>(errValue);
+  isJust(maybe) ? ok<T, E>(Maybe.unsafelyUnwrap(maybe)) : err<T, E>(errValue);
 
 /**
   Create a `String` representation of a `result` instance.
@@ -956,5 +948,46 @@ export const match = <T, E, A>(matcher: Matcher<T, E, A>, result: Result<T, E>):
 
 /** Alias for [`match`](#match) */
 export const cata = match;
+
+/**
+  A value which may (`Ok`) or may not (`Err`) be present.
+
+  The behavior of this type is checked by TypeScript at compile time, and bears
+  no runtime overhead other than the very small cost of the container object.
+ */
+export type Result<T, E> = Ok<T, E> | Err<T, E>;
+export const Result = {
+  Variant,
+  Ok,
+  Err,
+  isOk,
+  isErr,
+  ok,
+  err,
+  map,
+  mapOr,
+  mapOrElse,
+  mapErr,
+  and,
+  andThen,
+  chain,
+  flatMap,
+  or,
+  orElse,
+  unsafelyUnwrap,
+  unsafelyGet,
+  unsafeGet,
+  unsafelyUnwrapErr,
+  unsafelyGetErr,
+  unwrapOr,
+  getOr,
+  unwrapOrElse,
+  getOrElse,
+  toMaybe,
+  fromMaybe,
+  toString,
+  match,
+  cata,
+};
 
 export default Result;
