@@ -249,7 +249,7 @@ export class Nothing<T> implements MaybeShape<T> {
 
     @throws      If you pass `null` or `undefined`.
    */
-  constructor(_value?: null) {
+  constructor(_?: null) {
     /* nothing to do */
   }
 
@@ -393,7 +393,7 @@ export const just = <T>(value?: T | null): Maybe<T> => new Just<T>(value);
   @typeparam T The type of the item contained in the `Maybe`.
   @returns     An instance of `Maybe.Nothing<T>`.
  */
-export const nothing = <T>(_value?: null): Maybe<T> => new Nothing<T>(_value);
+export const nothing = <T>(_?: null): Maybe<T> => new Nothing<T>(_);
 
 /**
   Create a `Maybe` from any value.
