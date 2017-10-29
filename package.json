@@ -23,7 +23,10 @@
   },
   "keywords": [
     "ember-addon",
-    "typescript"
+    "typescript",
+    "functional programming",
+    "maybe",
+    "result"
   ],
   "scripts": {
     "clean": "rimraf dist",
@@ -80,6 +83,5 @@
         "lines": 100
       }
     }
-  },
-  "dependencies": {}
+  }
 }

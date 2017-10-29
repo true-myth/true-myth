@@ -57,11 +57,11 @@
     "experimentalDecorators": true            /* Enables experimental support for ES7 decorators. */
     // "emitDecoratorMetadata": true,         /* Enables experimental support for emitting type metadata for decorators. */
   },
-  "include": ["./src"],
+  "include": ["src"],
   "typedocOptions": {
     "out": "./docs",
-    "mode": "modules",
-    "toc": true,
+    // "mode": "modules",
+    "toc": false,
     "excludePrivate": true,
     "includes": "./src",
     "target": "ES6",
