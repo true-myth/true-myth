@@ -344,7 +344,7 @@ const getMeAValue = (url) => {
 const value = getMeAValue('http:/www.google.com');  // missing slash
 ```
 
-Notice: there's no way for the caller to know that the function will throw. Perhaps you're very disciplined an write a good docstring for every function *and* everyone's editor shows it to them *and* they pay attention to that briefly available popover. More likely, though, this exception throws at runtime and probably as a result of user-entered data – and then you're chasing down the problem through error logs.
+Notice: there's no way for the caller to know that the function will throw. Perhaps you're very disciplined and write good docstrings for every function – *and* moreover, perhaps everyone's editor shows it to them *and* they pay attention to that briefly-available popover. More likely, though, this exception throws at runtime and probably as a result of user-entered data – and then you're chasing down the problem through error logs.
 
 More, if you *do* want to account for the reality that any function anywhere in JavaScript might actually throw, you're going to write something like this:
 
