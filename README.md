@@ -275,11 +275,11 @@ myFuncThatTakesAnInteger(myNumber); // TypeError: anInteger is undefined
 
 ![this is fine](https://user-images.githubusercontent.com/2403023/31154374-ac25ce0e-a874-11e7-9399-73ad99d9d6cb.png)
 
-When the function tries to convert the integer to a string, the function blows up because it was written with the assumption that the parameter being passed in (a) is defined and (b) has a `toString` method. Neither of these assumptions are true when `anInteger` is `null` or `undefined`. This leads JavaScript programmers to program defensively, with `if (!anInteger) return;` style guard blocks at the top of their functions. This leads to harder-to-read code, and what's more, *it doesn't actually solve the root problem.* You could imagine this situation playing itself out in a million different ways: arguments to functions go missing. Values on objects turn out not to exist. Arrays are absent instead of merely empty.
+When the function tries to convert the integer to a string, the function blows up because it was written with the assumption that the parameter being passed in (a) is defined and (b) has a `toString` method. Neither of these assumptions are true when `anInteger` is `null` or `undefined`. This leads JavaScript programmers to program defensively, with `if (!anInteger) return;` style guard blocks at the top of their functions. This leads to harder-to-read code, and what's more, *it doesn't actually solve the root problem.*
 
-The result is a steady stream not merely of programming frustrations, but of *errors*. The program does not function as the programmer intends. That means stuff doesn't work correctly for the user of the software. Imagine a hammer where the head just slips off every so often, in ways you could compensate for but which makes it that much harder to just get the nail into the wood.
+You could imagine this situation playing itself out in a million different ways: arguments to functions go missing. Values on objects turn out not to exist. Arrays are absent instead of merely empty. The result is a steady stream not merely of programming frustrations, but of *errors*. The program does not function as the programmer intends. That means stuff doesn't work correctly for the user of the software.
 
-That's what `null` and `undefined` are. You can program around them. But defensive programming is gross. You write a lot of things like this:
+You can program around `null` and `undefined`. But defensive programming is gross. You write a lot of things like this:
 
 ```js
 function isNil(thingToCheck) {
