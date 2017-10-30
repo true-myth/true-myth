@@ -19,7 +19,7 @@
   "module": "dist/modules/src/index.js",
   "types": "dist/types/src/index.d.ts",
   "ember-addon": {
-    "main": "scripts/ember-addon.js"
+    "main": "ember-addon.js"
   },
   "keywords": [
     "ember-addon",
