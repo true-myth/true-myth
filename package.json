@@ -14,7 +14,7 @@
   "bugs": {
     "url": "https://github.com/chriskrycho/true-myth/issues"
   },
-  "version": "0.10.1",
+  "version": "0.10.2",
   "main": "dist/commonjs/src/index.js",
   "module": "dist/modules/src/index.js",
   "types": "dist/types/src/index.d.ts",
@@ -33,7 +33,7 @@
     "doc": "./scripts/build-docs",
     "precommit": "./scripts/build-docs && git add docs",
     "problems": "node ./scripts/problems.js",
-    "preversion": "yarn run test",
+    "preversion": "yarn run test && yarn run prepack",
     "prepack": "ember build -prod && cp ./src/flow/* ./dist/modules/src && cp ./src/flow/* ./dist/commonjs/src",
     "build": "ember build -prod",
     "test": "jest",
