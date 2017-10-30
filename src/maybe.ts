@@ -15,8 +15,6 @@ export enum Variant {
   Nothing = 'Nothing',
 }
 
-export type Mapper<T, U> = (t: T) => U;
-
 export interface MaybeShape<T> {
   /** Distinguish between the `Just` and `Nothing` [variants](../enums/_maybe_.variant). */
   variant: Variant;
@@ -515,13 +513,27 @@ export function map<T, U>(
  */
 export function mapOr<T, U>(orU: U, mapFn: (t: T) => U, maybe: Maybe<T>): U;
 export function mapOr<T, U>(orU: U, mapFn: (t: T) => U): (maybe: Maybe<T>) => U;
+export function mapOr<T, U>(orU: U): (mapFn: (t: T) => U) => (maybe: Maybe<T>) => U;
 export function mapOr<T, U>(
   orU: U,
-  mapFn: (t: T) => U,
+  mapFn?: (t: T) => U,
   maybe?: Maybe<T>
-): U | ((maybe: Maybe<T>) => U) {
-  const op = (m: Maybe<T>) => (isJust(m) ? mapFn(unwrap(m)) : orU);
-  return curry1(op, maybe);
+): U | ((maybe: Maybe<T>) => U) | ((mapFn: (t: T) => U) => (maybe: Maybe<T>) => U) {
+  function fullOp(fn: (t: T) => U, m: Maybe<T>) {
+    return isJust(m) ? fn(unwrap(m)) : orU;
+  }
+
+  function partialOp(fn: (t: T) => U): (maybe: Maybe<T>) => U;
+  function partialOp(fn: (t: T) => U, curriedMaybe: Maybe<T>): U;
+  function partialOp(fn: (t: T) => U, curriedMaybe?: Maybe<T>): U | ((maybe: Maybe<T>) => U) {
+    return curriedMaybe !== undefined
+      ? fullOp(fn, curriedMaybe)
+      : (extraCurriedMaybe: Maybe<T>) => fullOp(fn, extraCurriedMaybe);
+  }
+
+  return mapFn === undefined
+    ? partialOp
+    : maybe === undefined ? partialOp(mapFn) : partialOp(mapFn, maybe);
 }
 
 /**
@@ -566,7 +578,9 @@ export function mapOrElse<T, U>(
   mapFn?: (t: T) => U,
   maybe?: Maybe<T>
 ): U | ((maybe: Maybe<T>) => U) | ((mapFn: (t: T) => U) => (maybe: Maybe<T>) => U) {
-  const fullOp = (fn: (t: T) => U, m: Maybe<T>) => (isJust(m) ? fn(unwrap(m)) : orElseFn());
+  function fullOp(fn: (t: T) => U, m: Maybe<T>) {
+    return isJust(m) ? fn(unwrap(m)) : orElseFn();
+  }
 
   function partialOp(fn: (t: T) => U): (maybe: Maybe<T>) => U;
   function partialOp(fn: (t: T) => U, curriedMaybe: Maybe<T>): U;
@@ -724,8 +738,8 @@ export const flatMap = andThen;
   @param maybe        The `Maybe` instance to evaluate.
   @returns            `maybe` if it is a `Just`, otherwise `defaultMaybe`.
  */
-export function or<T>(defaultMaybe: Maybe<T>): (maybe: Maybe<T>) => Maybe<T>;
 export function or<T>(defaultMaybe: Maybe<T>, maybe: Maybe<T>): Maybe<T>;
+export function or<T>(defaultMaybe: Maybe<T>): (maybe: Maybe<T>) => Maybe<T>;
 export function or<T>(
   defaultMaybe: Maybe<T>,
   maybe?: Maybe<T>
@@ -750,8 +764,8 @@ export function or<T>(
   @returns      The `maybe` if it is `Just`, or the `Maybe` returned by
                 `elseFn` if the `maybe` is `Nothing.
  */
-export function orElse<T>(elseFn: (...args: any[]) => Maybe<T>): (maybe: Maybe<T>) => Maybe<T>;
 export function orElse<T>(elseFn: (...args: any[]) => Maybe<T>, maybe: Maybe<T>): Maybe<T>;
+export function orElse<T>(elseFn: (...args: any[]) => Maybe<T>): (maybe: Maybe<T>) => Maybe<T>;
 export function orElse<T>(
   elseFn: (...args: any[]) => Maybe<T>,
   maybe?: Maybe<T>
@@ -805,8 +819,8 @@ const unwrap = unsafelyUnwrap;
   @returns            The content of `maybe` if it is a `Just`, otherwise
                       `defaultValue`.
  */
-export function unwrapOr<T>(defaultValue: T): (maybe: Maybe<T>) => T;
 export function unwrapOr<T>(defaultValue: T, maybe: Maybe<T>): T;
+export function unwrapOr<T>(defaultValue: T): (maybe: Maybe<T>) => T;
 export function unwrapOr<T>(defaultValue: T, maybe?: Maybe<T>): T | ((maybe: Maybe<T>) => T) {
   const op = (m: Maybe<T>) => (isJust(m) ? unwrap(m) : defaultValue);
   return curry1(op, maybe);
@@ -844,8 +858,8 @@ export const getOr = unwrapOr;
   @returns        Either the content of `maybe` or the value returned from
                   `orElseFn`.
  */
-export function unwrapOrElse<T>(orElseFn: (...args: any[]) => T): (maybe: Maybe<T>) => T;
 export function unwrapOrElse<T>(orElseFn: (...args: any[]) => T, maybe: Maybe<T>): T;
+export function unwrapOrElse<T>(orElseFn: (...args: any[]) => T): (maybe: Maybe<T>) => T;
 export function unwrapOrElse<T>(
   orElseFn: (...args: any[]) => T,
   maybe?: Maybe<T>
@@ -869,12 +883,12 @@ export const getOrElse = unwrapOrElse;
   @returns     A `Result` containing the value wrapped in `maybe` in an `Ok`,
                or `error` in an `Err`.
  */
-export function toOkOrErr<T, E>(error: E): (curriedMaybe: Maybe<T>) => Result<T, E>;
 export function toOkOrErr<T, E>(error: E, maybe: Maybe<T>): Result<T, E>;
+export function toOkOrErr<T, E>(error: E): (maybe: Maybe<T>) => Result<T, E>;
 export function toOkOrErr<T, E>(
   error: E,
   maybe?: Maybe<T>
-): Result<T, E> | ((curriedMaybe: Maybe<T>) => Result<T, E>) {
+): Result<T, E> | ((maybe: Maybe<T>) => Result<T, E>) {
   const op = (m: Maybe<T>) => (isJust(m) ? ok(unwrap(m)) : err(error)) as Result<T, E>;
   return maybe !== undefined ? op(maybe) : op;
 }
@@ -891,10 +905,10 @@ export function toOkOrErr<T, E>(
   @returns     A `Result` containing the value wrapped in `maybe` in an `Ok`,
                or `the value generated by `elseFn` in an `Err`.
  */
+export function toOkOrElseErr<T, E>(elseFn: (...args: any[]) => E, maybe: Maybe<T>): Result<T, E>;
 export function toOkOrElseErr<T, E>(
   elseFn: (...args: any[]) => E
 ): (maybe: Maybe<T>) => Result<T, E>;
-export function toOkOrElseErr<T, E>(elseFn: (...args: any[]) => E, maybe: Maybe<T>): Result<T, E>;
 export function toOkOrElseErr<T, E>(
   elseFn: (...args: any[]) => E,
   maybe?: Maybe<T>
@@ -1000,8 +1014,8 @@ export type Matcher<T, A> = {
                  variant.
   @param maybe   The `maybe` instance to check.
  */
-export function match<T, A>(matcher: Matcher<T, A>): (m: Maybe<T>) => A;
 export function match<T, A>(matcher: Matcher<T, A>, maybe: Maybe<T>): A;
+export function match<T, A>(matcher: Matcher<T, A>): (m: Maybe<T>) => A;
 export function match<T, A>(matcher: Matcher<T, A>, maybe?: Maybe<T>): A | ((m: Maybe<T>) => A) {
   return maybe !== undefined
     ? mapOrElse(matcher.Nothing, matcher.Just, maybe)

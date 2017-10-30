@@ -116,8 +116,13 @@ describe('`Maybe` pure functions', () => {
   });
 
   test('`mapOr`', () => {
-    expect(Maybe.mapOr(0, x => x.length, Maybe.just('string'))).toEqual('string'.length);
-    expect(Maybe.mapOr(0, x => x.length, Maybe.of<string>(null))).toEqual(0);
+    const justAString = Maybe.of('string');
+
+    expect(Maybe.mapOr(0, length, justAString)).toEqual('string'.length);
+    expect(Maybe.mapOr(0, length, Maybe.of<string>(null))).toEqual(0);
+
+    expect(Maybe.mapOr(0)(length)(justAString)).toEqual(Maybe.mapOr(0, length, justAString));
+    expect(Maybe.mapOr(0, length)(justAString)).toEqual(Maybe.mapOr(0, length, justAString));
   });
 
   test('`mapOrElse`', () => {
