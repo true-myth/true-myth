@@ -151,13 +151,14 @@ For TypeScript, whether using Webpack or Ember CLI or something else for your bu
 - [x] `Maybe`
     - [x] add aliases for the standard names, e.g. `bind`, `chain`, etc.
     - [x] finish documentation
+    - [ ] curried variants
 
 - [x] `Result`
     - [x] implement
     - [x] document
+    - [ ] curried variants
 
 - [x] *All* the exports
-    - [x] AMD
     - [x] ES modules
     - [x] CommonJS modules
 
@@ -169,9 +170,8 @@ If you think another type should be in this list, please [open an issue]!
 
 ### Post-1.0 ideas
 
-- [ ] Curried variants (probably at `'true-myth/curried/maybe'` and `'true-myth/curried/result'`)
 - [ ] Static types that can work with `Maybe` *or* `Result` (and possibly also other e.g. mappable types), inspired by [this approach](https://medium.com/@gcanti/higher-kinded-types-in-typescript-static-and-fantasy-land-d41c361d0dbe)
-- More types
+- [ ] More types
     - `Either`?
     - `Task`?
 
