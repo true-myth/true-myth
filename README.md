@@ -35,6 +35,7 @@ You could implement all of these yourself – it's not hard! – but it's much 
     - [`Maybe` with the method style](#maybe-with-the-method-style)
     - [Constructing `Maybe`](#constructing-maybe)
     - [Safely getting at values](#safely-getting-at-values)
+    - [Curried variants](#curried-variants)
 - [Why do I need this?](#why-do-i-need-this)
     - [1. Nothingness: `null` and `undefined`](#1-nothingness-null-and-undefined)
     - [2. Failure handling: callbacks and exceptions](#2-failure-handling-callbacks-and-exceptions)
@@ -250,6 +251,86 @@ import { ok, unwrapOr } from 'true-myth/result';
 const theAnswer = ok(42);
 const theAnswerValue = unwrapOr(0, theAnswer);
 ```
+
+### Curried variants
+
+All static functions which take two or more parameters are automatically partially applied/curried so you can supply only *some* of the arguments as makes sense. For example, if you were using [lodash], you might have something like this:
+
+```ts
+import * as _ from 'lodash-fp';
+import Maybe from 'true-myth/maybe';
+
+const length = (s: string) => s.length;
+const even = (n: number) => n % 2 === 0;
+const timesThree = (n: number) => n * 3;
+
+const result = transform([
+  Maybe.of('yay'),
+  Maybe.nothing(),
+  Maybe.nothing(),
+  Maybe.of('waffles'),
+  Maybe.of('fish'),
+  Maybe.of('oh'),
+]);
+
+const transform = _flow(
+  // transform strings to their length: Just(3), Nothing, etc.
+  _.map(Maybe.map(length)),
+  // drop `Nothing` instances
+  _.filter(Maybe.isJust),
+  // unwrap now that it's safe to do so
+  _.map(Maybe.unsafelyUnwrap),
+  // only keep the even numbers ('fish' => 4)
+  _.filter(even),
+  // multiply by three
+  _.map(timesThree),
+  // add them up!
+  _.sum
+);
+
+console.log(result);  // 18
+```
+
+This makes for a much nicer API than needing to include the parameters for every function. If we *didn't* have the curried functions, we'd have a much, *much* noisier input:
+
+```ts
+import * as _ from 'lodash';
+import Maybe from 'true-myth/maybe';
+
+const length = (s: string) => s.length;
+const even = (n: number) => n % 2 === 0;
+const timesThree = (n: number) => n * 3;
+
+const result = transform([
+  Maybe.of('yay'),
+  Maybe.nothing(),
+  Maybe.nothing(),
+  Maybe.of('waffles'),
+  Maybe.of('fish'),
+  Maybe.of('oh'),
+]);
+
+const transform = _flow(
+  // transform strings to their length: Just(3), Nothing, etc.
+  maybeStrings => _.map(maybeStrings, maybeString => Maybe.map(length, maybeString)),
+  // drop `Nothing` instances
+  maybeLengths => _.filter(maybeLengths, Maybe.isJust),
+  // unwrap now that it's safe to do so
+  justLengths => _.map(justLengths, Maybe.unsafelyUnwrap),
+  // only keep the even numbers ('fish' => 4)
+  lengths => _.filter(lengths, even),
+  // multiply by three
+  evenLengths => _.map(evenLengths, timesThree),
+  // add them up!
+  _.sum
+);
+
+console.log(result);  // 18
+```
+
+This "point-free" style isn't always better, but it's available for the times when it *is* better. ([Use it judiciously!][pfod])
+
+[pfod]: https://www.youtube.com/watch?v=seVSlKazsNk
 
 ## Why do I need this?
 

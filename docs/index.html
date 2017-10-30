@@ -101,6 +101,7 @@
 							<li><a href="#maybe-with-the-method-style"><code>Maybe</code> with the method style</a></li>
 							<li><a href="#constructing-maybe">Constructing <code>Maybe</code></a></li>
 							<li><a href="#safely-getting-at-values">Safely getting at values</a></li>
+							<li><a href="#curried-variants">Curried variants</a></li>
 						</ul>
 					</li>
 					<li><a href="#why-do-i-need-this">Why do I need this?</a><ul>
@@ -294,6 +295,76 @@
 <span class="hljs-keyword">const</span> theAnswer = ok(<span class="hljs-number">42</span>);
 <span class="hljs-keyword">const</span> theAnswerValue = unwrapOr(<span class="hljs-number">0</span>, theAnswer);
 </code></pre>
+				<h3 id="curried-variants">Curried variants</h3>
+				<p>All static functions which take two or more parameters are automatically partially applied/curried so you can supply only <em>some</em> of the arguments as makes sense. For example, if you were using <a href="https://lodash.com">lodash</a>, you might have something like this:</p>
+				<pre><code class="lang-ts"><span class="hljs-keyword">import</span> * <span class="hljs-keyword">as</span> _ <span class="hljs-keyword">from</span> <span class="hljs-string">'lodash-fp'</span>;
+<span class="hljs-keyword">import</span> Maybe <span class="hljs-keyword">from</span> <span class="hljs-string">'true-myth/maybe'</span>;
+
+<span class="hljs-keyword">const</span> length = <span class="hljs-function">(<span class="hljs-params">s: <span class="hljs-built_in">string</span></span>) =&gt;</span> s.length;
+<span class="hljs-keyword">const</span> even = <span class="hljs-function">(<span class="hljs-params">n: <span class="hljs-built_in">number</span></span>) =&gt;</span> n % <span class="hljs-number">2</span> === <span class="hljs-number">0</span>;
+<span class="hljs-keyword">const</span> timesThree = <span class="hljs-function">(<span class="hljs-params">n: <span class="hljs-built_in">number</span></span>) =&gt;</span> n * <span class="hljs-number">3</span>;
+
+<span class="hljs-keyword">const</span> result = transform([
+  Maybe.of(<span class="hljs-string">'yay'</span>),
+  Maybe.nothing(),
+  Maybe.nothing(),
+  Maybe.of(<span class="hljs-string">'waffles'</span>),
+  Maybe.of(<span class="hljs-string">'fish'</span>),
+  Maybe.of(<span class="hljs-string">'oh'</span>),
+]);
+
+<span class="hljs-keyword">const</span> transform = _flow(
+  <span class="hljs-comment">// transform strings to their length: Just(3), Nothing, etc.</span>
+  _.map(Maybe.map(length)),
+  <span class="hljs-comment">// drop `Nothing` instances</span>
+  _.filter(Maybe.isJust),
+  <span class="hljs-comment">// unwrap now that it's safe to do so</span>
+  _.map(Maybe.unsafelyUnwrap),
+  <span class="hljs-comment">// only keep the even numbers ('fish' =&gt; 4)</span>
+  _.filter(even),
+  <span class="hljs-comment">// multiply by three</span>
+  _.map(timesThree),
+  <span class="hljs-comment">// add them up!</span>
+  _.sum
+);
+
+<span class="hljs-built_in">console</span>.log(result);  <span class="hljs-comment">// 18</span>
+</code></pre>
+				<p>This makes for a much nicer API than needing to include the parameters for every function. If we <em>didn&#39;t</em> have the curried functions, we&#39;d have a much, <em>much</em> noisier input:</p>
+				<pre><code class="lang-ts"><span class="hljs-keyword">import</span> * <span class="hljs-keyword">as</span> _ <span class="hljs-keyword">from</span> <span class="hljs-string">'lodash'</span>;
+<span class="hljs-keyword">import</span> Maybe <span class="hljs-keyword">from</span> <span class="hljs-string">'true-myth/maybe'</span>;
+
+<span class="hljs-keyword">const</span> length = <span class="hljs-function">(<span class="hljs-params">s: <span class="hljs-built_in">string</span></span>) =&gt;</span> s.length;
+<span class="hljs-keyword">const</span> even = <span class="hljs-function">(<span class="hljs-params">n: <span class="hljs-built_in">number</span></span>) =&gt;</span> n % <span class="hljs-number">2</span> === <span class="hljs-number">0</span>;
+<span class="hljs-keyword">const</span> timesThree = <span class="hljs-function">(<span class="hljs-params">n: <span class="hljs-built_in">number</span></span>) =&gt;</span> n * <span class="hljs-number">3</span>;
+
+<span class="hljs-keyword">const</span> result = transform([
+  Maybe.of(<span class="hljs-string">'yay'</span>),
+  Maybe.nothing(),
+  Maybe.nothing(),
+  Maybe.of(<span class="hljs-string">'waffles'</span>),
+  Maybe.of(<span class="hljs-string">'fish'</span>),
+  Maybe.of(<span class="hljs-string">'oh'</span>),
+]);
+
+<span class="hljs-keyword">const</span> transform = _flow(
+  <span class="hljs-comment">// transform strings to their length: Just(3), Nothing, etc.</span>
+  maybeStrings =&gt; _.map(maybeStrings, <span class="hljs-function"><span class="hljs-params">maybeString</span> =&gt;</span> Maybe.map(length, maybeString)),
+  <span class="hljs-comment">// drop `Nothing` instances</span>
+  maybeLengths =&gt; _.filter(maybeLengths, Maybe.isJust),
+  <span class="hljs-comment">// unwrap now that it's safe to do so</span>
+  justLengths =&gt; _.map(justLengths, Maybe.unsafelyUnwrap),
+  <span class="hljs-comment">// only keep the even numbers ('fish' =&gt; 4)</span>
+  lengths =&gt; _.filter(lengths, even),
+  <span class="hljs-comment">// multiply by three</span>
+  evenLengths =&gt; _.map(evenLengths, timesThree),
+  <span class="hljs-comment">// add them up!</span>
+  _.sum
+);
+
+<span class="hljs-built_in">console</span>.log(result);  <span class="hljs-comment">// 18</span>
+</code></pre>
+				<p>This &quot;point-free&quot; style isn&#39;t always better, but it&#39;s available for the times when it <em>is</em> better. (<a href="https://www.youtube.com/watch?v=seVSlKazsNk">Use it judiciously!</a>)</p>
 				<h2 id="why-do-i-need-this-">Why do I need this?</h2>
 				<p>There are two motivating problems for True Myth (and other libraries like it): dealing with <em>nothingness</em> and dealing with <em>operations which can fail</em>.</p>
 				<h3 id="1-nothingness-null-and-undefined-">1. Nothingness: <code>null</code> and <code>undefined</code></h3>

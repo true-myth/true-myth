@@ -358,7 +358,9 @@ function curry1<T, U>(op: (t: T) => U, item?: T) {
   @returns     `true` if `maybe` is `Just`, `false` otherwise. In TypeScript,
                also narrows the type from `Maybe<T>` to `Just<T>`.
  */
-export const isJust = <T>(maybe: Maybe<T>): maybe is Just<T> => maybe.variant === Variant.Just;
+export function isJust<T>(maybe: Maybe<T>): maybe is Just<T> {
+  return maybe.variant === Variant.Just;
+}
 
 /**
   Is this result a `Nothing` instance?
@@ -368,8 +370,9 @@ export const isJust = <T>(maybe: Maybe<T>): maybe is Just<T> => maybe.variant ==
   @returns     `true` if `maybe` is `nothing`, `false` otherwise. In TypeScript,
                also narrows the type from `Maybe<T>` to `Nothing<T>`.
  */
-export const isNothing = <T>(maybe: Maybe<T>): maybe is Nothing<T> =>
-  maybe.variant === Variant.Nothing;
+export function isNothing<T>(maybe: Maybe<T>): maybe is Nothing<T> {
+  return maybe.variant === Variant.Nothing;
+}
 
 /**
   Create an instance of `Maybe.Just`.
@@ -383,7 +386,9 @@ export const isNothing = <T>(maybe: Maybe<T>): maybe is Nothing<T> =>
   @returns     An instance of `Maybe.Just<T>`.
   @throws      If you pass `null` or `undefined`.
  */
-export const just = <T>(value?: T | null): Maybe<T> => new Just<T>(value);
+export function just<T>(value?: T | null): Maybe<T> {
+  return new Just<T>(value);
+}
 
 /**
   Create an instance of `Maybe.Nothing`.
@@ -399,7 +404,9 @@ export const just = <T>(value?: T | null): Maybe<T> => new Just<T>(value);
   @typeparam T The type of the item contained in the `Maybe`.
   @returns     An instance of `Maybe.Nothing<T>`.
  */
-export const nothing = <T>(_?: null): Maybe<T> => new Nothing<T>(_);
+export function nothing<T>(_?: null): Maybe<T> {
+  return new Nothing<T>(_);
+}
 
 /**
   Create a `Maybe` from any value.
@@ -423,7 +430,9 @@ export const nothing = <T>(_?: null): Maybe<T> => new Nothing<T>(_);
                the result will be `Nothing`; otherwise it will be the type of
                the value passed.
  */
-export const of = <T>(value?: T | null): Maybe<T> => (isVoid(value) ? nothing<T>() : just(value));
+export function of<T>(value?: T | null): Maybe<T> {
+  return isVoid(value) ? nothing<T>() : just(value);
+}
 
 /** Alias for [`of`](#of), primarily for compatibility with Folktale. */
 export const fromNullable = of;
@@ -470,8 +479,8 @@ export const fromNullable = of;
   @returns     A new `Maybe` with the result of applying `mapFn` to the value
                in a `Just`, or `Nothing` if `maybe` is `Nothing`.
  */
-export function map<T, U>(mapFn: (t: T) => U, maybe: Maybe<T>): Maybe<U>;
 export function map<T, U>(mapFn: (t: T) => U): (maybe: Maybe<T>) => Maybe<U>;
+export function map<T, U>(mapFn: (t: T) => U, maybe: Maybe<T>): Maybe<U>;
 export function map<T, U>(
   mapFn: (t: T) => U,
   maybe?: Maybe<T>
@@ -610,8 +619,8 @@ export function mapOrElse<T, U>(
   @return         `Nothing` if the original `maybe` is `Nothing`, or `andMaybe`
                   if the original `maybe` is `Just`.
  */
+export function and<T, U>(andMaybe: Maybe<U>, maybe: Maybe<T>): Maybe<U>;
 export function and<T, U>(andMaybe: Maybe<U>): (maybe: Maybe<T>) => Maybe<U>;
-export function and<T, U>(andMaybe: Maybe<U>, maybe?: Maybe<T>): Maybe<U>;
 export function and<T, U>(
   andMaybe: Maybe<U>,
   maybe?: Maybe<T>
@@ -672,8 +681,8 @@ export function and<T, U>(
   @returns      The result of the `thenFn` (a new `Maybe`) if `maybe` is a
                 `Just`, otherwise `Nothing` if `maybe` is a `Nothing`.
  */
-export function andThen<T, U>(thenFn: (t: T) => Maybe<U>): (maybe: Maybe<T>) => Maybe<U>;
 export function andThen<T, U>(thenFn: (t: T) => Maybe<U>, maybe: Maybe<T>): Maybe<U>;
+export function andThen<T, U>(thenFn: (t: T) => Maybe<U>): (maybe: Maybe<T>) => Maybe<U>;
 export function andThen<T, U>(
   thenFn: (t: T) => Maybe<U>,
   maybe?: Maybe<T>
@@ -907,8 +916,9 @@ export function toOkOrElseErr<T, E>(
   @param result The `Result` to construct a `Maybe` from.
   @returns      `Just` if `result` was `Ok` or `Nothing` if it was `Err`.
  */
-export const fromResult = <T, E>(result: Result<T, E>): Maybe<T> =>
-  isOk(result) ? just(Result.unsafelyUnwrap(result)) : nothing();
+export function fromResult<T, E>(result: Result<T, E>): Maybe<T> {
+  return isOk(result) ? just(Result.unsafelyUnwrap(result)) : nothing();
+}
 
 /**
   Create a `String` representation of a `Maybe` instance.
@@ -929,10 +939,10 @@ export const fromResult = <T, E>(result: Result<T, E>): Maybe<T> =>
   @param maybe The value to convert to a string.
   @returns     The string representation of the `Maybe`.
  */
-export const toString = <T>(maybe: Maybe<T>): string => {
+export function toString<T>(maybe: Maybe<T>): string {
   const body = isJust(maybe) ? `(${unwrap(maybe).toString()})` : '';
   return `${maybe.variant}${body}`;
-};
+}
 
 /** A lightweight object defining how to handle each variant of a Maybe. */
 export type Matcher<T, A> = {
