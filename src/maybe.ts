@@ -2,7 +2,7 @@
 
 /** (keep typedoc from getting confused by the imports) */
 import Result, { err, isOk, ok } from './result';
-import { isVoid } from './utils';
+import { isVoid, curry1 } from './utils';
 
 /**
   Discriminant for the `Just` and `Nothing` variants.
@@ -342,10 +342,6 @@ export class Nothing<T> implements MaybeShape<T> {
   toString(this: Maybe<T>): string {
     return toString(this);
   }
-}
-
-function curry1<T, U>(op: (t: T) => U, item?: T) {
-  return item !== undefined ? op(item) : op;
 }
 
 /**

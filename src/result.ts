@@ -2,7 +2,7 @@
 
 /** (keep typedoc from getting confused by the import) */
 import Maybe, { isJust, just, nothing } from './maybe';
-import { isVoid } from './utils';
+import { isVoid, curry1 } from './utils';
 
 /**
   Discriminant for `Ok` and `Err` variants of `Result` type.
@@ -471,8 +471,15 @@ export const err = <T, E>(error?: E | null): Result<T, E> => new Err<T, E>(error
                 in an `Ok`, or else the original `Err` value wrapped in the new
                 instance.
  */
-export const map = <T, U, E>(mapFn: (t: T) => U, result: Result<T, E>): Result<U, E> =>
-  isOk(result) ? ok(mapFn(unwrap(result))) : result as Result<any, E>;
+export function map<T, U, E>(mapFn: (t: T) => U, result: Result<T, E>): Result<U, E>;
+export function map<T, U, E>(mapFn: (t: T) => U): (result: Result<T, E>) => Result<U, E>;
+export function map<T, U, E>(
+  mapFn: (t: T) => U,
+  result?: Result<T, E>
+): Result<U, E> | ((result: Result<T, E>) => Result<U, E>) {
+  const op = (r: Result<T, E>) => (isOk(r) ? ok(mapFn(unwrap(r))) : r) as Result<U, E>;
+  return curry1(op, result);
+}
 
 /**
   Map over a `Result` instance as in [`map`](#map) and get out the value
@@ -498,8 +505,10 @@ export const map = <T, U, E>(mapFn: (t: T) => U, result: Result<T, E>): Result<U
   @param mapFn The function to apply the value to if `result` is an `Ok`.
   @param result The `Result` instance to map over.
  */
-export const mapOr = <T, U, E>(orU: U, mapFn: (t: T) => U, result: Result<T, E>): U =>
-  isOk(result) ? mapFn(unwrap(result)) : orU;
+// TODO: triple-yowzers
+export function mapOr<T, U, E>(orU: U, mapFn: (t: T) => U, result: Result<T, E>): U {
+  return isOk(result) ? mapFn(unwrap(result)) : orU;
+}
 
 /**
   Map over a `Result` instance as in [`map`](#map) and get out the value if
@@ -536,11 +545,14 @@ export const mapOr = <T, U, E>(orU: U, mapFn: (t: T) => U, result: Result<T, E>)
                   an `Ok`.
   @param result   The `Result` instance to map over.
  */
-export const mapOrElse = <T, U, E>(
+// TODO: triple-yowzers
+export function mapOrElse<T, U, E>(
   orElseFn: (err: E) => U,
   mapFn: (t: T) => U,
   result: Result<T, E>
-): U => (isOk(result) ? mapFn(unwrap(result)) : orElseFn(unwrapErr(result)));
+): U {
+  return isOk(result) ? mapFn(unwrap(result)) : orElseFn(unwrapErr(result));
+}
 
 /**
   Map over a `Result`, exactly as in [`map`](#map), but operating on the value
@@ -572,8 +584,15 @@ export const mapOrElse = <T, U, E>(
   @param mapErrFn The function to apply to the value wrapped in `Err` if `result` is an `Err`.
   @param result   The `Result` instance to map over an error case for.
  */
-export const mapErr = <T, E, F>(mapErrFn: (e: E) => F, result: Result<T, E>): Result<T, F> =>
-  isOk(result) ? result as Ok<T, any> : err(mapErrFn(unwrapErr(result)));
+export function mapErr<T, E, F>(mapErrFn: (e: E) => F, result: Result<T, E>): Result<T, F>;
+export function mapErr<T, E, F>(mapErrFn: (e: E) => F): (result: Result<T, E>) => Result<T, F>;
+export function mapErr<T, E, F>(
+  mapErrFn: (e: E) => F,
+  result?: Result<T, E>
+): Result<T, F> | ((result: Result<T, E>) => Result<T, F>) {
+  const op = (r: Result<T, E>) => (isOk(r) ? r : err(mapErrFn(unwrapErr(r)))) as Result<T, F>;
+  return curry1(op, result);
+}
 
 /**
   You can think of this like a short-circuiting logical "and" operation on a
@@ -610,8 +629,15 @@ export const mapErr = <T, E, F>(mapErrFn: (e: E) => F, result: Result<T, E>): Re
   @param andResult The `Result` instance to return if `result` is `Err`.
   @param result    The `Result` instance to check.
  */
-export const and = <T, U, E>(andResult: Result<U, E>, result: Result<T, E>): Result<U, E> =>
-  isOk(result) ? andResult : result as Err<any, E>;
+export function and<T, U, E>(andResult: Result<U, E>, result: Result<T, E>): Result<U, E>;
+export function and<T, U, E>(andResult: Result<U, E>): (result: Result<T, E>) => Result<U, E>;
+export function and<T, U, E>(
+  andResult: Result<U, E>,
+  result?: Result<T, E>
+): Result<U, E> | ((result: Result<T, E>) => Result<U, E>) {
+  const op = (r: Result<T, E>) => (isOk(r) ? andResult : r as Err<any, E>);
+  return curry1(op, result);
+}
 
 /**
   Apply a function to the wrapped value if `Ok` and return a new `Ok`
@@ -659,10 +685,20 @@ export const and = <T, U, E>(andResult: Result<U, E>, result: Result<T, E>): Res
   @param thenFn  The function to apply to the wrapped `T` if `maybe` is `Just`.
   @param result  The `Maybe` to evaluate and possibly apply a function to.
  */
-export const andThen = <T, U, E>(
+export function andThen<T, U, E>(
   thenFn: (t: T) => Result<U, E>,
   result: Result<T, E>
-): Result<U, E> => (isOk(result) ? thenFn(unwrap(result)) : result as Err<any, E>);
+): Result<U, E>;
+export function andThen<T, U, E>(
+  thenFn: (t: T) => Result<U, E>
+): (result: Result<T, E>) => Result<U, E>;
+export function andThen<T, U, E>(
+  thenFn: (t: T) => Result<U, E>,
+  result?: Result<T, E>
+): Result<U, E> | ((result: Result<T, E>) => Result<U, E>) {
+  const op = (r: Result<T, E>) => (isOk(r) ? thenFn(unwrap(r)) : r as Err<any, E>);
+  return curry1(op, result);
+}
 
 /** Alias for [`andThen`](#andthen). */
 export const chain = andThen;
@@ -700,8 +736,15 @@ export const flatMap = andThen;
   @param result         The `Result` instance to check.
   @returns              `result` if it is an `Ok`, otherwise `defaultResult`.
  */
-export const or = <T, E, F>(defaultResult: Result<T, F>, result: Result<T, E>): Result<T, F> =>
-  isOk(result) ? result as Ok<T, any> : defaultResult;
+export function or<T, E, F>(defaultResult: Result<T, F>, result: Result<T, E>): Result<T, F>;
+export function or<T, E, F>(defaultResult: Result<T, F>): (result: Result<T, E>) => Result<T, F>;
+export function or<T, E, F>(
+  defaultResult: Result<T, F>,
+  result?: Result<T, E>
+): Result<T, F> | ((result: Result<T, E>) => Result<T, F>) {
+  const op = (r: Result<T, E>) => (isOk(r) ? r as Ok<T, any> : defaultResult);
+  return curry1(op, result);
+}
 
 /**
   Like `or`, but using a function to construct the alternative `Result`.
@@ -720,10 +763,20 @@ export const or = <T, E, F>(defaultResult: Result<T, F>, result: Result<T, E>): 
   @returns      The `result` if it is `Ok`, or the `Result` returned by `elseFn`
                 if `result` is an `Err.
  */
-export const orElse = <T, E, F>(
+export function orElse<T, E, F>(
   elseFn: (...args: any[]) => Result<T, F>,
   result: Result<T, E>
-): Result<T, F> => (isOk(result) ? result as Ok<T, any> : elseFn());
+): Result<T, F>;
+export function orElse<T, E, F>(
+  elseFn: (...args: any[]) => Result<T, F>
+): (result: Result<T, E>) => Result<T, F>;
+export function orElse<T, E, F>(
+  elseFn: (...args: any[]) => Result<T, F>,
+  result?: Result<T, E>
+): Result<T, F> | ((result: Result<T, E>) => Result<T, F>) {
+  const op = (r: Result<T, E>) => (isOk(r) ? r as Ok<T, any> : elseFn());
+  return curry1(op, result);
+}
 
 /**
   Get the value out of the `Result`.
@@ -733,7 +786,9 @@ export const orElse = <T, E, F>(
 
   @throws If the `Result` instance is `Nothing`.
  */
-export const unsafelyUnwrap = <T, E>(result: Result<T, E>): T => result.unsafelyUnwrap();
+export function unsafelyUnwrap<T, E>(result: Result<T, E>): T {
+  return result.unsafelyUnwrap();
+}
 
 /** Alias for [`unsafelyUnwrap`](#unsafelyunwrap) */
 export const unsafelyGet = unsafelyUnwrap;
@@ -754,7 +809,9 @@ const unwrap = unsafelyUnwrap;
   @param result
   @throws Error If the `Result` instance is `Nothing`.
  */
-export const unsafelyUnwrapErr = <T, E>(result: Result<T, E>): E => result.unsafelyUnwrapErr();
+export function unsafelyUnwrapErr<T, E>(result: Result<T, E>): E {
+  return result.unsafelyUnwrapErr();
+}
 
 /** Alias for [`unsafelyUnwrapErr`](#unsafelyunwraperr) */
 export const unsafelyGetErr = unsafelyUnwrapErr;
@@ -785,8 +842,15 @@ const unwrapErr = unsafelyUnwrapErr;
   @returns            The content of `result` if it is an `Ok`, otherwise
                       `defaultValue`.
  */
-export const unwrapOr = <T, E>(defaultValue: T, result: Result<T, E>): T =>
-  isOk(result) ? unwrap(result) : defaultValue;
+export function unwrapOr<T, E>(defaultValue: T, result: Result<T, E>): T;
+export function unwrapOr<T, E>(defaultValue: T): (result: Result<T, E>) => T;
+export function unwrapOr<T, E>(
+  defaultValue: T,
+  result?: Result<T, E>
+): T | ((result: Result<T, E>) => T) {
+  const op = (r: Result<T, E>) => (isOk(r) ? unwrap(r) : defaultValue);
+  return curry1(op, result);
+}
 
 /** Alias for [`unwrapOr`](#unwrapor) */
 export const getOr = unwrapOr;
@@ -821,8 +885,15 @@ export const getOr = unwrapOr;
   @returns        The value wrapped in `result` if it is `Ok` or the value
                   returned by `orElseFn` applied to the value in `Err`.
  */
-export const unwrapOrElse = <T, E>(orElseFn: (error: E) => T, result: Result<T, E>): T =>
-  isOk(result) ? unwrap(result) : orElseFn(unwrapErr(result));
+export function unwrapOrElse<T, E>(orElseFn: (error: E) => T, result: Result<T, E>): T;
+export function unwrapOrElse<T, E>(orElseFn: (error: E) => T): (result: Result<T, E>) => T;
+export function unwrapOrElse<T, E>(
+  orElseFn: (error: E) => T,
+  result?: Result<T, E>
+): T | ((result: Result<T, E>) => T) {
+  const op = (r: Result<T, E>) => (isOk(r) ? unwrap(r) : orElseFn(unwrapErr(r)));
+  return curry1(op, result);
+}
 
 /** Alias for [`unwrapOrElse`](#unwraporelse) */
 export const getOrElse = unwrapOrElse;
@@ -858,8 +929,15 @@ export const toMaybe = <T, E>(result: Result<T, E>): Maybe<T> =>
   @param errValue A value to wrap in an `Err` if `maybe` is a `Nothing`.
   @param maybe    The `Maybe` to convert to a `Result`.
  */
-export const fromMaybe = <T, E>(errValue: E, maybe: Maybe<T>): Result<T, E> =>
-  isJust(maybe) ? ok<T, E>(Maybe.unsafelyUnwrap(maybe)) : err<T, E>(errValue);
+export function fromMaybe<T, E>(errValue: E, maybe: Maybe<T>): Result<T, E>;
+export function fromMaybe<T, E>(errValue: E): (maybe: Maybe<T>) => Result<T, E>;
+export function fromMaybe<T, E>(
+  errValue: E,
+  maybe?: Maybe<T>
+): Result<T, E> | ((maybe: Maybe<T>) => Result<T, E>) {
+  const op = (m: Maybe<T>) => (isJust(m) ? ok<T, E>(Maybe.unsafelyUnwrap(m)) : err<T, E>(errValue));
+  return curry1(op, maybe);
+}
 
 /**
   Create a `String` representation of a `result` instance.
@@ -943,8 +1021,15 @@ export type Matcher<T, E, A> = {
                  variant.
   @param maybe   The `maybe` instance to check.
  */
-export const match = <T, E, A>(matcher: Matcher<T, E, A>, result: Result<T, E>): A =>
-  mapOrElse(matcher.Err, matcher.Ok, result);
+export function match<T, E, A>(matcher: Matcher<T, E, A>, result: Result<T, E>): A;
+export function match<T, E, A>(matcher: Matcher<T, E, A>): (result: Result<T, E>) => A;
+export function match<T, E, A>(
+  matcher: Matcher<T, E, A>,
+  result?: Result<T, E>
+): A | ((result: Result<T, E>) => A) {
+  const op = (r: Result<T, E>) => mapOrElse(matcher.Err, matcher.Ok, r);
+  return curry1(op, result);
+}
 
 /** Alias for [`match`](#match) */
 export const cata = match;
