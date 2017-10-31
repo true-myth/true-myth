@@ -69,6 +69,9 @@ describe('`Result` pure functions', () => {
 
     const anErr = Result.err('blah');
     expect(Result.mapOr(theDefault, double, anErr)).toEqual(theDefault);
+
+    expect(Result.mapOr(theDefault)(double)(anOk)).toEqual(Result.mapOr(theDefault, double, anOk));
+    expect(Result.mapOr(theDefault, double)(anOk)).toEqual(Result.mapOr(theDefault, double, anOk));
   });
 
   test('`mapOrElse`', () => {
@@ -81,6 +84,13 @@ describe('`Result` pure functions', () => {
     const errValue = 10;
     const anErr = Result.err(10);
     expect(Result.mapOrElse(getDefault, String, anErr)).toEqual(`${description}: ${errValue}`);
+
+    expect(Result.mapOrElse(getDefault)(String)(anErr)).toEqual(
+      Result.mapOrElse(getDefault, String, anErr)
+    );
+    expect(Result.mapOrElse(getDefault, String)(anErr)).toEqual(
+      Result.mapOrElse(getDefault, String, anErr)
+    );
   });
 
   test('`match`', () => {

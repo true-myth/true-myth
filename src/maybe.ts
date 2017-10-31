@@ -2,7 +2,7 @@
 
 /** (keep typedoc from getting confused by the imports) */
 import Result, { err, isOk, ok } from './result';
-import { isVoid, curry1 } from './utils';
+import { curry1, isVoid } from './utils';
 
 /**
   Discriminant for the `Just` and `Nothing` variants.

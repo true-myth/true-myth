@@ -2,7 +2,7 @@
 
 /** (keep typedoc from getting confused by the import) */
 import Maybe, { isJust, just, nothing } from './maybe';
-import { isVoid, curry1 } from './utils';
+import { curry1, isVoid } from './utils';
 
 /**
   Discriminant for `Ok` and `Err` variants of `Result` type.
@@ -505,9 +505,32 @@ export function map<T, U, E>(
   @param mapFn The function to apply the value to if `result` is an `Ok`.
   @param result The `Result` instance to map over.
  */
-// TODO: triple-yowzers
-export function mapOr<T, U, E>(orU: U, mapFn: (t: T) => U, result: Result<T, E>): U {
-  return isOk(result) ? mapFn(unwrap(result)) : orU;
+export function mapOr<T, U, E>(orU: U, mapFn: (t: T) => U, result: Result<T, E>): U;
+export function mapOr<T, U, E>(orU: U, mapFn: (t: T) => U): (result: Result<T, E>) => U;
+export function mapOr<T, U, E>(orU: U): (mapFn: (t: T) => U) => (result: Result<T, E>) => U;
+export function mapOr<T, U, E>(
+  orU: U,
+  mapFn?: (t: T) => U,
+  result?: Result<T, E>
+): U | ((result: Result<T, E>) => U) | ((mapFn: (t: T) => U) => (result: Result<T, E>) => U) {
+  function fullOp(fn: (t: T) => U, r: Result<T, E>): U {
+    return isOk(r) ? fn(unwrap(r)) : orU;
+  }
+
+  function partialOp(fn: (t: T) => U): (maybe: Result<T, E>) => U;
+  function partialOp(fn: (t: T) => U, curriedResult: Result<T, E>): U;
+  function partialOp(
+    fn: (t: T) => U,
+    curriedResult?: Result<T, E>
+  ): U | ((maybe: Result<T, E>) => U) {
+    return curriedResult !== undefined
+      ? fullOp(fn, curriedResult)
+      : (extraCurriedResult: Result<T, E>) => fullOp(fn, extraCurriedResult);
+  }
+
+  return mapFn === undefined
+    ? partialOp
+    : result === undefined ? partialOp(mapFn) : partialOp(mapFn, result);
 }
 
 /**
@@ -550,8 +573,37 @@ export function mapOrElse<T, U, E>(
   orElseFn: (err: E) => U,
   mapFn: (t: T) => U,
   result: Result<T, E>
-): U {
-  return isOk(result) ? mapFn(unwrap(result)) : orElseFn(unwrapErr(result));
+): U;
+export function mapOrElse<T, U, E>(
+  orElseFn: (err: E) => U,
+  mapFn: (t: T) => U
+): (result: Result<T, E>) => U;
+export function mapOrElse<T, U, E>(
+  orElseFn: (err: E) => U
+): (mapFn: (t: T) => U) => (result: Result<T, E>) => U;
+export function mapOrElse<T, U, E>(
+  orElseFn: (err: E) => U,
+  mapFn?: (t: T) => U,
+  result?: Result<T, E>
+): U | ((result: Result<T, E>) => U) | ((mapFn: (t: T) => U) => (result: Result<T, E>) => U) {
+  function fullOp(fn: (t: T) => U, r: Result<T, E>) {
+    return isOk(r) ? fn(unwrap(r)) : orElseFn(unwrapErr(r));
+  }
+
+  function partialOp(fn: (t: T) => U): (maybe: Result<T, E>) => U;
+  function partialOp(fn: (t: T) => U, curriedResult: Result<T, E>): U;
+  function partialOp(
+    fn: (t: T) => U,
+    curriedResult?: Result<T, E>
+  ): U | ((maybe: Result<T, E>) => U) {
+    return curriedResult !== undefined
+      ? fullOp(fn, curriedResult)
+      : (extraCurriedResult: Result<T, E>) => fullOp(fn, extraCurriedResult);
+  }
+
+  return mapFn === undefined
+    ? partialOp
+    : result === undefined ? partialOp(mapFn) : partialOp(mapFn, result);
 }
 
 /**
