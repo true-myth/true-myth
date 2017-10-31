@@ -7,7 +7,7 @@ If the value is present, it is `Ok(value)`. If it's absent, it's `Err(reason)`. 
 1.  You *know* when an item may have a failure case, unlike exceptions (which may be thrown from any function with no warning and no help from the type system).
 2.  The error scenario is a first-class citizen, and the provided helper functions and methods allow you to deal with the type in much the same way as you might an array – transforming values if present, or dealing with errors instead if necessary.
 
-Having the possibility of an error handed to you as part of the type of an item gives you the flexibility to do the same kinds of things with it that you might with any other nice container type. For example, you can use [`map`][map] to apply a transformation if the item represents a succesful outcome, and even if the result was actually an error, it won't break under you.
+Having the possibility of an error handed to you as part of the type of an item gives you the flexibility to do the same kinds of things with it that you might with any other nice container type. For example, you can use [`map`][map] to apply a transformation if the item represents a successful outcome, and even if the result was actually an error, it won't break under you.
 
 [map]: https://chriskrycho.github.io/true-myth/modules/_result_.html#map
 
@@ -48,7 +48,7 @@ The next thing we might try is returning an error code and mutating an object pa
 
 -   You have to mutate an object. This doesn't work for simple items like numbers, and it can also be pretty unexpected behavior at times – you want to *know* when something is going to change, and mutating freely throughout a library or application makes that impossible.
 
--   You have to make sure to actually check the return code to make sure it's valid. In theory, we're all displined enough to always do that. In practice, we often end up reasoning, _Well, this particular call can never fail..._ (but of course, it probably can, just not in a way we expect).
+-   You have to make sure to actually check the return code to make sure it's valid. In theory, we're all disciplined enough to always do that. In practice, we often end up reasoning, _Well, this particular call can never fail..._ (but of course, it probably can, just not in a way we expect).
 
 -   We don't have a good way to return a *reason* for the error. We end up needing to introduce another parameter, designed to be mutated, to make sure that's possible.
 

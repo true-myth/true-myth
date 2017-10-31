@@ -116,8 +116,13 @@ describe('`Maybe` pure functions', () => {
   });
 
   test('`mapOr`', () => {
-    expect(Maybe.mapOr(0, x => x.length, Maybe.just('string'))).toEqual('string'.length);
-    expect(Maybe.mapOr(0, x => x.length, Maybe.of<string>(null))).toEqual(0);
+    const justAString = Maybe.of('string');
+
+    expect(Maybe.mapOr(0, length, justAString)).toEqual('string'.length);
+    expect(Maybe.mapOr(0, length, Maybe.of<string>(null))).toEqual(0);
+
+    expect(Maybe.mapOr(0)(length)(justAString)).toEqual(Maybe.mapOr(0, length, justAString));
+    expect(Maybe.mapOr(0, length)(justAString)).toEqual(Maybe.mapOr(0, length, justAString));
   });
 
   test('`mapOrElse`', () => {
@@ -126,33 +131,32 @@ describe('`Maybe` pure functions', () => {
     const toDefault = () => theDefault;
     const aJust = Maybe.just(theValue);
     const aNothing = Maybe.nothing();
+
     expect(Maybe.mapOrElse(toDefault, length, aJust)).toBe(theValue.length);
     expect(Maybe.mapOrElse(toDefault, length, aNothing)).toBe(theDefault);
+
+    expect(Maybe.mapOrElse(toDefault)(length)(aJust)).toEqual(
+      Maybe.mapOrElse(toDefault, length, aJust)
+    );
+    expect(Maybe.mapOrElse(toDefault, length)(aJust)).toEqual(
+      Maybe.mapOrElse(toDefault, length, aJust)
+    );
   });
 
   test('`match`', () => {
     const theValue = 'a string';
-    const adjust = Maybe.just(theValue);
+    const aJust = Maybe.just(theValue);
     const aNothing = Maybe.nothing();
 
-    expect(
-      Maybe.match(
-        {
-          Just: val => val + ', yo',
-          Nothing: () => 'rats, nothing',
-        },
-        adjust
-      )
-    ).toEqual('a string, yo');
-    expect(
-      Maybe.match(
-        {
-          Just: val => val + ', yo',
-          Nothing: () => 'rats, nothing',
-        },
-        aNothing
-      )
-    ).toEqual('rats, nothing');
+    const matcher = {
+      Just: val => val + ', yo',
+      Nothing: () => 'rats, nothing',
+    };
+
+    expect(Maybe.match(matcher, aJust)).toEqual('a string, yo');
+    expect(Maybe.match(matcher, aNothing)).toEqual('rats, nothing');
+
+    expect(Maybe.match(matcher)(aJust)).toEqual(Maybe.match(matcher, aJust));
   });
 
   test('`and`', () => {
@@ -161,10 +165,11 @@ describe('`Maybe` pure functions', () => {
     const aNothing = Maybe.nothing();
     expect(Maybe.and(anotherJust, aJust)).toBe(anotherJust);
 
-    // Cannot coerce `Nothing<T>` to `Nothing<U>`
     expect(Maybe.and(aNothing, aJust)).toEqual(aNothing);
     expect(Maybe.and(aNothing, aJust)).toEqual(aNothing);
     expect(Maybe.and(aNothing, aNothing)).toEqual(aNothing);
+
+    expect(Maybe.and(aNothing)(aJust)).toEqual(Maybe.and(aNothing, aJust));
   });
 
   const andThenTest = (fn: AndThenAliases) => () => {
@@ -181,6 +186,8 @@ describe('`Maybe` pure functions', () => {
     expect(Maybe[fn](toNothing, theJust)).toEqual(noNumber);
     expect(Maybe[fn](toMaybeNumber, noString)).toEqual(noNumber);
     expect(Maybe[fn](toNothing, noString)).toEqual(noNumber);
+
+    expect(Maybe[fn](toMaybeNumber)(theJust)).toEqual(Maybe[fn](toMaybeNumber, theJust));
   };
 
   test('`andThen`', andThenTest('andThen'));
@@ -196,13 +203,19 @@ describe('`Maybe` pure functions', () => {
     expect(Maybe.or(nothing, justWaffles)).toBe(justWaffles);
     expect(Maybe.or(justAnswer, nothing)).toBe(justAnswer);
     expect(Maybe.or(nothing, nothing)).toBe(nothing);
+
+    expect(Maybe.or(justAnswer)(justWaffles)).toEqual(Maybe.or(justAnswer, justWaffles));
   });
 
   test('`orElse`', () => {
-    expect(Maybe.orElse(() => Maybe.of('waffles'), Maybe.of('42'))).toEqual(Maybe.just('42'));
-    expect(Maybe.orElse(() => Maybe.of('waffles'), Maybe.of(null))).toEqual(Maybe.just('waffles'));
-    expect(Maybe.orElse(() => Maybe.of(null), Maybe.of('42'))).toEqual(Maybe.just('42'));
+    const getWaffles = () => Maybe.of('waffles');
+    const just42 = Maybe.of('42');
+    expect(Maybe.orElse(getWaffles, just42)).toEqual(Maybe.just('42'));
+    expect(Maybe.orElse(getWaffles, Maybe.of(null))).toEqual(Maybe.just('waffles'));
+    expect(Maybe.orElse(() => Maybe.of(null), just42)).toEqual(Maybe.just('42'));
     expect(Maybe.orElse(() => Maybe.of(null), Maybe.of(null))).toEqual(Maybe.nothing());
+
+    expect(Maybe.orElse(getWaffles)(just42)).toEqual(Maybe.orElse(getWaffles, just42));
   });
 
   test('`unwrap`', () => {
@@ -219,17 +232,32 @@ describe('`Maybe` pure functions', () => {
 
     expect(Maybe.unwrapOr(theDefaultValue, theJust)).toEqual(theValue);
     expect(Maybe.unwrapOr(theDefaultValue, theNothing)).toEqual(theDefaultValue);
+
+    expect(Maybe.unwrapOr(theDefaultValue)(theJust)).toEqual(
+      Maybe.unwrapOr(theDefaultValue, theJust)
+    );
   });
 
   test('`unwrapOrElse`', () => {
-    expect(Maybe.unwrapOrElse(() => 100, Maybe.of(42))).toBe(42);
-    expect(Maybe.unwrapOrElse(() => 42, Maybe.nothing())).toBe(42);
+    const val = 100;
+    const getVal = () => val;
+    const just42 = Maybe.of(42);
+
+    expect(Maybe.unwrapOrElse(getVal, just42)).toBe(42);
+    expect(Maybe.unwrapOrElse(getVal, Maybe.nothing())).toBe(val);
+
+    expect(Maybe.unwrapOrElse(getVal)(just42)).toEqual(Maybe.unwrapOrElse(getVal, just42));
   });
 
   test('`toOkOrErr`', () => {
+    const theValue = 'string';
+    const theJust = Maybe.of(theValue);
     const errValue = { reason: 'such badness' };
-    expect(Maybe.toOkOrErr(errValue, Maybe.of('string'))).toEqual(ok('string'));
+
+    expect(Maybe.toOkOrErr(errValue, theJust)).toEqual(ok(theValue));
     expect(Maybe.toOkOrErr(errValue, Maybe.nothing())).toEqual(err(errValue));
+
+    expect(Maybe.toOkOrErr(errValue)(theJust)).toEqual(Maybe.toOkOrErr(errValue, theJust));
   });
 
   test('`toOkOrElseErr`', () => {
@@ -239,6 +267,10 @@ describe('`Maybe` pure functions', () => {
 
     expect(Maybe.toOkOrElseErr(getErrValue, theJust)).toEqual(ok(12));
     expect(Maybe.toOkOrElseErr(getErrValue, Maybe.nothing())).toEqual(err(errValue));
+
+    expect(Maybe.toOkOrElseErr(getErrValue)(theJust)).toEqual(
+      Maybe.toOkOrElseErr(getErrValue, theJust)
+    );
   });
 
   test('`fromResult`', () => {
