@@ -6,7 +6,7 @@ If the value is present, it is `Just(value)`. If it's absent, it's `Nothing`. Th
 
 The behavior of this type is checked by TypeScript or Flow at compile time, and bears no runtime overhead other than the very small cost of the container object and some lightweight wrap/unwrap functionality.
 
-The `Nothing` variant has a type parameter `<T>` so that type inference works correctly in TypeScript when operating on `Nothing` instances with functions which require a `T` to behave properly, e.g. [`map`][map], which cannot check that the map function satisies the type constraints for `Maybe<T>` unless `Nothing` has a parameter `T` to constrain it on invocation.
+The `Nothing` variant has a type parameter `<T>` so that type inference works correctly in TypeScript when operating on `Nothing` instances with functions which require a `T` to behave properly, e.g. [`map`][map], which cannot check that the map function satisfies the type constraints for `Maybe<T>` unless `Nothing` has a parameter `T` to constrain it on invocation.
 
 [map]: https://chriskrycho.github.io/true-myth/modules/_maybe_.html#map
 

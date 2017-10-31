@@ -1,8 +1,8 @@
 <h1 align="center"><a href='https://github.com/chriskrycho/true-myth'>True Myth</a></h1>
 
-<p align="center">A library for safe functional programming in JavaScript, with
-first-class support for TypeScript and Flow, that has `Maybe` and `Result`
-types,supporting both a functional style and a more traditional method-call
+<p align="center">A library for saner programming in JavaScript, with
+first-class support for TypeScript (and Flow), with `Maybe` and `Result`
+types, and supporting both a functional style and a more traditional method-call
 style.</p>
 
 [![Travis `master`](https://img.shields.io/travis/chriskrycho/true-myth/master.svg?style=flat-square)](https://travis-ci.org/chriskrycho/true-myth)
@@ -130,8 +130,6 @@ node_modules/
 
 ### TypeScript and Flow
 
-Flow should *just work*. You can simply use the module as a normal ES6-style module import, whether working in Node or using something like Webpack.
-
 For TypeScript, whether using Webpack or Ember CLI or something else for your bundling, you will be able to import the root module directly but will not be able to import the more useful modules. To do so, you'll need to add this to your `tsconfig.json`:
 
 ```json
@@ -144,6 +142,10 @@ For TypeScript, whether using Webpack or Ember CLI or something else for your bu
 }
 ```
 
+Install-wise, Flow's types should *just work*, as they're distributed side-by-side with the modules. You can simply use the module as a normal ES6-style module import, whether working in Node or using something like Webpack.
+
+Note, however, that Flow support is beta quality. They're offered as a best-effort approach, but are incomplete and may have a couple errors – the primary author uses TypeScript and so doesn't have a good place to test them. Pull requests are very welcome!
+
 ## Roadmap
 
 ### 1.0 commitments
@@ -151,12 +153,12 @@ For TypeScript, whether using Webpack or Ember CLI or something else for your bu
 - [x] `Maybe`
     - [x] add aliases for the standard names, e.g. `bind`, `chain`, etc.
     - [x] finish documentation
-    - [ ] curried variants
+    - [x] curried variants
 
 - [x] `Result`
     - [x] implement
     - [x] document
-    - [ ] curried variants
+    - [x] curried variants
 
 - [x] *All* the exports
     - [x] ES modules
@@ -413,7 +415,7 @@ Meanwhile, in client-side code, if we're not using some similar kind of callback
 
 ```js
 // in one part of the codebase
-const getMeAValue = (url) => {
+function getMeAValue(url) {
   if (isMalformed(url)) {
     throw new Error(`The url `${url}` is malformed!`);
   }
@@ -439,7 +441,7 @@ try {
 
 This is like the Node example *but even worse* for repetition!
 
-Nor can TypeScript and Flow help you here! They don't have type signatures to say "This throws an exception!" (TypeScript's `never` might come to mind, but it might mean lots of things, not just exception-throwing.)
+Nor can TypeScript or Flow help you here! They don't have type signatures to say "This throws an exception!" (TypeScript's `never` might come to mind, but it might mean lots of things, not just exception-throwing.)
 
 Neither callbacks nor exceptions are good solutions here.
 
@@ -463,9 +465,7 @@ Imagine, for a moment, that you have a variable `myArray` and you want to map ov
 
 ```js
 let myArray = [];
-
 // oops, I meant to load up the variable with an array, but I forgot!
-
 myArray.forEach(n => console.log(n)); // <nothing prints to the screen>
 ```
 
@@ -508,7 +508,7 @@ console.log(myNumberErr.map(n => n * 2)); // Err(oh no)
 
 Thus, you can replace functions which take polymorphic arguments or have polymorphic return values to try to handle scenarios where something may be a success or an error with functions using `Result`.
 
-Any place you try to treat either a `Maybe` or a `Result` as just the underlying value rather than the container, the type systems will complain, of course. And you'll also get help from smart editors with suggestions about what kinds of values (includingfunctions) you need to interact with any given helper or method, since the type definitions are supplied.
+Any place you try to treat either a `Maybe` or a `Result` as just the underlying value rather than the container, the type systems will complain, of course. And you'll also get help from smart editors with suggestions about what kinds of values (including functions) you need to interact with any given helper or method, since the type definitions are supplied.
 
 By leaning on TypeScript or Flow to handle the checking, we also get all these benefits with *no* runtime overhead other than the cost of constructing the actual container objects (which is to say: *very* low!).
 
@@ -549,7 +549,7 @@ In practice, that means:
 
 -   Using the library with TypeScript or Flow will *just work* and will provide you with considerable safety out of the box. Using it with JavaScript will work just fine, but there is no runtime checking, and you're responsible to make sure you don't `unwrap()` a `Maybe` without checking that it's safe to do so.
 
--   Since this is a TypeScript- and Flow-first library, we intentionally leave out any runtime type checking. As such, you *should* make use of the type systems if you want the benefits of the system. Many of the functions simply assume that the types are checked, and *will* error if you pass in items of the wrong type.
+-   Since this is a TypeScript-first (and Flow-second!) library, we intentionally leave out any runtime type checking. As such, you *should* make use of the type systems if you want the benefits of the system. Many of the functions simply assume that the types are checked, and *will* error if you pass in items of the wrong type.
 
     For example, if you pass a non-`Maybe` instance to many functions, they will simply fail – even the basic helpers like `isJust` and `isNothing`. These assumptions have been made precisely *because* this is a TypeScript- and Flow-first library. (See the discussion below comparing True Myth to Folktale and Sanctuary if you aren't using TypeScript or Flow and need runtime checking.)
 

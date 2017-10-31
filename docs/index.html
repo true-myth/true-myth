@@ -65,9 +65,9 @@
 		<div class="col-8 col-content">
 			<div class="tsd-panel tsd-typography">
 				<h1 align="center"><a href='https://github.com/chriskrycho/true-myth'>True Myth</a></h1>
-				<p align="center">A library for safe functional programming in JavaScript, with
-					first-class support for TypeScript and Flow, that has <code>Maybe</code> and <code>Result</code>
-					types,supporting both a functional style and a more traditional method-call
+				<p align="center">A library for saner programming in JavaScript, with
+					first-class support for TypeScript (and Flow), with <code>Maybe</code> and <code>Result</code>
+					types, and supporting both a functional style and a more traditional method-call
 				style.</p>
 				<p><a href="https://travis-ci.org/chriskrycho/true-myth"><img src="https://img.shields.io/travis/chriskrycho/true-myth/master.svg?style=flat-square" alt="Travis `master`"></a>
 					<a href="https://www.npmjs.com/package/true-myth"><img src="https://img.shields.io/npm/v/true-myth.svg?style=flat-square" alt="npm"></a>
@@ -195,7 +195,6 @@
           utils.d.ts</code>
 				</details>
 				<h3 id="typescript-and-flow">TypeScript and Flow</h3>
-				<p>Flow should <em>just work</em>. You can simply use the module as a normal ES6-style module import, whether working in Node or using something like Webpack.</p>
 				<p>For TypeScript, whether using Webpack or Ember CLI or something else for your bundling, you will be able to import the root module directly but will not be able to import the more useful modules. To do so, you&#39;ll need to add this to your <code>tsconfig.json</code>:</p>
 				<pre><code class="lang-json">{
   <span class="hljs-attr">"compilerOptions"</span>: {
@@ -205,6 +204,8 @@
   }
 }
 </code></pre>
+				<p>Install-wise, Flow&#39;s types should <em>just work</em>, as they&#39;re distributed side-by-side with the modules. You can simply use the module as a normal ES6-style module import, whether working in Node or using something like Webpack.</p>
+				<p>Note, however, that Flow support is beta quality. They&#39;re offered as a best-effort approach, but are incomplete and may have a couple errors – the primary author uses TypeScript and so doesn&#39;t have a good place to test them. Pull requests are very welcome!</p>
 				<h2 id="roadmap">Roadmap</h2>
 				<h3 id="1-0-commitments">1.0 commitments</h3>
 				<ul>
@@ -212,14 +213,14 @@
 						<ul>
 							<li>[x] add aliases for the standard names, e.g. <code>bind</code>, <code>chain</code>, etc.</li>
 							<li>[x] finish documentation</li>
-							<li>[ ] curried variants</li>
+							<li>[x] curried variants</li>
 						</ul>
 					</li>
 					<li><p>[x] <code>Result</code></p>
 						<ul>
 							<li>[x] implement</li>
 							<li>[x] document</li>
-							<li>[ ] curried variants</li>
+							<li>[x] curried variants</li>
 						</ul>
 					</li>
 					<li><p>[x] <em>All</em> the exports</p>
@@ -419,7 +420,7 @@ myFuncThatTakesAnInteger(myNumber); <span class="hljs-comment">// TypeError: anI
 				</ol>
 				<p>Meanwhile, in client-side code, if we&#39;re not using some similar kind of callback pattern, we usually resort to exceptions. But exceptions are unpredictable: you can&#39;t know whether a given function invocation is going to throw an exception until runtime as someone calling the function. No big deal if it&#39;s a small application and one person wrote all the code, but with even a few thousand lines of code or two developers, it&#39;s very easy to miss that. And then this happens:</p>
 				<pre><code class="lang-js"><span class="hljs-comment">// in one part of the codebase</span>
-<span class="hljs-keyword">const</span> getMeAValue = <span class="hljs-function">(<span class="hljs-params">url</span>) =&gt;</span> {
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">getMeAValue</span>(<span class="hljs-params">url</span>) </span>{
   <span class="hljs-keyword">if</span> (isMalformed(url)) {
     <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">Error</span>(<span class="hljs-string">`The url `</span>${url}<span class="hljs-string">` is malformed!`</span>);
   }
@@ -439,7 +440,7 @@ myFuncThatTakesAnInteger(myNumber); <span class="hljs-comment">// TypeError: anI
 }
 </code></pre>
 				<p>This is like the Node example <em>but even worse</em> for repetition!</p>
-				<p>Nor can TypeScript and Flow help you here! They don&#39;t have type signatures to say &quot;This throws an exception!&quot; (TypeScript&#39;s <code>never</code> might come to mind, but it might mean lots of things, not just exception-throwing.)</p>
+				<p>Nor can TypeScript or Flow help you here! They don&#39;t have type signatures to say &quot;This throws an exception!&quot; (TypeScript&#39;s <code>never</code> might come to mind, but it might mean lots of things, not just exception-throwing.)</p>
 				<p>Neither callbacks nor exceptions are good solutions here.</p>
 				<h2 id="solutions-maybe-and-result-">Solutions: <code>Maybe</code> and <code>Result</code></h2>
 				<p><code>Maybe</code> and <code>Result</code> are our escape hatch from all this madness.</p>
@@ -451,9 +452,7 @@ myFuncThatTakesAnInteger(myNumber); <span class="hljs-comment">// TypeError: anI
 				<p>It turns out you probably already have a good idea of how this works, if you&#39;ve spent much time writing JavaScript, because this is exactly how arrays work.</p>
 				<p>Imagine, for a moment, that you have a variable <code>myArray</code> and you want to map over it and print out every value to the console. You instantiate it as an empty array and then forget to load it up with values before mapping over it:</p>
 				<pre><code class="lang-js"><span class="hljs-keyword">let</span> myArray = [];
-
 <span class="hljs-comment">// oops, I meant to load up the variable with an array, but I forgot!</span>
-
 myArray.forEach(<span class="hljs-function"><span class="hljs-params">n</span> =&gt;</span> <span class="hljs-built_in">console</span>.log(n)); <span class="hljs-comment">// &lt;nothing prints to the screen&gt;</span>
 </code></pre>
 				<p>Even though this doesn&#39;t print anything to the screen, it doesn&#39;t unexpectedly blow up, either. In other words, it represents the concept of having nothing &quot;inside the box&quot; in a safe manner. By contrast, an integer has no such safe box around it. What if you could multiply an integer by two, and if your variable was &quot;empty&quot; for one reason or another, it wouldn&#39;t blow up?</p>
@@ -481,7 +480,7 @@ myInteger.map(<span class="hljs-function"><span class="hljs-params">x</span> =&g
 <span class="hljs-built_in">console</span>.log(myNumberErr.map(<span class="hljs-function"><span class="hljs-params">n</span> =&gt;</span> n * <span class="hljs-number">2</span>)); <span class="hljs-comment">// Err(oh no)</span>
 </code></pre>
 				<p>Thus, you can replace functions which take polymorphic arguments or have polymorphic return values to try to handle scenarios where something may be a success or an error with functions using <code>Result</code>.</p>
-				<p>Any place you try to treat either a <code>Maybe</code> or a <code>Result</code> as just the underlying value rather than the container, the type systems will complain, of course. And you&#39;ll also get help from smart editors with suggestions about what kinds of values (includingfunctions) you need to interact with any given helper or method, since the type definitions are supplied.</p>
+				<p>Any place you try to treat either a <code>Maybe</code> or a <code>Result</code> as just the underlying value rather than the container, the type systems will complain, of course. And you&#39;ll also get help from smart editors with suggestions about what kinds of values (including functions) you need to interact with any given helper or method, since the type definitions are supplied.</p>
 				<p>By leaning on TypeScript or Flow to handle the checking, we also get all these benefits with <em>no</em> runtime overhead other than the cost of constructing the actual container objects (which is to say: <em>very</em> low!).</p>
 				<h2 id="design-philosophy">Design philosophy</h2>
 				<p>The design aims for True Myth are:</p>
@@ -514,7 +513,7 @@ const functionalNothing = nothing();
 					</li>
 					<li><p>Using the library with TypeScript or Flow will <em>just work</em> and will provide you with considerable safety out of the box. Using it with JavaScript will work just fine, but there is no runtime checking, and you&#39;re responsible to make sure you don&#39;t <code>unwrap()</code> a <code>Maybe</code> without checking that it&#39;s safe to do so.</p>
 					</li>
-					<li><p>Since this is a TypeScript- and Flow-first library, we intentionally leave out any runtime type checking. As such, you <em>should</em> make use of the type systems if you want the benefits of the system. Many of the functions simply assume that the types are checked, and <em>will</em> error if you pass in items of the wrong type.</p>
+					<li><p>Since this is a TypeScript-first (and Flow-second!) library, we intentionally leave out any runtime type checking. As such, you <em>should</em> make use of the type systems if you want the benefits of the system. Many of the functions simply assume that the types are checked, and <em>will</em> error if you pass in items of the wrong type.</p>
 						<p>For example, if you pass a non-<code>Maybe</code> instance to many functions, they will simply fail – even the basic helpers like <code>isJust</code> and <code>isNothing</code>. These assumptions have been made precisely <em>because</em> this is a TypeScript- and Flow-first library. (See the discussion below comparing True Myth to Folktale and Sanctuary if you aren&#39;t using TypeScript or Flow and need runtime checking.)</p>
 					</li>
 				</ul>

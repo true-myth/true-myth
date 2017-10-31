@@ -76,7 +76,7 @@
 							<li>You <em>know</em> when an item may have a failure case, unlike exceptions (which may be thrown from any function with no warning and no help from the type system).</li>
 							<li>The error scenario is a first-class citizen, and the provided helper functions and methods allow you to deal with the type in much the same way as you might an array – transforming values if present, or dealing with errors instead if necessary.</li>
 						</ol>
-						<p>Having the possibility of an error handed to you as part of the type of an item gives you the flexibility to do the same kinds of things with it that you might with any other nice container type. For example, you can use <a href="https://chriskrycho.github.io/true-myth/modules/_result_.html#map"><code>map</code></a> to apply a transformation if the item represents a succesful outcome, and even if the result was actually an error, it won&#39;t break under you.</p>
+						<p>Having the possibility of an error handed to you as part of the type of an item gives you the flexibility to do the same kinds of things with it that you might with any other nice container type. For example, you can use <a href="https://chriskrycho.github.io/true-myth/modules/_result_.html#map"><code>map</code></a> to apply a transformation if the item represents a successful outcome, and even if the result was actually an error, it won&#39;t break under you.</p>
 						<p>To make that concrete, let&#39;s look at an example. In normal JavaScript, you might have something like this:</p>
 						<pre><code class="lang-js"><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">mightSucceed</span>(<span class="hljs-params">doesSucceed</span>) </span>{
   <span class="hljs-keyword">if</span> (!doesSucceed) {
@@ -107,7 +107,7 @@
 						<ul>
 							<li><p>You have to mutate an object. This doesn&#39;t work for simple items like numbers, and it can also be pretty unexpected behavior at times – you want to <em>know</em> when something is going to change, and mutating freely throughout a library or application makes that impossible.</p>
 							</li>
-							<li><p>You have to make sure to actually check the return code to make sure it&#39;s valid. In theory, we&#39;re all displined enough to always do that. In practice, we often end up reasoning, <em>Well, this particular call can never fail...</em> (but of course, it probably can, just not in a way we expect).</p>
+							<li><p>You have to make sure to actually check the return code to make sure it&#39;s valid. In theory, we&#39;re all disciplined enough to always do that. In practice, we often end up reasoning, <em>Well, this particular call can never fail...</em> (but of course, it probably can, just not in a way we expect).</p>
 							</li>
 							<li><p>We don&#39;t have a good way to return a <em>reason</em> for the error. We end up needing to introduce another parameter, designed to be mutated, to make sure that&#39;s possible.</p>
 							</li>
