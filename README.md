@@ -53,7 +53,11 @@ You could implement all of these yourself – it's not hard! – but it's much 
 - [Why not...](#why-not)
     - [Folktale](#folktale)
     - [Sanctuary](#sanctuary)
-- [Migrating from existing libs](#migrating-from-existing-libs)
+- [Migrating from other libraries](#migrating-from-other-libraries)
+    - [From Folktale](#from-folktale)
+        - [1.x](#from-folktale-1x)
+        - [2.x](#from-folktale-2x)
+    - [Sanctuary](#from-sanctuary)
 - [What's with the name?](#whats-with-the-name)
 
 ## Setup
@@ -736,17 +740,17 @@ Note that much of the content between these sections is the same; it's presented
 
 ## Migrating from other libraries
 
-### Folktale
+### From Folktale
 
 Migrating from Folktale should be *very* straightforward: many of the names are the same, and the behavior of many of the functions is as well.
 
-#### Folktale 1.0
+#### From Folktale 1.x
 
 In many cases, you can simple rename your imports and some of the function invocations for Folktale to switch to True Myth – several imports are supplied with exactly that pattern in mind. If a given item is not mentioned, you can assume no change other than the import is required.
 
 - [ ] TODO: migration path from Folktale 1.0
 
-#### Folktale 2.0
+#### From Folktale 2.x
 
 In many cases, you can simple rename your imports and some of the function invocations for Folktale to switch to True Myth – several imports are supplied with exactly that pattern in mind. If a given item is not mentioned, you can assume no change other than the import is required.
 
@@ -781,7 +785,7 @@ In many cases, you can simple rename your imports and some of the function invoc
 [`_.isEqual`]: https://lodash.com/docs/4.17.4#isEqual
 [`R.equals`]: http://ramdajs.com/docs/#equals
 
-### Sanctuary
+### From Sanctuary
 
 - `S.Either`: `Result`
     + `Left`: `Err`
