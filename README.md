@@ -1,9 +1,6 @@
 <h1 align="center"><a href='https://github.com/chriskrycho/true-myth'>True Myth</a></h1>
 
-<p align="center">A library for saner programming in JavaScript, with
-first-class support for TypeScript (and Flow), with `Maybe` and `Result`
-types, and supporting both a functional style and a more traditional method-call
-style.</p>
+<p align="center">A library for saner programming in JavaScript, with first-class support for TypeScript (and Flow), with <code>Maybe</code> and <code>Result</code> types, and supporting both a functional style and a more traditional method-call style.</p>
 
 <p align="center">
   <a href='https://travis-ci.org/chriskrycho/true-myth'>
