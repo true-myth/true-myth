@@ -15,6 +15,10 @@ style.</p>
 [![](https://img.shields.io/badge/js.org-dns-ffb400.svg?style=flat-square)](https://js.org)
 [![docs built with TypeDoc](https://img.shields.io/badge/documented-with_TypeDoc-009fb5.svg?style=flat-square)](http://true-myth.js.org)
 
+<p align="center">
+  <a href='https://github.com/chriskrycho/true-myth'>README</a> • <a href='https://true-myth.js.org'>API docs</a> • <a href='https://github.com/chriskrycho/true-myth/tree/master/src'>Source</a>
+</p>
+
 ## Overview
 
 True Myth provides standard, type-safe wrappers and helper functions to help help you with two *extremely* common cases in programming:
@@ -24,7 +28,8 @@ True Myth provides standard, type-safe wrappers and helper functions to help hel
 
 You could implement all of these yourself – it's not hard! – but it's much easier to just have one extremely well-tested library you can use everywhere to solve this problem once and for all.
 
-- [Overview](#overview)
+### Contents
+
 - [Setup](#setup)
     - [TypeScript and Flow](#typescript-and-flow)
 - [Roadmap](#roadmap)
