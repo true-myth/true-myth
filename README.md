@@ -750,27 +750,33 @@ In many cases, you can simple rename your imports and some of the function invoc
 
 In many cases, you can simple rename your imports and some of the function invocations for Folktale to switch to True Myth – several imports are supplied with exactly that pattern in mind. If a given item is not mentioned, you can assume no change other than the import is required.
 
-- [ ] TODO: migration path from Folktale 2.0
+- [ ] TODO: rest of the migration path from Folktale 2.0
 
-- `Maybe` ⟹ `Maybe`
-    - `Maybe.hasInstance` ⟹ no equivalent
-    - `Maybe.empty` ⟹ `Maybe.nothing`
-    - `Maybe.of` ⟹ `Maybe.just` – note that because True Myth's `Maybe.of` correctly handles, you *can* simply keep using `Maybe.of`, but the semantics will be somewhat different.
-    - `Maybe.fromNullable` ⟹ `Maybe.of` – note that `Maybe.fromNullable` also exists and accordingly you do not *need* to migrate.
-    - `Maybe.fromResult` ⟹ `Maybe.fromResult`
-    - `Maybe.fromValidation` ⟹ no equivalent; but you can use `Maybe.fromResult` as type-signature equivalent
-    - `Maybe.fromJSON` ⟹ no equivalent
-    - `Maybe.Just` ⟹ `Maybe.just` or `new Maybe.Just`
-    - `Maybe.Nothing` ⟹ `Maybe.nothing` or `new Maybe.Nothing`
-    - `Maybe.matchWith` or `Maybe.cata` ⟹ `Maybe.match` or `Maybe.cata`, but with the value unwrapped, i.e. you do not need to do `item.value`, merely `item` in True Myth.
-    - `(Just|Nothing)#inspect` ⟹ `(Maybe|Just|Nothing)#toString`
-    - `(Just|Nothing)#tag` ⟹ `(Just|Nothing)#variant`
-    - `(Just|Nothing)#type` ⟹ no equivalent
-    - `(Just|Nothing)#concat` ⟹ no equivalent
-    - `(Just|Nothing)#equals` ⟹ no equivalent (consider using e.g. [`_.isEqual`] or [`R.equals`])
-    - 
-- `Result`: `Result`
-- `Validation` ⟹ use `Result` instead: a `Validation<Success, Failure>` has identical semantics to `Result<T, E>`
+| Folktale                          | True Myth                              | Notes                                                                                                                                   |
+|-----------------------------------|----------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------|
+| `Maybe`                           | `Maybe `                               |                                                                                                                                         |
+| `Maybe.hasInstance`               | no equivalent                          |                                                                                                                                         |
+| `Maybe.empty`                     | `Maybe.nothing`                        |                                                                                                                                         |
+| `Maybe.of`                        | `Maybe.just`                           | Because True Myth's `Maybe.of` correctly handles, you *can* simply keep using `Maybe.of`, but the semantics will be somewhat different. |
+| `Maybe.fromNullable`              | `Maybe.of`                             | `Maybe.fromNullable` also exists and accordingly you do not *need* to migrate.                                                          |
+| `Maybe.fromResult`                | `Maybe.fromResult`                     |                                                                                                                                         |
+| `Maybe.fromValidation`            | no equivalent                          | You can use `Maybe.fromResult` as type-signature equivalent                                                                             |
+| `Maybe.fromJSON`                  | no equivalent                          |                                                                                                                                         |
+| `Maybe.Just`                      | `Maybe.just` or `new Maybe.Just`       |                                                                                                                                         |
+| `Maybe.Nothing`                   | `Maybe.nothing` or `new Maybe.Nothing` |                                                                                                                                         |
+| `Maybe.matchWith` or `Maybe.cata` | `Maybe.match` or `Maybe.cata`          | With the value unwrapped, i.e. you do not need to do `item.value`, merely `item` in True Myth, as in Folktale 1.0                       |
+| `Just#inspect`                    | `Just#toString`                        | You can also use the static method `Maybe.toString`                                                                                     |
+| `Nothing#inspect`                 | `Nothing#toString`                     | You can also use the static method `Maybe.toString`                                                                                     |
+| `Just#tag`                        | `Just#variant`                         |                                                                                                                                         |
+| `Nothing#tag`                     | `Nothing#variant`                      |                                                                                                                                         |
+| `Just#type`                       | no equivalent                          |                                                                                                                                         |
+| `Nothing#type`                    | no equivalent                          |                                                                                                                                         |
+| `Just#concat`                     | no equivalent                          |                                                                                                                                         |
+| `Nothing#concat`                  | no equivalent                          |                                                                                                                                         |
+| `Just#equals`                     | no equivalent                          | Consider using e.g. [`_.isEqual`] or [`R.equals`]                                                                                       |
+| `Nothing#equals`                  | no equivalent                          | Consider using e.g. [`_.isEqual`] or [`R.equals`]                                                                                       |
+| `Result`                          | `Result`                               |                                                                                                                                         |
+| `Validation`                      | no equivalent                          | You can use `Result` instead: a `Validation<Success, Failure>` has identical semantics to `Result<T, E>`                                |
 
 [`_.isEqual`]: https://lodash.com/docs/4.17.4#isEqual
 [`R.equals`]: http://ramdajs.com/docs/#equals
