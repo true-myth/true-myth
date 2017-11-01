@@ -699,18 +699,23 @@ anObjectToWrap.desc.push(<span class="hljs-string">'.'</span>);
 						</tr>
 						<tr>
 							<td><code>Maybe.Just</code></td>
-							<td><code>Maybe.just</code> or <code>new Maybe.Just</code></td>
-							<td></td>
+							<td><code>Maybe.just</code></td>
+							<td>You may also use <code>new Maybe.Just</code>, but the standalone function is recommended</td>
 						</tr>
 						<tr>
 							<td><code>Maybe.Nothing</code></td>
-							<td><code>Maybe.nothing</code> or <code>new Maybe.Nothing</code></td>
-							<td></td>
+							<td><code>Maybe.nothing</code></td>
+							<td>You may also use <code>new Maybe.Nothing</code>, but the standalone function is recommended</td>
 						</tr>
 						<tr>
-							<td><code>Maybe.matchWith</code> or <code>Maybe.cata</code></td>
-							<td><code>Maybe.match</code> or <code>Maybe.cata</code></td>
-							<td>With the value unwrapped, i.e. you do not need to do <code>item.value</code>, merely <code>item</code> in True Myth, as in Folktale 1.0</td>
+							<td><code>Maybe.matchWith</code></td>
+							<td><code>Maybe.match</code></td>
+							<td>The value is supplied unwrapped, i.e. you do not need to do <code>item.value</code>, merely <code>item</code> in True Myth, as in Folktale 1.0</td>
+						</tr>
+						<tr>
+							<td><code>Maybe.cata</code></td>
+							<td><code>Maybe.cata</code></td>
+							<td>The value is supplied unwrapped, i.e. you do not need to do <code>item.value</code>, merely <code>item</code> in True Myth, as in Folktale 1.0</td>
 						</tr>
 						<tr>
 							<td><code>Just#inspect</code></td>
