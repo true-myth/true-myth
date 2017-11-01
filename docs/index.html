@@ -675,12 +675,12 @@ anObjectToWrap.desc.push(<span class="hljs-string">'.'</span>);
 						<tr>
 							<td><code>Maybe.of</code></td>
 							<td><code>Maybe.just</code></td>
-							<td>Because True Myth&#39;s <code>Maybe.of</code> correctly handles, you <em>can</em> simply keep using <code>Maybe.of</code>, but the semantics will be somewhat different.</td>
+							<td>Because True Myth&#39;s <code>Maybe.of</code> correctly handles <code>null</code> and <code>undefined</code>, you <em>can</em> simply keep using <code>Maybe.of</code>, but the semantics will be somewhat different.</td>
 						</tr>
 						<tr>
 							<td><code>Maybe.fromNullable</code></td>
 							<td><code>Maybe.of</code></td>
-							<td><code>Maybe.fromNullable</code> also exists and accordingly you do not <em>need</em> to migrate.</td>
+							<td><code>Maybe.fromNullable</code> also exists and accordingly you do not <em>need</em> to migrate. <code>Maybe.of</code> is nicer, though!</td>
 						</tr>
 						<tr>
 							<td><code>Maybe.fromResult</code></td>
