@@ -788,6 +788,8 @@ In many cases, you can simple rename your imports and some of the function invoc
 
 ### From Sanctuary
 
+There are straightforward conversions from most Sanctuary functions to True Myth functions.
+
 | Sanctuary   | True Myth  | Notes |
 |-------------|------------|-------|
 | `S.Either`  | `Result`   |       |
