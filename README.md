@@ -788,12 +788,12 @@ In many cases, you can simple rename your imports and some of the function invoc
 
 ### From Sanctuary
 
-- `S.Either`: `Result`
-    + `Left`: `Err`
-    + `Right`: `Ok`
-- `S.toMaybe`: `Maybe.of`
-
-<!-- break that list -->
+| Sanctuary   | True Myth  | Notes |
+|-------------|------------|-------|
+| `S.Either`  | `Result`   |       |
+| `Left`      | `Err`      |       |
+| `Right`     | `Ok`       |       |
+| `S.toMaybe` | `Maybe.of` |       |
 
 - [ ] TODO: migration path from Sanctuary
 
