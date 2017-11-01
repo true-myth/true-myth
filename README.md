@@ -32,7 +32,7 @@
 </p>
 
 <p align="center">
-  <a href='https://github.com/chriskrycho/true-myth'>README</a> • <a href='https://true-myth.js.org'>API docs</a> • <a href='https://github.com/chriskrycho/true-myth/tree/master/src'>Source</a>
+  <a href='https://github.com/chriskrycho/true-myth'>README</a> • <a href='https://true-myth.js.org'>API docs</a> • <a href='https://github.com/chriskrycho/true-myth/tree/master/src'>Source</a>  • <a href='http://www.chriskrycho.com/2017/announcing-true-myth-10.html'>Intro blog post</a>
 </p>
 
 ## Overview
