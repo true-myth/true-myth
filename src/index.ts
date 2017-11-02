@@ -6,5 +6,6 @@
 /** (keep typedoc from getting confused by the imports) */
 import Maybe from './maybe';
 import Result from './result';
+import Unit from './unit';
 
-export { Maybe, Result };
+export { Maybe, Result, Unit };
