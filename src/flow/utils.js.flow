@@ -9,6 +9,6 @@
 declare export var isVoid: (value: any) => boolean;
 declare export function curry1<T, U>(op: (t: T) => U, item?: T): U | ((t: T) => U);
 export type AndThenAliases = 'andThen' | 'chain' | 'flatMap';
-declare export class Brand<Tag> {
+declare export class _Brand<Tag> {
   constructor(t: Tag): this;
 }

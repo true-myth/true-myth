@@ -6,7 +6,7 @@
  * Repo: http://github.com/joarwilk/flowgen
  */
 
-import { Brand } from './utils';
+import { _Brand } from './utils';
 
-declare export var Unit: Brand<'unit'>;
+declare export var Unit: _Brand<'unit'>;
 declare export default typeof Unit
