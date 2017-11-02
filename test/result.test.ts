@@ -1,5 +1,6 @@
 import { just, nothing } from '../src/maybe';
 import Result from '../src/result';
+import Unit from '../src/unit';
 import { AndThenAliases } from '../src/utils';
 import { assertType } from './lib/assert';
 
@@ -18,6 +19,10 @@ describe('`Result` pure functions', () => {
         expect(false).toBe(true); // because this should never happen
         break;
     }
+
+    const withUnit = Result.ok();
+    assertType<Result<Unit, {}>>(withUnit);
+    expect(withUnit).toEqual(Result.ok(Unit));
   });
 
   test('`err`', () => {
@@ -32,6 +37,10 @@ describe('`Result` pure functions', () => {
         expect(Result.unsafelyUnwrapErr(theErr)).toBe(reason);
         break;
     }
+
+    const withUnit = Result.err();
+    assertType<Result<{}, Unit>>(withUnit);
+    expect(withUnit).toEqual(Result.err(Unit));
   });
 
   test('`isOk`', () => {

@@ -2,7 +2,11 @@
 
 /** (keep typedoc from getting confused by the import) */
 import Maybe, { isJust, just, nothing } from './maybe';
-import { curry1, isVoid } from './utils';
+import Unit from './unit';
+import { Brand, curry1, isVoid } from './utils';
+
+// So that it doesn't appear unused but can be exported.
+Brand; // tslint:disable-line:no-unused-expression
 
 /**
   Discriminant for `Ok` and `Err` variants of `Result` type.
@@ -109,6 +113,12 @@ export class Ok<T, E> implements ResultShape<T, E> {
     const aString = Result.ok('characters);
     ```
 
+    Note that you may explicitly pass `Unit` to the `Ok` constructor to create
+    a `Result<Unit, E>`. However, you may *not* call the `Ok` constructor with
+    `null` or `undefined` to get that result (the type system won't allow you to
+    construct it that way). Instead, for convenience, you can simply call
+    `Result.ok()`, which will construct the type correctly.
+
     @param value
     The value to wrap in a `Result.Ok`.
 
@@ -116,12 +126,12 @@ export class Ok<T, E> implements ResultShape<T, E> {
     constructor may `throw` on those rather than constructing a type like
     `Result<undefined>`.
 
-    @throws If you pass `null` or `undefined`.
-    */
+    @throws If you pass `null`.
+   */
   constructor(value?: T | null) {
     if (isVoid(value)) {
       throw new Error(
-        'Tried to construct `Err` with `null` or `undefined`. Maybe you want `Maybe.Nothing`?'
+        'Tried to construct `Ok` with `null` or `undefined`. Maybe you want `Maybe.Nothing`?'
       );
     }
 
@@ -256,6 +266,12 @@ export class Err<T, E> implements ResultShape<T, E> {
     const anErr = Result.err('alas, failure');
     ```
 
+    Note that you may explicitly pass `Unit` to the `Err` constructor to create
+    a `Result<T, Unit>`. However, you may *not* call the `Err` constructor with
+    `null` or `undefined` to get that result (the type system won't allow you to
+    construct it that way). Instead, for convenience, you can simply call
+    `Result.err()`, which will construct the type correctly.
+
     @param error
     The value to wrap in a `Result.Err`.
 
@@ -264,8 +280,8 @@ export class Err<T, E> implements ResultShape<T, E> {
     `Result<number, undefined>`.
 
     @throws If you pass `null` or `undefined`.
-    */
-  constructor(error?: E | null) {
+   */
+  constructor(error: E | null) {
     if (isVoid(error)) {
       throw new Error(
         'Tried to construct `Err` with `null` or `undefined`. Maybe you want `Maybe.Nothing`?'
@@ -390,34 +406,106 @@ export const isErr = <T, E>(result: Result<T, E>): result is Err<T, E> =>
 /**
   Create an instance of `Result.Ok`.
 
-  Note: `null` and `undefined` are allowed by the type signature so that the
-  function may `throw` on those rather than constructing a type like
-  `Result<undefined, string>`.
+  If you need to create an instance with a specific type (as you do whenever you
+  are not constructing immediately for a function return or as an argument to a
+  function), you can use a type parameter:
+
+  ```ts
+  const yayNumber = Result.ok<number, string>(12);
+  ```
+
+  Note: `null` is allowed by the type signature so that so that the function
+  may be used to  `throw` on passing `null` rather than constructing a type like
+  `Result<null, string>`. `undefined` is allowed as a convenience method for
+  constructing a `Result<Unit, E>`.
+
+  ```ts
+  const normalResult = Result.ok<number, string>(42);
+  const explicitUnit = Result.ok<Unit, string>(Unit);
+  const implicitUnit = Result.ok<Unit, string>();
+  ```
+
+  In the context of an immediate function return, or an arrow function with a
+  single expression value, you do not have to specify the types, so this can be
+  quite convenient.
+
+  ```ts
+  type SomeData = {
+    //...
+  };
+
+  const isValid = (data: SomeData): boolean => {
+    // true or false...
+  }
+
+  const arrowValidate = (data: SomeData): Result<Unit, string> =>
+    isValid(data) ? Result.ok() : Result.err('something was wrong!');
+
+  function fnValidate(data: someData): Result<Unit, string> {
+    return isValid(data) ? Result.ok() : Result.err('something was wrong');
+  }
+  ```
 
   @typeparam T The type of the item contained in the `Result`.
   @param value The value to wrap in a `Result.Ok`.
   @throws      If you pass `null` or `undefined`.
  */
-export const ok = <T, E>(value?: T | null): Result<T, E> => new Ok<T, E>(value);
+export function ok<T, E>(): Result<Unit, E>;
+export function ok<T, E>(value: T): Result<T, E>;
+export function ok<T, E>(value?: T): Result<Unit, E> | Result<T, E> {
+  return value === undefined ? new Ok(Unit) : new Ok(value);
+}
 
 /**
   Create an instance of `Result.Error`.
 
-  If you want to create an instance with a specific type, e.g. for use in a
-  function which expects a `Result<T, E>` where the `<T, E>` is known but you
-  have no value to give it, you can use a type parameter:
+  If you need to create an instance with a specific type (as you do whenever you
+  are not constructing immediately for a function return or as an argument to a
+  function), you can use a type parameter:
 
   ```ts
   const notString = Result.err<number, string>('something went wrong');
   ```
 
-  Note: `null` and `undefined` are allowed by the type signature so that the
-  function may `throw` on those rather than constructing a type like
-  `Result<number, undefined>`.
+  Note: `null` is allowed by the type signature so that so that the function
+  may be used to  `throw` on passing `null` rather than constructing a type like
+  `Result<null, string>`. `undefined` is allowed as a convenience method for
+  constructing a `Result<Unit, E>`.
+
+  ```ts
+  const normalResult = Result.err<number, string>('oh no');
+  const explicitUnit = Result.err<number, Unit>(Unit);
+  const implicitUnit = Result.err<number, Unit>();
+  ```
+
+  In the context of an immediate function return, or an arrow function with a
+  single expression value, you do not have to specify the types, so this can be
+  quite convenient.
+
+  ```ts
+  type SomeData = {
+    //...
+  };
+
+  const isValid = (data: SomeData): boolean => {
+    // true or false...
+  }
+
+  const arrowValidate = (data: SomeData): Result<number, Unit> =>
+    isValid(data) ? Result.ok(42) : Result.err();
+
+  function fnValidate(data: someData): Result<number, Unit> {
+    return isValid(data) ? Result.ok(42) : Result.err();
+  }
+  ```
 
   @typeparam T The type of the item contained in the `Result`.
  */
-export const err = <T, E>(error?: E | null): Result<T, E> => new Err<T, E>(error);
+export function err<T, E>(): Result<T, Unit>;
+export function err<T, E>(error: E): Result<T, E>;
+export function err<T, E>(error?: E): Result<T, Unit> | Result<T, E> {
+  return isVoid(error) ? new Err(Unit) : new Err(error);
+}
 
 /**
   Map over a `Result` instance: apply the function to the wrapped value if the

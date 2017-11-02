@@ -169,7 +169,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in result.ts:93</li>
+									<li>Defined in result.ts:97</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -185,9 +185,14 @@
 <span class="hljs-comment">// Prefer:</span>
 <span class="hljs-keyword">const</span> aString = Result.ok(<span class="hljs-string">'characters);</span>
 </code></pre>
+								<p>Note that you may explicitly pass <code>Unit</code> to the <code>Ok</code> constructor to create
+									a <code>Result&lt;Unit, E&gt;</code>. However, you may <em>not</em> call the <code>Ok</code> constructor with
+									<code>null</code> or <code>undefined</code> to get that result (the type system won&#39;t allow you to
+									construct it that way). Instead, for convenience, you can simply call
+								<code>Result.ok()</code>, which will construct the type correctly.</p>
 								<dl class="tsd-comment-tags">
 									<dt>throws</dt>
-									<dd><p>If you pass <code>null</code> or <code>undefined</code>.</p>
+									<dd><p>If you pass <code>null</code>.</p>
 									</dd>
 								</dl>
 							</div>
@@ -219,7 +224,7 @@
 					<aside class="tsd-sources">
 						<p>Implementation of <a href="../interfaces/_result_.resultshape.html">ResultShape</a>.<a href="../interfaces/_result_.resultshape.html#variant">variant</a></p>
 						<ul>
-							<li>Defined in result.ts:91</li>
+							<li>Defined in result.ts:95</li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -242,7 +247,7 @@
 							<aside class="tsd-sources">
 								<p>Implementation of <a href="../interfaces/_result_.resultshape.html">ResultShape</a>.<a href="../interfaces/_result_.resultshape.html#and">and</a></p>
 								<ul>
-									<li>Defined in result.ts:177</li>
+									<li>Defined in result.ts:187</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -279,7 +284,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in result.ts:182</li>
+									<li>Defined in result.ts:192</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -334,7 +339,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in result.ts:187</li>
+									<li>Defined in result.ts:197</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -389,7 +394,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in result.ts:192</li>
+									<li>Defined in result.ts:202</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -445,7 +450,7 @@
 							<aside class="tsd-sources">
 								<p>Implementation of <a href="../interfaces/_result_.resultshape.html">ResultShape</a>.<a href="../interfaces/_result_.resultshape.html#iserr">isErr</a></p>
 								<ul>
-									<li>Defined in result.ts:137</li>
+									<li>Defined in result.ts:147</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -474,7 +479,7 @@
 							<aside class="tsd-sources">
 								<p>Implementation of <a href="../interfaces/_result_.resultshape.html">ResultShape</a>.<a href="../interfaces/_result_.resultshape.html#isok">isOk</a></p>
 								<ul>
-									<li>Defined in result.ts:132</li>
+									<li>Defined in result.ts:142</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -502,7 +507,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in result.ts:142</li>
+									<li>Defined in result.ts:152</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -557,7 +562,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in result.ts:162</li>
+									<li>Defined in result.ts:172</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -612,7 +617,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in result.ts:147</li>
+									<li>Defined in result.ts:157</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -670,7 +675,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in result.ts:152</li>
+									<li>Defined in result.ts:162</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -747,7 +752,7 @@
 							<aside class="tsd-sources">
 								<p>Implementation of <a href="../interfaces/_result_.resultshape.html">ResultShape</a>.<a href="../interfaces/_result_.resultshape.html#match">match</a></p>
 								<ul>
-									<li>Defined in result.ts:157</li>
+									<li>Defined in result.ts:167</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -785,7 +790,7 @@
 							<aside class="tsd-sources">
 								<p>Implementation of <a href="../interfaces/_result_.resultshape.html">ResultShape</a>.<a href="../interfaces/_result_.resultshape.html#or">or</a></p>
 								<ul>
-									<li>Defined in result.ts:167</li>
+									<li>Defined in result.ts:177</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -822,7 +827,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in result.ts:172</li>
+									<li>Defined in result.ts:182</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -878,7 +883,7 @@
 							<aside class="tsd-sources">
 								<p>Implementation of <a href="../interfaces/_result_.resultshape.html">ResultShape</a>.<a href="../interfaces/_result_.resultshape.html#tomaybe">toMaybe</a></p>
 								<ul>
-									<li>Defined in result.ts:217</li>
+									<li>Defined in result.ts:227</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -907,7 +912,7 @@
 							<aside class="tsd-sources">
 								<p>Implementation of <a href="../interfaces/_result_.resultshape.html">ResultShape</a>.<a href="../interfaces/_result_.resultshape.html#tostring">toString</a></p>
 								<ul>
-									<li>Defined in result.ts:222</li>
+									<li>Defined in result.ts:232</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -936,7 +941,7 @@
 							<aside class="tsd-sources">
 								<p>Implementation of <a href="../interfaces/_result_.resultshape.html">ResultShape</a>.<a href="../interfaces/_result_.resultshape.html#unsafelyunwrap">unsafelyUnwrap</a></p>
 								<ul>
-									<li>Defined in result.ts:197</li>
+									<li>Defined in result.ts:207</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -959,7 +964,7 @@
 							<aside class="tsd-sources">
 								<p>Implementation of <a href="../interfaces/_result_.resultshape.html">ResultShape</a>.<a href="../interfaces/_result_.resultshape.html#unsafelyunwraperr">unsafelyUnwrapErr</a></p>
 								<ul>
-									<li>Defined in result.ts:202</li>
+									<li>Defined in result.ts:212</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -982,7 +987,7 @@
 							<aside class="tsd-sources">
 								<p>Implementation of <a href="../interfaces/_result_.resultshape.html">ResultShape</a>.<a href="../interfaces/_result_.resultshape.html#unwrapor">unwrapOr</a></p>
 								<ul>
-									<li>Defined in result.ts:207</li>
+									<li>Defined in result.ts:217</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1013,7 +1018,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in result.ts:212</li>
+									<li>Defined in result.ts:222</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1068,6 +1073,9 @@
 					</li>
 					<li class="current tsd-kind-external-module">
 						<a href="../modules/_result_.html">"result"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="../modules/_unit_.html">"unit"</a>
 					</li>
 					<li class=" tsd-kind-external-module">
 						<a href="../modules/_utils_.html">"utils"</a>
