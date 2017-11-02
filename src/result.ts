@@ -3,10 +3,10 @@
 /** (keep typedoc from getting confused by the import) */
 import Maybe, { isJust, just, nothing } from './maybe';
 import Unit from './unit';
-import { Brand, curry1, isVoid } from './utils';
+import { _Brand, curry1, isVoid } from './utils';
 
 // So that it doesn't appear unused but can be exported.
-Brand; // tslint:disable-line:no-unused-expression
+_Brand; // tslint:disable-line:no-unused-expression
 
 /**
   Discriminant for `Ok` and `Err` variants of `Result` type.

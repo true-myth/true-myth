@@ -11,9 +11,10 @@ export function curry1<T, U>(op: (t: T) => U, item?: T) {
 
 export type AndThenAliases = 'andThen' | 'chain' | 'flatMap';
 
-export class Brand<Tag extends string> {
-  private brand: Tag;
+// tslint:disable-next-line:class-name
+export class _Brand<Tag extends string> {
+  private _brand: Tag;
   constructor(t: Tag) {
-    this.brand = t;
+    this._brand = t;
   }
 }
