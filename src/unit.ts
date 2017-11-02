@@ -7,6 +7,6 @@ import { Brand } from './utils';
   without being concerned that you'll accidentally introduce `null` or
   `undefined` back into your application.
  */
-export type Unit = typeof Unit;
 export const Unit = new Brand('unit');
+export type Unit = typeof Unit;
 export default Unit;
