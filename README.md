@@ -169,7 +169,7 @@ For TypeScript, whether using Webpack or Ember CLI or something else for your bu
 
 Install-wise, Flow's types should *just work*, as they're distributed side-by-side with the modules. You can simply use the module as a normal ES6-style module import, whether working in Node or using something like Webpack.
 
-Note, however, that Flow support is beta quality. They're offered as a best-effort approach, but are incomplete and may have a couple errors – the primary author uses TypeScript and so doesn't have a good place to test them. Pull requests are very welcome!
+Note, however, that Flow support is beta quality. They're offered as a best-effort approach, but are incomplete (they don't yet have any of the curried variants!) and may have a couple errors – the primary author uses TypeScript and so doesn't have a good place to test them. Pull requests are very welcome!
 
 ## Roadmap
 

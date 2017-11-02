@@ -7,6 +7,7 @@
  */
 
 import * as Maybe from './maybe';
+import Unit from './unit';
 
 type Variant = 'Ok' | 'Err';
 
@@ -281,8 +282,10 @@ export type Result<T, E> = Ok<T, E> | Err<T, E>;
 
 declare export var isOk: <T, E>(result: Result<T, E>) => boolean;
 declare export var isErr: <T, E>(result: Result<T, E>) => boolean;
-declare export var ok: <T, E>(value: T | null | void) => Result<T, E>;
-declare export var err: <T, E>(error: E) => Result<T, E>;
+declare export function ok<Unit, E>(): Result<Unit, E>;
+declare export function ok<T, E>(value: T | null): Result<T, E>;
+declare export function err<Unit, E>(): Result<Unit, E>;
+declare export function err<T, E>(error: E | null): Result<T, E>;
 declare export var map: <T, U, E>(mapFn: (t: T) => U, result: Result<T, E>) => Result<U, E>;
 declare export var mapOr: <T, U, E>(orU: U, mapFn: (t: T) => U, result: Result<T, E>) => U;
 declare export var mapOrElse: <T, U, E>(
