@@ -659,8 +659,30 @@ anObjectToWrap.desc.push(<span class="hljs-string">'.'</span>);
 				<p>Migrating from Folktale should be <em>very</em> straightforward: many of the names are the same, and the behavior of many of the functions is as well.</p>
 				<h4 id="from-folktale-1-x">From Folktale 1.x</h4>
 				<p>In many cases, you can simple rename your imports and some of the function invocations for Folktale to switch to True Myth – several imports are supplied with exactly that pattern in mind. If a given item is not mentioned, you can assume no change other than the import is required.</p>
+				<h5 id="update-imports">Update imports</h5>
+				<pre><code class="lang-diff"><span class="hljs-deletion">-import Maybe from 'data.maybe'</span>
+<span class="hljs-addition">+import { Maybe } from 'true-myth'</span>
+</code></pre>
+				<h5 id="update-nothing-just-constructors">Update <code>Nothing</code>/<code>Just</code> constructors</h5>
+				<pre><code class="lang-diff"><span class="hljs-deletion">-Maybe.Nothing()</span>
+<span class="hljs-deletion">-Maybe.Just('foo')</span>
+<span class="hljs-addition">+Maybe.nothing()</span>
+<span class="hljs-addition">+Maybe.just('foo)</span>
+</code></pre>
+				<h5 id="update-getorelse-unwrapor-">Update <code>getOrElse</code> -&gt; <code>unwrapOr</code></h5>
+				<pre><code class="lang-diff"><span class="hljs-deletion">-foo.getOrElse('oh noes')</span>
+<span class="hljs-addition">+foo.unwrapOr('oh noes')</span>
+</code></pre>
+				<h5 id="update-get-match-or-unsafelyunwrap-">Update <code>get</code> -&gt; <code>match</code> (or <code>unsafelyUnwrap</code>)</h5>
+				<p><em>Note: the method is called <code>unsafelyUnwrap</code> because it&#39;s not a good idea to use it. It&#39;s technically the equivalent of <code>get</code>, but it would be much better to change your logic to work with <code>match</code> instead because it&#39;s safer.</em></p>
+				<pre><code class="lang-diff"><span class="hljs-deletion">-foo.get()</span>
+<span class="hljs-addition">+foo.match({</span>
+<span class="hljs-addition">+  Just: (foo) =&gt; foo,</span>
+<span class="hljs-addition">+  Nothing: () =&gt; 'fallback value'</span>
+<span class="hljs-addition">+})</span>
+</code></pre>
 				<ul>
-					<li>[ ] TODO: migration path from Folktale 1.0</li>
+					<li>[ ] TODO: migration path from data.either -&gt; Result</li>
 				</ul>
 				<h4 id="from-folktale-2-x">From Folktale 2.x</h4>
 				<p>In many cases, you can simple rename your imports and some of the function invocations for Folktale to switch to True Myth – several imports are supplied with exactly that pattern in mind. If a given item is not mentioned, you can assume no change other than the import is required.</p>

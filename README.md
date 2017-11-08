@@ -425,7 +425,7 @@ const doSomething = (err, data) => {
   if (err) {
     return handleErr(err);
   }
-  
+
   // do whatever the *actual* point of the function is
 }
 ```
@@ -444,7 +444,7 @@ function getMeAValue(url) {
   if (isMalformed(url)) {
     throw new Error(`The url `${url}` is malformed!`);
   }
-  
+
   // do something else to load data from the URL
 }
 
@@ -769,7 +769,37 @@ Migrating from Folktale should be *very* straightforward: many of the names are 
 
 In many cases, you can simple rename your imports and some of the function invocations for Folktale to switch to True Myth – several imports are supplied with exactly that pattern in mind. If a given item is not mentioned, you can assume no change other than the import is required.
 
-- [ ] TODO: migration path from Folktale 1.0
+##### Update imports
+
+```diff
+-import Maybe from 'data.maybe'
++import { Maybe } from 'true-myth'
+```
+
+##### Update `Nothing`/`Just` constructors
+```diff
+-Maybe.Nothing()
+-Maybe.Just('foo')
++Maybe.nothing()
++Maybe.just('foo)
+```
+
+##### Update `getOrElse` -> `unwrapOr`
+```diff
+-foo.getOrElse('oh noes')
++foo.unwrapOr('oh noes')
+```
+
+##### Update `get` -> `match` (or `unsafelyUnwrap`)
+*Note: the method is called `unsafelyUnwrap` because it's not a good idea to use it. It's technically the equivalent of `get`, but it would be much better to change your logic to work with `match` instead because it's safer.*
+
+```diff
+-foo.get()
++foo.match({
++  Just: (foo) => foo,
++  Nothing: () => 'fallback value'
++})
+```
 
 #### From Folktale 2.x
 

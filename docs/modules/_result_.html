@@ -162,7 +162,7 @@
 <span class="hljs-keyword">const</span> okLen = hooray.map(length).unwrapOr(<span class="hljs-number">0</span>); <span class="hljs-comment">// okLen = 3</span>
 
 <span class="hljs-keyword">const</span> muySad = err(<span class="hljs-string">'oh no'</span>);
-<span class="hljs-keyword">const</span> errLen = hooray.map(length).unwrapOr(<span class="hljs-number">0</span>); <span class="hljs-comment">// errLen = 0</span>
+<span class="hljs-keyword">const</span> errLen = muySad.map(length).unwrapOr(<span class="hljs-number">0</span>); <span class="hljs-comment">// errLen = 0</span>
 </code></pre>
 						<h3 id="writing-type-constraints">Writing type constraints</h3>
 						<p>When creating a <code>Result</code> instance, you&#39;ll nearly always be using <em>either</em> the <code>Ok</code> <em>or</em> the <code>Err</code> type, so the type system won&#39;t necessarily be able to infer the other type parameter.</p>
@@ -183,7 +183,7 @@
 <span class="hljs-comment">// Succeeds</span>
 <span class="hljs-keyword">const</span> getAResultExpression = (): Result&lt;<span class="hljs-built_in">number</span>, <span class="hljs-built_in">string</span>&gt; =&gt; ok(<span class="hljs-number">12</span>);
 
-<span class="hljs-comment">// Succeedss</span>
+<span class="hljs-comment">// Succeeds</span>
 <span class="hljs-keyword">const</span> getAResultReturn = (): Result&lt;<span class="hljs-built_in">number</span>, <span class="hljs-built_in">string</span>&gt; =&gt; {
   <span class="hljs-keyword">return</span> ok(<span class="hljs-number">12</span>);
 };
