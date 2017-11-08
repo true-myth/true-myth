@@ -115,7 +115,7 @@ const hooray = ok('yay');
 const okLen = hooray.map(length).unwrapOr(0); // okLen = 3
 
 const muySad = err('oh no');
-const errLen = hooray.map(length).unwrapOr(0); // errLen = 0
+const errLen = muySad.map(length).unwrapOr(0); // errLen = 0
 ```
 
 ### Writing type constraints
