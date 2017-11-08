@@ -143,7 +143,7 @@ const getAResultNotAssignable = (): Result<number, string> => {
 // Succeeds
 const getAResultExpression = (): Result<number, string> => ok(12);
 
-// Succeedss
+// Succeeds
 const getAResultReturn = (): Result<number, string> => {
   return ok(12);
 };
