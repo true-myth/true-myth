@@ -801,6 +801,8 @@ In many cases, you can simple rename your imports and some of the function invoc
 +})
 ```
 
+- [ ] TODO: migration path from data.either -> Result
+
 #### From Folktale 2.x
 
 In many cases, you can simple rename your imports and some of the function invocations for Folktale to switch to True Myth – several imports are supplied with exactly that pattern in mind. If a given item is not mentioned, you can assume no change other than the import is required.
