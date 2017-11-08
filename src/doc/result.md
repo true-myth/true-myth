@@ -115,7 +115,7 @@ const hooray = ok('yay');
 const okLen = hooray.map(length).unwrapOr(0); // okLen = 3
 
 const muySad = err('oh no');
-const errLen = hooray.map(length).unwrapOr(0); // errLen = 0
+const errLen = muySad.map(length).unwrapOr(0); // errLen = 0
 ```
 
 ### Writing type constraints
@@ -143,7 +143,7 @@ const getAResultNotAssignable = (): Result<number, string> => {
 // Succeeds
 const getAResultExpression = (): Result<number, string> => ok(12);
 
-// Succeedss
+// Succeeds
 const getAResultReturn = (): Result<number, string> => {
   return ok(12);
 };
