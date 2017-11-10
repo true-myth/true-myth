@@ -661,7 +661,7 @@ anObjectToWrap.desc.push(<span class="hljs-string">'.'</span>);
 				<p>In many cases, you can simple rename your imports and some of the function invocations for Folktale to switch to True Myth – several imports are supplied with exactly that pattern in mind. If a given item is not mentioned, you can assume no change other than the import is required.</p>
 				<h5 id="update-imports">Update imports</h5>
 				<pre><code class="lang-diff"><span class="hljs-deletion">-import Maybe from 'data.maybe'</span>
-<span class="hljs-addition">+import { Maybe } from 'true-myth'</span>
+<span class="hljs-addition">+import Maybe from 'true-myth/maybe'</span>
 </code></pre>
 				<h5 id="update-nothing-just-constructors">Update <code>Nothing</code>/<code>Just</code> constructors</h5>
 				<pre><code class="lang-diff"><span class="hljs-deletion">-Maybe.Nothing()</span>
@@ -673,13 +673,16 @@ anObjectToWrap.desc.push(<span class="hljs-string">'.'</span>);
 				<pre><code class="lang-diff"><span class="hljs-deletion">-foo.getOrElse('oh noes')</span>
 <span class="hljs-addition">+foo.unwrapOr('oh noes')</span>
 </code></pre>
-				<h5 id="update-get-match-or-unsafelyunwrap-">Update <code>get</code> -&gt; <code>match</code> (or <code>unsafelyUnwrap</code>)</h5>
+				<h5 id="update-get-unsafelyunwrap-">Update <code>get</code> -&gt; <code>unsafelyUnwrap</code></h5>
 				<p><em>Note: the method is called <code>unsafelyUnwrap</code> because it&#39;s not a good idea to use it. It&#39;s technically the equivalent of <code>get</code>, but it would be much better to change your logic to work with <code>match</code> instead because it&#39;s safer.</em></p>
 				<pre><code class="lang-diff"><span class="hljs-deletion">-foo.get()</span>
-<span class="hljs-addition">+foo.match({</span>
-<span class="hljs-addition">+  Just: (foo) =&gt; foo,</span>
-<span class="hljs-addition">+  Nothing: () =&gt; 'fallback value'</span>
-<span class="hljs-addition">+})</span>
+<span class="hljs-addition">+foo.unsafelyUnwrap()</span>
+</code></pre>
+				<pre><code class="lang-js"><span class="hljs-comment">// a better alternative:</span>
+foo.match({
+  <span class="hljs-attr">Just</span>: <span class="hljs-function">(<span class="hljs-params">foo</span>) =&gt;</span> foo,
+  <span class="hljs-attr">Nothing</span>: <span class="hljs-function"><span class="hljs-params">()</span> =&gt;</span> <span class="hljs-string">'fallback value'</span>
+})
 </code></pre>
 				<ul>
 					<li>[ ] TODO: migration path from data.either -&gt; Result</li>

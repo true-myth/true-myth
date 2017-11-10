@@ -773,10 +773,11 @@ In many cases, you can simple rename your imports and some of the function invoc
 
 ```diff
 -import Maybe from 'data.maybe'
-+import { Maybe } from 'true-myth'
++import Maybe from 'true-myth/maybe'
 ```
 
 ##### Update `Nothing`/`Just` constructors
+
 ```diff
 -Maybe.Nothing()
 -Maybe.Just('foo')
@@ -785,20 +786,27 @@ In many cases, you can simple rename your imports and some of the function invoc
 ```
 
 ##### Update `getOrElse` -> `unwrapOr`
+
 ```diff
 -foo.getOrElse('oh noes')
 +foo.unwrapOr('oh noes')
 ```
 
-##### Update `get` -> `match` (or `unsafelyUnwrap`)
+##### Update `get` -> `unsafelyUnwrap`
+
 *Note: the method is called `unsafelyUnwrap` because it's not a good idea to use it. It's technically the equivalent of `get`, but it would be much better to change your logic to work with `match` instead because it's safer.*
 
 ```diff
 -foo.get()
-+foo.match({
-+  Just: (foo) => foo,
-+  Nothing: () => 'fallback value'
-+})
++foo.unsafelyUnwrap()
+```
+
+```js
+// a better alternative:
+foo.match({
+  Just: (foo) => foo,
+  Nothing: () => 'fallback value'
+})
 ```
 
 - [ ] TODO: migration path from data.either -> Result
