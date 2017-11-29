@@ -758,7 +758,7 @@ export function or<T>(
   @param elseFn The function to apply if `maybe` is `Nothing`
   @param maybe  The `maybe` to use if it is `Just`.
   @returns      The `maybe` if it is `Just`, or the `Maybe` returned by
-                `elseFn` if the `maybe` is `Nothing.
+                `elseFn` if the `maybe` is `Nothing`.
  */
 export function orElse<T>(elseFn: (...args: any[]) => Maybe<T>, maybe: Maybe<T>): Maybe<T>;
 export function orElse<T>(elseFn: (...args: any[]) => Maybe<T>): (maybe: Maybe<T>) => Maybe<T>;
