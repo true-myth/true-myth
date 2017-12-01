@@ -760,10 +760,10 @@ export function or<T>(
   @returns      The `maybe` if it is `Just`, or the `Maybe` returned by
                 `elseFn` if the `maybe` is `Nothing`.
  */
-export function orElse<T>(elseFn: (...args: any[]) => Maybe<T>, maybe: Maybe<T>): Maybe<T>;
-export function orElse<T>(elseFn: (...args: any[]) => Maybe<T>): (maybe: Maybe<T>) => Maybe<T>;
+export function orElse<T>(elseFn: () => Maybe<T>, maybe: Maybe<T>): Maybe<T>;
+export function orElse<T>(elseFn: () => Maybe<T>): (maybe: Maybe<T>) => Maybe<T>;
 export function orElse<T>(
-  elseFn: (...args: any[]) => Maybe<T>,
+  elseFn: () => Maybe<T>,
   maybe?: Maybe<T>
 ): Maybe<T> | ((maybe: Maybe<T>) => Maybe<T>) {
   const op = (m: Maybe<T>) => (isJust(m) ? m : elseFn());
@@ -854,12 +854,9 @@ export const getOr = unwrapOr;
   @returns        Either the content of `maybe` or the value returned from
                   `orElseFn`.
  */
-export function unwrapOrElse<T>(orElseFn: (...args: any[]) => T, maybe: Maybe<T>): T;
-export function unwrapOrElse<T>(orElseFn: (...args: any[]) => T): (maybe: Maybe<T>) => T;
-export function unwrapOrElse<T>(
-  orElseFn: (...args: any[]) => T,
-  maybe?: Maybe<T>
-): T | ((maybe: Maybe<T>) => T) {
+export function unwrapOrElse<T>(orElseFn: () => T, maybe: Maybe<T>): T;
+export function unwrapOrElse<T>(orElseFn: () => T): (maybe: Maybe<T>) => T;
+export function unwrapOrElse<T>(orElseFn: () => T, maybe?: Maybe<T>): T | ((maybe: Maybe<T>) => T) {
   const op = (m: Maybe<T>) => (isJust(m) ? unwrap(m) : orElseFn());
   return curry1(op, maybe);
 }

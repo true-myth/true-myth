@@ -656,7 +656,6 @@ export function mapOr<T, U, E>(
                   an `Ok`.
   @param result   The `Result` instance to map over.
  */
-// TODO: triple-yowzers
 export function mapOrElse<T, U, E>(
   orElseFn: (err: E) => U,
   mapFn: (t: T) => U,
@@ -904,17 +903,17 @@ export function or<T, E, F>(
                 if `result` is an `Err.
  */
 export function orElse<T, E, F>(
-  elseFn: (...args: any[]) => Result<T, F>,
+  elseFn: (err: E) => Result<T, F>,
   result: Result<T, E>
 ): Result<T, F>;
 export function orElse<T, E, F>(
-  elseFn: (...args: any[]) => Result<T, F>
+  elseFn: (err: E) => Result<T, F>
 ): (result: Result<T, E>) => Result<T, F>;
 export function orElse<T, E, F>(
-  elseFn: (...args: any[]) => Result<T, F>,
+  elseFn: (err: E) => Result<T, F>,
   result?: Result<T, E>
 ): Result<T, F> | ((result: Result<T, E>) => Result<T, F>) {
-  const op = (r: Result<T, E>) => (isOk(r) ? r as Ok<T, any> : elseFn());
+  const op = (r: Result<T, E>) => (isOk(r) ? r as Ok<T, any> : elseFn(r.unsafelyUnwrapErr()));
   return curry1(op, result);
 }
 
