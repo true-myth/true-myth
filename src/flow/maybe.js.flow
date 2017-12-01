@@ -72,7 +72,7 @@ declare export class Just<T> {
   /**
      * Method variant for [`Maybe.mapOrElse`](../modules/_maybe_.html#maporelse) 
      */
-  mapOrElse<U>(orElseFn: (...args: any[]) => U, mapFn: (t: T) => U): U;
+  mapOrElse<U>(orElseFn: () => U, mapFn: (t: T) => U): U;
 
   /** Method variant for [`Maybe.match`](../modules/_maybe_.html#match) */
   match<U>(matcher: Matcher<T, U>): U;
@@ -85,7 +85,7 @@ declare export class Just<T> {
   /**
      * Method variant for [`Maybe.orElse`](../modules/_maybe_.html#orelse) 
      */
-  orElse(orElseFn: (...args: any[]) => Maybe<T>): Maybe<T>;
+  orElse(orElseFn: () => Maybe<T>): Maybe<T>;
 
   /**
      * Method variant for [`Maybe.and`](../modules/_maybe_.html#and) 
@@ -120,7 +120,7 @@ declare export class Just<T> {
   /**
      * Method variant for [`Maybe.unwrapOrElse`](../modules/_maybe_.html#unwraporelse) 
      */
-  unwrapOrElse(elseFn: (...args: any[]) => T): T;
+  unwrapOrElse(elseFn: () => T): T;
 
   /**
      * Method variant for [`Maybe.toOkOrErr`](../modules/_maybe_.html#tookorerr) 
@@ -130,7 +130,7 @@ declare export class Just<T> {
   /**
      * Method variant for [`Maybe.toOkOrElseErr`](../modules/_maybe_.html#tookorelseerr) 
      */
-  toOkOrElseErr<E>(elseFn: (...args: any[]) => E): Result.Result<T, E>;
+  toOkOrElseErr<E>(elseFn: () => E): Result.Result<T, E>;
 
   /**
      * Method variant for [`Maybe.toString`](../modules/_maybe_.html#tostring) 
@@ -173,7 +173,7 @@ declare export class Nothing<T> {
   /**
      * Method variant for [`Maybe.mapOrElse`](../modules/_maybe_.html#maporelse) 
      */
-  mapOrElse<U>(orElseFn: (...args: any[]) => U, mapFn: (t: T) => U): U;
+  mapOrElse<U>(orElseFn: () => U, mapFn: (t: T) => U): U;
 
   /** Method variant for [`Maybe.match`](../modules/_maybe_.html#match) */
   match<U>(matcher: Matcher<T, U>): U;
@@ -186,7 +186,7 @@ declare export class Nothing<T> {
   /**
      * Method variant for [`Maybe.orElse`](../modules/_maybe_.html#orelse) 
      */
-  orElse(orElseFn: (...args: any[]) => Maybe<T>): Maybe<T>;
+  orElse(orElseFn: () => Maybe<T>): Maybe<T>;
 
   /**
      * Method variant for [`Maybe.and`](../modules/_maybe_.html#and) 
@@ -221,7 +221,7 @@ declare export class Nothing<T> {
   /**
      * Method variant for [`Maybe.unwrapOrElse`](../modules/_maybe_.html#unwraporelse) 
      */
-  unwrapOrElse(elseFn: (...args: any[]) => T): T;
+  unwrapOrElse(elseFn: () => T): T;
 
   /**
      * Method variant for [`Maybe.toOkOrErr`](../modules/_maybe_.html#tookorerr) 
@@ -231,7 +231,7 @@ declare export class Nothing<T> {
   /**
      * Method variant for [`Maybe.toOkOrElseErr`](../modules/_maybe_.html#tookorelseerr) 
      */
-  toOkOrElseErr<E>(elseFn: (...args: any[]) => E): Result.Result<T, E>;
+  toOkOrElseErr<E>(elseFn: () => E): Result.Result<T, E>;
 
   /**
      * Method variant for [`Maybe.toString`](../modules/_maybe_.html#tostring) 
@@ -252,7 +252,7 @@ declare export var fromNullable: <T>(value: T | null | void) => Maybe<T>;
 declare export var map: <T, U>(mapFn: (t: T) => U, maybe: Maybe<T>) => Maybe<U>;
 declare export var mapOr: <T, U>(orU: U, mapFn: (t: T) => U, maybe: Maybe<T>) => U;
 declare export var mapOrElse: <T, U>(
-  orElseFn: (...args: any[]) => U,
+  orElseFn: () => U,
   mapFn: (t: T) => U,
   maybe: Maybe<T>
 ) => U;
@@ -263,17 +263,17 @@ declare export var andThen: <T, U>(thenFn: (t: T) => Maybe<U>, maybe: Maybe<T>) 
 declare export var chain: <T, U>(thenFn: (t: T) => Maybe<U>, maybe: Maybe<T>) => Maybe<U>;
 declare export var flatMap: <T, U>(thenFn: (t: T) => Maybe<U>, maybe: Maybe<T>) => Maybe<U>;
 declare export var or: <T>(defaultMaybe: Maybe<T>, maybe: Maybe<T>) => Maybe<T>;
-declare export var orElse: <T>(elseFn: (...args: any[]) => Maybe<T>, maybe: Maybe<T>) => Maybe<T>;
+declare export var orElse: <T>(elseFn: () => Maybe<T>, maybe: Maybe<T>) => Maybe<T>;
 declare export var unsafelyUnwrap: <T>(maybe: Maybe<T>) => T;
 declare export var unsafelyGet: <T>(maybe: Maybe<T>) => T;
 declare export var unsafeGet: <T>(maybe: Maybe<T>) => T;
 declare export var unwrapOr: <T>(defaultValue: T, maybe: Maybe<T>) => T;
 declare export var getOr: <T>(defaultValue: T, maybe: Maybe<T>) => T;
-declare export var unwrapOrElse: <T>(orElseFn: (...args: any[]) => T, maybe: Maybe<T>) => T;
-declare export var getOrElse: <T>(orElseFn: (...args: any[]) => T, maybe: Maybe<T>) => T;
+declare export var unwrapOrElse: <T>(orElseFn: () => T, maybe: Maybe<T>) => T;
+declare export var getOrElse: <T>(orElseFn: () => T, maybe: Maybe<T>) => T;
 declare export var toOkOrErr: <T, E>(error: E, maybe: Maybe<T>) => Result.Result<T, E>;
 declare export var toOkOrElseErr: <T, E>(
-  elseFn: (...args: any[]) => E,
+  elseFn: () => E,
   maybe: Maybe<T>
 ) => Result.Result<T, E>;
 declare export var fromResult: <T, E>(result: Result.Result<T, E>) => Maybe<T>;
@@ -290,22 +290,22 @@ declare export default {
   fromNullable: <T>(value?: T | null | void) => Maybe<T>,
   map: <T, U>(mapFn: (t: T) => U, maybe: Maybe<T>) => Maybe<U>,
   mapOr: <T, U>(orU: U, mapFn: (t: T) => U, maybe: Maybe<T>) => U,
-  mapOrElse: <T, U>(orElseFn: (...args: any[]) => U, mapFn: (t: T) => U, maybe: Maybe<T>) => U,
+  mapOrElse: <T, U>(orElseFn: () => U, mapFn: (t: T) => U, maybe: Maybe<T>) => U,
   and: <T, U>(andMaybe: Maybe<U>, maybe: Maybe<T>) => Maybe<U>,
   andThen: <T, U>(thenFn: (t: T) => Maybe<U>, maybe: Maybe<T>) => Maybe<U>,
   chain: <T, U>(thenFn: (t: T) => Maybe<U>, maybe: Maybe<T>) => Maybe<U>,
   flatMap: <T, U>(thenFn: (t: T) => Maybe<U>, maybe: Maybe<T>) => Maybe<U>,
   or: <T>(defaultMaybe: Maybe<T>, maybe: Maybe<T>) => Maybe<T>,
-  orElse: <T>(elseFn: (...args: any[]) => Maybe<T>, maybe: Maybe<T>) => Maybe<T>,
+  orElse: <T>(elseFn: () => Maybe<T>, maybe: Maybe<T>) => Maybe<T>,
   unsafelyUnwrap: <T>(maybe: Maybe<T>) => T,
   unsafelyGet: <T>(maybe: Maybe<T>) => T,
   unsafeGet: <T>(maybe: Maybe<T>) => T,
   unwrapOr: <T>(defaultValue: T, maybe: Maybe<T>) => T,
   getOr: <T>(defaultValue: T, maybe: Maybe<T>) => T,
-  unwrapOrElse: <T>(orElseFn: (...args: any[]) => T, maybe: Maybe<T>) => T,
-  getOrElse: <T>(orElseFn: (...args: any[]) => T, maybe: Maybe<T>) => T,
+  unwrapOrElse: <T>(orElseFn: () => T, maybe: Maybe<T>) => T,
+  getOrElse: <T>(orElseFn: () => T, maybe: Maybe<T>) => T,
   toOkOrErr: <T, E>(error: E, maybe: Maybe<T>) => Result<T, E>,
-  toOkOrElseErr: <T, E>(elseFn: (...args: any[]) => E, maybe: Maybe<T>) => Result<T, E>,
+  toOkOrElseErr: <T, E>(elseFn: () => E, maybe: Maybe<T>) => Result<T, E>,
   fromResult: <T, E>(result: Result<T, E>) => Maybe<T>,
   toString: <T>(maybe: Maybe<T>) => string,
   match: <T, A>(matcher: Matcher<T, A>, maybe: Maybe<T>) => A,

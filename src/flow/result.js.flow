@@ -72,7 +72,7 @@ declare export class Ok<T, E> {
   /**
      * Method variant for [`Result.mapOrElse`](../modules/_result_.html#maporelse) 
      */
-  mapOrElse<U>(orElseFn: (...args: any[]) => U, mapFn: (t: T) => U): U;
+  mapOrElse<U>(orElseFn: (err: E) => U, mapFn: (t: T) => U): U;
 
   /** Method variant for [`Result.match`](../modules/_result_.html#match) */
   match<U>(matcher: Matcher<T, E, U>): U;
@@ -90,7 +90,7 @@ declare export class Ok<T, E> {
   /**
      * Method variant for [`Result.orElse`](../modules/_result_.html#orelse) 
      */
-  orElse<F>(orElseFn: (...args: any[]) => Result<T, F>): Result<T, F>;
+  orElse<F>(orElseFn: (err: E) => Result<T, F>): Result<T, F>;
 
   /**
      * Method variant for [`Result.and`](../modules/_result_.html#and) 
@@ -203,7 +203,7 @@ declare export class Err<T, E> {
   /**
      * Method variant for [`Result.mapOrElse`](../modules/_result_.html#maporelse) 
      */
-  mapOrElse<U>(orElseFn: (...args: any[]) => U, mapFn: (t: T) => U): U;
+  mapOrElse<U>(orElseFn: (err: E) => U, mapFn: (t: T) => U): U;
 
   /** Method variant for [`Result.match`](../modules/_result_.html#match) */
   match<U>(matcher: Matcher<T, E, U>): U;
@@ -221,7 +221,7 @@ declare export class Err<T, E> {
   /**
      * Method variant for [`Result.orElse`](../modules/_result_.html#orelse) 
      */
-  orElse<F>(orElseFn: (...args: any[]) => Result<T, F>): Result<T, F>;
+  orElse<F>(orElseFn: (err: E) => Result<T, F>): Result<T, F>;
 
   /**
      * Method variant for [`Result.and`](../modules/_result_.html#and) 
@@ -311,7 +311,7 @@ declare export var flatMap: <T, U, E>(
 ) => Result<U, E>;
 declare export var or: <T, E, F>(defaultResult: Result<T, F>, result: Result<T, E>) => Result<T, F>;
 declare export var orElse: <T, E, F>(
-  elseFn: (...args: any[]) => Result<T, F>,
+  elseFn: (err: E) => Result<T, F>,
   result: Result<T, E>
 ) => Result<T, F>;
 declare export var unsafelyUnwrap: <T, E>(result: Result<T, E>) => T;
@@ -343,7 +343,7 @@ declare export default {
   chain: <T, U, E>(thenFn: (t: T) => Result<U, E>, result: Result<T, E>) => Result<U, E>,
   flatMap: <T, U, E>(thenFn: (t: T) => Result<U, E>, result: Result<T, E>) => Result<U, E>,
   or: <T, E, F>(defaultResult: Result<T, F>, result: Result<T, E>) => Result<T, F>,
-  orElse: <T, E, F>(elseFn: (...args: any[]) => Result<T, F>, result: Result<T, E>) => Result<T, F>,
+  orElse: <T, E, F>(elseFn: (err: E) => Result<T, F>, result: Result<T, E>) => Result<T, F>,
   unsafelyUnwrap: <T, E>(result: Result<T, E>) => T,
   unsafelyGet: <T, E>(result: Result<T, E>) => T,
   unsafeGet: <T, E>(result: Result<T, E>) => T,

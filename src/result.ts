@@ -36,7 +36,7 @@ export interface ResultShape<T, E> {
   mapOr<U>(this: Result<T, E>, orU: U, mapFn: (t: T) => U): U;
 
   /** Method variant for [`Result.mapOrElse`](../modules/_result_.html#maporelse) */
-  mapOrElse<U>(this: Result<T, E>, orElseFn: (...args: any[]) => U, mapFn: (t: T) => U): U;
+  mapOrElse<U>(this: Result<T, E>, orElseFn: (err: E) => U, mapFn: (t: T) => U): U;
 
   /** Method variant for [`Result.match`](../modules/_result_.html#match) */
   match<U>(this: Result<T, E>, matcher: Matcher<T, E, U>): U;
@@ -48,7 +48,7 @@ export interface ResultShape<T, E> {
   or<F>(this: Result<T, E>, orResult: Result<T, F>): Result<T, F>;
 
   /** Method variant for [`Result.orElse`](../modules/_result_.html#orelse) */
-  orElse<F>(this: Result<T, E>, orElseFn: (...args: any[]) => Result<T, F>): Result<T, F>;
+  orElse<F>(this: Result<T, E>, orElseFn: (err: E) => Result<T, F>): Result<T, F>;
 
   /** Method variant for [`Result.and`](../modules/_result_.html#and) */
   and<U>(this: Result<T, E>, mAnd: Result<U, E>): Result<U, E>;
@@ -159,7 +159,7 @@ export class Ok<T, E> implements ResultShape<T, E> {
   }
 
   /** Method variant for [`Result.mapOrElse`](../modules/_result_.html#maporelse) */
-  mapOrElse<U>(this: Result<T, E>, orElseFn: (...args: any[]) => U, mapFn: (t: T) => U): U {
+  mapOrElse<U>(this: Result<T, E>, orElseFn: (err: E) => U, mapFn: (t: T) => U): U {
     return mapOrElse(orElseFn, mapFn, this);
   }
 
@@ -179,7 +179,7 @@ export class Ok<T, E> implements ResultShape<T, E> {
   }
 
   /** Method variant for [`Result.orElse`](../modules/_result_.html#orelse) */
-  orElse<F>(this: Result<T, E>, orElseFn: (...args: any[]) => Result<T, F>): Result<T, F> {
+  orElse<F>(this: Result<T, E>, orElseFn: (err: E) => Result<T, F>): Result<T, F> {
     return orElse(orElseFn, this);
   }
 
@@ -312,7 +312,7 @@ export class Err<T, E> implements ResultShape<T, E> {
   }
 
   /** Method variant for [`Result.mapOrElse`](../modules/_result_.html#maporelse) */
-  mapOrElse<U>(this: Result<T, E>, orElseFn: (...args: any[]) => U, mapFn: (t: T) => U): U {
+  mapOrElse<U>(this: Result<T, E>, orElseFn: (err: E) => U, mapFn: (t: T) => U): U {
     return mapOrElse(orElseFn, mapFn, this);
   }
 
@@ -332,7 +332,7 @@ export class Err<T, E> implements ResultShape<T, E> {
   }
 
   /** Method variant for [`Result.orElse`](../modules/_result_.html#orelse) */
-  orElse<F>(this: Result<T, E>, orElseFn: (...args: any[]) => Result<T, F>): Result<T, F> {
+  orElse<F>(this: Result<T, E>, orElseFn: (err: E) => Result<T, F>): Result<T, F> {
     return orElse(orElseFn, this);
   }
 
