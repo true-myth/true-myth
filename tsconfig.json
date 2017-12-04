@@ -5,19 +5,21 @@
     "stripInternal": true,
 
     "strict": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
 
     "moduleResolution": "node",
     "baseUrl": "./",
     "paths": {
-      "true-myth": ["src/index.ts"]
+      "true-myth": ["src/index.ts"],
+      "true-myth/*": ["src/*"]
     },
     "rootDirs": [
       "src"
     ],
+
+    "outDir": "dist",
+    "module": "esnext",
 
     "sourceRoot": "./",
     "inlineSourceMap": true,

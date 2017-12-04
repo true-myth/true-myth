@@ -1,0 +1,20 @@
+#!/usr/bin/env sh
+
+# generate the actual build artifacts
+echo "  1/4: building modules..."
+yarn run tsc
+
+# include flow types
+cp src/flow/* dist/
+
+# backwards compatibility for 1.x
+echo "  2/4: building backwards-compatible CommonJS modules..."
+tsc -m commonjs --outDir dist/commonjs
+
+echo "  3/4: building backwards-compatible ES modules..."
+mkdir -p dist/modules/src
+cp dist/*.js dist/modules/src
+
+echo "  4/4: building backwards-compatible source..."
+mkdir -p dist/types/src
+cp dist/*.d.ts dist/types/src

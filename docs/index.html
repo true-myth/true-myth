@@ -108,6 +108,7 @@
 				<ul>
 					<li><a href="#setup">Setup</a><ul>
 							<li><a href="#typescript-and-flow">TypeScript and Flow</a></li>
+							<li><a href="#nodejs-and-es-modules">Node.js and ES Modules</a></li>
 						</ul>
 					</li>
 					<li><a href="#roadmap">Roadmap</a><ul>
@@ -177,23 +178,64 @@
 </code></pre>
 					</li>
 				</ul>
-				<p>For ES6-module-friendly consumers, you can import the modules directly, or import them from the root module:</p>
-				<pre><code class="lang-typescript"><span class="hljs-comment">// this works:</span>
-<span class="hljs-keyword">import</span> Maybe <span class="hljs-keyword">from</span> <span class="hljs-string">'true-myth/maybe'</span>;
+				<p>For ES6-module-friendly consumers, you can import the modules directly, or import them from the root module.</p>
+				<p>So this works:</p>
+				<pre><code class="lang-typescript"><span class="hljs-keyword">import</span> Maybe <span class="hljs-keyword">from</span> <span class="hljs-string">'true-myth/maybe'</span>;
 <span class="hljs-keyword">import</span> Result <span class="hljs-keyword">from</span> <span class="hljs-string">'true-myth/result'</span>;
-
-<span class="hljs-comment">// this also works:</span>
-<span class="hljs-keyword">import</span> { Maybe, Result } <span class="hljs-keyword">from</span> <span class="hljs-string">'true-myth'</span>;
 </code></pre>
+				<p>And this also works:</p>
+				<pre><code class="lang-typescript"><span class="hljs-keyword">import</span> { Maybe, Result } <span class="hljs-keyword">from</span> <span class="hljs-string">'true-myth'</span>;
+</code></pre>
+				<p>For use in Node.js, see <a href="#nodejs-and-es-modules">below</a>.</p>
 				<p>In Node.js, the TypeScript-generated CommonJS package cannot be imported as nested modules, but the modules still can be imported directly from the top-level module:</p>
 				<pre><code class="lang-typescript"><span class="hljs-keyword">const</span> { Maybe, Result } = <span class="hljs-built_in">require</span>(<span class="hljs-string">'true-myth'</span>);
 </code></pre>
-				<p>The build includes both ES6 modules and CommonJS modules, so you may reference them directly from their installation in the <code>node_modules</code> directory. (This may be helpful for using the library in different contexts, with the ES modules being supplied especially so you can do tree-shaking with e.g. Rollup.)</p>
+				<p>The build includes ES6 modules, so you may reference them directly from their installation in the <code>node_modules</code> directory. (This may be helpful for using the library in different contexts, with the ES modules being supplied especially so you can do tree-shaking with e.g. Rollup.)</p>
 				<details>
 					<summary>Distributed package layout</summary>
+					Note that these are all ES6-style modules, <em>not</em> CommonJS modules. For notes on CommonJS modules and use in Node.js, see <a href="#nodejs-and-es-modules">below</a>.
 					<code>node_modules/
   true-myth/
     dist/
+      index.js
+      index.d.ts
+      index.js.flow
+      maybe.js
+      maybe.d.ts
+      maybe.js.flow
+      result.js
+      result.d.ts
+      result.js.flow
+      utils.js
+      utils.d.ts
+      utils.js.flow</code>
+				</details>
+				<h3 id="typescript-and-flow">TypeScript and Flow</h3>
+				<p>For TypeScript, whether using Webpack or Ember CLI or something else for your bundling, you will be able to import the root module directly but will not be able to import the more useful modules. To do so, you&#39;ll need to add this to your <code>tsconfig.json</code>:</p>
+				<pre><code class="lang-json">{
+  <span class="hljs-attr">"compilerOptions"</span>: {
+    <span class="hljs-attr">"paths"</span>: {
+      <span class="hljs-attr">"true-myth/*"</span>: [<span class="hljs-string">"node_modules/true-myth/dist/*"</span>],
+    }
+  }
+}
+</code></pre>
+				<p>Install-wise, Flow&#39;s types should <em>just work</em>, as they&#39;re distributed side-by-side with the modules. You can simply use the module as a normal ES6-style module import, whether working in Node or using something like Webpack.</p>
+				<p>Note, however, that Flow support is beta quality. They&#39;re offered as a best-effort approach, but are incomplete (they don&#39;t yet have any of the curried variants!) and may have a couple errors – the primary author uses TypeScript and so doesn&#39;t have a good place to test them. Pull requests are very welcome!</p>
+				<h3 id="node-js-and-es-modules">Node.js and ES Modules</h3>
+				<p>True Myth is distributed primarily as ES6-style modules. However, it&#39;s straightforward to use them in Node.js by using <a href="https://www.npmjs.com/package/@std/esm">@std/esm</a>. To use True Myth directly and easily in Node.js:</p>
+				<ol>
+					<li>Install <a href="https://www.npmjs.com/package/@std/esm">@std/esm</a> as a dependency.</li>
+					<li>Add <code>&quot;@std/esm&quot;: &quot;js&quot;</code> at the top-level of your <code>package.json</code>.</li>
+					<li>Run node with <code>node -r @std/esm</code> or do <code>require = require(&quot;@std/esm&quot;)(module)</code> at the top of your entry point (or wherever appropriate in your app).</li>
+				</ol>
+				<p><strong>Why?</strong> Publishing both CommonJS <em>and</em> ES Modules in a way that makes TypeScript happy is difficult at best: it doesn&#39;t really expect the types and modules used to be totally distinct from each other, and doesn&#39;t provide a way to use type definitions distributed side-by-side with both ES modules <em>and</em> CommonJS. You can hack around it with the <code>&quot;paths&quot;</code> key in your tsconfig, but this also requires <a href="https://www.npmjs.com/package/tsconfig-paths">yet further work as a consumer</a> to use them with ts-node.</p>
+				<p>It&#39;s much more straightforward from a build-and-publish point of view to simply distribute ES modules and let consumers use <code>@std/esm</code> if appropriate.</p>
+				<p>Since True Myth originally attempted to distribute both ES6 and CommonJS modules as first-class citizens, for backwards compatibility for anyone who started using True Myth before the 1.2 release, the old locations are still published exactly as they were throughout 1.0.0–1.1.3 (see the distributed package layout above for new locations).</p>
+				<details>
+					<summary>Old distributed package layout</summary>
+					<code>node_modules/
+  true-myth/
       commonjs/
         src/
           index.js
@@ -221,18 +263,6 @@
           result.d.ts
           utils.d.ts</code>
 				</details>
-				<h3 id="typescript-and-flow">TypeScript and Flow</h3>
-				<p>For TypeScript, whether using Webpack or Ember CLI or something else for your bundling, you will be able to import the root module directly but will not be able to import the more useful modules. To do so, you&#39;ll need to add this to your <code>tsconfig.json</code>:</p>
-				<pre><code class="lang-json">{
-  <span class="hljs-attr">"compilerOptions"</span>: {
-    <span class="hljs-attr">"paths"</span>: {
-      <span class="hljs-attr">"true-myth/*"</span>: [<span class="hljs-string">"node_modules/true-myth/dist/types/src/*"</span>],
-    }
-  }
-}
-</code></pre>
-				<p>Install-wise, Flow&#39;s types should <em>just work</em>, as they&#39;re distributed side-by-side with the modules. You can simply use the module as a normal ES6-style module import, whether working in Node or using something like Webpack.</p>
-				<p>Note, however, that Flow support is beta quality. They&#39;re offered as a best-effort approach, but are incomplete (they don&#39;t yet have any of the curried variants!) and may have a couple errors – the primary author uses TypeScript and so doesn&#39;t have a good place to test them. Pull requests are very welcome!</p>
 				<h2 id="roadmap">Roadmap</h2>
 				<h3 id="1-0-commitments">1.0 commitments</h3>
 				<ul>

@@ -772,7 +772,9 @@ export function orElse<T>(
   @returns     The unwrapped value if the `Maybe` instance is `Just`.
   @throws      If the `maybe` is `Nothing`.
  */
-export const unsafelyUnwrap = <T>(maybe: Maybe<T>): T => maybe.unsafelyUnwrap();
+export function unsafelyUnwrap<T>(maybe: Maybe<T>): T {
+  return maybe.unsafelyUnwrap();
+}
 
 /** Alias for [`unsafelyUnwrap`](#unsafelyunwrap) */
 export const unsafelyGet = unsafelyUnwrap;
