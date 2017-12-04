@@ -13,6 +13,7 @@ export type AndThenAliases = 'andThen' | 'chain' | 'flatMap';
 
 // tslint:disable-next-line:class-name
 export class _Brand<Tag extends string> {
+  // @ts-ignore
   private _brand: Tag;
   constructor(t: Tag) {
     this._brand = t;

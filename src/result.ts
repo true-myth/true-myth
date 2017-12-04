@@ -392,16 +392,18 @@ export class Err<T, E> implements ResultShape<T, E> {
 
   In TypeScript, narrows the type from `Result<T, E>` to `Ok<T, E>`.
  */
-export const isOk = <T, E>(result: Result<T, E>): result is Ok<T, E> =>
-  result.variant === Variant.Ok;
+export function isOk<T, E>(result: Result<T, E>): result is Ok<T, E> {
+  return result.variant === Variant.Ok;
+}
 
 /**
   Is this `Result` an `Err` instance?
 
   In TypeScript, narrows the type from `Result<T, E>` to `Err<T, E>`.
  */
-export const isErr = <T, E>(result: Result<T, E>): result is Err<T, E> =>
-  result.variant === Variant.Err;
+export function isErr<T, E>(result: Result<T, E>): result is Err<T, E> {
+  return result.variant === Variant.Err;
+}
 
 /**
   Create an instance of `Result.Ok`.
@@ -1051,8 +1053,9 @@ export const getOrElse = unwrapOrElse;
   @param result The `Result` to convert to a `Maybe`
   @returns      `Just` the value in `result` if it is `Ok`; otherwise `Nothing`
  */
-export const toMaybe = <T, E>(result: Result<T, E>): Maybe<T> =>
-  isOk(result) ? just(unwrap(result)) : nothing();
+export function toMaybe<T, E>(result: Result<T, E>): Maybe<T> {
+  return isOk(result) ? just(unwrap(result)) : nothing();
+}
 
 /**
   Transform a [`Maybe`](../modules/_maybe_.html#maybe) into a [`Result`](#result).
@@ -1100,10 +1103,10 @@ export function fromMaybe<T, E>(
   @param maybe The value to convert to a string.
   @returns     The string representation of the `Maybe`.
  */
-export const toString = <T, E>(result: Result<T, E>): string => {
+export function toString<T, E>(result: Result<T, E>): string {
   const body = (isOk(result) ? unwrap(result) : unwrapErr(result)).toString();
   return `${result.variant}(${body})`;
-};
+}
 
 /** A lightweight object defining how to handle each variant of a Maybe. */
 export type Matcher<T, E, A> = {

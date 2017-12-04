@@ -48,6 +48,7 @@ You could implement all of these yourself – it's not hard! – but it's much 
 
 - [Setup](#setup)
     - [TypeScript and Flow](#typescript-and-flow)
+    - [Node.js and ES Modules][node]
 - [Roadmap](#roadmap)
     - [1.0 commitments](#10-c–ommitments)
     - [Post-1.0 ideas](#post-10-ideas)
@@ -81,6 +82,8 @@ You could implement all of these yourself – it's not hard! – but it's much 
     - [Sanctuary](#from-sanctuary)
 - [What's with the name?](#whats-with-the-name)
 
+[node]: #nodejs-and-es-modules
+
 ## Setup
 
 Add True Myth to your dependencies:
@@ -97,16 +100,22 @@ Add True Myth to your dependencies:
     npm install true-myth
     ```
 
-For ES6-module-friendly consumers, you can import the modules directly, or import them from the root module:
+For ES6-module-friendly consumers, you can import the modules directly, or import them from the root module.
+
+So this works:
 
 ```typescript
-// this works:
 import Maybe from 'true-myth/maybe';
 import Result from 'true-myth/result';
+```
 
-// this also works:
+And this also works:
+
+```typescript
 import { Maybe, Result } from 'true-myth';
 ```
+
+For use in Node.js, see [below][node].
 
 In Node.js, the TypeScript-generated CommonJS package cannot be imported as nested modules, but the modules still can be imported directly from the top-level module:
 
@@ -114,15 +123,73 @@ In Node.js, the TypeScript-generated CommonJS package cannot be imported as nest
 const { Maybe, Result } = require('true-myth');
 ```
 
-The build includes both ES6 modules and CommonJS modules, so you may reference them directly from their installation in the `node_modules` directory. (This may be helpful for using the library in different contexts, with the ES modules being supplied especially so you can do tree-shaking with e.g. Rollup.)
+The build includes ES6 modules, so you may reference them directly from their installation in the `node_modules` directory. (This may be helpful for using the library in different contexts, with the ES modules being supplied especially so you can do tree-shaking with e.g. Rollup.)
 
 <details>
 <summary>Distributed package layout</summary>
+
+Note that these are all ES6-style modules, *not* CommonJS modules. For notes on CommonJS modules and use in Node.js, see [below][node].
 
 ```
 node_modules/
   true-myth/
     dist/
+      index.js
+      index.d.ts
+      index.js.flow
+      maybe.js
+      maybe.d.ts
+      maybe.js.flow
+      result.js
+      result.d.ts
+      result.js.flow
+      utils.js
+      utils.d.ts
+      utils.js.flow
+```
+
+</details>
+
+### TypeScript and Flow
+
+For TypeScript, whether using Webpack or Ember CLI or something else for your bundling, you will be able to import the root module directly but will not be able to import the more useful modules. To do so, you'll need to add this to your `tsconfig.json`:
+
+```json
+{
+  "compilerOptions": {
+    "paths": {
+      "true-myth/*": ["node_modules/true-myth/dist/*"],
+    }
+  }
+}
+```
+
+Install-wise, Flow's types should *just work*, as they're distributed side-by-side with the modules. You can simply use the module as a normal ES6-style module import, whether working in Node or using something like Webpack.
+
+Note, however, that Flow support is beta quality. They're offered as a best-effort approach, but are incomplete (they don't yet have any of the curried variants!) and may have a couple errors – the primary author uses TypeScript and so doesn't have a good place to test them. Pull requests are very welcome!
+
+### Node.js and ES Modules
+
+True Myth is distributed primarily as ES6-style modules. However, it's straightforward to use them in Node.js by using [@std/esm]. To use True Myth directly and easily in Node.js:
+
+1. Install [@std/esm] as a dependency.
+2. Add `"@std/esm": "js"` at the top-level of your `package.json`.
+3. Run node with `node -r @std/esm` or do `require = require("@std/esm")(module)` at the top of your entry point (or wherever appropriate in your app).
+
+[@std/esm]: https://www.npmjs.com/package/@std/esm
+
+**Why?** Publishing both CommonJS *and* ES Modules in a way that makes TypeScript happy is difficult at best: it doesn't really expect the types and modules used to be totally distinct from each other, and doesn't provide a way to use type definitions distributed side-by-side with both ES modules *and* CommonJS. You can hack around it with the `"paths"` key in your tsconfig, but this also requires [yet further work as a consumer](https://www.npmjs.com/package/tsconfig-paths) to use them with ts-node.
+
+It's much more straightforward from a build-and-publish point of view to simply distribute ES modules and let consumers use `@std/esm` if appropriate.
+
+Since True Myth originally attempted to distribute both ES6 and CommonJS modules as first-class citizens, for backwards compatibility for anyone who started using True Myth before the 1.2 release, the old locations are still published exactly as they were throughout 1.0.0–1.1.3 (see the distributed package layout above for new locations).
+
+<details>
+<summary>Old distributed package layout</summary>
+
+```
+node_modules/
+  true-myth/
       commonjs/
         src/
           index.js
@@ -152,24 +219,6 @@ node_modules/
 ```
 
 </details>
-
-### TypeScript and Flow
-
-For TypeScript, whether using Webpack or Ember CLI or something else for your bundling, you will be able to import the root module directly but will not be able to import the more useful modules. To do so, you'll need to add this to your `tsconfig.json`:
-
-```json
-{
-  "compilerOptions": {
-    "paths": {
-      "true-myth/*": ["node_modules/true-myth/dist/types/src/*"],
-    }
-  }
-}
-```
-
-Install-wise, Flow's types should *just work*, as they're distributed side-by-side with the modules. You can simply use the module as a normal ES6-style module import, whether working in Node or using something like Webpack.
-
-Note, however, that Flow support is beta quality. They're offered as a best-effort approach, but are incomplete (they don't yet have any of the curried variants!) and may have a couple errors – the primary author uses TypeScript and so doesn't have a good place to test them. Pull requests are very welcome!
 
 ## Roadmap
 
