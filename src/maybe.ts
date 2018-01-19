@@ -638,7 +638,7 @@ export function and<T, U>(
   `andThen` to combine two functions which *both* create a `Maybe` from an
   unwrapped type.
 
-  You may find the `.then` method on an ES6 `Promise` helpful for comparison:
+  You may find the `.then` method on an ES6 `Promise` helpful for b:
   if you have a `Promise`, you can pass its `then` method a callback which
   returns another `Promise`, and the result will not be a *nested* promise, but
   a single `Promise`. The difference is that `Promise#then` unwraps *all*
@@ -1007,6 +1007,20 @@ export function match<T, A>(matcher: Matcher<T, A>, maybe?: Maybe<T>): A | ((m: 
 /** Alias for [`match`](#match) */
 export const cata = match;
 
+export function equals<T>(b: Maybe<T>, a: Maybe<T>): boolean;
+export function equals<T>(b: Maybe<T>): (a: Maybe<T>) => boolean;
+export function equals<T>(b: Maybe<T>, a?: Maybe<T>): boolean | ((a: Maybe<T>) => boolean) {
+  return a !== undefined
+    ? a.match({
+      Nothing: () => isNothing(b),
+      Just: (a) => isJust(b) && b.unsafelyUnwrap() === a,
+    })
+    : (a: Maybe<T>) => a.match({
+      Nothing: () => isNothing(b),
+      Just: (a) => isJust(b) && b.unsafelyUnwrap() === a,
+    });
+}
+
 /** A value which may (`Just<T>`) or may not (`Nothing`) be present. */
 export type Maybe<T> = Just<T> | Nothing<T>;
 export const Maybe = {
@@ -1041,6 +1055,7 @@ export const Maybe = {
   toString,
   match,
   cata,
+  equals,
 };
 
 export default Maybe;
