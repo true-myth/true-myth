@@ -287,6 +287,19 @@ describe('`Maybe` pure functions', () => {
     expect(Maybe.toString(Maybe.of(42))).toEqual('Just(42)');
     expect(Maybe.toString(Maybe.nothing())).toEqual('Nothing');
   });
+
+  test('`equals`', () => {
+    const a = Maybe.of<string>('a');
+    const b = Maybe.of<string>('a');
+    const c = Maybe.nothing<string>();
+    const d = Maybe.nothing<string>();
+    expect(Maybe.equals(b, a)).toBe(true);
+    expect(Maybe.equals(b)(a)).toBe(true);
+    expect(Maybe.equals(c, b)).toBe(false);
+    expect(Maybe.equals(c)(b)).toBe(false);
+    expect(Maybe.equals(d, c)).toBe(true);
+    expect(Maybe.equals(d)(c)).toBe(true);
+  });
 });
 
 describe('`Maybe.Just` class', () => {
@@ -546,6 +559,16 @@ describe('`Maybe.Nothing` class', () => {
 
   test('`toString` method', () => {
     expect(Maybe.nothing().toString()).toEqual('Nothing');
+  });
+
+  test('`equals` method', () => {
+    const a = new Maybe.Just<string>('a');
+    const b = new Maybe.Just<string>('a');
+    const c = new Maybe.Nothing<string>();
+    const d = new Maybe.Nothing<string>();
+    expect(a.equals(b)).toBe(true);
+    expect(b.equals(c)).toBe(false);
+    expect(c.equals(d)).toBe(true);
   });
 });
 

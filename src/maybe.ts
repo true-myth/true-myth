@@ -69,6 +69,9 @@ export interface MaybeShape<T> {
 
   /** Method variant for [`Maybe.toString`](../modules/_maybe_.html#tostring) */
   toString(this: Maybe<T>): string;
+
+  /** Method variant for [`Maybe.equals`](../modules/_maybe_.html#equals) */
+  equals(this: Maybe<T>, comparison: Maybe<T>): boolean;
 }
 
 /**
@@ -210,6 +213,11 @@ export class Just<T> implements MaybeShape<T> {
   toString(this: Maybe<T>): string {
     return toString(this);
   }
+
+  /** Method variant for [`Maybe.equals`](../modules/_maybe_.html#equals) */
+  equals(this: Maybe<T>, comparison: Maybe<T>): boolean {
+    return equals(comparison, this)
+  }
 }
 
 /**
@@ -341,6 +349,11 @@ export class Nothing<T> implements MaybeShape<T> {
   /** Method variant for [`Maybe.toString`](../modules/_maybe_.html#tostring) */
   toString(this: Maybe<T>): string {
     return toString(this);
+  }
+
+  /** Method variant for [`Maybe.equals`](../modules/_maybe_.html#equals) */
+  equals(this: Maybe<T>, comparison: Maybe<T>): boolean {
+    return equals(comparison, this)
   }
 }
 
@@ -1007,6 +1020,24 @@ export function match<T, A>(matcher: Matcher<T, A>, maybe?: Maybe<T>): A | ((m: 
 /** Alias for [`match`](#match) */
 export const cata = match;
 
+/**
+ * Allows quick triple-equal equality check between the values inside two `maybe`s
+ * without having to unwrap them first.
+ *
+ * ```ts
+ * const a = Maybe.of(3)
+ * const b = Maybe.of(3)
+ * const c = Maybe.of(null)
+ * const d = Maybe.nothing()
+ *
+ * Maybe.equals(a, b) // true
+ * Maybe.equals(a, c) // false
+ * Maybe.equals(c, d) // true
+ * ```
+ *
+ * @param b A `maybe` to compare to.
+ * @param a A `maybe` instance to check.
+ */
 export function equals<T>(b: Maybe<T>, a: Maybe<T>): boolean;
 export function equals<T>(b: Maybe<T>): (a: Maybe<T>) => boolean;
 export function equals<T>(b: Maybe<T>, a?: Maybe<T>): boolean | ((a: Maybe<T>) => boolean) {
