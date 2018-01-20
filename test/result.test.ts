@@ -274,10 +274,10 @@ describe('`Result` pure functions', () => {
   });
 
   test('`equals`', () => {
-    const a = Result.ok('a');
-    const b = Result.ok('a');
-    const c = Result.err('error');
-    const d = Result.err('error');
+    const a = Result.ok<string, string>('a');
+    const b = Result.ok<string, string>('a');
+    const c = Result.err<string, string>('error');
+    const d = Result.err<string, string>('error');
     expect(Result.equals(b, a)).toBe(true);
     expect(Result.equals(b)(a)).toBe(true);
     expect(Result.equals(c, b)).toBe(false);
@@ -591,9 +591,9 @@ describe('`Result.Err` class', () => {
 
   test('`equals` method', () => {
     const a = new Result.Ok('a');
-    const b = new Result.Ok('a');
-    const c = new Result.Err('err');
-    const d = new Result.Err('err');
+    const b = new Result.Ok<string, string>('a');
+    const c = new Result.Err<string, string>('err');
+    const d = new Result.Err<string, string>('err');
     expect(a.equals(b)).toBe(true);
     expect(b.equals(c)).toBe(false);
     expect(c.equals(d)).toBe(true);
