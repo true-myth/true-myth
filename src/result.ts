@@ -79,6 +79,9 @@ export interface ResultShape<T, E> {
 
   /** Method variant for [`Result.toString`](../modules/_result_.html#tostring) */
   toString(this: Result<T, E>): string;
+
+  /** Method variant for [`Result.equals`](../modules/_result_.html#equals) */
+  equals(this: Result<T, E>, comparison: Result<T, E>): boolean;
 }
 
 /**
@@ -232,6 +235,11 @@ export class Ok<T, E> implements ResultShape<T, E> {
   toString(this: Result<T, E>): string {
     return toString(this);
   }
+
+  /** Method variant for [`Result.equals`](../modules/_result_.html#equals) */
+  equals(this: Result<T, E>, comparison: Result<T, E>): boolean {
+    return equals(comparison, this)
+  }
 }
 
 /**
@@ -384,6 +392,11 @@ export class Err<T, E> implements ResultShape<T, E> {
   /** Method variant for [`Result.toString`](../modules/_result_.html#tostring) */
   toString(this: Result<T, E>): string {
     return toString(this);
+  }
+
+  /** Method variant for [`Result.equals`](../modules/_result_.html#equals) */
+  equals(this: Result<T, E>, comparison: Result<T, E>): boolean {
+    return equals(comparison, this)
   }
 }
 
@@ -1123,7 +1136,7 @@ export type Matcher<T, E, A> = {
   Instead of code like this:
 
   ```ts
-  import { Result, isOk, match } from 'true-myth/maybe';
+  import { Result, isOk, match } from 'true-myth/result';
 
   const logValue = (mightBeANumber: Result<number, string>) => {
     console.log(
@@ -1137,7 +1150,7 @@ export type Matcher<T, E, A> = {
   ...we can write code like this:
 
   ```ts
-  import { Result, match } from 'true-myth/maybe';
+  import { Result, match } from 'true-myth/result';
 
   const logValue = (mightBeANumber: Result<number, string>) => {
     const value = match(
@@ -1172,6 +1185,38 @@ export function match<T, E, A>(
 
 /** Alias for [`match`](#match) */
 export const cata = match;
+
+/**
+ * Allows quick triple-equal equality check between the values inside two `result`s
+ * without having to unwrap them first.
+ *
+ * ```ts
+ * const a = Result.of(3)
+ * const b = Result.of(3)
+ * const c = Result.of(null)
+ * const d = Result.nothing()
+ *
+ * Result.equals(a, b) // true
+ * Result.equals(a, c) // false
+ * Result.equals(c, d) // true
+ * ```
+ *
+ * @param b A `maybe` to compare to.
+ * @param a A `maybe` instance to check.
+ */
+export function equals<T, E>(b: Result<T, E>, a: Result<T, E>): boolean;
+export function equals<T, E>(b: Result<T, E>): (a: Result<T, E>) => boolean;
+export function equals<T, E>(b: Result<T, E>, a?: Result<T, E>): boolean | ((a: Result<T, E>) => boolean) {
+  return a !== undefined
+    ? a.match({
+      Err: () => isErr(b),
+      Ok: (a) => isOk(b) && b.unsafelyUnwrap() === a,
+    })
+    : (a: Result<T, E>) => a.match({
+      Err: () => isErr(b),
+      Ok: (a) => isOk(b) && b.unsafelyUnwrap() === a,
+    });
+}
 
 /**
   A value which may (`Ok`) or may not (`Err`) be present.
@@ -1212,6 +1257,7 @@ export const Result = {
   toString,
   match,
   cata,
+  equals,
 };
 
 export default Result;

@@ -272,6 +272,19 @@ describe('`Result` pure functions', () => {
     const anErr = Result.err(errValue);
     expect(Result.toString(anErr)).toEqual(`Err(${errValue.toString()})`);
   });
+
+  test('`equals`', () => {
+    const a = Result.ok('a');
+    const b = Result.ok('a');
+    const c = Result.err('error');
+    const d = Result.err('error');
+    expect(Result.equals(b, a)).toBe(true);
+    expect(Result.equals(b)(a)).toBe(true);
+    expect(Result.equals(c, b)).toBe(false);
+    expect(Result.equals(c)(b)).toBe(false);
+    expect(Result.equals(d, c)).toBe(true);
+    expect(Result.equals(d)(c)).toBe(true);
+  });
 });
 
 describe('`Result.Ok` class', () => {
@@ -574,5 +587,15 @@ describe('`Result.Err` class', () => {
     const theErrValue = { something: 'sad' };
     const theErr = new Result.Err(theErrValue);
     expect(theErr.toString()).toEqual(`Err(${theErrValue.toString()})`);
+  });
+
+  test('`equals` method', () => {
+    const a = new Result.Ok('a');
+    const b = new Result.Ok('a');
+    const c = new Result.Err('err');
+    const d = new Result.Err('err');
+    expect(a.equals(b)).toBe(true);
+    expect(b.equals(c)).toBe(false);
+    expect(c.equals(d)).toBe(true);
   });
 });
