@@ -302,7 +302,7 @@ describe('`Maybe` pure functions', () => {
   });
 
   test('`ap`', () => {
-    const add = (a) => (b) => a + b
+    const add = a => b => a + b;
     const fn = Maybe.of<(val: number) => number>(add(3));
     const val = Maybe.of(2);
 
@@ -451,9 +451,9 @@ describe('`Maybe.Just` class', () => {
   });
 
   test('`equals` method', () => {
-    const a = new Maybe.Just<string>('a');
-    const b = new Maybe.Just<string>('a');
-    const c = new Maybe.Just<string>('b');
+    const a = new Maybe.Just('a');
+    const b = new Maybe.Just('a');
+    const c = new Maybe.Just('b');
     const d = new Maybe.Nothing<string>();
     expect(a.equals(b)).toBe(true);
     expect(b.equals(c)).toBe(false);
@@ -462,10 +462,10 @@ describe('`Maybe.Just` class', () => {
 
   test('`ap` method', () => {
     const toString = (a: number) => a.toString();
-    const fn = new Maybe.Just<(val: number) => string>(toString);
-    const val = new Maybe.Just<number>(3);
+    const fn: Maybe<typeof toString> = new Maybe.Just(toString);
+    const val = new Maybe.Just(3);
 
-    const result = fn.ap<number>(val);
+    const result = fn.ap(val);
 
     expect(result.equals(Maybe.of('3'))).toBe(true);
   });
@@ -601,12 +601,12 @@ describe('`Maybe.Nothing` class', () => {
 
   test('`ap` method', () => {
     const fn = new Maybe.Nothing<(val: string) => number>();
-    const val = new Maybe.Just<string>('three');
+    const val = new Maybe.Just('three');
 
     const result = fn.ap(val);
 
     expect(result.isNothing()).toBe(true);
-  })
+  });
 });
 
 test('`Maybe` classes interacting', () => {

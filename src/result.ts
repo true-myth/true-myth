@@ -238,7 +238,7 @@ export class Ok<T, E> implements ResultShape<T, E> {
 
   /** Method variant for [`Result.equals`](../modules/_result_.html#equals) */
   equals(this: Result<T, E>, comparison: Result<T, E>): boolean {
-    return equals(comparison, this)
+    return equals(comparison, this);
   }
 }
 
@@ -396,7 +396,7 @@ export class Err<T, E> implements ResultShape<T, E> {
 
   /** Method variant for [`Result.equals`](../modules/_result_.html#equals) */
   equals(this: Result<T, E>, comparison: Result<T, E>): boolean {
-    return equals(comparison, this)
+    return equals(comparison, this);
   }
 }
 
@@ -1201,21 +1201,25 @@ export const cata = match;
  * Result.equals(c, d) // true
  * ```
  *
- * @param b A `maybe` to compare to.
- * @param a A `maybe` instance to check.
+ * @param resultB A `maybe` to compare to.
+ * @param resultA A `maybe` instance to check.
  */
-export function equals<T, E>(b: Result<T, E>, a: Result<T, E>): boolean;
-export function equals<T, E>(b: Result<T, E>): (a: Result<T, E>) => boolean;
-export function equals<T, E>(b: Result<T, E>, a?: Result<T, E>): boolean | ((a: Result<T, E>) => boolean) {
-  return a !== undefined
-    ? a.match({
-      Err: () => isErr(b),
-      Ok: (a) => isOk(b) && b.unsafelyUnwrap() === a,
-    })
-    : (a: Result<T, E>) => a.match({
-      Err: () => isErr(b),
-      Ok: (a) => isOk(b) && b.unsafelyUnwrap() === a,
-    });
+export function equals<T, E>(resultB: Result<T, E>, resultA: Result<T, E>): boolean;
+export function equals<T, E>(resultB: Result<T, E>): (resultA: Result<T, E>) => boolean;
+export function equals<T, E>(
+  resultB: Result<T, E>,
+  resultA?: Result<T, E>
+): boolean | ((a: Result<T, E>) => boolean) {
+  return resultA !== undefined
+    ? resultA.match({
+        Err: () => isErr(resultB),
+        Ok: a => isOk(resultB) && resultB.unsafelyUnwrap() === a,
+      })
+    : (curriedResultA: Result<T, E>) =>
+        curriedResultA.match({
+          Err: () => isErr(resultB),
+          Ok: a => isOk(resultB) && resultB.unsafelyUnwrap() === a,
+        });
 }
 
 /**

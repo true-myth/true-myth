@@ -223,7 +223,7 @@ export class Just<T> implements MaybeShape<T> {
   }
 
   /** Method variant for [`Maybe.ap`](../modules/_maybe_.html#ap) */
-  ap<U>(this: Maybe<(val: T) => U>, val: Maybe<T>): Maybe<U> {
+  ap<A, B>(this: Maybe<(val: A) => B>, val: Maybe<A>): Maybe<B> {
     return ap(this, val);
   }
 }
@@ -361,11 +361,11 @@ export class Nothing<T> implements MaybeShape<T> {
 
   /** Method variant for [`Maybe.equals`](../modules/_maybe_.html#equals) */
   equals(this: Maybe<T>, comparison: Maybe<T>): boolean {
-    return equals(comparison, this)
+    return equals(comparison, this);
   }
 
   /** Method variant for [`Maybe.ap`](../modules/_maybe_.html#ap) */
-  ap<U>(this: Maybe<(val: T) => U>, val: Maybe<T>): Maybe<U> {
+  ap<A, B>(this: Maybe<(val: A) => B>, val: Maybe<A>): Maybe<B> {
     return ap(this, val);
   }
 }
@@ -1048,21 +1048,22 @@ export const cata = match;
  * Maybe.equals(c, d); // true
  * ```
  *
- * @param b A `maybe` to compare to.
- * @param a A `maybe` instance to check.
+ * @param mb A `maybe` to compare to.
+ * @param ma A `maybe` instance to check.
  */
-export function equals<T>(b: Maybe<T>, a: Maybe<T>): boolean;
-export function equals<T>(b: Maybe<T>): (a: Maybe<T>) => boolean;
-export function equals<T>(b: Maybe<T>, a?: Maybe<T>): boolean | ((a: Maybe<T>) => boolean) {
-  return a !== undefined
-    ? a.match({
-      Nothing: () => isNothing(b),
-      Just: (a) => isJust(b) && b.unsafelyUnwrap() === a,
-    })
-    : (a: Maybe<T>) => a.match({
-      Nothing: () => isNothing(b),
-      Just: (a) => isJust(b) && b.unsafelyUnwrap() === a,
-    });
+export function equals<T>(mb: Maybe<T>, ma: Maybe<T>): boolean;
+export function equals<T>(mb: Maybe<T>): (ma: Maybe<T>) => boolean;
+export function equals<T>(mb: Maybe<T>, ma?: Maybe<T>): boolean | ((a: Maybe<T>) => boolean) {
+  return ma !== undefined
+    ? ma.match({
+        Just: aVal => isJust(mb) && mb.unsafelyUnwrap() === aVal,
+        Nothing: () => isNothing(mb),
+      })
+    : (maybeA: Maybe<T>) =>
+        maybeA.match({
+          Nothing: () => isNothing(mb),
+          Just: aVal => isJust(mb) && mb.unsafelyUnwrap() === aVal,
+        });
 }
 
 /**
@@ -1077,8 +1078,8 @@ export function equals<T>(b: Maybe<T>, a?: Maybe<T>): boolean | ((a: Maybe<T>) =
  * Maybe.of(toString).ap(Maybe.of(null)); // Nothing
  * ```
  *
- * Or let's say you need to compare the equality of two ImmutableJS data structures,
- * where a `===` comparison won't work.
+ * Or let's say you need to compare the equality of two ImmutableJS data
+ * structures, where a `===` comparison won't work.
  *
  * ```ts
  * import Immutable from 'immutable';
@@ -1092,20 +1093,23 @@ export function equals<T>(b: Maybe<T>, a?: Maybe<T>): boolean | ((a: Maybe<T>) =
  * ```
  *
  * @param fn maybe a function from T to U
- * @param val maybe a T to apply to `fn`
+ * @param maybe maybe a T to apply to `fn`
  */
-export function ap<T, U>(fn: Maybe<(val: T) => U>, val: Maybe<T>): Maybe<U>;
-export function ap<T, U>(fn: Maybe<(val: T) => U>): (val: Maybe<T>) => Maybe<U>;
-export function ap<T, U>(fn: Maybe<(val: T) => U>, val?: Maybe<T>): Maybe<U> | ((val: Maybe<T>) => Maybe<U>) {
-  return val !== undefined
-    ? val.match({
-      Just: (val) => fn.map((f) => f(val)),
-      Nothing: () => Maybe.nothing<U>()
-    })
-    : (val: Maybe<T>) =>
-        val.match({
-          Just: (val) => fn.map((f) => f(val)),
-          Nothing: () => Maybe.nothing<U>()
+export function ap<T, U>(fn: Maybe<(t: T) => U>, maybe: Maybe<T>): Maybe<U>;
+export function ap<T, U>(fn: Maybe<(t: T) => U>): (maybe: Maybe<T>) => Maybe<U>;
+export function ap<T, U>(
+  fn: Maybe<(val: T) => U>,
+  maybe?: Maybe<T>
+): Maybe<U> | ((val: Maybe<T>) => Maybe<U>) {
+  return maybe !== undefined
+    ? maybe.match({
+        Just: val => fn.map(f => f(val)),
+        Nothing: () => Maybe.nothing<U>(),
+      })
+    : (curriedMaybe: Maybe<T>) =>
+        curriedMaybe.match({
+          Just: val => fn.map(f => f(val)),
+          Nothing: () => Maybe.nothing<U>(),
         });
 }
 
