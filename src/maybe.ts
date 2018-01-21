@@ -72,6 +72,9 @@ export interface MaybeShape<T> {
 
   /** Method variant for [`Maybe.equals`](../modules/_maybe_.html#equals) */
   equals(this: Maybe<T>, comparison: Maybe<T>): boolean;
+
+  /** Method variant for [`Maybe.ap`](../modules/_maybe_.html#ap) */
+  ap<U>(this: Maybe<(val: T) => U>, val: Maybe<T>): Maybe<U>;
 }
 
 /**
@@ -216,7 +219,12 @@ export class Just<T> implements MaybeShape<T> {
 
   /** Method variant for [`Maybe.equals`](../modules/_maybe_.html#equals) */
   equals(this: Maybe<T>, comparison: Maybe<T>): boolean {
-    return equals(comparison, this)
+    return equals(comparison, this);
+  }
+
+  /** Method variant for [`Maybe.ap`](../modules/_maybe_.html#ap) */
+  ap<U>(this: Maybe<(val: T) => U>, val: Maybe<T>): Maybe<U> {
+    return ap(this, val);
   }
 }
 
@@ -354,6 +362,11 @@ export class Nothing<T> implements MaybeShape<T> {
   /** Method variant for [`Maybe.equals`](../modules/_maybe_.html#equals) */
   equals(this: Maybe<T>, comparison: Maybe<T>): boolean {
     return equals(comparison, this)
+  }
+
+  /** Method variant for [`Maybe.ap`](../modules/_maybe_.html#ap) */
+  ap<U>(this: Maybe<(val: T) => U>, val: Maybe<T>): Maybe<U> {
+    return ap(this, val);
   }
 }
 
@@ -1052,6 +1065,50 @@ export function equals<T>(b: Maybe<T>, a?: Maybe<T>): boolean | ((a: Maybe<T>) =
     });
 }
 
+/**
+ * Allows you to apply a value to a function without having to take either out
+ * of the context of their `Maybe`s. This does mean that the transforming function
+ * is itself within a `Maybe`, which can be hard to grok. This allows you to do
+ * convenient things like this:
+ *
+ * ```ts
+ * Maybe.of(add).ap(Maybe.of(1)).ap(Maybe.of(5)); // Maybe(6)
+ * Maybe.of(toString).ap(Maybe.of(4)); // Maybe('4')
+ * Maybe.of(toString).ap(Maybe.of(null)); // Nothing
+ * ```
+ *
+ * Or let's say you need to compare the equality of two ImmutableJS data structures,
+ * where a `===` comparison won't work.
+ *
+ * ```ts
+ * import Immutable from 'immutable';
+ *
+ * const is = curry(Immutable.is);
+ *
+ * const x = Maybe.of(Immutable.Set.of(1, 2, 3));
+ * const y = Maybe.of(Immutable.Set.of(2, 3, 4));
+ *
+ * Maybe.of(is).ap(x).ap(y); // Maybe(false)
+ * ```
+ *
+ * @param fn maybe a function from T to U
+ * @param val maybe a T to apply to `fn`
+ */
+export function ap<T, U>(fn: Maybe<(val: T) => U>, val: Maybe<T>): Maybe<U>;
+export function ap<T, U>(fn: Maybe<(val: T) => U>): (val: Maybe<T>) => Maybe<U>;
+export function ap<T, U>(fn: Maybe<(val: T) => U>, val?: Maybe<T>): Maybe<U> | ((val: Maybe<T>) => Maybe<U>) {
+  return val !== undefined
+    ? val.match({
+      Just: (val) => fn.map((f) => f(val)),
+      Nothing: () => Maybe.nothing<U>()
+    })
+    : (val: Maybe<T>) =>
+        val.match({
+          Just: (val) => fn.map((f) => f(val)),
+          Nothing: () => Maybe.nothing<U>()
+        });
+}
+
 /** A value which may (`Just<T>`) or may not (`Nothing`) be present. */
 export type Maybe<T> = Just<T> | Nothing<T>;
 export const Maybe = {
@@ -1087,6 +1144,7 @@ export const Maybe = {
   match,
   cata,
   equals,
+  ap,
 };
 
 export default Maybe;
