@@ -863,14 +863,14 @@ Maybe.of(is).ap(x).ap(y); <span class="hljs-comment">// Maybe(false)</span>
 									<p>Allows quick triple-equal equality check between the values inside two <code>maybe</code>s
 									without having to unwrap them first.</p>
 								</div>
-								<pre><code class="lang-ts"><span class="hljs-keyword">const</span> a = Maybe.of(<span class="hljs-number">3</span>)
-<span class="hljs-keyword">const</span> b = Maybe.of(<span class="hljs-number">3</span>)
-<span class="hljs-keyword">const</span> c = Maybe.of(<span class="hljs-literal">null</span>)
-<span class="hljs-keyword">const</span> d = Maybe.nothing()
+								<pre><code class="lang-ts"><span class="hljs-keyword">const</span> a = Maybe.of(<span class="hljs-number">3</span>);
+<span class="hljs-keyword">const</span> b = Maybe.of(<span class="hljs-number">3</span>);
+<span class="hljs-keyword">const</span> c = Maybe.of(<span class="hljs-literal">null</span>);
+<span class="hljs-keyword">const</span> d = Maybe.nothing();
 
-Maybe.equals(a, b) <span class="hljs-comment">// true</span>
-Maybe.equals(a, c) <span class="hljs-comment">// false</span>
-Maybe.equals(c, d) <span class="hljs-comment">// true</span>
+Maybe.equals(a, b); <span class="hljs-comment">// true</span>
+Maybe.equals(a, c); <span class="hljs-comment">// false</span>
+Maybe.equals(c, d); <span class="hljs-comment">// true</span>
 </code></pre>
 							</div>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>

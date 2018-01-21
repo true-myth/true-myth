@@ -1038,14 +1038,14 @@ export const cata = match;
  * without having to unwrap them first.
  *
  * ```ts
- * const a = Maybe.of(3)
- * const b = Maybe.of(3)
- * const c = Maybe.of(null)
- * const d = Maybe.nothing()
+ * const a = Maybe.of(3);
+ * const b = Maybe.of(3);
+ * const c = Maybe.of(null);
+ * const d = Maybe.nothing();
  *
- * Maybe.equals(a, b) // true
- * Maybe.equals(a, c) // false
- * Maybe.equals(c, d) // true
+ * Maybe.equals(a, b); // true
+ * Maybe.equals(a, c); // false
+ * Maybe.equals(c, d); // true
  * ```
  *
  * @param b A `maybe` to compare to.

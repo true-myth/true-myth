@@ -300,6 +300,16 @@ describe('`Maybe` pure functions', () => {
     expect(Maybe.equals(d, c)).toBe(true);
     expect(Maybe.equals(d)(c)).toBe(true);
   });
+
+  test('`ap`', () => {
+    const add = (a) => (b) => a + b
+    const fn = Maybe.of<(val: number) => number>(add(3));
+    const val = Maybe.of(2);
+
+    const result = Maybe.ap(fn, val);
+
+    expect(Maybe.equals(result, Maybe.of(5))).toBe(true);
+  });
 });
 
 describe('`Maybe.Just` class', () => {
@@ -439,6 +449,26 @@ describe('`Maybe.Just` class', () => {
   test('`toString` method', () => {
     expect(Maybe.of(42).toString()).toEqual('Just(42)');
   });
+
+  test('`equals` method', () => {
+    const a = new Maybe.Just<string>('a');
+    const b = new Maybe.Just<string>('a');
+    const c = new Maybe.Just<string>('b');
+    const d = new Maybe.Nothing<string>();
+    expect(a.equals(b)).toBe(true);
+    expect(b.equals(c)).toBe(false);
+    expect(c.equals(d)).toBe(false);
+  });
+
+  test('`ap` method', () => {
+    const toString = (a: number) => a.toString();
+    const fn = new Maybe.Just<(val: number) => string>(toString);
+    const val = new Maybe.Just<number>(3);
+
+    const result = fn.ap<number>(val);
+
+    expect(result.equals(Maybe.of('3'))).toBe(true);
+  });
 });
 
 describe('`Maybe.Nothing` class', () => {
@@ -563,13 +593,20 @@ describe('`Maybe.Nothing` class', () => {
 
   test('`equals` method', () => {
     const a = new Maybe.Just<string>('a');
-    const b = new Maybe.Just<string>('a');
+    const b = new Maybe.Nothing<string>();
     const c = new Maybe.Nothing<string>();
-    const d = new Maybe.Nothing<string>();
-    expect(a.equals(b)).toBe(true);
-    expect(b.equals(c)).toBe(false);
-    expect(c.equals(d)).toBe(true);
+    expect(a.equals(b)).toBe(false);
+    expect(b.equals(c)).toBe(true);
   });
+
+  test('`ap` method', () => {
+    const fn = new Maybe.Nothing<(val: string) => number>();
+    const val = new Maybe.Just<string>('three');
+
+    const result = fn.ap(val);
+
+    expect(result.isNothing()).toBe(true);
+  })
 });
 
 test('`Maybe` classes interacting', () => {
