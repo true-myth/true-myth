@@ -1092,25 +1092,22 @@ export function equals<T>(mb: Maybe<T>, ma?: Maybe<T>): boolean | ((a: Maybe<T>)
  * Maybe.of(is).ap(x).ap(y); // Maybe(false)
  * ```
  *
- * @param fn maybe a function from T to U
+ * @param maybeFn maybe a function from T to U
  * @param maybe maybe a T to apply to `fn`
  */
-export function ap<T, U>(fn: Maybe<(t: T) => U>, maybe: Maybe<T>): Maybe<U>;
-export function ap<T, U>(fn: Maybe<(t: T) => U>): (maybe: Maybe<T>) => Maybe<U>;
+export function ap<T, U>(maybeFn: Maybe<(t: T) => U>, maybe: Maybe<T>): Maybe<U>;
+export function ap<T, U>(maybeFn: Maybe<(t: T) => U>): (maybe: Maybe<T>) => Maybe<U>;
 export function ap<T, U>(
-  fn: Maybe<(val: T) => U>,
+  maybeFn: Maybe<(val: T) => U>,
   maybe?: Maybe<T>
 ): Maybe<U> | ((val: Maybe<T>) => Maybe<U>) {
-  return maybe !== undefined
-    ? maybe.match({
-        Just: val => fn.map(f => f(val)),
-        Nothing: () => Maybe.nothing<U>(),
-      })
-    : (curriedMaybe: Maybe<T>) =>
-        curriedMaybe.match({
-          Just: val => fn.map(f => f(val)),
-          Nothing: () => Maybe.nothing<U>(),
-        });
+  const op = (m: Maybe<T>) =>
+    m.match({
+      Just: val => maybeFn.map(fn => fn(val)),
+      Nothing: () => Maybe.nothing<U>(),
+    });
+
+  return curry1(op, maybe);
 }
 
 /** A value which may (`Just<T>`) or may not (`Nothing`) be present. */

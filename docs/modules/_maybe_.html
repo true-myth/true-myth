@@ -742,8 +742,8 @@ takesAMaybeString(nothingHereEither);
 					<a name="ap" class="tsd-anchor"></a>
 					<h3>ap</h3>
 					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-external-module tsd-has-type-parameter">
-						<li class="tsd-signature tsd-kind-icon">ap&lt;T, U&gt;<span class="tsd-signature-symbol">(</span>fn<span class="tsd-signature-symbol">: </span><a href="_maybe_.html#maybe" class="tsd-signature-type">Maybe</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">function</span><span class="tsd-signature-symbol">&gt;</span>, maybe<span class="tsd-signature-symbol">: </span><a href="_maybe_.html#maybe" class="tsd-signature-type">Maybe</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_maybe_.html#maybe" class="tsd-signature-type">Maybe</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">U</span><span class="tsd-signature-symbol">&gt;</span></li>
-						<li class="tsd-signature tsd-kind-icon">ap&lt;T, U&gt;<span class="tsd-signature-symbol">(</span>fn<span class="tsd-signature-symbol">: </span><a href="_maybe_.html#maybe" class="tsd-signature-type">Maybe</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">function</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">function</span></li>
+						<li class="tsd-signature tsd-kind-icon">ap&lt;T, U&gt;<span class="tsd-signature-symbol">(</span>maybeFn<span class="tsd-signature-symbol">: </span><a href="_maybe_.html#maybe" class="tsd-signature-type">Maybe</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">function</span><span class="tsd-signature-symbol">&gt;</span>, maybe<span class="tsd-signature-symbol">: </span><a href="_maybe_.html#maybe" class="tsd-signature-type">Maybe</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_maybe_.html#maybe" class="tsd-signature-type">Maybe</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">U</span><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon">ap&lt;T, U&gt;<span class="tsd-signature-symbol">(</span>maybeFn<span class="tsd-signature-symbol">: </span><a href="_maybe_.html#maybe" class="tsd-signature-type">Maybe</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">function</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">function</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
@@ -787,7 +787,7 @@ Maybe.of(is).ap(x).ap(y); <span class="hljs-comment">// Maybe(false)</span>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>fn: <a href="_maybe_.html#maybe" class="tsd-signature-type">Maybe</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">function</span><span class="tsd-signature-symbol">&gt;</span></h5>
+									<h5>maybeFn: <a href="_maybe_.html#maybe" class="tsd-signature-type">Maybe</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">function</span><span class="tsd-signature-symbol">&gt;</span></h5>
 									<div class="tsd-comment tsd-typography">
 										<p>maybe a function from T to U</p>
 									</div>
@@ -819,7 +819,7 @@ Maybe.of(is).ap(x).ap(y); <span class="hljs-comment">// Maybe(false)</span>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>fn: <a href="_maybe_.html#maybe" class="tsd-signature-type">Maybe</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">function</span><span class="tsd-signature-symbol">&gt;</span></h5>
+									<h5>maybeFn: <a href="_maybe_.html#maybe" class="tsd-signature-type">Maybe</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">function</span><span class="tsd-signature-symbol">&gt;</span></h5>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">function</span></h4>
@@ -2781,8 +2781,8 @@ mightBeANumber
 					<div class="tsd-signature tsd-kind-icon">Maybe<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">object</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in maybe.ts:1117</li>
-							<li>Defined in maybe.ts:1118</li>
+							<li>Defined in maybe.ts:1114</li>
+							<li>Defined in maybe.ts:1115</li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -2796,7 +2796,7 @@ mightBeANumber
 						<div class="tsd-signature tsd-kind-icon">Just<span class="tsd-signature-symbol">:</span> <a href="../classes/_maybe_.just.html" class="tsd-signature-type">Just</a></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in maybe.ts:1120</li>
+								<li>Defined in maybe.ts:1117</li>
 							</ul>
 						</aside>
 					</section>
@@ -2806,7 +2806,7 @@ mightBeANumber
 						<div class="tsd-signature tsd-kind-icon">Nothing<span class="tsd-signature-symbol">:</span> <a href="../classes/_maybe_.nothing.html" class="tsd-signature-type">Nothing</a></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in maybe.ts:1121</li>
+								<li>Defined in maybe.ts:1118</li>
 							</ul>
 						</aside>
 					</section>
@@ -2816,7 +2816,7 @@ mightBeANumber
 						<div class="tsd-signature tsd-kind-icon">Variant<span class="tsd-signature-symbol">:</span> <a href="../enums/_maybe_.variant.html" class="tsd-signature-type">Variant</a></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in maybe.ts:1119</li>
+								<li>Defined in maybe.ts:1116</li>
 							</ul>
 						</aside>
 					</section>
@@ -2826,7 +2826,7 @@ mightBeANumber
 						<div class="tsd-signature tsd-kind-icon">and<span class="tsd-signature-symbol">:</span> <a href="_maybe_.html#and" class="tsd-signature-type">and</a></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in maybe.ts:1131</li>
+								<li>Defined in maybe.ts:1128</li>
 							</ul>
 						</aside>
 					</section>
@@ -2836,7 +2836,7 @@ mightBeANumber
 						<div class="tsd-signature tsd-kind-icon">and<wbr>Then<span class="tsd-signature-symbol">:</span> <a href="_maybe_.html#andthen" class="tsd-signature-type">andThen</a></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in maybe.ts:1132</li>
+								<li>Defined in maybe.ts:1129</li>
 							</ul>
 						</aside>
 					</section>
@@ -2846,7 +2846,7 @@ mightBeANumber
 						<div class="tsd-signature tsd-kind-icon">ap<span class="tsd-signature-symbol">:</span> <a href="_maybe_.html#ap" class="tsd-signature-type">ap</a></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in maybe.ts:1151</li>
+								<li>Defined in maybe.ts:1148</li>
 							</ul>
 						</aside>
 					</section>
@@ -2856,7 +2856,7 @@ mightBeANumber
 						<div class="tsd-signature tsd-kind-icon">cata<span class="tsd-signature-symbol">:</span> <a href="_maybe_.html#match" class="tsd-signature-type">match</a></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in maybe.ts:1149</li>
+								<li>Defined in maybe.ts:1146</li>
 							</ul>
 						</aside>
 					</section>
@@ -2866,7 +2866,7 @@ mightBeANumber
 						<div class="tsd-signature tsd-kind-icon">chain<span class="tsd-signature-symbol">:</span> <a href="_maybe_.html#andthen" class="tsd-signature-type">andThen</a></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in maybe.ts:1133</li>
+								<li>Defined in maybe.ts:1130</li>
 							</ul>
 						</aside>
 					</section>
@@ -2876,7 +2876,7 @@ mightBeANumber
 						<div class="tsd-signature tsd-kind-icon">equals<span class="tsd-signature-symbol">:</span> <a href="_maybe_.html#equals" class="tsd-signature-type">equals</a></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in maybe.ts:1150</li>
+								<li>Defined in maybe.ts:1147</li>
 							</ul>
 						</aside>
 					</section>
@@ -2886,7 +2886,7 @@ mightBeANumber
 						<div class="tsd-signature tsd-kind-icon">flat<wbr>Map<span class="tsd-signature-symbol">:</span> <a href="_maybe_.html#andthen" class="tsd-signature-type">andThen</a></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in maybe.ts:1134</li>
+								<li>Defined in maybe.ts:1131</li>
 							</ul>
 						</aside>
 					</section>
@@ -2896,7 +2896,7 @@ mightBeANumber
 						<div class="tsd-signature tsd-kind-icon">from<wbr>Nullable<span class="tsd-signature-symbol">:</span> <a href="_maybe_.html#of" class="tsd-signature-type">of</a></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in maybe.ts:1127</li>
+								<li>Defined in maybe.ts:1124</li>
 							</ul>
 						</aside>
 					</section>
@@ -2906,7 +2906,7 @@ mightBeANumber
 						<div class="tsd-signature tsd-kind-icon">from<wbr>Result<span class="tsd-signature-symbol">:</span> <a href="_maybe_.html#fromresult" class="tsd-signature-type">fromResult</a></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in maybe.ts:1146</li>
+								<li>Defined in maybe.ts:1143</li>
 							</ul>
 						</aside>
 					</section>
@@ -2916,7 +2916,7 @@ mightBeANumber
 						<div class="tsd-signature tsd-kind-icon">get<wbr>Or<span class="tsd-signature-symbol">:</span> <a href="_maybe_.html#unwrapor" class="tsd-signature-type">unwrapOr</a></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in maybe.ts:1141</li>
+								<li>Defined in maybe.ts:1138</li>
 							</ul>
 						</aside>
 					</section>
@@ -2926,7 +2926,7 @@ mightBeANumber
 						<div class="tsd-signature tsd-kind-icon">get<wbr>OrElse<span class="tsd-signature-symbol">:</span> <a href="_maybe_.html#unwraporelse" class="tsd-signature-type">unwrapOrElse</a></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in maybe.ts:1143</li>
+								<li>Defined in maybe.ts:1140</li>
 							</ul>
 						</aside>
 					</section>
@@ -2936,7 +2936,7 @@ mightBeANumber
 						<div class="tsd-signature tsd-kind-icon">is<wbr>Just<span class="tsd-signature-symbol">:</span> <a href="_maybe_.html#isjust" class="tsd-signature-type">isJust</a></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in maybe.ts:1122</li>
+								<li>Defined in maybe.ts:1119</li>
 							</ul>
 						</aside>
 					</section>
@@ -2946,7 +2946,7 @@ mightBeANumber
 						<div class="tsd-signature tsd-kind-icon">is<wbr>Nothing<span class="tsd-signature-symbol">:</span> <a href="_maybe_.html#isnothing" class="tsd-signature-type">isNothing</a></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in maybe.ts:1123</li>
+								<li>Defined in maybe.ts:1120</li>
 							</ul>
 						</aside>
 					</section>
@@ -2956,7 +2956,7 @@ mightBeANumber
 						<div class="tsd-signature tsd-kind-icon">just<span class="tsd-signature-symbol">:</span> <a href="_maybe_.html#just-2" class="tsd-signature-type">just</a></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in maybe.ts:1124</li>
+								<li>Defined in maybe.ts:1121</li>
 							</ul>
 						</aside>
 					</section>
@@ -2966,7 +2966,7 @@ mightBeANumber
 						<div class="tsd-signature tsd-kind-icon">map<span class="tsd-signature-symbol">:</span> <a href="_maybe_.html#map" class="tsd-signature-type">map</a></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in maybe.ts:1128</li>
+								<li>Defined in maybe.ts:1125</li>
 							</ul>
 						</aside>
 					</section>
@@ -2976,7 +2976,7 @@ mightBeANumber
 						<div class="tsd-signature tsd-kind-icon">map<wbr>Or<span class="tsd-signature-symbol">:</span> <a href="_maybe_.html#mapor" class="tsd-signature-type">mapOr</a></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in maybe.ts:1129</li>
+								<li>Defined in maybe.ts:1126</li>
 							</ul>
 						</aside>
 					</section>
@@ -2986,7 +2986,7 @@ mightBeANumber
 						<div class="tsd-signature tsd-kind-icon">map<wbr>OrElse<span class="tsd-signature-symbol">:</span> <a href="_maybe_.html#maporelse" class="tsd-signature-type">mapOrElse</a></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in maybe.ts:1130</li>
+								<li>Defined in maybe.ts:1127</li>
 							</ul>
 						</aside>
 					</section>
@@ -2996,7 +2996,7 @@ mightBeANumber
 						<div class="tsd-signature tsd-kind-icon">match<span class="tsd-signature-symbol">:</span> <a href="_maybe_.html#match" class="tsd-signature-type">match</a></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in maybe.ts:1148</li>
+								<li>Defined in maybe.ts:1145</li>
 							</ul>
 						</aside>
 					</section>
@@ -3006,7 +3006,7 @@ mightBeANumber
 						<div class="tsd-signature tsd-kind-icon">nothing<span class="tsd-signature-symbol">:</span> <a href="_maybe_.html#nothing-2" class="tsd-signature-type">nothing</a></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in maybe.ts:1125</li>
+								<li>Defined in maybe.ts:1122</li>
 							</ul>
 						</aside>
 					</section>
@@ -3016,7 +3016,7 @@ mightBeANumber
 						<div class="tsd-signature tsd-kind-icon">of<span class="tsd-signature-symbol">:</span> <a href="_maybe_.html#of" class="tsd-signature-type">of</a></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in maybe.ts:1126</li>
+								<li>Defined in maybe.ts:1123</li>
 							</ul>
 						</aside>
 					</section>
@@ -3026,7 +3026,7 @@ mightBeANumber
 						<div class="tsd-signature tsd-kind-icon">or<span class="tsd-signature-symbol">:</span> <a href="_maybe_.html#or" class="tsd-signature-type">or</a></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in maybe.ts:1135</li>
+								<li>Defined in maybe.ts:1132</li>
 							</ul>
 						</aside>
 					</section>
@@ -3036,7 +3036,7 @@ mightBeANumber
 						<div class="tsd-signature tsd-kind-icon">or<wbr>Else<span class="tsd-signature-symbol">:</span> <a href="_maybe_.html#orelse" class="tsd-signature-type">orElse</a></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in maybe.ts:1136</li>
+								<li>Defined in maybe.ts:1133</li>
 							</ul>
 						</aside>
 					</section>
@@ -3046,7 +3046,7 @@ mightBeANumber
 						<div class="tsd-signature tsd-kind-icon">to<wbr>OkOr<wbr>Else<wbr>Err<span class="tsd-signature-symbol">:</span> <a href="_maybe_.html#tookorelseerr" class="tsd-signature-type">toOkOrElseErr</a></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in maybe.ts:1145</li>
+								<li>Defined in maybe.ts:1142</li>
 							</ul>
 						</aside>
 					</section>
@@ -3056,7 +3056,7 @@ mightBeANumber
 						<div class="tsd-signature tsd-kind-icon">to<wbr>OkOr<wbr>Err<span class="tsd-signature-symbol">:</span> <a href="_maybe_.html#tookorerr" class="tsd-signature-type">toOkOrErr</a></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in maybe.ts:1144</li>
+								<li>Defined in maybe.ts:1141</li>
 							</ul>
 						</aside>
 					</section>
@@ -3066,7 +3066,7 @@ mightBeANumber
 						<div class="tsd-signature tsd-kind-icon">to<wbr>String<span class="tsd-signature-symbol">:</span> <a href="_maybe_.html#tostring" class="tsd-signature-type">toString</a></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in maybe.ts:1147</li>
+								<li>Defined in maybe.ts:1144</li>
 							</ul>
 						</aside>
 					</section>
@@ -3076,7 +3076,7 @@ mightBeANumber
 						<div class="tsd-signature tsd-kind-icon">unsafe<wbr>Get<span class="tsd-signature-symbol">:</span> <a href="" class="tsd-signature-type">unsafelyUnwrap</a></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in maybe.ts:1139</li>
+								<li>Defined in maybe.ts:1136</li>
 							</ul>
 						</aside>
 					</section>
@@ -3086,7 +3086,7 @@ mightBeANumber
 						<div class="tsd-signature tsd-kind-icon">unsafely<wbr>Get<span class="tsd-signature-symbol">:</span> <a href="" class="tsd-signature-type">unsafelyUnwrap</a></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in maybe.ts:1138</li>
+								<li>Defined in maybe.ts:1135</li>
 							</ul>
 						</aside>
 					</section>
@@ -3096,7 +3096,7 @@ mightBeANumber
 						<div class="tsd-signature tsd-kind-icon">unsafely<wbr>Unwrap<span class="tsd-signature-symbol">:</span> <a href="" class="tsd-signature-type">unsafelyUnwrap</a></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in maybe.ts:1137</li>
+								<li>Defined in maybe.ts:1134</li>
 							</ul>
 						</aside>
 					</section>
@@ -3106,7 +3106,7 @@ mightBeANumber
 						<div class="tsd-signature tsd-kind-icon">unwrap<wbr>Or<span class="tsd-signature-symbol">:</span> <a href="_maybe_.html#unwrapor" class="tsd-signature-type">unwrapOr</a></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in maybe.ts:1140</li>
+								<li>Defined in maybe.ts:1137</li>
 							</ul>
 						</aside>
 					</section>
@@ -3116,7 +3116,7 @@ mightBeANumber
 						<div class="tsd-signature tsd-kind-icon">unwrap<wbr>OrElse<span class="tsd-signature-symbol">:</span> <a href="_maybe_.html#unwraporelse" class="tsd-signature-type">unwrapOrElse</a></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in maybe.ts:1142</li>
+								<li>Defined in maybe.ts:1139</li>
 							</ul>
 						</aside>
 					</section>
