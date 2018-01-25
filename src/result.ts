@@ -82,6 +82,9 @@ export interface ResultShape<T, E> {
 
   /** Method variant for [`Result.equals`](../modules/_result_.html#equals) */
   equals(this: Result<T, E>, comparison: Result<T, E>): boolean;
+
+  /** Method variant for [`Result.ap`](../modules/_result_.html#ap) */
+  ap<A, B, E>(this: Result<(a: A) => B, E>, r: Result<A, E>): Result<B, E>;
 }
 
 /**
@@ -240,6 +243,11 @@ export class Ok<T, E> implements ResultShape<T, E> {
   equals(this: Result<T, E>, comparison: Result<T, E>): boolean {
     return equals(comparison, this);
   }
+
+  /** Method variant for [`Result.ap`](../modules/_result_.html#ap) */
+  ap<A, B, E>(this: Result<(a: A) => B, E>, r: Result<A, E>): Result<B, E> {
+    return ap(this, r);
+  }
 }
 
 /**
@@ -397,6 +405,11 @@ export class Err<T, E> implements ResultShape<T, E> {
   /** Method variant for [`Result.equals`](../modules/_result_.html#equals) */
   equals(this: Result<T, E>, comparison: Result<T, E>): boolean {
     return equals(comparison, this);
+  }
+
+  /** Method variant for [`Result.ap`](../modules/_result_.html#ap) */
+  ap<A, B, E>(this: Result<(a: A) => B, E>, r: Result<A, E>): Result<B, E> {
+    return ap(this, r);
   }
 }
 
@@ -1223,6 +1236,50 @@ export function equals<T, E>(
 }
 
 /**
+ * Allows you to apply a value to a function without having to take either out
+ * of the context of their `Result`s. This does mean that the transforming function
+ * is itself within a `Result`, which can be hard to grok. This allows you to do
+ * convenient things like this:
+ *
+ * ```ts
+ * Result.of(add).ap(Result.of(1)).ap(Result.of(5)); // Result(6)
+ * Result.of(toString).ap(Result.of(4)); // Result('4')
+ * Result.of(toString).ap(Result.of(null)); // Nothing
+ * ```
+ *
+ * Or let's say you need to compare the equality of two ImmutableJS data
+ * structures, where a `===` comparison won't work.
+ *
+ * ```ts
+ * import Immutable from 'immutable';
+ *
+ * const is = curry(Immutable.is);
+ *
+ * const x = Result.of(Immutable.Set.of(1, 2, 3));
+ * const y = Result.of(Immutable.Set.of(2, 3, 4));
+ *
+ * Result.of(is).ap(x).ap(y); // Result(false)
+ * ```
+ *
+ * @param resultFn maybe a function from T to U
+ * @param result maybe a T to apply to `fn`
+ */
+export function ap<T, U, E>(resultFn: Result<(t: T) => U, E>, result: Result<T, E>): Result<U, E>;
+export function ap<T, U, E>(resultFn: Result<(t: T) => U, E>): (result: Result<T, E>) => Result<U, E>;
+export function ap<T, U, E>(
+  resultFn: Result<(val: T) => U, E>,
+  result?: Result<T, E>
+): Result<U, E> | ((val: Result<T, E>) => Result<U, E>) {
+  const op = (r: Result<T, E>) =>
+    r.match({
+      Ok: (val) => resultFn.map(fn => fn(val)),
+      Err: (e) => Result.err<U, E>(e),
+    });
+
+  return curry1(op, result);
+}
+
+/**
   A value which may (`Ok`) or may not (`Err`) be present.
 
   The behavior of this type is checked by TypeScript at compile time, and bears
@@ -1262,6 +1319,7 @@ export const Result = {
   match,
   cata,
   equals,
+  ap,
 };
 
 export default Result;

@@ -285,6 +285,16 @@ describe('`Result` pure functions', () => {
     expect(Result.equals(d, c)).toBe(true);
     expect(Result.equals(d)(c)).toBe(true);
   });
+
+  test('`ap`', () => {
+    const add = a => b => a + b;
+    const fn = Result.ok<(val: number) => number, string>(add(3));
+    const val = Result.ok(2);
+
+    const result = Result.ap(fn, val);
+
+    expect(Result.equals(result, Result.ok(5))).toBe(true);
+  });
 });
 
 describe('`Result.Ok` class', () => {
@@ -430,6 +440,15 @@ describe('`Result.Ok` class', () => {
     const theValue = 42;
     const theOk = new Result.Ok(theValue);
     expect(theOk.toString()).toEqual(`Ok(${theValue.toString()})`);
+  });
+
+  test('`ap` method', () => {
+    const fn = new Result.Ok<(val: string) => number, string>((str) => str.length);
+    const val = new Result.Ok('three');
+
+    const result = fn.ap(val);
+
+    expect(result.toString()).toEqual(`Ok(5)`);
   });
 });
 
@@ -597,5 +616,14 @@ describe('`Result.Err` class', () => {
     expect(a.equals(b)).toBe(true);
     expect(b.equals(c)).toBe(false);
     expect(c.equals(d)).toBe(true);
+  });
+
+  test('`ap` method', () => {
+    const fn = new Result.Err<(val: string) => number, string>("ERR_THESYSTEMISDOWN");
+    const val = new Result.Err('ERR_ALLURBASE');
+
+    const result = fn.ap(val);
+
+    expect(result.toString()).toEqual(`Err(ERR_ALLURBASE)`);
   });
 });

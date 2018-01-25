@@ -305,10 +305,13 @@ describe('`Maybe` pure functions', () => {
     const add = a => b => a + b;
     const fn = Maybe.of<(val: number) => number>(add(3));
     const val = Maybe.of(2);
+    const nada = Maybe.of(null);
 
     const result = Maybe.ap(fn, val);
+    const noResult = Maybe.ap(fn)(nada);
 
     expect(Maybe.equals(result, Maybe.of(5))).toBe(true);
+    expect(Maybe.isNothing(nada)).toBe(true);
   });
 });
 
