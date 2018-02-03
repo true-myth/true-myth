@@ -251,11 +251,7 @@ declare export var of: <T>(value: T | null | void) => Maybe<T>;
 declare export var fromNullable: <T>(value: T | null | void) => Maybe<T>;
 declare export var map: <T, U>(mapFn: (t: T) => U, maybe: Maybe<T>) => Maybe<U>;
 declare export var mapOr: <T, U>(orU: U, mapFn: (t: T) => U, maybe: Maybe<T>) => U;
-declare export var mapOrElse: <T, U>(
-  orElseFn: () => U,
-  mapFn: (t: T) => U,
-  maybe: Maybe<T>
-) => U;
+declare export var mapOrElse: <T, U>(orElseFn: () => U, mapFn: (t: T) => U, maybe: Maybe<T>) => U;
 declare export var match: <T, A>(matcher: Matcher<T, A>, maybe: Maybe<T>) => A;
 declare export var cata: <T, A>(matcher: Matcher<T, A>, maybe: Maybe<T>) => A;
 declare export var and: <T, U>(andMaybe: Maybe<U>, maybe: Maybe<T>) => Maybe<U>;
@@ -272,12 +268,11 @@ declare export var getOr: <T>(defaultValue: T, maybe: Maybe<T>) => T;
 declare export var unwrapOrElse: <T>(orElseFn: () => T, maybe: Maybe<T>) => T;
 declare export var getOrElse: <T>(orElseFn: () => T, maybe: Maybe<T>) => T;
 declare export var toOkOrErr: <T, E>(error: E, maybe: Maybe<T>) => Result.Result<T, E>;
-declare export var toOkOrElseErr: <T, E>(
-  elseFn: () => E,
-  maybe: Maybe<T>
-) => Result.Result<T, E>;
+declare export var toOkOrElseErr: <T, E>(elseFn: () => E, maybe: Maybe<T>) => Result.Result<T, E>;
 declare export var fromResult: <T, E>(result: Result.Result<T, E>) => Maybe<T>;
 declare export var toString: <T>(maybe: Maybe<T>) => string;
+declare export var equals: <T>(mb: Maybe<T>, ma: Maybe<T>) => boolean;
+declare export var ap: <T, U>(maybeFn: Maybe<(t: T) => U>, maybe: Maybe<T>) => Maybe<U>;
 declare export default {
   Variant: Variant,
   Just: typeof Just,
@@ -310,4 +305,6 @@ declare export default {
   toString: <T>(maybe: Maybe<T>) => string,
   match: <T, A>(matcher: Matcher<T, A>, maybe: Maybe<T>) => A,
   cata: <T, A>(matcher: Matcher<T, A>, maybe: Maybe<T>) => A,
+  equals: <T>(mb: Maybe<T>, ma: Maybe<T>) => boolean,
+  ap: <T, U>(maybeFn: Maybe<(t: T) => U>, maybe: Maybe<T>) => Maybe<U>,
 }

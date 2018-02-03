@@ -326,6 +326,8 @@ declare export var getOrElse: <T, E>(orElseFn: (error: E) => T, result: Result<T
 declare export var toMaybe: <T, E>(result: Result<T, E>) => Maybe<T>;
 declare export var fromMaybe: <T, E>(errValue: E, maybe: Maybe<T>) => Result<T, E>;
 declare export var toString: <T, E>(result: Result<T, E>) => string;
+declare export var equals: <T, E>(resultB: Result<T, E>, resultA: Result<T, E>) => boolean;
+declare export var ap: <T, U, E>(resultFn: Result<(t: T) => U, E>, result: Result<T, E>): Result<U, E>;
 declare export default {
   Variant: Variant,
   Ok: typeof Ok,
@@ -358,4 +360,6 @@ declare export default {
   toString: <T, E>(result: Result<T, E>) => string,
   match: <T, E, A>(matcher: Matcher<T, E, A>, result: Result<T, E>) => A,
   cata: <T, E, A>(matcher: Matcher<T, E, A>, result: Result<T, E>) => A,
+  equals: <T, E>(resultB: Result<T, E>, resultA: Result<T, E>) => boolean,
+  ap: <T, U, E>(resultFn: Result<(t: T) => U, E>, result: Result<T, E>) => Result<U, E>,
 }

@@ -43,7 +43,7 @@
   "devDependencies": {
     "@types/jest": "^22.1.1",
     "ember-cli": "^2.18.2",
-    "flow-bin": "^0.57.3",
+    "flow-bin": "^0.64.0",
     "husky": "^0.14.3",
     "jest": "^22.1.4",
     "libkit": "^0.5.17",
