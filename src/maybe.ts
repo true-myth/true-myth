@@ -15,6 +15,7 @@ export enum Variant {
   Nothing = 'Nothing',
 }
 
+/** Simply defines the common shape for `Just` and `Nothing`. */
 export interface MaybeShape<T> {
   /** Distinguish between the `Just` and `Nothing` [variants](../enums/_maybe_.variant). */
   variant: Variant;

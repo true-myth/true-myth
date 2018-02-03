@@ -19,6 +19,7 @@ export enum Variant {
   Err = 'Err',
 }
 
+/** Simply defines the common shape for `Ok` and `Err`. */
 export interface ResultShape<T, E> {
   /** Distinguish between the `Ok` and `Err` variants. */
   variant: Variant;
