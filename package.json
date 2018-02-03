@@ -52,7 +52,7 @@
     "shelljs": "^0.8.1",
     "ts-jest": "^22.0.3",
     "tslint": "^5.9.1",
-    "typedoc": "^0.8.0",
+    "typedoc": "^0.10.0",
     "typescript": "^2.7.1"
   },
   "jest": {
