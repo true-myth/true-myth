@@ -3220,9 +3220,25 @@ isValid(data) ? Result.ok() : Result.err(<span class="hljs-string">'something wa
 						<div class="tsd-signature tsd-kind-icon">Err<span class="tsd-signature-symbol">:</span> <a href="../classes/_result_.err.html" class="tsd-signature-type">Err</a></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in result.ts:1448</li>
+								<li>Defined in result.ts:1472</li>
 							</ul>
 						</aside>
+						<div class="tsd-comment tsd-typography">
+							<div class="lead">
+								<p>An <code>Err</code> instance is the <em>failure</em> variant instance of the
+									<a href="../modules/_result_.html#result"><code>Result</code></a> type, representing a failure
+									outcome from an operation which may fail. For a full discussion, see <a href="../modules/_result_.html">the
+								module docs</a>.</p>
+							</div>
+							<dl class="tsd-comment-tags">
+								<dt>typeparam</dt>
+								<dd><p>The type which would be wrapped in an <code>Ok</code> variant of <code>Result</code>.</p>
+								</dd>
+								<dt>typeparam</dt>
+								<dd><p>The type wrapped in this <code>Err</code> variant of <code>Result</code>.</p>
+								</dd>
+							</dl>
+						</div>
 					</section>
 					<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-object-literal">
 						<a name="result.ok-3" class="tsd-anchor"></a>
@@ -3230,9 +3246,25 @@ isValid(data) ? Result.ok() : Result.err(<span class="hljs-string">'something wa
 						<div class="tsd-signature tsd-kind-icon">Ok<span class="tsd-signature-symbol">:</span> <a href="../classes/_result_.ok.html" class="tsd-signature-type">Ok</a></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in result.ts:1447</li>
+								<li>Defined in result.ts:1462</li>
 							</ul>
 						</aside>
+						<div class="tsd-comment tsd-typography">
+							<div class="lead">
+								<p>An <code>Ok</code> instance is the <em>successful</em> variant instance of the
+									<a href="../modules/_result_.html#result"><code>Result</code></a> type, representing a successful
+									outcome from an operation which may fail. For a full discussion, see <a href="../modules/_result_.html">the
+								module docs</a>.</p>
+							</div>
+							<dl class="tsd-comment-tags">
+								<dt>typeparam</dt>
+								<dd><p>The type wrapped in this <code>Ok</code> variant of <code>Result</code>.</p>
+								</dd>
+								<dt>typeparam</dt>
+								<dd><p>The type which would be wrapped in an <code>Err</code> variant of <code>Result</code>.</p>
+								</dd>
+							</dl>
+						</div>
 					</section>
 					<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-object-literal">
 						<a name="result.variant-1" class="tsd-anchor"></a>
@@ -3240,9 +3272,16 @@ isValid(data) ? Result.ok() : Result.err(<span class="hljs-string">'something wa
 						<div class="tsd-signature tsd-kind-icon">Variant<span class="tsd-signature-symbol">:</span> <a href="../enums/_result_.variant.html" class="tsd-signature-type">Variant</a></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in result.ts:1446</li>
+								<li>Defined in result.ts:1452</li>
 							</ul>
 						</aside>
+						<div class="tsd-comment tsd-typography">
+							<div class="lead">
+								<p>Discriminant for <code>Ok</code> and <code>Err</code> variants of <code>Result</code> type.</p>
+							</div>
+							<p>You can use the discriminant via the <code>variant</code> property of <code>Result</code> instances
+							if you need to match explicitly on it.</p>
+						</div>
 					</section>
 					<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-object-literal">
 						<a name="result.and-1" class="tsd-anchor"></a>
@@ -3250,9 +3289,52 @@ isValid(data) ? Result.ok() : Result.err(<span class="hljs-string">'something wa
 						<div class="tsd-signature tsd-kind-icon">and<span class="tsd-signature-symbol">:</span> <a href="_result_.html#and" class="tsd-signature-type">and</a></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in result.ts:1457</li>
+								<li>Defined in result.ts:1759</li>
 							</ul>
 						</aside>
+						<div class="tsd-comment tsd-typography">
+							<div class="lead">
+								<p>You can think of this like a short-circuiting logical &quot;and&quot; operation on a
+									<code>Result</code> type. If <code>result</code> is <code>Ok</code>, then the result is the <code>andResult</code>. If
+								<code>result</code> is <code>Err</code>, the result is the <code>Err</code>.</p>
+							</div>
+							<p>This is useful when you have another <code>Result</code> value you want to provide if
+								and <em>only if</em> you have an <code>Ok</code> – that is, when you need to make sure that if you
+							<code>Err</code>, whatever else you&#39;re handing a <code>Result</code> to <em>also</em> gets that <code>Err</code>.</p>
+							<p>Notice that, unlike in <a href="#map"><code>map</code></a> or its variants, the original <code>result</code> is
+							not involved in constructing the new <code>Result</code>.</p>
+							<h4 id="examples">Examples</h4>
+							<pre><code class="lang-ts"><span class="hljs-keyword">import</span> { and, ok, err, toString } <span class="hljs-keyword">from</span> <span class="hljs-string">'true-myth/result'</span>;
+
+<span class="hljs-keyword">const</span> okA = ok(<span class="hljs-string">'A'</span>);
+<span class="hljs-keyword">const</span> okB = ok(<span class="hljs-string">'B'</span>);
+<span class="hljs-keyword">const</span> anErr = err({ so: <span class="hljs-string">'bad'</span> });
+
+<span class="hljs-built_in">console</span>.log(toString(and(okB, okA)));  <span class="hljs-comment">// Ok(B)</span>
+<span class="hljs-built_in">console</span>.log(toString(and(okB, anErr)));  <span class="hljs-comment">// Err([object Object])</span>
+<span class="hljs-built_in">console</span>.log(toString(and(anErr, okA)));  <span class="hljs-comment">// Err([object Object])</span>
+<span class="hljs-built_in">console</span>.log(toString(and(anErr, anErr)));  <span class="hljs-comment">// Err([object Object])</span>
+</code></pre>
+							<dl class="tsd-comment-tags">
+								<dt>typeparam</dt>
+								<dd><p>The type of the value wrapped in the <code>Ok</code> of the <code>Result</code>.</p>
+								</dd>
+								<dt>typeparam</dt>
+								<dd><p>The type of the value wrapped in the <code>Ok</code> of the <code>andResult</code>,
+										i.e. the success type of the <code>Result</code> present if the checked
+									<code>Result</code> is <code>Ok</code>.</p>
+								</dd>
+								<dt>typeparam</dt>
+								<dd><p>The type of the value wrapped in the <code>Err</code> of the <code>Result</code>.</p>
+								</dd>
+								<dt>param</dt>
+								<dd><p>The <code>Result</code> instance to return if <code>result</code> is <code>Err</code>.</p>
+								</dd>
+								<dt>param</dt>
+								<dd><p>The <code>Result</code> instance to check.</p>
+								</dd>
+							</dl>
+						</div>
 					</section>
 					<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-object-literal">
 						<a name="result.andthen-1" class="tsd-anchor"></a>
@@ -3260,9 +3342,58 @@ isValid(data) ? Result.ok() : Result.err(<span class="hljs-string">'something wa
 						<div class="tsd-signature tsd-kind-icon">and<wbr>Then<span class="tsd-signature-symbol">:</span> <a href="_result_.html#andthen" class="tsd-signature-type">andThen</a></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in result.ts:1458</li>
+								<li>Defined in result.ts:1806</li>
 							</ul>
 						</aside>
+						<div class="tsd-comment tsd-typography">
+							<div class="lead">
+								<p>Apply a function to the wrapped value if <code>Ok</code> and return a new <code>Ok</code>
+								containing the resulting value; or if it is <code>Err</code> return it unmodified.</p>
+							</div>
+							<p>This differs from <code>map</code> in that <code>thenFn</code> returns another <code>Result</code>. You can use
+								<code>andThen</code> to combine two functions which <em>both</em> create a <code>Result</code> from an
+							unwrapped type.</p>
+							<p>You may find the <code>.then</code> method on an ES6 <code>Promise</code> helpful for comparison: if
+								you have a <code>Promise</code>, you can pass its <code>then</code> method a callback which
+								returns another <code>Promise</code>, and the result will not be a <em>nested</em> promise, but
+								a single <code>Promise</code>. The difference is that <code>Promise#then</code> unwraps <em>all</em>
+								layers to only ever return a single <code>Promise</code> value, whereas <code>Result.andThen</code>
+							will not unwrap nested <code>Result</code>s.</p>
+							<p>This is also commonly known as (and therefore aliased as) <a href="#flatmap"><code>flatMap</code></a> or
+								<a href="#chain"><code>chain</code></a>. It is sometimes also known as <code>bind</code>, but <em>not</em> aliased as such
+							because <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function/bind"><code>bind</code> already means something in JavaScript</a>.</p>
+							<h4 id="examples">Examples</h4>
+							<pre><code class="lang-ts"><span class="hljs-keyword">import</span> { ok, err, andThen, toString } <span class="hljs-keyword">from</span> <span class="hljs-string">'true-myth/result'</span>;
+
+<span class="hljs-keyword">const</span> toLengthAsResult = <span class="hljs-function">(<span class="hljs-params">s: <span class="hljs-built_in">string</span></span>) =&gt;</span> ok(s.length);
+
+<span class="hljs-keyword">const</span> anOk = ok(<span class="hljs-string">'just a string'</span>);
+<span class="hljs-keyword">const</span> lengthAsResult = andThen(toLengthAsResult, anOk);
+<span class="hljs-built_in">console</span>.log(toString(lengthAsResult));  <span class="hljs-comment">// Ok(13)</span>
+
+<span class="hljs-keyword">const</span> anErr = err([<span class="hljs-string">'srsly'</span>, <span class="hljs-string">'whatever'</span>]);
+<span class="hljs-keyword">const</span> notLengthAsResult = andThen(toLengthAsResult, anErr);
+<span class="hljs-built_in">console</span>.log(toString(notLengthAsResult));  <span class="hljs-comment">// Err(srsly,whatever)</span>
+</code></pre>
+							<dl class="tsd-comment-tags">
+								<dt>typeparam</dt>
+								<dd><p>The type of the value wrapped in the <code>Ok</code> of the <code>Result</code>.</p>
+								</dd>
+								<dt>typeparam</dt>
+								<dd><p>The type of the value wrapped in the <code>Ok</code> of the <code>Result</code>
+									returned by the <code>thenFn</code>.</p>
+								</dd>
+								<dt>typeparam</dt>
+								<dd><p>The type of the value wrapped in the <code>Err</code> of the <code>Result</code>.</p>
+								</dd>
+								<dt>param</dt>
+								<dd><p>The function to apply to the wrapped <code>T</code> if <code>maybe</code> is <code>Just</code>.</p>
+								</dd>
+								<dt>param</dt>
+								<dd><p>The <code>Maybe</code> to evaluate and possibly apply a function to.</p>
+								</dd>
+							</dl>
+						</div>
 					</section>
 					<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-object-literal">
 						<a name="result.ap-1" class="tsd-anchor"></a>
@@ -3270,9 +3401,165 @@ isValid(data) ? Result.ok() : Result.err(<span class="hljs-string">'something wa
 						<div class="tsd-signature tsd-kind-icon">ap<span class="tsd-signature-symbol">:</span> <a href="_result_.html#ap" class="tsd-signature-type">ap</a></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in result.ts:1478</li>
+								<li>Defined in result.ts:2247</li>
 							</ul>
 						</aside>
+						<div class="tsd-comment tsd-typography">
+							<div class="lead">
+								<p>Allows you to <em>apply</em> (thus <code>ap</code>) a value to a function without having to
+									take either out of the context of their <code>Result</code>s. This does mean that the
+									transforming function is itself within a <code>Result</code>, which can be hard to grok
+									at first but lets you do some very elegant things. For example, <code>ap</code> allows
+								you to do this:</p>
+							</div>
+							<pre><code class="lang-ts"><span class="hljs-keyword">import</span> Result <span class="hljs-keyword">from</span> <span class="hljs-string">'true-myth/result'</span>;
+
+<span class="hljs-keyword">const</span> one = Result.ok&lt;<span class="hljs-built_in">number</span>, <span class="hljs-built_in">string</span>&gt;(<span class="hljs-number">1</span>);
+<span class="hljs-keyword">const</span> five = Result.ok&lt;<span class="hljs-built_in">number</span>, <span class="hljs-built_in">string</span>&gt;(<span class="hljs-number">5</span>);
+<span class="hljs-keyword">const</span> whoops = Result.err&lt;<span class="hljs-built_in">number</span>, <span class="hljs-built_in">string</span>&gt;(<span class="hljs-string">'oh no'</span>);
+
+<span class="hljs-keyword">const</span> add = <span class="hljs-function">(<span class="hljs-params">a: <span class="hljs-built_in">number</span></span>) =&gt;</span> (b: <span class="hljs-built_in">number</span>) =&gt; a + b;
+<span class="hljs-keyword">const</span> resultAdd = Result.ok&lt;<span class="hljs-keyword">typeof</span> add, <span class="hljs-built_in">string</span>&gt;(add);
+
+resultAdd.ap(one).ap(five); <span class="hljs-comment">// Ok(6)</span>
+resultAdd.ap(one).ap(whoops); <span class="hljs-comment">// Err('oh no')</span>
+resultAdd.ap(whoops).ap(five) <span class="hljs-comment">// Err('oh no')</span>
+</code></pre>
+							<p>Without <code>Result.ap</code>, you&#39;d need to do something like a nested <code>Result.match</code>:</p>
+							<pre><code class="lang-ts"><span class="hljs-keyword">import</span> { ok, err } <span class="hljs-keyword">from</span> <span class="hljs-string">'true-myth/result'</span>;
+
+<span class="hljs-keyword">const</span> one = ok&lt;<span class="hljs-built_in">number</span>, <span class="hljs-built_in">string</span>&gt;(<span class="hljs-number">1</span>);
+<span class="hljs-keyword">const</span> five = ok&lt;<span class="hljs-built_in">number</span>, <span class="hljs-built_in">string</span>&gt;(<span class="hljs-number">5</span>);
+<span class="hljs-keyword">const</span> whoops = err&lt;<span class="hljs-built_in">number</span>, <span class="hljs-built_in">string</span>&gt;(<span class="hljs-string">'oh no'</span>);
+
+one.match({
+Ok: <span class="hljs-function"><span class="hljs-params">n</span> =&gt;</span> five.match({
+Ok: <span class="hljs-function"><span class="hljs-params">o</span> =&gt;</span> ok&lt;<span class="hljs-built_in">number</span>, <span class="hljs-built_in">string</span>&gt;(n + o),
+Err: <span class="hljs-function"><span class="hljs-params">e</span> =&gt;</span> err&lt;<span class="hljs-built_in">number</span>, <span class="hljs-built_in">string</span>&gt;(e),
+}),
+Err: <span class="hljs-function"><span class="hljs-params">e</span>  =&gt;</span> err&lt;<span class="hljs-built_in">number</span>, <span class="hljs-built_in">string</span>&gt;(e),
+}); <span class="hljs-comment">// Ok(6)</span>
+
+one.match({
+Ok: <span class="hljs-function"><span class="hljs-params">n</span> =&gt;</span> whoops.match({
+Ok: <span class="hljs-function"><span class="hljs-params">o</span> =&gt;</span> ok&lt;<span class="hljs-built_in">number</span>, <span class="hljs-built_in">string</span>&gt;(n + o),
+Err: <span class="hljs-function"><span class="hljs-params">e</span> =&gt;</span> err&lt;<span class="hljs-built_in">number</span>, <span class="hljs-built_in">string</span>&gt;(e),
+}),
+Err: <span class="hljs-function"><span class="hljs-params">e</span>  =&gt;</span> err&lt;<span class="hljs-built_in">number</span>, <span class="hljs-built_in">string</span>&gt;(e),
+}); <span class="hljs-comment">// Err('oh no')</span>
+
+whoops.match({
+Ok: <span class="hljs-function"><span class="hljs-params">n</span> =&gt;</span> five.match({
+Ok: <span class="hljs-function"><span class="hljs-params">o</span> =&gt;</span> ok(n + o),
+Err: <span class="hljs-function"><span class="hljs-params">e</span> =&gt;</span> err(e),
+}),
+Err: <span class="hljs-function"><span class="hljs-params">e</span>  =&gt;</span> err(e),
+}); <span class="hljs-comment">// Err('oh no')</span>
+</code></pre>
+							<p>And this kind of thing comes up quite often once you&#39;re using <code>Maybe</code> to
+							handle optionality throughout your application.</p>
+							<p>For another example, imagine you need to compare the equality of two
+								ImmutableJS data structures, where a <code>===</code> comparison won&#39;t work. With <code>ap</code>,
+							that&#39;s as simple as this:</p>
+							<pre><code class="lang-ts"><span class="hljs-keyword">import</span> { ok } <span class="hljs-keyword">from</span> <span class="hljs-string">'true-myth/result'</span>;
+<span class="hljs-keyword">import</span> Immutable <span class="hljs-keyword">from</span> <span class="hljs-string">'immutable'</span>;
+<span class="hljs-keyword">import</span> { curry } <span class="hljs-keyword">from</span> <span class="hljs-string">'lodash'</span>
+
+<span class="hljs-keyword">const</span> is = curry(Immutable.is);
+
+<span class="hljs-keyword">const</span> x = ok(Immutable.Set.of(<span class="hljs-number">1</span>, <span class="hljs-number">2</span>, <span class="hljs-number">3</span>));
+<span class="hljs-keyword">const</span> y = ok(Immutable.Set.of(<span class="hljs-number">2</span>, <span class="hljs-number">3</span>, <span class="hljs-number">4</span>));
+
+ok(is).ap(x).ap(y); <span class="hljs-comment">// Ok(false)</span>
+</code></pre>
+							<p>Without <code>ap</code>, we&#39;re back to that gnarly nested <code>match</code>:</p>
+							<pre><code class="lang-ts"><span class="hljs-keyword">import</span> Result, { ok, err } <span class="hljs-keyword">from</span> <span class="hljs-string">'true-myth/result'</span>;
+<span class="hljs-keyword">import</span> Immutable <span class="hljs-keyword">from</span> <span class="hljs-string">'immutable'</span>;
+<span class="hljs-keyword">import</span> { curry } <span class="hljs-keyword">from</span> <span class="hljs-string">'lodash'</span>
+
+<span class="hljs-keyword">const</span> is = curry(Immutable.is);
+
+<span class="hljs-keyword">const</span> x = ok(Immutable.Set.of(<span class="hljs-number">1</span>, <span class="hljs-number">2</span>, <span class="hljs-number">3</span>));
+<span class="hljs-keyword">const</span> y = ok(Immutable.Set.of(<span class="hljs-number">2</span>, <span class="hljs-number">3</span>, <span class="hljs-number">4</span>));
+
+x.match({
+Ok: <span class="hljs-function"><span class="hljs-params">iX</span> =&gt;</span> y.match({
+Ok: <span class="hljs-function"><span class="hljs-params">iY</span> =&gt;</span> Result.of(Immutable.is(iX, iY)),
+Err: <span class="hljs-function">(<span class="hljs-params">e</span>) =&gt;</span> ok(<span class="hljs-literal">false</span>),
+})
+Err: <span class="hljs-function">(<span class="hljs-params">e</span>) =&gt;</span> ok(<span class="hljs-literal">false</span>),
+}); <span class="hljs-comment">// Ok(false)</span>
+</code></pre>
+							<p>In summary: anywhere you have two <code>Maybe</code> instances and need to perform an
+							operation that uses both of them, <code>ap</code> is your friend.</p>
+							<p>Two things to note, both regarding <em>currying</em>:</p>
+							<ol>
+								<li>All functions passed to <code>ap</code> must be curried. That is, they must be of the
+									form (for add) <code>(a: number) =&gt; (b: number) =&gt; a + b</code>, <em>not</em> the more usual
+								<code>(a: number, b: number) =&gt; a + b</code> you see in JavaScript more generally.</li>
+							</ol>
+							<p>For convenience, you may want to look at Lodash&#39;s <code>_.curry</code> or Ramda&#39;s
+								<code>R.curry</code>, which allow you to create curried versions of functions
+							whenever you want:</p>
+							<pre><code><span class="hljs-keyword">import</span> Result <span class="hljs-keyword">from</span> <span class="hljs-string">'true-myth/result'</span>;
+<span class="hljs-keyword">import</span> { curry } <span class="hljs-keyword">from</span> <span class="hljs-string">'lodash'</span>;
+
+<span class="hljs-keyword">const</span> normalAdd = <span class="hljs-function">(<span class="hljs-params">a: <span class="hljs-built_in">number</span>, b: <span class="hljs-built_in">number</span></span>) =&gt;</span> a + b;
+<span class="hljs-keyword">const</span> curriedAdd = curry(normalAdd); <span class="hljs-comment">// (a: number) =&gt; (b: number) =&gt; a + b;</span>
+
+Result.of(curriedAdd).ap(Result.of(<span class="hljs-number">1</span>)).ap(Result.of(<span class="hljs-number">5</span>)); <span class="hljs-comment">// Ok(6)</span>
+</code></pre><ol>
+								<li>You will need to call <code>ap</code> as many times as there are arguments to the
+									function you&#39;re dealing with. So in the case of <code>add</code>, which has the
+									&quot;arity&quot; (function argument count) of 2 (<code>a</code> and <code>b</code>), you&#39;ll need to call
+									<code>ap</code> twice: once for <code>a</code>, and once for <code>b</code>. To see why, let&#39;s look at what
+								the result in each phase is:</li>
+							</ol>
+							<pre><code class="lang-ts"><span class="hljs-keyword">const</span> add = <span class="hljs-function">(<span class="hljs-params">a: <span class="hljs-built_in">number</span></span>) =&gt;</span> (b: <span class="hljs-built_in">number</span>) =&gt; a + b;
+
+<span class="hljs-keyword">const</span> maybeAdd = Result.of(add); <span class="hljs-comment">// Ok((a: number) =&gt; (b: number) =&gt; a + b)</span>
+<span class="hljs-keyword">const</span> maybeAdd1 = maybeAdd.ap(Result.of(<span class="hljs-number">1</span>)); <span class="hljs-comment">// Ok((b: number) =&gt; 1 + b)</span>
+<span class="hljs-keyword">const</span> final = maybeAdd1.ap(Result.of(<span class="hljs-number">3</span>)); <span class="hljs-comment">// Ok(4)</span>
+</code></pre>
+							<p>So for <code>toString</code>, which just takes a single argument, you would only need
+							to call <code>ap</code> once.</p>
+							<pre><code class="lang-ts"><span class="hljs-keyword">const</span> toStr = <span class="hljs-function">(<span class="hljs-params">v: { toString(<span class="hljs-params"></span>): <span class="hljs-built_in">string</span> }</span>) =&gt;</span> v.toString();
+Result.of(toStr).ap(<span class="hljs-number">12</span>); <span class="hljs-comment">// Ok("12")</span>
+</code></pre>
+							<p>One other scenario which doesn&#39;t come up <em>quite</em> as often but is conceivable
+								is where you have something that may or may not actually construct a function
+								for handling a specific <code>Result</code> scenario. In that case, you can wrap the
+								possibly-present in <code>ap</code> and then wrap the values to apply to the function to
+							in <code>Result</code> themselves.</p>
+							<p>Because <code>Result</code> often requires you to type out the full type parameterization
+								on a regular basis, it&#39;s convenient to use TypeScript&#39;s <code>typeof</code> operator to
+								write out the type of a curried function. For example, if you had a function
+							that simply merged three strings, you might write it like this:</p>
+							<pre><code class="lang-ts"><span class="hljs-keyword">import</span> Result <span class="hljs-keyword">from</span> <span class="hljs-string">'true-myth/result'</span>;
+<span class="hljs-keyword">import</span> { curry } <span class="hljs-keyword">from</span> <span class="hljs-string">'lodash'</span>;
+
+<span class="hljs-keyword">const</span> merge3Strs = <span class="hljs-function">(<span class="hljs-params">a: <span class="hljs-built_in">string</span>, b: <span class="hljs-built_in">string</span>, c: <span class="hljs-built_in">string</span></span>) =&gt;</span> <span class="hljs-built_in">string</span>;
+<span class="hljs-keyword">const</span> curriedMerge = curry(merge3Strs);
+
+<span class="hljs-keyword">const</span> fn = Result.ok&lt;<span class="hljs-keyword">typeof</span> curriedMerge, <span class="hljs-built_in">string</span>&gt;(curriedMerge);
+</code></pre>
+							<p>The alternative is writing out the full signature long-form:</p>
+							<pre><code class="lang-ts"><span class="hljs-keyword">const</span> fn = Result.ok&lt;<span class="hljs-function">(<span class="hljs-params">a: <span class="hljs-built_in">string</span></span>) =&gt;</span> (b: <span class="hljs-built_in">string</span>) =&gt; <span class="hljs-function">(<span class="hljs-params">c: <span class="hljs-built_in">string</span></span>) =&gt;</span> <span class="hljs-built_in">string</span>, <span class="hljs-built_in">string</span>&gt;(curriedMerge);
+</code></pre>
+							<p><em>Aside:*</em> <code>ap</code> is not named <code>apply</code> because of the overlap with JavaScript&#39;s
+								existing <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function/apply"><code>apply</code></a> function – and although strictly speaking, there isn&#39;t any
+								direct overlap (<code>Result.apply</code> and <code>Function.prototype.apply</code> don&#39;t intersect
+								at all) it&#39;s useful to have a different name to avoid implying that they&#39;re
+							the same.</p>
+							<dl class="tsd-comment-tags">
+								<dt>param</dt>
+								<dd><p>result of a function from T to U</p>
+								</dd>
+								<dt>param</dt>
+								<dd><p>result of a T to apply to <code>fn</code></p>
+								</dd>
+							</dl>
+						</div>
 					</section>
 					<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-object-literal">
 						<a name="result.cata-1" class="tsd-anchor"></a>
@@ -3280,9 +3567,14 @@ isValid(data) ? Result.ok() : Result.err(<span class="hljs-string">'something wa
 						<div class="tsd-signature tsd-kind-icon">cata<span class="tsd-signature-symbol">:</span> <a href="_result_.html#match" class="tsd-signature-type">match</a></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in result.ts:1476</li>
+								<li>Defined in result.ts:2047</li>
 							</ul>
 						</aside>
+						<div class="tsd-comment tsd-typography">
+							<div class="lead">
+								<p>Alias for <a href="#match"><code>match</code></a></p>
+							</div>
+						</div>
 					</section>
 					<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-object-literal">
 						<a name="result.chain-1" class="tsd-anchor"></a>
@@ -3290,9 +3582,14 @@ isValid(data) ? Result.ok() : Result.err(<span class="hljs-string">'something wa
 						<div class="tsd-signature tsd-kind-icon">chain<span class="tsd-signature-symbol">:</span> <a href="_result_.html#andthen" class="tsd-signature-type">andThen</a></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in result.ts:1459</li>
+								<li>Defined in result.ts:1808</li>
 							</ul>
 						</aside>
+						<div class="tsd-comment tsd-typography">
+							<div class="lead">
+								<p>Alias for <a href="#andthen"><code>andThen</code></a>.</p>
+							</div>
+						</div>
 					</section>
 					<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-object-literal">
 						<a name="result.equals-1" class="tsd-anchor"></a>
@@ -3300,9 +3597,32 @@ isValid(data) ? Result.ok() : Result.err(<span class="hljs-string">'something wa
 						<div class="tsd-signature tsd-kind-icon">equals<span class="tsd-signature-symbol">:</span> <a href="_result_.html#equals" class="tsd-signature-type">equals</a></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in result.ts:1477</li>
+								<li>Defined in result.ts:2066</li>
 							</ul>
 						</aside>
+						<div class="tsd-comment tsd-typography">
+							<div class="lead">
+								<p>Allows quick triple-equal equality check between the values inside two <code>result</code>s
+								without having to unwrap them first.</p>
+							</div>
+							<pre><code class="lang-ts"><span class="hljs-keyword">const</span> a = Result.of(<span class="hljs-number">3</span>)
+<span class="hljs-keyword">const</span> b = Result.of(<span class="hljs-number">3</span>)
+<span class="hljs-keyword">const</span> c = Result.of(<span class="hljs-literal">null</span>)
+<span class="hljs-keyword">const</span> d = Result.nothing()
+
+Result.equals(a, b) <span class="hljs-comment">// true</span>
+Result.equals(a, c) <span class="hljs-comment">// false</span>
+Result.equals(c, d) <span class="hljs-comment">// true</span>
+</code></pre>
+							<dl class="tsd-comment-tags">
+								<dt>param</dt>
+								<dd><p>A <code>maybe</code> to compare to.</p>
+								</dd>
+								<dt>param</dt>
+								<dd><p>A <code>maybe</code> instance to check.</p>
+								</dd>
+							</dl>
+						</div>
 					</section>
 					<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-object-literal">
 						<a name="result.err-4" class="tsd-anchor"></a>
@@ -3310,9 +3630,50 @@ isValid(data) ? Result.ok() : Result.err(<span class="hljs-string">'something wa
 						<div class="tsd-signature tsd-kind-icon">err<span class="tsd-signature-symbol">:</span> <a href="_result_.html#err-2" class="tsd-signature-type">err</a></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in result.ts:1452</li>
+								<li>Defined in result.ts:1578</li>
 							</ul>
 						</aside>
+						<div class="tsd-comment tsd-typography">
+							<div class="lead">
+								<p>Create an instance of <code>Result.Error</code>.</p>
+							</div>
+							<p>If you need to create an instance with a specific type (as you do whenever you
+								are not constructing immediately for a function return or as an argument to a
+							function), you can use a type parameter:</p>
+							<pre><code class="lang-ts"><span class="hljs-keyword">const</span> notString = Result.err&lt;<span class="hljs-built_in">number</span>, <span class="hljs-built_in">string</span>&gt;(<span class="hljs-string">'something went wrong'</span>);
+</code></pre>
+							<p>Note: <code>null</code> is allowed by the type signature so that so that the function
+								may be used to  <code>throw</code> on passing <code>null</code> rather than constructing a type like
+								<code>Result&lt;null, string&gt;</code>. <code>undefined</code> is allowed as a convenience method for
+							constructing a <code>Result&lt;Unit, E&gt;</code>.</p>
+							<pre><code class="lang-ts"><span class="hljs-keyword">const</span> normalResult = Result.err&lt;<span class="hljs-built_in">number</span>, <span class="hljs-built_in">string</span>&gt;(<span class="hljs-string">'oh no'</span>);
+<span class="hljs-keyword">const</span> explicitUnit = Result.err&lt;<span class="hljs-built_in">number</span>, Unit&gt;(Unit);
+<span class="hljs-keyword">const</span> implicitUnit = Result.err&lt;<span class="hljs-built_in">number</span>, Unit&gt;();
+</code></pre>
+							<p>In the context of an immediate function return, or an arrow function with a
+								single expression value, you do not have to specify the types, so this can be
+							quite convenient.</p>
+							<pre><code class="lang-ts"><span class="hljs-keyword">type</span> SomeData = {
+<span class="hljs-comment">//...</span>
+};
+
+<span class="hljs-keyword">const</span> isValid = (data: SomeData): <span class="hljs-function"><span class="hljs-params">boolean</span> =&gt;</span> {
+<span class="hljs-comment">// true or false...</span>
+}
+
+<span class="hljs-keyword">const</span> arrowValidate = (data: SomeData): Result&lt;<span class="hljs-built_in">number</span>, Unit&gt; =&gt;
+isValid(data) ? Result.ok(<span class="hljs-number">42</span>) : Result.err();
+
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">fnValidate</span>(<span class="hljs-params">data: someData</span>): <span class="hljs-title">Result</span>&lt;<span class="hljs-title">number</span>, <span class="hljs-title">Unit</span>&gt; </span>{
+<span class="hljs-keyword">return</span> isValid(data) ? Result.ok(<span class="hljs-number">42</span>) : Result.err();
+}
+</code></pre>
+							<dl class="tsd-comment-tags">
+								<dt>typeparam</dt>
+								<dd><p>The type of the item contained in the <code>Result</code>.</p>
+								</dd>
+							</dl>
+						</div>
 					</section>
 					<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-object-literal">
 						<a name="result.flatmap-1" class="tsd-anchor"></a>
@@ -3320,9 +3681,14 @@ isValid(data) ? Result.ok() : Result.err(<span class="hljs-string">'something wa
 						<div class="tsd-signature tsd-kind-icon">flat<wbr>Map<span class="tsd-signature-symbol">:</span> <a href="_result_.html#andthen" class="tsd-signature-type">andThen</a></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in result.ts:1460</li>
+								<li>Defined in result.ts:1810</li>
 							</ul>
 						</aside>
+						<div class="tsd-comment tsd-typography">
+							<div class="lead">
+								<p>Alias for <a href="#andthen"><code>andThen</code></a>.</p>
+							</div>
+						</div>
 					</section>
 					<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-object-literal">
 						<a name="result.frommaybe-1" class="tsd-anchor"></a>
@@ -3330,9 +3696,24 @@ isValid(data) ? Result.ok() : Result.err(<span class="hljs-string">'something wa
 						<div class="tsd-signature tsd-kind-icon">from<wbr>Maybe<span class="tsd-signature-symbol">:</span> <a href="_result_.html#frommaybe" class="tsd-signature-type">fromMaybe</a></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in result.ts:1473</li>
+								<li>Defined in result.ts:1972</li>
 							</ul>
 						</aside>
+						<div class="tsd-comment tsd-typography">
+							<div class="lead">
+								<p>Transform a <a href="../modules/_maybe_.html#maybe"><code>Maybe</code></a> into a <a href="#result"><code>Result</code></a>.</p>
+							</div>
+							<p>If the <code>Maybe</code> is a <a href="../classes/_maybe_.just.html"><code>Just</code></a>, its value will be wrapped in the <a href="../classes/_result_.ok.html"><code>Ok</code></a> variant;
+							if it is a <a href="../classes/_maybe_.nothing.html"><code>Nothing</code></a> the <code>errValue</code> will be wrapped in the <a href="../classes/_result_.err.html"><code>Err</code></a> variant.</p>
+							<dl class="tsd-comment-tags">
+								<dt>param</dt>
+								<dd><p>A value to wrap in an <code>Err</code> if <code>maybe</code> is a <code>Nothing</code>.</p>
+								</dd>
+								<dt>param</dt>
+								<dd><p>The <code>Maybe</code> to convert to a <code>Result</code>.</p>
+								</dd>
+							</dl>
+						</div>
 					</section>
 					<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-object-literal">
 						<a name="result.getor-1" class="tsd-anchor"></a>
@@ -3340,9 +3721,14 @@ isValid(data) ? Result.ok() : Result.err(<span class="hljs-string">'something wa
 						<div class="tsd-signature tsd-kind-icon">get<wbr>Or<span class="tsd-signature-symbol">:</span> <a href="_result_.html#unwrapor" class="tsd-signature-type">unwrapOr</a></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in result.ts:1469</li>
+								<li>Defined in result.ts:1909</li>
 							</ul>
 						</aside>
+						<div class="tsd-comment tsd-typography">
+							<div class="lead">
+								<p>Alias for <a href="#unwrapor"><code>unwrapOr</code></a></p>
+							</div>
+						</div>
 					</section>
 					<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-object-literal">
 						<a name="result.getorelse-1" class="tsd-anchor"></a>
@@ -3350,9 +3736,14 @@ isValid(data) ? Result.ok() : Result.err(<span class="hljs-string">'something wa
 						<div class="tsd-signature tsd-kind-icon">get<wbr>OrElse<span class="tsd-signature-symbol">:</span> <a href="_result_.html#unwraporelse" class="tsd-signature-type">unwrapOrElse</a></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in result.ts:1471</li>
+								<li>Defined in result.ts:1942</li>
 							</ul>
 						</aside>
+						<div class="tsd-comment tsd-typography">
+							<div class="lead">
+								<p>Alias for <a href="#unwraporelse"><code>unwrapOrElse</code></a></p>
+							</div>
+						</div>
 					</section>
 					<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-object-literal">
 						<a name="result.iserr-1" class="tsd-anchor"></a>
@@ -3360,9 +3751,15 @@ isValid(data) ? Result.ok() : Result.err(<span class="hljs-string">'something wa
 						<div class="tsd-signature tsd-kind-icon">is<wbr>Err<span class="tsd-signature-symbol">:</span> <a href="" class="tsd-signature-type">isErr</a></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in result.ts:1450</li>
+								<li>Defined in result.ts:1484</li>
 							</ul>
 						</aside>
+						<div class="tsd-comment tsd-typography">
+							<div class="lead">
+								<p>Is this <code>Result</code> an <code>Err</code> instance?</p>
+							</div>
+							<p>In TypeScript, narrows the type from <code>Result&lt;T, E&gt;</code> to <code>Err&lt;T, E&gt;</code>.</p>
+						</div>
 					</section>
 					<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-object-literal">
 						<a name="result.isok-1" class="tsd-anchor"></a>
@@ -3370,9 +3767,15 @@ isValid(data) ? Result.ok() : Result.err(<span class="hljs-string">'something wa
 						<div class="tsd-signature tsd-kind-icon">is<wbr>Ok<span class="tsd-signature-symbol">:</span> <a href="" class="tsd-signature-type">isOk</a></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in result.ts:1449</li>
+								<li>Defined in result.ts:1478</li>
 							</ul>
 						</aside>
+						<div class="tsd-comment tsd-typography">
+							<div class="lead">
+								<p>Is this <code>Result</code> an <code>Ok</code> instance?</p>
+							</div>
+							<p>In TypeScript, narrows the type from <code>Result&lt;T, E&gt;</code> to <code>Ok&lt;T, E&gt;</code>.</p>
+						</div>
 					</section>
 					<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-object-literal">
 						<a name="result.map-1" class="tsd-anchor"></a>
@@ -3380,9 +3783,69 @@ isValid(data) ? Result.ok() : Result.err(<span class="hljs-string">'something wa
 						<div class="tsd-signature tsd-kind-icon">map<span class="tsd-signature-symbol">:</span> <a href="_result_.html#map" class="tsd-signature-type">map</a></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in result.ts:1453</li>
+								<li>Defined in result.ts:1631</li>
 							</ul>
 						</aside>
+						<div class="tsd-comment tsd-typography">
+							<div class="lead">
+								<p>Map over a <code>Result</code> instance: apply the function to the wrapped value if the
+									instance is <code>Ok</code>, and return the wrapped error value wrapped as a new <code>Err</code> of
+								the correct type (<code>Result&lt;U, E&gt;</code>) if the instance is <code>Err</code>.</p>
+							</div>
+							<p><code>Result.map</code> works a lot like <code>Array.prototype.map</code>, but with one important
+								difference. Both <code>Result</code> and <code>Array</code> are containers for other kinds of items,
+								but where <code>Array.prototype.map</code> has 0 to <em>n</em> items, a <code>Result</code> always has
+							exactly one item, which is <em>either</em> a success or an error instance.</p>
+							<p>Where <code>Array.prototype.map</code> will apply the mapping function to every item in
+								the array (if there are any), <code>Result.map</code> will only apply the mapping
+							function to the (single) element if an <code>Ok</code> instance, if there is one.</p>
+							<p>If you have no items in an array of
+								numbers named <code>foo</code> and call <code>foo.map(x =&gt; x + 1)</code>, you&#39;ll still some have an
+								array with nothing in it. But if you have any items in the array (<code>[2, 3]</code>),
+								and you call <code>foo.map(x =&gt; x + 1)</code> on it, you&#39;ll get a new array with each of
+							those items inside the array &quot;container&quot; transformed (<code>[3, 4]</code>).</p>
+							<p>With <code>Result.map</code>, the <code>Err</code> variant is treated <em>by the <code>map</code> function</em> kind
+								of the same way as the empty array case: it&#39;s just ignored, and you get back a
+								new <code>Result</code> that is still just the same <code>Err</code> instance. But if you have an
+								<code>Ok</code> variant, the map function is applied to it, and you get back a new
+							<code>Result</code> with the value transformed, and still wrapped in an <code>Ok</code>.</p>
+							<h4 id="examples">Examples</h4>
+							<pre><code class="lang-ts"><span class="hljs-keyword">import</span> { ok, err, map, toString } <span class="hljs-keyword">from</span> <span class="hljs-string">'true-myth/result'</span>;
+<span class="hljs-keyword">const</span> double = <span class="hljs-function"><span class="hljs-params">n</span> =&gt;</span> n * <span class="hljs-number">2</span>;
+
+<span class="hljs-keyword">const</span> anOk = ok(<span class="hljs-number">12</span>);
+<span class="hljs-keyword">const</span> mappedOk = map(double, anOk);
+<span class="hljs-built_in">console</span>.log(toString(mappedOk)); <span class="hljs-comment">// Ok(24)</span>
+
+<span class="hljs-keyword">const</span> anErr = err(<span class="hljs-string">"nothing here!"</span>);
+<span class="hljs-keyword">const</span> mappedErr = map(double, anErr);
+<span class="hljs-built_in">console</span>.log(toString(mappedOk)); <span class="hljs-comment">// Err(nothing here!)</span>
+</code></pre>
+							<dl class="tsd-comment-tags">
+								<dt>typeparam</dt>
+								<dd><p>The type of the value wrapped in an <code>Ok</code> instance, and taken as
+									the argument to the <code>mapFn</code>.</p>
+								</dd>
+								<dt>typeparam</dt>
+								<dd><p>The type of the value wrapped in the new <code>Ok</code> instance after
+									applying <code>mapFn</code>, that is, the type returned by <code>mapFn</code>.</p>
+								</dd>
+								<dt>typeparam</dt>
+								<dd><p>The type of the value wrapped in an <code>Err</code> instance.</p>
+								</dd>
+								<dt>param</dt>
+								<dd><p>The function to apply the value to if <code>result</code> is <code>Ok</code>.</p>
+								</dd>
+								<dt>param</dt>
+								<dd><p>The <code>Result</code> instance to map over.</p>
+								</dd>
+								<dt>returns</dt>
+								<dd><p>A new <code>Result</code> with the result of applying <code>mapFn</code> to the value
+										in an <code>Ok</code>, or else the original <code>Err</code> value wrapped in the new
+									instance.</p>
+								</dd>
+							</dl>
+						</div>
 					</section>
 					<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-object-literal">
 						<a name="result.maperr-1" class="tsd-anchor"></a>
@@ -3390,9 +3853,49 @@ isValid(data) ? Result.ok() : Result.err(<span class="hljs-string">'something wa
 						<div class="tsd-signature tsd-kind-icon">map<wbr>Err<span class="tsd-signature-symbol">:</span> <a href="_result_.html#maperr" class="tsd-signature-type">mapErr</a></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in result.ts:1456</li>
+								<li>Defined in result.ts:1723</li>
 							</ul>
 						</aside>
+						<div class="tsd-comment tsd-typography">
+							<div class="lead">
+								<p>Map over a <code>Result</code>, exactly as in <a href="#map"><code>map</code></a>, but operating on the value
+									wrapped in an <code>Err</code> instead of the value wrapped in the <code>Ok</code>. This is handy
+									for when you need to line up a bunch of different types of errors, or if you
+									need an error of one shape to be in a different shape to use somewhere else in
+								your codebase.</p>
+							</div>
+							<h4 id="examples">Examples</h4>
+							<pre><code class="lang-ts"><span class="hljs-keyword">import</span> { ok, err, mapErr, toString } <span class="hljs-keyword">from</span> <span class="hljs-string">'true-myth/result'</span>;
+
+<span class="hljs-keyword">const</span> reason = <span class="hljs-function">(<span class="hljs-params">err: { code: <span class="hljs-built_in">number</span>, reason: <span class="hljs-built_in">string</span> }</span>) =&gt;</span> err.reason;
+
+<span class="hljs-keyword">const</span> anOk = ok(<span class="hljs-number">12</span>);
+<span class="hljs-keyword">const</span> mappedOk = mapErr(reason, anOk);
+<span class="hljs-built_in">console</span>.log(toString(mappedOk));  <span class="hljs-comment">// Ok(12)</span>
+
+<span class="hljs-keyword">const</span> anErr = err({ code: <span class="hljs-number">101</span>, reason: <span class="hljs-string">'bad file'</span> });
+<span class="hljs-keyword">const</span> mappedErr = mapErr(reason, anErr);
+<span class="hljs-built_in">console</span>.log(toString(mappedErr));  <span class="hljs-comment">// Err(bad file)</span>
+</code></pre>
+							<dl class="tsd-comment-tags">
+								<dt>typeparam</dt>
+								<dd><p>The type of the value wrapped in the <code>Ok</code> of the <code>Result</code>.</p>
+								</dd>
+								<dt>typeparam</dt>
+								<dd><p>The type of the value wrapped in the <code>Err</code> of the <code>Result</code>.</p>
+								</dd>
+								<dt>typeparam</dt>
+								<dd><p>The type of the value wrapped in the <code>Err</code> of a new <code>Result</code>,
+									returned by the <code>mapErrFn</code>.</p>
+								</dd>
+								<dt>param</dt>
+								<dd><p>The function to apply to the value wrapped in <code>Err</code> if <code>result</code> is an <code>Err</code>.</p>
+								</dd>
+								<dt>param</dt>
+								<dd><p>The <code>Result</code> instance to map over an error case for.</p>
+								</dd>
+							</dl>
+						</div>
 					</section>
 					<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-object-literal">
 						<a name="result.mapor-1" class="tsd-anchor"></a>
@@ -3400,9 +3903,39 @@ isValid(data) ? Result.ok() : Result.err(<span class="hljs-string">'something wa
 						<div class="tsd-signature tsd-kind-icon">map<wbr>Or<span class="tsd-signature-symbol">:</span> <a href="_result_.html#mapor" class="tsd-signature-type">mapOr</a></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in result.ts:1454</li>
+								<li>Defined in result.ts:1656</li>
 							</ul>
 						</aside>
+						<div class="tsd-comment tsd-typography">
+							<div class="lead">
+								<p>Map over a <code>Result</code> instance as in <a href="#map"><code>map</code></a> and get out the value
+								if <code>result</code> is an <code>Ok</code>, or return a default value if <code>result</code> is an <code>Err</code>.</p>
+							</div>
+							<h4 id="examples">Examples</h4>
+							<pre><code class="lang-ts"><span class="hljs-keyword">import</span> { ok, err, mapOr } <span class="hljs-keyword">from</span> <span class="hljs-string">'true-myth/result'</span>;
+
+<span class="hljs-keyword">const</span> length = <span class="hljs-function">(<span class="hljs-params">s: <span class="hljs-built_in">string</span></span>) =&gt;</span> s.length;
+
+<span class="hljs-keyword">const</span> anOkString = ok(<span class="hljs-string">'a string'</span>);
+<span class="hljs-keyword">const</span> theStringLength = mapOr(<span class="hljs-number">0</span>, anOkString);
+<span class="hljs-built_in">console</span>.log(theStringLength);  <span class="hljs-comment">// 8</span>
+
+<span class="hljs-keyword">const</span> anErr = err(<span class="hljs-string">'uh oh'</span>);
+<span class="hljs-keyword">const</span> anErrMapped = mapOr(<span class="hljs-number">0</span>, anErr);
+<span class="hljs-built_in">console</span>.log(anErrMapped);  <span class="hljs-comment">// 0</span>
+</code></pre>
+							<dl class="tsd-comment-tags">
+								<dt>param</dt>
+								<dd><p>The default value to use if <code>result</code> is an <code>Err</code>.</p>
+								</dd>
+								<dt>param</dt>
+								<dd><p>The function to apply the value to if <code>result</code> is an <code>Ok</code>.</p>
+								</dd>
+								<dt>param</dt>
+								<dd><p>The <code>Result</code> instance to map over.</p>
+								</dd>
+							</dl>
+						</div>
 					</section>
 					<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-object-literal">
 						<a name="result.maporelse-1" class="tsd-anchor"></a>
@@ -3410,9 +3943,55 @@ isValid(data) ? Result.ok() : Result.err(<span class="hljs-string">'something wa
 						<div class="tsd-signature tsd-kind-icon">map<wbr>OrElse<span class="tsd-signature-symbol">:</span> <a href="_result_.html#maporelse" class="tsd-signature-type">mapOrElse</a></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in result.ts:1455</li>
+								<li>Defined in result.ts:1692</li>
 							</ul>
 						</aside>
+						<div class="tsd-comment tsd-typography">
+							<div class="lead">
+								<p>Map over a <code>Result</code> instance as in <a href="#map"><code>map</code></a> and get out the value if
+									<code>result</code> is <code>Ok</code>, or apply a function (<code>orElseFn</code>) to the value wrapped in
+								the <code>Err</code> to get a default value.</p>
+							</div>
+							<p>Like <a href="#mapor"><code>mapOr</code></a> but using a function to transform the error into a
+							usable value instead of simply using a default value.</p>
+							<h4 id="examples">Examples</h4>
+							<pre><code class="lang-ts"><span class="hljs-keyword">import</span> { ok, err, mapOrElse } <span class="hljs-keyword">from</span> <span class="hljs-string">'true-myth/result'</span>;
+
+<span class="hljs-keyword">const</span> summarize = <span class="hljs-function">(<span class="hljs-params">s: <span class="hljs-built_in">string</span></span>) =&gt;</span> <span class="hljs-string">`The response was: '<span class="hljs-subst">${s}</span>'`</span>;
+<span class="hljs-keyword">const</span> getReason = <span class="hljs-function">(<span class="hljs-params">err: { code: <span class="hljs-built_in">number</span>, reason: <span class="hljs-built_in">string</span> }</span>) =&gt;</span> err.reason;
+
+<span class="hljs-keyword">const</span> okResponse = ok(<span class="hljs-string">"Things are grand here."</span>);
+<span class="hljs-keyword">const</span> mappedOkAndUnwrapped = mapOrElse(getReason, summarize, okResponse);
+<span class="hljs-built_in">console</span>.log(mappedOkAndUnwrapped);  <span class="hljs-comment">// The response was: 'Things are grand here.'</span>
+
+<span class="hljs-keyword">const</span> errResponse = err({ code: <span class="hljs-number">500</span>, reason: <span class="hljs-string">'Nothing at this endpoint!'</span> });
+<span class="hljs-keyword">const</span> mappedErrAndUnwrapped = mapOrElse(getReason, summarize, errResponse);
+<span class="hljs-built_in">console</span>.log(mappedErrAndUnwrapped);  <span class="hljs-comment">// Nothing at this endpoint!</span>
+</code></pre>
+							<dl class="tsd-comment-tags">
+								<dt>typeparam</dt>
+								<dd><p>The type of the wrapped <code>Ok</code> value.</p>
+								</dd>
+								<dt>typeparam</dt>
+								<dd><p>The type of the resulting value from applying <code>mapFn</code> to the
+									<code>Ok</code> value or <code>orElseFn</code> to the <code>Err</code> value.</p>
+								</dd>
+								<dt>typeparam</dt>
+								<dd><p>The type of the wrapped <code>Err</code> value.</p>
+								</dd>
+								<dt>param</dt>
+								<dd><p>The function to apply to the wrapped <code>Err</code> value to get a
+									usable value if <code>result</code> is an <code>Err</code>.</p>
+								</dd>
+								<dt>param</dt>
+								<dd><p>The function to apply to the wrapped <code>Ok</code> value if <code>result</code> is
+									an <code>Ok</code>.</p>
+								</dd>
+								<dt>param</dt>
+								<dd><p>The <code>Result</code> instance to map over.</p>
+								</dd>
+							</dl>
+						</div>
 					</section>
 					<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-object-literal">
 						<a name="result.match-1" class="tsd-anchor"></a>
@@ -3420,9 +3999,57 @@ isValid(data) ? Result.ok() : Result.err(<span class="hljs-string">'something wa
 						<div class="tsd-signature tsd-kind-icon">match<span class="tsd-signature-symbol">:</span> <a href="_result_.html#match" class="tsd-signature-type">match</a></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in result.ts:1475</li>
+								<li>Defined in result.ts:2045</li>
 							</ul>
 						</aside>
+						<div class="tsd-comment tsd-typography">
+							<div class="lead">
+								<p>Performs the same basic functionality as <code>getOrElse</code>, but instead of simply
+									unwrapping the value if it is <code>Ok</code> and applying a value to generate the same
+									default type if it is <code>Nothing</code>, lets you supply functions which may transform
+								the wrapped type if it is <code>Ok</code> or get a default value for <code>Nothing</code>.</p>
+							</div>
+							<p>This is kind of like a poor man&#39;s version of pattern matching, which
+							JavaScript currently lacks.</p>
+							<p>Instead of code like this:</p>
+							<pre><code class="lang-ts"><span class="hljs-keyword">import</span> { Result, isOk, match } <span class="hljs-keyword">from</span> <span class="hljs-string">'true-myth/result'</span>;
+
+<span class="hljs-keyword">const</span> logValue = <span class="hljs-function">(<span class="hljs-params">mightBeANumber: Result&lt;<span class="hljs-built_in">number</span>, <span class="hljs-built_in">string</span>&gt;</span>) =&gt;</span> {
+<span class="hljs-built_in">console</span>.log(
+isOk(mightBeANumber)
+? unsafelyUnwrap(mightBeANumber).toString()
+: <span class="hljs-string">`There was an error: <span class="hljs-subst">${unsafelyGetErr(mightBeANumber)}</span>`</span>
+);
+};
+</code></pre>
+							<p>...we can write code like this:</p>
+							<pre><code class="lang-ts"><span class="hljs-keyword">import</span> { Result, match } <span class="hljs-keyword">from</span> <span class="hljs-string">'true-myth/result'</span>;
+
+<span class="hljs-keyword">const</span> logValue = <span class="hljs-function">(<span class="hljs-params">mightBeANumber: Result&lt;<span class="hljs-built_in">number</span>, <span class="hljs-built_in">string</span>&gt;</span>) =&gt;</span> {
+<span class="hljs-keyword">const</span> value = match(
+{
+Ok: <span class="hljs-function"><span class="hljs-params">n</span> =&gt;</span> n.toString(),
+Err: <span class="hljs-function"><span class="hljs-params">e</span> =&gt;</span> <span class="hljs-string">`There was an error: <span class="hljs-subst">${e}</span>`</span>,
+},
+mightBeANumber
+);
+<span class="hljs-built_in">console</span>.log(value);
+};
+</code></pre>
+							<p>This is slightly longer to write, but clearer: the more complex the resulting
+								expression, the hairer it is to understand the ternary. Thus, this is
+								especially convenient for times when there is a complex result, e.g. when
+							rendering part of a React component inline in JSX/TSX.</p>
+							<dl class="tsd-comment-tags">
+								<dt>param</dt>
+								<dd><p>A lightweight object defining what to do in the case of each
+									variant.</p>
+								</dd>
+								<dt>param</dt>
+								<dd><p>The <code>maybe</code> instance to check.</p>
+								</dd>
+							</dl>
+						</div>
 					</section>
 					<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-object-literal">
 						<a name="result.ok-4" class="tsd-anchor"></a>
@@ -3430,9 +4057,56 @@ isValid(data) ? Result.ok() : Result.err(<span class="hljs-string">'something wa
 						<div class="tsd-signature tsd-kind-icon">ok<span class="tsd-signature-symbol">:</span> <a href="_result_.html#ok-2" class="tsd-signature-type">ok</a></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in result.ts:1451</li>
+								<li>Defined in result.ts:1532</li>
 							</ul>
 						</aside>
+						<div class="tsd-comment tsd-typography">
+							<div class="lead">
+								<p>Create an instance of <code>Result.Ok</code>.</p>
+							</div>
+							<p>If you need to create an instance with a specific type (as you do whenever you
+								are not constructing immediately for a function return or as an argument to a
+							function), you can use a type parameter:</p>
+							<pre><code class="lang-ts"><span class="hljs-keyword">const</span> yayNumber = Result.ok&lt;<span class="hljs-built_in">number</span>, <span class="hljs-built_in">string</span>&gt;(<span class="hljs-number">12</span>);
+</code></pre>
+							<p>Note: <code>null</code> is allowed by the type signature so that so that the function
+								may be used to  <code>throw</code> on passing <code>null</code> rather than constructing a type like
+								<code>Result&lt;null, string&gt;</code>. <code>undefined</code> is allowed as a convenience method for
+							constructing a <code>Result&lt;Unit, E&gt;</code>.</p>
+							<pre><code class="lang-ts"><span class="hljs-keyword">const</span> normalResult = Result.ok&lt;<span class="hljs-built_in">number</span>, <span class="hljs-built_in">string</span>&gt;(<span class="hljs-number">42</span>);
+<span class="hljs-keyword">const</span> explicitUnit = Result.ok&lt;Unit, <span class="hljs-built_in">string</span>&gt;(Unit);
+<span class="hljs-keyword">const</span> implicitUnit = Result.ok&lt;Unit, <span class="hljs-built_in">string</span>&gt;();
+</code></pre>
+							<p>In the context of an immediate function return, or an arrow function with a
+								single expression value, you do not have to specify the types, so this can be
+							quite convenient.</p>
+							<pre><code class="lang-ts"><span class="hljs-keyword">type</span> SomeData = {
+<span class="hljs-comment">//...</span>
+};
+
+<span class="hljs-keyword">const</span> isValid = (data: SomeData): <span class="hljs-function"><span class="hljs-params">boolean</span> =&gt;</span> {
+<span class="hljs-comment">// true or false...</span>
+}
+
+<span class="hljs-keyword">const</span> arrowValidate = (data: SomeData): Result&lt;Unit, <span class="hljs-built_in">string</span>&gt; =&gt;
+isValid(data) ? Result.ok() : Result.err(<span class="hljs-string">'something was wrong!'</span>);
+
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">fnValidate</span>(<span class="hljs-params">data: someData</span>): <span class="hljs-title">Result</span>&lt;<span class="hljs-title">Unit</span>, <span class="hljs-title">string</span>&gt; </span>{
+<span class="hljs-keyword">return</span> isValid(data) ? Result.ok() : Result.err(<span class="hljs-string">'something was wrong'</span>);
+}
+</code></pre>
+							<dl class="tsd-comment-tags">
+								<dt>typeparam</dt>
+								<dd><p>The type of the item contained in the <code>Result</code>.</p>
+								</dd>
+								<dt>param</dt>
+								<dd><p>The value to wrap in a <code>Result.Ok</code>.</p>
+								</dd>
+								<dt>throws</dt>
+								<dd><p>If you pass <code>null</code> or <code>undefined</code>.</p>
+								</dd>
+							</dl>
+						</div>
 					</section>
 					<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-object-literal">
 						<a name="result.or-1" class="tsd-anchor"></a>
@@ -3440,9 +4114,51 @@ isValid(data) ? Result.ok() : Result.err(<span class="hljs-string">'something wa
 						<div class="tsd-signature tsd-kind-icon">or<span class="tsd-signature-symbol">:</span> <a href="_result_.html#or" class="tsd-signature-type">or</a></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in result.ts:1461</li>
+								<li>Defined in result.ts:1841</li>
 							</ul>
 						</aside>
+						<div class="tsd-comment tsd-typography">
+							<div class="lead">
+								<p>Provide a fallback for a given <code>Result</code>. Behaves like a logical <code>or</code>: if the
+									<code>result</code> value is an <code>Ok</code>, returns that <code>result</code>; otherwise, returns the
+								<code>defaultResult</code> value.</p>
+							</div>
+							<p>This is useful when you want to make sure that something which takes a
+								<code>Result</code> always ends up getting an <code>Ok</code> variant, by supplying a default value
+							for the case that you currently have an <code>Err</code>.</p>
+							<pre><code class="lang-ts"><span class="hljs-keyword">import</span> { ok, err, Result, or } <span class="hljs-keyword">from</span> <span class="hljs-string">'true-utils/result'</span>;
+
+<span class="hljs-keyword">const</span> okA = ok&lt;<span class="hljs-built_in">string</span>, <span class="hljs-built_in">string</span>&gt;(<span class="hljs-string">'a'</span>);
+<span class="hljs-keyword">const</span> okB = ok&lt;<span class="hljs-built_in">string</span>, <span class="hljs-built_in">string</span>&gt;(<span class="hljs-string">'b'</span>);
+<span class="hljs-keyword">const</span> anErr = err&lt;<span class="hljs-built_in">string</span>, <span class="hljs-built_in">string</span>&gt;(<span class="hljs-string">':wat:'</span>);
+<span class="hljs-keyword">const</span> anotherErr = err&lt;<span class="hljs-built_in">string</span>, <span class="hljs-built_in">string</span>&gt;(<span class="hljs-string">':headdesk:'</span>);
+
+<span class="hljs-built_in">console</span>.log(or(okB, okA).toString());  <span class="hljs-comment">// Ok(A)</span>
+<span class="hljs-built_in">console</span>.log(or(anErr, okA).toString());  <span class="hljs-comment">// Ok(A)</span>
+<span class="hljs-built_in">console</span>.log(or(okB, anErr).toString());  <span class="hljs-comment">// Ok(B)</span>
+<span class="hljs-built_in">console</span>.log(or(anotherErr, anErr).toString());  <span class="hljs-comment">// Err(:headdesk:)</span>
+</code></pre>
+							<dl class="tsd-comment-tags">
+								<dt>typeparam</dt>
+								<dd><p>The type wrapped in the <code>Ok</code> case of <code>result</code>.</p>
+								</dd>
+								<dt>typeparam</dt>
+								<dd><p>The type wrapped in the <code>Err</code> case of <code>result</code>.</p>
+								</dd>
+								<dt>typeparam</dt>
+								<dd><p>The type wrapped in the <code>Err</code> case of <code>defaultResult</code>.</p>
+								</dd>
+								<dt>param</dt>
+								<dd><p>The <code>Result</code> to use if <code>result</code> is an <code>Err</code>.</p>
+								</dd>
+								<dt>param</dt>
+								<dd><p>The <code>Result</code> instance to check.</p>
+								</dd>
+								<dt>returns</dt>
+								<dd><p><code>result</code> if it is an <code>Ok</code>, otherwise <code>defaultResult</code>.</p>
+								</dd>
+							</dl>
+						</div>
 					</section>
 					<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-object-literal">
 						<a name="result.orelse-1" class="tsd-anchor"></a>
@@ -3450,9 +4166,33 @@ isValid(data) ? Result.ok() : Result.err(<span class="hljs-string">'something wa
 						<div class="tsd-signature tsd-kind-icon">or<wbr>Else<span class="tsd-signature-symbol">:</span> <a href="_result_.html#orelse" class="tsd-signature-type">orElse</a></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in result.ts:1462</li>
+								<li>Defined in result.ts:1859</li>
 							</ul>
 						</aside>
+						<div class="tsd-comment tsd-typography">
+							<div class="lead">
+								<p>Like <code>or</code>, but using a function to construct the alternative <code>Result</code>.</p>
+							</div>
+							<p>Sometimes you need to perform an operation using other data in the environment
+								to construct the fallback value. In these situations, you can pass a function
+								(which may be a closure) as the <code>elseFn</code> to generate the fallback <code>Result&lt;T&gt;</code>.
+								It can then transform the data in the <code>Err</code> to something usable as an <code>Ok</code>, or
+							generate a new <code>Err</code> instance as appropriate.</p>
+							<p>Useful for transforming failures to usable data.</p>
+							<dl class="tsd-comment-tags">
+								<dt>param</dt>
+								<dd><p>The function to apply to the contents of the <code>Err</code> if <code>result</code>
+									is an <code>Err</code>, to create a new <code>Result</code>.</p>
+								</dd>
+								<dt>param</dt>
+								<dd><p>The <code>Result</code> to use if it is an <code>Ok</code>.</p>
+								</dd>
+								<dt>returns</dt>
+								<dd><p>The <code>result</code> if it is <code>Ok</code>, or the <code>Result</code> returned by <code>elseFn</code>
+									if <code>result</code> is an `Err.</p>
+								</dd>
+							</dl>
+						</div>
 					</section>
 					<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-object-literal">
 						<a name="result.tomaybe-1" class="tsd-anchor"></a>
@@ -3460,9 +4200,24 @@ isValid(data) ? Result.ok() : Result.err(<span class="hljs-string">'something wa
 						<div class="tsd-signature tsd-kind-icon">to<wbr>Maybe<span class="tsd-signature-symbol">:</span> <a href="" class="tsd-signature-type">toMaybe</a></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in result.ts:1472</li>
+								<li>Defined in result.ts:1957</li>
 							</ul>
 						</aside>
+						<div class="tsd-comment tsd-typography">
+							<div class="lead">
+								<p>Convert a <a href="#result"><code>Result</code></a> to a <a href="../modules/_maybe_.html#maybe"><code>Maybe</code></a>.</p>
+							</div>
+							<p>The converted type will be <a href="../classes/_maybe_.just.html"><code>Just</code></a> if the <code>Result</code> is <a href="../classes/_result_.ok.html"><code>Ok</code></a> or <a href="../classes/_maybe_.nothing.html"><code>Nothing</code></a>
+							if the <code>Result</code> is <a href="../classes/_result_.err.html"><code>Err</code></a>; the wrapped error value will be discarded.</p>
+							<dl class="tsd-comment-tags">
+								<dt>param</dt>
+								<dd><p>The <code>Result</code> to convert to a <code>Maybe</code></p>
+								</dd>
+								<dt>returns</dt>
+								<dd><p><code>Just</code> the value in <code>result</code> if it is <code>Ok</code>; otherwise <code>Nothing</code></p>
+								</dd>
+							</dl>
+						</div>
 					</section>
 					<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-object-literal">
 						<a name="result.tostring-1" class="tsd-anchor"></a>
@@ -3470,9 +4225,64 @@ isValid(data) ? Result.ok() : Result.err(<span class="hljs-string">'something wa
 						<div class="tsd-signature tsd-kind-icon">to<wbr>String<span class="tsd-signature-symbol">:</span> <a href="" class="tsd-signature-type">toString</a></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in result.ts:1474</li>
+								<li>Defined in result.ts:1995</li>
 							</ul>
 						</aside>
+						<div class="tsd-comment tsd-typography">
+							<div class="lead">
+								<p>Create a <code>String</code> representation of a <code>result</code> instance.</p>
+							</div>
+							<p>An <code>Ok</code> instance will be printed as <code>Ok(&lt;representation of the value&gt;)</code>, and
+								an <code>Err</code> instance will be printed as <code>Err(&lt;representation of the error&gt;)</code>,
+								where the representation of the value or error is simply the value or error&#39;s
+							own <code>toString</code> representation. For example:</p>
+							<table>
+								<thead>
+									<tr>
+										<th>call</th>
+										<th>output</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr>
+										<td><code>toString(ok(42))</code></td>
+										<td><code>Ok(42)</code></td>
+									</tr>
+									<tr>
+										<td><code>toString(ok([1, 2, 3]))</code></td>
+										<td><code>Ok(1,2,3)</code></td>
+									</tr>
+									<tr>
+										<td><code>toString(ok({ an: &#39;object&#39; }))</code></td>
+										<td><code>Ok([object Object])</code>n</td>
+									</tr>
+									<tr>
+										<td><code>toString(err(42))</code></td>
+										<td><code>Err(42)</code></td>
+									</tr>
+									<tr>
+										<td><code>toString(err([1, 2, 3]))</code></td>
+										<td><code>Err(1,2,3)</code></td>
+									</tr>
+									<tr>
+										<td><code>toString(err({ an: &#39;object&#39; }))</code></td>
+										<td><code>Err([object Object])</code></td>
+									</tr>
+								</tbody>
+							</table>
+							<dl class="tsd-comment-tags">
+								<dt>typeparam</dt>
+								<dd><p>The type of the wrapped value; its own <code>.toString</code> will be used
+									to print the interior contents of the <code>Just</code> variant.</p>
+								</dd>
+								<dt>param</dt>
+								<dd><p>The value to convert to a string.</p>
+								</dd>
+								<dt>returns</dt>
+								<dd><p>The string representation of the <code>Maybe</code>.</p>
+								</dd>
+							</dl>
+						</div>
 					</section>
 					<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-object-literal">
 						<a name="result.unsafeget-1" class="tsd-anchor"></a>
@@ -3480,9 +4290,14 @@ isValid(data) ? Result.ok() : Result.err(<span class="hljs-string">'something wa
 						<div class="tsd-signature tsd-kind-icon">unsafe<wbr>Get<span class="tsd-signature-symbol">:</span> <a href="_result_.html#unsafelyunwrap" class="tsd-signature-type">unsafelyUnwrap</a></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in result.ts:1465</li>
+								<li>Defined in result.ts:1872</li>
 							</ul>
 						</aside>
+						<div class="tsd-comment tsd-typography">
+							<div class="lead">
+								<p>Alias for <a href="#unsafelyunwrap"><code>unsafelyUnwrap</code></a></p>
+							</div>
+						</div>
 					</section>
 					<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-object-literal">
 						<a name="result.unsafelyget-1" class="tsd-anchor"></a>
@@ -3490,9 +4305,14 @@ isValid(data) ? Result.ok() : Result.err(<span class="hljs-string">'something wa
 						<div class="tsd-signature tsd-kind-icon">unsafely<wbr>Get<span class="tsd-signature-symbol">:</span> <a href="_result_.html#unsafelyunwrap" class="tsd-signature-type">unsafelyUnwrap</a></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in result.ts:1464</li>
+								<li>Defined in result.ts:1870</li>
 							</ul>
 						</aside>
+						<div class="tsd-comment tsd-typography">
+							<div class="lead">
+								<p>Alias for <a href="#unsafelyunwrap"><code>unsafelyUnwrap</code></a></p>
+							</div>
+						</div>
 					</section>
 					<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-object-literal">
 						<a name="result.unsafelygeterr-1" class="tsd-anchor"></a>
@@ -3500,9 +4320,14 @@ isValid(data) ? Result.ok() : Result.err(<span class="hljs-string">'something wa
 						<div class="tsd-signature tsd-kind-icon">unsafely<wbr>Get<wbr>Err<span class="tsd-signature-symbol">:</span> <a href="_result_.html#unsafelyunwraperr" class="tsd-signature-type">unsafelyUnwrapErr</a></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in result.ts:1467</li>
+								<li>Defined in result.ts:1884</li>
 							</ul>
 						</aside>
+						<div class="tsd-comment tsd-typography">
+							<div class="lead">
+								<p>Alias for <a href="#unsafelyunwraperr"><code>unsafelyUnwrapErr</code></a></p>
+							</div>
+						</div>
 					</section>
 					<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-object-literal">
 						<a name="result.unsafelyunwrap-1" class="tsd-anchor"></a>
@@ -3510,9 +4335,21 @@ isValid(data) ? Result.ok() : Result.err(<span class="hljs-string">'something wa
 						<div class="tsd-signature tsd-kind-icon">unsafely<wbr>Unwrap<span class="tsd-signature-symbol">:</span> <a href="_result_.html#unsafelyunwrap" class="tsd-signature-type">unsafelyUnwrap</a></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in result.ts:1463</li>
+								<li>Defined in result.ts:1868</li>
 							</ul>
 						</aside>
+						<div class="tsd-comment tsd-typography">
+							<div class="lead">
+								<p>Get the value out of the <code>Result</code>.</p>
+							</div>
+							<p>Returns the content of an <code>Ok</code>, but <strong>throws if the <code>Result</code> is <code>Err</code>.</strong>
+							Prefer to use <a href="#unwrapor"><code>unwrapOr</code></a> or <a href="#unwraporelse"><code>unwrapOrElse</code></a>.</p>
+							<dl class="tsd-comment-tags">
+								<dt>throws</dt>
+								<dd><p>If the <code>Result</code> instance is <code>Nothing</code>.</p>
+								</dd>
+							</dl>
+						</div>
 					</section>
 					<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-object-literal">
 						<a name="result.unsafelyunwraperr-1" class="tsd-anchor"></a>
@@ -3520,9 +4357,23 @@ isValid(data) ? Result.ok() : Result.err(<span class="hljs-string">'something wa
 						<div class="tsd-signature tsd-kind-icon">unsafely<wbr>Unwrap<wbr>Err<span class="tsd-signature-symbol">:</span> <a href="_result_.html#unsafelyunwraperr" class="tsd-signature-type">unsafelyUnwrapErr</a></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in result.ts:1466</li>
+								<li>Defined in result.ts:1882</li>
 							</ul>
 						</aside>
+						<div class="tsd-comment tsd-typography">
+							<div class="lead">
+								<p>Get the error value out of the <a href="#result"><code>Result</code></a>.</p>
+							</div>
+							<p>Returns the content of an <code>Err</code>, but <strong>throws if the <code>Result</code> is <code>Ok</code></strong>.
+							Prefer to use <a href="#unwraporelse"><code>unwrapOrElse</code></a>.</p>
+							<dl class="tsd-comment-tags">
+								<dt>param</dt>
+								<dd></dd>
+								<dt>throws</dt>
+								<dd><p>Error If the <code>Result</code> instance is <code>Nothing</code>.</p>
+								</dd>
+							</dl>
+						</div>
 					</section>
 					<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-object-literal">
 						<a name="result.unwrapor-1" class="tsd-anchor"></a>
@@ -3530,9 +4381,41 @@ isValid(data) ? Result.ok() : Result.err(<span class="hljs-string">'something wa
 						<div class="tsd-signature tsd-kind-icon">unwrap<wbr>Or<span class="tsd-signature-symbol">:</span> <a href="_result_.html#unwrapor" class="tsd-signature-type">unwrapOr</a></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in result.ts:1468</li>
+								<li>Defined in result.ts:1907</li>
 							</ul>
 						</aside>
+						<div class="tsd-comment tsd-typography">
+							<div class="lead">
+								<p>Safely get the value out of the <code>Ok</code> variant of a <a href="#result"><code>Result</code></a>.</p>
+							</div>
+							<p>This is the recommended way to get a value out of a <code>Result</code> most of the time.</p>
+							<pre><code class="lang-ts"><span class="hljs-keyword">import</span> { ok, err, unwrapOr } <span class="hljs-keyword">from</span> <span class="hljs-string">'true-myth/result'</span>;
+
+<span class="hljs-keyword">const</span> anOk = ok&lt;<span class="hljs-built_in">number</span>, <span class="hljs-built_in">string</span>&gt;(<span class="hljs-number">12</span>);
+<span class="hljs-built_in">console</span>.log(unwrapOr(<span class="hljs-number">0</span>, anOk));  <span class="hljs-comment">// 12</span>
+
+<span class="hljs-keyword">const</span> anErr = err&lt;<span class="hljs-built_in">number</span>, <span class="hljs-built_in">string</span>&gt;(<span class="hljs-string">'nooooo'</span>);
+<span class="hljs-built_in">console</span>.log(unwrapOr(<span class="hljs-number">0</span>, anErr));  <span class="hljs-comment">// 0</span>
+</code></pre>
+							<dl class="tsd-comment-tags">
+								<dt>typeparam</dt>
+								<dd><p>The value wrapped in the <code>Ok</code>.</p>
+								</dd>
+								<dt>typeparam</dt>
+								<dd><p>The value wrapped in the <code>Err</code>.</p>
+								</dd>
+								<dt>param</dt>
+								<dd><p>The value to use if <code>result</code> is an <code>Err</code>.</p>
+								</dd>
+								<dt>param</dt>
+								<dd><p>The <code>Result</code> instance to unwrap if it is an <code>Ok</code>.</p>
+								</dd>
+								<dt>returns</dt>
+								<dd><p>The content of <code>result</code> if it is an <code>Ok</code>, otherwise
+									<code>defaultValue</code>.</p>
+								</dd>
+							</dl>
+						</div>
 					</section>
 					<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-object-literal">
 						<a name="result.unwraporelse-1" class="tsd-anchor"></a>
@@ -3540,9 +4423,49 @@ isValid(data) ? Result.ok() : Result.err(<span class="hljs-string">'something wa
 						<div class="tsd-signature tsd-kind-icon">unwrap<wbr>OrElse<span class="tsd-signature-symbol">:</span> <a href="_result_.html#unwraporelse" class="tsd-signature-type">unwrapOrElse</a></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in result.ts:1470</li>
+								<li>Defined in result.ts:1940</li>
 							</ul>
 						</aside>
+						<div class="tsd-comment tsd-typography">
+							<div class="lead">
+								<p>Safely get the value out of a <a href="#result"><code>Result</code></a> by returning the wrapped
+								value if it is <code>Ok</code>, or by applying <code>orElseFn</code> to the value in the <code>Err</code>.</p>
+							</div>
+							<p>This is useful when you need to <em>generate</em> a value (e.g. by using current
+								values in the environment – whether preloaded or by local closure) instead of
+							having a single default value available (as in <a href="#unwrapor"><code>unwrapOr</code></a>).</p>
+							<pre><code class="lang-ts"><span class="hljs-keyword">import</span> { ok, err, unwrapOrElse } <span class="hljs-keyword">from</span> <span class="hljs-string">'true-myth/result'</span>;
+
+<span class="hljs-comment">// You can imagine that someOtherValue might be dynamic.</span>
+<span class="hljs-keyword">const</span> someOtherValue = <span class="hljs-number">2</span>;
+<span class="hljs-keyword">const</span> handleErr = <span class="hljs-function">(<span class="hljs-params">errValue: <span class="hljs-built_in">string</span></span>) =&gt;</span> errValue.length + someOtherValue;
+
+<span class="hljs-keyword">const</span> anOk = ok&lt;<span class="hljs-built_in">number</span>, <span class="hljs-built_in">string</span>&gt;(<span class="hljs-number">42</span>);
+<span class="hljs-built_in">console</span>.log(unwrapOrElse(handleErr, anOk));  <span class="hljs-comment">// 42</span>
+
+<span class="hljs-keyword">const</span> anErr = err&lt;<span class="hljs-built_in">number</span>, <span class="hljs-built_in">string</span>&gt;(<span class="hljs-string">'oh teh noes'</span>);
+<span class="hljs-built_in">console</span>.log(unwrapOrElse(handleErr, anErr));  <span class="hljs-comment">// 13</span>
+</code></pre>
+							<dl class="tsd-comment-tags">
+								<dt>typeparam</dt>
+								<dd><p>The value wrapped in the <code>Ok</code>.</p>
+								</dd>
+								<dt>typeparam</dt>
+								<dd><p>The value wrapped in the <code>Err</code>.</p>
+								</dd>
+								<dt>param</dt>
+								<dd><p>A function applied to the value wrapped in <code>result</code> if it is
+									an <code>Err</code>, to generate the final value.</p>
+								</dd>
+								<dt>param</dt>
+								<dd><p>The <code>result</code> to unwrap if it is an <code>Ok</code>.</p>
+								</dd>
+								<dt>returns</dt>
+								<dd><p>The value wrapped in <code>result</code> if it is <code>Ok</code> or the value
+									returned by <code>orElseFn</code> applied to the value in <code>Err</code>.</p>
+								</dd>
+							</dl>
+						</div>
 					</section>
 				</section>
 			</section>
