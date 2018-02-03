@@ -272,6 +272,32 @@ describe('`Result` pure functions', () => {
     const anErr = Result.err(errValue);
     expect(Result.toString(anErr)).toEqual(`Err(${errValue.toString()})`);
   });
+
+  test('`equals`', () => {
+    const a = Result.ok<string, string>('a');
+    const b = Result.ok<string, string>('a');
+    const c = Result.err<string, string>('error');
+    const d = Result.err<string, string>('error');
+    expect(Result.equals(b, a)).toBe(true);
+    expect(Result.equals(b)(a)).toBe(true);
+    expect(Result.equals(c, b)).toBe(false);
+    expect(Result.equals(c)(b)).toBe(false);
+    expect(Result.equals(d, c)).toBe(true);
+    expect(Result.equals(d)(c)).toBe(true);
+  });
+
+  test('`ap`', () => {
+    const add = (a: number) => (b: number) => a + b;
+    const okAdd = Result.ok<typeof add, string>(add);
+
+    expect(okAdd.ap(Result.ok(2)).ap(Result.ok(3))).toEqual(Result.ok(5));
+
+    const add3 = add(3);
+    const okAdd3 = Result.ok<typeof add3, string>(add(3));
+    const val = Result.ok(2);
+
+    expect(Result.ap(okAdd3, Result.ok(2))).toEqual(Result.ok(5));
+  });
 });
 
 describe('`Result.Ok` class', () => {
@@ -417,6 +443,15 @@ describe('`Result.Ok` class', () => {
     const theValue = 42;
     const theOk = new Result.Ok(theValue);
     expect(theOk.toString()).toEqual(`Ok(${theValue.toString()})`);
+  });
+
+  test('`ap` method', () => {
+    const fn = new Result.Ok<(val: string) => number, string>(str => str.length);
+    const val = new Result.Ok('three');
+
+    const result = fn.ap(val);
+
+    expect(result.toString()).toEqual(`Ok(5)`);
   });
 });
 
@@ -574,5 +609,24 @@ describe('`Result.Err` class', () => {
     const theErrValue = { something: 'sad' };
     const theErr = new Result.Err(theErrValue);
     expect(theErr.toString()).toEqual(`Err(${theErrValue.toString()})`);
+  });
+
+  test('`equals` method', () => {
+    const a = new Result.Ok('a');
+    const b = new Result.Ok<string, string>('a');
+    const c = new Result.Err<string, string>('err');
+    const d = new Result.Err<string, string>('err');
+    expect(a.equals(b)).toBe(true);
+    expect(b.equals(c)).toBe(false);
+    expect(c.equals(d)).toBe(true);
+  });
+
+  test('`ap` method', () => {
+    const fn = new Result.Err<(val: string) => number, string>('ERR_THESYSTEMISDOWN');
+    const val = new Result.Err('ERR_ALLURBASE');
+
+    const result = fn.ap(val);
+
+    expect(result.toString()).toEqual(`Err(ERR_ALLURBASE)`);
   });
 });

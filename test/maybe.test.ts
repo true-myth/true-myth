@@ -287,6 +287,33 @@ describe('`Maybe` pure functions', () => {
     expect(Maybe.toString(Maybe.of(42))).toEqual('Just(42)');
     expect(Maybe.toString(Maybe.nothing())).toEqual('Nothing');
   });
+
+  test('`equals`', () => {
+    const a = Maybe.of<string>('a');
+    const b = Maybe.of<string>('a');
+    const c = Maybe.nothing<string>();
+    const d = Maybe.nothing<string>();
+    expect(Maybe.equals(b, a)).toBe(true);
+    expect(Maybe.equals(b)(a)).toBe(true);
+    expect(Maybe.equals(c, b)).toBe(false);
+    expect(Maybe.equals(c)(b)).toBe(false);
+    expect(Maybe.equals(d, c)).toBe(true);
+    expect(Maybe.equals(d)(c)).toBe(true);
+  });
+
+  test('`ap`', () => {
+    const add = (a: number) => (b: number) => a + b;
+    const maybeAdd = Maybe.of(add);
+
+    expect(maybeAdd.ap(Maybe.of(1)).ap(Maybe.of(5))).toEqual(Maybe.of(6));
+
+    const maybeAdd3 = Maybe.of<(val: number) => number>(add(3));
+    const val = Maybe.of(2);
+    const nada = Maybe.of(null);
+
+    expect(Maybe.ap(maybeAdd3, val)).toEqual(Maybe.just(5));
+    expect(Maybe.ap(maybeAdd3)(nada)).toEqual(Maybe.nothing());
+  });
 });
 
 describe('`Maybe.Just` class', () => {
@@ -426,6 +453,26 @@ describe('`Maybe.Just` class', () => {
   test('`toString` method', () => {
     expect(Maybe.of(42).toString()).toEqual('Just(42)');
   });
+
+  test('`equals` method', () => {
+    const a = new Maybe.Just('a');
+    const b = new Maybe.Just('a');
+    const c = new Maybe.Just('b');
+    const d = new Maybe.Nothing<string>();
+    expect(a.equals(b)).toBe(true);
+    expect(b.equals(c)).toBe(false);
+    expect(c.equals(d)).toBe(false);
+  });
+
+  test('`ap` method', () => {
+    const toString = (a: number) => a.toString();
+    const fn: Maybe<typeof toString> = new Maybe.Just(toString);
+    const val = new Maybe.Just(3);
+
+    const result = fn.ap(val);
+
+    expect(result.equals(Maybe.of('3'))).toBe(true);
+  });
 });
 
 describe('`Maybe.Nothing` class', () => {
@@ -546,6 +593,23 @@ describe('`Maybe.Nothing` class', () => {
 
   test('`toString` method', () => {
     expect(Maybe.nothing().toString()).toEqual('Nothing');
+  });
+
+  test('`equals` method', () => {
+    const a = new Maybe.Just<string>('a');
+    const b = new Maybe.Nothing<string>();
+    const c = new Maybe.Nothing<string>();
+    expect(a.equals(b)).toBe(false);
+    expect(b.equals(c)).toBe(true);
+  });
+
+  test('`ap` method', () => {
+    const fn = new Maybe.Nothing<(val: string) => number>();
+    const val = new Maybe.Just('three');
+
+    const result = fn.ap(val);
+
+    expect(result.isNothing()).toBe(true);
   });
 });
 

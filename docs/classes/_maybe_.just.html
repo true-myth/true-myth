@@ -127,7 +127,9 @@
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-has-type-parameter"><a href="_maybe_.just.html#and" class="tsd-kind-icon">and</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-has-type-parameter"><a href="_maybe_.just.html#andthen" class="tsd-kind-icon">and<wbr>Then</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-has-type-parameter"><a href="_maybe_.just.html#ap" class="tsd-kind-icon">ap</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-has-type-parameter"><a href="_maybe_.just.html#chain" class="tsd-kind-icon">chain</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_maybe_.just.html#equals" class="tsd-kind-icon">equals</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-has-type-parameter"><a href="_maybe_.just.html#flatmap" class="tsd-kind-icon">flat<wbr>Map</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_maybe_.just.html#isjust" class="tsd-kind-icon">is<wbr>Just</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_maybe_.just.html#isnothing" class="tsd-kind-icon">is<wbr>Nothing</a></li>
@@ -160,7 +162,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in maybe.ts:86</li>
+									<li>Defined in maybe.ts:92</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -213,7 +215,7 @@
 					<aside class="tsd-sources">
 						<p>Implementation of <a href="../interfaces/_maybe_.maybeshape.html">MaybeShape</a>.<a href="../interfaces/_maybe_.maybeshape.html#variant">variant</a></p>
 						<ul>
-							<li>Defined in maybe.ts:84</li>
+							<li>Defined in maybe.ts:90</li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -236,7 +238,7 @@
 							<aside class="tsd-sources">
 								<p>Implementation of <a href="../interfaces/_maybe_.maybeshape.html">MaybeShape</a>.<a href="../interfaces/_maybe_.maybeshape.html#and">and</a></p>
 								<ul>
-									<li>Defined in maybe.ts:165</li>
+									<li>Defined in maybe.ts:171</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -273,7 +275,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in maybe.ts:170</li>
+									<li>Defined in maybe.ts:176</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -319,6 +321,47 @@
 					</ul>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-has-type-parameter">
+					<a name="ap" class="tsd-anchor"></a>
+					<h3>ap</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-has-type-parameter">
+						<li class="tsd-signature tsd-kind-icon">ap&lt;A, B&gt;<span class="tsd-signature-symbol">(</span>this<span class="tsd-signature-symbol">: </span><a href="../modules/_maybe_.html#maybe" class="tsd-signature-type">Maybe</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">function</span><span class="tsd-signature-symbol">&gt;</span>, val<span class="tsd-signature-symbol">: </span><a href="../modules/_maybe_.html#maybe" class="tsd-signature-type">Maybe</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">A</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../modules/_maybe_.html#maybe" class="tsd-signature-type">Maybe</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">B</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Implementation of <a href="../interfaces/_maybe_.maybeshape.html">MaybeShape</a>.<a href="../interfaces/_maybe_.maybeshape.html#ap">ap</a></p>
+								<ul>
+									<li>Defined in maybe.ts:226</li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Method variant for <a href="../modules/_maybe_.html#ap"><code>Maybe.ap</code></a></p>
+								</div>
+							</div>
+							<h4 class="tsd-type-parameters-title">Type parameters</h4>
+							<ul class="tsd-type-parameters">
+								<li>
+									<h4>A</h4>
+								</li>
+								<li>
+									<h4>B</h4>
+								</li>
+							</ul>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>this: <a href="../modules/_maybe_.html#maybe" class="tsd-signature-type">Maybe</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">function</span><span class="tsd-signature-symbol">&gt;</span></h5>
+								</li>
+								<li>
+									<h5>val: <a href="../modules/_maybe_.html#maybe" class="tsd-signature-type">Maybe</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">A</span><span class="tsd-signature-symbol">&gt;</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <a href="../modules/_maybe_.html#maybe" class="tsd-signature-type">Maybe</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">B</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-has-type-parameter">
 					<a name="chain" class="tsd-anchor"></a>
 					<h3>chain</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-has-type-parameter">
@@ -328,7 +371,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in maybe.ts:175</li>
+									<li>Defined in maybe.ts:181</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -373,6 +416,38 @@
 						</li>
 					</ul>
 				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="equals" class="tsd-anchor"></a>
+					<h3>equals</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">equals<span class="tsd-signature-symbol">(</span>this<span class="tsd-signature-symbol">: </span><a href="../modules/_maybe_.html#maybe" class="tsd-signature-type">Maybe</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span>, comparison<span class="tsd-signature-symbol">: </span><a href="../modules/_maybe_.html#maybe" class="tsd-signature-type">Maybe</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Implementation of <a href="../interfaces/_maybe_.maybeshape.html">MaybeShape</a>.<a href="../interfaces/_maybe_.maybeshape.html#equals">equals</a></p>
+								<ul>
+									<li>Defined in maybe.ts:221</li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Method variant for <a href="../modules/_maybe_.html#equals"><code>Maybe.equals</code></a></p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>this: <a href="../modules/_maybe_.html#maybe" class="tsd-signature-type">Maybe</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span></h5>
+								</li>
+								<li>
+									<h5>comparison: <a href="../modules/_maybe_.html#maybe" class="tsd-signature-type">Maybe</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
+						</li>
+					</ul>
+				</section>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-has-type-parameter">
 					<a name="flatmap" class="tsd-anchor"></a>
 					<h3>flat<wbr>Map</h3>
@@ -383,7 +458,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in maybe.ts:180</li>
+									<li>Defined in maybe.ts:186</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -439,7 +514,7 @@
 							<aside class="tsd-sources">
 								<p>Implementation of <a href="../interfaces/_maybe_.maybeshape.html">MaybeShape</a>.<a href="../interfaces/_maybe_.maybeshape.html#isjust">isJust</a></p>
 								<ul>
-									<li>Defined in maybe.ts:125</li>
+									<li>Defined in maybe.ts:131</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -468,7 +543,7 @@
 							<aside class="tsd-sources">
 								<p>Implementation of <a href="../interfaces/_maybe_.maybeshape.html">MaybeShape</a>.<a href="../interfaces/_maybe_.maybeshape.html#isnothing">isNothing</a></p>
 								<ul>
-									<li>Defined in maybe.ts:130</li>
+									<li>Defined in maybe.ts:136</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -496,7 +571,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in maybe.ts:135</li>
+									<li>Defined in maybe.ts:141</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -551,7 +626,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in maybe.ts:140</li>
+									<li>Defined in maybe.ts:146</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -609,7 +684,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in maybe.ts:145</li>
+									<li>Defined in maybe.ts:151</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -680,7 +755,7 @@
 							<aside class="tsd-sources">
 								<p>Implementation of <a href="../interfaces/_maybe_.maybeshape.html">MaybeShape</a>.<a href="../interfaces/_maybe_.maybeshape.html#match">match</a></p>
 								<ul>
-									<li>Defined in maybe.ts:150</li>
+									<li>Defined in maybe.ts:156</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -718,7 +793,7 @@
 							<aside class="tsd-sources">
 								<p>Implementation of <a href="../interfaces/_maybe_.maybeshape.html">MaybeShape</a>.<a href="../interfaces/_maybe_.maybeshape.html#or">or</a></p>
 								<ul>
-									<li>Defined in maybe.ts:155</li>
+									<li>Defined in maybe.ts:161</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -749,7 +824,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in maybe.ts:160</li>
+									<li>Defined in maybe.ts:166</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -792,7 +867,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in maybe.ts:205</li>
+									<li>Defined in maybe.ts:211</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -842,7 +917,7 @@
 							<aside class="tsd-sources">
 								<p>Implementation of <a href="../interfaces/_maybe_.maybeshape.html">MaybeShape</a>.<a href="../interfaces/_maybe_.maybeshape.html#tookorerr">toOkOrErr</a></p>
 								<ul>
-									<li>Defined in maybe.ts:200</li>
+									<li>Defined in maybe.ts:206</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -880,7 +955,7 @@
 							<aside class="tsd-sources">
 								<p>Implementation of <a href="../interfaces/_maybe_.maybeshape.html">MaybeShape</a>.<a href="../interfaces/_maybe_.maybeshape.html#tostring">toString</a></p>
 								<ul>
-									<li>Defined in maybe.ts:210</li>
+									<li>Defined in maybe.ts:216</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -909,7 +984,7 @@
 							<aside class="tsd-sources">
 								<p>Implementation of <a href="../interfaces/_maybe_.maybeshape.html">MaybeShape</a>.<a href="../interfaces/_maybe_.maybeshape.html#unsafelyunwrap">unsafelyUnwrap</a></p>
 								<ul>
-									<li>Defined in maybe.ts:185</li>
+									<li>Defined in maybe.ts:191</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -931,7 +1006,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in maybe.ts:190</li>
+									<li>Defined in maybe.ts:196</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -962,7 +1037,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in maybe.ts:195</li>
+									<li>Defined in maybe.ts:201</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1043,7 +1118,13 @@
 								<a href="_maybe_.just.html#andthen" class="tsd-kind-icon">and<wbr>Then</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-has-type-parameter">
+								<a href="_maybe_.just.html#ap" class="tsd-kind-icon">ap</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-has-type-parameter">
 								<a href="_maybe_.just.html#chain" class="tsd-kind-icon">chain</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="_maybe_.just.html#equals" class="tsd-kind-icon">equals</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-has-type-parameter">
 								<a href="_maybe_.just.html#flatmap" class="tsd-kind-icon">flat<wbr>Map</a>
@@ -1135,6 +1216,12 @@
 					</li>
 					<li class=" tsd-kind-function tsd-parent-kind-external-module tsd-has-type-parameter">
 						<a href="../modules/_maybe_.html#andthen" class="tsd-kind-icon">and<wbr>Then</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-external-module tsd-has-type-parameter">
+						<a href="../modules/_maybe_.html#ap" class="tsd-kind-icon">ap</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-external-module tsd-has-type-parameter">
+						<a href="../modules/_maybe_.html#equals" class="tsd-kind-icon">equals</a>
 					</li>
 					<li class=" tsd-kind-function tsd-parent-kind-external-module tsd-has-type-parameter">
 						<a href="../modules/_maybe_.html#fromresult" class="tsd-kind-icon">from<wbr>Result</a>

@@ -69,6 +69,12 @@ export interface MaybeShape<T> {
 
   /** Method variant for [`Maybe.toString`](../modules/_maybe_.html#tostring) */
   toString(this: Maybe<T>): string;
+
+  /** Method variant for [`Maybe.equals`](../modules/_maybe_.html#equals) */
+  equals(this: Maybe<T>, comparison: Maybe<T>): boolean;
+
+  /** Method variant for [`Maybe.ap`](../modules/_maybe_.html#ap) */
+  ap<U>(this: Maybe<(val: T) => U>, val: Maybe<T>): Maybe<U>;
 }
 
 /**
@@ -210,6 +216,16 @@ export class Just<T> implements MaybeShape<T> {
   toString(this: Maybe<T>): string {
     return toString(this);
   }
+
+  /** Method variant for [`Maybe.equals`](../modules/_maybe_.html#equals) */
+  equals(this: Maybe<T>, comparison: Maybe<T>): boolean {
+    return equals(comparison, this);
+  }
+
+  /** Method variant for [`Maybe.ap`](../modules/_maybe_.html#ap) */
+  ap<A, B>(this: Maybe<(val: A) => B>, val: Maybe<A>): Maybe<B> {
+    return ap(this, val);
+  }
 }
 
 /**
@@ -341,6 +357,16 @@ export class Nothing<T> implements MaybeShape<T> {
   /** Method variant for [`Maybe.toString`](../modules/_maybe_.html#tostring) */
   toString(this: Maybe<T>): string {
     return toString(this);
+  }
+
+  /** Method variant for [`Maybe.equals`](../modules/_maybe_.html#equals) */
+  equals(this: Maybe<T>, comparison: Maybe<T>): boolean {
+    return equals(comparison, this);
+  }
+
+  /** Method variant for [`Maybe.ap`](../modules/_maybe_.html#ap) */
+  ap<A, B>(this: Maybe<(val: A) => B>, val: Maybe<A>): Maybe<B> {
+    return ap(this, val);
   }
 }
 
@@ -638,7 +664,7 @@ export function and<T, U>(
   `andThen` to combine two functions which *both* create a `Maybe` from an
   unwrapped type.
 
-  You may find the `.then` method on an ES6 `Promise` helpful for comparison:
+  You may find the `.then` method on an ES6 `Promise` helpful for b:
   if you have a `Promise`, you can pass its `then` method a callback which
   returns another `Promise`, and the result will not be a *nested* promise, but
   a single `Promise`. The difference is that `Promise#then` unwraps *all*
@@ -1007,6 +1033,213 @@ export function match<T, A>(matcher: Matcher<T, A>, maybe?: Maybe<T>): A | ((m: 
 /** Alias for [`match`](#match) */
 export const cata = match;
 
+/**
+  Allows quick triple-equal equality check between the values inside two `maybe`s
+  without having to unwrap them first.
+
+  ```ts
+  const a = Maybe.of(3);
+  const b = Maybe.of(3);
+  const c = Maybe.of(null);
+  const d = Maybe.nothing();
+
+  Maybe.equals(a, b); // true
+  Maybe.equals(a, c); // false
+  Maybe.equals(c, d); // true
+  ```
+
+  @param mb A `maybe` to compare to.
+  @param ma A `maybe` instance to check.
+ */
+export function equals<T>(mb: Maybe<T>, ma: Maybe<T>): boolean;
+export function equals<T>(mb: Maybe<T>): (ma: Maybe<T>) => boolean;
+export function equals<T>(mb: Maybe<T>, ma?: Maybe<T>): boolean | ((a: Maybe<T>) => boolean) {
+  return ma !== undefined
+    ? ma.match({
+        Just: aVal => isJust(mb) && mb.unsafelyUnwrap() === aVal,
+        Nothing: () => isNothing(mb),
+      })
+    : (maybeA: Maybe<T>) =>
+        maybeA.match({
+          Nothing: () => isNothing(mb),
+          Just: aVal => isJust(mb) && mb.unsafelyUnwrap() === aVal,
+        });
+}
+
+/**
+  Allows you to *apply* (thus `ap`) a value to a function without having to
+  take either out of the context of their `Maybe`s. This does mean that the
+  transforming function is itself within a `Maybe`, which can be hard to grok
+  at first but lets you do some very elegant things. For example, `ap` allows
+  you to this:
+
+  ```ts
+  import { just, nothing } from 'true-myth/maybe';
+
+  const one = just(1);
+  const five = just(5);
+  const none = nothing();
+
+  const add = (a: number) => (b: number) => a + b;
+  const maybeAdd = just(add);
+
+  maybeAdd.ap(one).ap(five); // Just(6)
+  maybeAdd.ap(one).ap(none); // Nothing
+  maybeAdd.ap(none).ap(five) // Nothing
+  ```
+
+  Without `Maybe.ap`, you'd need to do something like a nested `Maybe.match`:
+
+  ```ts
+  import { just, nothing } from 'true-myth/maybe';
+
+  const one = just(1);
+  const five = just(5);
+  const none = nothing();
+
+  one.match({
+    Just: n => five.match({
+      Just: o => just(n + o),
+      Nothing: () => nothing(),
+    }),
+    Nothing: ()  => nothing(),
+  }); // Just(6)
+
+  one.match({
+    Just: n => none.match({
+      Just: o => just(n + o),
+      Nothing: () => nothing(),
+    }),
+    Nothing: ()  => nothing(),
+  }); // Nothing
+
+  none.match({
+    Just: n => five.match({
+      Just: o => just(n + o),
+      Nothing: () => nothing(),
+    }),
+    Nothing: ()  => nothing(),
+  }); // Nothing
+  ```
+
+  And this kind of thing comes up quite often once you're using `Maybe` to
+  handle optionality throughout your application.
+
+  For another example, imagine you need to compare the equality of two
+  ImmutableJS data structures, where a `===` comparison won't work. With `ap`,
+  that's as simple as this:
+
+  ```ts
+  import Maybe from 'true-myth/maybe';
+  import Immutable from 'immutable';
+  import { curry } from 'lodash'
+
+  const is = curry(Immutable.is);
+
+  const x = Maybe.of(Immutable.Set.of(1, 2, 3));
+  const y = Maybe.of(Immutable.Set.of(2, 3, 4));
+
+  Maybe.of(is).ap(x).ap(y); // Just(false)
+  ```
+
+  Without `ap`, we're back to that gnarly nested `match`:
+
+  ```ts
+   * import Maybe, { just, nothing } from 'true-myth/maybe';
+  import Immutable from 'immutable';
+  import { curry } from 'lodash'
+
+  const is = curry(Immutable.is);
+
+  const x = Maybe.of(Immutable.Set.of(1, 2, 3));
+  const y = Maybe.of(Immutable.Set.of(2, 3, 4));
+
+  x.match({
+    Just: iX => y.match({
+      Just: iY => Maybe.just(Immutable.is(iX, iY)),
+      Nothing: () => Maybe.nothing(),
+    })
+    Nothing: () => Maybe.nothing(),
+  }); // Just(false)
+  ```
+
+  In summary: anywhere you have two `Maybe` instances and need to perform an
+  operation that uses both of them, `ap` is your friend.
+
+  Two things to note, both regarding *currying*:
+
+  1.  All functions passed to `ap` must be curried. That is, they must be of the
+      form (for add) `(a: number) => (b: number) => a + b`, *not* the more usual
+      `(a: number, b: number) => a + b` you see in JavaScript more generally.
+
+      For convenience, you may want to look at Lodash's `_.curry` or Ramda's
+      `R.curry`, which allow you to create curried versions of functions
+      whenever you want:
+
+      ```
+      import Maybe from 'true-myth/maybe';
+      import { curry } from 'lodash';
+
+      const normalAdd = (a: number, b: number) => a + b;
+      const curriedAdd = curry(normalAdd); // (a: number) => (b: number) => a + b;
+
+      Maybe.of(curriedAdd).ap(Maybe.of(1)).ap(Maybe.of(5)); // Just(6)
+      ```
+
+  2.  You will need to call `ap` as many times as there are arguments to the
+      function you're dealing with. So in the case of `add`, which has the
+      "arity" (function argument count) of 2 (`a` and `b`), you'll need to call
+      `ap` twice: once for `a`, and once for `b`. To see why, let's look at what
+      the result in each phase is:
+
+      ```ts
+      const add = (a: number) => (b: number) => a + b;
+
+      const maybeAdd = Maybe.of(add); // Just((a: number) => (b: number) => a + b)
+      const maybeAdd1 = maybeAdd.ap(Maybe.of(1)); // Just((b: number) => 1 + b)
+      const final = maybeAdd1.ap(Maybe.of(3)); // Just(4)
+      ```
+
+      So for `toString`, which just takes a single argument, you would only need
+      to call `ap` once.
+
+      ```ts
+      const toStr = (v: { toString(): string }) => v.toString();
+      Maybe.of(toStr).ap(12); // Just("12")
+      ```
+
+  One other scenario which doesn't come up *quite* as often but is conceivable
+  is where you have something that may or may not actually construct a function
+  for handling a specific `Maybe` scenario. In that case, you can wrap the
+  possibly-present in `ap` and then wrap the values to apply to the function to
+  in `Maybe` themselves.
+
+  **Aside:** `ap` is not named `apply` because of the overlap with JavaScript's
+  existing [`apply`] function – and although strictly speaking, there isn't any
+  direct overlap (`Maybe.apply` and `Function.prototype.apply` don't intersect
+  at all) it's useful to have a different name to avoid implying that they're
+  the same.
+
+  [`apply`]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function/apply
+
+  @param maybeFn maybe a function from T to U
+  @param maybe maybe a T to apply to `fn`
+ */
+export function ap<T, U>(maybeFn: Maybe<(t: T) => U>, maybe: Maybe<T>): Maybe<U>;
+export function ap<T, U>(maybeFn: Maybe<(t: T) => U>): (maybe: Maybe<T>) => Maybe<U>;
+export function ap<T, U>(
+  maybeFn: Maybe<(val: T) => U>,
+  maybe?: Maybe<T>
+): Maybe<U> | ((val: Maybe<T>) => Maybe<U>) {
+  const op = (m: Maybe<T>) =>
+    m.match({
+      Just: val => maybeFn.map(fn => fn(val)),
+      Nothing: () => Maybe.nothing<U>(),
+    });
+
+  return curry1(op, maybe);
+}
+
 /** A value which may (`Just<T>`) or may not (`Nothing`) be present. */
 export type Maybe<T> = Just<T> | Nothing<T>;
 export const Maybe = {
@@ -1041,6 +1274,8 @@ export const Maybe = {
   toString,
   match,
   cata,
+  equals,
+  ap,
 };
 
 export default Maybe;
