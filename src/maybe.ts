@@ -1034,22 +1034,22 @@ export function match<T, A>(matcher: Matcher<T, A>, maybe?: Maybe<T>): A | ((m: 
 export const cata = match;
 
 /**
- * Allows quick triple-equal equality check between the values inside two `maybe`s
- * without having to unwrap them first.
- *
- * ```ts
- * const a = Maybe.of(3);
- * const b = Maybe.of(3);
- * const c = Maybe.of(null);
- * const d = Maybe.nothing();
- *
- * Maybe.equals(a, b); // true
- * Maybe.equals(a, c); // false
- * Maybe.equals(c, d); // true
- * ```
- *
- * @param mb A `maybe` to compare to.
- * @param ma A `maybe` instance to check.
+  Allows quick triple-equal equality check between the values inside two `maybe`s
+  without having to unwrap them first.
+
+  ```ts
+  const a = Maybe.of(3);
+  const b = Maybe.of(3);
+  const c = Maybe.of(null);
+  const d = Maybe.nothing();
+
+  Maybe.equals(a, b); // true
+  Maybe.equals(a, c); // false
+  Maybe.equals(c, d); // true
+  ```
+
+  @param mb A `maybe` to compare to.
+  @param ma A `maybe` instance to check.
  */
 export function equals<T>(mb: Maybe<T>, ma: Maybe<T>): boolean;
 export function equals<T>(mb: Maybe<T>): (ma: Maybe<T>) => boolean;
@@ -1067,33 +1067,163 @@ export function equals<T>(mb: Maybe<T>, ma?: Maybe<T>): boolean | ((a: Maybe<T>)
 }
 
 /**
- * Allows you to apply a value to a function without having to take either out
- * of the context of their `Maybe`s. This does mean that the transforming function
- * is itself within a `Maybe`, which can be hard to grok. This allows you to do
- * convenient things like this:
- *
- * ```ts
- * Maybe.of(add).ap(Maybe.of(1)).ap(Maybe.of(5)); // Maybe(6)
- * Maybe.of(toString).ap(Maybe.of(4)); // Maybe('4')
- * Maybe.of(toString).ap(Maybe.of(null)); // Nothing
- * ```
- *
- * Or let's say you need to compare the equality of two ImmutableJS data
- * structures, where a `===` comparison won't work.
- *
- * ```ts
- * import Immutable from 'immutable';
- *
- * const is = curry(Immutable.is);
- *
- * const x = Maybe.of(Immutable.Set.of(1, 2, 3));
- * const y = Maybe.of(Immutable.Set.of(2, 3, 4));
- *
- * Maybe.of(is).ap(x).ap(y); // Maybe(false)
- * ```
- *
- * @param maybeFn maybe a function from T to U
- * @param maybe maybe a T to apply to `fn`
+  Allows you to *apply* (thus `ap`) a value to a function without having to
+  take either out of the context of their `Maybe`s. This does mean that the
+  transforming function is itself within a `Maybe`, which can be hard to grok
+  at first but lets you do some very elegant things. For example, `ap` allows
+  you to this:
+
+  ```ts
+  import { just, nothing } from 'true-myth/maybe';
+
+  const one = just(1);
+  const five = just(5);
+  const none = nothing();
+
+  const add = (a: number) => (b: number) => a + b;
+  const maybeAdd = just(add);
+
+  maybeAdd.ap(one).ap(five); // Just(6)
+  maybeAdd.ap(one).ap(none); // Nothing
+  maybeAdd.ap(none).ap(five) // Nothing
+  ```
+
+  Without `Maybe.ap`, you'd need to do something like a nested `Maybe.match`:
+
+  ```ts
+  import { just, nothing } from 'true-myth/maybe';
+
+  const one = just(1);
+  const five = just(5);
+  const none = nothing();
+
+  one.match({
+    Just: n => five.match({
+      Just: o => just(n + o),
+      Nothing: () => nothing(),
+    }),
+    Nothing: ()  => nothing(),
+  }); // Just(6)
+
+  one.match({
+    Just: n => none.match({
+      Just: o => just(n + o),
+      Nothing: () => nothing(),
+    }),
+    Nothing: ()  => nothing(),
+  }); // Nothing
+
+  none.match({
+    Just: n => five.match({
+      Just: o => just(n + o),
+      Nothing: () => nothing(),
+    }),
+    Nothing: ()  => nothing(),
+  }); // Nothing
+  ```
+
+  And this kind of thing comes up quite often once you're using `Maybe` to
+  handle optionality throughout your application.
+
+  For another example, imagine you need to compare the equality of two
+  ImmutableJS data structures, where a `===` comparison won't work. With `ap`,
+  that's as simple as this:
+
+  ```ts
+  import Maybe from 'true-myth/maybe';
+  import Immutable from 'immutable';
+  import { curry } from 'lodash'
+
+  const is = curry(Immutable.is);
+
+  const x = Maybe.of(Immutable.Set.of(1, 2, 3));
+  const y = Maybe.of(Immutable.Set.of(2, 3, 4));
+
+  Maybe.of(is).ap(x).ap(y); // Just(false)
+  ```
+
+  Without `ap`, we're back to that gnarly nested `match`:
+
+  ```ts
+   * import Maybe, { just, nothing } from 'true-myth/maybe';
+  import Immutable from 'immutable';
+  import { curry } from 'lodash'
+
+  const is = curry(Immutable.is);
+
+  const x = Maybe.of(Immutable.Set.of(1, 2, 3));
+  const y = Maybe.of(Immutable.Set.of(2, 3, 4));
+
+  x.match({
+    Just: iX => y.match({
+      Just: iY => Maybe.just(Immutable.is(iX, iY)),
+      Nothing: () => Maybe.nothing(),
+    })
+    Nothing: () => Maybe.nothing(),
+  }); // Just(false)
+  ```
+
+  In summary: anywhere you have two `Maybe` instances and need to perform an
+  operation that uses both of them, `ap` is your friend.
+
+  Two things to note, both regarding *currying*:
+
+  1.  All functions passed to `ap` must be curried. That is, they must be of the
+      form (for add) `(a: number) => (b: number) => a + b`, *not* the more usual
+      `(a: number, b: number) => a + b` you see in JavaScript more generally.
+
+      For convenience, you may want to look at Lodash's `_.curry` or Ramda's
+      `R.curry`, which allow you to create curried versions of functions
+      whenever you want:
+
+      ```
+      import Maybe from 'true-myth/maybe';
+      import { curry } from 'lodash';
+
+      const normalAdd = (a: number, b: number) => a + b;
+      const curriedAdd = curry(normalAdd); // (a: number) => (b: number) => a + b;
+
+      Maybe.of(curriedAdd).ap(Maybe.of(1)).ap(Maybe.of(5)); // Just(6)
+      ```
+
+  2.  You will need to call `ap` as many times as there are arguments to the
+      function you're dealing with. So in the case of `add`, which has the
+      "arity" (function argument count) of 2 (`a` and `b`), you'll need to call
+      `ap` twice: once for `a`, and once for `b`. To see why, let's look at what
+      the result in each phase is:
+
+      ```ts
+      const add = (a: number) => (b: number) => a + b;
+
+      const maybeAdd = Maybe.of(add); // Just((a: number) => (b: number) => a + b)
+      const maybeAdd1 = maybeAdd.ap(Maybe.of(1)); // Just((b: number) => 1 + b)
+      const final = maybeAdd1.ap(Maybe.of(3)); // Just(4)
+      ```
+
+      So for `toString`, which just takes a single argument, you would only need
+      to call `ap` once.
+
+      ```ts
+      const toStr = (v: { toString(): string }) => v.toString();
+      Maybe.of(toStr).ap(12); // Just("12")
+      ```
+
+  One other scenario which doesn't come up *quite* as often but is conceivable
+  is where you have something that may or may not actually construct a function
+  for handling a specific `Maybe` scenario. In that case, you can wrap the
+  possibly-present in `ap` and then wrap the values to apply to the function to
+  in `Maybe` themselves.
+
+  **Aside:** `ap` is not named `apply` because of the overlap with JavaScript's
+  existing [`apply`] function – and although strictly speaking, there isn't any
+  direct overlap (`Maybe.apply` and `Function.prototype.apply` don't intersect
+  at all) it's useful to have a different name to avoid implying that they're
+  the same.
+
+  [`apply`]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function/apply
+
+  @param maybeFn maybe a function from T to U
+  @param maybe maybe a T to apply to `fn`
  */
 export function ap<T, U>(maybeFn: Maybe<(t: T) => U>, maybe: Maybe<T>): Maybe<U>;
 export function ap<T, U>(maybeFn: Maybe<(t: T) => U>): (maybe: Maybe<T>) => Maybe<U>;

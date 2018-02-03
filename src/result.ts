@@ -482,6 +482,9 @@ export function ok<T, E>(value?: T): Result<Unit, E> | Result<T, E> {
   return value === undefined ? new Ok(Unit) : new Ok(value);
 }
 
+/** `Result.of` is an alias for `Result.ok`. */
+export const of = ok;
+
 /**
   Create an instance of `Result.Error`.
 
@@ -1236,33 +1239,184 @@ export function equals<T, E>(
 }
 
 /**
- * Allows you to apply a value to a function without having to take either out
- * of the context of their `Result`s. This does mean that the transforming function
- * is itself within a `Result`, which can be hard to grok. This allows you to do
- * convenient things like this:
- *
- * ```ts
- * Result.of(add).ap(Result.of(1)).ap(Result.of(5)); // Result(6)
- * Result.of(toString).ap(Result.of(4)); // Result('4')
- * Result.of(toString).ap(Result.of(null)); // Nothing
- * ```
- *
- * Or let's say you need to compare the equality of two ImmutableJS data
- * structures, where a `===` comparison won't work.
- *
- * ```ts
- * import Immutable from 'immutable';
- *
- * const is = curry(Immutable.is);
- *
- * const x = Result.of(Immutable.Set.of(1, 2, 3));
- * const y = Result.of(Immutable.Set.of(2, 3, 4));
- *
- * Result.of(is).ap(x).ap(y); // Result(false)
- * ```
- *
- * @param resultFn maybe a function from T to U
- * @param result maybe a T to apply to `fn`
+  Allows you to *apply* (thus `ap`) a value to a function without having to
+  take either out of the context of their `Result`s. This does mean that the
+  transforming function is itself within a `Result`, which can be hard to grok
+  at first but lets you do some very elegant things. For example, `ap` allows
+  you to do this:
+
+  ```ts
+  import Result from 'true-myth/result';
+
+  const one = Result.ok<number, string>(1);
+  const five = Result.ok<number, string>(5);
+  const whoops = Result.err<number, string>('oh no');
+
+  const add = (a: number) => (b: number) => a + b;
+  const resultAdd = Result.ok<typeof add, string>(add);
+
+  resultAdd.ap(one).ap(five); // Ok(6)
+  resultAdd.ap(one).ap(whoops); // Err('oh no')
+  resultAdd.ap(whoops).ap(five) // Err('oh no')
+  ```
+
+  Without `Result.ap`, you'd need to do something like a nested `Result.match`:
+
+  ```ts
+  import { ok, err } from 'true-myth/result';
+
+  const one = ok<number, string>(1);
+  const five = ok<number, string>(5);
+  const whoops = err<number, string>('oh no');
+
+  one.match({
+    Ok: n => five.match({
+      Ok: o => ok<number, string>(n + o),
+      Err: e => err<number, string>(e),
+    }),
+    Err: e  => err<number, string>(e),
+  }); // Ok(6)
+
+  one.match({
+    Ok: n => whoops.match({
+      Ok: o => ok<number, string>(n + o),
+      Err: e => err<number, string>(e),
+    }),
+    Err: e  => err<number, string>(e),
+  }); // Err('oh no')
+
+  whoops.match({
+    Ok: n => five.match({
+      Ok: o => ok(n + o),
+      Err: e => err(e),
+    }),
+    Err: e  => err(e),
+  }); // Err('oh no')
+  ```
+
+  And this kind of thing comes up quite often once you're using `Maybe` to
+  handle optionality throughout your application.
+
+  For another example, imagine you need to compare the equality of two
+  ImmutableJS data structures, where a `===` comparison won't work. With `ap`,
+  that's as simple as this:
+
+  ```ts
+  import { ok } from 'true-myth/result';
+  import Immutable from 'immutable';
+  import { curry } from 'lodash'
+
+  const is = curry(Immutable.is);
+
+  const x = ok(Immutable.Set.of(1, 2, 3));
+  const y = ok(Immutable.Set.of(2, 3, 4));
+
+  ok(is).ap(x).ap(y); // Ok(false)
+  ```
+
+  Without `ap`, we're back to that gnarly nested `match`:
+
+  ```ts
+   * import Result, { ok, err } from 'true-myth/result';
+  import Immutable from 'immutable';
+  import { curry } from 'lodash'
+
+  const is = curry(Immutable.is);
+
+  const x = ok(Immutable.Set.of(1, 2, 3));
+  const y = ok(Immutable.Set.of(2, 3, 4));
+
+  x.match({
+    Ok: iX => y.match({
+      Ok: iY => Result.of(Immutable.is(iX, iY)),
+      Err: (e) => ok(false),
+    })
+    Err: (e) => ok(false),
+  }); // Ok(false)
+  ```
+
+  In summary: anywhere you have two `Maybe` instances and need to perform an
+  operation that uses both of them, `ap` is your friend.
+
+  Two things to note, both regarding *currying*:
+
+  1.  All functions passed to `ap` must be curried. That is, they must be of the
+      form (for add) `(a: number) => (b: number) => a + b`, *not* the more usual
+      `(a: number, b: number) => a + b` you see in JavaScript more generally.
+
+      For convenience, you may want to look at Lodash's `_.curry` or Ramda's
+      `R.curry`, which allow you to create curried versions of functions
+      whenever you want:
+
+      ```
+      import Result from 'true-myth/result';
+      import { curry } from 'lodash';
+
+      const normalAdd = (a: number, b: number) => a + b;
+      const curriedAdd = curry(normalAdd); // (a: number) => (b: number) => a + b;
+
+      Result.of(curriedAdd).ap(Result.of(1)).ap(Result.of(5)); // Ok(6)
+      ```
+
+  2.  You will need to call `ap` as many times as there are arguments to the
+      function you're dealing with. So in the case of `add`, which has the
+      "arity" (function argument count) of 2 (`a` and `b`), you'll need to call
+      `ap` twice: once for `a`, and once for `b`. To see why, let's look at what
+      the result in each phase is:
+
+      ```ts
+      const add = (a: number) => (b: number) => a + b;
+
+      const maybeAdd = Result.of(add); // Ok((a: number) => (b: number) => a + b)
+      const maybeAdd1 = maybeAdd.ap(Result.of(1)); // Ok((b: number) => 1 + b)
+      const final = maybeAdd1.ap(Result.of(3)); // Ok(4)
+      ```
+
+      So for `toString`, which just takes a single argument, you would only need
+      to call `ap` once.
+
+      ```ts
+      const toStr = (v: { toString(): string }) => v.toString();
+      Result.of(toStr).ap(12); // Ok("12")
+      ```
+
+  One other scenario which doesn't come up *quite* as often but is conceivable
+  is where you have something that may or may not actually construct a function
+  for handling a specific `Result` scenario. In that case, you can wrap the
+  possibly-present in `ap` and then wrap the values to apply to the function to
+  in `Result` themselves.
+
+  Because `Result` often requires you to type out the full type parameterization
+  on a regular basis, it's convenient to use TypeScript's `typeof` operator to
+  write out the type of a curried function. For example, if you had a function
+  that simply merged three strings, you might write it like this:
+
+  ```ts
+  import Result from 'true-myth/result';
+  import { curry } from 'lodash';
+
+  const merge3Strs = (a: string, b: string, c: string) => string;
+  const curriedMerge = curry(merge3Strs);
+
+  const fn = Result.ok<typeof curriedMerge, string>(curriedMerge);
+  ```
+
+  The alternative is writing out the full signature long-form:
+
+  ```ts
+  const fn = Result.ok<(a: string) => (b: string) => (c: string) => string, string>(curriedMerge);
+  ```
+
+  **Aside:** `ap` is not named `apply` because of the overlap with JavaScript's
+  existing [`apply`] function – and although strictly speaking, there isn't any
+  direct overlap (`Result.apply` and `Function.prototype.apply` don't intersect
+  at all) it's useful to have a different name to avoid implying that they're
+  the same.
+
+  [`apply`]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function/apply
+
+  @param resultFn result of a function from T to U
+  @param result result of a T to apply to `fn`
  */
 export function ap<T, U, E>(resultFn: Result<(t: T) => U, E>, result: Result<T, E>): Result<U, E>;
 export function ap<T, U, E>(

@@ -749,31 +749,141 @@ takesAMaybeString(nothingHereEither);
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in maybe.ts:1098</li>
+									<li>Defined in maybe.ts:1228</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
-									<p>Allows you to apply a value to a function without having to take either out
-										of the context of their <code>Maybe</code>s. This does mean that the transforming function
-										is itself within a <code>Maybe</code>, which can be hard to grok. This allows you to do
-									convenient things like this:</p>
+									<p>Allows you to <em>apply</em> (thus <code>ap</code>) a value to a function without having to
+										take either out of the context of their <code>Maybe</code>s. This does mean that the
+										transforming function is itself within a <code>Maybe</code>, which can be hard to grok
+										at first but lets you do some very elegant things. For example, <code>ap</code> allows
+									you to this:</p>
 								</div>
-								<pre><code class="lang-ts">Maybe.of(add).ap(Maybe.of(<span class="hljs-number">1</span>)).ap(Maybe.of(<span class="hljs-number">5</span>)); <span class="hljs-comment">// Maybe(6)</span>
-Maybe.of(toString).ap(Maybe.of(<span class="hljs-number">4</span>)); <span class="hljs-comment">// Maybe('4')</span>
-Maybe.of(toString).ap(Maybe.of(<span class="hljs-literal">null</span>)); <span class="hljs-comment">// Nothing</span>
+								<pre><code class="lang-ts"><span class="hljs-keyword">import</span> { just, nothing } <span class="hljs-keyword">from</span> <span class="hljs-string">'true-myth/maybe'</span>;
+
+<span class="hljs-keyword">const</span> one = just(<span class="hljs-number">1</span>);
+<span class="hljs-keyword">const</span> five = just(<span class="hljs-number">5</span>);
+<span class="hljs-keyword">const</span> none = nothing();
+
+<span class="hljs-keyword">const</span> add = <span class="hljs-function">(<span class="hljs-params">a: <span class="hljs-built_in">number</span></span>) =&gt;</span> (b: <span class="hljs-built_in">number</span>) =&gt; a + b;
+<span class="hljs-keyword">const</span> maybeAdd = just(add);
+
+maybeAdd.ap(one).ap(five); <span class="hljs-comment">// Just(6)</span>
+maybeAdd.ap(one).ap(none); <span class="hljs-comment">// Nothing</span>
+maybeAdd.ap(none).ap(five) <span class="hljs-comment">// Nothing</span>
 </code></pre>
-								<p>Or let&#39;s say you need to compare the equality of two ImmutableJS data
-								structures, where a <code>===</code> comparison won&#39;t work.</p>
-								<pre><code class="lang-ts"><span class="hljs-keyword">import</span> Immutable <span class="hljs-keyword">from</span> <span class="hljs-string">'immutable'</span>;
+								<p>Without <code>Maybe.ap</code>, you&#39;d need to do something like a nested <code>Maybe.match</code>:</p>
+								<pre><code class="lang-ts"><span class="hljs-keyword">import</span> { just, nothing } <span class="hljs-keyword">from</span> <span class="hljs-string">'true-myth/maybe'</span>;
+
+<span class="hljs-keyword">const</span> one = just(<span class="hljs-number">1</span>);
+<span class="hljs-keyword">const</span> five = just(<span class="hljs-number">5</span>);
+<span class="hljs-keyword">const</span> none = nothing();
+
+one.match({
+Just: <span class="hljs-function"><span class="hljs-params">n</span> =&gt;</span> five.match({
+Just: <span class="hljs-function"><span class="hljs-params">o</span> =&gt;</span> just(n + o),
+Nothing: <span class="hljs-function"><span class="hljs-params">()</span> =&gt;</span> nothing(),
+}),
+Nothing: <span class="hljs-function"><span class="hljs-params">()</span>  =&gt;</span> nothing(),
+}); <span class="hljs-comment">// Just(6)</span>
+
+one.match({
+Just: <span class="hljs-function"><span class="hljs-params">n</span> =&gt;</span> none.match({
+Just: <span class="hljs-function"><span class="hljs-params">o</span> =&gt;</span> just(n + o),
+Nothing: <span class="hljs-function"><span class="hljs-params">()</span> =&gt;</span> nothing(),
+}),
+Nothing: <span class="hljs-function"><span class="hljs-params">()</span>  =&gt;</span> nothing(),
+}); <span class="hljs-comment">// Nothing</span>
+
+none.match({
+Just: <span class="hljs-function"><span class="hljs-params">n</span> =&gt;</span> five.match({
+Just: <span class="hljs-function"><span class="hljs-params">o</span> =&gt;</span> just(n + o),
+Nothing: <span class="hljs-function"><span class="hljs-params">()</span> =&gt;</span> nothing(),
+}),
+Nothing: <span class="hljs-function"><span class="hljs-params">()</span>  =&gt;</span> nothing(),
+}); <span class="hljs-comment">// Nothing</span>
+</code></pre>
+								<p>And this kind of thing comes up quite often once you&#39;re using <code>Maybe</code> to
+								handle optionality throughout your application.</p>
+								<p>For another example, imagine you need to compare the equality of two
+									ImmutableJS data structures, where a <code>===</code> comparison won&#39;t work. With <code>ap</code>,
+								that&#39;s as simple as this:</p>
+								<pre><code class="lang-ts"><span class="hljs-keyword">import</span> Maybe <span class="hljs-keyword">from</span> <span class="hljs-string">'true-myth/maybe'</span>;
+<span class="hljs-keyword">import</span> Immutable <span class="hljs-keyword">from</span> <span class="hljs-string">'immutable'</span>;
+<span class="hljs-keyword">import</span> { curry } <span class="hljs-keyword">from</span> <span class="hljs-string">'lodash'</span>
 
 <span class="hljs-keyword">const</span> is = curry(Immutable.is);
 
 <span class="hljs-keyword">const</span> x = Maybe.of(Immutable.Set.of(<span class="hljs-number">1</span>, <span class="hljs-number">2</span>, <span class="hljs-number">3</span>));
 <span class="hljs-keyword">const</span> y = Maybe.of(Immutable.Set.of(<span class="hljs-number">2</span>, <span class="hljs-number">3</span>, <span class="hljs-number">4</span>));
 
-Maybe.of(is).ap(x).ap(y); <span class="hljs-comment">// Maybe(false)</span>
+Maybe.of(is).ap(x).ap(y); <span class="hljs-comment">// Just(false)</span>
 </code></pre>
+								<p>Without <code>ap</code>, we&#39;re back to that gnarly nested <code>match</code>:</p>
+								<pre><code class="lang-ts"><span class="hljs-keyword">import</span> Maybe, { just, nothing } <span class="hljs-keyword">from</span> <span class="hljs-string">'true-myth/maybe'</span>;
+<span class="hljs-keyword">import</span> Immutable <span class="hljs-keyword">from</span> <span class="hljs-string">'immutable'</span>;
+<span class="hljs-keyword">import</span> { curry } <span class="hljs-keyword">from</span> <span class="hljs-string">'lodash'</span>
+
+<span class="hljs-keyword">const</span> is = curry(Immutable.is);
+
+<span class="hljs-keyword">const</span> x = Maybe.of(Immutable.Set.of(<span class="hljs-number">1</span>, <span class="hljs-number">2</span>, <span class="hljs-number">3</span>));
+<span class="hljs-keyword">const</span> y = Maybe.of(Immutable.Set.of(<span class="hljs-number">2</span>, <span class="hljs-number">3</span>, <span class="hljs-number">4</span>));
+
+x.match({
+Just: <span class="hljs-function"><span class="hljs-params">iX</span> =&gt;</span> y.match({
+Just: <span class="hljs-function"><span class="hljs-params">iY</span> =&gt;</span> Maybe.just(Immutable.is(iX, iY)),
+Nothing: <span class="hljs-function"><span class="hljs-params">()</span> =&gt;</span> Maybe.nothing(),
+})
+Nothing: <span class="hljs-function"><span class="hljs-params">()</span> =&gt;</span> Maybe.nothing(),
+}); <span class="hljs-comment">// Just(false)</span>
+</code></pre>
+								<p>In summary: anywhere you have two <code>Maybe</code> instances and need to perform an
+								operation that uses both of them, <code>ap</code> is your friend.</p>
+								<p>Two things to note, both regarding <em>currying</em>:</p>
+								<ol>
+									<li>All functions passed to <code>ap</code> must be curried. That is, they must be of the
+										form (for add) <code>(a: number) =&gt; (b: number) =&gt; a + b</code>, <em>not</em> the more usual
+									<code>(a: number, b: number) =&gt; a + b</code> you see in JavaScript more generally.</li>
+								</ol>
+								<p>For convenience, you may want to look at Lodash&#39;s <code>_.curry</code> or Ramda&#39;s
+									<code>R.curry</code>, which allow you to create curried versions of functions
+								whenever you want:</p>
+								<pre><code><span class="hljs-keyword">import</span> Maybe <span class="hljs-keyword">from</span> <span class="hljs-string">'true-myth/maybe'</span>;
+<span class="hljs-keyword">import</span> { curry } <span class="hljs-keyword">from</span> <span class="hljs-string">'lodash'</span>;
+
+<span class="hljs-keyword">const</span> normalAdd = <span class="hljs-function">(<span class="hljs-params">a: <span class="hljs-built_in">number</span>, b: <span class="hljs-built_in">number</span></span>) =&gt;</span> a + b;
+<span class="hljs-keyword">const</span> curriedAdd = curry(normalAdd); <span class="hljs-comment">// (a: number) =&gt; (b: number) =&gt; a + b;</span>
+
+Maybe.of(curriedAdd).ap(Maybe.of(<span class="hljs-number">1</span>)).ap(Maybe.of(<span class="hljs-number">5</span>)); <span class="hljs-comment">// Just(6)</span>
+</code></pre><ol>
+									<li>You will need to call <code>ap</code> as many times as there are arguments to the
+										function you&#39;re dealing with. So in the case of <code>add</code>, which has the
+										&quot;arity&quot; (function argument count) of 2 (<code>a</code> and <code>b</code>), you&#39;ll need to call
+										<code>ap</code> twice: once for <code>a</code>, and once for <code>b</code>. To see why, let&#39;s look at what
+									the result in each phase is:</li>
+								</ol>
+								<pre><code class="lang-ts"><span class="hljs-keyword">const</span> add = <span class="hljs-function">(<span class="hljs-params">a: <span class="hljs-built_in">number</span></span>) =&gt;</span> (b: <span class="hljs-built_in">number</span>) =&gt; a + b;
+
+<span class="hljs-keyword">const</span> maybeAdd = Maybe.of(add); <span class="hljs-comment">// Just((a: number) =&gt; (b: number) =&gt; a + b)</span>
+<span class="hljs-keyword">const</span> maybeAdd1 = maybeAdd.ap(Maybe.of(<span class="hljs-number">1</span>)); <span class="hljs-comment">// Just((b: number) =&gt; 1 + b)</span>
+<span class="hljs-keyword">const</span> final = maybeAdd1.ap(Maybe.of(<span class="hljs-number">3</span>)); <span class="hljs-comment">// Just(4)</span>
+</code></pre>
+								<p>So for <code>toString</code>, which just takes a single argument, you would only need
+								to call <code>ap</code> once.</p>
+								<pre><code class="lang-ts"><span class="hljs-keyword">const</span> toStr = <span class="hljs-function">(<span class="hljs-params">v: { toString(<span class="hljs-params"></span>): <span class="hljs-built_in">string</span> }</span>) =&gt;</span> v.toString();
+Maybe.of(toStr).ap(<span class="hljs-number">12</span>); <span class="hljs-comment">// Just("12")</span>
+</code></pre>
+								<p>One other scenario which doesn&#39;t come up <em>quite</em> as often but is conceivable
+									is where you have something that may or may not actually construct a function
+									for handling a specific <code>Maybe</code> scenario. In that case, you can wrap the
+									possibly-present in <code>ap</code> and then wrap the values to apply to the function to
+								in <code>Maybe</code> themselves.</p>
+								<p><em>Aside:*</em> <code>ap</code> is not named <code>apply</code> because of the overlap with JavaScript&#39;s
+									existing <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function/apply"><code>apply</code></a> function – and although strictly speaking, there isn&#39;t any
+									direct overlap (<code>Maybe.apply</code> and <code>Function.prototype.apply</code> don&#39;t intersect
+									at all) it&#39;s useful to have a different name to avoid implying that they&#39;re
+								the same.</p>
 							</div>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
 							<ul class="tsd-type-parameters">
@@ -804,7 +914,7 @@ Maybe.of(is).ap(x).ap(y); <span class="hljs-comment">// Maybe(false)</span>
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in maybe.ts:1099</li>
+									<li>Defined in maybe.ts:1229</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
@@ -2781,8 +2891,8 @@ mightBeANumber
 					<div class="tsd-signature tsd-kind-icon">Maybe<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">object</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in maybe.ts:1114</li>
-							<li>Defined in maybe.ts:1115</li>
+							<li>Defined in maybe.ts:1244</li>
+							<li>Defined in maybe.ts:1245</li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -2796,7 +2906,7 @@ mightBeANumber
 						<div class="tsd-signature tsd-kind-icon">Just<span class="tsd-signature-symbol">:</span> <a href="../classes/_maybe_.just.html" class="tsd-signature-type">Just</a></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in maybe.ts:1117</li>
+								<li>Defined in maybe.ts:1247</li>
 							</ul>
 						</aside>
 					</section>
@@ -2806,7 +2916,7 @@ mightBeANumber
 						<div class="tsd-signature tsd-kind-icon">Nothing<span class="tsd-signature-symbol">:</span> <a href="../classes/_maybe_.nothing.html" class="tsd-signature-type">Nothing</a></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in maybe.ts:1118</li>
+								<li>Defined in maybe.ts:1248</li>
 							</ul>
 						</aside>
 					</section>
@@ -2816,7 +2926,7 @@ mightBeANumber
 						<div class="tsd-signature tsd-kind-icon">Variant<span class="tsd-signature-symbol">:</span> <a href="../enums/_maybe_.variant.html" class="tsd-signature-type">Variant</a></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in maybe.ts:1116</li>
+								<li>Defined in maybe.ts:1246</li>
 							</ul>
 						</aside>
 					</section>
@@ -2826,7 +2936,7 @@ mightBeANumber
 						<div class="tsd-signature tsd-kind-icon">and<span class="tsd-signature-symbol">:</span> <a href="_maybe_.html#and" class="tsd-signature-type">and</a></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in maybe.ts:1128</li>
+								<li>Defined in maybe.ts:1258</li>
 							</ul>
 						</aside>
 					</section>
@@ -2836,7 +2946,7 @@ mightBeANumber
 						<div class="tsd-signature tsd-kind-icon">and<wbr>Then<span class="tsd-signature-symbol">:</span> <a href="_maybe_.html#andthen" class="tsd-signature-type">andThen</a></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in maybe.ts:1129</li>
+								<li>Defined in maybe.ts:1259</li>
 							</ul>
 						</aside>
 					</section>
@@ -2846,7 +2956,7 @@ mightBeANumber
 						<div class="tsd-signature tsd-kind-icon">ap<span class="tsd-signature-symbol">:</span> <a href="_maybe_.html#ap" class="tsd-signature-type">ap</a></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in maybe.ts:1148</li>
+								<li>Defined in maybe.ts:1278</li>
 							</ul>
 						</aside>
 					</section>
@@ -2856,7 +2966,7 @@ mightBeANumber
 						<div class="tsd-signature tsd-kind-icon">cata<span class="tsd-signature-symbol">:</span> <a href="_maybe_.html#match" class="tsd-signature-type">match</a></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in maybe.ts:1146</li>
+								<li>Defined in maybe.ts:1276</li>
 							</ul>
 						</aside>
 					</section>
@@ -2866,7 +2976,7 @@ mightBeANumber
 						<div class="tsd-signature tsd-kind-icon">chain<span class="tsd-signature-symbol">:</span> <a href="_maybe_.html#andthen" class="tsd-signature-type">andThen</a></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in maybe.ts:1130</li>
+								<li>Defined in maybe.ts:1260</li>
 							</ul>
 						</aside>
 					</section>
@@ -2876,7 +2986,7 @@ mightBeANumber
 						<div class="tsd-signature tsd-kind-icon">equals<span class="tsd-signature-symbol">:</span> <a href="_maybe_.html#equals" class="tsd-signature-type">equals</a></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in maybe.ts:1147</li>
+								<li>Defined in maybe.ts:1277</li>
 							</ul>
 						</aside>
 					</section>
@@ -2886,7 +2996,7 @@ mightBeANumber
 						<div class="tsd-signature tsd-kind-icon">flat<wbr>Map<span class="tsd-signature-symbol">:</span> <a href="_maybe_.html#andthen" class="tsd-signature-type">andThen</a></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in maybe.ts:1131</li>
+								<li>Defined in maybe.ts:1261</li>
 							</ul>
 						</aside>
 					</section>
@@ -2896,7 +3006,7 @@ mightBeANumber
 						<div class="tsd-signature tsd-kind-icon">from<wbr>Nullable<span class="tsd-signature-symbol">:</span> <a href="_maybe_.html#of" class="tsd-signature-type">of</a></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in maybe.ts:1124</li>
+								<li>Defined in maybe.ts:1254</li>
 							</ul>
 						</aside>
 					</section>
@@ -2906,7 +3016,7 @@ mightBeANumber
 						<div class="tsd-signature tsd-kind-icon">from<wbr>Result<span class="tsd-signature-symbol">:</span> <a href="_maybe_.html#fromresult" class="tsd-signature-type">fromResult</a></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in maybe.ts:1143</li>
+								<li>Defined in maybe.ts:1273</li>
 							</ul>
 						</aside>
 					</section>
@@ -2916,7 +3026,7 @@ mightBeANumber
 						<div class="tsd-signature tsd-kind-icon">get<wbr>Or<span class="tsd-signature-symbol">:</span> <a href="_maybe_.html#unwrapor" class="tsd-signature-type">unwrapOr</a></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in maybe.ts:1138</li>
+								<li>Defined in maybe.ts:1268</li>
 							</ul>
 						</aside>
 					</section>
@@ -2926,7 +3036,7 @@ mightBeANumber
 						<div class="tsd-signature tsd-kind-icon">get<wbr>OrElse<span class="tsd-signature-symbol">:</span> <a href="_maybe_.html#unwraporelse" class="tsd-signature-type">unwrapOrElse</a></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in maybe.ts:1140</li>
+								<li>Defined in maybe.ts:1270</li>
 							</ul>
 						</aside>
 					</section>
@@ -2936,7 +3046,7 @@ mightBeANumber
 						<div class="tsd-signature tsd-kind-icon">is<wbr>Just<span class="tsd-signature-symbol">:</span> <a href="_maybe_.html#isjust" class="tsd-signature-type">isJust</a></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in maybe.ts:1119</li>
+								<li>Defined in maybe.ts:1249</li>
 							</ul>
 						</aside>
 					</section>
@@ -2946,7 +3056,7 @@ mightBeANumber
 						<div class="tsd-signature tsd-kind-icon">is<wbr>Nothing<span class="tsd-signature-symbol">:</span> <a href="_maybe_.html#isnothing" class="tsd-signature-type">isNothing</a></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in maybe.ts:1120</li>
+								<li>Defined in maybe.ts:1250</li>
 							</ul>
 						</aside>
 					</section>
@@ -2956,7 +3066,7 @@ mightBeANumber
 						<div class="tsd-signature tsd-kind-icon">just<span class="tsd-signature-symbol">:</span> <a href="_maybe_.html#just-2" class="tsd-signature-type">just</a></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in maybe.ts:1121</li>
+								<li>Defined in maybe.ts:1251</li>
 							</ul>
 						</aside>
 					</section>
@@ -2966,7 +3076,7 @@ mightBeANumber
 						<div class="tsd-signature tsd-kind-icon">map<span class="tsd-signature-symbol">:</span> <a href="_maybe_.html#map" class="tsd-signature-type">map</a></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in maybe.ts:1125</li>
+								<li>Defined in maybe.ts:1255</li>
 							</ul>
 						</aside>
 					</section>
@@ -2976,7 +3086,7 @@ mightBeANumber
 						<div class="tsd-signature tsd-kind-icon">map<wbr>Or<span class="tsd-signature-symbol">:</span> <a href="_maybe_.html#mapor" class="tsd-signature-type">mapOr</a></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in maybe.ts:1126</li>
+								<li>Defined in maybe.ts:1256</li>
 							</ul>
 						</aside>
 					</section>
@@ -2986,7 +3096,7 @@ mightBeANumber
 						<div class="tsd-signature tsd-kind-icon">map<wbr>OrElse<span class="tsd-signature-symbol">:</span> <a href="_maybe_.html#maporelse" class="tsd-signature-type">mapOrElse</a></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in maybe.ts:1127</li>
+								<li>Defined in maybe.ts:1257</li>
 							</ul>
 						</aside>
 					</section>
@@ -2996,7 +3106,7 @@ mightBeANumber
 						<div class="tsd-signature tsd-kind-icon">match<span class="tsd-signature-symbol">:</span> <a href="_maybe_.html#match" class="tsd-signature-type">match</a></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in maybe.ts:1145</li>
+								<li>Defined in maybe.ts:1275</li>
 							</ul>
 						</aside>
 					</section>
@@ -3006,7 +3116,7 @@ mightBeANumber
 						<div class="tsd-signature tsd-kind-icon">nothing<span class="tsd-signature-symbol">:</span> <a href="_maybe_.html#nothing-2" class="tsd-signature-type">nothing</a></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in maybe.ts:1122</li>
+								<li>Defined in maybe.ts:1252</li>
 							</ul>
 						</aside>
 					</section>
@@ -3016,7 +3126,7 @@ mightBeANumber
 						<div class="tsd-signature tsd-kind-icon">of<span class="tsd-signature-symbol">:</span> <a href="_maybe_.html#of" class="tsd-signature-type">of</a></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in maybe.ts:1123</li>
+								<li>Defined in maybe.ts:1253</li>
 							</ul>
 						</aside>
 					</section>
@@ -3026,7 +3136,7 @@ mightBeANumber
 						<div class="tsd-signature tsd-kind-icon">or<span class="tsd-signature-symbol">:</span> <a href="_maybe_.html#or" class="tsd-signature-type">or</a></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in maybe.ts:1132</li>
+								<li>Defined in maybe.ts:1262</li>
 							</ul>
 						</aside>
 					</section>
@@ -3036,7 +3146,7 @@ mightBeANumber
 						<div class="tsd-signature tsd-kind-icon">or<wbr>Else<span class="tsd-signature-symbol">:</span> <a href="_maybe_.html#orelse" class="tsd-signature-type">orElse</a></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in maybe.ts:1133</li>
+								<li>Defined in maybe.ts:1263</li>
 							</ul>
 						</aside>
 					</section>
@@ -3046,7 +3156,7 @@ mightBeANumber
 						<div class="tsd-signature tsd-kind-icon">to<wbr>OkOr<wbr>Else<wbr>Err<span class="tsd-signature-symbol">:</span> <a href="_maybe_.html#tookorelseerr" class="tsd-signature-type">toOkOrElseErr</a></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in maybe.ts:1142</li>
+								<li>Defined in maybe.ts:1272</li>
 							</ul>
 						</aside>
 					</section>
@@ -3056,7 +3166,7 @@ mightBeANumber
 						<div class="tsd-signature tsd-kind-icon">to<wbr>OkOr<wbr>Err<span class="tsd-signature-symbol">:</span> <a href="_maybe_.html#tookorerr" class="tsd-signature-type">toOkOrErr</a></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in maybe.ts:1141</li>
+								<li>Defined in maybe.ts:1271</li>
 							</ul>
 						</aside>
 					</section>
@@ -3066,7 +3176,7 @@ mightBeANumber
 						<div class="tsd-signature tsd-kind-icon">to<wbr>String<span class="tsd-signature-symbol">:</span> <a href="_maybe_.html#tostring" class="tsd-signature-type">toString</a></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in maybe.ts:1144</li>
+								<li>Defined in maybe.ts:1274</li>
 							</ul>
 						</aside>
 					</section>
@@ -3076,7 +3186,7 @@ mightBeANumber
 						<div class="tsd-signature tsd-kind-icon">unsafe<wbr>Get<span class="tsd-signature-symbol">:</span> <a href="" class="tsd-signature-type">unsafelyUnwrap</a></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in maybe.ts:1136</li>
+								<li>Defined in maybe.ts:1266</li>
 							</ul>
 						</aside>
 					</section>
@@ -3086,7 +3196,7 @@ mightBeANumber
 						<div class="tsd-signature tsd-kind-icon">unsafely<wbr>Get<span class="tsd-signature-symbol">:</span> <a href="" class="tsd-signature-type">unsafelyUnwrap</a></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in maybe.ts:1135</li>
+								<li>Defined in maybe.ts:1265</li>
 							</ul>
 						</aside>
 					</section>
@@ -3096,7 +3206,7 @@ mightBeANumber
 						<div class="tsd-signature tsd-kind-icon">unsafely<wbr>Unwrap<span class="tsd-signature-symbol">:</span> <a href="" class="tsd-signature-type">unsafelyUnwrap</a></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in maybe.ts:1134</li>
+								<li>Defined in maybe.ts:1264</li>
 							</ul>
 						</aside>
 					</section>
@@ -3106,7 +3216,7 @@ mightBeANumber
 						<div class="tsd-signature tsd-kind-icon">unwrap<wbr>Or<span class="tsd-signature-symbol">:</span> <a href="_maybe_.html#unwrapor" class="tsd-signature-type">unwrapOr</a></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in maybe.ts:1137</li>
+								<li>Defined in maybe.ts:1267</li>
 							</ul>
 						</aside>
 					</section>
@@ -3116,7 +3226,7 @@ mightBeANumber
 						<div class="tsd-signature tsd-kind-icon">unwrap<wbr>OrElse<span class="tsd-signature-symbol">:</span> <a href="_maybe_.html#unwraporelse" class="tsd-signature-type">unwrapOrElse</a></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in maybe.ts:1139</li>
+								<li>Defined in maybe.ts:1269</li>
 							</ul>
 						</aside>
 					</section>

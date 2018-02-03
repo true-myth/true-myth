@@ -287,13 +287,16 @@ describe('`Result` pure functions', () => {
   });
 
   test('`ap`', () => {
-    const add = a => b => a + b;
-    const fn = Result.ok<(val: number) => number, string>(add(3));
+    const add = (a: number) => (b: number) => a + b;
+    const okAdd = Result.ok<typeof add, string>(add);
+
+    expect(okAdd.ap(Result.ok(2)).ap(Result.ok(3))).toEqual(Result.ok(5));
+
+    const add3 = add(3);
+    const okAdd3 = Result.ok<typeof add3, string>(add(3));
     const val = Result.ok(2);
 
-    const result = Result.ap(fn, val);
-
-    expect(Result.equals(result, Result.ok(5))).toBe(true);
+    expect(Result.ap(okAdd3, Result.ok(2))).toEqual(Result.ok(5));
   });
 });
 

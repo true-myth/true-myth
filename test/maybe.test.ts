@@ -302,16 +302,17 @@ describe('`Maybe` pure functions', () => {
   });
 
   test('`ap`', () => {
-    const add = a => b => a + b;
-    const fn = Maybe.of<(val: number) => number>(add(3));
+    const add = (a: number) => (b: number) => a + b;
+    const maybeAdd = Maybe.of(add);
+
+    expect(maybeAdd.ap(Maybe.of(1)).ap(Maybe.of(5))).toEqual(Maybe.of(6));
+
+    const maybeAdd3 = Maybe.of<(val: number) => number>(add(3));
     const val = Maybe.of(2);
     const nada = Maybe.of(null);
 
-    const result = Maybe.ap(fn, val);
-    const noResult = Maybe.ap(fn)(nada);
-
-    expect(Maybe.equals(result, Maybe.of(5))).toBe(true);
-    expect(Maybe.isNothing(nada)).toBe(true);
+    expect(Maybe.ap(maybeAdd3, val)).toEqual(Maybe.just(5));
+    expect(Maybe.ap(maybeAdd3)(nada)).toEqual(Maybe.nothing());
   });
 });
 
