@@ -443,7 +443,7 @@ describe('`Result.Ok` class', () => {
   });
 
   test('`ap` method', () => {
-    const fn = new Result.Ok<(val: string) => number, string>((str) => str.length);
+    const fn = new Result.Ok<(val: string) => number, string>(str => str.length);
     const val = new Result.Ok('three');
 
     const result = fn.ap(val);
@@ -619,7 +619,7 @@ describe('`Result.Err` class', () => {
   });
 
   test('`ap` method', () => {
-    const fn = new Result.Err<(val: string) => number, string>("ERR_THESYSTEMISDOWN");
+    const fn = new Result.Err<(val: string) => number, string>('ERR_THESYSTEMISDOWN');
     const val = new Result.Err('ERR_ALLURBASE');
 
     const result = fn.ap(val);

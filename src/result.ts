@@ -84,7 +84,7 @@ export interface ResultShape<T, E> {
   equals(this: Result<T, E>, comparison: Result<T, E>): boolean;
 
   /** Method variant for [`Result.ap`](../modules/_result_.html#ap) */
-  ap<A, B, E>(this: Result<(a: A) => B, E>, r: Result<A, E>): Result<B, E>;
+  ap<A, B>(this: Result<(a: A) => B, E>, r: Result<A, E>): Result<B, E>;
 }
 
 /**
@@ -245,7 +245,7 @@ export class Ok<T, E> implements ResultShape<T, E> {
   }
 
   /** Method variant for [`Result.ap`](../modules/_result_.html#ap) */
-  ap<A, B, E>(this: Result<(a: A) => B, E>, r: Result<A, E>): Result<B, E> {
+  ap<A, B>(this: Result<(a: A) => B, E>, r: Result<A, E>): Result<B, E> {
     return ap(this, r);
   }
 }
@@ -408,7 +408,7 @@ export class Err<T, E> implements ResultShape<T, E> {
   }
 
   /** Method variant for [`Result.ap`](../modules/_result_.html#ap) */
-  ap<A, B, E>(this: Result<(a: A) => B, E>, r: Result<A, E>): Result<B, E> {
+  ap<A, B>(this: Result<(a: A) => B, E>, r: Result<A, E>): Result<B, E> {
     return ap(this, r);
   }
 }
@@ -1265,15 +1265,17 @@ export function equals<T, E>(
  * @param result maybe a T to apply to `fn`
  */
 export function ap<T, U, E>(resultFn: Result<(t: T) => U, E>, result: Result<T, E>): Result<U, E>;
-export function ap<T, U, E>(resultFn: Result<(t: T) => U, E>): (result: Result<T, E>) => Result<U, E>;
+export function ap<T, U, E>(
+  resultFn: Result<(t: T) => U, E>
+): (result: Result<T, E>) => Result<U, E>;
 export function ap<T, U, E>(
   resultFn: Result<(val: T) => U, E>,
   result?: Result<T, E>
 ): Result<U, E> | ((val: Result<T, E>) => Result<U, E>) {
   const op = (r: Result<T, E>) =>
     r.match({
-      Ok: (val) => resultFn.map(fn => fn(val)),
-      Err: (e) => Result.err<U, E>(e),
+      Ok: val => resultFn.map(fn => fn(val)),
+      Err: e => Result.err<U, E>(e),
     });
 
   return curry1(op, result);
