@@ -47,7 +47,7 @@
     "husky": "^0.14.3",
     "jest": "^21.2.1",
     "libkit": "^0.5.17",
-    "prettier": "^1.7.0",
+    "prettier": "^1.10.2",
     "rimraf": "^2.6.2",
     "shelljs": "^0.7.8",
     "ts-jest": "^21.0.1",
@@ -83,5 +83,12 @@
         "lines": 100
       }
     }
+  },
+  "prettier": {
+    "printWidth": 100,
+    "semi": true,
+    "singleQuote": true,
+    "trailingComma": "es5",
+    "tabWidth": 2
   }
 }
