@@ -2906,9 +2906,22 @@ mightBeANumber
 						<div class="tsd-signature tsd-kind-icon">Just<span class="tsd-signature-symbol">:</span> <a href="../classes/_maybe_.just.html" class="tsd-signature-type">Just</a></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in maybe.ts:1247</li>
+								<li>Defined in maybe.ts:1261</li>
 							</ul>
 						</aside>
+						<div class="tsd-comment tsd-typography">
+							<div class="lead">
+								<p>A <code>Just</code> instance is the <em>present</em> variant instance of the
+									<a href="../modules/_maybe_.html#maybe"><code>Maybe</code></a> type, representing the presence of a
+									value which may be absent. For a full discussion, see <a href="../modules/_maybe_.html">the module
+								docs</a>.</p>
+							</div>
+							<dl class="tsd-comment-tags">
+								<dt>typeparam</dt>
+								<dd><p>The type wrapped in this <code>Just</code> variant of <code>Maybe</code>.</p>
+								</dd>
+							</dl>
+						</div>
 					</section>
 					<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-object-literal">
 						<a name="maybe.nothing-3" class="tsd-anchor"></a>
@@ -2916,9 +2929,22 @@ mightBeANumber
 						<div class="tsd-signature tsd-kind-icon">Nothing<span class="tsd-signature-symbol">:</span> <a href="../classes/_maybe_.nothing.html" class="tsd-signature-type">Nothing</a></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in maybe.ts:1248</li>
+								<li>Defined in maybe.ts:1270</li>
 							</ul>
 						</aside>
+						<div class="tsd-comment tsd-typography">
+							<div class="lead">
+								<p>A <code>Nothing</code> instance is the <em>absent</em> variant instance of the
+									<a href="../modules/_maybe_.html#maybe"><code>Maybe</code></a> type, representing the presence of a
+									value which may be absent. For a full discussion, see <a href="../modules/_maybe_.html">the module
+								docs</a>.</p>
+							</div>
+							<dl class="tsd-comment-tags">
+								<dt>typeparam</dt>
+								<dd><p>The type which would be wrapped in a <code>Just</code> variant of <code>Maybe</code>.</p>
+								</dd>
+							</dl>
+						</div>
 					</section>
 					<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-object-literal">
 						<a name="maybe.variant-1" class="tsd-anchor"></a>
@@ -2926,9 +2952,16 @@ mightBeANumber
 						<div class="tsd-signature tsd-kind-icon">Variant<span class="tsd-signature-symbol">:</span> <a href="../enums/_maybe_.variant.html" class="tsd-signature-type">Variant</a></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in maybe.ts:1246</li>
+								<li>Defined in maybe.ts:1252</li>
 							</ul>
 						</aside>
+						<div class="tsd-comment tsd-typography">
+							<div class="lead">
+								<p>Discriminant for the <code>Just</code> and <code>Nothing</code> variants.</p>
+							</div>
+							<p>You can use the discriminant via the <code>variant</code> property of <code>Maybe</code> instances
+							if you need to match explicitly on it.</p>
+						</div>
 					</section>
 					<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-object-literal">
 						<a name="maybe.and-1" class="tsd-anchor"></a>
@@ -2936,9 +2969,51 @@ mightBeANumber
 						<div class="tsd-signature tsd-kind-icon">and<span class="tsd-signature-symbol">:</span> <a href="_maybe_.html#and" class="tsd-signature-type">and</a></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in maybe.ts:1258</li>
+								<li>Defined in maybe.ts:1470</li>
 							</ul>
 						</aside>
+						<div class="tsd-comment tsd-typography">
+							<div class="lead">
+								<p>You can think of this like a short-circuiting logical &quot;and&quot; operation on a
+									<code>Maybe</code> type. If <code>maybe</code> is <code>Just</code>, then the result is the <code>andMaybe</code>. If
+								<code>maybe</code> is <code>Nothing</code>, the result is <code>Nothing</code>.</p>
+							</div>
+							<p>This is useful when you have another <code>Maybe</code> value you want to provide if and
+								only if<em> you have a <code>Just</code> – that is, when you need to make sure that if you
+							<code>Nothing</code>, whatever else you&#39;re handing a <code>Maybe</code> to </em>also* gets a <code>Nothing</code>.</p>
+							<p>Notice that, unlike in <a href="#map"><code>map</code></a> or its variants, the original <code>maybe</code> is
+							not involved in constructing the new <code>Maybe</code>.</p>
+							<h4 id="examples">Examples</h4>
+							<pre><code class="lang-ts"><span class="hljs-keyword">import</span> Maybe <span class="hljs-keyword">from</span> <span class="hljs-string">'true-myth/maybe'</span>;
+
+<span class="hljs-keyword">const</span> justA = Maybe.just(<span class="hljs-string">'A'</span>);
+<span class="hljs-keyword">const</span> justB = Maybe.just(<span class="hljs-string">'B'</span>);
+<span class="hljs-keyword">const</span> nothing: Maybe&lt;<span class="hljs-built_in">number</span>&gt; = nothing();
+
+<span class="hljs-built_in">console</span>.log(Maybe.and(justB, justA).toString());  <span class="hljs-comment">// Just(B)</span>
+<span class="hljs-built_in">console</span>.log(Maybe.and(justB, nothing).toString());  <span class="hljs-comment">// Nothing</span>
+<span class="hljs-built_in">console</span>.log(Maybe.and(nothing, justA).toString());  <span class="hljs-comment">// Nothing</span>
+<span class="hljs-built_in">console</span>.log(Maybe.and(nothing, nothing).toString());  <span class="hljs-comment">// Nothing</span>
+</code></pre>
+							<dl class="tsd-comment-tags">
+								<dt>typeparam</dt>
+								<dd><p>The type of the initial wrapped value.</p>
+								</dd>
+								<dt>typeparam</dt>
+								<dd><p>The type of the wrapped value of the returned <code>Maybe</code>.</p>
+								</dd>
+								<dt>param</dt>
+								<dd><p>The <code>Maybe</code> instance to return if <code>maybe</code> is <code>Just</code></p>
+								</dd>
+								<dt>param</dt>
+								<dd><p>The <code>Maybe</code> instance to check.</p>
+								</dd>
+								<dt>returns</dt>
+								<dd><p><code>Nothing</code> if the original <code>maybe</code> is <code>Nothing</code>, or <code>andMaybe</code>
+									if the original <code>maybe</code> is <code>Just</code>.</p>
+								</dd>
+							</dl>
+						</div>
 					</section>
 					<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-object-literal">
 						<a name="maybe.andthen-1" class="tsd-anchor"></a>
@@ -2946,9 +3021,62 @@ mightBeANumber
 						<div class="tsd-signature tsd-kind-icon">and<wbr>Then<span class="tsd-signature-symbol">:</span> <a href="_maybe_.html#andthen" class="tsd-signature-type">andThen</a></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in maybe.ts:1259</li>
+								<li>Defined in maybe.ts:1523</li>
 							</ul>
 						</aside>
+						<div class="tsd-comment tsd-typography">
+							<div class="lead">
+								<p>Apply a function to the wrapped value if <code>Just</code> and return a new <code>Just</code>
+								containing the resulting value; or return <code>Nothing</code> if <code>Nothing</code>.</p>
+							</div>
+							<p>This differs from <code>map</code> in that <code>thenFn</code> returns another <code>Maybe</code>. You can use
+								<code>andThen</code> to combine two functions which <em>both</em> create a <code>Maybe</code> from an
+							unwrapped type.</p>
+							<p>You may find the <code>.then</code> method on an ES6 <code>Promise</code> helpful for b:
+								if you have a <code>Promise</code>, you can pass its <code>then</code> method a callback which
+								returns another <code>Promise</code>, and the result will not be a <em>nested</em> promise, but
+								a single <code>Promise</code>. The difference is that <code>Promise#then</code> unwraps <em>all</em>
+								layers to only ever return a single <code>Promise</code> value, whereas <code>Maybe.andThen</code>
+							will not unwrap nested <code>Maybe</code>s.</p>
+							<p>This is also commonly known as (and therefore aliased as) <a href="#flatmap"><code>flatMap</code></a> or
+								<a href="#chain"><code>chain</code></a>. It is sometimes also known as <code>bind</code>, but <em>not</em> aliased as such
+							because <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function/bind"><code>bind</code> already means something in JavaScript</a>.</p>
+							<h4 id="example">Example</h4>
+							<p>(This is a somewhat contrived example, but it serves to show the way the
+							function behaves.)</p>
+							<pre><code class="lang-ts"><span class="hljs-keyword">import</span> Maybe <span class="hljs-keyword">from</span> <span class="hljs-string">'true-myth/maybe'</span>;
+
+<span class="hljs-comment">// string -&gt; Maybe&lt;number&gt;</span>
+<span class="hljs-keyword">const</span> toMaybeLength = (s: <span class="hljs-built_in">string</span>): Maybe&lt;<span class="hljs-built_in">number</span>&gt; =&gt; Maybe.of(s.length);
+
+<span class="hljs-comment">// Maybe&lt;string&gt;</span>
+<span class="hljs-keyword">const</span> aMaybeString = Maybe.of(<span class="hljs-string">'Hello, there!'</span>);
+
+<span class="hljs-comment">// Maybe&lt;number&gt;</span>
+<span class="hljs-keyword">const</span> resultingLength = Maybe.andThen(toMaybeLength, aMaybeString);
+<span class="hljs-built_in">console</span>.log(Maybe.toString(resultingLength)); <span class="hljs-comment">// 13</span>
+</code></pre>
+							<p>Note that the result is not <code>(Just(13))</code>, but <code>13</code>!</p>
+							<dl class="tsd-comment-tags">
+								<dt>typeparam</dt>
+								<dd><p>The type of the wrapped value.</p>
+								</dd>
+								<dt>typeparam</dt>
+								<dd><p>The type of the wrapped value in the resulting <code>Maybe</code>.</p>
+								</dd>
+								<dt>param</dt>
+								<dd><p>The function to apply to the wrapped <code>T</code> if <code>maybe</code> is <code>Just</code>.</p>
+								</dd>
+								<dt>param</dt>
+								<dd><p>The <code>Maybe</code> to evaluate and possibly apply a function to the
+									contents of.</p>
+								</dd>
+								<dt>returns</dt>
+								<dd><p>The result of the <code>thenFn</code> (a new <code>Maybe</code>) if <code>maybe</code> is a
+									<code>Just</code>, otherwise <code>Nothing</code> if <code>maybe</code> is a <code>Nothing</code>.</p>
+								</dd>
+							</dl>
+						</div>
 					</section>
 					<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-object-literal">
 						<a name="maybe.ap-1" class="tsd-anchor"></a>
@@ -2956,9 +3084,150 @@ mightBeANumber
 						<div class="tsd-signature tsd-kind-icon">ap<span class="tsd-signature-symbol">:</span> <a href="_maybe_.html#ap" class="tsd-signature-type">ap</a></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in maybe.ts:1278</li>
+								<li>Defined in maybe.ts:1937</li>
 							</ul>
 						</aside>
+						<div class="tsd-comment tsd-typography">
+							<div class="lead">
+								<p>Allows you to <em>apply</em> (thus <code>ap</code>) a value to a function without having to
+									take either out of the context of their <code>Maybe</code>s. This does mean that the
+									transforming function is itself within a <code>Maybe</code>, which can be hard to grok
+									at first but lets you do some very elegant things. For example, <code>ap</code> allows
+								you to this:</p>
+							</div>
+							<pre><code class="lang-ts"><span class="hljs-keyword">import</span> { just, nothing } <span class="hljs-keyword">from</span> <span class="hljs-string">'true-myth/maybe'</span>;
+
+<span class="hljs-keyword">const</span> one = just(<span class="hljs-number">1</span>);
+<span class="hljs-keyword">const</span> five = just(<span class="hljs-number">5</span>);
+<span class="hljs-keyword">const</span> none = nothing();
+
+<span class="hljs-keyword">const</span> add = <span class="hljs-function">(<span class="hljs-params">a: <span class="hljs-built_in">number</span></span>) =&gt;</span> (b: <span class="hljs-built_in">number</span>) =&gt; a + b;
+<span class="hljs-keyword">const</span> maybeAdd = just(add);
+
+maybeAdd.ap(one).ap(five); <span class="hljs-comment">// Just(6)</span>
+maybeAdd.ap(one).ap(none); <span class="hljs-comment">// Nothing</span>
+maybeAdd.ap(none).ap(five) <span class="hljs-comment">// Nothing</span>
+</code></pre>
+							<p>Without <code>Maybe.ap</code>, you&#39;d need to do something like a nested <code>Maybe.match</code>:</p>
+							<pre><code class="lang-ts"><span class="hljs-keyword">import</span> { just, nothing } <span class="hljs-keyword">from</span> <span class="hljs-string">'true-myth/maybe'</span>;
+
+<span class="hljs-keyword">const</span> one = just(<span class="hljs-number">1</span>);
+<span class="hljs-keyword">const</span> five = just(<span class="hljs-number">5</span>);
+<span class="hljs-keyword">const</span> none = nothing();
+
+one.match({
+Just: <span class="hljs-function"><span class="hljs-params">n</span> =&gt;</span> five.match({
+Just: <span class="hljs-function"><span class="hljs-params">o</span> =&gt;</span> just(n + o),
+Nothing: <span class="hljs-function"><span class="hljs-params">()</span> =&gt;</span> nothing(),
+}),
+Nothing: <span class="hljs-function"><span class="hljs-params">()</span>  =&gt;</span> nothing(),
+}); <span class="hljs-comment">// Just(6)</span>
+
+one.match({
+Just: <span class="hljs-function"><span class="hljs-params">n</span> =&gt;</span> none.match({
+Just: <span class="hljs-function"><span class="hljs-params">o</span> =&gt;</span> just(n + o),
+Nothing: <span class="hljs-function"><span class="hljs-params">()</span> =&gt;</span> nothing(),
+}),
+Nothing: <span class="hljs-function"><span class="hljs-params">()</span>  =&gt;</span> nothing(),
+}); <span class="hljs-comment">// Nothing</span>
+
+none.match({
+Just: <span class="hljs-function"><span class="hljs-params">n</span> =&gt;</span> five.match({
+Just: <span class="hljs-function"><span class="hljs-params">o</span> =&gt;</span> just(n + o),
+Nothing: <span class="hljs-function"><span class="hljs-params">()</span> =&gt;</span> nothing(),
+}),
+Nothing: <span class="hljs-function"><span class="hljs-params">()</span>  =&gt;</span> nothing(),
+}); <span class="hljs-comment">// Nothing</span>
+</code></pre>
+							<p>And this kind of thing comes up quite often once you&#39;re using <code>Maybe</code> to
+							handle optionality throughout your application.</p>
+							<p>For another example, imagine you need to compare the equality of two
+								ImmutableJS data structures, where a <code>===</code> comparison won&#39;t work. With <code>ap</code>,
+							that&#39;s as simple as this:</p>
+							<pre><code class="lang-ts"><span class="hljs-keyword">import</span> Maybe <span class="hljs-keyword">from</span> <span class="hljs-string">'true-myth/maybe'</span>;
+<span class="hljs-keyword">import</span> Immutable <span class="hljs-keyword">from</span> <span class="hljs-string">'immutable'</span>;
+<span class="hljs-keyword">import</span> { curry } <span class="hljs-keyword">from</span> <span class="hljs-string">'lodash'</span>
+
+<span class="hljs-keyword">const</span> is = curry(Immutable.is);
+
+<span class="hljs-keyword">const</span> x = Maybe.of(Immutable.Set.of(<span class="hljs-number">1</span>, <span class="hljs-number">2</span>, <span class="hljs-number">3</span>));
+<span class="hljs-keyword">const</span> y = Maybe.of(Immutable.Set.of(<span class="hljs-number">2</span>, <span class="hljs-number">3</span>, <span class="hljs-number">4</span>));
+
+Maybe.of(is).ap(x).ap(y); <span class="hljs-comment">// Just(false)</span>
+</code></pre>
+							<p>Without <code>ap</code>, we&#39;re back to that gnarly nested <code>match</code>:</p>
+							<pre><code class="lang-ts"><span class="hljs-keyword">import</span> Maybe, { just, nothing } <span class="hljs-keyword">from</span> <span class="hljs-string">'true-myth/maybe'</span>;
+<span class="hljs-keyword">import</span> Immutable <span class="hljs-keyword">from</span> <span class="hljs-string">'immutable'</span>;
+<span class="hljs-keyword">import</span> { curry } <span class="hljs-keyword">from</span> <span class="hljs-string">'lodash'</span>
+
+<span class="hljs-keyword">const</span> is = curry(Immutable.is);
+
+<span class="hljs-keyword">const</span> x = Maybe.of(Immutable.Set.of(<span class="hljs-number">1</span>, <span class="hljs-number">2</span>, <span class="hljs-number">3</span>));
+<span class="hljs-keyword">const</span> y = Maybe.of(Immutable.Set.of(<span class="hljs-number">2</span>, <span class="hljs-number">3</span>, <span class="hljs-number">4</span>));
+
+x.match({
+Just: <span class="hljs-function"><span class="hljs-params">iX</span> =&gt;</span> y.match({
+Just: <span class="hljs-function"><span class="hljs-params">iY</span> =&gt;</span> Maybe.just(Immutable.is(iX, iY)),
+Nothing: <span class="hljs-function"><span class="hljs-params">()</span> =&gt;</span> Maybe.nothing(),
+})
+Nothing: <span class="hljs-function"><span class="hljs-params">()</span> =&gt;</span> Maybe.nothing(),
+}); <span class="hljs-comment">// Just(false)</span>
+</code></pre>
+							<p>In summary: anywhere you have two <code>Maybe</code> instances and need to perform an
+							operation that uses both of them, <code>ap</code> is your friend.</p>
+							<p>Two things to note, both regarding <em>currying</em>:</p>
+							<ol>
+								<li>All functions passed to <code>ap</code> must be curried. That is, they must be of the
+									form (for add) <code>(a: number) =&gt; (b: number) =&gt; a + b</code>, <em>not</em> the more usual
+								<code>(a: number, b: number) =&gt; a + b</code> you see in JavaScript more generally.</li>
+							</ol>
+							<p>For convenience, you may want to look at Lodash&#39;s <code>_.curry</code> or Ramda&#39;s
+								<code>R.curry</code>, which allow you to create curried versions of functions
+							whenever you want:</p>
+							<pre><code><span class="hljs-keyword">import</span> Maybe <span class="hljs-keyword">from</span> <span class="hljs-string">'true-myth/maybe'</span>;
+<span class="hljs-keyword">import</span> { curry } <span class="hljs-keyword">from</span> <span class="hljs-string">'lodash'</span>;
+
+<span class="hljs-keyword">const</span> normalAdd = <span class="hljs-function">(<span class="hljs-params">a: <span class="hljs-built_in">number</span>, b: <span class="hljs-built_in">number</span></span>) =&gt;</span> a + b;
+<span class="hljs-keyword">const</span> curriedAdd = curry(normalAdd); <span class="hljs-comment">// (a: number) =&gt; (b: number) =&gt; a + b;</span>
+
+Maybe.of(curriedAdd).ap(Maybe.of(<span class="hljs-number">1</span>)).ap(Maybe.of(<span class="hljs-number">5</span>)); <span class="hljs-comment">// Just(6)</span>
+</code></pre><ol>
+								<li>You will need to call <code>ap</code> as many times as there are arguments to the
+									function you&#39;re dealing with. So in the case of <code>add</code>, which has the
+									&quot;arity&quot; (function argument count) of 2 (<code>a</code> and <code>b</code>), you&#39;ll need to call
+									<code>ap</code> twice: once for <code>a</code>, and once for <code>b</code>. To see why, let&#39;s look at what
+								the result in each phase is:</li>
+							</ol>
+							<pre><code class="lang-ts"><span class="hljs-keyword">const</span> add = <span class="hljs-function">(<span class="hljs-params">a: <span class="hljs-built_in">number</span></span>) =&gt;</span> (b: <span class="hljs-built_in">number</span>) =&gt; a + b;
+
+<span class="hljs-keyword">const</span> maybeAdd = Maybe.of(add); <span class="hljs-comment">// Just((a: number) =&gt; (b: number) =&gt; a + b)</span>
+<span class="hljs-keyword">const</span> maybeAdd1 = maybeAdd.ap(Maybe.of(<span class="hljs-number">1</span>)); <span class="hljs-comment">// Just((b: number) =&gt; 1 + b)</span>
+<span class="hljs-keyword">const</span> final = maybeAdd1.ap(Maybe.of(<span class="hljs-number">3</span>)); <span class="hljs-comment">// Just(4)</span>
+</code></pre>
+							<p>So for <code>toString</code>, which just takes a single argument, you would only need
+							to call <code>ap</code> once.</p>
+							<pre><code class="lang-ts"><span class="hljs-keyword">const</span> toStr = <span class="hljs-function">(<span class="hljs-params">v: { toString(<span class="hljs-params"></span>): <span class="hljs-built_in">string</span> }</span>) =&gt;</span> v.toString();
+Maybe.of(toStr).ap(<span class="hljs-number">12</span>); <span class="hljs-comment">// Just("12")</span>
+</code></pre>
+							<p>One other scenario which doesn&#39;t come up <em>quite</em> as often but is conceivable
+								is where you have something that may or may not actually construct a function
+								for handling a specific <code>Maybe</code> scenario. In that case, you can wrap the
+								possibly-present in <code>ap</code> and then wrap the values to apply to the function to
+							in <code>Maybe</code> themselves.</p>
+							<p><em>Aside:*</em> <code>ap</code> is not named <code>apply</code> because of the overlap with JavaScript&#39;s
+								existing <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function/apply"><code>apply</code></a> function – and although strictly speaking, there isn&#39;t any
+								direct overlap (<code>Maybe.apply</code> and <code>Function.prototype.apply</code> don&#39;t intersect
+								at all) it&#39;s useful to have a different name to avoid implying that they&#39;re
+							the same.</p>
+							<dl class="tsd-comment-tags">
+								<dt>param</dt>
+								<dd><p>maybe a function from T to U</p>
+								</dd>
+								<dt>param</dt>
+								<dd><p>maybe a T to apply to <code>fn</code></p>
+								</dd>
+							</dl>
+						</div>
 					</section>
 					<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-object-literal">
 						<a name="maybe.cata-1" class="tsd-anchor"></a>
@@ -2966,9 +3235,14 @@ mightBeANumber
 						<div class="tsd-signature tsd-kind-icon">cata<span class="tsd-signature-symbol">:</span> <a href="_maybe_.html#match" class="tsd-signature-type">match</a></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in maybe.ts:1276</li>
+								<li>Defined in maybe.ts:1758</li>
 							</ul>
 						</aside>
+						<div class="tsd-comment tsd-typography">
+							<div class="lead">
+								<p>Alias for <a href="#match"><code>match</code></a></p>
+							</div>
+						</div>
 					</section>
 					<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-object-literal">
 						<a name="maybe.chain-1" class="tsd-anchor"></a>
@@ -2976,9 +3250,14 @@ mightBeANumber
 						<div class="tsd-signature tsd-kind-icon">chain<span class="tsd-signature-symbol">:</span> <a href="_maybe_.html#andthen" class="tsd-signature-type">andThen</a></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in maybe.ts:1260</li>
+								<li>Defined in maybe.ts:1525</li>
 							</ul>
 						</aside>
+						<div class="tsd-comment tsd-typography">
+							<div class="lead">
+								<p>Alias for <a href="#andthen"><code>andThen</code></a>.</p>
+							</div>
+						</div>
 					</section>
 					<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-object-literal">
 						<a name="maybe.equals-1" class="tsd-anchor"></a>
@@ -2986,9 +3265,32 @@ mightBeANumber
 						<div class="tsd-signature tsd-kind-icon">equals<span class="tsd-signature-symbol">:</span> <a href="_maybe_.html#equals" class="tsd-signature-type">equals</a></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in maybe.ts:1277</li>
+								<li>Defined in maybe.ts:1777</li>
 							</ul>
 						</aside>
+						<div class="tsd-comment tsd-typography">
+							<div class="lead">
+								<p>Allows quick triple-equal equality check between the values inside two
+								<code>maybe</code>s without having to unwrap them first.</p>
+							</div>
+							<pre><code class="lang-ts"><span class="hljs-keyword">const</span> a = Maybe.of(<span class="hljs-number">3</span>);
+<span class="hljs-keyword">const</span> b = Maybe.of(<span class="hljs-number">3</span>);
+<span class="hljs-keyword">const</span> c = Maybe.of(<span class="hljs-literal">null</span>);
+<span class="hljs-keyword">const</span> d = Maybe.nothing();
+
+Maybe.equals(a, b); <span class="hljs-comment">// true</span>
+Maybe.equals(a, c); <span class="hljs-comment">// false</span>
+Maybe.equals(c, d); <span class="hljs-comment">// true</span>
+</code></pre>
+							<dl class="tsd-comment-tags">
+								<dt>param</dt>
+								<dd><p>A <code>maybe</code> to compare to.</p>
+								</dd>
+								<dt>param</dt>
+								<dd><p>A <code>maybe</code> instance to check.</p>
+								</dd>
+							</dl>
+						</div>
 					</section>
 					<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-object-literal">
 						<a name="maybe.flatmap-1" class="tsd-anchor"></a>
@@ -2996,9 +3298,14 @@ mightBeANumber
 						<div class="tsd-signature tsd-kind-icon">flat<wbr>Map<span class="tsd-signature-symbol">:</span> <a href="_maybe_.html#andthen" class="tsd-signature-type">andThen</a></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in maybe.ts:1261</li>
+								<li>Defined in maybe.ts:1527</li>
 							</ul>
 						</aside>
+						<div class="tsd-comment tsd-typography">
+							<div class="lead">
+								<p>Alias for <a href="#andthen"><code>andThen</code></a>.</p>
+							</div>
+						</div>
 					</section>
 					<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-object-literal">
 						<a name="maybe.fromnullable-1" class="tsd-anchor"></a>
@@ -3006,9 +3313,14 @@ mightBeANumber
 						<div class="tsd-signature tsd-kind-icon">from<wbr>Nullable<span class="tsd-signature-symbol">:</span> <a href="_maybe_.html#of" class="tsd-signature-type">of</a></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in maybe.ts:1254</li>
+								<li>Defined in maybe.ts:1341</li>
 							</ul>
 						</aside>
+						<div class="tsd-comment tsd-typography">
+							<div class="lead">
+								<p>Alias for <a href="#of"><code>of</code></a>, primarily for compatibility with Folktale.</p>
+							</div>
+						</div>
 					</section>
 					<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-object-literal">
 						<a name="maybe.fromresult-1" class="tsd-anchor"></a>
@@ -3016,9 +3328,32 @@ mightBeANumber
 						<div class="tsd-signature tsd-kind-icon">from<wbr>Result<span class="tsd-signature-symbol">:</span> <a href="_maybe_.html#fromresult" class="tsd-signature-type">fromResult</a></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in maybe.ts:1273</li>
+								<li>Defined in maybe.ts:1685</li>
 							</ul>
 						</aside>
+						<div class="tsd-comment tsd-typography">
+							<div class="lead">
+								<p>Construct a <code>Maybe&lt;T&gt;</code> from a <code>Result&lt;T, E&gt;</code>.</p>
+							</div>
+							<p>If the <code>Result</code> is an <code>Ok</code>, wrap its value in <code>Just</code>. If the <code>Result</code> is an
+							<code>Err</code>, throw away the wrapped <code>E</code> and transform to a <code>Nothing</code>.</p>
+							<dl class="tsd-comment-tags">
+								<dt>typeparam</dt>
+								<dd><p>The type of the value wrapped in a <code>Result.Ok</code> and in the <code>Just</code>
+									of the resulting <code>Maybe</code>.</p>
+								</dd>
+								<dt>typeparam</dt>
+								<dd><p>The type of the value wrapped in a <code>Result.Err</code>; thrown away in
+									the resulting <code>Maybe</code>.</p>
+								</dd>
+								<dt>param</dt>
+								<dd><p>The <code>Result</code> to construct a <code>Maybe</code> from.</p>
+								</dd>
+								<dt>returns</dt>
+								<dd><p><code>Just</code> if <code>result</code> was <code>Ok</code> or <code>Nothing</code> if it was <code>Err</code>.</p>
+								</dd>
+							</dl>
+						</div>
 					</section>
 					<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-object-literal">
 						<a name="maybe.getor-1" class="tsd-anchor"></a>
@@ -3026,9 +3361,14 @@ mightBeANumber
 						<div class="tsd-signature tsd-kind-icon">get<wbr>Or<span class="tsd-signature-symbol">:</span> <a href="_maybe_.html#unwrapor" class="tsd-signature-type">unwrapOr</a></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in maybe.ts:1268</li>
+								<li>Defined in maybe.ts:1613</li>
 							</ul>
 						</aside>
+						<div class="tsd-comment tsd-typography">
+							<div class="lead">
+								<p>Alias for <a href="#unwrapor"><code>unwrapOr</code></a></p>
+							</div>
+						</div>
 					</section>
 					<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-object-literal">
 						<a name="maybe.getorelse-1" class="tsd-anchor"></a>
@@ -3036,9 +3376,14 @@ mightBeANumber
 						<div class="tsd-signature tsd-kind-icon">get<wbr>OrElse<span class="tsd-signature-symbol">:</span> <a href="_maybe_.html#unwraporelse" class="tsd-signature-type">unwrapOrElse</a></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in maybe.ts:1270</li>
+								<li>Defined in maybe.ts:1645</li>
 							</ul>
 						</aside>
+						<div class="tsd-comment tsd-typography">
+							<div class="lead">
+								<p>Alias for <a href="#unwraporelse"><code>unwrapOrElse</code></a></p>
+							</div>
+						</div>
 					</section>
 					<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-object-literal">
 						<a name="maybe.isjust-1" class="tsd-anchor"></a>
@@ -3046,9 +3391,26 @@ mightBeANumber
 						<div class="tsd-signature tsd-kind-icon">is<wbr>Just<span class="tsd-signature-symbol">:</span> <a href="_maybe_.html#isjust" class="tsd-signature-type">isJust</a></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in maybe.ts:1249</li>
+								<li>Defined in maybe.ts:1279</li>
 							</ul>
 						</aside>
+						<div class="tsd-comment tsd-typography">
+							<div class="lead">
+								<p>Is this result a <code>Just</code> instance?</p>
+							</div>
+							<dl class="tsd-comment-tags">
+								<dt>typeparam</dt>
+								<dd><p>The type of the wrapped value.</p>
+								</dd>
+								<dt>param</dt>
+								<dd><p>The <code>Maybe</code> instance to check.</p>
+								</dd>
+								<dt>returns</dt>
+								<dd><p><code>true</code> if <code>maybe</code> is <code>Just</code>, <code>false</code> otherwise. In TypeScript,
+									also narrows the type from <code>Maybe&lt;T&gt;</code> to <code>Just&lt;T&gt;</code>.</p>
+								</dd>
+							</dl>
+						</div>
 					</section>
 					<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-object-literal">
 						<a name="maybe.isnothing-1" class="tsd-anchor"></a>
@@ -3056,9 +3418,26 @@ mightBeANumber
 						<div class="tsd-signature tsd-kind-icon">is<wbr>Nothing<span class="tsd-signature-symbol">:</span> <a href="_maybe_.html#isnothing" class="tsd-signature-type">isNothing</a></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in maybe.ts:1250</li>
+								<li>Defined in maybe.ts:1288</li>
 							</ul>
 						</aside>
+						<div class="tsd-comment tsd-typography">
+							<div class="lead">
+								<p>Is this result a <code>Nothing</code> instance?</p>
+							</div>
+							<dl class="tsd-comment-tags">
+								<dt>typeparam</dt>
+								<dd><p>The type of the wrapped value.</p>
+								</dd>
+								<dt>param</dt>
+								<dd><p>The <code>Maybe</code> instance to check.</p>
+								</dd>
+								<dt>returns</dt>
+								<dd><p><code>true</code> if <code>maybe</code> is <code>nothing</code>, <code>false</code> otherwise. In TypeScript,
+									also narrows the type from <code>Maybe&lt;T&gt;</code> to <code>Nothing&lt;T&gt;</code>.</p>
+								</dd>
+							</dl>
+						</div>
 					</section>
 					<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-object-literal">
 						<a name="maybe.just-4" class="tsd-anchor"></a>
@@ -3066,9 +3445,31 @@ mightBeANumber
 						<div class="tsd-signature tsd-kind-icon">just<span class="tsd-signature-symbol">:</span> <a href="_maybe_.html#just-2" class="tsd-signature-type">just</a></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in maybe.ts:1251</li>
+								<li>Defined in maybe.ts:1301</li>
 							</ul>
 						</aside>
+						<div class="tsd-comment tsd-typography">
+							<div class="lead">
+								<p>Create an instance of <code>Maybe.Just</code>.</p>
+							</div>
+							<p><code>null</code> and <code>undefined</code> are allowed by the type signature so that the
+								function may <code>throw</code> on those rather than constructing a type like
+							<code>Maybe&lt;undefined&gt;</code>.</p>
+							<dl class="tsd-comment-tags">
+								<dt>typeparam</dt>
+								<dd><p>The type of the item contained in the <code>Maybe</code>.</p>
+								</dd>
+								<dt>param</dt>
+								<dd><p>The value to wrap in a <code>Maybe.Just</code>.</p>
+								</dd>
+								<dt>returns</dt>
+								<dd><p>An instance of <code>Maybe.Just&lt;T&gt;</code>.</p>
+								</dd>
+								<dt>throws</dt>
+								<dd><p>If you pass <code>null</code> or <code>undefined</code>.</p>
+								</dd>
+							</dl>
+						</div>
 					</section>
 					<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-object-literal">
 						<a name="maybe.map-1" class="tsd-anchor"></a>
@@ -3076,9 +3477,58 @@ mightBeANumber
 						<div class="tsd-signature tsd-kind-icon">map<span class="tsd-signature-symbol">:</span> <a href="_maybe_.html#map" class="tsd-signature-type">map</a></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in maybe.ts:1255</li>
+								<li>Defined in maybe.ts:1384</li>
 							</ul>
 						</aside>
+						<div class="tsd-comment tsd-typography">
+							<div class="lead">
+								<p>Map over a <code>Maybe</code> instance: apply the function to the wrapped value if the
+								instance is <code>Just</code>, and return <code>Nothing</code> if the instance is <code>Nothing</code>.</p>
+							</div>
+							<p><code>Maybe.map</code> works a lot like <code>Array.prototype.map</code>: <code>Maybe</code> and <code>Array</code> are
+								both <em>containers</em> for other things. If you have no items in an array of
+								numbers named <code>foo</code> and call <code>foo.map(x =&gt; x + 1)</code>, you&#39;ll still just have an
+								array with nothing in it. But if you have any items in the array (<code>[2, 3]</code>),
+								and you call <code>foo.map(x =&gt; x + 1)</code> on it, you&#39;ll get a new array with each of
+							those items inside the array &quot;container&quot; transformed (<code>[3, 4]</code>).</p>
+							<p>That&#39;s exactly what&#39;s happening with <code>Maybe.map</code>. If the container is <em>empty</em>
+								– the <code>Nothing</code> variant – you just get back an empty container. If the
+								container has something in it – the <code>Just</code> variant – you get back a container
+							with the item inside transformed.</p>
+							<p>(So... why not just use an array? The biggest reason is that an array can be
+								any length. With a <code>Maybe</code>, we&#39;re capturing the idea of &quot;something or
+								nothing&quot; rather than &quot;0 to n&quot; items. And this lets us implement a whole set
+							of <em>other</em> interfaces, like those in this module.)</p>
+							<h4 id="examples">Examples</h4>
+							<pre><code class="lang-ts"><span class="hljs-keyword">const</span> length = <span class="hljs-function">(<span class="hljs-params">s: <span class="hljs-built_in">string</span></span>) =&gt;</span> s.length;
+
+<span class="hljs-keyword">const</span> justAString = Maybe.just(<span class="hljs-string">'string'</span>);
+<span class="hljs-keyword">const</span> justTheStringLength = map(length, justAString);
+<span class="hljs-built_in">console</span>.log(justTheStringLength.toString()); <span class="hljs-comment">// Just(6)</span>
+
+<span class="hljs-keyword">const</span> notAString = Maybe.nothing&lt;<span class="hljs-built_in">string</span>&gt;();
+<span class="hljs-keyword">const</span> notAStringLength = map(length, notAString);
+<span class="hljs-built_in">console</span>.log(notAStringLength.toString()); <span class="hljs-comment">// "Nothing"</span>
+</code></pre>
+							<dl class="tsd-comment-tags">
+								<dt>typeparam</dt>
+								<dd><p>The type of the wrapped value.</p>
+								</dd>
+								<dt>typeparam</dt>
+								<dd><p>The type of the wrapped value of the returned <code>Maybe</code>.</p>
+								</dd>
+								<dt>param</dt>
+								<dd><p>The function to apply the value to if <code>Maybe</code> is <code>Just</code>.</p>
+								</dd>
+								<dt>param</dt>
+								<dd><p>The <code>Maybe</code> instance to map over.</p>
+								</dd>
+								<dt>returns</dt>
+								<dd><p>A new <code>Maybe</code> with the result of applying <code>mapFn</code> to the value
+									in a <code>Just</code>, or <code>Nothing</code> if <code>maybe</code> is <code>Nothing</code>.</p>
+								</dd>
+							</dl>
+						</div>
 					</section>
 					<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-object-literal">
 						<a name="maybe.mapor-1" class="tsd-anchor"></a>
@@ -3086,9 +3536,43 @@ mightBeANumber
 						<div class="tsd-signature tsd-kind-icon">map<wbr>Or<span class="tsd-signature-symbol">:</span> <a href="_maybe_.html#mapor" class="tsd-signature-type">mapOr</a></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in maybe.ts:1256</li>
+								<li>Defined in maybe.ts:1409</li>
 							</ul>
 						</aside>
+						<div class="tsd-comment tsd-typography">
+							<div class="lead">
+								<p>Map over a <code>Maybe</code> instance and get out the value if <code>maybe</code> is a <code>Just</code>, or
+								return a default value if <code>maybe</code> is a <code>Nothing</code>.</p>
+							</div>
+							<h4 id="examples">Examples</h4>
+							<pre><code class="lang-ts"><span class="hljs-keyword">const</span> length = <span class="hljs-function">(<span class="hljs-params">s: <span class="hljs-built_in">string</span></span>) =&gt;</span> s.length;
+
+<span class="hljs-keyword">const</span> justAString = Maybe.just(<span class="hljs-string">'string'</span>);
+<span class="hljs-keyword">const</span> theStringLength = mapOr(<span class="hljs-number">0</span>, length, justAString);
+<span class="hljs-built_in">console</span>.log(theStringLength); <span class="hljs-comment">// 6</span>
+
+<span class="hljs-keyword">const</span> notAString = Maybe.nothing&lt;<span class="hljs-built_in">string</span>&gt;();
+<span class="hljs-keyword">const</span> notAStringLength = mapOr(<span class="hljs-number">0</span>, length, notAString)
+<span class="hljs-built_in">console</span>.log(notAStringLength); <span class="hljs-comment">// 0</span>
+</code></pre>
+							<dl class="tsd-comment-tags">
+								<dt>typeparam</dt>
+								<dd><p>The type of the wrapped value.</p>
+								</dd>
+								<dt>typeparam</dt>
+								<dd><p>The type of the wrapped value of the returned <code>Maybe</code>.</p>
+								</dd>
+								<dt>param</dt>
+								<dd><p>The default value to use if <code>maybe</code> is <code>Nothing</code></p>
+								</dd>
+								<dt>param</dt>
+								<dd><p>The function to apply the value to if <code>Maybe</code> is <code>Just</code></p>
+								</dd>
+								<dt>param</dt>
+								<dd><p>The <code>Maybe</code> instance to map over.</p>
+								</dd>
+							</dl>
+						</div>
 					</section>
 					<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-object-literal">
 						<a name="maybe.maporelse-1" class="tsd-anchor"></a>
@@ -3096,9 +3580,44 @@ mightBeANumber
 						<div class="tsd-signature tsd-kind-icon">map<wbr>OrElse<span class="tsd-signature-symbol">:</span> <a href="_maybe_.html#maporelse" class="tsd-signature-type">mapOrElse</a></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in maybe.ts:1257</li>
+								<li>Defined in maybe.ts:1435</li>
 							</ul>
 						</aside>
+						<div class="tsd-comment tsd-typography">
+							<div class="lead">
+								<p>Map over a <code>Maybe</code> instance and get out the value if <code>maybe</code> is a <code>Just</code>,
+								or use a function to construct a default value if <code>maybe</code> is <code>Nothing</code>.</p>
+							</div>
+							<h4 id="examples">Examples</h4>
+							<pre><code class="lang-ts"><span class="hljs-keyword">const</span> length = <span class="hljs-function">(<span class="hljs-params">s: <span class="hljs-built_in">string</span></span>) =&gt;</span> s.length;
+<span class="hljs-keyword">const</span> getDefault = <span class="hljs-function"><span class="hljs-params">()</span> =&gt;</span> <span class="hljs-number">0</span>;
+
+<span class="hljs-keyword">const</span> justAString = Maybe.just(<span class="hljs-string">'string'</span>);
+<span class="hljs-keyword">const</span> theStringLength = mapOrElse(getDefault, length, justAString);
+<span class="hljs-built_in">console</span>.log(theStringLength); <span class="hljs-comment">// 6</span>
+
+<span class="hljs-keyword">const</span> notAString = Maybe.nothing&lt;<span class="hljs-built_in">string</span>&gt;();
+<span class="hljs-keyword">const</span> notAStringLength = mapOrElse(getDefault, length, notAString)
+<span class="hljs-built_in">console</span>.log(notAStringLength); <span class="hljs-comment">// 0</span>
+</code></pre>
+							<dl class="tsd-comment-tags">
+								<dt>typeparam</dt>
+								<dd><p>The type of the wrapped value.</p>
+								</dd>
+								<dt>typeparam</dt>
+								<dd><p>The type of the wrapped value of the returned <code>Maybe</code>.</p>
+								</dd>
+								<dt>param</dt>
+								<dd><p>The function to apply if <code>maybe</code> is <code>Nothing</code>.</p>
+								</dd>
+								<dt>param</dt>
+								<dd><p>The function to apply to the wrapped value if <code>maybe</code> is <code>Just</code></p>
+								</dd>
+								<dt>param</dt>
+								<dd><p>The <code>Maybe</code> instance to map over.</p>
+								</dd>
+							</dl>
+						</div>
 					</section>
 					<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-object-literal">
 						<a name="maybe.match-1" class="tsd-anchor"></a>
@@ -3106,9 +3625,58 @@ mightBeANumber
 						<div class="tsd-signature tsd-kind-icon">match<span class="tsd-signature-symbol">:</span> <a href="_maybe_.html#match" class="tsd-signature-type">match</a></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in maybe.ts:1275</li>
+								<li>Defined in maybe.ts:1756</li>
 							</ul>
 						</aside>
+						<div class="tsd-comment tsd-typography">
+							<div class="lead">
+								<p>Performs the same basic functionality as <code>getOrElse</code>, but instead of simply
+									unwrapping the value if it is <code>Just</code> and applying a value to generate the same
+									default type if it is <code>Nothing</code>, lets you supply functions which may transform
+								the wrapped type if it is <code>Just</code> or get a default value for <code>Nothing</code>.</p>
+							</div>
+							<p>This is kind of like a poor man&#39;s version of pattern matching, which
+							JavaScript currently lacks.</p>
+							<p>Instead of code like this:</p>
+							<pre><code class="lang-ts"><span class="hljs-keyword">import</span> Maybe <span class="hljs-keyword">from</span> <span class="hljs-string">'true-myth/maybe'</span>;
+
+<span class="hljs-keyword">const</span> logValue = <span class="hljs-function">(<span class="hljs-params">mightBeANumber: Maybe&lt;<span class="hljs-built_in">number</span>&gt;</span>) =&gt;</span> {
+<span class="hljs-keyword">const</span> valueToLog = Maybe.isJust(mightBeANumber)
+? Maybe.unsafelyUnwrap(mightBeANumber).toString()
+: <span class="hljs-string">'Nothing to log.'</span>;
+
+<span class="hljs-built_in">console</span>.log(valueToLog);
+};
+</code></pre>
+							<p>...we can write code like this:</p>
+							<pre><code class="lang-ts"><span class="hljs-keyword">import</span> Maybe <span class="hljs-keyword">from</span> <span class="hljs-string">'true-myth/maybe'</span>;
+
+<span class="hljs-keyword">const</span> logValue = <span class="hljs-function">(<span class="hljs-params">mightBeANumber: Maybe&lt;<span class="hljs-built_in">number</span>&gt;</span>) =&gt;</span> {
+<span class="hljs-keyword">const</span> value = Maybe.match(
+{
+Just: <span class="hljs-function"><span class="hljs-params">n</span> =&gt;</span> n.toString(),
+Nothing: <span class="hljs-function"><span class="hljs-params">()</span> =&gt;</span> <span class="hljs-string">'Nothing to log.'</span>,
+},
+mightBeANumber
+);
+
+<span class="hljs-built_in">console</span>.log(value);
+};
+</code></pre>
+							<p>This is slightly longer to write, but clearer: the more complex the resulting
+								expression, the hairer it is to understand the ternary. Thus, this is
+								especially convenient for times when there is a complex result, e.g. when
+							rendering part of a React component inline in JSX/TSX.</p>
+							<dl class="tsd-comment-tags">
+								<dt>param</dt>
+								<dd><p>A lightweight object defining what to do in the case of each
+									variant.</p>
+								</dd>
+								<dt>param</dt>
+								<dd><p>The <code>maybe</code> instance to check.</p>
+								</dd>
+							</dl>
+						</div>
 					</section>
 					<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-object-literal">
 						<a name="maybe.nothing-4" class="tsd-anchor"></a>
@@ -3116,9 +3684,27 @@ mightBeANumber
 						<div class="tsd-signature tsd-kind-icon">nothing<span class="tsd-signature-symbol">:</span> <a href="_maybe_.html#nothing-2" class="tsd-signature-type">nothing</a></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in maybe.ts:1252</li>
+								<li>Defined in maybe.ts:1316</li>
 							</ul>
 						</aside>
+						<div class="tsd-comment tsd-typography">
+							<div class="lead">
+								<p>Create an instance of <code>Maybe.Nothing</code>.</p>
+							</div>
+							<p>If you want to create an instance with a specific type, e.g. for use in a
+								function which expects a <code>Maybe&lt;T&gt;</code> where the <code>&lt;T&gt;</code> is known but you have no
+							value to give it, you can use a type parameter:</p>
+							<pre><code class="lang-ts"><span class="hljs-keyword">const</span> notString = Maybe.nothing&lt;<span class="hljs-built_in">string</span>&gt;();
+</code></pre>
+							<dl class="tsd-comment-tags">
+								<dt>typeparam</dt>
+								<dd><p>The type of the item contained in the <code>Maybe</code>.</p>
+								</dd>
+								<dt>returns</dt>
+								<dd><p>An instance of <code>Maybe.Nothing&lt;T&gt;</code>.</p>
+								</dd>
+							</dl>
+						</div>
 					</section>
 					<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-object-literal">
 						<a name="maybe.of-1" class="tsd-anchor"></a>
@@ -3126,9 +3712,35 @@ mightBeANumber
 						<div class="tsd-signature tsd-kind-icon">of<span class="tsd-signature-symbol">:</span> <a href="_maybe_.html#of" class="tsd-signature-type">of</a></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in maybe.ts:1253</li>
+								<li>Defined in maybe.ts:1339</li>
 							</ul>
 						</aside>
+						<div class="tsd-comment tsd-typography">
+							<div class="lead">
+								<p>Create a <code>Maybe</code> from any value.</p>
+							</div>
+							<p>To specify that the result should be interpreted as a specific type, you may
+							invoke <code>Maybe.of</code> with an explicit type parameter:</p>
+							<pre><code class="lang-ts"><span class="hljs-keyword">const</span> foo = Maybe.of&lt;<span class="hljs-built_in">string</span>&gt;(<span class="hljs-literal">null</span>);
+</code></pre>
+							<p>This is usually only important in two cases:</p>
+							<ol>
+								<li>If you are intentionally constructing a <code>Nothing</code> from a known <code>null</code> or
+								undefined value <em>which is untyped</em>.</li>
+								<li>If you are specifying that the type is more general than the value passed
+								(since TypeScript can define types as literals).</li>
+							</ol>
+							<dl class="tsd-comment-tags">
+								<dt>typeparam</dt>
+								<dd><p>The type of the item contained in the <code>Maybe</code>.</p>
+								</dd>
+								<dt>param</dt>
+								<dd><p>The value to wrap in a <code>Maybe</code>. If it is <code>undefined</code> or <code>null</code>,
+										the result will be <code>Nothing</code>; otherwise it will be the type of
+									the value passed.</p>
+								</dd>
+							</dl>
+						</div>
 					</section>
 					<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-object-literal">
 						<a name="maybe.or-1" class="tsd-anchor"></a>
@@ -3136,9 +3748,44 @@ mightBeANumber
 						<div class="tsd-signature tsd-kind-icon">or<span class="tsd-signature-symbol">:</span> <a href="_maybe_.html#or" class="tsd-signature-type">or</a></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in maybe.ts:1262</li>
+								<li>Defined in maybe.ts:1555</li>
 							</ul>
 						</aside>
+						<div class="tsd-comment tsd-typography">
+							<div class="lead">
+								<p>Provide a fallback for a given <code>Maybe</code>. Behaves like a logical <code>or</code>: if the
+									<code>maybe</code> value is a <code>Just</code>, returns that <code>maybe</code>; otherwise, returns the
+								<code>defaultMaybe</code> value.</p>
+							</div>
+							<p>This is useful when you want to make sure that something which takes a
+								<code>Maybe</code> always ends up getting a <code>Just</code> variant, by supplying a default value
+							for the case that you currently have a nothing.</p>
+							<pre><code class="lang-ts"><span class="hljs-keyword">import</span> Maybe <span class="hljs-keyword">from</span> <span class="hljs-string">'true-utils/maybe'</span>;
+
+<span class="hljs-keyword">const</span> justA = Maybe.just(<span class="hljs-string">"a"</span>);
+<span class="hljs-keyword">const</span> justB = Maybe.just(<span class="hljs-string">"b"</span>);
+<span class="hljs-keyword">const</span> aNothing: Maybe&lt;<span class="hljs-built_in">string</span>&gt; = nothing();
+
+<span class="hljs-built_in">console</span>.log(Maybe.or(justB, justA).toString());  <span class="hljs-comment">// Just(A)</span>
+<span class="hljs-built_in">console</span>.log(Maybe.or(aNothing, justA).toString());  <span class="hljs-comment">// Just(A)</span>
+<span class="hljs-built_in">console</span>.log(Maybe.or(justB, aNothing).toString());  <span class="hljs-comment">// Just(B)</span>
+<span class="hljs-built_in">console</span>.log(Maybe.or(aNothing, aNothing).toString());  <span class="hljs-comment">// Nothing</span>
+</code></pre>
+							<dl class="tsd-comment-tags">
+								<dt>typeparam</dt>
+								<dd><p>The type of the wrapped value.</p>
+								</dd>
+								<dt>param</dt>
+								<dd><p>The <code>Maybe</code> to use if <code>maybe</code> is a <code>Nothing</code>.</p>
+								</dd>
+								<dt>param</dt>
+								<dd><p>The <code>Maybe</code> instance to evaluate.</p>
+								</dd>
+								<dt>returns</dt>
+								<dd><p><code>maybe</code> if it is a <code>Just</code>, otherwise <code>defaultMaybe</code>.</p>
+								</dd>
+							</dl>
+						</div>
 					</section>
 					<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-object-literal">
 						<a name="maybe.orelse-1" class="tsd-anchor"></a>
@@ -3146,9 +3793,34 @@ mightBeANumber
 						<div class="tsd-signature tsd-kind-icon">or<wbr>Else<span class="tsd-signature-symbol">:</span> <a href="_maybe_.html#orelse" class="tsd-signature-type">orElse</a></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in maybe.ts:1263</li>
+								<li>Defined in maybe.ts:1572</li>
 							</ul>
 						</aside>
+						<div class="tsd-comment tsd-typography">
+							<div class="lead">
+								<p>Like <code>or</code>, but using a function to construct the alternative <code>Maybe</code>.</p>
+							</div>
+							<p>Sometimes you need to perform an operation using other data in the
+								environment to construct the fallback value. In these situations, you can
+								pass a function (which may be a closure) as the <code>elseFn</code> to generate the
+							fallback <code>Maybe&lt;T&gt;</code>.</p>
+							<p>Useful for transforming empty scenarios based on values in context.</p>
+							<dl class="tsd-comment-tags">
+								<dt>typeparam</dt>
+								<dd><p>The type of the wrapped value.</p>
+								</dd>
+								<dt>param</dt>
+								<dd><p>The function to apply if <code>maybe</code> is <code>Nothing</code></p>
+								</dd>
+								<dt>param</dt>
+								<dd><p>The <code>maybe</code> to use if it is <code>Just</code>.</p>
+								</dd>
+								<dt>returns</dt>
+								<dd><p>The <code>maybe</code> if it is <code>Just</code>, or the <code>Maybe</code> returned by
+									<code>elseFn</code> if the <code>maybe</code> is <code>Nothing</code>.</p>
+								</dd>
+							</dl>
+						</div>
 					</section>
 					<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-object-literal">
 						<a name="maybe.tookorelseerr-1" class="tsd-anchor"></a>
@@ -3156,9 +3828,34 @@ mightBeANumber
 						<div class="tsd-signature tsd-kind-icon">to<wbr>OkOr<wbr>Else<wbr>Err<span class="tsd-signature-symbol">:</span> <a href="_maybe_.html#tookorelseerr" class="tsd-signature-type">toOkOrElseErr</a></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in maybe.ts:1272</li>
+								<li>Defined in maybe.ts:1671</li>
 							</ul>
 						</aside>
+						<div class="tsd-comment tsd-typography">
+							<div class="lead">
+								<p>Transform the <a href="#maybe"><code>Maybe</code></a> into a
+									<a href="../modules/_result_.html#result"><code>Result</code></a>, using the wrapped value as the
+								<code>Ok</code> value if <code>Just</code>; otherwise using <code>elseFn</code> to generate <code>Err</code>.</p>
+							</div>
+							<dl class="tsd-comment-tags">
+								<dt>typeparam</dt>
+								<dd><p>The wrapped value.</p>
+								</dd>
+								<dt>typeparam</dt>
+								<dd><p>The error type to in the <code>Result</code>.</p>
+								</dd>
+								<dt>param</dt>
+								<dd><p>The function which generates an error of type <code>E</code>.</p>
+								</dd>
+								<dt>param</dt>
+								<dd><p>The <code>Maybe</code> instance to convert.</p>
+								</dd>
+								<dt>returns</dt>
+								<dd><p>A <code>Result</code> containing the value wrapped in <code>maybe</code> in an <code>Ok</code>,
+									or the value generated by <code>elseFn</code> in an <code>Err</code>.</p>
+								</dd>
+							</dl>
+						</div>
 					</section>
 					<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-object-literal">
 						<a name="maybe.tookorerr-1" class="tsd-anchor"></a>
@@ -3166,9 +3863,34 @@ mightBeANumber
 						<div class="tsd-signature tsd-kind-icon">to<wbr>OkOr<wbr>Err<span class="tsd-signature-symbol">:</span> <a href="_maybe_.html#tookorerr" class="tsd-signature-type">toOkOrErr</a></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in maybe.ts:1271</li>
+								<li>Defined in maybe.ts:1658</li>
 							</ul>
 						</aside>
+						<div class="tsd-comment tsd-typography">
+							<div class="lead">
+								<p>Transform the <a href="#maybe"><code>Maybe</code></a> into a
+									<a href="../modules/_result_.html#result"><code>Result</code></a>, using the wrapped value as the
+								<code>Ok</code> value if <code>Just</code>; otherwise using the supplied <code>error</code> value for <code>Err</code>.</p>
+							</div>
+							<dl class="tsd-comment-tags">
+								<dt>typeparam</dt>
+								<dd><p>The wrapped value.</p>
+								</dd>
+								<dt>typeparam</dt>
+								<dd><p>The error type to in the <code>Result</code>.</p>
+								</dd>
+								<dt>param</dt>
+								<dd><p>The error value to use if the <code>Maybe</code> is <code>Nothing</code>.</p>
+								</dd>
+								<dt>param</dt>
+								<dd><p>The <code>Maybe</code> instance to convert.</p>
+								</dd>
+								<dt>returns</dt>
+								<dd><p>A <code>Result</code> containing the value wrapped in <code>maybe</code> in an <code>Ok</code>,
+									or <code>error</code> in an <code>Err</code>.</p>
+								</dd>
+							</dl>
+						</div>
 					</section>
 					<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-object-literal">
 						<a name="maybe.tostring-1" class="tsd-anchor"></a>
@@ -3176,9 +3898,55 @@ mightBeANumber
 						<div class="tsd-signature tsd-kind-icon">to<wbr>String<span class="tsd-signature-symbol">:</span> <a href="_maybe_.html#tostring" class="tsd-signature-type">toString</a></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in maybe.ts:1274</li>
+								<li>Defined in maybe.ts:1705</li>
 							</ul>
 						</aside>
+						<div class="tsd-comment tsd-typography">
+							<div class="lead">
+								<p>Create a <code>String</code> representation of a <code>Maybe</code> instance.</p>
+							</div>
+							<p>A <code>Just</code> instance will be printed as <code>Just(&lt;representation of the value&gt;)</code>,
+								where the representation of the value is simply the value&#39;s own <code>toString</code>
+							representation. For example:</p>
+							<table>
+								<thead>
+									<tr>
+										<th>call</th>
+										<th>output</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr>
+										<td><code>toString(Maybe.of(42))</code></td>
+										<td><code>Just(42)</code></td>
+									</tr>
+									<tr>
+										<td><code>toString(Maybe.of([1, 2, 3]))</code></td>
+										<td><code>Just(1,2,3)</code></td>
+									</tr>
+									<tr>
+										<td><code>toString(Maybe.of({ an: &#39;object&#39; }))</code></td>
+										<td><code>Just([object Object])</code></td>
+									</tr>
+									<tr>
+										<td><code>toString(Maybe.nothing())</code></td>
+										<td><code>Nothing</code></td>
+									</tr>
+								</tbody>
+							</table>
+							<dl class="tsd-comment-tags">
+								<dt>typeparam</dt>
+								<dd><p>The type of the wrapped value; its own <code>.toString</code> will be used
+									to print the interior contents of the <code>Just</code> variant.</p>
+								</dd>
+								<dt>param</dt>
+								<dd><p>The value to convert to a string.</p>
+								</dd>
+								<dt>returns</dt>
+								<dd><p>The string representation of the <code>Maybe</code>.</p>
+								</dd>
+							</dl>
+						</div>
 					</section>
 					<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-object-literal">
 						<a name="maybe.unsafeget-1" class="tsd-anchor"></a>
@@ -3186,9 +3954,14 @@ mightBeANumber
 						<div class="tsd-signature tsd-kind-icon">unsafe<wbr>Get<span class="tsd-signature-symbol">:</span> <a href="" class="tsd-signature-type">unsafelyUnwrap</a></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in maybe.ts:1266</li>
+								<li>Defined in maybe.ts:1588</li>
 							</ul>
 						</aside>
+						<div class="tsd-comment tsd-typography">
+							<div class="lead">
+								<p>Alias for <a href="#unsafelyunwrap"><code>unsafelyUnwrap</code></a></p>
+							</div>
+						</div>
 					</section>
 					<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-object-literal">
 						<a name="maybe.unsafelyget-1" class="tsd-anchor"></a>
@@ -3196,9 +3969,14 @@ mightBeANumber
 						<div class="tsd-signature tsd-kind-icon">unsafely<wbr>Get<span class="tsd-signature-symbol">:</span> <a href="" class="tsd-signature-type">unsafelyUnwrap</a></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in maybe.ts:1265</li>
+								<li>Defined in maybe.ts:1586</li>
 							</ul>
 						</aside>
+						<div class="tsd-comment tsd-typography">
+							<div class="lead">
+								<p>Alias for <a href="#unsafelyunwrap"><code>unsafelyUnwrap</code></a></p>
+							</div>
+						</div>
 					</section>
 					<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-object-literal">
 						<a name="maybe.unsafelyunwrap-1" class="tsd-anchor"></a>
@@ -3206,9 +3984,30 @@ mightBeANumber
 						<div class="tsd-signature tsd-kind-icon">unsafely<wbr>Unwrap<span class="tsd-signature-symbol">:</span> <a href="" class="tsd-signature-type">unsafelyUnwrap</a></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in maybe.ts:1264</li>
+								<li>Defined in maybe.ts:1584</li>
 							</ul>
 						</aside>
+						<div class="tsd-comment tsd-typography">
+							<div class="lead">
+								<p>Get the value out of the <code>Maybe</code>.</p>
+							</div>
+							<p>Returns the content of a <code>Just</code>, but <strong>throws if the <code>Maybe</code> is <code>Nothing</code></strong>.
+							Prefer to use <a href="#unwrapor"><code>unwrapOr</code></a> or <a href="#unwraporelse"><code>unwrapOrElse</code></a>.</p>
+							<dl class="tsd-comment-tags">
+								<dt>typeparam</dt>
+								<dd><p>The type of the wrapped value.</p>
+								</dd>
+								<dt>param</dt>
+								<dd><p>The value to unwrap</p>
+								</dd>
+								<dt>returns</dt>
+								<dd><p>The unwrapped value if the <code>Maybe</code> instance is <code>Just</code>.</p>
+								</dd>
+								<dt>throws</dt>
+								<dd><p>If the <code>maybe</code> is <code>Nothing</code>.</p>
+								</dd>
+							</dl>
+						</div>
 					</section>
 					<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-object-literal">
 						<a name="maybe.unwrapor-1" class="tsd-anchor"></a>
@@ -3216,9 +4015,39 @@ mightBeANumber
 						<div class="tsd-signature tsd-kind-icon">unwrap<wbr>Or<span class="tsd-signature-symbol">:</span> <a href="_maybe_.html#unwrapor" class="tsd-signature-type">unwrapOr</a></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in maybe.ts:1267</li>
+								<li>Defined in maybe.ts:1611</li>
 							</ul>
 						</aside>
+						<div class="tsd-comment tsd-typography">
+							<div class="lead">
+								<p>Safely get the value out of a <code>Maybe</code>.</p>
+							</div>
+							<p>Returns the content of a <code>Just</code> or <code>defaultValue</code> if <code>Nothing</code>. This is the
+							recommended way to get a value out of a <code>Maybe</code> most of the time.</p>
+							<pre><code class="lang-ts"><span class="hljs-keyword">import</span> Maybe <span class="hljs-keyword">from</span> <span class="hljs-string">'true-myth/maybe'</span>;
+
+<span class="hljs-keyword">const</span> notAString = Maybe.nothing&lt;<span class="hljs-built_in">string</span>&gt;();
+<span class="hljs-keyword">const</span> isAString = Maybe.just(<span class="hljs-string">'look ma! some characters!'</span>);
+
+<span class="hljs-built_in">console</span>.log(Maybe.unwrapOr(<span class="hljs-string">'&lt;empty&gt;'</span>, notAString));  <span class="hljs-comment">// "&lt;empty&gt;"</span>
+<span class="hljs-built_in">console</span>.log(Maybe.unwrapOr(<span class="hljs-string">'&lt;empty&gt;'</span>, isAString));  <span class="hljs-comment">// "look ma! some characters!"</span>
+</code></pre>
+							<dl class="tsd-comment-tags">
+								<dt>typeparam</dt>
+								<dd><p>The type of the wrapped value.</p>
+								</dd>
+								<dt>param</dt>
+								<dd><p>The value to return if <code>maybe</code> is a <code>Nothing</code>.</p>
+								</dd>
+								<dt>param</dt>
+								<dd><p>The <code>Maybe</code> instance to unwrap if it is a <code>Just</code>.</p>
+								</dd>
+								<dt>returns</dt>
+								<dd><p>The content of <code>maybe</code> if it is a <code>Just</code>, otherwise
+									<code>defaultValue</code>.</p>
+								</dd>
+							</dl>
+						</div>
 					</section>
 					<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-object-literal">
 						<a name="maybe.unwraporelse-1" class="tsd-anchor"></a>
@@ -3226,9 +4055,46 @@ mightBeANumber
 						<div class="tsd-signature tsd-kind-icon">unwrap<wbr>OrElse<span class="tsd-signature-symbol">:</span> <a href="_maybe_.html#unwraporelse" class="tsd-signature-type">unwrapOrElse</a></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in maybe.ts:1269</li>
+								<li>Defined in maybe.ts:1643</li>
 							</ul>
 						</aside>
+						<div class="tsd-comment tsd-typography">
+							<div class="lead">
+								<p>Safely get the value out of a <a href="#maybe"><code>Maybe</code></a> by returning the wrapped
+								value if it is <code>Just</code>, or by applying <code>orElseFn</code> if it is <code>Nothing</code>.</p>
+							</div>
+							<p>This is useful when you need to <em>generate</em> a value (e.g. by using current
+								values in the environment – whether preloaded or by local closure) instead of
+							having a single default value available (as in <a href="#unwrapor"><code>unwrapOr</code></a>).</p>
+							<pre><code class="lang-ts"><span class="hljs-keyword">import</span> Maybe <span class="hljs-keyword">from</span> <span class="hljs-string">'true-myth/maybe'</span>;
+
+<span class="hljs-comment">// You can imagine that someOtherValue might be dynamic.</span>
+<span class="hljs-keyword">const</span> someOtherValue = <span class="hljs-number">99</span>;
+<span class="hljs-keyword">const</span> handleNothing = <span class="hljs-function"><span class="hljs-params">()</span> =&gt;</span> someOtherValue;
+
+<span class="hljs-keyword">const</span> aJust = Maybe.just(<span class="hljs-number">42</span>);
+<span class="hljs-built_in">console</span>.log(Maybe.unwrapOrElse(handleNothing, aJust));  <span class="hljs-comment">// 42</span>
+
+<span class="hljs-keyword">const</span> aNothing = nothing&lt;<span class="hljs-built_in">number</span>&gt;();
+<span class="hljs-built_in">console</span>.log(Maybe.unwrapOrElse(handleNothing, aNothing)); <span class="hljs-comment">// 99</span>
+</code></pre>
+							<dl class="tsd-comment-tags">
+								<dt>typeparam</dt>
+								<dd><p>The wrapped value.</p>
+								</dd>
+								<dt>param</dt>
+								<dd><p>A function used to generate a valid value if <code>maybe</code> is a
+									<code>Nothing</code>.</p>
+								</dd>
+								<dt>param</dt>
+								<dd><p>The <code>Maybe</code> instance to unwrap if it is a <code>Just</code></p>
+								</dd>
+								<dt>returns</dt>
+								<dd><p>Either the content of <code>maybe</code> or the value returned from
+									<code>orElseFn</code>.</p>
+								</dd>
+							</dl>
+						</div>
 					</section>
 				</section>
 			</section>
