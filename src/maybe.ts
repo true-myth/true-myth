@@ -653,7 +653,7 @@ export function and<T, U>(
   andMaybe: Maybe<U>,
   maybe?: Maybe<T>
 ): Maybe<U> | ((maybe: Maybe<T>) => Maybe<U>) {
-  const op = (m: Maybe<T>) => (isJust(m) ? andMaybe : nothing() as Maybe<U>);
+  const op = (m: Maybe<T>) => (isJust(m) ? andMaybe : (nothing() as Maybe<U>));
   return curry1(op, maybe);
 }
 
@@ -715,7 +715,7 @@ export function andThen<T, U>(
   thenFn: (t: T) => Maybe<U>,
   maybe?: Maybe<T>
 ): Maybe<U> | ((maybe: Maybe<T>) => Maybe<U>) {
-  const op = (m: Maybe<T>) => (isJust(m) ? thenFn(unwrap(m)) : nothing() as Maybe<U>);
+  const op = (m: Maybe<T>) => (isJust(m) ? thenFn(unwrap(m)) : (nothing() as Maybe<U>));
   return maybe !== undefined ? op(maybe) : op;
 }
 
@@ -1239,6 +1239,15 @@ export function ap<T, U>(
     });
 
   return curry1(op, maybe);
+}
+
+/**
+  Determine whether an item is an instance of `Just` or `Nothing`.
+
+  @param item The item to check.
+ */
+export function isInstance<T = any>(item: any): item is Maybe<T> {
+  return item instanceof Just || item instanceof Nothing;
 }
 
 /** A value which may (`Just<T>`) or may not (`Nothing`) be present. */
@@ -1936,6 +1945,8 @@ export const Maybe = {
     @param maybe maybe a T to apply to `fn`
   */
   ap,
+
+  isInstance,
 };
 
 export default Maybe;

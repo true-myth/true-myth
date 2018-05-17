@@ -298,6 +298,20 @@ describe('`Result` pure functions', () => {
 
     expect(Result.ap(okAdd3, Result.ok(2))).toEqual(Result.ok(5));
   });
+
+  test('isInstance', () => {
+    const ok: any = Result.ok('yay');
+    expect(Result.isInstance(ok)).toBe(true);
+
+    const err: any = Result.err('oh no');
+    expect(Result.isInstance(err)).toBe(true);
+
+    const nada: any = null;
+    expect(Result.isInstance(nada)).toBe(false);
+
+    const obj: any = { random: 'nonsense' };
+    expect(Result.isInstance(obj)).toBe(false);
+  });
 });
 
 describe('`Result.Ok` class', () => {
