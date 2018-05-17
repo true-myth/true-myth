@@ -314,6 +314,20 @@ describe('`Maybe` pure functions', () => {
     expect(Maybe.ap(maybeAdd3, val)).toEqual(Maybe.just(5));
     expect(Maybe.ap(maybeAdd3)(nada)).toEqual(Maybe.nothing());
   });
+
+  test('isInstance', () => {
+    const something: any = Maybe.just('yay');
+    expect(Maybe.isInstance(something)).toBe(true);
+
+    const nothing = Maybe.nothing();
+    expect(Maybe.isInstance(nothing)).toBe(true);
+
+    const nada = null;
+    expect(Maybe.isInstance(nada)).toBe(false);
+
+    const obj = { random: 'nonsense' };
+    expect(Maybe.isInstance(obj)).toBe(false);
+  });
 });
 
 describe('`Maybe.Just` class', () => {
