@@ -254,7 +254,7 @@ You can use `Maybe.of` to construct a `Maybe` from any value. It will return a `
 import Maybe from 'true-myth/maybe';
 
 function acceptsANullOhNo(value: number | null): Maybe<string> {
-  const maybeNumber = maybeOf(value);
+  const maybeNumber = Maybe.of(value);
   return mapOr("0", n => n.toString(), maybeNumber);
 }
 ```
