@@ -57,3 +57,6 @@ typings/
 
 # JetBrains
 .idea/
+
+# Don't commit compiled type defs
+*.d.ts
