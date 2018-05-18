@@ -65,7 +65,7 @@
 		<div class="col-8 col-content">
 			<div class="tsd-panel tsd-typography">
 				<h1 align="center"><a href='https://github.com/chriskrycho/true-myth'>True Myth</a></h1>
-				<p align="center">A library for safer programming in JavaScript, with first-class support for TypeScript (and Flow), with <code>Maybe</code> and <code>Result</code> types, and supporting both a functional style and a more traditional method-call style.</p>
+				<p align="center">A library for safer programming in JavaScript, with first-class support for TypeScript, with <code>Maybe</code> and <code>Result</code> types, and supporting both a functional style and a more traditional method-call style.</p>
 				<p align="center">
 					<a href='https://travis-ci.org/chriskrycho/true-myth'>
 						<img src='https://img.shields.io/travis/chriskrycho/true-myth/master.svg?style=flat-square' alt='Travis `master` build status'>
@@ -107,12 +107,7 @@
 				<h3 id="contents">Contents</h3>
 				<ul>
 					<li><a href="#setup">Setup</a><ul>
-							<li><a href="#typescript-and-flow">TypeScript and Flow</a></li>
-						</ul>
-					</li>
-					<li><a href="#roadmap">Roadmap</a><ul>
-							<li><a href="#10-c–ommitments">1.0 commitments</a></li>
-							<li><a href="#post-10-ideas">Post-1.0 ideas</a></li>
+							<li><a href="#typescript">TypeScript</a></li>
 						</ul>
 					</li>
 					<li><a href="#just-the-api-please">Just the API, please</a><ul>
@@ -189,90 +184,36 @@
 				<pre><code class="lang-typescript"><span class="hljs-keyword">const</span> { Maybe, Result } = <span class="hljs-built_in">require</span>(<span class="hljs-string">'true-myth'</span>);
 </code></pre>
 				<p>The build includes both ES6 modules and CommonJS modules, so you may reference them directly from their installation in the <code>node_modules</code> directory. (This may be helpful for using the library in different contexts, with the ES modules being supplied especially so you can do tree-shaking with e.g. Rollup.)</p>
+				<p>Note that the build target is ES2015, since all current evergreen browsers and the current LTS of Node support all ES2015 features. (Strictly speaking, Node 6 does not support <em>all</em> of ES2015, but this library goes nowhere near the couple features it has behind a flag.)</p>
 				<details>
 					<summary>Distributed package layout</summary>
 					<code>node_modules/
   true-myth/
+    index.d.ts
+    maybe.d.ts
+    result.d.ts
+    unit.d.ts
+    utils.d.ts
     dist/
-      commonjs/
-        src/
-          index.js
-          index.js.flow
-          maybe.js
-          maybe.js.flow
-          result.js
-          result.js.flow
-          utils.js
-          utils.js.flow
-      modules/
-        src/
-          index.js
-          index.js.flow
-          maybe.js
-          maybe.js.flow
-          result.js
-          result.js.flow
-          utils.js
-          utils.js.flow
-      types/
-        src/
-          index.d.ts
-          maybe.d.ts
-          result.d.ts
-          utils.d.ts</code>
+      cjs/
+        index.js
+        maybe.js
+        result.js
+        unit.js
+        utils.js
+      es/
+        index.js
+        maybe.js
+        result.js
+        unit.js
+        utils.js</code>
 				</details>
-				<h3 id="typescript-and-flow">TypeScript and Flow</h3>
-				<p>For TypeScript, whether using Webpack or Ember CLI or something else for your bundling, you will be able to import the root module directly but will not be able to import the more useful modules. To do so, you&#39;ll need to add this to your <code>tsconfig.json</code>:</p>
-				<pre><code class="lang-json">{
-  <span class="hljs-attr">"compilerOptions"</span>: {
-    <span class="hljs-attr">"paths"</span>: {
-      <span class="hljs-attr">"true-myth/*"</span>: [<span class="hljs-string">"node_modules/true-myth/dist/types/src/*"</span>],
-    }
-  }
-}
-</code></pre>
-				<p>Install-wise, Flow&#39;s types should <em>just work</em>, as they&#39;re distributed side-by-side with the modules. You can simply use the module as a normal ES6-style module import, whether working in Node or using something like Webpack.</p>
-				<p>Note, however, that Flow support is beta quality. They&#39;re offered as a best-effort approach, but are incomplete (they don&#39;t yet have any of the curried variants!) and may have a couple errors – the primary author uses TypeScript and so doesn&#39;t have a good place to test them. Pull requests are very welcome!</p>
-				<h2 id="roadmap">Roadmap</h2>
-				<h3 id="1-0-commitments">1.0 commitments</h3>
-				<ul>
-					<li><p>[x] <code>Maybe</code></p>
-						<ul>
-							<li>[x] add aliases for the standard names, e.g. <code>bind</code>, <code>chain</code>, etc.</li>
-							<li>[x] finish documentation</li>
-							<li>[x] curried variants</li>
-						</ul>
-					</li>
-					<li><p>[x] <code>Result</code></p>
-						<ul>
-							<li>[x] implement</li>
-							<li>[x] document</li>
-							<li>[x] curried variants</li>
-						</ul>
-					</li>
-					<li><p>[x] <em>All</em> the exports</p>
-						<ul>
-							<li>[x] ES modules</li>
-							<li>[x] CommonJS modules</li>
-						</ul>
-					</li>
-					<li><p>[x] Ember CLI integration</p>
-					</li>
-				</ul>
-				<p>If you think another type should be in this list, please <a href="https://github.com/chriskrycho/true-myth/issues">open an issue</a>!</p>
-				<h3 id="post-1-0-ideas">Post-1.0 ideas</h3>
-				<ul>
-					<li>[ ] Static types that can work with <code>Maybe</code> <em>or</em> <code>Result</code> (and possibly also other e.g. mappable types), inspired by <a href="https://medium.com/@gcanti/higher-kinded-types-in-typescript-static-and-fantasy-land-d41c361d0dbe">this approach</a></li>
-					<li>[ ] More types<ul>
-							<li><code>Either</code>?</li>
-							<li><code>Task</code>?</li>
-						</ul>
-					</li>
-				</ul>
+				<h3 id="typescript">TypeScript</h3>
+				<p>TypeScript should resolve the types in both a Node and a bundler (Webpack, Parcel, Broccoli/Ember CLI, etc.) context automatically. If it doesn&#39;t, please <a href="https://github.com/chriskrycho/true-myth/issues/new">open an issue</a>!</p>
 				<h2 id="just-the-api-please">Just the API, please</h2>
 				<p><em>If you&#39;re unsure of why you would want to use the library, you might jump down to <a href="#why-do-i-need-this"><strong>Why do I need this?</strong></a>.</em></p>
 				<p>These examples don&#39;t cover every corner of the API; it&#39;s just here to show you what a few of the functions are like. <a href="https://true-myth.js.org">Full API documentation is available!</a> You can also <a href="https://github.com/chriskrycho/true-myth">view the source</a> if you prefer.</p>
-				<h3 id="-result-with-a-functional-style"><code>Result</code> with a functional style</h3>
+				<h3 id="result-with-a-functional-style"><code>Result</code> with a functional style</h3>
 				<pre><code class="lang-typescript"><span class="hljs-keyword">import</span> Result, { err, map, ok, toString } <span class="hljs-keyword">from</span> <span class="hljs-string">'true-myth/result'</span>;
 
 <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">fallibleCheck</span>(<span class="hljs-params">isValid: <span class="hljs-built_in">boolean</span></span>): <span class="hljs-title">Result</span>&lt;<span class="hljs-title">string</span>, </span>{ reason: <span class="hljs-built_in">string</span> }&gt; {
@@ -289,7 +230,7 @@
 <span class="hljs-keyword">const</span> mappedBad = map(describe, notGreat);
 <span class="hljs-built_in">console</span>.log(toString(mappedBad)); <span class="hljs-comment">// "Err({ reason: 'was not valid' })"</span>
 </code></pre>
-				<h3 id="-maybe-with-the-method-style"><code>Maybe</code> with the method style</h3>
+				<h3 id="maybe-with-the-method-style"><code>Maybe</code> with the method style</h3>
 				<pre><code class="lang-typescript"><span class="hljs-keyword">import</span> Maybe, { Just, Nothing } <span class="hljs-keyword">from</span> <span class="hljs-string">'true-myth/maybe'</span>;
 
 <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">safeLength</span>(<span class="hljs-params">mightBeAString: Maybe&lt;<span class="hljs-built_in">string</span>&gt;</span>): <span class="hljs-title">Maybe</span>&lt;<span class="hljs-title">number</span>&gt; </span>{
@@ -301,12 +242,12 @@
 <span class="hljs-built_in">console</span>.log(safeLength(justAString).toString()); <span class="hljs-comment">// Just(8)</span>
 <span class="hljs-built_in">console</span>.log(safeLength(nothingHere).toString()); <span class="hljs-comment">// Nothing</span>
 </code></pre>
-				<h3 id="constructing-maybe-">Constructing <code>Maybe</code></h3>
+				<h3 id="constructing-maybe">Constructing <code>Maybe</code></h3>
 				<p>You can use <code>Maybe.of</code> to construct a <code>Maybe</code> from any value. It will return a <code>Nothing</code> if the passed type is <code>null</code> or <code>undefined</code>, or a <code>Just</code> otherwise.</p>
 				<pre><code class="lang-typescript"><span class="hljs-keyword">import</span> Maybe <span class="hljs-keyword">from</span> <span class="hljs-string">'true-myth/maybe'</span>;
 
 <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">acceptsANullOhNo</span>(<span class="hljs-params">value: <span class="hljs-built_in">number</span> | <span class="hljs-literal">null</span></span>): <span class="hljs-title">Maybe</span>&lt;<span class="hljs-title">string</span>&gt; </span>{
-  <span class="hljs-keyword">const</span> maybeNumber = maybeOf(value);
+  <span class="hljs-keyword">const</span> maybeNumber = Maybe.of(value);
   <span class="hljs-keyword">return</span> mapOr(<span class="hljs-string">"0"</span>, <span class="hljs-function"><span class="hljs-params">n</span> =&gt;</span> n.toString(), maybeNumber);
 }
 </code></pre>
@@ -322,6 +263,30 @@
 
 <span class="hljs-keyword">const</span> theAnswer = ok(<span class="hljs-number">42</span>);
 <span class="hljs-keyword">const</span> theAnswerValue = unwrapOr(<span class="hljs-number">0</span>, theAnswer);
+</code></pre>
+				<p>You can also use TypeScript&#39;s &quot;type narrowing&quot; capabilities: if you <em>check</em> which variant you are accessing, TypeScript will &quot;narrow&quot; the type to that variant and allow you to access the <code>value</code> directly if it is available.</p>
+				<pre><code class="lang-typescript"><span class="hljs-keyword">import</span> Maybe <span class="hljs-keyword">from</span> <span class="hljs-string">'true-myth/maybe'</span>;
+
+<span class="hljs-comment">// Maybe&lt;string&gt;</span>
+<span class="hljs-keyword">const</span> couldBeSomething = Maybe.of(<span class="hljs-string">"Hello!"</span>);
+
+<span class="hljs-comment">// type error, because `value` does not exist on `Nothing`:</span>
+<span class="hljs-comment">// couldBeSomething.value;</span>
+
+<span class="hljs-keyword">if</span> (couldBeSomething.isJust()) {
+  <span class="hljs-comment">// valid, because `couldBeSomething` is "narrowed" to `Just` here:</span>
+  <span class="hljs-built_in">console</span>.log(couldBeSomething.value);
+}
+</code></pre>
+				<p>This is especially convenient in functional style pipelines, and there are convenience methods available to make it even more ergonomic:</p>
+				<pre><code class="lang-typescript"><span class="hljs-keyword">import</span> Result, { Err } <span class="hljs-keyword">from</span> <span class="hljs-string">'true-myth/result'</span>;
+
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">getErrorMessages</span>(<span class="hljs-params">results: <span class="hljs-built_in">Array</span>&lt;Result&lt;<span class="hljs-built_in">string</span>, <span class="hljs-built_in">Error</span>&gt;&gt;</span>) </span>{
+  <span class="hljs-keyword">return</span> results
+    .filter(Result.isErr)
+    .map(Err.unwrapErr) <span class="hljs-comment">// would not type-checkout with previous line</span>
+    .map(<span class="hljs-function"><span class="hljs-params">error</span> =&gt;</span> error.message);
+}
 </code></pre>
 				<h3 id="curried-variants">Curried variants</h3>
 				<p>All static functions which take two or more parameters are automatically partially applied/curried so you can supply only <em>some</em> of the arguments as makes sense. For example, if you were using <a href="https://lodash.com">lodash</a>, you might have something like this:</p>
@@ -346,8 +311,8 @@
   _.map(Maybe.map(length)),
   <span class="hljs-comment">// drop `Nothing` instances</span>
   _.filter(Maybe.isJust),
-  <span class="hljs-comment">// unwrap now that it's safe to do so</span>
-  _.map(Maybe.unsafelyUnwrap),
+  <span class="hljs-comment">// get value now that it's safe to do so (TS will not allow it earlier)</span>
+  _.map(<span class="hljs-function"><span class="hljs-params">maybe</span> =&gt;</span> maybe.value),
   <span class="hljs-comment">// only keep the even numbers ('fish' =&gt; 4)</span>
   _.filter(even),
   <span class="hljs-comment">// multiply by three</span>
@@ -380,8 +345,8 @@
   maybeStrings =&gt; _.map(maybeStrings, <span class="hljs-function"><span class="hljs-params">maybeString</span> =&gt;</span> Maybe.map(length, maybeString)),
   <span class="hljs-comment">// drop `Nothing` instances</span>
   maybeLengths =&gt; _.filter(maybeLengths, Maybe.isJust),
-  <span class="hljs-comment">// unwrap now that it's safe to do so</span>
-  justLengths =&gt; _.map(justLengths, Maybe.unsafelyUnwrap),
+  <span class="hljs-comment">// get value now that it's safe to do so (TS will not allow it earlier)</span>
+  justLengths =&gt; _.map(justLengths, <span class="hljs-function"><span class="hljs-params">maybe</span> =&gt;</span> maybe.value),
   <span class="hljs-comment">// only keep the even numbers ('fish' =&gt; 4)</span>
   lengths =&gt; _.filter(lengths, even),
   <span class="hljs-comment">// multiply by three</span>
@@ -395,7 +360,7 @@
 				<p>This &quot;point-free&quot; style isn&#39;t always better, but it&#39;s available for the times when it <em>is</em> better. (<a href="https://www.youtube.com/watch?v=seVSlKazsNk">Use it judiciously!</a>)</p>
 				<h2 id="why-do-i-need-this-">Why do I need this?</h2>
 				<p>There are two motivating problems for True Myth (and other libraries like it): dealing with <em>nothingness</em> and dealing with <em>operations which can fail</em>.</p>
-				<h3 id="1-nothingness-null-and-undefined-">1. Nothingness: <code>null</code> and <code>undefined</code></h3>
+				<h3 id="1-nothingness-null-and-undefined">1. Nothingness: <code>null</code> and <code>undefined</code></h3>
 				<p>How do you represent the concept of <em>not having anything</em>, programmatically? As a language, JavaScript uses <code>null</code> to represent this concept; if you have a variable <code>myNumber</code> to store numbers, you might assign the value <code>null</code> when you don&#39;t have any number at all. If you have a variable <code>myString</code>, you might set <code>myString = null;</code> when you don&#39;t have a string.</p>
 				<p>Some JavaScript programmers use <code>undefined</code> in place of <code>null</code> or in addition to <code>null</code>, so rather than setting a value to <code>null</code> they might just set <code>let myString;</code> or even <code>let myString = undefined;</code>.</p>
 				<p>Every language needs a way to express the concept of nothing, but <code>null</code> and <code>undefined</code> are a curse. Their presence in JavaScript (and in many other languages) introduce a host of problems, because they are not a particularly <em>safe</em> way to represent the concept. Say, for a moment, that you have a function that takes an integer as a parameter:</p>
@@ -424,7 +389,7 @@ myFuncThatTakesAnInteger(myNumber); <span class="hljs-comment">// TypeError: anI
 }
 </code></pre>
 				<p>If you forget that check, or simply assume, &quot;Look, I&#39;ll <em>never</em> call this without including the argument,&quot; eventually you or someone else will get it wrong. Usually somewhere far away from the actual invocation of <code>doAThing</code>, so that it&#39;s not obvious why that value ended up being <code>null</code> there.</p>
-				<p>TypeScript and Flow take us a big step in that direction, so long as our type annotations are good enough. (Use of <code>any</code> will leave us sad, though.) We can specify that type <em>may</em> be present, using the <a href="https://flow.org/en/docs/types/maybe/">maybe</a>/<a href="http://www.typescriptlang.org/docs/handbook/interfaces.html#optional-properties">optional</a> annotation. This at least helps keep us honest. But we still end up writing a ton of repeated boilerplate to deal with this problem. Rather than just handling it once and being done with it, we play a never-ending game of whack-a-mole. We must be constantly vigilant and proactive so that our users don&#39;t get into broken error states.</p>
+				<p>TypeScript takes us a big step in that direction, so long as our type annotations are good enough. (Use of <code>any</code> will leave us sad, though.) We can specify that type <em>may</em> be present, using the <a href="https://flow.org/en/docs/types/maybe/">maybe</a>/<a href="http://www.typescriptlang.org/docs/handbook/interfaces.html#optional-properties">optional</a> annotation. This at least helps keep us honest. But we still end up writing a ton of repeated boilerplate to deal with this problem. Rather than just handling it once and being done with it, we play a never-ending game of whack-a-mole. We must be constantly vigilant and proactive so that our users don&#39;t get into broken error states.</p>
 				<h3 id="2-failure-handling-callbacks-and-exceptions">2. Failure handling: callbacks and exceptions</h3>
 				<p>Similarly, you often have functions whose return value represents an operation which might fail in some way. We also often have functions which have to deal with the result of operations which might fail.</p>
 				<p>Many patterns exist to work around the fact that you can&#39;t very easily return two things together in JavaScript. Node has a callback pattern with an error as the first argument to every callback, set to <code>null</code> if there was no error. Client-side JavaScript usually just doesn&#39;t have a single pattern for handling this.</p>
@@ -467,15 +432,15 @@ myFuncThatTakesAnInteger(myNumber); <span class="hljs-comment">// TypeError: anI
 }
 </code></pre>
 				<p>This is like the Node example <em>but even worse</em> for repetition!</p>
-				<p>Nor can TypeScript or Flow help you here! They don&#39;t have type signatures to say &quot;This throws an exception!&quot; (TypeScript&#39;s <code>never</code> might come to mind, but it might mean lots of things, not just exception-throwing.)</p>
+				<p>Nor can TypeScript help you here! It doesn&#39;t have type signatures to say &quot;This throws an exception!&quot; (TypeScript&#39;s <code>never</code> might come to mind, but it might mean lots of things, not just exception-throwing.)</p>
 				<p>Neither callbacks nor exceptions are good solutions here.</p>
-				<h2 id="solutions-maybe-and-result-">Solutions: <code>Maybe</code> and <code>Result</code></h2>
+				<h2 id="solutions-maybe-and-result">Solutions: <code>Maybe</code> and <code>Result</code></h2>
 				<p><code>Maybe</code> and <code>Result</code> are our escape hatch from all this madness.</p>
 				<p>We reach for libraries precisely so we can solve real business problems while letting lower-level concerns live in the &quot;solved problems&quot; category. True Myth, borrowing ideas from many other languages and libraries, aims to put <em>code written to defend against <code>null</code>/<code>undefined</code> problems</em> in that &quot;solved problems&quot; category.</p>
 				<p><code>Maybe</code> and <code>Result</code> solve this problem <em>once</em>, and <em>in a principled way</em>, instead of in an <em>ad-hoc</em> way throughout your codebase, by putting the value into a <em>container</em> which is guaranteed to be safe to act upon, regardless of whether there&#39;s something inside it or not.</p>
 				<p>These containers let us write functions with <em>actually safe</em> assumptions about parameter values by extracting the question, &quot;Does this variable contain a valid value?&quot; to API boundaries, rather than needing to ask that question at the head of every. single. function.</p>
 				<p><em>What is this sorcery?</em></p>
-				<h3 id="how-it-works-maybe-">How it works: <code>Maybe</code></h3>
+				<h3 id="how-it-works-maybe">How it works: <code>Maybe</code></h3>
 				<p>It turns out you probably already have a good idea of how this works, if you&#39;ve spent much time writing JavaScript, because this is exactly how arrays work.</p>
 				<p>Imagine, for a moment, that you have a variable <code>myArray</code> and you want to map over it and print out every value to the console. You instantiate it as an empty array and then forget to load it up with values before mapping over it:</p>
 				<pre><code class="lang-js"><span class="hljs-keyword">let</span> myArray = [];
@@ -495,8 +460,8 @@ myInteger.map(<span class="hljs-function"><span class="hljs-params">x</span> =&g
 </code></pre>
 				<p><img src="https://user-images.githubusercontent.com/2403023/31098390-5d6573d0-a790-11e7-96f9-361d2e70522b.gif" alt="mind blown"></p>
 				<p>We received <code>Nothing</code> back as our value, which isn&#39;t particularly useful, but it also didn&#39;t halt our program in its tracks!</p>
-				<p>Best of all, when you use these with libraries like TypeScript or Flow, you can lean on their type systems to check aggressively for <code>null</code> and <code>undefined</code>, and actually <em>eliminate</em> those from your codebase by replacing anywhere you would have used them with <code>Maybe</code>.</p>
-				<h3 id="how-it-works-result-">How it works: <code>Result</code></h3>
+				<p>Best of all, when you use these with libraries like TypeScript, you can lean on their type systems to check aggressively for <code>null</code> and <code>undefined</code>, and actually <em>eliminate</em> those from your codebase by replacing anywhere you would have used them with <code>Maybe</code>.</p>
+				<h3 id="how-it-works-result">How it works: <code>Result</code></h3>
 				<p><code>Result</code> is similar to <code>Maybe</code>, except it packages up the result of an operation (like a network request) whether it&#39;s a success (an <code>Ok</code>) or a failure (an <code>Err</code>) and lets us unwrap the package at our leisure. Whether you get back a 200 or a 401 for your HTTP request, you can pass the box around the same either way; the methods and properties the container has are not dependent upon whether there is shiny new data or a big red error inside.</p>
 				<pre><code class="lang-typescript"><span class="hljs-keyword">import</span> { ok, err } <span class="hljs-keyword">from</span> <span class="hljs-string">'true-myth/result'</span>;
 
@@ -508,14 +473,14 @@ myInteger.map(<span class="hljs-function"><span class="hljs-params">x</span> =&g
 </code></pre>
 				<p>Thus, you can replace functions which take polymorphic arguments or have polymorphic return values to try to handle scenarios where something may be a success or an error with functions using <code>Result</code>.</p>
 				<p>Any place you try to treat either a <code>Maybe</code> or a <code>Result</code> as just the underlying value rather than the container, the type systems will complain, of course. And you&#39;ll also get help from smart editors with suggestions about what kinds of values (including functions) you need to interact with any given helper or method, since the type definitions are supplied.</p>
-				<p>By leaning on TypeScript or Flow to handle the checking, we also get all these benefits with <em>no</em> runtime overhead other than the cost of constructing the actual container objects (which is to say: <em>very</em> low!).</p>
+				<p>By leaning on TypeScript to handle the checking, we also get all these benefits with <em>no</em> runtime overhead other than the cost of constructing the actual container objects (which is to say: <em>very</em> low!).</p>
 				<h2 id="design-philosophy">Design philosophy</h2>
 				<p>The design aims for True Myth are:</p>
 				<ul>
 					<li>to be as idiomatic as possible in JavaScript</li>
 					<li>to support a natural functional programming style</li>
 					<li>to have zero runtime cost beyond simple object construction and function invocation</li>
-					<li>to lean heavily on TypeScript and Flow to enable all of the above</li>
+					<li>to lean heavily on TypeScript to enable all of the above</li>
 				</ul>
 				<p>In practice, that means:</p>
 				<ul>
@@ -538,15 +503,15 @@ const functionalNothing = nothing();
 </code></pre>
 						<p>As this second example suggests, the aim has been to support the most idiomatic approach for each style. This means that yes, you might find it a bit confusing if you&#39;re actively switching between the two of them. (Why would you do that?!?)</p>
 					</li>
-					<li><p>Using the library with TypeScript or Flow will <em>just work</em> and will provide you with considerable safety out of the box. Using it with JavaScript will work just fine, but there is no runtime checking, and you&#39;re responsible to make sure you don&#39;t <code>unwrap()</code> a <code>Maybe</code> without checking that it&#39;s safe to do so.</p>
+					<li><p>Using the library with TypeScript will <em>just work</em> and will provide you with considerable safety out of the box. Using it with JavaScript will work just fine, but there is no runtime checking, and you&#39;re responsible to make sure you don&#39;t <code>unwrap()</code> a <code>Maybe</code> without checking that it&#39;s safe to do so.</p>
 					</li>
-					<li><p>Since this is a TypeScript-first (and Flow-second!) library, we intentionally leave out any runtime type checking. As such, you <em>should</em> make use of the type systems if you want the benefits of the system. Many of the functions simply assume that the types are checked, and <em>will</em> error if you pass in items of the wrong type.</p>
-						<p>For example, if you pass a non-<code>Maybe</code> instance to many functions, they will simply fail – even the basic helpers like <code>isJust</code> and <code>isNothing</code>. These assumptions have been made precisely <em>because</em> this is a TypeScript- and Flow-first library. (See the discussion below comparing True Myth to Folktale and Sanctuary if you aren&#39;t using TypeScript or Flow and need runtime checking.)</p>
+					<li><p>Since this is a TypeScript-first library, we intentionally leave out any runtime type checking. As such, you <em>should</em> make use of the type systems if you want the benefits of the system. Many of the functions simply assume that the types are checked, and <em>will</em> error if you pass in items of the wrong type.</p>
+						<p>For example, if you pass a non-<code>Maybe</code> instance to many functions, they will simply fail – even the basic helpers like <code>isJust</code> and <code>isNothing</code>. These assumptions have been made precisely <em>because</em> this is a TypeScript-first library. (See the discussion below comparing True Myth to Folktale and Sanctuary if you aren&#39;t using TypeScript and need runtime checking.)</p>
 					</li>
 				</ul>
 				<p>The overarching themes are flexibility and approachability.</p>
 				<p>The hope is that a team just picking up these ideas for the first time can use them without adapting their whole style to a &quot;traditional&quot; functional programming approach, but a team comfortable with functional idioms will find themselves at home with the style of data-last pure functions. (For a brief discussion of why you want the data last in a functional style, see <a href="http://www.chriskrycho.com/2017/collection-last-auto-curried-functions.html">this blog post</a>.)</p>
-				<p>(As a closely related note: True Myth does not currently supply curried variants of the functions. There are a <em>lot</em> of good options out there for that; both <a href="https://lodash.com">lodash</a> and <a href="http://ramdajs.com">Ramda</a> have tools for currying existing function definitions. It also profoundly complicates writing the type signatures for these functions, since neither TypeScript nor Flow can easily represent auto- curried functions – unsurprisingly, given they&#39;re uncommon in JavaScript. Using Ramda or lodash to get curried versions of the functions may be a huge win for you in your codebase, though!)</p>
+				<p>(As a closely related note: True Myth does not currently supply curried variants of the functions. There are a <em>lot</em> of good options out there for that; both <a href="https://lodash.com">lodash</a> and <a href="http://ramdajs.com">Ramda</a> have tools for currying existing function definitions. It also profoundly complicates writing the type signatures for these functions, since TypeScript cannot easily represent auto- curried functions – unsurprisingly, given they&#39;re uncommon in JavaScript. Using Ramda or lodash to get curried versions of the functions may be a huge win for you in your codebase, though!)</p>
 				<h3 id="a-note-on-reference-types-no-deep-copies-here-">A note on reference types: no deep copies here!</h3>
 				<p>One important note: True Myth does <em>not</em> attempt to deeply-clone the wrapped values when performing operations on them. Instead, the library assumes that you will <em>not</em> mutate those objects in place. (Doing more than this would require taking on a dependency on e.g. <a href="https://lodash.com">lodash</a>). If you violate that constraint, you can and will see surprising outcomes. Accordingly, you should take care not to mutate reference types, or to use deep cloning yourself when e.g. mapping over reference types.</p>
 				<pre><code class="lang-typescript"><span class="hljs-keyword">import</span> { just, map, unsafelyUnwrap } <span class="hljs-keyword">from</span> <span class="hljs-string">'true-myth/maybe'</span>;
@@ -574,13 +539,13 @@ anObjectToWrap.desc.push(<span class="hljs-string">'.'</span>);
 				<p>In other words: you <em>must</em> use other tools along with True Myth if you&#39;re going to mutate objects you&#39;re wrapping in <code>Maybe</code> or <code>Result</code>.</p>
 				<p>True Myth will work quite nicely with <a href="https://lodash.com">lodash</a>, <a href="http://ramdajs.com">Ramda</a>, <a href="http://facebook.github.io/immutable-js/">Immutable-JS</a>, etc., so you can use whatever tools you like to handle this problem.</p>
 				<h3 id="the-type-names">The type names</h3>
-				<h4 id="-maybe-"><code>Maybe</code></h4>
+				<h4 id="maybe"><code>Maybe</code></h4>
 				<p>The existing options in this space include <code>Option</code>, <code>Optional</code>, and <code>Maybe</code>. You could also point to &quot;nullable,&quot; but that actually means the <em>opposite</em> of what we&#39;re doing here – these represent types which can <em>not</em> be nullable!</p>
 				<p><code>Option</code> implies a choice between several different <em>options</em>; in this case that&#39;s not really what&#39;s going on. It&#39;s also not really a great word for the type in the sense that it&#39;s weird to read aloud: &quot;an Option string&quot; doesn&#39;t make any sense in English.</p>
 				<p><code>Optional</code> is much better than <code>Option</code>. The semantics are much more accurate, in that it captures that the thing is allowed to be absent. It&#39;s also the nicest grammatically: &quot;an Optional string&quot;. On the other hand, it&#39;s also the <em>longest</em>.</p>
 				<p><code>Maybe</code> seems to be the best type name semantically: we&#39;re modeling something which <em>may</em> be there – or may <em>not</em> be there! Grammatically, it&#39;s comparable to &quot;optional&quot;: &quot;a Maybe string&quot; isn&#39;t great – but &quot;maybe a string&quot; is the most natural <em>accurate</em> way to answer the question, &quot;What&#39;s in this field?&quot; It&#39;s also the shortest!</p>
 				<p><code>Optional</code> or <code>Maybe</code> are both good names; <code>Maybe</code> just seemed slightly better.</p>
-				<h5 id="the-maybe-variants-just-and-nothing-">The <code>Maybe</code> variants: <code>Just</code> and <code>Nothing</code></h5>
+				<h5 id="the-maybe-variants-just-and-nothing">The <code>Maybe</code> variants: <code>Just</code> and <code>Nothing</code></h5>
 				<p>Similar consideration was given to the names of the type variants. Options for the &quot;present&quot; type in other libraries are <code>Some</code> and <code>Just</code>. Options for the &quot;absent&quot; type are <code>None</code> or <code>Nothing</code>.</p>
 				<h6 id="why-just-">Why <code>Just</code>?</h6>
 				<p>Both <code>Just</code> and <code>Some</code> are reasonable choices for this, and both have things to recommend them semantically:</p>
@@ -591,11 +556,11 @@ anObjectToWrap.desc.push(<span class="hljs-string">'.'</span>);
 				<p>Given that &quot;just a number&quot; <em>works</em> (even if it&#39;s strictly a little less nice than &quot;some number&quot;) and that &quot;just 12&quot; works but &quot;some 12&quot; doesn&#39;t, <code>Just</code> seems to be a slightly better option.</p>
 				<h6 id="why-nothing-">Why <code>Nothing</code>?</h6>
 				<p>Given the choice between <code>None</code> and <code>Nothing</code>, the consideration just came down to the most natural <em>language</em> choice. &quot;What&#39;s here? Nothing!&quot; makes sense, while &quot;What&#39;s here? None&quot; does not. <code>None</code> also implies that there might be more than one of the items. It&#39;s entirely unnatural to say &quot;There is none of a number here&quot;; you&#39;d normally say &quot;there is no number here&quot; or &quot;there is nothing here&quot; instead. So <code>Nothing</code> it is!</p>
-				<h4 id="-result-"><code>Result</code></h4>
+				<h4 id="result"><code>Result</code></h4>
 				<p>In some languages and libraries, a more general type named <code>Either</code> is used instead of the more specific <code>Result</code> name. The two are equivalent in functionality – both provide two variants, each of which wraps a value. In the <code>Either</code> implementations, those are usually named <code>Left</code> and <code>Right</code>. In the <code>Result</code> implementations (both here and in other libraries and languages), they are named <code>Ok</code> and <code>Err</code>.</p>
 				<p>The main difference between <code>Either</code> and <code>Result</code> is precisely that question of generality. <code>Either</code> can meaningfully capture <em>any</em> scenario where there are two possible values resulting from a given function application, or applicable as arguments to a function. <code>Result</code> <em>only</em> captures the idea of something succeeding or failing. In that sense, <code>Either</code> might seem to be better: it can capture what <code>Result</code> captures (traditionally with <code>Left</code> being the error case and <code>Right</code> being the success, or <em>right</em>, case), and many more besides.</p>
 				<p>However, in practice, the idea of a result is far and away the most common case for using an <code>Either</code>, and it&#39;s also the easiest to explain. (An <code>Either</code> implementation would also be valuable, though, and it might be a later addition to the library.)</p>
-				<h5 id="the-result-variants-ok-and-err-">The <code>Result</code> variants: <code>Ok</code> and <code>Err</code></h5>
+				<h5 id="the-result-variants-ok-and-err">The <code>Result</code> variants: <code>Ok</code> and <code>Err</code></h5>
 				<p>Given a &quot;result&quot; type, we need to be able to express the idea of &quot;success&quot; and &quot;failure.&quot; The most obvious names here would be <code>Success</code> and <code>Failure</code>. Those are actually really good names with a single problem: they&#39;re <em>long</em>. Needing to write <code>success(12)</code> or <code>failure({ oh: &#39;no&#39; })</code> is a <em>lot</em> to write over and over again. Especially when there some options which <em>also</em> work well: <code>Ok</code> and <code>Err</code>.</p>
 				<p>Both <code>Ok</code> and <code>Err</code> could be written out long-form: <code>Okay</code> and <code>Error</code>. But in this case, the longer names don&#39;t add any particular clarity; they require more typing; and the <code>Error</code> case also overloads the existing name of the base exception type in JavaScript. So: <code>Ok</code> and <code>Err</code> it is.</p>
 				<h3 id="inspiration">Inspiration</h3>
@@ -612,15 +577,15 @@ anObjectToWrap.desc.push(<span class="hljs-string">'.'</span>);
 				<h3 id="folktale-">Folktale?</h3>
 				<p><a href="http://folktale.origamitower.com">Folktale</a> has an API a lot like this one, as you&#39;ll see when perusing the docs. However, there are two main reasons you might prefer True Myth to Folktale:</p>
 				<ol>
-					<li><p>True Myth is TypeScript-first and Flow-first, which means that it assumes you are using TypeScript or Flow if you&#39;re aiming for rigorous type safety.</p>
+					<li><p>True Myth is TypeScript-first, which means that it assumes you are using TypeScript if you&#39;re aiming for rigorous type safety.</p>
 						<p>By contrast, Folktale is a JavaScript-first library, with runtime checking built in for its types. Folktale&#39;s TypeScript support is in-progress, but will remain secondary until a TypeScript rewrite of the whole Folktale library lands... eventually.</p>
 						<p>There&#39;s value in both of these approaches, so True Myth aims to take advantage of the compilers and play in a no-runtime-cost space.</p>
-						<p>If you want a JS-focused (rather than TS- or Flow-focused) library which will help you be safer without a compiler, you should definitely pick Folktale over True Myth. If you&#39;ve already using TS or Flow, True Myth is a bit nicer of an experience.</p>
+						<p>If you want a JS-focused (rather than TS-focused) library which will help you be safer without a compiler, you should definitely pick Folktale over True Myth. If you&#39;ve already using TS, True Myth is a bit nicer of an experience.</p>
 					</li>
-					<li><p>True Myth aims to keep functional programming jargon to a minimum and to use TypeScript and Flow type notation throughout its docs as well as in its implementation.</p>
+					<li><p>True Myth aims to keep functional programming jargon to a minimum and to use TypeScript type notation throughout its docs as well as in its implementation.</p>
 						<p>Folktale is aimed squarely at people who are already pretty comfortable with the world of strongly-typed functional programming languages. This is particularly evident in the way its type signatures are written out (using the same basic notation you might see in e.g. Haskell), but it&#39;s also there in its heavy use of functional programming terminology throughout its docs.</p>
 						<p>Haskell-style types are quite nice, and functional programming jargon is very useful. However, they&#39;re also another hump to get over. Again: a tradeoff.</p>
-						<p>By opting for type notation that TS or Flow developers are already familiar with, and by focusing on what various functions <em>do</em> rather than the usual FP names for them, True Myth aims at people just coming up to speed on these ideas.</p>
+						<p>By opting for type notation that TS developers are already familiar with, and by focusing on what various functions <em>do</em> rather than the usual FP names for them, True Myth aims at people just coming up to speed on these ideas.</p>
 						<p>The big win for Folktale over True Myth is <a href="https://github.com/fantasyland/fantasy-land">Fantasy Land</a> compatibility.</p>
 					</li>
 					<li><p>True Myth&#39;s API aims to be more idiomatic as JavaScript/TypeScript, with a couple differences in particular worth calling out:</p>
@@ -638,15 +603,15 @@ anObjectToWrap.desc.push(<span class="hljs-string">'.'</span>);
 				<h3 id="sanctuary-">Sanctuary?</h3>
 				<p><a href="https://sanctuary.js.org">Sanctuary</a> has many of the same goals as True Myth, but is much more focused on the expectations and patterns you&#39;d see in Haskell or PureScript or similar languages. Its API and True Myth&#39;s are much <em>less</em> similar than Folktale and True Myth&#39;s are, as a result – the underlying details are often similar, but the names are nearly all different. A few of the major contrasts:</p>
 				<ol>
-					<li><p>True Myth is TypeScript-first and Flow-first, which means that it assumes you are using TypeScript or Flow if you&#39;re aiming for rigorous type safety.</p>
+					<li><p>True Myth is TypeScript-first, which means that it assumes you are using TypeScript if you&#39;re aiming for rigorous type safety.</p>
 						<p>By contrast, Sanctuary is a JavaScript-first library, with runtime checking built in for its types. Sanctuary&#39;s TypeScript support is <a href="https://github.com/sanctuary-js/sanctuary/pull/431">in progress</a>, but will for the foreseeable future remain add-on rather than first-class. (Sanctuary <em>does</em> allow you to create a version of the module without the runtime checking, but it requires you to do this yourself.)</p>
 						<p>There&#39;s value in both of these approaches, so True Myth aims to take advantage of the compilers and play in a no-runtime-cost space.</p>
-						<p>If you want a JS-focused (rather than TS- or Flow-focused) library which will help you be safer without a compiler, you should definitely pick Sanctuary over True Myth. If you&#39;ve already using TS or Flow, True Myth is a bit nicer of an experience.</p>
+						<p>If you want a JS-focused (rather than TS-focused) library which will help you be safer without a compiler, you should definitely pick Sanctuary over True Myth. If you&#39;ve already using TS, True Myth is a bit nicer of an experience.</p>
 					</li>
-					<li><p>True Myth aims to keep functional programming jargon to a minimum and to use TypeScript and Flow type notation throughout its docs as well as in its implementation.</p>
+					<li><p>True Myth aims to keep functional programming jargon to a minimum and to use TypeScript type notation throughout its docs as well as in its implementation.</p>
 						<p>Sanctuary is aimed squarely at people who are already extremely comfortable the world of strongly-typed, pure functional programming languages. This is particularly evident in the way its type signatures are written out (using the same notation you would see in Haskell or PureScript), but it&#39;s also present in Sanctuary&#39;s heavy use of functional programming terminology throughout its docs.</p>
 						<p>Haskell- and Purescript-style types are quite nice, and the functional programming jargon is very useful. However, they&#39;re also another hump to get over. Again: a tradeoff.</p>
-						<p>By opting for type notation that TS or Flow developers are already familiar with, and by focusing on what various functions <em>do</em> rather than the usual FP names for them True Myth aims at people just coming up to speed on these ideas.</p>
+						<p>By opting for type notation that TS developers are already familiar with, and by focusing on what various functions <em>do</em> rather than the usual FP names for them True Myth aims at people just coming up to speed on these ideas.</p>
 						<p>The big win for Sanctuary over True Myth is <a href="https://github.com/fantasyland/fantasy-land">Fantasy Land</a> compatibility, or familiarity if coming from a language like Haskell or PureScript.</p>
 					</li>
 					<li><p>True Myth&#39;s API aims to be more idiomatic as JavaScript/TypeScript, with a one difference in particular worth calling out: the <strong>function naming convention.</strong> True Myth uses PascalCase for types and camelCase for functions – so, <code>new Just(5)</code> and <code>just(5)</code>, whereas Sanctuary uses the capitals as function names for type constructors, i.e. <code>S.Just(5)</code>, and does not support <code>new</code>.</p>
@@ -669,11 +634,11 @@ anObjectToWrap.desc.push(<span class="hljs-string">'.'</span>);
 <span class="hljs-addition">+Maybe.nothing()</span>
 <span class="hljs-addition">+Maybe.just('foo)</span>
 </code></pre>
-				<h5 id="update-getorelse-unwrapor-">Update <code>getOrElse</code> -&gt; <code>unwrapOr</code></h5>
+				<h5 id="update-getorelse-unwrapor">Update <code>getOrElse</code> -&gt; <code>unwrapOr</code></h5>
 				<pre><code class="lang-diff"><span class="hljs-deletion">-foo.getOrElse('oh noes')</span>
 <span class="hljs-addition">+foo.unwrapOr('oh noes')</span>
 </code></pre>
-				<h5 id="update-get-unsafelyunwrap-">Update <code>get</code> -&gt; <code>unsafelyUnwrap</code></h5>
+				<h5 id="update-get-unsafelyunwrap">Update <code>get</code> -&gt; <code>unsafelyUnwrap</code></h5>
 				<p><em>Note: the method is called <code>unsafelyUnwrap</code> because it&#39;s not a good idea to use it. It&#39;s technically the equivalent of <code>get</code>, but it would be much better to change your logic to work with <code>match</code> instead because it&#39;s safer.</em></p>
 				<pre><code class="lang-diff"><span class="hljs-deletion">-foo.get()</span>
 <span class="hljs-addition">+foo.unsafelyUnwrap()</span>
@@ -803,13 +768,13 @@ foo.match({
 						</tr>
 						<tr>
 							<td><code>Just#equals</code></td>
-							<td>no equivalent</td>
-							<td>Consider using e.g. <a href="https://lodash.com/docs/4.17.4#isEqual"><code>_.isEqual</code></a> or <a href="http://ramdajs.com/docs/#equals"><code>R.equals</code></a></td>
+							<td><code>Just#equals</code></td>
+							<td>You can also use the static method <code>Maybe.equals</code></td>
 						</tr>
 						<tr>
 							<td><code>Nothing#equals</code></td>
-							<td>no equivalent</td>
-							<td>Consider using e.g. <a href="https://lodash.com/docs/4.17.4#isEqual"><code>_.isEqual</code></a> or <a href="http://ramdajs.com/docs/#equals"><code>R.equals</code></a></td>
+							<td><code>Nothing#equals</code></td>
+							<td>You can also use the static method <code>Maybe.equals</code></td>
 						</tr>
 						<tr>
 							<td><code>Result</code></td>
