@@ -305,8 +305,8 @@ const transform = _flow(
   _.map(Maybe.map(length)),
   // drop `Nothing` instances
   _.filter(Maybe.isJust),
-  // unwrap now that it's safe to do so
-  _.map(Maybe.unsafelyUnwrap),
+  // get value now that it's safe to do so (TS will not allow earlier)
+  _.map(maybe => maybe.value),
   // only keep the even numbers ('fish' => 4)
   _.filter(even),
   // multiply by three
@@ -342,8 +342,8 @@ const transform = _flow(
   maybeStrings => _.map(maybeStrings, maybeString => Maybe.map(length, maybeString)),
   // drop `Nothing` instances
   maybeLengths => _.filter(maybeLengths, Maybe.isJust),
-  // unwrap now that it's safe to do so
-  justLengths => _.map(justLengths, Maybe.unsafelyUnwrap),
+  // get value now that it's safe to do so (TS will not allow earlier)
+  justLengths => _.map(justLengths, maybe => maybe.value),
   // only keep the even numbers ('fish' => 4)
   lengths => _.filter(lengths, even),
   // multiply by three
@@ -817,8 +817,8 @@ In many cases, you can simple rename your imports and some of the function invoc
 
 - [ ] TODO: rest of the migration path from Folktale 2.0
 
-| Folktale               | True Myth          | Notes                                                                                                                                                          |
-|------------------------|--------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------|
+|        Folktale        |     True Myth      |                                                                             Notes                                                                              |
+| ---------------------- | ------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `Maybe`                | `Maybe `           |                                                                                                                                                                |
 | `Maybe.hasInstance`    | no equivalent      |                                                                                                                                                                |
 | `Maybe.empty`          | `Maybe.nothing`    |                                                                                                                                                                |
@@ -839,8 +839,8 @@ In many cases, you can simple rename your imports and some of the function invoc
 | `Nothing#type`         | no equivalent      |                                                                                                                                                                |
 | `Just#concat`          | no equivalent      |                                                                                                                                                                |
 | `Nothing#concat`       | no equivalent      |                                                                                                                                                                |
-| `Just#equals`          | no equivalent      | Consider using e.g. [`_.isEqual`] or [`R.equals`]                                                                                                              |
-| `Nothing#equals`       | no equivalent      | Consider using e.g. [`_.isEqual`] or [`R.equals`]                                                                                                              |
+| `Just#equals`          | `Just#equals`      | You can also use the static method `Maybe.equals`                                                                                                              |
+| `Nothing#equals`       | `Nothing#equals`   | You can also use the static method `Maybe.equals`                                                                                                              |
 | `Result`               | `Result`           |                                                                                                                                                                |
 | `Validation`           | no equivalent      | You can use `Result` instead: a `Validation<Success, Failure>` has identical semantics to `Result<T, E>`                                                       |
 
@@ -851,8 +851,8 @@ In many cases, you can simple rename your imports and some of the function invoc
 
 There are straightforward conversions from most Sanctuary functions to True Myth functions.
 
-| Sanctuary   | True Myth  | Notes |
-|-------------|------------|-------|
+|  Sanctuary  | True Myth  | Notes |
+| ----------- | ---------- | ----- |
 | `S.Either`  | `Result`   |       |
 | `Left`      | `Err`      |       |
 | `Right`     | `Ok`       |       |

@@ -1,5 +1,5 @@
 import { just, nothing } from '../src/maybe';
-import Result from '../src/result';
+import Result, { Ok, Variant, Err } from '../src/result';
 import Unit from '../src/unit';
 import { AndThenAliases } from '../src/utils';
 import { assertType } from './lib/assert';
@@ -18,6 +18,8 @@ describe('`Result` pure functions', () => {
       case Result.Variant.Err:
         expect(false).toBe(true); // because this should never happen
         break;
+      default:
+        expect(false).toBe(true); // because those are the only cases
     }
 
     const withUnit = Result.ok();
@@ -36,6 +38,8 @@ describe('`Result` pure functions', () => {
       case Result.Variant.Err:
         expect(Result.unsafelyUnwrapErr(theErr)).toBe(reason);
         break;
+      default:
+        expect(false).toBe(true); // because those are the only cases
     }
 
     const withUnit = Result.err();
@@ -314,6 +318,37 @@ describe('`Result` pure functions', () => {
   });
 });
 
+// We aren't even really concerned with the "runtime" behavior here, which we
+// know to be correct from other tests. Instead, this test just checks whether
+// the types are narrowed as they should be.
+test('narrowing', () => {
+  const oneOk = Result.ok();
+  if (oneOk.isOk()) {
+    assertType<Ok<Unit, any>>(oneOk);
+    expect(oneOk.value).toBeDefined();
+  }
+
+  const anotherOk = Result.ok();
+  if (anotherOk.variant === Variant.Ok) {
+    assertType<Ok<Unit, any>>(anotherOk);
+    expect(anotherOk.value).toBeDefined();
+  }
+
+  const oneErr = Result.err();
+  if (oneErr.isErr()) {
+    assertType<Err<any, Unit>>(oneErr);
+    expect(oneErr.error).toBeDefined();
+  }
+
+  const anotherErr = Result.err();
+  if (anotherErr.variant === Variant.Err) {
+    assertType<Err<any, Unit>>(anotherErr);
+    expect(anotherErr.error).toBeDefined();
+  }
+
+  expect('this type checked, hooray').toBeTruthy();
+});
+
 describe('`Result.Ok` class', () => {
   test('constructor', () => {
     const fullyQualifiedOk = new Result.Ok<number, string>(42);
@@ -324,6 +359,18 @@ describe('`Result.Ok` class', () => {
 
     expect(() => new Result.Ok(null)).toThrow();
     expect(() => new Result.Ok(undefined)).toThrow();
+  });
+
+  test('`value` property', () => {
+    const okValue = 'yay';
+    const theOk = new Result.Ok(okValue);
+    expect(theOk.value).toEqual(okValue);
+  });
+
+  test('`unwrap` static method', () => {
+    const okValue = 12;
+    const theOk = new Result.Ok(okValue);
+    expect(Ok.unwrap(theOk)).toEqual(okValue);
   });
 
   test('`isOk` method', () => {
@@ -461,7 +508,7 @@ describe('`Result.Ok` class', () => {
 
   test('`ap` method', () => {
     const fn = new Result.Ok<(val: string) => number, string>(str => str.length);
-    const val = new Result.Ok('three');
+    const val = new Result.Ok<string, string>('three');
 
     const result = fn.ap(val);
 
@@ -479,6 +526,18 @@ describe('`Result.Err` class', () => {
 
     expect(() => new Result.Err(null)).toThrow();
     expect(() => new Result.Err(undefined)).toThrow();
+  });
+
+  test('`error` property', () => {
+    const errValue = 'boo';
+    const theErr = new Result.Err(errValue);
+    expect(theErr.error).toBe(errValue);
+  });
+
+  test('`unwrap` static method', () => {
+    const errValue = 12;
+    const theErr = new Result.Err(errValue);
+    expect(Err.unwrapErr(theErr)).toEqual(errValue);
   });
 
   test('`isOk` method', () => {
