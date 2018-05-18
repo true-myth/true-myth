@@ -1,6 +1,6 @@
 <h1 align="center"><a href='https://github.com/chriskrycho/true-myth'>True Myth</a></h1>
 
-<p align="center">A library for safer programming in JavaScript, with first-class support for TypeScript (and Flow), with <code>Maybe</code> and <code>Result</code> types, and supporting both a functional style and a more traditional method-call style.</p>
+<p align="center">A library for safer programming in JavaScript, with first-class support for TypeScript, with <code>Maybe</code> and <code>Result</code> types, and supporting both a functional style and a more traditional method-call style.</p>
 
 <p align="center">
   <a href='https://travis-ci.org/chriskrycho/true-myth'>
@@ -47,10 +47,7 @@ You could implement all of these yourself – it's not hard! – but it's much 
 ### Contents
 
 - [Setup](#setup)
-    - [TypeScript and Flow](#typescript-and-flow)
-- [Roadmap](#roadmap)
-    - [1.0 commitments](#10-c–ommitments)
-    - [Post-1.0 ideas](#post-10-ideas)
+    - [TypeScript](#typescript)
 - [Just the API, please](#just-the-api-please)
     - [`Result` with a functional style](#result-with-a-functional-style)
     - [`Maybe` with the method style](#maybe-with-the-method-style)
@@ -116,91 +113,39 @@ const { Maybe, Result } = require('true-myth');
 
 The build includes both ES6 modules and CommonJS modules, so you may reference them directly from their installation in the `node_modules` directory. (This may be helpful for using the library in different contexts, with the ES modules being supplied especially so you can do tree-shaking with e.g. Rollup.)
 
+Note that the build target is ES2015, since all current evergreen browsers and the current LTS of Node support all ES2015 features. (Strictly speaking, Node 6 does not support *all* of ES2015, but this library goes nowhere near the couple features it has behind a flag.)
+
 <details>
 <summary>Distributed package layout</summary>
 
 ```
 node_modules/
   true-myth/
+    index.d.ts
+    maybe.d.ts
+    result.d.ts
+    unit.d.ts
+    utils.d.ts
     dist/
-      commonjs/
-        src/
-          index.js
-          index.js.flow
-          maybe.js
-          maybe.js.flow
-          result.js
-          result.js.flow
-          utils.js
-          utils.js.flow
-      modules/
-        src/
-          index.js
-          index.js.flow
-          maybe.js
-          maybe.js.flow
-          result.js
-          result.js.flow
-          utils.js
-          utils.js.flow
-      types/
-        src/
-          index.d.ts
-          maybe.d.ts
-          result.d.ts
-          utils.d.ts
+      cjs/
+        index.js
+        maybe.js
+        result.js
+        unit.js
+        utils.js
+      es/
+        index.js
+        maybe.js
+        result.js
+        unit.js
+        utils.js
 ```
 
 </details>
 
-### TypeScript and Flow
+### TypeScript
 
-For TypeScript, whether using Webpack or Ember CLI or something else for your bundling, you will be able to import the root module directly but will not be able to import the more useful modules. To do so, you'll need to add this to your `tsconfig.json`:
-
-```json
-{
-  "compilerOptions": {
-    "paths": {
-      "true-myth/*": ["node_modules/true-myth/dist/types/src/*"],
-    }
-  }
-}
-```
-
-Install-wise, Flow's types should *just work*, as they're distributed side-by-side with the modules. You can simply use the module as a normal ES6-style module import, whether working in Node or using something like Webpack.
-
-Note, however, that Flow support is beta quality. They're offered as a best-effort approach, but are incomplete (they don't yet have any of the curried variants!) and may have a couple errors – the primary author uses TypeScript and so doesn't have a good place to test them. Pull requests are very welcome!
-
-## Roadmap
-
-### 1.0 commitments
-
-- [x] `Maybe`
-    - [x] add aliases for the standard names, e.g. `bind`, `chain`, etc.
-    - [x] finish documentation
-    - [x] curried variants
-
-- [x] `Result`
-    - [x] implement
-    - [x] document
-    - [x] curried variants
-
-- [x] *All* the exports
-    - [x] ES modules
-    - [x] CommonJS modules
-
-- [x] Ember CLI integration
-
-If you think another type should be in this list, please [open an issue]!
-
-[open an issue]: https://github.com/chriskrycho/true-myth/issues
-
-### Post-1.0 ideas
-
-- [ ] Static types that can work with `Maybe` *or* `Result` (and possibly also other e.g. mappable types), inspired by [this approach](https://medium.com/@gcanti/higher-kinded-types-in-typescript-static-and-fantasy-land-d41c361d0dbe)
-- [ ] More types
-    - `Either`?
-    - `Task`?
+TypeScript should resolve the types in both a Node and a bundler (Webpack, Parcel, Broccoli/Ember CLI, etc.) context automatically. If it doesn't, please [open an issue](https://github.com/chriskrycho/true-myth/issues/new)!
 
 ## Just the API, please
 
@@ -279,6 +224,36 @@ const theAnswer = ok(42);
 const theAnswerValue = unwrapOr(0, theAnswer);
 ```
 
+You can also use TypeScript's "type narrowing" capabilities: if you *check* which variant you are accessing, TypeScript will "narrow" the type to that variant and allow you to access the `value` directly if it is available.
+
+```typescript
+import Maybe from 'true-myth/maybe';
+
+// Maybe<string>
+const couldBeSomething = Maybe.of("Hello!");
+
+// type error, because `value` does not exist on `Nothing`:
+// couldBeSomething.value;
+
+if (couldBeSomething.isJust()) {
+  // valid, because `couldBeSomething` is "narrowed" to `Just` here:
+  console.log(couldBeSomething.value);
+}
+```
+
+This is especially convenient in functional style pipelines, and there are convenience methods available to make it even more ergonomic:
+
+```typescript
+import Result, { Err } from 'true-myth/result';
+
+function getErrorMessages(results: Array<Result<string, Error>>) {
+  return results
+    .filter(Result.isErr)
+    .map(Err.unwrapErr) // would not type-checkout with previous line
+    .map(error => error.message);
+}
+```
+
 ### Curried variants
 
 All static functions which take two or more parameters are automatically partially applied/curried so you can supply only *some* of the arguments as makes sense. For example, if you were using [lodash], you might have something like this:
@@ -305,7 +280,7 @@ const transform = _flow(
   _.map(Maybe.map(length)),
   // drop `Nothing` instances
   _.filter(Maybe.isJust),
-  // get value now that it's safe to do so (TS will not allow earlier)
+  // get value now that it's safe to do so (TS will not allow it earlier)
   _.map(maybe => maybe.value),
   // only keep the even numbers ('fish' => 4)
   _.filter(even),
@@ -342,7 +317,7 @@ const transform = _flow(
   maybeStrings => _.map(maybeStrings, maybeString => Maybe.map(length, maybeString)),
   // drop `Nothing` instances
   maybeLengths => _.filter(maybeLengths, Maybe.isJust),
-  // get value now that it's safe to do so (TS will not allow earlier)
+  // get value now that it's safe to do so (TS will not allow it earlier)
   justLengths => _.map(justLengths, maybe => maybe.value),
   // only keep the even numbers ('fish' => 4)
   lengths => _.filter(lengths, even),
@@ -405,7 +380,7 @@ function doAThing(withAString) {
 
 If you forget that check, or simply assume, "Look, I'll *never* call this without including the argument," eventually you or someone else will get it wrong. Usually somewhere far away from the actual invocation of `doAThing`, so that it's not obvious why that value ended up being `null` there.
 
-TypeScript and Flow take us a big step in that direction, so long as our type annotations are good enough. (Use of `any` will leave us sad, though.) We can specify that type *may* be present, using the [maybe]/[optional] annotation. This at least helps keep us honest. But we still end up writing a ton of repeated boilerplate to deal with this problem. Rather than just handling it once and being done with it, we play a never-ending game of whack-a-mole. We must be constantly vigilant and proactive so that our users don't get into broken error states.
+TypeScript takes us a big step in that direction, so long as our type annotations are good enough. (Use of `any` will leave us sad, though.) We can specify that type *may* be present, using the [maybe]/[optional] annotation. This at least helps keep us honest. But we still end up writing a ton of repeated boilerplate to deal with this problem. Rather than just handling it once and being done with it, we play a never-ending game of whack-a-mole. We must be constantly vigilant and proactive so that our users don't get into broken error states.
 
 [maybe]: https://flow.org/en/docs/types/maybe/
 [optional]: http://www.typescriptlang.org/docs/handbook/interfaces.html#optional-properties
@@ -466,7 +441,7 @@ try {
 
 This is like the Node example *but even worse* for repetition!
 
-Nor can TypeScript or Flow help you here! They don't have type signatures to say "This throws an exception!" (TypeScript's `never` might come to mind, but it might mean lots of things, not just exception-throwing.)
+Nor can TypeScript help you here! It doesn't have type signatures to say "This throws an exception!" (TypeScript's `never` might come to mind, but it might mean lots of things, not just exception-throwing.)
 
 Neither callbacks nor exceptions are good solutions here.
 
@@ -515,7 +490,7 @@ myInteger.map(x => x * 3); // Nothing
 
 We received `Nothing` back as our value, which isn't particularly useful, but it also didn't halt our program in its tracks!
 
-Best of all, when you use these with libraries like TypeScript or Flow, you can lean on their type systems to check aggressively for `null` and `undefined`, and actually *eliminate* those from your codebase by replacing anywhere you would have used them with `Maybe`.
+Best of all, when you use these with libraries like TypeScript, you can lean on their type systems to check aggressively for `null` and `undefined`, and actually *eliminate* those from your codebase by replacing anywhere you would have used them with `Maybe`.
 
 ### How it works: `Result`
 
@@ -535,7 +510,7 @@ Thus, you can replace functions which take polymorphic arguments or have polymor
 
 Any place you try to treat either a `Maybe` or a `Result` as just the underlying value rather than the container, the type systems will complain, of course. And you'll also get help from smart editors with suggestions about what kinds of values (including functions) you need to interact with any given helper or method, since the type definitions are supplied.
 
-By leaning on TypeScript or Flow to handle the checking, we also get all these benefits with *no* runtime overhead other than the cost of constructing the actual container objects (which is to say: *very* low!).
+By leaning on TypeScript to handle the checking, we also get all these benefits with *no* runtime overhead other than the cost of constructing the actual container objects (which is to say: *very* low!).
 
 ## Design philosophy
 
@@ -544,7 +519,7 @@ The design aims for True Myth are:
 -   to be as idiomatic as possible in JavaScript
 -   to support a natural functional programming style
 -   to have zero runtime cost beyond simple object construction and function invocation
--   to lean heavily on TypeScript and Flow to enable all of the above
+-   to lean heavily on TypeScript to enable all of the above
 
 In practice, that means:
 
@@ -572,11 +547,11 @@ In practice, that means:
 
     As this second example suggests, the aim has been to support the most idiomatic approach for each style. This means that yes, you might find it a bit confusing if you're actively switching between the two of them. (Why would you do that?!?)
 
--   Using the library with TypeScript or Flow will *just work* and will provide you with considerable safety out of the box. Using it with JavaScript will work just fine, but there is no runtime checking, and you're responsible to make sure you don't `unwrap()` a `Maybe` without checking that it's safe to do so.
+-   Using the library with TypeScript will *just work* and will provide you with considerable safety out of the box. Using it with JavaScript will work just fine, but there is no runtime checking, and you're responsible to make sure you don't `unwrap()` a `Maybe` without checking that it's safe to do so.
 
--   Since this is a TypeScript-first (and Flow-second!) library, we intentionally leave out any runtime type checking. As such, you *should* make use of the type systems if you want the benefits of the system. Many of the functions simply assume that the types are checked, and *will* error if you pass in items of the wrong type.
+-   Since this is a TypeScript-first library, we intentionally leave out any runtime type checking. As such, you *should* make use of the type systems if you want the benefits of the system. Many of the functions simply assume that the types are checked, and *will* error if you pass in items of the wrong type.
 
-    For example, if you pass a non-`Maybe` instance to many functions, they will simply fail – even the basic helpers like `isJust` and `isNothing`. These assumptions have been made precisely *because* this is a TypeScript- and Flow-first library. (See the discussion below comparing True Myth to Folktale and Sanctuary if you aren't using TypeScript or Flow and need runtime checking.)
+    For example, if you pass a non-`Maybe` instance to many functions, they will simply fail – even the basic helpers like `isJust` and `isNothing`. These assumptions have been made precisely *because* this is a TypeScript-first library. (See the discussion below comparing True Myth to Folktale and Sanctuary if you aren't using TypeScript and need runtime checking.)
 
 The overarching themes are flexibility and approachability.
 
@@ -584,7 +559,7 @@ The hope is that a team just picking up these ideas for the first time can use t
 
 [this blog post]: http://www.chriskrycho.com/2017/collection-last-auto-curried-functions.html
 
-(As a closely related note: True Myth does not currently supply curried variants of the functions. There are a *lot* of good options out there for that; both [lodash] and [Ramda] have tools for currying existing function definitions. It also profoundly complicates writing the type signatures for these functions, since neither TypeScript nor Flow can easily represent auto- curried functions – unsurprisingly, given they're uncommon in JavaScript. Using Ramda or lodash to get curried versions of the functions may be a huge win for you in your codebase, though!)
+(As a closely related note: True Myth does not currently supply curried variants of the functions. There are a *lot* of good options out there for that; both [lodash] and [Ramda] have tools for currying existing function definitions. It also profoundly complicates writing the type signatures for these functions, since TypeScript cannot easily represent auto- curried functions – unsurprisingly, given they're uncommon in JavaScript. Using Ramda or lodash to get curried versions of the functions may be a huge win for you in your codebase, though!)
 
 [Ramda]: http://ramdajs.com
 [lodash]: https://lodash.com
@@ -696,21 +671,21 @@ Note that much of the content between these sections is the same; it's presented
 
 [Folktale]: http://folktale.origamitower.com
 
-1.  True Myth is TypeScript-first and Flow-first, which means that it assumes you are using TypeScript or Flow if you're aiming for rigorous type safety.
+1.  True Myth is TypeScript-first, which means that it assumes you are using TypeScript if you're aiming for rigorous type safety.
 
     By contrast, Folktale is a JavaScript-first library, with runtime checking built in for its types. Folktale's TypeScript support is in-progress, but will remain secondary until a TypeScript rewrite of the whole Folktale library lands... eventually.
 
     There's value in both of these approaches, so True Myth aims to take advantage of the compilers and play in a no-runtime-cost space.
 
-    If you want a JS-focused (rather than TS- or Flow-focused) library which will help you be safer without a compiler, you should definitely pick Folktale over True Myth. If you've already using TS or Flow, True Myth is a bit nicer of an experience.
+    If you want a JS-focused (rather than TS-focused) library which will help you be safer without a compiler, you should definitely pick Folktale over True Myth. If you've already using TS, True Myth is a bit nicer of an experience.
 
-2.  True Myth aims to keep functional programming jargon to a minimum and to use TypeScript and Flow type notation throughout its docs as well as in its implementation.
+2.  True Myth aims to keep functional programming jargon to a minimum and to use TypeScript type notation throughout its docs as well as in its implementation.
 
     Folktale is aimed squarely at people who are already pretty comfortable with the world of strongly-typed functional programming languages. This is particularly evident in the way its type signatures are written out (using the same basic notation you might see in e.g. Haskell), but it's also there in its heavy use of functional programming terminology throughout its docs.
 
     Haskell-style types are quite nice, and functional programming jargon is very useful. However, they're also another hump to get over. Again: a tradeoff.
 
-    By opting for type notation that TS or Flow developers are already familiar with, and by focusing on what various functions *do* rather than the usual FP names for them, True Myth aims at people just coming up to speed on these ideas.
+    By opting for type notation that TS developers are already familiar with, and by focusing on what various functions *do* rather than the usual FP names for them, True Myth aims at people just coming up to speed on these ideas.
 
     The big win for Folktale over True Myth is [Fantasy Land] compatibility.
 
@@ -735,21 +710,21 @@ Note that much of the content between these sections is the same; it's presented
 
 [Sanctuary]: https://sanctuary.js.org
 
-1.  True Myth is TypeScript-first and Flow-first, which means that it assumes you are using TypeScript or Flow if you're aiming for rigorous type safety.
+1.  True Myth is TypeScript-first, which means that it assumes you are using TypeScript if you're aiming for rigorous type safety.
 
     By contrast, Sanctuary is a JavaScript-first library, with runtime checking built in for its types. Sanctuary's TypeScript support is [in progress][s-ts], but will for the foreseeable future remain add-on rather than first-class. (Sanctuary *does* allow you to create a version of the module without the runtime checking, but it requires you to do this yourself.)
 
     There's value in both of these approaches, so True Myth aims to take advantage of the compilers and play in a no-runtime-cost space.
 
-    If you want a JS-focused (rather than TS- or Flow-focused) library which will help you be safer without a compiler, you should definitely pick Sanctuary over True Myth. If you've already using TS or Flow, True Myth is a bit nicer of an experience.
+    If you want a JS-focused (rather than TS-focused) library which will help you be safer without a compiler, you should definitely pick Sanctuary over True Myth. If you've already using TS, True Myth is a bit nicer of an experience.
 
-2.  True Myth aims to keep functional programming jargon to a minimum and to use TypeScript and Flow type notation throughout its docs as well as in its implementation.
+2.  True Myth aims to keep functional programming jargon to a minimum and to use TypeScript type notation throughout its docs as well as in its implementation.
 
     Sanctuary is aimed squarely at people who are already extremely comfortable the world of strongly-typed, pure functional programming languages. This is particularly evident in the way its type signatures are written out (using the same notation you would see in Haskell or PureScript), but it's also present in Sanctuary's heavy use of functional programming terminology throughout its docs.
 
     Haskell- and Purescript-style types are quite nice, and the functional programming jargon is very useful. However, they're also another hump to get over. Again: a tradeoff.
 
-    By opting for type notation that TS or Flow developers are already familiar with, and by focusing on what various functions *do* rather than the usual FP names for them True Myth aims at people just coming up to speed on these ideas.
+    By opting for type notation that TS developers are already familiar with, and by focusing on what various functions *do* rather than the usual FP names for them True Myth aims at people just coming up to speed on these ideas.
 
     The big win for Sanctuary over True Myth is [Fantasy Land] compatibility, or familiarity if coming from a language like Haskell or PureScript.
 
