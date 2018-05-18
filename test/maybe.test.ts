@@ -1,6 +1,7 @@
-import Maybe from '../src/maybe';
+import Maybe, { Variant, Nothing, Just } from '../src/maybe';
 import { err, ok } from '../src/result';
 import { assertType } from './lib/assert';
+import { Unit } from '../src/unit';
 
 type Neat = { neat: string };
 
@@ -19,6 +20,8 @@ describe('`Maybe` pure functions', () => {
       case Maybe.Variant.Nothing:
         expect(false).toBe(true); // because this should never happen
         break;
+      default:
+        expect(false).toBe(true); // because those are the only cases
     }
 
     expect(() => Maybe.just(null)).toThrow();
@@ -35,6 +38,8 @@ describe('`Maybe` pure functions', () => {
       case Maybe.Variant.Nothing:
         expect(true).toBe(true); // yay
         break;
+      default:
+        expect(false).toBe(true); // because those are the only cases
     }
 
     const nothingOnType = Maybe.nothing<string>();
@@ -330,10 +335,52 @@ describe('`Maybe` pure functions', () => {
   });
 });
 
+// We aren't even really concerned with the "runtime" behavior here, which we
+// know to be correct from other tests. Instead, this test just checks whether
+// the types are narrowed as they should be.
+test('narrowing', () => {
+  const oneJust = Maybe.of(Unit);
+  if (oneJust.isJust()) {
+    assertType<Just<Unit>>(oneJust);
+    expect(oneJust.value).toBeDefined();
+  }
+
+  // As above, narrowing directly on the type rather than with the lookup.
+  const anotherJust = Maybe.of(Unit);
+  if (anotherJust.variant === Variant.Just) {
+    assertType<Just<Unit>>(anotherJust);
+    expect(anotherJust.value).toBeDefined();
+  }
+
+  const oneNothing = Maybe.nothing();
+  if (oneNothing.isNothing()) {
+    assertType<Nothing<any>>(oneNothing);
+  }
+
+  const anotherNothing = Maybe.nothing();
+  if (anotherNothing.variant === Variant.Nothing) {
+    assertType<Nothing<any>>(anotherNothing);
+  }
+
+  expect('this type checked, hooray').toBeTruthy();
+});
+
 describe('`Maybe.Just` class', () => {
   test('constructor', () => {
     const theJust = new Maybe.Just([]);
     expect(theJust).toBeInstanceOf(Maybe.Just);
+  });
+
+  test('`value` property', () => {
+    const val = 'hallo';
+    const theJust = new Maybe.Just(val);
+    expect(theJust.value).toBe(val);
+  });
+
+  test('`unwrap` static method', () => {
+    const val = 42;
+    const theJust = new Maybe.Just(42);
+    expect(Just.unwrap(theJust)).toEqual(val);
   });
 
   test('`isJust` method', () => {

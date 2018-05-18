@@ -4,8 +4,6 @@
  */
 
 /** (keep typedoc from getting confused by the imports) */
-import Maybe from './maybe';
-import Result from './result';
-import Unit from './unit';
-
-export { Maybe, Result, Unit };
+export { default as Maybe } from './maybe';
+export { default as Result } from './result';
+export { default as Unit } from './unit';

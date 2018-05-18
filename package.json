@@ -14,7 +14,7 @@
   "bugs": {
     "url": "https://github.com/chriskrycho/true-myth/issues"
   },
-  "version": "1.2.0",
+  "version": "1.3.0",
   "main": "dist/commonjs/src/index.js",
   "module": "dist/modules/src/index.js",
   "types": "dist/types/src/index.d.ts",
@@ -31,7 +31,6 @@
   "scripts": {
     "clean": "rimraf dist",
     "doc": "./scripts/build-docs",
-    "precommit": "./scripts/build-docs && git add docs",
     "problems": "node ./scripts/problems.js",
     "preversion": "yarn run test && yarn run prepack",
     "prepack": "ember build -prod && cp ./src/flow/* ./dist/modules/src && cp ./src/flow/* ./dist/commonjs/src",
@@ -44,7 +43,6 @@
     "@types/jest": "^22.1.1",
     "ember-cli": "^2.18.2",
     "flow-bin": "^0.64.0",
-    "husky": "^0.14.3",
     "jest": "^22.1.4",
     "libkit": "^0.5.17",
     "prettier": "^1.10.2",
