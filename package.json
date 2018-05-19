@@ -33,9 +33,8 @@
     "ts:es": "tsc -p ts/es.tsconfig.json",
     "ts:typedefs": "tsc --outDir . --emitDeclarationOnly",
     "ts:all": "yarn ts:cjs && yarn ts:es && yarn ts:typedefs",
-    "ts:clean": "rimraf ./*.d.ts dist",
     "build": "yarn clean && yarn ts:all",
-    "clean": "rimraf dist && yarn ts:clean",
+    "clean": "rimraf ./*.d.ts dist",
     "doc": "./scripts/build-docs",
     "lint": "yarn eslint src/*.ts test/*.ts",
     "prepublishOnly": "yarn test && yarn build",
@@ -44,6 +43,10 @@
     "test": "jest && yarn lint",
     "tdd": "jest --watch"
   },
+  "files": [
+    "*.d.ts",
+    "dist"
+  ],
   "license": "MIT",
   "devDependencies": {
     "@types/jest": "^22.2.3",
