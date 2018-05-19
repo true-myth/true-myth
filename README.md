@@ -559,8 +559,6 @@ The hope is that a team just picking up these ideas for the first time can use t
 
 [this blog post]: http://www.chriskrycho.com/2017/collection-last-auto-curried-functions.html
 
-(As a closely related note: True Myth does not currently supply curried variants of the functions. There are a *lot* of good options out there for that; both [lodash] and [Ramda] have tools for currying existing function definitions. It also profoundly complicates writing the type signatures for these functions, since TypeScript cannot easily represent auto- curried functions – unsurprisingly, given they're uncommon in JavaScript. Using Ramda or lodash to get curried versions of the functions may be a huge win for you in your codebase, though!)
-
 [Ramda]: http://ramdajs.com
 [lodash]: https://lodash.com
 
