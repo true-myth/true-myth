@@ -12,9 +12,6 @@
 
     "moduleResolution": "node",
     "baseUrl": "./",
-    "paths": {
-      "true-myth": ["src/index.ts"]
-    },
 
     "rootDirs": [
       "src"
