@@ -1274,6 +1274,60 @@ export function isInstance<T = any>(item: any): item is Maybe<T> {
 
 type Predicate<T> = (element: T, index: number, array: T[]) => boolean;
 
+// NOTE: documentation is lightly adapted from the MDN and TypeScript docs for
+// `Array.prototype.find`.
+/**
+  Safely search for an element in an array.
+  
+  This function behaves like `Array.prototype.find`, but returns `Maybe<T>`
+  instead of `T | undefined`.
+  
+  For example:
+
+  ```ts
+  import Maybe from 'true-myth/maybe';
+
+  let array = [1, 2, 3];
+  Maybe.find(v => v > 1, array); // Just(2)
+  Maybe.find(v => v < 1, array); // Nothing
+  ```
+
+  The function is curried so you can use it in a functional chain. For example
+  (leaving aside error handling on a bad response for simplicity), suppose the
+  url `https://arrays.example.com` returned a JSON payload with the type
+  `Array<{ count: number, name: string }>`, and we wanted to get the first
+  of these where `count` was at least 100. We could write this:
+
+  ```ts
+  import Maybe from 'true-myth/maybe';
+
+  type Item = { count: number; name: string };
+  type Response = Array<Item>;
+
+  // curried variant!
+  const findAtLeast100 = Maybe.find(({ count }: Item) => count > 100);
+
+  fetch('https://arrays.example.com')
+    .then(response => response.json() as Response)
+    .then(findAtLeast100)
+    .then(found => {
+      if (found.isJust()) {
+        console.log(`The matching value is ${found.value.name}!`);
+      }
+    });
+  ```
+  
+  @param predicate  A function to execute on each value in the array, returning
+                    `true` when the item in the array matches the condition. The
+                    signature for `predicate` is identical to the signature for
+                    the first argument to `Array.prototype.find`. The function
+                    is called once for each element of the array, in ascending
+                    order, until it finds one where predicate returns true. If
+                    such an element is found, find immediately returns that
+                    element value wrapped in `Just`. Otherwise, `Maybe.find`
+                    returns `Nothing`.
+ * @param array     The array to search using the predicate.
+ */
 export function find<T>(predicate: Predicate<T>, array: T[]): Maybe<T>;
 export function find<T>(predicate: Predicate<T>): (array: T[]) => Maybe<T>;
 export function find<T>(
@@ -1284,12 +1338,41 @@ export function find<T>(
   return curry1(op, array);
 }
 
+/**
+  Safely get the first item from a list, returning `Just` the first item if the
+  array has at least one item in it, or `Nothing` if it is empty.
+
+  ```ts
+  let empty = [];
+  Maybe.head(empty); // Nothing
+
+  let full = [1, 2, 3];
+  Maybe.head(full); // Just(1)
+  ```
+
+  @param array The array to get the first item from.
+ */
 export function head<T>(array: T[]): Maybe<T> {
   return Maybe.of(array[0]);
 }
 
+/** A convenience alias for `Maybe.head`. */
 export const first = head;
 
+/**
+  Safely get the last item from a list, returning `Just` the last item if the
+  array has at least one item in it, or `Nothing` if it is empty.
+
+  ```ts
+  let empty = [];
+  Maybe.last(empty); // Nothing
+
+  let full = [1, 2, 3];
+  Maybe.last(full); // Just(3)
+  ```
+
+  @param array The array to get the first item from.
+ */
 export function last<T>(array: T[]): Maybe<T> {
   return Maybe.of(array[array.length - 1]);
 }
