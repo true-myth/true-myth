@@ -333,6 +333,64 @@ describe('`Maybe` pure functions', () => {
     const obj = { random: 'nonsense' };
     expect(Maybe.isInstance(obj)).toBe(false);
   });
+
+  test('`find`', () => {
+    const theValue = 4;
+    const pred = (v: number) => v === theValue;
+
+    const empty = [];
+
+    expect(Maybe.find(pred, empty).variant).toBe(Maybe.Variant.Nothing);
+
+    const missingTheValue = [1, 2, 3];
+    expect(Maybe.find(pred, missingTheValue).variant).toBe(Maybe.Variant.Nothing);
+
+    const hasTheValue = [1, 2, 3, theValue];
+    const result = Maybe.find(pred, hasTheValue);
+    expect(result.variant).toBe(Maybe.Variant.Just);
+    expect((result as Just<number>).value).toBe(theValue);
+
+    type Item = { count: number; name: string };
+    type Response = Array<Item>;
+
+    // This is more about testing the types with the currying; it's functionally
+    // covered already.
+    const array: Response = [{ count: 1, name: 'potato' }, { count: 10, name: 'waffles' }];
+    const findAtLeast5 = Maybe.find(({ count }: Item) => count > 5);
+    const found = findAtLeast5(array);
+    expect(found.variant).toBe(Maybe.Variant.Just);
+    expect((found as Just<Item>).value).toEqual(array[1]);
+  });
+
+  test('`head`', () => {
+    const empty = [];
+    expect(Maybe.head(empty).variant).toBe(Maybe.Variant.Nothing);
+
+    const one = [1];
+    const oneResult = Maybe.head(one);
+    expect(oneResult.variant).toBe(Maybe.Variant.Just);
+    expect((oneResult as Just<number>).value).toBe(one[0]);
+
+    const many = [1, 2, 3];
+    const manyResult = Maybe.head(many);
+    expect(manyResult.variant).toBe(Maybe.Variant.Just);
+    expect((manyResult as Just<number>).value).toBe(many[0]);
+  });
+
+  test('`last`', () => {
+    const empty = [];
+    expect(Maybe.last(empty).variant).toBe(Maybe.Variant.Nothing);
+
+    const one = [1];
+    const oneResult = Maybe.last(one);
+    expect(oneResult.variant).toBe(Maybe.Variant.Just);
+    expect((oneResult as Just<number>).value).toBe(one[0]);
+
+    const many = [1, 2, 3];
+    const manyResult = Maybe.last(many);
+    expect(manyResult.variant).toBe(Maybe.Variant.Just);
+    expect((manyResult as Just<number>).value).toBe(many[many.length - 1]);
+  });
 });
 
 // We aren't even really concerned with the "runtime" behavior here, which we
