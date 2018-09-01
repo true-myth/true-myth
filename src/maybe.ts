@@ -578,7 +578,9 @@ export function mapOr<T, U>(
 
   return mapFn === undefined
     ? partialOp
-    : maybe === undefined ? partialOp(mapFn) : partialOp(mapFn, maybe);
+    : maybe === undefined
+      ? partialOp(mapFn)
+      : partialOp(mapFn, maybe);
 }
 
 /**
@@ -1270,6 +1272,28 @@ export function isInstance<T = any>(item: any): item is Maybe<T> {
   return item instanceof Just || item instanceof Nothing;
 }
 
+type Predicate<T> = (element: T, index: number, array: T[]) => boolean;
+
+export function find<T>(predicate: Predicate<T>, array: T[]): Maybe<T>;
+export function find<T>(predicate: Predicate<T>): (array: T[]) => Maybe<T>;
+export function find<T>(
+  predicate: Predicate<T>,
+  array?: T[]
+): Maybe<T> | ((array: T[]) => Maybe<T>) {
+  const op = (a: T[]) => Maybe.of(a.find(predicate));
+  return curry1(op, array);
+}
+
+export function head<T>(array: T[]): Maybe<T> {
+  return Maybe.of(array[0]);
+}
+
+export const first = head;
+
+export function last<T>(array: T[]): Maybe<T> {
+  return Maybe.of(array[array.length - 1]);
+}
+
 /** A value which may (`Just<T>`) or may not (`Nothing`) be present. */
 export type Maybe<T> = Just<T> | Nothing<T>;
 export const Maybe = {
@@ -1281,7 +1305,11 @@ export const Maybe = {
   just,
   nothing,
   of,
+  find,
+  first,
   fromNullable,
+  head,
+  last,
   map,
   mapOr,
   mapOrElse,
