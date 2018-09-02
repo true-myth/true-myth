@@ -1282,7 +1282,9 @@ type Predicate<T> = (element: T, index: number, array: T[]) => boolean;
   This function behaves like `Array.prototype.find`, but returns `Maybe<T>`
   instead of `T | undefined`.
   
-  For example:
+  ## Examples
+
+  The basic form is:
 
   ```ts
   import Maybe from 'true-myth/maybe';
@@ -1342,6 +1344,8 @@ export function find<T>(
   Safely get the first item from a list, returning `Just` the first item if the
   array has at least one item in it, or `Nothing` if it is empty.
 
+  ## Examples
+
   ```ts
   let empty = [];
   Maybe.head(empty); // Nothing
@@ -1363,6 +1367,8 @@ export const first = head;
   Safely get the last item from a list, returning `Just` the last item if the
   array has at least one item in it, or `Nothing` if it is empty.
 
+  ## Examples
+
   ```ts
   let empty = [];
   Maybe.last(empty); // Nothing
@@ -1377,12 +1383,96 @@ export function last<T>(array: T[]): Maybe<T> {
   return Maybe.of(array[array.length - 1]);
 }
 
+/**
+  Convert the arguments to a single `Maybe`. Useful for dealing with arrays of
+  `Maybe`s, via the spread operator.
+
+  ## Examples
+
+  ```ts
+  import Maybe from 'true-myth/maybe';
+
+  let valid = [Maybe.just(2), Maybe.just('three')];
+  Maybe.all(...valid); // Just([2, 'three']);
+
+  let invalid = [Maybe.just(2), Maybe.nothing<string>()];
+  Maybe.all(...invalid); // Nothing
+  ```
+
+  ## Note on Spread
+
+  This requires the use of the spread operator because (at least as of
+  TypeScript 3.0), the type inference falls down when attempting to build this
+  same type with an array directly. Moreover, this spread-based approach handles
+  heteregenous arrays; TS *also* fails to infer correctly for anything but
+  homogeneous arrays when using that approach.
+
+  @param args The `Maybe`s to resolve to a single `Maybe`.
+ */
+function all<T extends Maybe<any>>(...args: T[]): T extends Maybe<infer U> ? Maybe<U[]> : never {
+  // @ts-ignore -- this is indeed the correct implementation, but TS doesn't
+  //               correctly parse the types in the context of `reduce`.
+  return args.reduce(
+    (result, maybe) => result.andThen(as => maybe.map(a => as.concat(a))),
+    Maybe.just([] as any[])
+  );
+}
+
+/**
+  Given a tuple of `Maybe`s, return a `Maybe` of the tuple values.
+
+  Given a tuple of type `[Maybe<A>, Maybe<B>]`, the resulting type is
+  `Maybe<[A, B]>`. Works with up to a 5-tuple. (If you're doing more than a
+  5-tuple, what are you doing???)
+
+  ## Examples
+
+  If any of the items in the tuple are `Nothing`, the whole result is `Nothing`.
+  Here, for example, `result` has the type `Maybe<[string, number]>` and will be
+  `Nothing`:
+
+  ```ts
+  import Maybe from 'true-myth/maybe';
+
+  type Tuple = [Maybe<string>, Maybe<number>];
+
+  let invalid: Tuple = [Maybe.just('wat'), Maybe.nothing()];
+  let result = Maybe.tuple(invalid);
+  ```
+
+  If all of the items in the tuple are `Just`, the result is `Just` wrapping the
+  tuple of the values of the items. Here, for example, `result` again has the
+  type `Maybe<[string, number]>` and will be `Just['hey', 12]`:
+
+  ```ts
+  import Maybe from 'true-myth/maybe';
+
+  type Tuple = [Maybe<string>, Maybe<number>];
+
+  let valid: Tuple = [Maybe.just('hey'), Maybe.just(12)];
+  let result = Maybe.tuple(valid);
+  ```
+
+  @param maybes: the tuple of `Maybe`s to convert to a `Maybe` of tuple values.
+ */
+// @ts-ignore -- this doesn't type-check, but it is correct!
+function tuple<T, U>(maybes: [Maybe<T>, Maybe<U>]): Maybe<[T, U]>;
+function tuple<T, U, V>(maybes: [Maybe<T>, Maybe<U>, Maybe<V>]): Maybe<[T, U, V]>;
+function tuple<T, U, V, W>(maybes: [Maybe<T>, Maybe<U>, Maybe<V>, Maybe<W>]): Maybe<[T, U, V, W]>;
+function tuple<T, U, V, W, X>(
+  maybes: [Maybe<T>, Maybe<U>, Maybe<V>, Maybe<W>, Maybe<X>]
+): Maybe<[T, U, V, W, X]> {
+  // @ts-ignore -- this doesn't type-check, but it is correct!
+  return all(...maybes);
+}
+
 /** A value which may (`Just<T>`) or may not (`Nothing`) be present. */
 export type Maybe<T> = Just<T> | Nothing<T>;
 export const Maybe = {
   Variant,
   Just,
   Nothing,
+  all,
   isJust,
   isNothing,
   just,
@@ -1413,6 +1503,7 @@ export const Maybe = {
   toOkOrElseErr,
   fromResult,
   toString,
+  tuple,
   match,
   cata,
   equals,

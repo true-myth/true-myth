@@ -363,33 +363,36 @@ describe('`Maybe` pure functions', () => {
   });
 
   test('`head`', () => {
-    const empty = [];
-    expect(Maybe.head(empty).variant).toBe(Maybe.Variant.Nothing);
-
-    const one = [1];
-    const oneResult = Maybe.head(one);
-    expect(oneResult.variant).toBe(Maybe.Variant.Just);
-    expect((oneResult as Just<number>).value).toBe(one[0]);
-
-    const many = [1, 2, 3];
-    const manyResult = Maybe.head(many);
-    expect(manyResult.variant).toBe(Maybe.Variant.Just);
-    expect((manyResult as Just<number>).value).toBe(many[0]);
+    expect(Maybe.head([])).toEqual(Maybe.nothing());
+    expect(Maybe.head([1])).toEqual(Maybe.just(1));
+    expect(Maybe.head([1, 2, 3])).toEqual(Maybe.just(1));
   });
 
   test('`last`', () => {
-    const empty = [];
-    expect(Maybe.last(empty).variant).toBe(Maybe.Variant.Nothing);
+    expect(Maybe.last([])).toEqual(Maybe.nothing());
+    expect(Maybe.last([1])).toEqual(Maybe.just(1));
+    expect(Maybe.last([1, 2, 3])).toEqual(Maybe.just(3));
+  });
 
-    const one = [1];
-    const oneResult = Maybe.last(one);
-    expect(oneResult.variant).toBe(Maybe.Variant.Just);
-    expect((oneResult as Just<number>).value).toBe(one[0]);
+  test('`all`', () => {
+    let onlyJusts = [Maybe.just(2), Maybe.just('three')];
+    expect(Maybe.all(...onlyJusts)).toEqual(Maybe.just([2, 'three']));
 
-    const many = [1, 2, 3];
-    const manyResult = Maybe.last(many);
-    expect(manyResult.variant).toBe(Maybe.Variant.Just);
-    expect((manyResult as Just<number>).value).toBe(many[many.length - 1]);
+    let hasNothing = [Maybe.just(2), Maybe.nothing()];
+    expect(Maybe.all(...hasNothing)).toEqual(Maybe.nothing());
+  });
+
+  test('`tuple`', () => {
+    type Tuple2 = [Maybe<string>, Maybe<number>];
+    let invalid: Tuple2 = [Maybe.just('wat'), Maybe.nothing()];
+    const invalidResult = Maybe.tuple(invalid);
+    expect(invalidResult).toEqual(Maybe.nothing());
+
+    type Tuple3 = [Maybe<string>, Maybe<number>, Maybe<{ neat: string }>];
+    let valid: Tuple3 = [Maybe.just('hey'), Maybe.just(4), Maybe.just({ neat: 'yeah' })];
+    const result = Maybe.tuple(valid);
+    expect(result).toEqual(Maybe.just(['hey', 4, { neat: 'yeah' }]));
+    assertType<Maybe<[string, number, { neat: string }]>>(result);
   });
 });
 
