@@ -111,6 +111,12 @@ In Node.js, the TypeScript-generated CommonJS package cannot be imported as nest
 const { Maybe, Result } = require('true-myth');
 ```
 
+With the TypeScript Node-aware transforms, you can also write this in ES6 module-style imports for Node, but the same limitations apply about the nested module imports, i.e. you just can't use them. Use the top-level imports instead:
+
+```typescript
+import { Maybe, Result } from 'true-myth';
+```
+
 The build includes both ES6 modules and CommonJS modules, so you may reference them directly from their installation in the `node_modules` directory. (This may be helpful for using the library in different contexts, with the ES modules being supplied especially so you can do tree-shaking with e.g. Rollup.)
 
 Note that the build target is ES2015, since all current evergreen browsers and the current LTS of Node support all ES2015 features. (Strictly speaking, Node 6 does not support *all* of ES2015, but this library goes nowhere near the couple features it has behind a flag.)

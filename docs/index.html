@@ -179,6 +179,8 @@
 <span class="hljs-keyword">import</span> { Maybe, Result } <span class="hljs-keyword">from</span> <span class="hljs-string">'true-myth'</span>;</code></pre>
 				<p>In Node.js, the TypeScript-generated CommonJS package cannot be imported as nested modules, but the modules still can be imported directly from the top-level module:</p>
 				<pre><code class="language-typescript"><span class="hljs-keyword">const</span> { Maybe, Result } = <span class="hljs-built_in">require</span>(<span class="hljs-string">'true-myth'</span>);</code></pre>
+				<p>With the TypeScript Node-aware transforms, you can also write this in ES6 module-style imports for Node, but the same limitations apply about the nested module imports, i.e. you just can&#39;t use them. Use the top-level imports instead:</p>
+				<pre><code class="language-typescript"><span class="hljs-keyword">import</span> { Maybe, Result } <span class="hljs-keyword">from</span> <span class="hljs-string">'true-myth'</span>;</code></pre>
 				<p>The build includes both ES6 modules and CommonJS modules, so you may reference them directly from their installation in the <code>node_modules</code> directory. (This may be helpful for using the library in different contexts, with the ES modules being supplied especially so you can do tree-shaking with e.g. Rollup.)</p>
 				<p>Note that the build target is ES2015, since all current evergreen browsers and the current LTS of Node support all ES2015 features. (Strictly speaking, Node 6 does not support <em>all</em> of ES2015, but this library goes nowhere near the couple features it has behind a flag.)</p>
 				<details>
