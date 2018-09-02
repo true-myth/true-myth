@@ -1414,7 +1414,7 @@ function all<T extends Maybe<any>>(...args: T[]): T extends Maybe<infer U> ? May
   //               correctly parse the types in the context of `reduce`.
   return args.reduce(
     (result, maybe) => result.andThen(as => maybe.map(a => as.concat(a))),
-    Maybe.just([] as any[])
+    Maybe.just([] as T[])
   );
 }
 
