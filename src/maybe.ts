@@ -1348,10 +1348,10 @@ export function find<T>(
 
   ```ts
   let empty = [];
-  Maybe.head(empty); // Nothing
+  Maybe.head(empty); // => Nothing
 
   let full = [1, 2, 3];
-  Maybe.head(full); // Just(1)
+  Maybe.head(full); // => Just(1)
   ```
 
   @param array The array to get the first item from.
@@ -1371,10 +1371,10 @@ export const first = head;
 
   ```ts
   let empty = [];
-  Maybe.last(empty); // Nothing
+  Maybe.last(empty); // => Nothing
 
   let full = [1, 2, 3];
-  Maybe.last(full); // Just(3)
+  Maybe.last(full); // => Just(3)
   ```
 
   @param array The array to get the first item from.
@@ -1393,10 +1393,10 @@ export function last<T>(array: T[]): Maybe<T> {
   import Maybe from 'true-myth/maybe';
 
   let valid = [Maybe.just(2), Maybe.just('three')];
-  Maybe.all(...valid); // Just([2, 'three']);
+  Maybe.all(...valid); // => Just([2, 'three']);
 
   let invalid = [Maybe.just(2), Maybe.nothing<string>()];
-  Maybe.all(...invalid); // Nothing
+  Maybe.all(...invalid); // => Nothing
   ```
 
   ## Note on Spread
@@ -1437,12 +1437,12 @@ function all<T extends Maybe<any>>(...args: T[]): T extends Maybe<infer U> ? May
   type Tuple = [Maybe<string>, Maybe<number>];
 
   let invalid: Tuple = [Maybe.just('wat'), Maybe.nothing()];
-  let result = Maybe.tuple(invalid);
+  let result = Maybe.tuple(invalid);  // => Nothing
   ```
 
   If all of the items in the tuple are `Just`, the result is `Just` wrapping the
   tuple of the values of the items. Here, for example, `result` again has the
-  type `Maybe<[string, number]>` and will be `Just['hey', 12]`:
+  type `Maybe<[string, number]>` and will be `Just(['hey', 12]`:
 
   ```ts
   import Maybe from 'true-myth/maybe';
@@ -1450,7 +1450,7 @@ function all<T extends Maybe<any>>(...args: T[]): T extends Maybe<infer U> ? May
   type Tuple = [Maybe<string>, Maybe<number>];
 
   let valid: Tuple = [Maybe.just('hey'), Maybe.just(12)];
-  let result = Maybe.tuple(valid);
+  let result = Maybe.tuple(valid);  // => Just(['hey', 12])
   ```
 
   @param maybes: the tuple of `Maybe`s to convert to a `Maybe` of tuple values.
