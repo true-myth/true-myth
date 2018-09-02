@@ -1458,10 +1458,12 @@ export function all<T extends Maybe<any>>(
   @param maybes: the tuple of `Maybe`s to convert to a `Maybe` of tuple values.
  */
 // @ts-ignore -- this doesn't type-check, but it is correct!
-function tuple<T, U>(maybes: [Maybe<T>, Maybe<U>]): Maybe<[T, U]>;
-function tuple<T, U, V>(maybes: [Maybe<T>, Maybe<U>, Maybe<V>]): Maybe<[T, U, V]>;
-function tuple<T, U, V, W>(maybes: [Maybe<T>, Maybe<U>, Maybe<V>, Maybe<W>]): Maybe<[T, U, V, W]>;
-function tuple<T, U, V, W, X>(
+export function tuple<T, U>(maybes: [Maybe<T>, Maybe<U>]): Maybe<[T, U]>;
+export function tuple<T, U, V>(maybes: [Maybe<T>, Maybe<U>, Maybe<V>]): Maybe<[T, U, V]>;
+export function tuple<T, U, V, W>(
+  maybes: [Maybe<T>, Maybe<U>, Maybe<V>, Maybe<W>]
+): Maybe<[T, U, V, W]>;
+export function tuple<T, U, V, W, X>(
   maybes: [Maybe<T>, Maybe<U>, Maybe<V>, Maybe<W>, Maybe<X>]
 ): Maybe<[T, U, V, W, X]> {
   // @ts-ignore -- this doesn't type-check, but it is correct!
