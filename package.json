@@ -49,21 +49,21 @@
   ],
   "license": "MIT",
   "devDependencies": {
-    "@types/jest": "^22.2.3",
-    "eslint": "^4.19.1",
-    "jest": "^22.4.3",
+    "@types/jest": "^23.3.1",
+    "eslint": "^5.5.0",
+    "jest": "^23.5.0",
     "prettier": "^1.12.1",
     "prettier-eslint": "^8.8.1",
     "rimraf": "^2.6.2",
     "shelljs": "^0.8.2",
-    "ts-jest": "^22.4.6",
-    "typedoc": "^0.11.1",
-    "typescript": "^2.8.3",
-    "typescript-eslint-parser": "^15.0.0"
+    "ts-jest": "^23.1.4",
+    "typedoc": "^0.12.0",
+    "typescript": "^3.0.3",
+    "typescript-eslint-parser": "^18.0.0"
   },
   "jest": {
     "transform": {
-      "^.+\\.tsx?$": "<rootDir>/node_modules/ts-jest/preprocessor.js"
+      "^.+\\.tsx?$": "ts-jest"
     },
     "testRegex": "(/__tests__/.*|(\\.|/)(test|spec))\\.(jsx?|tsx?)$",
     "moduleFileExtensions": [
