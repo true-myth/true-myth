@@ -375,11 +375,17 @@ describe('`Maybe` pure functions', () => {
   });
 
   test('`all`', () => {
-    let onlyJusts = [Maybe.just(2), Maybe.just('three')];
-    expect(Maybe.all(...onlyJusts)).toEqual(Maybe.just([2, 'three']));
+    type ExpectedOutputType = Maybe<Array<string | number>>;
 
-    let hasNothing = [Maybe.just(2), Maybe.nothing()];
-    expect(Maybe.all(...hasNothing)).toEqual(Maybe.nothing());
+    let onlyJusts = [Maybe.just(2), Maybe.just('three')];
+    let onlyJustsAll = Maybe.all(...onlyJusts);
+    assertType<ExpectedOutputType>(onlyJustsAll);
+    expect(onlyJustsAll).toEqual(Maybe.just([2, 'three']));
+
+    let hasNothing = [Maybe.just(2), Maybe.nothing<string>()];
+    let hasNothingAll = Maybe.all(...hasNothing);
+    assertType<ExpectedOutputType>(hasNothingAll);
+    expect(hasNothingAll).toEqual(Maybe.nothing());
   });
 
   test('`tuple`', () => {
