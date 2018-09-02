@@ -14,7 +14,7 @@
   "bugs": {
     "url": "https://github.com/chriskrycho/true-myth/issues"
   },
-  "version": "2.0.0",
+  "version": "2.1.0",
   "main": "dist/cjs/index.js",
   "module": "dist/es/index.js",
   "types": "index.d.ts",
@@ -105,7 +105,7 @@
       "ecmaVersion": 2018,
       "sourceType": "module",
       "ecmaFeatures": {
-          "jsx": true
+        "jsx": true
       }
     },
     "env": {
