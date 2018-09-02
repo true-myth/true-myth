@@ -1409,7 +1409,9 @@ export function last<T>(array: T[]): Maybe<T> {
 
   @param args The `Maybe`s to resolve to a single `Maybe`.
  */
-function all<T extends Maybe<any>>(...args: T[]): T extends Maybe<infer U> ? Maybe<U[]> : never {
+export function all<T extends Maybe<any>>(
+  ...args: T[]
+): T extends Maybe<infer U> ? Maybe<U[]> : never {
   // @ts-ignore -- this is indeed the correct implementation, but TS doesn't
   //               correctly parse the types in the context of `reduce`.
   return args.reduce(
