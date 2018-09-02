@@ -78,7 +78,7 @@
 						</ol>
 						<p>Having the possibility of an error handed to you as part of the type of an item gives you the flexibility to do the same kinds of things with it that you might with any other nice container type. For example, you can use <a href="https://chriskrycho.github.io/true-myth/modules/_result_.html#map"><code>map</code></a> to apply a transformation if the item represents a successful outcome, and even if the result was actually an error, it won&#39;t break under you.</p>
 						<p>To make that concrete, let&#39;s look at an example. In normal JavaScript, you might have something like this:</p>
-						<pre><code class="lang-js"><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">mightSucceed</span>(<span class="hljs-params">doesSucceed</span>) </span>{
+						<pre><code class="language-js"><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">mightSucceed</span>(<span class="hljs-params">doesSucceed</span>) </span>{
   <span class="hljs-keyword">if</span> (!doesSucceed) {
     <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">Error</span>(<span class="hljs-string">'something went wrong!'</span>);
   }
@@ -90,18 +90,16 @@
 <span class="hljs-built_in">console</span>.log(doubleTheAnswer); <span class="hljs-comment">// 84; this is fine</span>
 
 <span class="hljs-keyword">const</span> doubleAnError = mightSucceed(<span class="hljs-literal">false</span>) * <span class="hljs-number">2</span>; <span class="hljs-comment">// throws an uncaught exception</span>
-<span class="hljs-built_in">console</span>.log(doubleAnErr); <span class="hljs-comment">// never even gets here because of the exception</span>
-</code></pre>
+<span class="hljs-built_in">console</span>.log(doubleAnErr); <span class="hljs-comment">// never even gets here because of the exception</span></code></pre>
 						<p>If we wanted to <em>handle</em> that error, we&#39;d need to first of all know that the function could throw an error. Assuming we knew that – probably we&#39;d figure it out via painful discovery at runtime, or by documenting it in our JSDoc – then we&#39;d need to wrap it up in a <code>try</code>/<code>catch</code> block:</p>
-						<pre><code class="lang-js"><span class="hljs-keyword">try</span> {
+						<pre><code class="language-js"><span class="hljs-keyword">try</span> {
   <span class="hljs-keyword">const</span> doubleTheAnswer = mightSucceed(<span class="hljs-literal">true</span>) * <span class="hljs-number">2</span>;
   <span class="hljs-built_in">console</span>.log(doubleTheAnswer);
 
   <span class="hljs-keyword">const</span> doubleAnError = mightSucceed(<span class="hljs-literal">false</span>) * <span class="hljs-number">2</span>;
 } <span class="hljs-keyword">catch</span> (ex) {
   <span class="hljs-built_in">console</span>.log(ex.message);
-}
-</code></pre>
+}</code></pre>
 						<p>This is a pain to work with!</p>
 						<p>The next thing we might try is returning an error code and mutating an object passed in. (This is the standard pattern for non-exception-based error handling in C, C++, Java, and C#, for example.) But that has a few problems:</p>
 						<ul>
@@ -122,7 +120,7 @@
 							<li>the explicitness about success or failure that we got with a return code</li>
 						</ul>
 						<p>Here&#39;s what that same example from above would look like using <code>Result</code>:</p>
-						<pre><code class="lang-typescript"><span class="hljs-keyword">import</span> Result, { ok, err, map, toString } <span class="hljs-keyword">from</span> <span class="hljs-string">'true-myth/result'</span>;
+						<pre><code class="language-typescript"><span class="hljs-keyword">import</span> Result, { ok, err, map, toString } <span class="hljs-keyword">from</span> <span class="hljs-string">'true-myth/result'</span>;
 
 <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">mightSucceed</span>(<span class="hljs-params">doesSucceed: <span class="hljs-built_in">boolean</span></span>): <span class="hljs-title">Result</span>&lt;<span class="hljs-title">number</span>, <span class="hljs-title">string</span>&gt; </span>{
   <span class="hljs-keyword">return</span> doesSucceed ? ok(<span class="hljs-number">42</span>) : err(<span class="hljs-string">'something went wrong!'</span>);
@@ -134,13 +132,12 @@
 <span class="hljs-built_in">console</span>.log(toString(doubleTheAnswer)); <span class="hljs-comment">// `Ok(84)`</span>
 
 <span class="hljs-keyword">const</span> doubleAnErr = map(double, mightSucceed(<span class="hljs-literal">false</span>));
-<span class="hljs-built_in">console</span>.log(toString(doubleAnErr)); <span class="hljs-comment">// `Err('something went wrong')`</span>
-</code></pre>
+<span class="hljs-built_in">console</span>.log(toString(doubleAnErr)); <span class="hljs-comment">// `Err('something went wrong')`</span></code></pre>
 						<p>Note that if we tried to call <code>mightSucceed(true) * 2</code> here, we&#39;d get a type error – this wouldn&#39;t make it past the compile step. Instead, we need to use one of the helper functions (or methods) to manipulate the value in a safe way.</p>
 						<h2 id="using-result">Using <code>Result</code></h2>
 						<p>The library is designed to be used with a functional style, allowing you to compose operations easily. Thus, standalone pure function versions of every operation are supplied. However, the same operations also exist on the <code>Ok</code> and <code>Err</code> types directly, so you may also write them in a more traditional &quot;fluent&quot; object style.</p>
 						<h3 id="examples-functional-style">Examples: functional style</h3>
-						<pre><code class="lang-typescript"><span class="hljs-keyword">import</span> { ok, err, map, toString } <span class="hljs-keyword">from</span> <span class="hljs-string">'true-myth/result'</span>;
+						<pre><code class="language-typescript"><span class="hljs-keyword">import</span> { ok, err, map, toString } <span class="hljs-keyword">from</span> <span class="hljs-string">'true-myth/result'</span>;
 
 <span class="hljs-keyword">const</span> length = <span class="hljs-function">(<span class="hljs-params">s: <span class="hljs-built_in">string</span></span>) =&gt;</span> s.length;
 
@@ -150,11 +147,10 @@
 
 <span class="hljs-keyword">const</span> anErr = err(<span class="hljs-string">'gah!'</span>);
 <span class="hljs-keyword">const</span> errLength = map(length, anErr);
-<span class="hljs-built_in">console</span>.log(toString(errLength)); <span class="hljs-comment">// Err(gah!)</span>
-</code></pre>
+<span class="hljs-built_in">console</span>.log(toString(errLength)); <span class="hljs-comment">// Err(gah!)</span></code></pre>
 						<h3 id="examples-fluent-object-invocation">Examples: fluent object invocation</h3>
 						<p>You can also use a &quot;fluent&quot; method chaining style to apply the various helper functions to a <code>Result</code> instance:</p>
-						<pre><code class="lang-typescript"><span class="hljs-keyword">import</span> { ok, err } <span class="hljs-keyword">from</span> <span class="hljs-string">'true-myth/result'</span>;
+						<pre><code class="language-typescript"><span class="hljs-keyword">import</span> { ok, err } <span class="hljs-keyword">from</span> <span class="hljs-string">'true-myth/result'</span>;
 
 <span class="hljs-keyword">const</span> length = <span class="hljs-function">(<span class="hljs-params">s: <span class="hljs-built_in">string</span></span>) =&gt;</span> s.length;
 
@@ -162,17 +158,15 @@
 <span class="hljs-keyword">const</span> okLen = hooray.map(length).unwrapOr(<span class="hljs-number">0</span>); <span class="hljs-comment">// okLen = 3</span>
 
 <span class="hljs-keyword">const</span> muySad = err(<span class="hljs-string">'oh no'</span>);
-<span class="hljs-keyword">const</span> errLen = muySad.map(length).unwrapOr(<span class="hljs-number">0</span>); <span class="hljs-comment">// errLen = 0</span>
-</code></pre>
+<span class="hljs-keyword">const</span> errLen = muySad.map(length).unwrapOr(<span class="hljs-number">0</span>); <span class="hljs-comment">// errLen = 0</span></code></pre>
 						<h3 id="writing-type-constraints">Writing type constraints</h3>
 						<p>When creating a <code>Result</code> instance, you&#39;ll nearly always be using <em>either</em> the <code>Ok</code> <em>or</em> the <code>Err</code> type, so the type system won&#39;t necessarily be able to infer the other type parameter.</p>
-						<pre><code class="lang-typescript"><span class="hljs-keyword">import</span> { ok, err } <span class="hljs-keyword">from</span> <span class="hljs-string">'true-myth/result'</span>;
+						<pre><code class="language-typescript"><span class="hljs-keyword">import</span> { ok, err } <span class="hljs-keyword">from</span> <span class="hljs-string">'true-myth/result'</span>;
 
 <span class="hljs-keyword">const</span> anOk = ok(<span class="hljs-number">12</span>); <span class="hljs-comment">// TypeScript infers: `Result&lt;number, {}&gt;`</span>
-<span class="hljs-keyword">const</span> anErr = err(<span class="hljs-string">'sad'</span>); <span class="hljs-comment">// TypeScript infers: `Result&lt;{}, string&gt;`</span>
-</code></pre>
+<span class="hljs-keyword">const</span> anErr = err(<span class="hljs-string">'sad'</span>); <span class="hljs-comment">// TypeScript infers: `Result&lt;{}, string&gt;`</span></code></pre>
 						<p>In TypeScript, because of the direction type inference happens, you will need to specify the type at declaration to make it type check when returning values from a function with a specified type. Note that this <em>only</em> applies when the instance is declared in its own statement and returned separately, <em>not</em> when it is the expression value of a single-expression arrow function or the explicit return value of any function.</p>
-						<pre><code class="lang-typescript"><span class="hljs-keyword">import</span> Result, { ok } <span class="hljs-keyword">from</span> <span class="hljs-string">'true-myth/result'</span>;
+						<pre><code class="language-typescript"><span class="hljs-keyword">import</span> Result, { ok } <span class="hljs-keyword">from</span> <span class="hljs-string">'true-myth/result'</span>;
 
 <span class="hljs-comment">// ERROR: Type 'Result&lt;number, {}&gt;' is not assignable to type 'Result&lt;number, string&gt;'.</span>
 <span class="hljs-keyword">const</span> getAResultNotAssignable = (): Result&lt;<span class="hljs-built_in">number</span>, <span class="hljs-built_in">string</span>&gt; =&gt; {
@@ -186,8 +180,7 @@
 <span class="hljs-comment">// Succeeds</span>
 <span class="hljs-keyword">const</span> getAResultReturn = (): Result&lt;<span class="hljs-built_in">number</span>, <span class="hljs-built_in">string</span>&gt; =&gt; {
   <span class="hljs-keyword">return</span> ok(<span class="hljs-number">12</span>);
-};
-</code></pre>
+};</code></pre>
 					</div>
 				</div>
 			</section>
@@ -279,7 +272,7 @@
 					<div class="tsd-signature tsd-kind-icon">Matcher<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">object</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/chriskrycho/true-myth/blob/2a9c876/src/result.ts#L1178">result.ts:1178</a></li>
+							<li>Defined in <a href="https://github.com/chriskrycho/true-myth/blob/98682a8/src/result.ts#L1182">result.ts:1182</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -344,7 +337,7 @@
 					<div class="tsd-signature tsd-kind-icon">cata<span class="tsd-signature-symbol">:</span> <a href="_result_.html#match" class="tsd-signature-type">match</a><span class="tsd-signature-symbol"> =&nbsp;match</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/chriskrycho/true-myth/blob/2a9c876/src/result.ts#L1243">result.ts:1243</a></li>
+							<li>Defined in <a href="https://github.com/chriskrycho/true-myth/blob/98682a8/src/result.ts#L1247">result.ts:1247</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -359,7 +352,7 @@
 					<div class="tsd-signature tsd-kind-icon">chain<span class="tsd-signature-symbol">:</span> <a href="_result_.html#andthen" class="tsd-signature-type">andThen</a><span class="tsd-signature-symbol"> =&nbsp;andThen</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/chriskrycho/true-myth/blob/2a9c876/src/result.ts#L919">result.ts:919</a></li>
+							<li>Defined in <a href="https://github.com/chriskrycho/true-myth/blob/98682a8/src/result.ts#L923">result.ts:923</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -374,7 +367,7 @@
 					<div class="tsd-signature tsd-kind-icon">flat<wbr>Map<span class="tsd-signature-symbol">:</span> <a href="_result_.html#andthen" class="tsd-signature-type">andThen</a><span class="tsd-signature-symbol"> =&nbsp;andThen</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/chriskrycho/true-myth/blob/2a9c876/src/result.ts#L922">result.ts:922</a></li>
+							<li>Defined in <a href="https://github.com/chriskrycho/true-myth/blob/98682a8/src/result.ts#L926">result.ts:926</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -389,7 +382,7 @@
 					<div class="tsd-signature tsd-kind-icon">get<wbr>Or<span class="tsd-signature-symbol">:</span> <a href="_result_.html#unwrapor" class="tsd-signature-type">unwrapOr</a><span class="tsd-signature-symbol"> =&nbsp;unwrapOr</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/chriskrycho/true-myth/blob/2a9c876/src/result.ts#L1063">result.ts:1063</a></li>
+							<li>Defined in <a href="https://github.com/chriskrycho/true-myth/blob/98682a8/src/result.ts#L1067">result.ts:1067</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -404,7 +397,7 @@
 					<div class="tsd-signature tsd-kind-icon">get<wbr>OrElse<span class="tsd-signature-symbol">:</span> <a href="_result_.html#unwraporelse" class="tsd-signature-type">unwrapOrElse</a><span class="tsd-signature-symbol"> =&nbsp;unwrapOrElse</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/chriskrycho/true-myth/blob/2a9c876/src/result.ts#L1106">result.ts:1106</a></li>
+							<li>Defined in <a href="https://github.com/chriskrycho/true-myth/blob/98682a8/src/result.ts#L1110">result.ts:1110</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -419,7 +412,7 @@
 					<div class="tsd-signature tsd-kind-icon">of<span class="tsd-signature-symbol">:</span> <a href="_result_.html#ok-2" class="tsd-signature-type">ok</a><span class="tsd-signature-symbol"> =&nbsp;ok</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/chriskrycho/true-myth/blob/2a9c876/src/result.ts#L532">result.ts:532</a></li>
+							<li>Defined in <a href="https://github.com/chriskrycho/true-myth/blob/98682a8/src/result.ts#L532">result.ts:532</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -434,7 +427,7 @@
 					<div class="tsd-signature tsd-kind-icon">unsafe<wbr>Get<span class="tsd-signature-symbol">:</span> <a href="_result_.html#unsafelyunwrap" class="tsd-signature-type">unsafelyUnwrap</a><span class="tsd-signature-symbol"> =&nbsp;unsafelyUnwrap</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/chriskrycho/true-myth/blob/2a9c876/src/result.ts#L1012">result.ts:1012</a></li>
+							<li>Defined in <a href="https://github.com/chriskrycho/true-myth/blob/98682a8/src/result.ts#L1016">result.ts:1016</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -449,7 +442,7 @@
 					<div class="tsd-signature tsd-kind-icon">unsafely<wbr>Get<span class="tsd-signature-symbol">:</span> <a href="_result_.html#unsafelyunwrap" class="tsd-signature-type">unsafelyUnwrap</a><span class="tsd-signature-symbol"> =&nbsp;unsafelyUnwrap</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/chriskrycho/true-myth/blob/2a9c876/src/result.ts#L1009">result.ts:1009</a></li>
+							<li>Defined in <a href="https://github.com/chriskrycho/true-myth/blob/98682a8/src/result.ts#L1013">result.ts:1013</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -464,7 +457,7 @@
 					<div class="tsd-signature tsd-kind-icon">unsafely<wbr>Get<wbr>Err<span class="tsd-signature-symbol">:</span> <a href="_result_.html#unsafelyunwraperr" class="tsd-signature-type">unsafelyUnwrapErr</a><span class="tsd-signature-symbol"> =&nbsp;unsafelyUnwrapErr</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/chriskrycho/true-myth/blob/2a9c876/src/result.ts#L1028">result.ts:1028</a></li>
+							<li>Defined in <a href="https://github.com/chriskrycho/true-myth/blob/98682a8/src/result.ts#L1032">result.ts:1032</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -487,7 +480,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/chriskrycho/true-myth/blob/2a9c876/src/result.ts#L847">result.ts:847</a></li>
+									<li>Defined in <a href="https://github.com/chriskrycho/true-myth/blob/98682a8/src/result.ts#L851">result.ts:851</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -502,7 +495,7 @@
 								<p>Notice that, unlike in <a href="#map"><code>map</code></a> or its variants, the original <code>result</code> is
 								not involved in constructing the new <code>Result</code>.</p>
 								<h4 id="examples">Examples</h4>
-								<pre><code class="lang-ts"><span class="hljs-keyword">import</span> { and, ok, err, toString } <span class="hljs-keyword">from</span> <span class="hljs-string">'true-myth/result'</span>;
+								<pre><code class="language-ts"><span class="hljs-keyword">import</span> { and, ok, err, toString } <span class="hljs-keyword">from</span> <span class="hljs-string">'true-myth/result'</span>;
 
 <span class="hljs-keyword">const</span> okA = ok(<span class="hljs-string">'A'</span>);
 <span class="hljs-keyword">const</span> okB = ok(<span class="hljs-string">'B'</span>);
@@ -511,8 +504,7 @@
 <span class="hljs-built_in">console</span>.log(toString(and(okB, okA)));  <span class="hljs-comment">// Ok(B)</span>
 <span class="hljs-built_in">console</span>.log(toString(and(okB, anErr)));  <span class="hljs-comment">// Err([object Object])</span>
 <span class="hljs-built_in">console</span>.log(toString(and(anErr, okA)));  <span class="hljs-comment">// Err([object Object])</span>
-<span class="hljs-built_in">console</span>.log(toString(and(anErr, anErr)));  <span class="hljs-comment">// Err([object Object])</span>
-</code></pre>
+<span class="hljs-built_in">console</span>.log(toString(and(anErr, anErr)));  <span class="hljs-comment">// Err([object Object])</span></code></pre>
 							</div>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
 							<ul class="tsd-type-parameters">
@@ -557,7 +549,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/chriskrycho/true-myth/blob/2a9c876/src/result.ts#L848">result.ts:848</a></li>
+									<li>Defined in <a href="https://github.com/chriskrycho/true-myth/blob/98682a8/src/result.ts#L852">result.ts:852</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
@@ -611,7 +603,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/chriskrycho/true-myth/blob/2a9c876/src/result.ts#L903">result.ts:903</a></li>
+									<li>Defined in <a href="https://github.com/chriskrycho/true-myth/blob/98682a8/src/result.ts#L907">result.ts:907</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -628,11 +620,11 @@
 									a single <code>Promise</code>. The difference is that <code>Promise#then</code> unwraps <em>all</em>
 									layers to only ever return a single <code>Promise</code> value, whereas <code>Result.andThen</code>
 								will not unwrap nested <code>Result</code>s.</p>
-								<p>This is also commonly known as (and therefore aliased as) <a href="#flatmap"><code>flatMap</code></a> or
-									<a href="#chain"><code>chain</code></a>. It is sometimes also known as <code>bind</code>, but <em>not</em> aliased as such
-								because <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function/bind"><code>bind</code> already means something in JavaScript</a>.</p>
+								<p>This is also commonly known as (and therefore aliased as) <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function/bind"><code>flatMap</code>] or
+										<a href="#chain"><code>chain</code></a>. It is sometimes also known as <code>bind</code>, but <em>not</em> aliased as such
+								because [<code>bind</code> already means something in JavaScript</a>.</p>
 								<h4 id="examples">Examples</h4>
-								<pre><code class="lang-ts"><span class="hljs-keyword">import</span> { ok, err, andThen, toString } <span class="hljs-keyword">from</span> <span class="hljs-string">'true-myth/result'</span>;
+								<pre><code class="language-ts"><span class="hljs-keyword">import</span> { ok, err, andThen, toString } <span class="hljs-keyword">from</span> <span class="hljs-string">'true-myth/result'</span>;
 
 <span class="hljs-keyword">const</span> toLengthAsResult = <span class="hljs-function">(<span class="hljs-params">s: <span class="hljs-built_in">string</span></span>) =&gt;</span> ok(s.length);
 
@@ -642,8 +634,7 @@
 
 <span class="hljs-keyword">const</span> anErr = err([<span class="hljs-string">'srsly'</span>, <span class="hljs-string">'whatever'</span>]);
 <span class="hljs-keyword">const</span> notLengthAsResult = andThen(toLengthAsResult, anErr);
-<span class="hljs-built_in">console</span>.log(toString(notLengthAsResult));  <span class="hljs-comment">// Err(srsly,whatever)</span>
-</code></pre>
+<span class="hljs-built_in">console</span>.log(toString(notLengthAsResult));  <span class="hljs-comment">// Err(srsly,whatever)</span></code></pre>
 							</div>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
 							<ul class="tsd-type-parameters">
@@ -705,7 +696,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/chriskrycho/true-myth/blob/2a9c876/src/result.ts#L907">result.ts:907</a></li>
+									<li>Defined in <a href="https://github.com/chriskrycho/true-myth/blob/98682a8/src/result.ts#L911">result.ts:911</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
@@ -777,7 +768,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/chriskrycho/true-myth/blob/2a9c876/src/result.ts#L1461">result.ts:1461</a></li>
+									<li>Defined in <a href="https://github.com/chriskrycho/true-myth/blob/98682a8/src/result.ts#L1465">result.ts:1465</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -788,7 +779,7 @@
 										at first but lets you do some very elegant things. For example, <code>ap</code> allows
 									you to do this:</p>
 								</div>
-								<pre><code class="lang-ts"><span class="hljs-keyword">import</span> Result <span class="hljs-keyword">from</span> <span class="hljs-string">'true-myth/result'</span>;
+								<pre><code class="language-ts"><span class="hljs-keyword">import</span> Result <span class="hljs-keyword">from</span> <span class="hljs-string">'true-myth/result'</span>;
 
 <span class="hljs-keyword">const</span> one = Result.ok&lt;<span class="hljs-built_in">number</span>, <span class="hljs-built_in">string</span>&gt;(<span class="hljs-number">1</span>);
 <span class="hljs-keyword">const</span> five = Result.ok&lt;<span class="hljs-built_in">number</span>, <span class="hljs-built_in">string</span>&gt;(<span class="hljs-number">5</span>);
@@ -799,10 +790,9 @@
 
 resultAdd.ap(one).ap(five); <span class="hljs-comment">// Ok(6)</span>
 resultAdd.ap(one).ap(whoops); <span class="hljs-comment">// Err('oh no')</span>
-resultAdd.ap(whoops).ap(five) <span class="hljs-comment">// Err('oh no')</span>
-</code></pre>
+resultAdd.ap(whoops).ap(five) <span class="hljs-comment">// Err('oh no')</span></code></pre>
 								<p>Without <code>Result.ap</code>, you&#39;d need to do something like a nested <code>Result.match</code>:</p>
-								<pre><code class="lang-ts"><span class="hljs-keyword">import</span> { ok, err } <span class="hljs-keyword">from</span> <span class="hljs-string">'true-myth/result'</span>;
+								<pre><code class="language-ts"><span class="hljs-keyword">import</span> { ok, err } <span class="hljs-keyword">from</span> <span class="hljs-string">'true-myth/result'</span>;
 
 <span class="hljs-keyword">const</span> one = ok&lt;<span class="hljs-built_in">number</span>, <span class="hljs-built_in">string</span>&gt;(<span class="hljs-number">1</span>);
 <span class="hljs-keyword">const</span> five = ok&lt;<span class="hljs-built_in">number</span>, <span class="hljs-built_in">string</span>&gt;(<span class="hljs-number">5</span>);
@@ -830,14 +820,13 @@ Ok: <span class="hljs-function"><span class="hljs-params">o</span> =&gt;</span> 
 Err: <span class="hljs-function"><span class="hljs-params">e</span> =&gt;</span> err(e),
 }),
 Err: <span class="hljs-function"><span class="hljs-params">e</span>  =&gt;</span> err(e),
-}); <span class="hljs-comment">// Err('oh no')</span>
-</code></pre>
+}); <span class="hljs-comment">// Err('oh no')</span></code></pre>
 								<p>And this kind of thing comes up quite often once you&#39;re using <code>Maybe</code> to
 								handle optionality throughout your application.</p>
 								<p>For another example, imagine you need to compare the equality of two
 									ImmutableJS data structures, where a <code>===</code> comparison won&#39;t work. With <code>ap</code>,
 								that&#39;s as simple as this:</p>
-								<pre><code class="lang-ts"><span class="hljs-keyword">import</span> { ok } <span class="hljs-keyword">from</span> <span class="hljs-string">'true-myth/result'</span>;
+								<pre><code class="language-ts"><span class="hljs-keyword">import</span> { ok } <span class="hljs-keyword">from</span> <span class="hljs-string">'true-myth/result'</span>;
 <span class="hljs-keyword">import</span> Immutable <span class="hljs-keyword">from</span> <span class="hljs-string">'immutable'</span>;
 <span class="hljs-keyword">import</span> { curry } <span class="hljs-keyword">from</span> <span class="hljs-string">'lodash'</span>
 
@@ -846,10 +835,9 @@ Err: <span class="hljs-function"><span class="hljs-params">e</span>  =&gt;</span
 <span class="hljs-keyword">const</span> x = ok(Immutable.Set.of(<span class="hljs-number">1</span>, <span class="hljs-number">2</span>, <span class="hljs-number">3</span>));
 <span class="hljs-keyword">const</span> y = ok(Immutable.Set.of(<span class="hljs-number">2</span>, <span class="hljs-number">3</span>, <span class="hljs-number">4</span>));
 
-ok(is).ap(x).ap(y); <span class="hljs-comment">// Ok(false)</span>
-</code></pre>
+ok(is).ap(x).ap(y); <span class="hljs-comment">// Ok(false)</span></code></pre>
 								<p>Without <code>ap</code>, we&#39;re back to that gnarly nested <code>match</code>:</p>
-								<pre><code class="lang-ts"><span class="hljs-keyword">import</span> Result, { ok, err } <span class="hljs-keyword">from</span> <span class="hljs-string">'true-myth/result'</span>;
+								<pre><code class="language-ts"><span class="hljs-keyword">import</span> Result, { ok, err } <span class="hljs-keyword">from</span> <span class="hljs-string">'true-myth/result'</span>;
 <span class="hljs-keyword">import</span> Immutable <span class="hljs-keyword">from</span> <span class="hljs-string">'immutable'</span>;
 <span class="hljs-keyword">import</span> { curry } <span class="hljs-keyword">from</span> <span class="hljs-string">'lodash'</span>
 
@@ -864,8 +852,7 @@ Ok: <span class="hljs-function"><span class="hljs-params">iY</span> =&gt;</span>
 Err: <span class="hljs-function">(<span class="hljs-params">e</span>) =&gt;</span> ok(<span class="hljs-literal">false</span>),
 })
 Err: <span class="hljs-function">(<span class="hljs-params">e</span>) =&gt;</span> ok(<span class="hljs-literal">false</span>),
-}); <span class="hljs-comment">// Ok(false)</span>
-</code></pre>
+}); <span class="hljs-comment">// Ok(false)</span></code></pre>
 								<p>In summary: anywhere you have two <code>Maybe</code> instances and need to perform an
 								operation that uses both of them, <code>ap</code> is your friend.</p>
 								<p>Two things to note, both regarding <em>currying</em>:</p>
@@ -883,25 +870,22 @@ Err: <span class="hljs-function">(<span class="hljs-params">e</span>) =&gt;</spa
 <span class="hljs-keyword">const</span> normalAdd = <span class="hljs-function">(<span class="hljs-params">a: <span class="hljs-built_in">number</span>, b: <span class="hljs-built_in">number</span></span>) =&gt;</span> a + b;
 <span class="hljs-keyword">const</span> curriedAdd = curry(normalAdd); <span class="hljs-comment">// (a: number) =&gt; (b: number) =&gt; a + b;</span>
 
-Result.of(curriedAdd).ap(Result.of(<span class="hljs-number">1</span>)).ap(Result.of(<span class="hljs-number">5</span>)); <span class="hljs-comment">// Ok(6)</span>
-</code></pre><ol start="2">
+Result.of(curriedAdd).ap(Result.of(<span class="hljs-number">1</span>)).ap(Result.of(<span class="hljs-number">5</span>)); <span class="hljs-comment">// Ok(6)</span></code></pre><ol start="2">
 									<li>You will need to call <code>ap</code> as many times as there are arguments to the
 										function you&#39;re dealing with. So in the case of <code>add</code>, which has the
 										&quot;arity&quot; (function argument count) of 2 (<code>a</code> and <code>b</code>), you&#39;ll need to call
 										<code>ap</code> twice: once for <code>a</code>, and once for <code>b</code>. To see why, let&#39;s look at what
 									the result in each phase is:</li>
 								</ol>
-								<pre><code class="lang-ts"><span class="hljs-keyword">const</span> add = <span class="hljs-function">(<span class="hljs-params">a: <span class="hljs-built_in">number</span></span>) =&gt;</span> (b: <span class="hljs-built_in">number</span>) =&gt; a + b;
+								<pre><code class="language-ts"><span class="hljs-keyword">const</span> add = <span class="hljs-function">(<span class="hljs-params">a: <span class="hljs-built_in">number</span></span>) =&gt;</span> (b: <span class="hljs-built_in">number</span>) =&gt; a + b;
 
 <span class="hljs-keyword">const</span> maybeAdd = Result.of(add); <span class="hljs-comment">// Ok((a: number) =&gt; (b: number) =&gt; a + b)</span>
 <span class="hljs-keyword">const</span> maybeAdd1 = maybeAdd.ap(Result.of(<span class="hljs-number">1</span>)); <span class="hljs-comment">// Ok((b: number) =&gt; 1 + b)</span>
-<span class="hljs-keyword">const</span> final = maybeAdd1.ap(Result.of(<span class="hljs-number">3</span>)); <span class="hljs-comment">// Ok(4)</span>
-</code></pre>
+<span class="hljs-keyword">const</span> final = maybeAdd1.ap(Result.of(<span class="hljs-number">3</span>)); <span class="hljs-comment">// Ok(4)</span></code></pre>
 								<p>So for <code>toString</code>, which just takes a single argument, you would only need
 								to call <code>ap</code> once.</p>
-								<pre><code class="lang-ts"><span class="hljs-keyword">const</span> toStr = <span class="hljs-function">(<span class="hljs-params">v: { toString(<span class="hljs-params"></span>): <span class="hljs-built_in">string</span> }</span>) =&gt;</span> v.toString();
-Result.of(toStr).ap(<span class="hljs-number">12</span>); <span class="hljs-comment">// Ok("12")</span>
-</code></pre>
+								<pre><code class="language-ts"><span class="hljs-keyword">const</span> toStr = <span class="hljs-function">(<span class="hljs-params">v: { toString(<span class="hljs-params"></span>): <span class="hljs-built_in">string</span> }</span>) =&gt;</span> v.toString();
+Result.of(toStr).ap(<span class="hljs-number">12</span>); <span class="hljs-comment">// Ok("12")</span></code></pre>
 								<p>One other scenario which doesn&#39;t come up <em>quite</em> as often but is conceivable
 									is where you have something that may or may not actually construct a function
 									for handling a specific <code>Result</code> scenario. In that case, you can wrap the
@@ -911,18 +895,16 @@ Result.of(toStr).ap(<span class="hljs-number">12</span>); <span class="hljs-comm
 									on a regular basis, it&#39;s convenient to use TypeScript&#39;s <code>typeof</code> operator to
 									write out the type of a curried function. For example, if you had a function
 								that simply merged three strings, you might write it like this:</p>
-								<pre><code class="lang-ts"><span class="hljs-keyword">import</span> Result <span class="hljs-keyword">from</span> <span class="hljs-string">'true-myth/result'</span>;
+								<pre><code class="language-ts"><span class="hljs-keyword">import</span> Result <span class="hljs-keyword">from</span> <span class="hljs-string">'true-myth/result'</span>;
 <span class="hljs-keyword">import</span> { curry } <span class="hljs-keyword">from</span> <span class="hljs-string">'lodash'</span>;
 
 <span class="hljs-keyword">const</span> merge3Strs = <span class="hljs-function">(<span class="hljs-params">a: <span class="hljs-built_in">string</span>, b: <span class="hljs-built_in">string</span>, c: <span class="hljs-built_in">string</span></span>) =&gt;</span> <span class="hljs-built_in">string</span>;
 <span class="hljs-keyword">const</span> curriedMerge = curry(merge3Strs);
 
-<span class="hljs-keyword">const</span> fn = Result.ok&lt;<span class="hljs-keyword">typeof</span> curriedMerge, <span class="hljs-built_in">string</span>&gt;(curriedMerge);
-</code></pre>
+<span class="hljs-keyword">const</span> fn = Result.ok&lt;<span class="hljs-keyword">typeof</span> curriedMerge, <span class="hljs-built_in">string</span>&gt;(curriedMerge);</code></pre>
 								<p>The alternative is writing out the full signature long-form:</p>
-								<pre><code class="lang-ts"><span class="hljs-keyword">const</span> fn = Result.ok&lt;<span class="hljs-function">(<span class="hljs-params">a: <span class="hljs-built_in">string</span></span>) =&gt;</span> (b: <span class="hljs-built_in">string</span>) =&gt; <span class="hljs-function">(<span class="hljs-params">c: <span class="hljs-built_in">string</span></span>) =&gt;</span> <span class="hljs-built_in">string</span>, <span class="hljs-built_in">string</span>&gt;(curriedMerge);
-</code></pre>
-								<p>*Aside:** <code>ap</code> is not named <code>apply</code> because of the overlap with JavaScript&#39;s
+								<pre><code class="language-ts"><span class="hljs-keyword">const</span> fn = Result.ok&lt;<span class="hljs-function">(<span class="hljs-params">a: <span class="hljs-built_in">string</span></span>) =&gt;</span> (b: <span class="hljs-built_in">string</span>) =&gt; <span class="hljs-function">(<span class="hljs-params">c: <span class="hljs-built_in">string</span></span>) =&gt;</span> <span class="hljs-built_in">string</span>, <span class="hljs-built_in">string</span>&gt;(curriedMerge);</code></pre>
+								<p><em>Aside:*</em> <code>ap</code> is not named <code>apply</code> because of the overlap with JavaScript&#39;s
 									existing <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function/apply"><code>apply</code></a> function – and although strictly speaking, there isn&#39;t any
 									direct overlap (<code>Result.apply</code> and <code>Function.prototype.apply</code> don&#39;t intersect
 									at all) it&#39;s useful to have a different name to avoid implying that they&#39;re
@@ -960,7 +942,7 @@ Result.of(toStr).ap(<span class="hljs-number">12</span>); <span class="hljs-comm
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/chriskrycho/true-myth/blob/2a9c876/src/result.ts#L1462">result.ts:1462</a></li>
+									<li>Defined in <a href="https://github.com/chriskrycho/true-myth/blob/98682a8/src/result.ts#L1466">result.ts:1466</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
@@ -1014,7 +996,7 @@ Result.of(toStr).ap(<span class="hljs-number">12</span>); <span class="hljs-comm
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/chriskrycho/true-myth/blob/2a9c876/src/result.ts#L1263">result.ts:1263</a></li>
+									<li>Defined in <a href="https://github.com/chriskrycho/true-myth/blob/98682a8/src/result.ts#L1267">result.ts:1267</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1022,15 +1004,14 @@ Result.of(toStr).ap(<span class="hljs-number">12</span>); <span class="hljs-comm
 									<p>Allows quick triple-equal equality check between the values inside two <code>result</code>s
 									without having to unwrap them first.</p>
 								</div>
-								<pre><code class="lang-ts"><span class="hljs-keyword">const</span> a = Result.of(<span class="hljs-number">3</span>)
+								<pre><code class="language-ts"><span class="hljs-keyword">const</span> a = Result.of(<span class="hljs-number">3</span>)
 <span class="hljs-keyword">const</span> b = Result.of(<span class="hljs-number">3</span>)
 <span class="hljs-keyword">const</span> c = Result.of(<span class="hljs-literal">null</span>)
 <span class="hljs-keyword">const</span> d = Result.nothing()
 
 Result.equals(a, b) <span class="hljs-comment">// true</span>
 Result.equals(a, c) <span class="hljs-comment">// false</span>
-Result.equals(c, d) <span class="hljs-comment">// true</span>
-</code></pre>
+Result.equals(c, d) <span class="hljs-comment">// true</span></code></pre>
 							</div>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
 							<ul class="tsd-type-parameters">
@@ -1061,7 +1042,7 @@ Result.equals(c, d) <span class="hljs-comment">// true</span>
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/chriskrycho/true-myth/blob/2a9c876/src/result.ts#L1264">result.ts:1264</a></li>
+									<li>Defined in <a href="https://github.com/chriskrycho/true-myth/blob/98682a8/src/result.ts#L1268">result.ts:1268</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
@@ -1112,7 +1093,7 @@ Result.equals(c, d) <span class="hljs-comment">// true</span>
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/chriskrycho/true-myth/blob/2a9c876/src/result.ts#L580">result.ts:580</a></li>
+									<li>Defined in <a href="https://github.com/chriskrycho/true-myth/blob/98682a8/src/result.ts#L580">result.ts:580</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1122,20 +1103,18 @@ Result.equals(c, d) <span class="hljs-comment">// true</span>
 								<p>If you need to create an instance with a specific type (as you do whenever you
 									are not constructing immediately for a function return or as an argument to a
 								function), you can use a type parameter:</p>
-								<pre><code class="lang-ts"><span class="hljs-keyword">const</span> notString = Result.err&lt;<span class="hljs-built_in">number</span>, <span class="hljs-built_in">string</span>&gt;(<span class="hljs-string">'something went wrong'</span>);
-</code></pre>
+								<pre><code class="language-ts"><span class="hljs-keyword">const</span> notString = Result.err&lt;<span class="hljs-built_in">number</span>, <span class="hljs-built_in">string</span>&gt;(<span class="hljs-string">'something went wrong'</span>);</code></pre>
 								<p>Note: <code>null</code> is allowed by the type signature so that so that the function
 									may be used to  <code>throw</code> on passing <code>null</code> rather than constructing a type like
 									<code>Result&lt;null, string&gt;</code>. <code>undefined</code> is allowed as a convenience method for
 								constructing a <code>Result&lt;Unit, E&gt;</code>.</p>
-								<pre><code class="lang-ts"><span class="hljs-keyword">const</span> normalResult = Result.err&lt;<span class="hljs-built_in">number</span>, <span class="hljs-built_in">string</span>&gt;(<span class="hljs-string">'oh no'</span>);
+								<pre><code class="language-ts"><span class="hljs-keyword">const</span> normalResult = Result.err&lt;<span class="hljs-built_in">number</span>, <span class="hljs-built_in">string</span>&gt;(<span class="hljs-string">'oh no'</span>);
 <span class="hljs-keyword">const</span> explicitUnit = Result.err&lt;<span class="hljs-built_in">number</span>, Unit&gt;(Unit);
-<span class="hljs-keyword">const</span> implicitUnit = Result.err&lt;<span class="hljs-built_in">number</span>, Unit&gt;();
-</code></pre>
+<span class="hljs-keyword">const</span> implicitUnit = Result.err&lt;<span class="hljs-built_in">number</span>, Unit&gt;();</code></pre>
 								<p>In the context of an immediate function return, or an arrow function with a
 									single expression value, you do not have to specify the types, so this can be
 								quite convenient.</p>
-								<pre><code class="lang-ts"><span class="hljs-keyword">type</span> SomeData = {
+								<pre><code class="language-ts"><span class="hljs-keyword">type</span> SomeData = {
 <span class="hljs-comment">//...</span>
 };
 
@@ -1148,8 +1127,7 @@ isValid(data) ? Result.ok(<span class="hljs-number">42</span>) : Result.err();
 
 <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">fnValidate</span>(<span class="hljs-params">data: someData</span>): <span class="hljs-title">Result</span>&lt;<span class="hljs-title">number</span>, <span class="hljs-title">Unit</span>&gt; </span>{
 <span class="hljs-keyword">return</span> isValid(data) ? Result.ok(<span class="hljs-number">42</span>) : Result.err();
-}
-</code></pre>
+}</code></pre>
 							</div>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
 							<ul class="tsd-type-parameters">
@@ -1171,7 +1149,7 @@ isValid(data) ? Result.ok(<span class="hljs-number">42</span>) : Result.err();
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/chriskrycho/true-myth/blob/2a9c876/src/result.ts#L581">result.ts:581</a></li>
+									<li>Defined in <a href="https://github.com/chriskrycho/true-myth/blob/98682a8/src/result.ts#L581">result.ts:581</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
@@ -1204,7 +1182,7 @@ isValid(data) ? Result.ok(<span class="hljs-number">42</span>) : Result.err();
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/chriskrycho/true-myth/blob/2a9c876/src/result.ts#L1140">result.ts:1140</a></li>
+									<li>Defined in <a href="https://github.com/chriskrycho/true-myth/blob/98682a8/src/result.ts#L1144">result.ts:1144</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1243,7 +1221,7 @@ isValid(data) ? Result.ok(<span class="hljs-number">42</span>) : Result.err();
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/chriskrycho/true-myth/blob/2a9c876/src/result.ts#L1141">result.ts:1141</a></li>
+									<li>Defined in <a href="https://github.com/chriskrycho/true-myth/blob/98682a8/src/result.ts#L1145">result.ts:1145</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
@@ -1293,7 +1271,7 @@ isValid(data) ? Result.ok(<span class="hljs-number">42</span>) : Result.err();
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/chriskrycho/true-myth/blob/2a9c876/src/result.ts#L475">result.ts:475</a></li>
+									<li>Defined in <a href="https://github.com/chriskrycho/true-myth/blob/98682a8/src/result.ts#L475">result.ts:475</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1331,7 +1309,7 @@ isValid(data) ? Result.ok(<span class="hljs-number">42</span>) : Result.err();
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/chriskrycho/true-myth/blob/2a9c876/src/result.ts#L1483">result.ts:1483</a></li>
+									<li>Defined in <a href="https://github.com/chriskrycho/true-myth/blob/98682a8/src/result.ts#L1487">result.ts:1487</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1371,7 +1349,7 @@ isValid(data) ? Result.ok(<span class="hljs-number">42</span>) : Result.err();
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/chriskrycho/true-myth/blob/2a9c876/src/result.ts#L466">result.ts:466</a></li>
+									<li>Defined in <a href="https://github.com/chriskrycho/true-myth/blob/98682a8/src/result.ts#L466">result.ts:466</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1410,7 +1388,7 @@ isValid(data) ? Result.ok(<span class="hljs-number">42</span>) : Result.err();
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/chriskrycho/true-myth/blob/2a9c876/src/result.ts#L638">result.ts:638</a></li>
+									<li>Defined in <a href="https://github.com/chriskrycho/true-myth/blob/98682a8/src/result.ts#L638">result.ts:638</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1421,7 +1399,7 @@ isValid(data) ? Result.ok(<span class="hljs-number">42</span>) : Result.err();
 								</div>
 								<p><code>Result.map</code> works a lot like <code>Array.prototype.map</code>, but with one important
 									difference. Both <code>Result</code> and <code>Array</code> are containers for other kinds of items,
-									but where <code>Array.prototype.map</code> has 0 to _n_ items, a <code>Result</code> always has
+									but where <code>Array.prototype.map</code> has 0 to <em>n</em> items, a <code>Result</code> always has
 								exactly one item, which is <em>either</em> a success or an error instance.</p>
 								<p>Where <code>Array.prototype.map</code> will apply the mapping function to every item in
 									the array (if there are any), <code>Result.map</code> will only apply the mapping
@@ -1437,7 +1415,7 @@ isValid(data) ? Result.ok(<span class="hljs-number">42</span>) : Result.err();
 									<code>Ok</code> variant, the map function is applied to it, and you get back a new
 								<code>Result</code> with the value transformed, and still wrapped in an <code>Ok</code>.</p>
 								<h4 id="examples">Examples</h4>
-								<pre><code class="lang-ts"><span class="hljs-keyword">import</span> { ok, err, map, toString } <span class="hljs-keyword">from</span> <span class="hljs-string">'true-myth/result'</span>;
+								<pre><code class="language-ts"><span class="hljs-keyword">import</span> { ok, err, map, toString } <span class="hljs-keyword">from</span> <span class="hljs-string">'true-myth/result'</span>;
 <span class="hljs-keyword">const</span> double = <span class="hljs-function"><span class="hljs-params">n</span> =&gt;</span> n * <span class="hljs-number">2</span>;
 
 <span class="hljs-keyword">const</span> anOk = ok(<span class="hljs-number">12</span>);
@@ -1446,8 +1424,7 @@ isValid(data) ? Result.ok(<span class="hljs-number">42</span>) : Result.err();
 
 <span class="hljs-keyword">const</span> anErr = err(<span class="hljs-string">"nothing here!"</span>);
 <span class="hljs-keyword">const</span> mappedErr = map(double, anErr);
-<span class="hljs-built_in">console</span>.log(toString(mappedOk)); <span class="hljs-comment">// Err(nothing here!)</span>
-</code></pre>
+<span class="hljs-built_in">console</span>.log(toString(mappedOk)); <span class="hljs-comment">// Err(nothing here!)</span></code></pre>
 							</div>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
 							<ul class="tsd-type-parameters">
@@ -1513,7 +1490,7 @@ isValid(data) ? Result.ok(<span class="hljs-number">42</span>) : Result.err();
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/chriskrycho/true-myth/blob/2a9c876/src/result.ts#L639">result.ts:639</a></li>
+									<li>Defined in <a href="https://github.com/chriskrycho/true-myth/blob/98682a8/src/result.ts#L639">result.ts:639</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
@@ -1585,7 +1562,7 @@ isValid(data) ? Result.ok(<span class="hljs-number">42</span>) : Result.err();
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/chriskrycho/true-myth/blob/2a9c876/src/result.ts#L802">result.ts:802</a></li>
+									<li>Defined in <a href="https://github.com/chriskrycho/true-myth/blob/98682a8/src/result.ts#L806">result.ts:806</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1597,7 +1574,7 @@ isValid(data) ? Result.ok(<span class="hljs-number">42</span>) : Result.err();
 									your codebase.</p>
 								</div>
 								<h4 id="examples">Examples</h4>
-								<pre><code class="lang-ts"><span class="hljs-keyword">import</span> { ok, err, mapErr, toString } <span class="hljs-keyword">from</span> <span class="hljs-string">'true-myth/result'</span>;
+								<pre><code class="language-ts"><span class="hljs-keyword">import</span> { ok, err, mapErr, toString } <span class="hljs-keyword">from</span> <span class="hljs-string">'true-myth/result'</span>;
 
 <span class="hljs-keyword">const</span> reason = <span class="hljs-function">(<span class="hljs-params">err: { code: <span class="hljs-built_in">number</span>, reason: <span class="hljs-built_in">string</span> }</span>) =&gt;</span> err.reason;
 
@@ -1607,8 +1584,7 @@ isValid(data) ? Result.ok(<span class="hljs-number">42</span>) : Result.err();
 
 <span class="hljs-keyword">const</span> anErr = err({ code: <span class="hljs-number">101</span>, reason: <span class="hljs-string">'bad file'</span> });
 <span class="hljs-keyword">const</span> mappedErr = mapErr(reason, anErr);
-<span class="hljs-built_in">console</span>.log(toString(mappedErr));  <span class="hljs-comment">// Err(bad file)</span>
-</code></pre>
+<span class="hljs-built_in">console</span>.log(toString(mappedErr));  <span class="hljs-comment">// Err(bad file)</span></code></pre>
 							</div>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
 							<ul class="tsd-type-parameters">
@@ -1670,7 +1646,7 @@ isValid(data) ? Result.ok(<span class="hljs-number">42</span>) : Result.err();
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/chriskrycho/true-myth/blob/2a9c876/src/result.ts#L803">result.ts:803</a></li>
+									<li>Defined in <a href="https://github.com/chriskrycho/true-myth/blob/98682a8/src/result.ts#L807">result.ts:807</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
@@ -1743,7 +1719,7 @@ isValid(data) ? Result.ok(<span class="hljs-number">42</span>) : Result.err();
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/chriskrycho/true-myth/blob/2a9c876/src/result.ts#L672">result.ts:672</a></li>
+									<li>Defined in <a href="https://github.com/chriskrycho/true-myth/blob/98682a8/src/result.ts#L672">result.ts:672</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1752,7 +1728,7 @@ isValid(data) ? Result.ok(<span class="hljs-number">42</span>) : Result.err();
 									if <code>result</code> is an <code>Ok</code>, or return a default value if <code>result</code> is an <code>Err</code>.</p>
 								</div>
 								<h4 id="examples">Examples</h4>
-								<pre><code class="lang-ts"><span class="hljs-keyword">import</span> { ok, err, mapOr } <span class="hljs-keyword">from</span> <span class="hljs-string">'true-myth/result'</span>;
+								<pre><code class="language-ts"><span class="hljs-keyword">import</span> { ok, err, mapOr } <span class="hljs-keyword">from</span> <span class="hljs-string">'true-myth/result'</span>;
 
 <span class="hljs-keyword">const</span> length = <span class="hljs-function">(<span class="hljs-params">s: <span class="hljs-built_in">string</span></span>) =&gt;</span> s.length;
 
@@ -1762,8 +1738,7 @@ isValid(data) ? Result.ok(<span class="hljs-number">42</span>) : Result.err();
 
 <span class="hljs-keyword">const</span> anErr = err(<span class="hljs-string">'uh oh'</span>);
 <span class="hljs-keyword">const</span> anErrMapped = mapOr(<span class="hljs-number">0</span>, anErr);
-<span class="hljs-built_in">console</span>.log(anErrMapped);  <span class="hljs-comment">// 0</span>
-</code></pre>
+<span class="hljs-built_in">console</span>.log(anErrMapped);  <span class="hljs-comment">// 0</span></code></pre>
 							</div>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
 							<ul class="tsd-type-parameters">
@@ -1821,7 +1796,7 @@ isValid(data) ? Result.ok(<span class="hljs-number">42</span>) : Result.err();
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/chriskrycho/true-myth/blob/2a9c876/src/result.ts#L673">result.ts:673</a></li>
+									<li>Defined in <a href="https://github.com/chriskrycho/true-myth/blob/98682a8/src/result.ts#L673">result.ts:673</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
@@ -1886,7 +1861,7 @@ isValid(data) ? Result.ok(<span class="hljs-number">42</span>) : Result.err();
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/chriskrycho/true-myth/blob/2a9c876/src/result.ts#L674">result.ts:674</a></li>
+									<li>Defined in <a href="https://github.com/chriskrycho/true-myth/blob/98682a8/src/result.ts#L674">result.ts:674</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
@@ -1977,7 +1952,7 @@ isValid(data) ? Result.ok(<span class="hljs-number">42</span>) : Result.err();
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/chriskrycho/true-myth/blob/2a9c876/src/result.ts#L735">result.ts:735</a></li>
+									<li>Defined in <a href="https://github.com/chriskrycho/true-myth/blob/98682a8/src/result.ts#L737">result.ts:737</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1989,7 +1964,7 @@ isValid(data) ? Result.ok(<span class="hljs-number">42</span>) : Result.err();
 								<p>Like <a href="#mapor"><code>mapOr</code></a> but using a function to transform the error into a
 								usable value instead of simply using a default value.</p>
 								<h4 id="examples">Examples</h4>
-								<pre><code class="lang-ts"><span class="hljs-keyword">import</span> { ok, err, mapOrElse } <span class="hljs-keyword">from</span> <span class="hljs-string">'true-myth/result'</span>;
+								<pre><code class="language-ts"><span class="hljs-keyword">import</span> { ok, err, mapOrElse } <span class="hljs-keyword">from</span> <span class="hljs-string">'true-myth/result'</span>;
 
 <span class="hljs-keyword">const</span> summarize = <span class="hljs-function">(<span class="hljs-params">s: <span class="hljs-built_in">string</span></span>) =&gt;</span> <span class="hljs-string">`The response was: '<span class="hljs-subst">${s}</span>'`</span>;
 <span class="hljs-keyword">const</span> getReason = <span class="hljs-function">(<span class="hljs-params">err: { code: <span class="hljs-built_in">number</span>, reason: <span class="hljs-built_in">string</span> }</span>) =&gt;</span> err.reason;
@@ -2000,8 +1975,7 @@ isValid(data) ? Result.ok(<span class="hljs-number">42</span>) : Result.err();
 
 <span class="hljs-keyword">const</span> errResponse = err({ code: <span class="hljs-number">500</span>, reason: <span class="hljs-string">'Nothing at this endpoint!'</span> });
 <span class="hljs-keyword">const</span> mappedErrAndUnwrapped = mapOrElse(getReason, summarize, errResponse);
-<span class="hljs-built_in">console</span>.log(mappedErrAndUnwrapped);  <span class="hljs-comment">// Nothing at this endpoint!</span>
-</code></pre>
+<span class="hljs-built_in">console</span>.log(mappedErrAndUnwrapped);  <span class="hljs-comment">// Nothing at this endpoint!</span></code></pre>
 							</div>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
 							<ul class="tsd-type-parameters">
@@ -2089,7 +2063,7 @@ isValid(data) ? Result.ok(<span class="hljs-number">42</span>) : Result.err();
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/chriskrycho/true-myth/blob/2a9c876/src/result.ts#L740">result.ts:740</a></li>
+									<li>Defined in <a href="https://github.com/chriskrycho/true-myth/blob/98682a8/src/result.ts#L742">result.ts:742</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
@@ -2172,7 +2146,7 @@ isValid(data) ? Result.ok(<span class="hljs-number">42</span>) : Result.err();
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/chriskrycho/true-myth/blob/2a9c876/src/result.ts#L744">result.ts:744</a></li>
+									<li>Defined in <a href="https://github.com/chriskrycho/true-myth/blob/98682a8/src/result.ts#L746">result.ts:746</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
@@ -2280,7 +2254,7 @@ isValid(data) ? Result.ok(<span class="hljs-number">42</span>) : Result.err();
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/chriskrycho/true-myth/blob/2a9c876/src/result.ts#L1232">result.ts:1232</a></li>
+									<li>Defined in <a href="https://github.com/chriskrycho/true-myth/blob/98682a8/src/result.ts#L1236">result.ts:1236</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -2293,7 +2267,7 @@ isValid(data) ? Result.ok(<span class="hljs-number">42</span>) : Result.err();
 								<p>This is kind of like a poor man&#39;s version of pattern matching, which
 								JavaScript currently lacks.</p>
 								<p>Instead of code like this:</p>
-								<pre><code class="lang-ts"><span class="hljs-keyword">import</span> { Result, isOk, match } <span class="hljs-keyword">from</span> <span class="hljs-string">'true-myth/result'</span>;
+								<pre><code class="language-ts"><span class="hljs-keyword">import</span> { Result, isOk, match } <span class="hljs-keyword">from</span> <span class="hljs-string">'true-myth/result'</span>;
 
 <span class="hljs-keyword">const</span> logValue = <span class="hljs-function">(<span class="hljs-params">mightBeANumber: Result&lt;<span class="hljs-built_in">number</span>, <span class="hljs-built_in">string</span>&gt;</span>) =&gt;</span> {
 <span class="hljs-built_in">console</span>.log(
@@ -2301,10 +2275,9 @@ isOk(mightBeANumber)
 ? unsafelyUnwrap(mightBeANumber).toString()
 : <span class="hljs-string">`There was an error: <span class="hljs-subst">${unsafelyGetErr(mightBeANumber)}</span>`</span>
 );
-};
-</code></pre>
+};</code></pre>
 								<p>...we can write code like this:</p>
-								<pre><code class="lang-ts"><span class="hljs-keyword">import</span> { Result, match } <span class="hljs-keyword">from</span> <span class="hljs-string">'true-myth/result'</span>;
+								<pre><code class="language-ts"><span class="hljs-keyword">import</span> { Result, match } <span class="hljs-keyword">from</span> <span class="hljs-string">'true-myth/result'</span>;
 
 <span class="hljs-keyword">const</span> logValue = <span class="hljs-function">(<span class="hljs-params">mightBeANumber: Result&lt;<span class="hljs-built_in">number</span>, <span class="hljs-built_in">string</span>&gt;</span>) =&gt;</span> {
 <span class="hljs-keyword">const</span> value = match(
@@ -2315,8 +2288,7 @@ Err: <span class="hljs-function"><span class="hljs-params">e</span> =&gt;</span>
 mightBeANumber
 );
 <span class="hljs-built_in">console</span>.log(value);
-};
-</code></pre>
+};</code></pre>
 								<p>This is slightly longer to write, but clearer: the more complex the resulting
 									expression, the hairer it is to understand the ternary. Thus, this is
 									especially convenient for times when there is a complex result, e.g. when
@@ -2352,7 +2324,7 @@ mightBeANumber
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/chriskrycho/true-myth/blob/2a9c876/src/result.ts#L1233">result.ts:1233</a></li>
+									<li>Defined in <a href="https://github.com/chriskrycho/true-myth/blob/98682a8/src/result.ts#L1237">result.ts:1237</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
@@ -2406,7 +2378,7 @@ mightBeANumber
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/chriskrycho/true-myth/blob/2a9c876/src/result.ts#L525">result.ts:525</a></li>
+									<li>Defined in <a href="https://github.com/chriskrycho/true-myth/blob/98682a8/src/result.ts#L525">result.ts:525</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -2416,20 +2388,18 @@ mightBeANumber
 								<p>If you need to create an instance with a specific type (as you do whenever you
 									are not constructing immediately for a function return or as an argument to a
 								function), you can use a type parameter:</p>
-								<pre><code class="lang-ts"><span class="hljs-keyword">const</span> yayNumber = Result.ok&lt;<span class="hljs-built_in">number</span>, <span class="hljs-built_in">string</span>&gt;(<span class="hljs-number">12</span>);
-</code></pre>
+								<pre><code class="language-ts"><span class="hljs-keyword">const</span> yayNumber = Result.ok&lt;<span class="hljs-built_in">number</span>, <span class="hljs-built_in">string</span>&gt;(<span class="hljs-number">12</span>);</code></pre>
 								<p>Note: <code>null</code> is allowed by the type signature so that so that the function
 									may be used to  <code>throw</code> on passing <code>null</code> rather than constructing a type like
 									<code>Result&lt;null, string&gt;</code>. <code>undefined</code> is allowed as a convenience method for
 								constructing a <code>Result&lt;Unit, E&gt;</code>.</p>
-								<pre><code class="lang-ts"><span class="hljs-keyword">const</span> normalResult = Result.ok&lt;<span class="hljs-built_in">number</span>, <span class="hljs-built_in">string</span>&gt;(<span class="hljs-number">42</span>);
+								<pre><code class="language-ts"><span class="hljs-keyword">const</span> normalResult = Result.ok&lt;<span class="hljs-built_in">number</span>, <span class="hljs-built_in">string</span>&gt;(<span class="hljs-number">42</span>);
 <span class="hljs-keyword">const</span> explicitUnit = Result.ok&lt;Unit, <span class="hljs-built_in">string</span>&gt;(Unit);
-<span class="hljs-keyword">const</span> implicitUnit = Result.ok&lt;Unit, <span class="hljs-built_in">string</span>&gt;();
-</code></pre>
+<span class="hljs-keyword">const</span> implicitUnit = Result.ok&lt;Unit, <span class="hljs-built_in">string</span>&gt;();</code></pre>
 								<p>In the context of an immediate function return, or an arrow function with a
 									single expression value, you do not have to specify the types, so this can be
 								quite convenient.</p>
-								<pre><code class="lang-ts"><span class="hljs-keyword">type</span> SomeData = {
+								<pre><code class="language-ts"><span class="hljs-keyword">type</span> SomeData = {
 <span class="hljs-comment">//...</span>
 };
 
@@ -2442,8 +2412,7 @@ isValid(data) ? Result.ok() : Result.err(<span class="hljs-string">'something wa
 
 <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">fnValidate</span>(<span class="hljs-params">data: someData</span>): <span class="hljs-title">Result</span>&lt;<span class="hljs-title">Unit</span>, <span class="hljs-title">string</span>&gt; </span>{
 <span class="hljs-keyword">return</span> isValid(data) ? Result.ok() : Result.err(<span class="hljs-string">'something was wrong'</span>);
-}
-</code></pre>
+}</code></pre>
 							</div>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
 							<ul class="tsd-type-parameters">
@@ -2462,7 +2431,7 @@ isValid(data) ? Result.ok() : Result.err(<span class="hljs-string">'something wa
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/chriskrycho/true-myth/blob/2a9c876/src/result.ts#L526">result.ts:526</a></li>
+									<li>Defined in <a href="https://github.com/chriskrycho/true-myth/blob/98682a8/src/result.ts#L526">result.ts:526</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
@@ -2495,7 +2464,7 @@ isValid(data) ? Result.ok() : Result.err(<span class="hljs-string">'something wa
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/chriskrycho/true-myth/blob/2a9c876/src/result.ts#L954">result.ts:954</a></li>
+									<li>Defined in <a href="https://github.com/chriskrycho/true-myth/blob/98682a8/src/result.ts#L958">result.ts:958</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -2507,7 +2476,7 @@ isValid(data) ? Result.ok() : Result.err(<span class="hljs-string">'something wa
 								<p>This is useful when you want to make sure that something which takes a
 									<code>Result</code> always ends up getting an <code>Ok</code> variant, by supplying a default value
 								for the case that you currently have an <code>Err</code>.</p>
-								<pre><code class="lang-ts"><span class="hljs-keyword">import</span> { ok, err, Result, or } <span class="hljs-keyword">from</span> <span class="hljs-string">'true-utils/result'</span>;
+								<pre><code class="language-ts"><span class="hljs-keyword">import</span> { ok, err, Result, or } <span class="hljs-keyword">from</span> <span class="hljs-string">'true-utils/result'</span>;
 
 <span class="hljs-keyword">const</span> okA = ok&lt;<span class="hljs-built_in">string</span>, <span class="hljs-built_in">string</span>&gt;(<span class="hljs-string">'a'</span>);
 <span class="hljs-keyword">const</span> okB = ok&lt;<span class="hljs-built_in">string</span>, <span class="hljs-built_in">string</span>&gt;(<span class="hljs-string">'b'</span>);
@@ -2517,8 +2486,7 @@ isValid(data) ? Result.ok() : Result.err(<span class="hljs-string">'something wa
 <span class="hljs-built_in">console</span>.log(or(okB, okA).toString());  <span class="hljs-comment">// Ok(A)</span>
 <span class="hljs-built_in">console</span>.log(or(anErr, okA).toString());  <span class="hljs-comment">// Ok(A)</span>
 <span class="hljs-built_in">console</span>.log(or(okB, anErr).toString());  <span class="hljs-comment">// Ok(B)</span>
-<span class="hljs-built_in">console</span>.log(or(anotherErr, anErr).toString());  <span class="hljs-comment">// Err(:headdesk:)</span>
-</code></pre>
+<span class="hljs-built_in">console</span>.log(or(anotherErr, anErr).toString());  <span class="hljs-comment">// Err(:headdesk:)</span></code></pre>
 							</div>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
 							<ul class="tsd-type-parameters">
@@ -2562,7 +2530,7 @@ isValid(data) ? Result.ok() : Result.err(<span class="hljs-string">'something wa
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/chriskrycho/true-myth/blob/2a9c876/src/result.ts#L955">result.ts:955</a></li>
+									<li>Defined in <a href="https://github.com/chriskrycho/true-myth/blob/98682a8/src/result.ts#L959">result.ts:959</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
@@ -2616,7 +2584,7 @@ isValid(data) ? Result.ok() : Result.err(<span class="hljs-string">'something wa
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/chriskrycho/true-myth/blob/2a9c876/src/result.ts#L981">result.ts:981</a></li>
+									<li>Defined in <a href="https://github.com/chriskrycho/true-myth/blob/98682a8/src/result.ts#L985">result.ts:985</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -2683,7 +2651,7 @@ isValid(data) ? Result.ok() : Result.err(<span class="hljs-string">'something wa
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/chriskrycho/true-myth/blob/2a9c876/src/result.ts#L985">result.ts:985</a></li>
+									<li>Defined in <a href="https://github.com/chriskrycho/true-myth/blob/98682a8/src/result.ts#L989">result.ts:989</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
@@ -2754,7 +2722,7 @@ isValid(data) ? Result.ok() : Result.err(<span class="hljs-string">'something wa
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/chriskrycho/true-myth/blob/2a9c876/src/result.ts#L1122">result.ts:1122</a></li>
+									<li>Defined in <a href="https://github.com/chriskrycho/true-myth/blob/98682a8/src/result.ts#L1126">result.ts:1126</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -2794,7 +2762,7 @@ isValid(data) ? Result.ok() : Result.err(<span class="hljs-string">'something wa
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/chriskrycho/true-myth/blob/2a9c876/src/result.ts#L1172">result.ts:1172</a></li>
+									<li>Defined in <a href="https://github.com/chriskrycho/true-myth/blob/98682a8/src/result.ts#L1176">result.ts:1176</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -2812,8 +2780,7 @@ isValid(data) ? Result.ok() : Result.err(<span class="hljs-string">'something wa
 											<th>output</th>
 										</tr>
 									</thead>
-									<tbody>
-										<tr>
+									<tbody><tr>
 											<td><code>toString(ok(42))</code></td>
 											<td><code>Ok(42)</code></td>
 										</tr>
@@ -2837,8 +2804,7 @@ isValid(data) ? Result.ok() : Result.err(<span class="hljs-string">'something wa
 											<td><code>toString(err({ an: &#39;object&#39; }))</code></td>
 											<td><code>Err([object Object])</code></td>
 										</tr>
-									</tbody>
-								</table>
+								</tbody></table>
 							</div>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
 							<ul class="tsd-type-parameters">
@@ -2874,7 +2840,7 @@ isValid(data) ? Result.ok() : Result.err(<span class="hljs-string">'something wa
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/chriskrycho/true-myth/blob/2a9c876/src/result.ts#L1004">result.ts:1004</a></li>
+									<li>Defined in <a href="https://github.com/chriskrycho/true-myth/blob/98682a8/src/result.ts#L1008">result.ts:1008</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -2918,7 +2884,7 @@ isValid(data) ? Result.ok() : Result.err(<span class="hljs-string">'something wa
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/chriskrycho/true-myth/blob/2a9c876/src/result.ts#L1023">result.ts:1023</a></li>
+									<li>Defined in <a href="https://github.com/chriskrycho/true-myth/blob/98682a8/src/result.ts#L1027">result.ts:1027</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -2963,7 +2929,7 @@ isValid(data) ? Result.ok() : Result.err(<span class="hljs-string">'something wa
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/chriskrycho/true-myth/blob/2a9c876/src/result.ts#L1052">result.ts:1052</a></li>
+									<li>Defined in <a href="https://github.com/chriskrycho/true-myth/blob/98682a8/src/result.ts#L1056">result.ts:1056</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -2971,14 +2937,13 @@ isValid(data) ? Result.ok() : Result.err(<span class="hljs-string">'something wa
 									<p>Safely get the value out of the <code>Ok</code> variant of a <a href="#result"><code>Result</code></a>.</p>
 								</div>
 								<p>This is the recommended way to get a value out of a <code>Result</code> most of the time.</p>
-								<pre><code class="lang-ts"><span class="hljs-keyword">import</span> { ok, err, unwrapOr } <span class="hljs-keyword">from</span> <span class="hljs-string">'true-myth/result'</span>;
+								<pre><code class="language-ts"><span class="hljs-keyword">import</span> { ok, err, unwrapOr } <span class="hljs-keyword">from</span> <span class="hljs-string">'true-myth/result'</span>;
 
 <span class="hljs-keyword">const</span> anOk = ok&lt;<span class="hljs-built_in">number</span>, <span class="hljs-built_in">string</span>&gt;(<span class="hljs-number">12</span>);
 <span class="hljs-built_in">console</span>.log(unwrapOr(<span class="hljs-number">0</span>, anOk));  <span class="hljs-comment">// 12</span>
 
 <span class="hljs-keyword">const</span> anErr = err&lt;<span class="hljs-built_in">number</span>, <span class="hljs-built_in">string</span>&gt;(<span class="hljs-string">'nooooo'</span>);
-<span class="hljs-built_in">console</span>.log(unwrapOr(<span class="hljs-number">0</span>, anErr));  <span class="hljs-comment">// 0</span>
-</code></pre>
+<span class="hljs-built_in">console</span>.log(unwrapOr(<span class="hljs-number">0</span>, anErr));  <span class="hljs-comment">// 0</span></code></pre>
 							</div>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
 							<ul class="tsd-type-parameters">
@@ -3017,7 +2982,7 @@ isValid(data) ? Result.ok() : Result.err(<span class="hljs-string">'something wa
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/chriskrycho/true-myth/blob/2a9c876/src/result.ts#L1053">result.ts:1053</a></li>
+									<li>Defined in <a href="https://github.com/chriskrycho/true-myth/blob/98682a8/src/result.ts#L1057">result.ts:1057</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
@@ -3068,7 +3033,7 @@ isValid(data) ? Result.ok() : Result.err(<span class="hljs-string">'something wa
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/chriskrycho/true-myth/blob/2a9c876/src/result.ts#L1095">result.ts:1095</a></li>
+									<li>Defined in <a href="https://github.com/chriskrycho/true-myth/blob/98682a8/src/result.ts#L1099">result.ts:1099</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -3079,7 +3044,7 @@ isValid(data) ? Result.ok() : Result.err(<span class="hljs-string">'something wa
 								<p>This is useful when you need to <em>generate</em> a value (e.g. by using current
 									values in the environment – whether preloaded or by local closure) instead of
 								having a single default value available (as in <a href="#unwrapor"><code>unwrapOr</code></a>).</p>
-								<pre><code class="lang-ts"><span class="hljs-keyword">import</span> { ok, err, unwrapOrElse } <span class="hljs-keyword">from</span> <span class="hljs-string">'true-myth/result'</span>;
+								<pre><code class="language-ts"><span class="hljs-keyword">import</span> { ok, err, unwrapOrElse } <span class="hljs-keyword">from</span> <span class="hljs-string">'true-myth/result'</span>;
 
 <span class="hljs-comment">// You can imagine that someOtherValue might be dynamic.</span>
 <span class="hljs-keyword">const</span> someOtherValue = <span class="hljs-number">2</span>;
@@ -3089,8 +3054,7 @@ isValid(data) ? Result.ok() : Result.err(<span class="hljs-string">'something wa
 <span class="hljs-built_in">console</span>.log(unwrapOrElse(handleErr, anOk));  <span class="hljs-comment">// 42</span>
 
 <span class="hljs-keyword">const</span> anErr = err&lt;<span class="hljs-built_in">number</span>, <span class="hljs-built_in">string</span>&gt;(<span class="hljs-string">'oh teh noes'</span>);
-<span class="hljs-built_in">console</span>.log(unwrapOrElse(handleErr, anErr));  <span class="hljs-comment">// 13</span>
-</code></pre>
+<span class="hljs-built_in">console</span>.log(unwrapOrElse(handleErr, anErr));  <span class="hljs-comment">// 13</span></code></pre>
 							</div>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
 							<ul class="tsd-type-parameters">
@@ -3148,7 +3112,7 @@ isValid(data) ? Result.ok() : Result.err(<span class="hljs-string">'something wa
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/chriskrycho/true-myth/blob/2a9c876/src/result.ts#L1096">result.ts:1096</a></li>
+									<li>Defined in <a href="https://github.com/chriskrycho/true-myth/blob/98682a8/src/result.ts#L1100">result.ts:1100</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
@@ -3215,8 +3179,8 @@ isValid(data) ? Result.ok() : Result.err(<span class="hljs-string">'something wa
 					<div class="tsd-signature tsd-kind-icon">Result<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">object</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/chriskrycho/true-myth/blob/2a9c876/src/result.ts#L1493">result.ts:1493</a></li>
-							<li>Defined in <a href="https://github.com/chriskrycho/true-myth/blob/2a9c876/src/result.ts#L1494">result.ts:1494</a></li>
+							<li>Defined in <a href="https://github.com/chriskrycho/true-myth/blob/98682a8/src/result.ts#L1497">result.ts:1497</a></li>
+							<li>Defined in <a href="https://github.com/chriskrycho/true-myth/blob/98682a8/src/result.ts#L1498">result.ts:1498</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -3232,7 +3196,7 @@ isValid(data) ? Result.ok() : Result.err(<span class="hljs-string">'something wa
 						<div class="tsd-signature tsd-kind-icon">Err<span class="tsd-signature-symbol">:</span> <a href="../classes/_result_.err.html" class="tsd-signature-type">Err</a></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/chriskrycho/true-myth/blob/2a9c876/src/result.ts#L1497">result.ts:1497</a></li>
+								<li>Defined in <a href="https://github.com/chriskrycho/true-myth/blob/98682a8/src/result.ts#L1501">result.ts:1501</a></li>
 							</ul>
 						</aside>
 					</section>
@@ -3242,7 +3206,7 @@ isValid(data) ? Result.ok() : Result.err(<span class="hljs-string">'something wa
 						<div class="tsd-signature tsd-kind-icon">Ok<span class="tsd-signature-symbol">:</span> <a href="../classes/_result_.ok.html" class="tsd-signature-type">Ok</a></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/chriskrycho/true-myth/blob/2a9c876/src/result.ts#L1496">result.ts:1496</a></li>
+								<li>Defined in <a href="https://github.com/chriskrycho/true-myth/blob/98682a8/src/result.ts#L1500">result.ts:1500</a></li>
 							</ul>
 						</aside>
 					</section>
@@ -3252,7 +3216,7 @@ isValid(data) ? Result.ok() : Result.err(<span class="hljs-string">'something wa
 						<div class="tsd-signature tsd-kind-icon">Variant<span class="tsd-signature-symbol">:</span> <a href="../enums/_result_.variant.html" class="tsd-signature-type">Variant</a></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/chriskrycho/true-myth/blob/2a9c876/src/result.ts#L1495">result.ts:1495</a></li>
+								<li>Defined in <a href="https://github.com/chriskrycho/true-myth/blob/98682a8/src/result.ts#L1499">result.ts:1499</a></li>
 							</ul>
 						</aside>
 					</section>
@@ -3262,7 +3226,7 @@ isValid(data) ? Result.ok() : Result.err(<span class="hljs-string">'something wa
 						<div class="tsd-signature tsd-kind-icon">and<span class="tsd-signature-symbol">:</span> <a href="_result_.html#and" class="tsd-signature-type">and</a></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/chriskrycho/true-myth/blob/2a9c876/src/result.ts#L1506">result.ts:1506</a></li>
+								<li>Defined in <a href="https://github.com/chriskrycho/true-myth/blob/98682a8/src/result.ts#L1510">result.ts:1510</a></li>
 							</ul>
 						</aside>
 					</section>
@@ -3272,7 +3236,7 @@ isValid(data) ? Result.ok() : Result.err(<span class="hljs-string">'something wa
 						<div class="tsd-signature tsd-kind-icon">and<wbr>Then<span class="tsd-signature-symbol">:</span> <a href="_result_.html#andthen" class="tsd-signature-type">andThen</a></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/chriskrycho/true-myth/blob/2a9c876/src/result.ts#L1507">result.ts:1507</a></li>
+								<li>Defined in <a href="https://github.com/chriskrycho/true-myth/blob/98682a8/src/result.ts#L1511">result.ts:1511</a></li>
 							</ul>
 						</aside>
 					</section>
@@ -3282,7 +3246,7 @@ isValid(data) ? Result.ok() : Result.err(<span class="hljs-string">'something wa
 						<div class="tsd-signature tsd-kind-icon">ap<span class="tsd-signature-symbol">:</span> <a href="_result_.html#ap" class="tsd-signature-type">ap</a></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/chriskrycho/true-myth/blob/2a9c876/src/result.ts#L1527">result.ts:1527</a></li>
+								<li>Defined in <a href="https://github.com/chriskrycho/true-myth/blob/98682a8/src/result.ts#L1531">result.ts:1531</a></li>
 							</ul>
 						</aside>
 					</section>
@@ -3292,7 +3256,7 @@ isValid(data) ? Result.ok() : Result.err(<span class="hljs-string">'something wa
 						<div class="tsd-signature tsd-kind-icon">cata<span class="tsd-signature-symbol">:</span> <a href="_result_.html#match" class="tsd-signature-type">match</a></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/chriskrycho/true-myth/blob/2a9c876/src/result.ts#L1525">result.ts:1525</a></li>
+								<li>Defined in <a href="https://github.com/chriskrycho/true-myth/blob/98682a8/src/result.ts#L1529">result.ts:1529</a></li>
 							</ul>
 						</aside>
 					</section>
@@ -3302,7 +3266,7 @@ isValid(data) ? Result.ok() : Result.err(<span class="hljs-string">'something wa
 						<div class="tsd-signature tsd-kind-icon">chain<span class="tsd-signature-symbol">:</span> <a href="_result_.html#andthen" class="tsd-signature-type">andThen</a></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/chriskrycho/true-myth/blob/2a9c876/src/result.ts#L1508">result.ts:1508</a></li>
+								<li>Defined in <a href="https://github.com/chriskrycho/true-myth/blob/98682a8/src/result.ts#L1512">result.ts:1512</a></li>
 							</ul>
 						</aside>
 					</section>
@@ -3312,7 +3276,7 @@ isValid(data) ? Result.ok() : Result.err(<span class="hljs-string">'something wa
 						<div class="tsd-signature tsd-kind-icon">equals<span class="tsd-signature-symbol">:</span> <a href="_result_.html#equals" class="tsd-signature-type">equals</a></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/chriskrycho/true-myth/blob/2a9c876/src/result.ts#L1526">result.ts:1526</a></li>
+								<li>Defined in <a href="https://github.com/chriskrycho/true-myth/blob/98682a8/src/result.ts#L1530">result.ts:1530</a></li>
 							</ul>
 						</aside>
 					</section>
@@ -3322,7 +3286,7 @@ isValid(data) ? Result.ok() : Result.err(<span class="hljs-string">'something wa
 						<div class="tsd-signature tsd-kind-icon">err<span class="tsd-signature-symbol">:</span> <a href="_result_.html#err-2" class="tsd-signature-type">err</a></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/chriskrycho/true-myth/blob/2a9c876/src/result.ts#L1501">result.ts:1501</a></li>
+								<li>Defined in <a href="https://github.com/chriskrycho/true-myth/blob/98682a8/src/result.ts#L1505">result.ts:1505</a></li>
 							</ul>
 						</aside>
 					</section>
@@ -3332,7 +3296,7 @@ isValid(data) ? Result.ok() : Result.err(<span class="hljs-string">'something wa
 						<div class="tsd-signature tsd-kind-icon">flat<wbr>Map<span class="tsd-signature-symbol">:</span> <a href="_result_.html#andthen" class="tsd-signature-type">andThen</a></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/chriskrycho/true-myth/blob/2a9c876/src/result.ts#L1509">result.ts:1509</a></li>
+								<li>Defined in <a href="https://github.com/chriskrycho/true-myth/blob/98682a8/src/result.ts#L1513">result.ts:1513</a></li>
 							</ul>
 						</aside>
 					</section>
@@ -3342,7 +3306,7 @@ isValid(data) ? Result.ok() : Result.err(<span class="hljs-string">'something wa
 						<div class="tsd-signature tsd-kind-icon">from<wbr>Maybe<span class="tsd-signature-symbol">:</span> <a href="_result_.html#frommaybe" class="tsd-signature-type">fromMaybe</a></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/chriskrycho/true-myth/blob/2a9c876/src/result.ts#L1522">result.ts:1522</a></li>
+								<li>Defined in <a href="https://github.com/chriskrycho/true-myth/blob/98682a8/src/result.ts#L1526">result.ts:1526</a></li>
 							</ul>
 						</aside>
 					</section>
@@ -3352,7 +3316,7 @@ isValid(data) ? Result.ok() : Result.err(<span class="hljs-string">'something wa
 						<div class="tsd-signature tsd-kind-icon">get<wbr>Or<span class="tsd-signature-symbol">:</span> <a href="_result_.html#unwrapor" class="tsd-signature-type">unwrapOr</a></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/chriskrycho/true-myth/blob/2a9c876/src/result.ts#L1518">result.ts:1518</a></li>
+								<li>Defined in <a href="https://github.com/chriskrycho/true-myth/blob/98682a8/src/result.ts#L1522">result.ts:1522</a></li>
 							</ul>
 						</aside>
 					</section>
@@ -3362,7 +3326,7 @@ isValid(data) ? Result.ok() : Result.err(<span class="hljs-string">'something wa
 						<div class="tsd-signature tsd-kind-icon">get<wbr>OrElse<span class="tsd-signature-symbol">:</span> <a href="_result_.html#unwraporelse" class="tsd-signature-type">unwrapOrElse</a></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/chriskrycho/true-myth/blob/2a9c876/src/result.ts#L1520">result.ts:1520</a></li>
+								<li>Defined in <a href="https://github.com/chriskrycho/true-myth/blob/98682a8/src/result.ts#L1524">result.ts:1524</a></li>
 							</ul>
 						</aside>
 					</section>
@@ -3372,7 +3336,7 @@ isValid(data) ? Result.ok() : Result.err(<span class="hljs-string">'something wa
 						<div class="tsd-signature tsd-kind-icon">is<wbr>Err<span class="tsd-signature-symbol">:</span> <a href="_result_.html#iserr" class="tsd-signature-type">isErr</a></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/chriskrycho/true-myth/blob/2a9c876/src/result.ts#L1499">result.ts:1499</a></li>
+								<li>Defined in <a href="https://github.com/chriskrycho/true-myth/blob/98682a8/src/result.ts#L1503">result.ts:1503</a></li>
 							</ul>
 						</aside>
 					</section>
@@ -3382,7 +3346,7 @@ isValid(data) ? Result.ok() : Result.err(<span class="hljs-string">'something wa
 						<div class="tsd-signature tsd-kind-icon">is<wbr>Instance<span class="tsd-signature-symbol">:</span> <a href="_result_.html#isinstance" class="tsd-signature-type">isInstance</a></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/chriskrycho/true-myth/blob/2a9c876/src/result.ts#L1528">result.ts:1528</a></li>
+								<li>Defined in <a href="https://github.com/chriskrycho/true-myth/blob/98682a8/src/result.ts#L1532">result.ts:1532</a></li>
 							</ul>
 						</aside>
 					</section>
@@ -3392,7 +3356,7 @@ isValid(data) ? Result.ok() : Result.err(<span class="hljs-string">'something wa
 						<div class="tsd-signature tsd-kind-icon">is<wbr>Ok<span class="tsd-signature-symbol">:</span> <a href="_result_.html#isok" class="tsd-signature-type">isOk</a></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/chriskrycho/true-myth/blob/2a9c876/src/result.ts#L1498">result.ts:1498</a></li>
+								<li>Defined in <a href="https://github.com/chriskrycho/true-myth/blob/98682a8/src/result.ts#L1502">result.ts:1502</a></li>
 							</ul>
 						</aside>
 					</section>
@@ -3402,7 +3366,7 @@ isValid(data) ? Result.ok() : Result.err(<span class="hljs-string">'something wa
 						<div class="tsd-signature tsd-kind-icon">map<span class="tsd-signature-symbol">:</span> <a href="_result_.html#map" class="tsd-signature-type">map</a></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/chriskrycho/true-myth/blob/2a9c876/src/result.ts#L1502">result.ts:1502</a></li>
+								<li>Defined in <a href="https://github.com/chriskrycho/true-myth/blob/98682a8/src/result.ts#L1506">result.ts:1506</a></li>
 							</ul>
 						</aside>
 					</section>
@@ -3412,7 +3376,7 @@ isValid(data) ? Result.ok() : Result.err(<span class="hljs-string">'something wa
 						<div class="tsd-signature tsd-kind-icon">map<wbr>Err<span class="tsd-signature-symbol">:</span> <a href="_result_.html#maperr" class="tsd-signature-type">mapErr</a></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/chriskrycho/true-myth/blob/2a9c876/src/result.ts#L1505">result.ts:1505</a></li>
+								<li>Defined in <a href="https://github.com/chriskrycho/true-myth/blob/98682a8/src/result.ts#L1509">result.ts:1509</a></li>
 							</ul>
 						</aside>
 					</section>
@@ -3422,7 +3386,7 @@ isValid(data) ? Result.ok() : Result.err(<span class="hljs-string">'something wa
 						<div class="tsd-signature tsd-kind-icon">map<wbr>Or<span class="tsd-signature-symbol">:</span> <a href="_result_.html#mapor" class="tsd-signature-type">mapOr</a></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/chriskrycho/true-myth/blob/2a9c876/src/result.ts#L1503">result.ts:1503</a></li>
+								<li>Defined in <a href="https://github.com/chriskrycho/true-myth/blob/98682a8/src/result.ts#L1507">result.ts:1507</a></li>
 							</ul>
 						</aside>
 					</section>
@@ -3432,7 +3396,7 @@ isValid(data) ? Result.ok() : Result.err(<span class="hljs-string">'something wa
 						<div class="tsd-signature tsd-kind-icon">map<wbr>OrElse<span class="tsd-signature-symbol">:</span> <a href="_result_.html#maporelse" class="tsd-signature-type">mapOrElse</a></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/chriskrycho/true-myth/blob/2a9c876/src/result.ts#L1504">result.ts:1504</a></li>
+								<li>Defined in <a href="https://github.com/chriskrycho/true-myth/blob/98682a8/src/result.ts#L1508">result.ts:1508</a></li>
 							</ul>
 						</aside>
 					</section>
@@ -3442,7 +3406,7 @@ isValid(data) ? Result.ok() : Result.err(<span class="hljs-string">'something wa
 						<div class="tsd-signature tsd-kind-icon">match<span class="tsd-signature-symbol">:</span> <a href="_result_.html#match" class="tsd-signature-type">match</a></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/chriskrycho/true-myth/blob/2a9c876/src/result.ts#L1524">result.ts:1524</a></li>
+								<li>Defined in <a href="https://github.com/chriskrycho/true-myth/blob/98682a8/src/result.ts#L1528">result.ts:1528</a></li>
 							</ul>
 						</aside>
 					</section>
@@ -3452,7 +3416,7 @@ isValid(data) ? Result.ok() : Result.err(<span class="hljs-string">'something wa
 						<div class="tsd-signature tsd-kind-icon">ok<span class="tsd-signature-symbol">:</span> <a href="_result_.html#ok-2" class="tsd-signature-type">ok</a></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/chriskrycho/true-myth/blob/2a9c876/src/result.ts#L1500">result.ts:1500</a></li>
+								<li>Defined in <a href="https://github.com/chriskrycho/true-myth/blob/98682a8/src/result.ts#L1504">result.ts:1504</a></li>
 							</ul>
 						</aside>
 					</section>
@@ -3462,7 +3426,7 @@ isValid(data) ? Result.ok() : Result.err(<span class="hljs-string">'something wa
 						<div class="tsd-signature tsd-kind-icon">or<span class="tsd-signature-symbol">:</span> <a href="_result_.html#or" class="tsd-signature-type">or</a></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/chriskrycho/true-myth/blob/2a9c876/src/result.ts#L1510">result.ts:1510</a></li>
+								<li>Defined in <a href="https://github.com/chriskrycho/true-myth/blob/98682a8/src/result.ts#L1514">result.ts:1514</a></li>
 							</ul>
 						</aside>
 					</section>
@@ -3472,7 +3436,7 @@ isValid(data) ? Result.ok() : Result.err(<span class="hljs-string">'something wa
 						<div class="tsd-signature tsd-kind-icon">or<wbr>Else<span class="tsd-signature-symbol">:</span> <a href="_result_.html#orelse" class="tsd-signature-type">orElse</a></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/chriskrycho/true-myth/blob/2a9c876/src/result.ts#L1511">result.ts:1511</a></li>
+								<li>Defined in <a href="https://github.com/chriskrycho/true-myth/blob/98682a8/src/result.ts#L1515">result.ts:1515</a></li>
 							</ul>
 						</aside>
 					</section>
@@ -3482,7 +3446,7 @@ isValid(data) ? Result.ok() : Result.err(<span class="hljs-string">'something wa
 						<div class="tsd-signature tsd-kind-icon">to<wbr>Maybe<span class="tsd-signature-symbol">:</span> <a href="_result_.html#tomaybe" class="tsd-signature-type">toMaybe</a></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/chriskrycho/true-myth/blob/2a9c876/src/result.ts#L1521">result.ts:1521</a></li>
+								<li>Defined in <a href="https://github.com/chriskrycho/true-myth/blob/98682a8/src/result.ts#L1525">result.ts:1525</a></li>
 							</ul>
 						</aside>
 					</section>
@@ -3492,7 +3456,7 @@ isValid(data) ? Result.ok() : Result.err(<span class="hljs-string">'something wa
 						<div class="tsd-signature tsd-kind-icon">to<wbr>String<span class="tsd-signature-symbol">:</span> <a href="" class="tsd-signature-type">toString</a></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/chriskrycho/true-myth/blob/2a9c876/src/result.ts#L1523">result.ts:1523</a></li>
+								<li>Defined in <a href="https://github.com/chriskrycho/true-myth/blob/98682a8/src/result.ts#L1527">result.ts:1527</a></li>
 							</ul>
 						</aside>
 					</section>
@@ -3502,7 +3466,7 @@ isValid(data) ? Result.ok() : Result.err(<span class="hljs-string">'something wa
 						<div class="tsd-signature tsd-kind-icon">unsafe<wbr>Get<span class="tsd-signature-symbol">:</span> <a href="_result_.html#unsafelyunwrap" class="tsd-signature-type">unsafelyUnwrap</a></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/chriskrycho/true-myth/blob/2a9c876/src/result.ts#L1514">result.ts:1514</a></li>
+								<li>Defined in <a href="https://github.com/chriskrycho/true-myth/blob/98682a8/src/result.ts#L1518">result.ts:1518</a></li>
 							</ul>
 						</aside>
 					</section>
@@ -3512,7 +3476,7 @@ isValid(data) ? Result.ok() : Result.err(<span class="hljs-string">'something wa
 						<div class="tsd-signature tsd-kind-icon">unsafely<wbr>Get<span class="tsd-signature-symbol">:</span> <a href="_result_.html#unsafelyunwrap" class="tsd-signature-type">unsafelyUnwrap</a></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/chriskrycho/true-myth/blob/2a9c876/src/result.ts#L1513">result.ts:1513</a></li>
+								<li>Defined in <a href="https://github.com/chriskrycho/true-myth/blob/98682a8/src/result.ts#L1517">result.ts:1517</a></li>
 							</ul>
 						</aside>
 					</section>
@@ -3522,7 +3486,7 @@ isValid(data) ? Result.ok() : Result.err(<span class="hljs-string">'something wa
 						<div class="tsd-signature tsd-kind-icon">unsafely<wbr>Get<wbr>Err<span class="tsd-signature-symbol">:</span> <a href="_result_.html#unsafelyunwraperr" class="tsd-signature-type">unsafelyUnwrapErr</a></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/chriskrycho/true-myth/blob/2a9c876/src/result.ts#L1516">result.ts:1516</a></li>
+								<li>Defined in <a href="https://github.com/chriskrycho/true-myth/blob/98682a8/src/result.ts#L1520">result.ts:1520</a></li>
 							</ul>
 						</aside>
 					</section>
@@ -3532,7 +3496,7 @@ isValid(data) ? Result.ok() : Result.err(<span class="hljs-string">'something wa
 						<div class="tsd-signature tsd-kind-icon">unsafely<wbr>Unwrap<span class="tsd-signature-symbol">:</span> <a href="_result_.html#unsafelyunwrap" class="tsd-signature-type">unsafelyUnwrap</a></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/chriskrycho/true-myth/blob/2a9c876/src/result.ts#L1512">result.ts:1512</a></li>
+								<li>Defined in <a href="https://github.com/chriskrycho/true-myth/blob/98682a8/src/result.ts#L1516">result.ts:1516</a></li>
 							</ul>
 						</aside>
 					</section>
@@ -3542,7 +3506,7 @@ isValid(data) ? Result.ok() : Result.err(<span class="hljs-string">'something wa
 						<div class="tsd-signature tsd-kind-icon">unsafely<wbr>Unwrap<wbr>Err<span class="tsd-signature-symbol">:</span> <a href="_result_.html#unsafelyunwraperr" class="tsd-signature-type">unsafelyUnwrapErr</a></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/chriskrycho/true-myth/blob/2a9c876/src/result.ts#L1515">result.ts:1515</a></li>
+								<li>Defined in <a href="https://github.com/chriskrycho/true-myth/blob/98682a8/src/result.ts#L1519">result.ts:1519</a></li>
 							</ul>
 						</aside>
 					</section>
@@ -3552,7 +3516,7 @@ isValid(data) ? Result.ok() : Result.err(<span class="hljs-string">'something wa
 						<div class="tsd-signature tsd-kind-icon">unwrap<wbr>Or<span class="tsd-signature-symbol">:</span> <a href="_result_.html#unwrapor" class="tsd-signature-type">unwrapOr</a></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/chriskrycho/true-myth/blob/2a9c876/src/result.ts#L1517">result.ts:1517</a></li>
+								<li>Defined in <a href="https://github.com/chriskrycho/true-myth/blob/98682a8/src/result.ts#L1521">result.ts:1521</a></li>
 							</ul>
 						</aside>
 					</section>
@@ -3562,7 +3526,7 @@ isValid(data) ? Result.ok() : Result.err(<span class="hljs-string">'something wa
 						<div class="tsd-signature tsd-kind-icon">unwrap<wbr>OrElse<span class="tsd-signature-symbol">:</span> <a href="_result_.html#unwraporelse" class="tsd-signature-type">unwrapOrElse</a></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/chriskrycho/true-myth/blob/2a9c876/src/result.ts#L1519">result.ts:1519</a></li>
+								<li>Defined in <a href="https://github.com/chriskrycho/true-myth/blob/98682a8/src/result.ts#L1523">result.ts:1523</a></li>
 							</ul>
 						</aside>
 					</section>

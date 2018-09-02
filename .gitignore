@@ -60,3 +60,6 @@ typings/
 
 # Don't commit compiled type defs
 *.d.ts
+
+# Exclude auto-created jsconfig.json
+jsconfig.json

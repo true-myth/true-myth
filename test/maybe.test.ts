@@ -333,6 +333,73 @@ describe('`Maybe` pure functions', () => {
     const obj = { random: 'nonsense' };
     expect(Maybe.isInstance(obj)).toBe(false);
   });
+
+  test('`find`', () => {
+    const theValue = 4;
+    const pred = (v: number) => v === theValue;
+
+    const empty = [];
+
+    expect(Maybe.find(pred, empty).variant).toBe(Maybe.Variant.Nothing);
+
+    const missingTheValue = [1, 2, 3];
+    expect(Maybe.find(pred, missingTheValue).variant).toBe(Maybe.Variant.Nothing);
+
+    const hasTheValue = [1, 2, 3, theValue];
+    const result = Maybe.find(pred, hasTheValue);
+    expect(result.variant).toBe(Maybe.Variant.Just);
+    expect((result as Just<number>).value).toBe(theValue);
+
+    type Item = { count: number; name: string };
+    type Response = Array<Item>;
+
+    // This is more about testing the types with the currying; it's functionally
+    // covered already.
+    const array: Response = [{ count: 1, name: 'potato' }, { count: 10, name: 'waffles' }];
+    const findAtLeast5 = Maybe.find(({ count }: Item) => count > 5);
+    const found = findAtLeast5(array);
+    expect(found.variant).toBe(Maybe.Variant.Just);
+    expect((found as Just<Item>).value).toEqual(array[1]);
+  });
+
+  test('`head`', () => {
+    expect(Maybe.head([])).toEqual(Maybe.nothing());
+    expect(Maybe.head([1])).toEqual(Maybe.just(1));
+    expect(Maybe.head([1, 2, 3])).toEqual(Maybe.just(1));
+  });
+
+  test('`last`', () => {
+    expect(Maybe.last([])).toEqual(Maybe.nothing());
+    expect(Maybe.last([1])).toEqual(Maybe.just(1));
+    expect(Maybe.last([1, 2, 3])).toEqual(Maybe.just(3));
+  });
+
+  test('`all`', () => {
+    type ExpectedOutputType = Maybe<Array<string | number>>;
+
+    let onlyJusts = [Maybe.just(2), Maybe.just('three')];
+    let onlyJustsAll = Maybe.all(...onlyJusts);
+    assertType<ExpectedOutputType>(onlyJustsAll);
+    expect(onlyJustsAll).toEqual(Maybe.just([2, 'three']));
+
+    let hasNothing = [Maybe.just(2), Maybe.nothing<string>()];
+    let hasNothingAll = Maybe.all(...hasNothing);
+    assertType<ExpectedOutputType>(hasNothingAll);
+    expect(hasNothingAll).toEqual(Maybe.nothing());
+  });
+
+  test('`tuple`', () => {
+    type Tuple2 = [Maybe<string>, Maybe<number>];
+    let invalid: Tuple2 = [Maybe.just('wat'), Maybe.nothing()];
+    const invalidResult = Maybe.tuple(invalid);
+    expect(invalidResult).toEqual(Maybe.nothing());
+
+    type Tuple3 = [Maybe<string>, Maybe<number>, Maybe<{ neat: string }>];
+    let valid: Tuple3 = [Maybe.just('hey'), Maybe.just(4), Maybe.just({ neat: 'yeah' })];
+    const result = Maybe.tuple(valid);
+    expect(result).toEqual(Maybe.just(['hey', 4, { neat: 'yeah' }]));
+    assertType<Maybe<[string, number, { neat: string }]>>(result);
+  });
 });
 
 // We aren't even really concerned with the "runtime" behavior here, which we
