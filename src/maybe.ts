@@ -1356,7 +1356,7 @@ export function find<T>(
 
   @param array The array to get the first item from.
  */
-export function head<T>(array: T[]): Maybe<T> {
+export function head<T>(array: Array<T | null | undefined>): Maybe<T> {
   return Maybe.of(array[0]);
 }
 
