@@ -1379,7 +1379,7 @@ export const first = head;
 
   @param array The array to get the first item from.
  */
-export function last<T>(array: T[]): Maybe<T> {
+export function last<T>(array: Array<T | null | undefined>): Maybe<T> {
   return Maybe.of(array[array.length - 1]);
 }
 
