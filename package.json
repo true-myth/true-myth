@@ -14,7 +14,7 @@
   "bugs": {
     "url": "https://github.com/chriskrycho/true-myth/issues"
   },
-  "version": "2.1.4",
+  "version": "2.1.5",
   "main": "dist/cjs/index.js",
   "module": "dist/es/index.js",
   "types": "index.d.ts",
@@ -45,7 +45,8 @@
   },
   "files": [
     "*.d.ts",
-    "dist"
+    "dist",
+    "ember-addon.js"
   ],
   "license": "MIT",
   "devDependencies": {
