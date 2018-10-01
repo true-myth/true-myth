@@ -374,18 +374,30 @@ describe('`Maybe` pure functions', () => {
     expect(Maybe.last([1, 2, 3])).toEqual(Maybe.just(3));
   });
 
-  test('`all`', () => {
-    type ExpectedOutputType = Maybe<Array<string | number>>;
+  describe('`all`', () => {
+    test('with basic types', () => {
+      type ExpectedOutputType = Maybe<Array<string | number>>;
 
-    let onlyJusts = [Maybe.just(2), Maybe.just('three')];
-    let onlyJustsAll = Maybe.all(...onlyJusts);
-    assertType<ExpectedOutputType>(onlyJustsAll);
-    expect(onlyJustsAll).toEqual(Maybe.just([2, 'three']));
+      let onlyJusts = [Maybe.just(2), Maybe.just('three')];
+      let onlyJustsAll = Maybe.all(...onlyJusts);
+      assertType<ExpectedOutputType>(onlyJustsAll);
+      expect(onlyJustsAll).toEqual(Maybe.just([2, 'three']));
+  
+      let hasNothing = [Maybe.just(2), Maybe.nothing<string>()];
+      let hasNothingAll = Maybe.all(...hasNothing);
+      assertType<ExpectedOutputType>(hasNothingAll);
+      expect(hasNothingAll).toEqual(Maybe.nothing());
+    });
 
-    let hasNothing = [Maybe.just(2), Maybe.nothing<string>()];
-    let hasNothingAll = Maybe.all(...hasNothing);
-    assertType<ExpectedOutputType>(hasNothingAll);
-    expect(hasNothingAll).toEqual(Maybe.nothing());
+    test('with arrays', () => {
+      type ExpectedOutputType = Maybe<Array<number | string[]>>;
+
+      let nestedArrays = [Maybe.just(1), Maybe.just(['two', 'three'])];
+      let nestedArraysAll = Maybe.all(...nestedArrays);
+
+      assertType<ExpectedOutputType>(nestedArraysAll);
+      expect(nestedArraysAll).toEqual(Maybe.just([1, ['two', 'three']]));
+    });
   });
 
   test('`tuple`', () => {

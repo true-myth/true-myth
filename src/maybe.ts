@@ -1407,17 +1407,28 @@ export function last<T>(array: Array<T | null | undefined>): Maybe<T> {
   heteregenous arrays; TS *also* fails to infer correctly for anything but
   homogeneous arrays when using that approach.
 
-  @param args The `Maybe`s to resolve to a single `Maybe`.
+  @param maybes The `Maybe`s to resolve to a single `Maybe`.
  */
 export function all<T extends Maybe<any>>(
-  ...args: T[]
+  ...maybes: T[]
 ): T extends Maybe<infer U> ? Maybe<U[]> : never {
   // @ts-ignore -- this is indeed the correct implementation, but TS doesn't
   //               correctly parse the types in the context of `reduce`.
-  return args.reduce(
-    (result, maybe) => result.andThen(as => maybe.map(a => as.concat(a))),
-    Maybe.just([] as T[])
-  );
+  let result: T extends Maybe<infer U> ? Maybe<U[]> : never = Maybe.just([]);
+  maybes.forEach(maybe => {
+    // @ts-ignore -- this is indeed the correct implementation, but TS doesn't
+    //               correctly parse the types in the context of `reduce`.
+    result = result.andThen(accumulatedMaybes =>
+      maybe.map(m => {
+        accumulatedMaybes.push(m);
+        return accumulatedMaybes;
+      })
+    );
+  });
+
+  // @ts-ignore -- this is indeed the correct implementation, but TS doesn't
+  //               correctly parse the types in the context of `reduce`.
+  return result;
 }
 
 /**
