@@ -1409,27 +1409,21 @@ export function last<T>(array: Array<T | null | undefined>): Maybe<T> {
 
   @param maybes The `Maybe`s to resolve to a single `Maybe`.
  */
-export function all<T extends Maybe<any>>(
-  ...maybes: T[]
-): T extends Maybe<infer U> ? Maybe<U[]> : never {
-  // @ts-ignore -- this is indeed the correct implementation, but TS doesn't
-  //               correctly parse the types in the context of `reduce`.
-  let result: T extends Maybe<infer U> ? Maybe<U[]> : never = Maybe.just([]);
+export function all<T extends Array<Maybe<unknown>>>(...maybes: T): All<T> {
+  let result: All<T> = Maybe.just([] as Maybe<unknown>[]) as All<T>;
   maybes.forEach(maybe => {
-    // @ts-ignore -- this is indeed the correct implementation, but TS doesn't
-    //               correctly parse the types in the context of `reduce`.
     result = result.andThen(accumulatedMaybes =>
       maybe.map(m => {
         accumulatedMaybes.push(m);
         return accumulatedMaybes;
       })
-    );
+    ) as All<T>;
   });
 
-  // @ts-ignore -- this is indeed the correct implementation, but TS doesn't
-  //               correctly parse the types in the context of `reduce`.
   return result;
 }
+
+type All<T extends Array<Maybe<any>>> = T extends Array<Maybe<infer U>> ? Maybe<Array<U>> : never;
 
 /**
   Given a tuple of `Maybe`s, return a `Maybe` of the tuple values.
@@ -1469,6 +1463,7 @@ export function all<T extends Maybe<any>>(
   @param maybes: the tuple of `Maybe`s to convert to a `Maybe` of tuple values.
  */
 // @ts-ignore -- this doesn't type-check, but it is correct!
+export function tuple<T>(maybes: [Maybe<T>]): Maybe<[T]>;
 export function tuple<T, U>(maybes: [Maybe<T>, Maybe<U>]): Maybe<[T, U]>;
 export function tuple<T, U, V>(maybes: [Maybe<T>, Maybe<U>, Maybe<V>]): Maybe<[T, U, V]>;
 export function tuple<T, U, V, W>(
@@ -1477,7 +1472,7 @@ export function tuple<T, U, V, W>(
 export function tuple<T, U, V, W, X>(
   maybes: [Maybe<T>, Maybe<U>, Maybe<V>, Maybe<W>, Maybe<X>]
 ): Maybe<[T, U, V, W, X]> {
-  // @ts-ignore -- this doesn't type-check, but it is correct!
+  // @ts-ignore -- this doesn't type-check, but it works correctly.
   return all(...maybes);
 }
 
