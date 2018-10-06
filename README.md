@@ -6,14 +6,14 @@
   <a href='https://travis-ci.org/chriskrycho/true-myth'>
     <img src='https://img.shields.io/travis/chriskrycho/true-myth/master.svg?style=flat-square' alt='Travis `master` build status'>
   </a>
-  <a href='https://github.com/chriskrycho/true-myth/blob/master/package.json#L78-L85'>
+  <a href='https://github.com/true-myth/true-myth/blob/master/package.json#L78-L85'>
     <img src='https://img.shields.io/badge/Jest-100%25-0a7c00.svg?style=flat-square' alt='Test coverage: 100%'>
   </a>
   <a href='https://www.npmjs.com/package/true-myth'>
     <img src='https://img.shields.io/npm/v/true-myth.svg?style=flat-square' alt='npm'>
   </a>
   <img src='https://img.shields.io/badge/stability-active-purple.svg?style=flat-square&colorB=663399' alt='Stability: Active'>
-  <a href='https://github.com/chriskrycho/true-myth/blob/master/LICENSE'>
+  <a href='https://github.com/true-myth/true-myth/blob/master/LICENSE'>
     <img src='https://img.shields.io/github/license/chriskrycho/true-myth.svg?style=flat-square'>
   </a>
   <br/>
@@ -23,16 +23,13 @@
   <a href='http://true-myth.js.org'>
     <img src='https://img.shields.io/badge/docs-Typedoc-009fb5.svg?style=flat-square' alt='docs built with Typedoc'>
   </a>
-  <a href='https://gitter.im/true-myth/Lobby'>
-    <img src='https://img.shields.io/gitter/room/true-myth/Lobby.svg?style=flat-square' alt='chat in Gitter'>
-  </a>
   <a href='https://www.patreon.com/chriskrycho'>
     <img src='https://img.shields.io/badge/sponsor-Patreon-F76959.svg?style=flat-square' alt='support me on Patreon!'>
   </a>
 </p>
 
 <p align="center">
-  <a href='https://github.com/chriskrycho/true-myth'>README</a> • <a href='https://true-myth.js.org'>API docs</a> • <a href='https://github.com/chriskrycho/true-myth/tree/master/src'>Source</a>  • <a href='http://www.chriskrycho.com/2017/announcing-true-myth-10.html'>Intro blog post</a>
+  <a href='https://github.com/true-myth/true-myth'>README</a> • <a href='https://true-myth.js.org'>API docs</a> • <a href='https://github.com/true-myth/true-myth/tree/master/src'>Source</a>  • <a href='http://www.chriskrycho.com/2017/announcing-true-myth-10.html'>Intro blog post</a>
 </p>
 
 ## Overview
