@@ -1,4 +1,4 @@
-<h1 align="center"><a href='https://github.com/chriskrycho/true-myth'>True Myth</a></h1>
+<h1 align="center"><a href='https://github.com/true-myth/true-myth'>True Myth</a></h1>
 
 <p align="center">A library for safer programming in JavaScript, with first-class support for TypeScript, with <code>Maybe</code> and <code>Result</code> types, and supporting both a functional style and a more traditional method-call style.</p>
 
