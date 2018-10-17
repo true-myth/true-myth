@@ -47,6 +47,20 @@ describe('`Result` pure functions', () => {
     expect(withUnit).toEqual(Result.err(Unit));
   });
 
+  test('`tryOrElse`', () => {
+    const handleError = e => e;
+    const operation = () => 2 + 2;
+    const badOperation = () => {
+      throw 'kablooey';
+    };
+
+    const res = Result.tryOrElse(handleError, operation);
+    expect(res).toBeInstanceOf(Result.Ok);
+
+    const res2 = Result.tryOrElse(handleError, badOperation);
+    expect(res2).toBeInstanceOf(Result.Err);
+  });
+
   test('`isOk`', () => {
     const anOk = Result.ok('neat');
     expect(Result.isOk(anOk)).toBe(true);
