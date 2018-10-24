@@ -589,18 +589,18 @@ export function err<T, E>(error?: E): Result<T, Unit> | Result<T, E> {
   function returns.
 
   ```ts
-  const aSuccessfulOperation = () => 2 + 2
+  const aSuccessfulOperation = () => 2 + 2;
 
   const anOkResult = Result.tryOrElse(
     (e) => e,
     aSuccessfulOperation
-  ) // => Ok(4)
+  ); // => Ok(4)
 
   const thisOperationThrows = () => throw 'Bummer'
 
   const anErrResult = Result.tryOrElse((e) => e, () => {
-    thisOperationThrows()
-  }) // => Err('Bummer')
+    thisOperationThrows();
+  }); // => Err('Bummer')
  ```
 
   @param onError A function that takes `e` exception and returns what will
