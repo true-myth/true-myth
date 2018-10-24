@@ -584,6 +584,35 @@ export function err<T, E>(error?: E): Result<T, Unit> | Result<T, E> {
 }
 
 /**
+  Execute the provided callback, wrapping the return value in `Result.Ok` or
+  `Result.Err(error)` if there is an exception.
+
+  ```ts
+  const aSuccessfulOperation = () => 2 + 2;
+
+  const anOkResult = Result.tryOr('Oh noes!!1', () => {
+    aSuccessfulOperation()
+  }); // => Ok(4)
+
+  const thisOperationThrows = () => throw new Error('Bummer');
+
+  const anErrResult = Result.tryOr('Oh noes!!1', () => {
+    thisOperationThrows();
+  }); // => Err('Oh noes!!1')
+ ```
+
+  @param error The error value in case of an exception
+  @param callback The callback to try executing
+ */
+export function tryOr<T, E>(error: E, callback: () => T): Result<T, E> {
+  try {
+    return Result.ok(callback());
+  } catch {
+    return Result.err(error);
+  }
+}
+
+/**
   Execute the provided callback, wrapping the return value in `Result.Ok`.
   If there is an exception, return a `Result.Err` of whatever the `onError`
   function returns.
@@ -1532,11 +1561,12 @@ export const Result = {
   Variant,
   Ok,
   Err,
-  tryOrElse,
   isOk,
   isErr,
   ok,
   err,
+  tryOr,
+  tryOrElse,
   map,
   mapOr,
   mapOrElse,
