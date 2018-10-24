@@ -1476,6 +1476,65 @@ export function tuple<T, U, V, W, X>(
   return all(...maybes);
 }
 
+/**
+  Safely extract a key from an object, returning `Just` if the key has a value
+  on the object and `Nothing` if it does not.
+
+  The check is type-safe: you won't even be able to compile if you try to look
+  up a property that TypeScript *knows* doesn't exist on the object.
+
+  ```ts
+  type Person = { name?: string };
+
+  const me: Person = { name: 'Chris' };
+  console.log(Maybe.prop('name', me)); // Just('Chris')
+
+  const nobody: Person = {};
+  console.log(Maybe.prop('name', nobody)); // Nothing
+  ```
+
+  However, it also works correctly with dictionary types:
+
+  ```ts
+  type Dict<T> = { [key: string]: T };
+
+  const score: Dict<number> = {
+    player1: 0,
+    player2: 1
+  };
+
+  console.log(Maybe.prop('player1', score)); // Just(0)
+  console.log(Maybe.prop('player2', score)); // Just(1)
+  console.log(Maybe.prop('player3', score)); // Nothing
+  ```
+
+  The order of keys is so that it can be partially applied:
+
+  ```ts
+  type Person = { name?: string };
+  
+  const lookupName = Maybe.prop('name');
+  
+  const me: Person = { name: 'Chris' };
+  console.log(lookupName(me)); // Just('Chris')
+
+  const nobody: Person = {};
+  console.log(lookupName(nobody)); // Nothing
+  ```
+  
+  @param key The key to pull out of the object.
+  @param obj The object to look up the key from.
+ */
+export function prop<T, K extends keyof T>(key: K, obj: T): Maybe<T[K]>;
+export function prop<T, K extends keyof T>(key: K): (obj: T) => Maybe<T[K]>;
+export function prop<T, K extends keyof T>(
+  key: K,
+  obj?: T
+): Maybe<T[K]> | ((obj: T) => Maybe<T[K]>) {
+  const op = (a: T) => Maybe.of(a[key]);
+  return curry1(op, obj);
+}
+
 /** A value which may (`Just<T>`) or may not (`Nothing`) be present. */
 export type Maybe<T> = Just<T> | Nothing<T>;
 export const Maybe = {
@@ -1519,6 +1578,7 @@ export const Maybe = {
   equals,
   ap,
   isInstance,
+  prop,
 };
 
 export default Maybe;

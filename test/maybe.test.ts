@@ -412,6 +412,19 @@ describe('`Maybe` pure functions', () => {
     expect(result).toEqual(Maybe.just(['hey', 4, { neat: 'yeah' }]));
     assertType<Maybe<[string, number, { neat: string }]>>(result);
   });
+
+  test('`prop`', () => {
+    type OptionalFoo = { foo?: string };
+    let a: OptionalFoo = { foo: 'bar' };
+    expect(Maybe.prop('foo', a)).toEqual(Maybe.just(a.foo));
+
+    let b: OptionalFoo = {};
+    expect(Maybe.prop('foo', b)).toEqual(Maybe.nothing());
+
+    type Dict<T> = { [key: string]: T };
+    let c: Dict<string> = {};
+    expect(Maybe.prop('wat', c)).toEqual(Maybe.nothing());
+  });
 });
 
 // We aren't even really concerned with the "runtime" behavior here, which we
