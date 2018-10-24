@@ -47,6 +47,21 @@ describe('`Result` pure functions', () => {
     expect(withUnit).toEqual(Result.err(Unit));
   });
 
+  test('`tryOr`', () => {
+    const errorMessage = 'dang';
+    const operation = () => 2 + 2;
+
+    const res = Result.tryOr(errorMessage, operation);
+    expect(res).toBeInstanceOf(Result.Ok);
+
+    const badOperation = () => {
+      throw new Error('Danger, danger, Will Robinson');
+    };
+
+    const res2 = Result.tryOr(errorMessage, badOperation);
+    expect(res2).toBeInstanceOf(Result.Err);
+  });
+
   test('`isOk`', () => {
     const anOk = Result.ok('neat');
     expect(Result.isOk(anOk)).toBe(true);
