@@ -613,6 +613,39 @@ export function tryOr<T, E>(error: E, callback: () => T): Result<T, E> {
 }
 
 /**
+  Execute the provided callback, wrapping the return value in `Result.Ok`.
+  If there is an exception, return a `Result.Err` of whatever the `onError`
+  function returns.
+
+  ```ts
+  const aSuccessfulOperation = () => 2 + 2;
+
+  const anOkResult = Result.tryOrElse(
+    (e) => e,
+    aSuccessfulOperation
+  ); // => Ok(4)
+
+  const thisOperationThrows = () => throw 'Bummer'
+
+  const anErrResult = Result.tryOrElse((e) => e, () => {
+    thisOperationThrows();
+  }); // => Err('Bummer')
+ ```
+
+  @param onError A function that takes `e` exception and returns what will
+  be wrapped in a `Result.Err`
+  @param callback The callback to try executing
+ */
+
+export function tryOrElse<T, E>(onError: (e: unknown) => E, callback: () => T): Result<T, E> {
+  try {
+    return Result.ok(callback());
+  } catch (e) {
+    return Result.err(onError(e));
+  }
+}
+
+/**
   Map over a `Result` instance: apply the function to the wrapped value if the
   instance is `Ok`, and return the wrapped error value wrapped as a new `Err` of
   the correct type (`Result<U, E>`) if the instance is `Err`.
@@ -1533,6 +1566,7 @@ export const Result = {
   ok,
   err,
   tryOr,
+  tryOrElse,
   map,
   mapOr,
   mapOrElse,
