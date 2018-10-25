@@ -413,17 +413,17 @@ describe('`Maybe` pure functions', () => {
     assertType<Maybe<[string, number, { neat: string }]>>(result);
   });
 
-  test('`prop`', () => {
+  test('`propert`', () => {
     type OptionalFoo = { foo?: string };
     let a: OptionalFoo = { foo: 'bar' };
-    expect(Maybe.prop('foo', a)).toEqual(Maybe.just(a.foo));
+    expect(Maybe.property('foo', a)).toEqual(Maybe.just(a.foo));
 
     let b: OptionalFoo = {};
-    expect(Maybe.prop('foo', b)).toEqual(Maybe.nothing());
+    expect(Maybe.property('foo', b)).toEqual(Maybe.nothing());
 
     type Dict<T> = { [key: string]: T };
     let c: Dict<string> = {};
-    expect(Maybe.prop('wat', c)).toEqual(Maybe.nothing());
+    expect(Maybe.property('wat', c)).toEqual(Maybe.nothing());
   });
 });
 

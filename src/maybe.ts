@@ -1487,10 +1487,10 @@ export function tuple<T, U, V, W, X>(
   type Person = { name?: string };
 
   const me: Person = { name: 'Chris' };
-  console.log(Maybe.prop('name', me)); // Just('Chris')
+  console.log(Maybe.property('name', me)); // Just('Chris')
 
   const nobody: Person = {};
-  console.log(Maybe.prop('name', nobody)); // Nothing
+  console.log(Maybe.property('name', nobody)); // Nothing
   ```
 
   However, it also works correctly with dictionary types:
@@ -1503,9 +1503,9 @@ export function tuple<T, U, V, W, X>(
     player2: 1
   };
 
-  console.log(Maybe.prop('player1', score)); // Just(0)
-  console.log(Maybe.prop('player2', score)); // Just(1)
-  console.log(Maybe.prop('player3', score)); // Nothing
+  console.log(Maybe.property('player1', score)); // Just(0)
+  console.log(Maybe.property('player2', score)); // Just(1)
+  console.log(Maybe.property('player3', score)); // Nothing
   ```
 
   The order of keys is so that it can be partially applied:
@@ -1513,7 +1513,7 @@ export function tuple<T, U, V, W, X>(
   ```ts
   type Person = { name?: string };
   
-  const lookupName = Maybe.prop('name');
+  const lookupName = Maybe.property('name');
   
   const me: Person = { name: 'Chris' };
   console.log(lookupName(me)); // Just('Chris')
@@ -1525,9 +1525,9 @@ export function tuple<T, U, V, W, X>(
   @param key The key to pull out of the object.
   @param obj The object to look up the key from.
  */
-export function prop<T, K extends keyof T>(key: K, obj: T): Maybe<T[K]>;
-export function prop<T, K extends keyof T>(key: K): (obj: T) => Maybe<T[K]>;
-export function prop<T, K extends keyof T>(
+export function property<T, K extends keyof T>(key: K, obj: T): Maybe<T[K]>;
+export function property<T, K extends keyof T>(key: K): (obj: T) => Maybe<T[K]>;
+export function property<T, K extends keyof T>(
   key: K,
   obj?: T
 ): Maybe<T[K]> | ((obj: T) => Maybe<T[K]>) {
@@ -1578,7 +1578,7 @@ export const Maybe = {
   equals,
   ap,
   isInstance,
-  prop,
+  property,
 };
 
 export default Maybe;
