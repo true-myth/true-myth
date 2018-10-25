@@ -76,6 +76,48 @@ export interface MaybeShape<T> {
 
   /** Method variant for [`Maybe.ap`](../modules/_maybe_.html#ap) */
   ap<U>(this: Maybe<(val: T) => U>, val: Maybe<T>): Maybe<U>;
+
+  /**
+    Method variant for [`Maybe.prop`](../modules/_maybe_.html#prop)
+
+        If you have a `Maybe` of an object type, you can do `thatMaybe.prop('a key')`
+    to look up the next layer down in the object.
+
+    ```ts
+    type DeepOptionalType = {
+      something?: {
+        with?: {
+          deeperKeys?: string;
+        }
+      }
+    };
+
+    const fullySet: DeepType = {
+      something: {
+        with: {
+          deeperKeys: 'like this'
+        }
+      }
+    };
+
+    const deepJust = Maybe.of(fullySet)
+      .prop('something')
+      .prop('with')
+      .prop('deeperKeys');
+
+    console.log(deepJust); // Just('like this');
+
+    const partiallyUnset: DeepType = { something: { } };
+
+    const deepEmpty = Maybe.of(partiallyUnset)
+      .prop('something')
+      .prop('with')
+      .prop('deeperKeys');
+
+    console.log(deepEmpty); // Nothing
+    ```
+   */
+  property<K extends keyof T>(this: Maybe<T>, key: K): Maybe<T[K]>;
 }
 
 /**
@@ -249,6 +291,50 @@ export class Just<T> implements MaybeShape<T> {
   ap<A, B>(this: Maybe<(val: A) => B>, val: Maybe<A>): Maybe<B> {
     return ap(this, val);
   }
+
+  /**
+    Method variant for [`Maybe.prop`](../modules/_maybe_.html#prop)
+
+        If you have a `Maybe` of an object type, you can do `thatMaybe.prop('a key')`
+    to look up the next layer down in the object.
+
+    ```ts
+    type DeepOptionalType = {
+      something?: {
+        with?: {
+          deeperKeys?: string;
+        }
+      }
+    };
+
+    const fullySet: DeepType = {
+      something: {
+        with: {
+          deeperKeys: 'like this'
+        }
+      }
+    };
+
+    const deepJust = Maybe.of(fullySet)
+      .prop('something')
+      .prop('with')
+      .prop('deeperKeys');
+
+    console.log(deepJust); // Just('like this');
+
+    const partiallyUnset: DeepType = { something: { } };
+
+    const deepEmpty = Maybe.of(partiallyUnset)
+      .prop('something')
+      .prop('with')
+      .prop('deeperKeys');
+
+    console.log(deepEmpty); // Nothing
+    ```
+   */
+  property<K extends keyof T>(this: Maybe<T>, key: K): Maybe<T[K]> {
+    return this.andThen(property(key));
+  }
 }
 
 /**
@@ -390,6 +476,50 @@ export class Nothing<T> implements MaybeShape<T> {
   /** Method variant for [`Maybe.ap`](../modules/_maybe_.html#ap) */
   ap<A, B>(this: Maybe<(val: A) => B>, val: Maybe<A>): Maybe<B> {
     return ap(this, val);
+  }
+
+  /**
+    Method variant for [`Maybe.prop`](../modules/_maybe_.html#prop)
+
+        If you have a `Maybe` of an object type, you can do `thatMaybe.prop('a key')`
+    to look up the next layer down in the object.
+
+    ```ts
+    type DeepOptionalType = {
+      something?: {
+        with?: {
+          deeperKeys?: string;
+        }
+      }
+    };
+
+    const fullySet: DeepType = {
+      something: {
+        with: {
+          deeperKeys: 'like this'
+        }
+      }
+    };
+
+    const deepJust = Maybe.of(fullySet)
+      .prop('something')
+      .prop('with')
+      .prop('deeperKeys');
+
+    console.log(deepJust); // Just('like this');
+
+    const partiallyUnset: DeepType = { something: { } };
+
+    const deepEmpty = Maybe.of(partiallyUnset)
+      .prop('something')
+      .prop('with')
+      .prop('deeperKeys');
+
+    console.log(deepEmpty); // Nothing
+    ```
+   */
+  property<K extends keyof T>(this: Maybe<T>, key: K): Maybe<T[K]> {
+    return this.andThen(property(key));
   }
 }
 
@@ -1487,10 +1617,10 @@ export function tuple<T, U, V, W, X>(
   type Person = { name?: string };
 
   const me: Person = { name: 'Chris' };
-  console.log(Maybe.property('name', me)); // Just('Chris')
+  console.log(Maybe.prop('name', me)); // Just('Chris')
 
   const nobody: Person = {};
-  console.log(Maybe.property('name', nobody)); // Nothing
+  console.log(Maybe.prop('name', nobody)); // Nothing
   ```
 
   However, it also works correctly with dictionary types:
@@ -1503,9 +1633,9 @@ export function tuple<T, U, V, W, X>(
     player2: 1
   };
 
-  console.log(Maybe.property('player1', score)); // Just(0)
-  console.log(Maybe.property('player2', score)); // Just(1)
-  console.log(Maybe.property('player3', score)); // Nothing
+  console.log(Maybe.prop('player1', score)); // Just(0)
+  console.log(Maybe.prop('player2', score)); // Just(1)
+  console.log(Maybe.prop('player3', score)); // Nothing
   ```
 
   The order of keys is so that it can be partially applied:
@@ -1513,7 +1643,7 @@ export function tuple<T, U, V, W, X>(
   ```ts
   type Person = { name?: string };
   
-  const lookupName = Maybe.property('name');
+  const lookupName = Maybe.prop('name');
   
   const me: Person = { name: 'Chris' };
   console.log(lookupName(me)); // Just('Chris')
