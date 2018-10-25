@@ -413,16 +413,31 @@ describe('`Maybe` pure functions', () => {
     assertType<Maybe<[string, number, { neat: string }]>>(result);
   });
 
-  test('`get`', () => {
+  test('`property`', () => {
     type Person = { name?: string };
     let chris: Person = { name: 'chris' };
-    expect(Maybe.get('name', chris)).toEqual(Maybe.just(chris.name));
+    expect(Maybe.property('name', chris)).toEqual(Maybe.just(chris.name));
 
     let nobody: Person = {};
-    expect(Maybe.get('name', nobody)).toEqual(Maybe.nothing());
+    expect(Maybe.property('name', nobody)).toEqual(Maybe.nothing());
 
     type Dict<T> = { [key: string]: T };
     let dict: Dict<string> = { quux: 'warble' };
+    expect(Maybe.property('quux', dict)).toEqual(Maybe.just('warble'));
+    expect(Maybe.property('wat', dict)).toEqual(Maybe.nothing());
+  });
+
+  test('`get`', () => {
+    type Person = { name?: string };
+    let chris = { name: 'chris' };
+    let justChris: Maybe<Person> = Maybe.just(chris);
+    expect(Maybe.get('name', justChris)).toEqual(Maybe.just(chris.name));
+
+    let nobody: Maybe<Person> = Maybe.nothing();
+    expect(Maybe.get('name', nobody)).toEqual(Maybe.nothing());
+
+    type Dict<T> = { [key: string]: T };
+    let dict: Maybe<Dict<string>> = Maybe.just({ quux: 'warble' });
     expect(Maybe.get('quux', dict)).toEqual(Maybe.just('warble'));
     expect(Maybe.get('wat', dict)).toEqual(Maybe.nothing());
   });
