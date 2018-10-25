@@ -703,6 +703,26 @@ foo.match({
 							<td>You can also use the static method <code>Maybe.toString</code></td>
 						</tr>
 						<tr>
+							<td><code>Just#get</code></td>
+							<td><code>Just#unsafelyUnwrap</code></td>
+							<td>You can also use the static method <code>Maybe.unsafelyUnwrap</code>, aliased as <code>Maybe.unsafeGet</code> and <code>Maybe.unsafelyGet</code></td>
+						</tr>
+						<tr>
+							<td><code>Nothing#get</code></td>
+							<td><code>Nothing#unsafelyUnwrap</code></td>
+							<td>You can also use the static method <code>Maybe.unsafelyUnwrap</code>, aliased as <code>Maybe.unsafeGet</code> and <code>Maybe.unsafelyGet</code></td>
+						</tr>
+						<tr>
+							<td><code>Just#getOrElse</code></td>
+							<td><code>Just#unwrapOrElse</code></td>
+							<td>You can also use the static method <code>Maybe.unwrapOrElse</code>, aliased as <code>Maybe.getOrElse</code></td>
+						</tr>
+						<tr>
+							<td><code>Nothing#getOrElse</code></td>
+							<td><code>Nothing#unwrapOrElse</code></td>
+							<td>You can also use the static method <code>Maybe.unwrapOrElse</code>, aliased as <code>Maybe.getOrElse</code></td>
+						</tr>
+						<tr>
 							<td><code>Just#tag</code></td>
 							<td><code>Just#variant</code></td>
 							<td></td>
