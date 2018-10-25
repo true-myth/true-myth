@@ -76,6 +76,48 @@ export interface MaybeShape<T> {
 
   /** Method variant for [`Maybe.ap`](../modules/_maybe_.html#ap) */
   ap<U>(this: Maybe<(val: T) => U>, val: Maybe<T>): Maybe<U>;
+
+  /**
+    Method variant for [`Maybe.get`](../modules/_maybe_.html#prop)
+
+        If you have a `Maybe` of an object type, you can do `thatMaybe.get('a key')`
+    to look up the next layer down in the object.
+
+    ```ts
+    type DeepOptionalType = {
+      something?: {
+        with?: {
+          deeperKeys?: string;
+        }
+      }
+    };
+
+    const fullySet: DeepType = {
+      something: {
+        with: {
+          deeperKeys: 'like this'
+        }
+      }
+    };
+
+    const deepJust = Maybe.of(fullySet)
+      .get('something')
+      .get('with')
+      .get('deeperKeys');
+
+    console.log(deepJust); // Just('like this');
+
+    const partiallyUnset: DeepType = { something: { } };
+
+    const deepEmpty = Maybe.of(partiallyUnset)
+      .get('something')
+      .get('with')
+      .get('deeperKeys');
+
+    console.log(deepEmpty); // Nothing
+    ```
+   */
+  get<K extends keyof T>(this: Maybe<T>, key: K): Maybe<T[K]>;
 }
 
 /**
@@ -249,6 +291,50 @@ export class Just<T> implements MaybeShape<T> {
   ap<A, B>(this: Maybe<(val: A) => B>, val: Maybe<A>): Maybe<B> {
     return ap(this, val);
   }
+
+  /**
+    Method variant for [`Maybe.get`](../modules/_maybe_.html#prop)
+
+        If you have a `Maybe` of an object type, you can do `thatMaybe.get('a key')`
+    to look up the next layer down in the object.
+
+    ```ts
+    type DeepOptionalType = {
+      something?: {
+        with?: {
+          deeperKeys?: string;
+        }
+      }
+    };
+
+    const fullySet: DeepType = {
+      something: {
+        with: {
+          deeperKeys: 'like this'
+        }
+      }
+    };
+
+    const deepJust = Maybe.of(fullySet)
+      .get('something')
+      .get('with')
+      .get('deeperKeys');
+
+    console.log(deepJust); // Just('like this');
+
+    const partiallyUnset: DeepType = { something: { } };
+
+    const deepEmpty = Maybe.of(partiallyUnset)
+      .get('something')
+      .get('with')
+      .get('deeperKeys');
+
+    console.log(deepEmpty); // Nothing
+    ```
+   */
+  get<K extends keyof T>(this: Maybe<T>, key: K): Maybe<T[K]> {
+    return this.andThen(property(key));
+  }
 }
 
 /**
@@ -390,6 +476,50 @@ export class Nothing<T> implements MaybeShape<T> {
   /** Method variant for [`Maybe.ap`](../modules/_maybe_.html#ap) */
   ap<A, B>(this: Maybe<(val: A) => B>, val: Maybe<A>): Maybe<B> {
     return ap(this, val);
+  }
+
+  /**
+    Method variant for [`Maybe.get`](../modules/_maybe_.html#prop)
+
+        If you have a `Maybe` of an object type, you can do `thatMaybe.get('a key')`
+    to look up the next layer down in the object.
+
+    ```ts
+    type DeepOptionalType = {
+      something?: {
+        with?: {
+          deeperKeys?: string;
+        }
+      }
+    };
+
+    const fullySet: DeepType = {
+      something: {
+        with: {
+          deeperKeys: 'like this'
+        }
+      }
+    };
+
+    const deepJust = Maybe.of(fullySet)
+      .get('something')
+      .get('with')
+      .get('deeperKeys');
+
+    console.log(deepJust); // Just('like this');
+
+    const partiallyUnset: DeepType = { something: { } };
+
+    const deepEmpty = Maybe.of(partiallyUnset)
+      .get('something')
+      .get('with')
+      .get('deeperKeys');
+
+    console.log(deepEmpty); // Nothing
+    ```
+   */
+  get<K extends keyof T>(this: Maybe<T>, key: K): Maybe<T[K]> {
+    return this.andThen(property(key));
   }
 }
 
@@ -1476,6 +1606,124 @@ export function tuple<T, U, V, W, X>(
   return all(...maybes);
 }
 
+/**
+  Safely extract a key from an object, returning `Just` if the key has a value
+  on the object and `Nothing` if it does not.
+
+  The check is type-safe: you won't even be able to compile if you try to look
+  up a property that TypeScript *knows* doesn't exist on the object.
+
+  ```ts
+  type Person = { name?: string };
+
+  const me: Person = { name: 'Chris' };
+  console.log(Maybe.property('name', me)); // Just('Chris')
+
+  const nobody: Person = {};
+  console.log(Maybe.property('name', nobody)); // Nothing
+  ```
+
+  However, it also works correctly with dictionary types:
+
+  ```ts
+  type Dict<T> = { [key: string]: T };
+
+  const score: Dict<number> = {
+    player1: 0,
+    player2: 1
+  };
+
+  console.log(Maybe.property('player1', score)); // Just(0)
+  console.log(Maybe.property('player2', score)); // Just(1)
+  console.log(Maybe.property('player3', score)); // Nothing
+  ```
+
+  The order of keys is so that it can be partially applied:
+
+  ```ts
+  type Person = { name?: string };
+  
+  const lookupName = Maybe.property('name');
+  
+  const me: Person = { name: 'Chris' };
+  console.log(lookupName(me)); // Just('Chris')
+
+  const nobody: Person = {};
+  console.log(lookupName(nobody)); // Nothing
+  ```
+  
+  @param key The key to pull out of the object.
+  @param obj The object to look up the key from.
+ */
+export function property<T, K extends keyof T>(key: K, obj: T): Maybe<T[K]>;
+export function property<T, K extends keyof T>(key: K): (obj: T) => Maybe<T[K]>;
+export function property<T, K extends keyof T>(
+  key: K,
+  obj?: T
+): Maybe<T[K]> | ((obj: T) => Maybe<T[K]>) {
+  const op = (a: T) => Maybe.of(a[key]);
+  return curry1(op, obj);
+}
+
+/**
+  Safely extract a key from a Maybe of an object, returning `Just` if the key
+  has a value on the object and `Nothing` if it does not. (Like `Maybe.property`
+  but operating on a `Maybe<T>` rather than directly on a `T`.)
+
+  The check is type-safe: you won't even be able to compile if you try to look
+  up a property that TypeScript *knows* doesn't exist on the object.
+
+  ```ts
+  type Person = { name?: string };
+
+  const me: Maybe<Person> = Maybe.just({ name: 'Chris' });
+  console.log(Maybe.get('name', me)); // Just('Chris')
+
+  const nobody = Maybe.nothing<Person>();
+  console.log(Maybe.get('name', nobody)); // Nothing
+  ```
+
+  However, it also works correctly with dictionary types:
+
+  ```ts
+  type Dict<T> = { [key: string]: T };
+
+  const score: Maybe<Dict<number>> = Maybe.just({
+    player1: 0,
+    player2: 1
+  });
+
+  console.log(Maybe.get('player1', score)); // Just(0)
+  console.log(Maybe.get('player2', score)); // Just(1)
+  console.log(Maybe.get('player3', score)); // Nothing
+  ```
+
+  The order of keys is so that it can be partially applied:
+
+  ```ts
+  type Person = { name?: string };
+  
+  const lookupName = Maybe.get('name');
+  
+  const me: Person = { name: 'Chris' };
+  console.log(lookupName(me)); // Just('Chris')
+
+  const nobody: Person = {};
+  console.log(lookupName(nobody)); // Nothing
+  ```
+  
+  @param key The key to pull out of the object.
+  @param obj The object to look up the key from.
+ */
+export function get<T, K extends keyof T>(key: K, maybeObj: Maybe<T>): Maybe<T[K]>;
+export function get<T, K extends keyof T>(key: K): (maybeObj: Maybe<T>) => Maybe<T[K]>;
+export function get<T, K extends keyof T>(
+  key: K,
+  maybeObj?: Maybe<T>
+): Maybe<T[K]> | ((maybeObj: Maybe<T>) => Maybe<T[K]>) {
+  return curry1(Maybe.andThen(property<T, K>(key)), maybeObj);
+}
+
 /** A value which may (`Just<T>`) or may not (`Nothing`) be present. */
 export type Maybe<T> = Just<T> | Nothing<T>;
 export const Maybe = {
@@ -1519,6 +1767,8 @@ export const Maybe = {
   equals,
   ap,
   isInstance,
+  property,
+  get,
 };
 
 export default Maybe;

@@ -382,7 +382,7 @@ describe('`Maybe` pure functions', () => {
       let onlyJustsAll = Maybe.all(...onlyJusts);
       assertType<ExpectedOutputType>(onlyJustsAll);
       expect(onlyJustsAll).toEqual(Maybe.just([2, 'three']));
-  
+
       let hasNothing = [Maybe.just(2), Maybe.nothing<string>()];
       let hasNothingAll = Maybe.all(...hasNothing);
       assertType<ExpectedOutputType>(hasNothingAll);
@@ -411,6 +411,35 @@ describe('`Maybe` pure functions', () => {
     const result = Maybe.tuple(valid);
     expect(result).toEqual(Maybe.just(['hey', 4, { neat: 'yeah' }]));
     assertType<Maybe<[string, number, { neat: string }]>>(result);
+  });
+
+  test('`property`', () => {
+    type Person = { name?: string };
+    let chris: Person = { name: 'chris' };
+    expect(Maybe.property('name', chris)).toEqual(Maybe.just(chris.name));
+
+    let nobody: Person = {};
+    expect(Maybe.property('name', nobody)).toEqual(Maybe.nothing());
+
+    type Dict<T> = { [key: string]: T };
+    let dict: Dict<string> = { quux: 'warble' };
+    expect(Maybe.property('quux', dict)).toEqual(Maybe.just('warble'));
+    expect(Maybe.property('wat', dict)).toEqual(Maybe.nothing());
+  });
+
+  test('`get`', () => {
+    type Person = { name?: string };
+    let chris = { name: 'chris' };
+    let justChris: Maybe<Person> = Maybe.just(chris);
+    expect(Maybe.get('name', justChris)).toEqual(Maybe.just(chris.name));
+
+    let nobody: Maybe<Person> = Maybe.nothing();
+    expect(Maybe.get('name', nobody)).toEqual(Maybe.nothing());
+
+    type Dict<T> = { [key: string]: T };
+    let dict: Maybe<Dict<string>> = Maybe.just({ quux: 'warble' });
+    expect(Maybe.get('quux', dict)).toEqual(Maybe.just('warble'));
+    expect(Maybe.get('wat', dict)).toEqual(Maybe.nothing());
   });
 });
 
@@ -613,6 +642,26 @@ describe('`Maybe.Just` class', () => {
 
     expect(result.equals(Maybe.of('3'))).toBe(true);
   });
+
+  test('`property` method', () => {
+    type DeepType = { something?: { with?: { deeper?: { 'key names'?: string } } } };
+
+    const allSet: DeepType = { something: { with: { deeper: { 'key names': 'like this' } } } };
+    const deepResult = new Maybe.Just(allSet)
+      .get('something')
+      .get('with')
+      .get('deeper')
+      .get('key names');
+    expect(deepResult).toEqual(Maybe.just('like this'));
+
+    const allEmpty: DeepType = {};
+    const emptyResult = new Maybe.Just(allEmpty)
+      .get('something')
+      .get('with')
+      .get('deeper')
+      .get('key names');
+    expect(emptyResult).toEqual(Maybe.nothing());
+  });
 });
 
 describe('`Maybe.Nothing` class', () => {
@@ -750,6 +799,17 @@ describe('`Maybe.Nothing` class', () => {
     const result = fn.ap(val);
 
     expect(result.isNothing()).toBe(true);
+  });
+
+  test('`property` method', () => {
+    type DeepType = { something?: { with?: { deeper?: { 'key names'?: string } } } };
+
+    const result = new Maybe.Nothing<DeepType>()
+      .get('something')
+      .get('with')
+      .get('deeper')
+      .get('key names');
+    expect(result).toEqual(Maybe.nothing());
   });
 });
 
