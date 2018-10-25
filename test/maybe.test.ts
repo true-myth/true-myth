@@ -413,18 +413,18 @@ describe('`Maybe` pure functions', () => {
     assertType<Maybe<[string, number, { neat: string }]>>(result);
   });
 
-  test('`property`', () => {
+  test('`get`', () => {
     type Person = { name?: string };
     let chris: Person = { name: 'chris' };
-    expect(Maybe.property('name', chris)).toEqual(Maybe.just(chris.name));
+    expect(Maybe.get('name', chris)).toEqual(Maybe.just(chris.name));
 
     let nobody: Person = {};
-    expect(Maybe.property('name', nobody)).toEqual(Maybe.nothing());
+    expect(Maybe.get('name', nobody)).toEqual(Maybe.nothing());
 
     type Dict<T> = { [key: string]: T };
     let dict: Dict<string> = { quux: 'warble' };
-    expect(Maybe.property('quux', dict)).toEqual(Maybe.just('warble'));
-    expect(Maybe.property('wat', dict)).toEqual(Maybe.nothing());
+    expect(Maybe.get('quux', dict)).toEqual(Maybe.just('warble'));
+    expect(Maybe.get('wat', dict)).toEqual(Maybe.nothing());
   });
 });
 
@@ -633,18 +633,18 @@ describe('`Maybe.Just` class', () => {
 
     const allSet: DeepType = { something: { with: { deeper: { 'key names': 'like this' } } } };
     const deepResult = new Maybe.Just(allSet)
-      .property('something')
-      .property('with')
-      .property('deeper')
-      .property('key names');
+      .get('something')
+      .get('with')
+      .get('deeper')
+      .get('key names');
     expect(deepResult).toEqual(Maybe.just('like this'));
 
     const allEmpty: DeepType = {};
     const emptyResult = new Maybe.Just(allEmpty)
-      .property('something')
-      .property('with')
-      .property('deeper')
-      .property('key names');
+      .get('something')
+      .get('with')
+      .get('deeper')
+      .get('key names');
     expect(emptyResult).toEqual(Maybe.nothing());
   });
 });
@@ -790,10 +790,10 @@ describe('`Maybe.Nothing` class', () => {
     type DeepType = { something?: { with?: { deeper?: { 'key names'?: string } } } };
 
     const result = new Maybe.Nothing<DeepType>()
-      .property('something')
-      .property('with')
-      .property('deeper')
-      .property('key names');
+      .get('something')
+      .get('with')
+      .get('deeper')
+      .get('key names');
     expect(result).toEqual(Maybe.nothing());
   });
 });
