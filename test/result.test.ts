@@ -48,18 +48,18 @@ describe('`Result` pure functions', () => {
   });
 
   test('`tryOr`', () => {
-    const errorMessage = 'dang';
-    const operation = () => 2 + 2;
+    const message = 'dang';
+    const goodOperation = () => 2 + 2;
 
-    const res = Result.tryOr(errorMessage, operation);
-    expect(res).toBeInstanceOf(Result.Ok);
+    expect(Result.tryOr(message, goodOperation)).toEqual(Result.ok(4));
+    expect(Result.tryOr(message)(goodOperation)).toEqual(Result.ok(4));
 
     const badOperation = () => {
       throw new Error('Danger, danger, Will Robinson');
     };
 
-    const res2 = Result.tryOr(errorMessage, badOperation);
-    expect(res2).toBeInstanceOf(Result.Err);
+    expect(Result.tryOr(message, badOperation)).toEqual(Result.err(message));
+    expect(Result.tryOr(message)(badOperation)).toEqual(Result.err(message));
   });
 
   test('`tryOrElse`', () => {

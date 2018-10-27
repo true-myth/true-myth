@@ -604,12 +604,21 @@ export function err<T, E>(error?: E): Result<T, Unit> | Result<T, E> {
   @param error The error value in case of an exception
   @param callback The callback to try executing
  */
-export function tryOr<T, E>(error: E, callback: () => T): Result<T, E> {
-  try {
-    return Result.ok(callback());
-  } catch {
-    return Result.err(error);
-  }
+export function tryOr<T, E>(error: E, callback: () => T): Result<T, E>;
+export function tryOr<T, E>(error: E): (callback: () => T) => Result<T, E>;
+export function tryOr<T, E>(
+  error: E,
+  callback?: () => T
+): Result<T, E> | ((callback: () => T) => Result<T, E>) {
+  const op = (cb: () => T) => {
+    try {
+      return Result.ok<T, E>(cb());
+    } catch {
+      return Result.err<T, E>(error);
+    }
+  };
+
+  return curry1(op, callback);
 }
 
 /**
@@ -636,13 +645,21 @@ export function tryOr<T, E>(error: E, callback: () => T): Result<T, E> {
   be wrapped in a `Result.Err`
   @param callback The callback to try executing
  */
+export function tryOrElse<T, E>(onError: (e: unknown) => E, callback: () => T): Result<T, E>;
+export function tryOrElse<T, E>(onError: (e: unknown) => E): (callback: () => T) => Result<T, E>;
+export function tryOrElse<T, E>(
+  onError: (e: unknown) => E,
+  callback?: () => T
+): Result<T, E> | ((callback: () => T) => Result<T, E>) {
+  const op = (cb: () => T) => {
+    try {
+      return Result.ok<T, E>(cb());
+    } catch (e) {
+      return Result.err<T, E>(onError(e));
+    }
+  };
 
-export function tryOrElse<T, E>(onError: (e: unknown) => E, callback: () => T): Result<T, E> {
-  try {
-    return Result.ok(callback());
-  } catch (e) {
-    return Result.err(onError(e));
-  }
+  return curry1(op, callback);
 }
 
 /**
