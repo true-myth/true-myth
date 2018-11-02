@@ -117,7 +117,7 @@ export interface MaybeShape<T> {
     console.log(deepEmpty); // Nothing
     ```
    */
-  get<K extends keyof T>(this: Maybe<T>, key: K): Maybe<T[K]>;
+  get<K extends keyof T>(this: Maybe<T>, key: K): Maybe<Required<T>[K]>;
 }
 
 /**
@@ -332,7 +332,7 @@ export class Just<T> implements MaybeShape<T> {
     console.log(deepEmpty); // Nothing
     ```
    */
-  get<K extends keyof T>(this: Maybe<T>, key: K): Maybe<T[K]> {
+  get<K extends keyof T>(this: Maybe<T>, key: K): Maybe<Required<T>[K]> {
     return this.andThen(property(key));
   }
 }
@@ -518,7 +518,7 @@ export class Nothing<T> implements MaybeShape<T> {
     console.log(deepEmpty); // Nothing
     ```
    */
-  get<K extends keyof T>(this: Maybe<T>, key: K): Maybe<T[K]> {
+  get<K extends keyof T>(this: Maybe<T>, key: K): Maybe<Required<T>[K]> {
     return this.andThen(property(key));
   }
 }
@@ -1655,12 +1655,12 @@ export function tuple<T, U, V, W, X>(
   @param key The key to pull out of the object.
   @param obj The object to look up the key from.
  */
-export function property<T, K extends keyof T>(key: K, obj: T): Maybe<T[K]>;
-export function property<T, K extends keyof T>(key: K): (obj: T) => Maybe<T[K]>;
+export function property<T, K extends keyof T>(key: K, obj: T): Maybe<Required<T>[K]>;
+export function property<T, K extends keyof T>(key: K): (obj: T) => Maybe<Required<T>[K]>;
 export function property<T, K extends keyof T>(
   key: K,
   obj?: T
-): Maybe<T[K]> | ((obj: T) => Maybe<T[K]>) {
+): Maybe<Required<T>[K]> | ((obj: T) => Maybe<Required<T>[K]>) {
   const op = (a: T) => Maybe.of(a[key]);
   return curry1(op, obj);
 }
@@ -1715,12 +1715,12 @@ export function property<T, K extends keyof T>(
   @param key The key to pull out of the object.
   @param obj The object to look up the key from.
  */
-export function get<T, K extends keyof T>(key: K, maybeObj: Maybe<T>): Maybe<T[K]>;
-export function get<T, K extends keyof T>(key: K): (maybeObj: Maybe<T>) => Maybe<T[K]>;
+export function get<T, K extends keyof T>(key: K, maybeObj: Maybe<T>): Maybe<Required<T>[K]>;
+export function get<T, K extends keyof T>(key: K): (maybeObj: Maybe<T>) => Maybe<Required<T>[K]>;
 export function get<T, K extends keyof T>(
   key: K,
   maybeObj?: Maybe<T>
-): Maybe<T[K]> | ((maybeObj: Maybe<T>) => Maybe<T[K]>) {
+): Maybe<Required<T>[K]> | ((maybeObj: Maybe<T>) => Maybe<Required<T>[K]>) {
   return curry1(Maybe.andThen(property<T, K>(key)), maybeObj);
 }
 
