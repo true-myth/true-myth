@@ -332,7 +332,7 @@ export class Just<T> implements MaybeShape<T> {
     console.log(deepEmpty); // Nothing
     ```
    */
-  get<K extends keyof T>(this: Maybe<T>, key: K): Maybe<Required<T>[K]> {
+  get<K extends keyof T>(this: Maybe<T>, key: K): Maybe<NonNullable<T[K]>> {
     return this.andThen(property(key));
   }
 }
@@ -518,7 +518,7 @@ export class Nothing<T> implements MaybeShape<T> {
     console.log(deepEmpty); // Nothing
     ```
    */
-  get<K extends keyof T>(this: Maybe<T>, key: K): Maybe<Required<T>[K]> {
+  get<K extends keyof T>(this: Maybe<T>, key: K): Maybe<NonNullable<T[K]>> {
     return this.andThen(property(key));
   }
 }
@@ -1655,13 +1655,13 @@ export function tuple<T, U, V, W, X>(
   @param key The key to pull out of the object.
   @param obj The object to look up the key from.
  */
-export function property<T, K extends keyof T>(key: K, obj: T): Maybe<Required<T>[K]>;
-export function property<T, K extends keyof T>(key: K): (obj: T) => Maybe<Required<T>[K]>;
+export function property<T, K extends keyof T>(key: K, obj: T): Maybe<NonNullable<T[K]>>;
+export function property<T, K extends keyof T>(key: K): (obj: T) => Maybe<NonNullable<T[K]>>;
 export function property<T, K extends keyof T>(
   key: K,
   obj?: T
-): Maybe<Required<T>[K]> | ((obj: T) => Maybe<Required<T>[K]>) {
-  const op = (a: T) => Maybe.of(a[key]);
+): Maybe<NonNullable<T[K]>> | ((obj: T) => Maybe<NonNullable<T[K]>>) {
+  const op = (a: T) => Maybe.of(a[key]) as Maybe<NonNullable<T[K]>>;
   return curry1(op, obj);
 }
 
