@@ -17,7 +17,7 @@
     ],
 
     "sourceRoot": "./",
-    "inlineSourceMap": true,
+    "sourceMap": true,
     "inlineSources": true,
 
     "experimentalDecorators": true
