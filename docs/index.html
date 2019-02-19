@@ -65,7 +65,7 @@
 		<div class="col-8 col-content">
 			<div class="tsd-panel tsd-typography">
 				<h1 align="center"><a href='https://github.com/true-myth/true-myth'>True Myth</a></h1>
-				<p align="center">A library for safer programming in JavaScript, with first-class support for TypeScript, with <code>Maybe</code> and <code>Result</code> types, and supporting both a functional style and a more traditional method-call style.</p>
+				<p align="center">A library for safe, idiomatic null and error handling in TypeScript, with <code>Maybe</code> and <code>Result</code> types, supporting both a functional style and a more traditional method-call style.</p>
 				<p align="center">
 					<a href='https://travis-ci.org/chriskrycho/true-myth'>
 						<img src='https://img.shields.io/travis/chriskrycho/true-myth/master.svg?style=flat-square' alt='Travis `master` build status'>
@@ -461,13 +461,13 @@ myInteger.map(<span class="hljs-function"><span class="hljs-params">x</span> =&g
 				<p>In practice, that means:</p>
 				<ul>
 					<li><p>You can construct the variant types in the traditional JavaScript way or with a pure function:</p>
-						<pre><code class="language-typescript">import { Just, just, Nothing, nothing } from &#39;true-myth/maybe&#39;;
+						<pre><code class="language-typescript"><span class="hljs-keyword">import</span> { Just, just, Nothing, nothing } <span class="hljs-keyword">from</span> <span class="hljs-string">'true-myth/maybe'</span>;
 
-const classicalJust = new Just(&#39;value&#39;);
-const classicalNothing = new Nothing();
+<span class="hljs-keyword">const</span> classicalJust = <span class="hljs-keyword">new</span> Just(<span class="hljs-string">'value'</span>);
+<span class="hljs-keyword">const</span> classicalNothing = <span class="hljs-keyword">new</span> Nothing();
 
-const functionalJust = just(&#39;value&#39;);
-const functionalNothing = nothing();</code></pre>
+<span class="hljs-keyword">const</span> <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-title">alJust</span> = <span class="hljs-title">just</span>(<span class="hljs-params">'value'</span>)</span>;
+<span class="hljs-keyword">const</span> <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-title">alNothing</span> = <span class="hljs-title">nothing</span>(<span class="hljs-params"></span>)</span>;</code></pre>
 					</li>
 					<li><p>Similarly, you can use methods or pure functions:</p>
 						<pre><code class="language-typescript"><span class="hljs-keyword">import</span> { ok, map } <span class="hljs-keyword">from</span> <span class="hljs-string">'true-myth/result'</span>;
