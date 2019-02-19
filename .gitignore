@@ -58,8 +58,10 @@ typings/
 # JetBrains
 .idea/
 
-# Don't commit compiled type defs
+# Don't commit compiled output
+dist
 *.d.ts
+*.map
 
 # Exclude auto-created jsconfig.json
 jsconfig.json
