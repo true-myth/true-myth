@@ -63,7 +63,10 @@ describe('`Result` pure functions', () => {
   });
 
   test('`tryOrElse`', () => {
-    const handleError = e => e;
+    function handleError<E>(e: E): E {
+      return e;
+    }
+
     const operation = () => 2 + 2;
     const badOperation = () => {
       throw 'kablooey';
@@ -98,7 +101,7 @@ describe('`Result` pure functions', () => {
     const doubledOk = Result.ok(double(theValue));
     expect(Result.map(double, anOk)).toEqual(doubledOk);
 
-    const anErr = Result.err('some nonsense');
+    const anErr: Result<number, string> = Result.err('some nonsense');
     expect(Result.map(double, anErr)).toEqual(anErr);
   });
 
@@ -106,13 +109,15 @@ describe('`Result` pure functions', () => {
     const theDefault = 0;
 
     const theValue = 5;
-    const anOk = Result.ok(theValue);
+    const anOk: Result<number, string> = Result.ok(theValue);
     expect(Result.mapOr(theDefault, double, anOk)).toEqual(double(theValue));
 
-    const anErr = Result.err('blah');
+    const anErr: Result<number, string> = Result.err('blah');
     expect(Result.mapOr(theDefault, double, anErr)).toEqual(theDefault);
 
-    expect(Result.mapOr(theDefault)(double)(anOk)).toEqual(Result.mapOr(theDefault, double, anOk));
+    expect(Result.mapOr<number, number, string>(theDefault)(double)(anOk)).toEqual(
+      Result.mapOr(theDefault, double, anOk)
+    );
     expect(Result.mapOr(theDefault, double)(anOk)).toEqual(Result.mapOr(theDefault, double, anOk));
   });
 
@@ -120,7 +125,7 @@ describe('`Result` pure functions', () => {
     const description = 'that was not good';
     const getDefault = (reason: number) => `${description}: ${reason}`;
 
-    const anOk = Result.ok(5);
+    const anOk: Result<number, number> = Result.ok(5);
     expect(Result.mapOrElse(getDefault, String, anOk)).toEqual(String(5));
 
     const errValue = 10;
@@ -160,7 +165,7 @@ describe('`Result` pure functions', () => {
   });
 
   test('`mapErr`', () => {
-    const anOk = Result.ok(10);
+    const anOk: Result<number, number> = Result.ok(10);
     expect(Result.mapErr(double, anOk)).toEqual(anOk);
 
     const theErrValue = 20;
@@ -184,13 +189,13 @@ describe('`Result` pure functions', () => {
 
   const andThenTest = (fn: AndThenAliases) => () => {
     const theValue = 'a string';
-    const toLengthResult = (s: string) => Result.ok(length(s));
+    const toLengthResult = (s: string) => Result.ok<number, string>(length(s));
     const expected = toLengthResult(theValue);
 
     const anOk = Result.ok(theValue);
     expect(Result[fn](toLengthResult, anOk)).toEqual(expected);
 
-    const anErr = Result.err('something wrong');
+    const anErr: Result<string, string> = Result.err('something wrong');
     expect(Result[fn](toLengthResult, anErr)).toEqual(anErr);
   };
 
@@ -199,30 +204,32 @@ describe('`Result` pure functions', () => {
   test('flatMap', andThenTest('flatMap'));
 
   test('`or`', () => {
-    const orOk = Result.ok(0);
-    const orErr = Result.err('something boring');
+    const orOk: Result<number, string> = Result.ok(0);
+    const orErr: Result<number, string> = Result.err('something boring');
 
-    const anOk = Result.ok(42);
+    type Err = { [key: string]: string };
+
+    const anOk: Result<number, Err> = Result.ok(42);
     expect(Result.or(orOk, anOk)).toEqual(anOk);
     expect(Result.or(orErr, anOk)).toEqual(anOk);
 
-    const anErr = Result.err({ oh: 'my' });
+    const anErr: Result<number, Err> = Result.err({ oh: 'my' });
     expect(Result.or(orOk, anErr)).toEqual(orOk);
     expect(Result.or(orErr, anErr)).toEqual(orErr);
   });
 
   test('`orElse`', () => {
-    const orElseOk = Result.ok(1);
+    const orElseOk: Result<number, string> = Result.ok(1);
     const getAnOk = () => orElseOk;
 
-    const orElseErr = Result.err('oh my');
+    const orElseErr: Result<number, string> = Result.err('oh my');
     const getAnErr = () => orElseErr;
 
-    const anOk = Result.ok(0);
+    const anOk: Result<number, string> = Result.ok(0);
     expect(Result.orElse(getAnOk, anOk)).toEqual(anOk);
     expect(Result.orElse(getAnErr, anOk)).toEqual(anOk);
 
-    const anErr = Result.err('boom');
+    const anErr: Result<number, string> = Result.err('boom');
     expect(Result.orElse(getAnOk, anErr)).toEqual(orElseOk);
     expect(Result.orElse(getAnErr, anErr)).toEqual(orElseErr);
   });
@@ -327,7 +334,6 @@ describe('`Result` pure functions', () => {
 
     const add3 = add(3);
     const okAdd3 = Result.ok<typeof add3, string>(add(3));
-    const val = Result.ok(2);
 
     expect(Result.ap(okAdd3, Result.ok(2))).toEqual(Result.ok(5));
   });
@@ -428,7 +434,7 @@ describe('`Result.Ok` class', () => {
 
   test('`mapOrElse` method', () => {
     const theValue = ['some', 'things'];
-    const theOk = new Result.Ok(theValue);
+    const theOk: Result<string[], string> = new Result.Ok(theValue);
     const getDefault = (reason: string) => `reason being, ${reason}`;
     const join = (strings: string[]) => strings.join(', ');
     expect(theOk.mapOrElse(getDefault, join)).toEqual(join(theValue));
@@ -447,7 +453,7 @@ describe('`Result.Ok` class', () => {
   });
 
   test('`mapErr` method', () => {
-    const theOk = new Result.Ok('hey!');
+    const theOk: Result<string, string> = new Result.Ok('hey!');
     const toMoreVerboseErr = (s: string) => `Seriously, ${s} was bad.`;
     expect(theOk.mapErr(toMoreVerboseErr)).toEqual(theOk);
   });
@@ -586,8 +592,8 @@ describe('`Result.Err` class', () => {
   });
 
   test('`mapOr` method', () => {
-    const errValue = 42;
-    const theErr = new Result.Err(errValue);
+    const errValue: number = 42;
+    const theErr: Result<number, number> = new Result.Err(errValue);
     const theDefault = 'victory!';
     const describe = (code: number) => `The error code was ${code}`;
 
@@ -595,8 +601,8 @@ describe('`Result.Err` class', () => {
   });
 
   test('`mapOrElse` method', () => {
-    const errValue = 42;
-    const theErr = new Result.Err(errValue);
+    const errValue: number = 42;
+    const theErr: Result<number, number> = new Result.Err(errValue);
     const getDefault = (valueFromErr: typeof errValue) => `whoa: ${valueFromErr}`;
     const describe = (code: number) => `The error code was ${code}`;
 
@@ -616,7 +622,7 @@ describe('`Result.Err` class', () => {
   });
 
   test('`mapErr` method', () => {
-    const errValue = 'fubar';
+    const errValue: string = 'fubar';
     const theErr = new Result.Err(errValue);
     const elaborate = (reason: typeof errValue) => `The problem was: ${reason}`;
     const expected = new Result.Err(elaborate(errValue));
@@ -659,8 +665,8 @@ describe('`Result.Err` class', () => {
   });
 
   test('`or` method', () => {
-    const theErr = new Result.Err('a shame');
-    const anOk = Result.ok<number, string>(42);
+    const theErr: Result<number, string> = new Result.Err('a shame');
+    const anOk: Result<number, string> = Result.ok(42);
     expect(theErr.or(anOk)).toBe(anOk);
 
     const anotherErr = Result.err<number, number>(10);
@@ -724,8 +730,11 @@ describe('`Result.Err` class', () => {
   });
 
   test('`ap` method', () => {
-    const fn = new Result.Err<(val: string) => number, string>('ERR_THESYSTEMISDOWN');
-    const val = new Result.Err('ERR_ALLURBASE');
+    const fn: Result<(val: string) => number, string> = new Result.Err<
+      (val: string) => number,
+      string
+    >('ERR_THESYSTEMISDOWN');
+    const val: Result<string, string> = new Result.Err('ERR_ALLURBASE');
 
     const result = fn.ap(val);
 

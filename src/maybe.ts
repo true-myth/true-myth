@@ -117,7 +117,7 @@ export interface MaybeShape<T> {
     console.log(deepEmpty); // Nothing
     ```
    */
-  get<K extends keyof T>(this: Maybe<T>, key: K): Maybe<Required<T>[K]>;
+  get<K extends keyof T>(this: Maybe<T>, key: K): Maybe<NonNullable<T[K]>>;
 }
 
 /**
@@ -1539,8 +1539,8 @@ export function last<T>(array: Array<T | null | undefined>): Maybe<T> {
 
   @param maybes The `Maybe`s to resolve to a single `Maybe`.
  */
-export function all<T extends Array<Maybe<unknown>>>(...maybes: T): All<T> {
-  let result: All<T> = Maybe.just([] as Maybe<unknown>[]) as All<T>;
+export function all<T extends Array<Maybe<any>>>(...maybes: T): All<T> {
+  let result: All<T> = Maybe.just([] as Maybe<any>[]) as All<T>;
   maybes.forEach(maybe => {
     result = result.andThen(accumulatedMaybes =>
       maybe.map(m => {
@@ -1661,7 +1661,7 @@ export function property<T, K extends keyof T>(
   key: K,
   obj?: T
 ): Maybe<NonNullable<T[K]>> | ((obj: T) => Maybe<NonNullable<T[K]>>) {
-  const op = (a: T) => Maybe.of(a[key]) as Maybe<NonNullable<T[K]>>;
+  const op = (a: T) => (Maybe.of(a[key]) as unknown) as Maybe<NonNullable<T[K]>>;
   return curry1(op, obj);
 }
 
@@ -1715,12 +1715,12 @@ export function property<T, K extends keyof T>(
   @param key The key to pull out of the object.
   @param obj The object to look up the key from.
  */
-export function get<T, K extends keyof T>(key: K, maybeObj: Maybe<T>): Maybe<Required<T>[K]>;
-export function get<T, K extends keyof T>(key: K): (maybeObj: Maybe<T>) => Maybe<Required<T>[K]>;
+export function get<T, K extends keyof T>(key: K, maybeObj: Maybe<T>): Maybe<NonNullable<T[K]>>;
+export function get<T, K extends keyof T>(key: K): (maybeObj: Maybe<T>) => Maybe<NonNullable<T[K]>>;
 export function get<T, K extends keyof T>(
   key: K,
   maybeObj?: Maybe<T>
-): Maybe<Required<T>[K]> | ((maybeObj: Maybe<T>) => Maybe<Required<T>[K]>) {
+): Maybe<NonNullable<T[K]>> | ((maybeObj: Maybe<T>) => Maybe<NonNullable<T[K]>>) {
   return curry1(Maybe.andThen(property<T, K>(key)), maybeObj);
 }
 
