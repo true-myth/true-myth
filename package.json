@@ -14,7 +14,7 @@
   "bugs": {
     "url": "https://github.com/true-myth/true-myth/issues"
   },
-  "version": "2.2.5",
+  "version": "2.2.6",
   "main": "dist/cjs/index.js",
   "module": "dist/es/index.js",
   "types": "index.d.ts",
@@ -45,6 +45,7 @@
   },
   "files": [
     "*.d.ts",
+    "*.d.ts.map",
     "dist",
     "ember-addon.js"
   ],
