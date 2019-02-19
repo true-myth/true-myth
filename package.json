@@ -29,12 +29,12 @@
     "result"
   ],
   "scripts": {
-    "ts:cjs": "tsc -p ts/cjs.tsconfig.json",
-    "ts:es": "tsc -p ts/es.tsconfig.json",
-    "ts:typedefs": "tsc --outDir . --emitDeclarationOnly",
+    "ts:cjs": "yarn tsc -p ts/cjs.tsconfig.json",
+    "ts:es": "yarn tsc -p ts/es.tsconfig.json",
+    "ts:typedefs": "yarn tsc -p ts/types.tsconfig.json && mv defs/* . && rmdir defs",
     "ts:all": "yarn ts:cjs && yarn ts:es && yarn ts:typedefs",
     "build": "yarn clean && yarn ts:all",
-    "clean": "rimraf ./*.d.ts dist",
+    "clean": "rimraf ./*.d.ts ./*.d.ts.map dist",
     "doc": "./scripts/build-docs",
     "lint": "yarn eslint src/*.ts test/*.ts",
     "prepublishOnly": "yarn test && yarn build",
@@ -50,17 +50,17 @@
   ],
   "license": "MIT",
   "devDependencies": {
-    "@types/jest": "^23.3.7",
-    "eslint": "^5.7.0",
-    "jest": "^23.5.0",
+    "@types/jest": "^24.0.6",
+    "eslint": "^5.14.1",
+    "jest": "^24.1.0",
     "prettier": "^1.14.3",
     "prettier-eslint": "^8.8.2",
     "rimraf": "^2.6.2",
     "shelljs": "^0.8.2",
-    "ts-jest": "^23.1.4",
-    "typedoc": "^0.13.0",
-    "typescript": "^3.1.3",
-    "typescript-eslint-parser": "^20.0.0"
+    "ts-jest": "^24.0.0",
+    "typedoc": "^0.14.2",
+    "typescript": "^3.3.3",
+    "typescript-eslint-parser": "^22.0.0"
   },
   "jest": {
     "transform": {
@@ -118,5 +118,9 @@
       "no-redeclare": "off",
       "no-irregular-whitespace": "off"
     }
+  },
+  "toolchain": {
+    "node": "11.10.0",
+    "yarn": "1.13.0"
   }
 }

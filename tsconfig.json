@@ -12,17 +12,10 @@
     "moduleResolution": "node",
     "baseUrl": "./",
 
-    "rootDirs": [
-      "src"
-    ],
-
     "sourceRoot": "./",
     "sourceMap": true,
-    "inlineSources": true,
-
-    "experimentalDecorators": true
   },
-  "include": ["src"],
+  "include": ["src", "test"],
   "typedocOptions": {
     "out": "./docs",
     "toc": false,
