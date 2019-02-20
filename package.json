@@ -47,6 +47,7 @@
     "*.d.ts",
     "*.d.ts.map",
     "dist",
+    "src",
     "ember-addon.js"
   ],
   "license": "MIT",
