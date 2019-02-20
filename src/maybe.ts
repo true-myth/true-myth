@@ -826,12 +826,12 @@ export function and<T, U>(
   layers to only ever return a single `Promise` value, whereas `Maybe.andThen`
   will not unwrap nested `Maybe`s.
 
-  This is also commonly known as (and therefore aliased as) [`flatMap`] or
-  [`chain`]. It is sometimes also known as `bind`, but *not* aliased as such
+  This is also commonly known as (and therefore aliased as) [`flatMap`][flatMap]
+  or [`chain`][chain]. It is sometimes also known as `bind`, but *not* aliased as such
   because [`bind` already means something in JavaScript][bind].
 
-  [`flatMap`]: #flatmap
-  [`chain`]: #chain
+  [flatMap]: #flatmap
+  [chain]: #chain
   [bind]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function/bind
 
   #### Example
@@ -856,7 +856,7 @@ export function and<T, U>(
   Note that the result is not `(Just(13))`, but `13`!
 
   @typeparam T  The type of the wrapped value.
-  @typeparam T  The type of the wrapped value in the resulting `Maybe`.
+  @typeparam U  The type of the wrapped value in the resulting `Maybe`.
   @param thenFn The function to apply to the wrapped `T` if `maybe` is `Just`.
   @param maybe  The `Maybe` to evaluate and possibly apply a function to the
                 contents of.
@@ -1086,8 +1086,6 @@ export function toOkOrElseErr<T, E>(
 
   @typeparam T  The type of the value wrapped in a `Result.Ok` and in the `Just`
                 of the resulting `Maybe`.
-  @typeparam E  The type of the value wrapped in a `Result.Err`; thrown away in
-                the resulting `Maybe`.
   @param result The `Result` to construct a `Maybe` from.
   @returns      `Just` if `result` was `Ok` or `Nothing` if it was `Err`.
  */
