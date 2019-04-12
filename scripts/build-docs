@@ -1,5 +1,9 @@
 #!/usr/bin/env sh
 rm -rf docs && \
-  ./node_modules/.bin/typedoc --out docs --tsconfig ./ts/doc.tsconfig.json src && \
+  ./node_modules/.bin/typedoc \
+    --out docs \
+    --includes src \
+    --tsconfig ts/doc.tsconfig.json \
+    src && \
   touch docs/.nojekyll && \
 echo "true-myth.js.org" > docs/CNAME
