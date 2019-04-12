@@ -10,9 +10,9 @@
     "noImplicitReturns": true,
 
     "moduleResolution": "node",
-    "baseUrl": "./",
+    "baseUrl": ".",
 
-    "sourceRoot": "./",
+    "sourceRoot": ".",
     "sourceMap": true,
   },
   "include": ["src", "test"],
