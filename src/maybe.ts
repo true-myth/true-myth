@@ -658,7 +658,7 @@ export function map<T, U>(
   mapFn: (t: T) => U,
   maybe?: Maybe<T>
 ): Maybe<U> | ((maybe: Maybe<T>) => Maybe<U>) {
-  const op = (m: Maybe<T>) => (m.isJust() ? just(mapFn(m.value)) : nothing<U>());
+  const op = (m: Maybe<T>) => (m.isJust() ? of(mapFn(m.value)) : nothing<U>());
   return curry1(op, maybe);
 }
 
@@ -1406,10 +1406,10 @@ type Predicate<T> = (element: T, index: number, array: T[]) => boolean;
 // `Array.prototype.find`.
 /**
   Safely search for an element in an array.
-  
+
   This function behaves like `Array.prototype.find`, but returns `Maybe<T>`
   instead of `T | undefined`.
-  
+
   ## Examples
 
   The basic form is:
@@ -1446,7 +1446,7 @@ type Predicate<T> = (element: T, index: number, array: T[]) => boolean;
       }
     });
   ```
-  
+
   @param predicate  A function to execute on each value in the array, returning
                     `true` when the item in the array matches the condition. The
                     signature for `predicate` is identical to the signature for
@@ -1640,16 +1640,16 @@ export function tuple<T, U, V, W, X>(
 
   ```ts
   type Person = { name?: string };
-  
+
   const lookupName = Maybe.property('name');
-  
+
   const me: Person = { name: 'Chris' };
   console.log(lookupName(me)); // Just('Chris')
 
   const nobody: Person = {};
   console.log(lookupName(nobody)); // Nothing
   ```
-  
+
   @param key The key to pull out of the object.
   @param obj The object to look up the key from.
  */
@@ -1700,16 +1700,16 @@ export function property<T, K extends keyof T>(
 
   ```ts
   type Person = { name?: string };
-  
+
   const lookupName = Maybe.get('name');
-  
+
   const me: Person = { name: 'Chris' };
   console.log(lookupName(me)); // Just('Chris')
 
   const nobody: Person = {};
   console.log(lookupName(nobody)); // Nothing
   ```
-  
+
   @param key The key to pull out of the object.
   @param obj The object to look up the key from.
  */
