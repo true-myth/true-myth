@@ -449,6 +449,26 @@ describe('`Maybe` pure functions', () => {
     expect(Maybe.get('quux', dict)).toEqual(Maybe.just('warble'));
     expect(Maybe.get('wat', dict)).toEqual(Maybe.nothing());
   });
+
+  test('`wrap`', () => {
+    const empty = '';
+    const emptyResult = Maybe.nothing();
+
+    const full = 'hello';
+    const fullResult = Maybe.just(full.length);
+
+    const mayBeNull = (s: string): number | null => (s.length > 0 ? s.length : null);
+    const mayNotBeNull = Maybe.wrap(mayBeNull);
+
+    expect(mayNotBeNull(empty)).toEqual(emptyResult);
+    expect(mayNotBeNull(full)).toEqual(fullResult);
+
+    const mayBeUndefined = (s: string): number | undefined => (s.length > 0 ? s.length : undefined);
+    const mayNotBeUndefined = Maybe.wrap(mayBeUndefined);
+
+    expect(mayNotBeUndefined(empty)).toEqual(emptyResult);
+    expect(mayNotBeUndefined(full)).toEqual(fullResult);
+  });
 });
 
 // We aren't even really concerned with the "runtime" behavior here, which we
