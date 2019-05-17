@@ -563,6 +563,8 @@ export function just<T>(value?: T | null): Maybe<T> {
   return new Just<T>(value);
 }
 
+let NOTHING: Nothing<any>;
+
 /**
   Create an instance of `Maybe.Nothing`.
 
@@ -578,7 +580,8 @@ export function just<T>(value?: T | null): Maybe<T> {
   @returns     An instance of `Maybe.Nothing<T>`.
  */
 export function nothing<T>(_?: null): Maybe<T> {
-  return new Nothing<T>(_);
+  if (!NOTHING) NOTHING = new Nothing();
+  return NOTHING;
 }
 
 /**
