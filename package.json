@@ -90,6 +90,15 @@
         "statements": 100,
         "lines": 100
       }
+    },
+    "globals": {
+      "ts-jest": {
+        "diagnostics": {
+          "ignoreCodes": [
+            151001
+          ]
+        }
+      }
     }
   },
   "prettier": {
