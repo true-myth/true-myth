@@ -774,8 +774,8 @@ export function mapOr<T, U, E>(
   return mapFn === undefined
     ? partialOp
     : result === undefined
-      ? partialOp(mapFn)
-      : partialOp(mapFn, result);
+    ? partialOp(mapFn)
+    : partialOp(mapFn, result);
 }
 
 /**
@@ -848,8 +848,8 @@ export function mapOrElse<T, U, E>(
   return mapFn === undefined
     ? partialOp
     : result === undefined
-      ? partialOp(mapFn)
-      : partialOp(mapFn, result);
+    ? partialOp(mapFn)
+    : partialOp(mapFn, result);
 }
 
 /**
