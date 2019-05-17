@@ -1722,12 +1722,57 @@ export function get<T, K extends keyof T>(
   return curry1(Maybe.andThen(property<T, K>(key)), maybeObj);
 }
 
+/**
+  Transform a function from a normal JS function which may return `null` or
+  `undefined` to a function which returns a `Maybe` instead.
+
+  For example, you might want to wrap the `Document#querySelector` DOM API so
+  you don't have to wrap its results in a `Maybe` every time you use it. Without
+  `wrapReturn`, you always have to explicitly wrap `Document#querySelector`
+  invocations with `Maybe.of`:
+
+  ```ts
+  const aWidth = Maybe.of(document.querySelector('#foo'))
+    .map(el => el.getBoundingClientRect().width)
+    .unwrapOr(0);
+
+  const aColor = Maybe.of(document.querySelector('.bar'))
+    .andThen(
+      el => el instanceof HTMLElement
+        ? Maybe.of(el.style.color)
+        : Maybe.nothing()
+    );
+  ```
+
+  With `wrapReturn`, you can create a transformed version of the function *once*
+  and then be able to use it freely throughout your codebase, *always* getting
+  back a `Maybe`:
+
+  ```ts
+  const querySelector = Maybe.wrapReturn(document.querySelector.bind(document));
+
+  const aWidth = querySelector('#foo')
+    .map(el => el.getBoundingClientRect().width)
+    .unwrapOr(0);
+
+  const aColor = querySelector('.bar')
+    .andThen(
+      el => el instanceof HTMLElement
+        ? Maybe.of(el.style.color)
+        : Maybe.nothing()
+    );
+  ```
+
+  @param fn The function to transform; the resulting function will have the
+            exact same signature except for its return type.
+ */
 export function wrapReturn<F extends (...args: any[]) => any>(
   fn: F
 ): (...args: Parameters<F>) => Maybe<NonNullable<ReturnType<F>>> {
   return (...args: Parameters<F>) => Maybe.of(fn(...args)) as Maybe<NonNullable<ReturnType<F>>>;
 }
 
+/** Alias for [`wrapReturn`](#wrapReturn). */
 export const maybeify = wrapReturn;
 
 export const transmogrify = wrapReturn;
