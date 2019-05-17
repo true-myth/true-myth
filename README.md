@@ -16,15 +16,11 @@
   <a href='https://github.com/true-myth/true-myth/blob/master/LICENSE'>
     <img src='https://img.shields.io/github/license/chriskrycho/true-myth.svg?style=flat-square'>
   </a>
-  <br/>
   <a href='https://js.org'>
     <img src='https://img.shields.io/badge/dns-js.org-ffb400.svg?style=flat-square' alt='DNS by JS.org'>
   </a>
   <a href='http://true-myth.js.org'>
     <img src='https://img.shields.io/badge/docs-Typedoc-009fb5.svg?style=flat-square' alt='docs built with Typedoc'>
-  </a>
-  <a href='https://www.patreon.com/chriskrycho'>
-    <img src='https://img.shields.io/badge/sponsor-Patreon-F76959.svg?style=flat-square' alt='support me on Patreon!'>
   </a>
 </p>
 
