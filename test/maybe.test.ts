@@ -468,6 +468,9 @@ describe('`Maybe` pure functions', () => {
 
     expect(mayNotBeUndefined(empty)).toEqual(emptyResult);
     expect(mayNotBeUndefined(full)).toEqual(fullResult);
+
+    const querySelector = Maybe.wrap(document.querySelector.bind(document));
+    assertType<(selector: string) => Maybe<Element>>(querySelector);
   });
 });
 
