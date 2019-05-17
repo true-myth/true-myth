@@ -14,7 +14,7 @@
   "bugs": {
     "url": "https://github.com/true-myth/true-myth/issues"
   },
-  "version": "2.2.8",
+  "version": "3.0.0",
   "main": "dist/cjs/index.js",
   "module": "dist/es/index.js",
   "types": "index.d.ts",
