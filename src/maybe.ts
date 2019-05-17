@@ -1722,11 +1722,15 @@ export function get<T, K extends keyof T>(
   return curry1(Maybe.andThen(property<T, K>(key)), maybeObj);
 }
 
-export function wrap<F extends (...args: any[]) => any>(
+export function wrapReturn<F extends (...args: any[]) => any>(
   fn: F
 ): (...args: Parameters<F>) => Maybe<NonNullable<ReturnType<F>>> {
   return (...args: Parameters<F>) => Maybe.of(fn(...args)) as Maybe<NonNullable<ReturnType<F>>>;
 }
+
+export const maybeify = wrapReturn;
+
+export const transmogrify = wrapReturn;
 
 /** A value which may (`Just<T>`) or may not (`Nothing`) be present. */
 export type Maybe<T> = Just<T> | Nothing<T>;
@@ -1773,7 +1777,8 @@ export const Maybe = {
   isInstance,
   property,
   get,
-  wrap,
+  wrapReturn,
+  ify: wrapReturn,
 };
 
 export default Maybe;

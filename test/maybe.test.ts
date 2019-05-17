@@ -450,7 +450,7 @@ describe('`Maybe` pure functions', () => {
     expect(Maybe.get('wat', dict)).toEqual(Maybe.nothing());
   });
 
-  test('`wrap`', () => {
+  test('`wrapReturn`', () => {
     const empty = '';
     const emptyResult = Maybe.nothing();
 
@@ -458,18 +458,18 @@ describe('`Maybe` pure functions', () => {
     const fullResult = Maybe.just(full.length);
 
     const mayBeNull = (s: string): number | null => (s.length > 0 ? s.length : null);
-    const mayNotBeNull = Maybe.wrap(mayBeNull);
+    const mayNotBeNull = Maybe.wrapReturn(mayBeNull);
 
     expect(mayNotBeNull(empty)).toEqual(emptyResult);
     expect(mayNotBeNull(full)).toEqual(fullResult);
 
     const mayBeUndefined = (s: string): number | undefined => (s.length > 0 ? s.length : undefined);
-    const mayNotBeUndefined = Maybe.wrap(mayBeUndefined);
+    const mayNotBeUndefined = Maybe.wrapReturn(mayBeUndefined);
 
     expect(mayNotBeUndefined(empty)).toEqual(emptyResult);
     expect(mayNotBeUndefined(full)).toEqual(fullResult);
 
-    const querySelector = Maybe.wrap(document.querySelector.bind(document));
+    const querySelector = Maybe.wrapReturn(document.querySelector.bind(document));
     assertType<(selector: string) => Maybe<Element>>(querySelector);
   });
 });
