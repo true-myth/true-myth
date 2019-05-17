@@ -3,8 +3,8 @@
 <p align="center">A library for safe, idiomatic null and error handling in TypeScript, with <code>Maybe</code> and <code>Result</code> types, supporting both a functional style and a more traditional method-call style.</p>
 
 <p align="center">
-  <a href='https://travis-ci.org/chriskrycho/true-myth'>
-    <img src='https://img.shields.io/travis/chriskrycho/true-myth/master.svg?style=flat-square' alt='Travis `master` build status'>
+  <a href='https://travis-ci.com/true-myth/true-myth'>
+    <img src='https://img.shields.io/travis/true-myth/true-myth/master.svg?style=flat-square' alt='Travis `master` build status'>
   </a>
   <a href='https://github.com/true-myth/true-myth/blob/master/package.json#L78-L85'>
     <img src='https://img.shields.io/badge/Jest-100%25-0a7c00.svg?style=flat-square' alt='Test coverage: 100%'>
