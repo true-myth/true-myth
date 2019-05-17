@@ -709,8 +709,8 @@ export function mapOr<T, U>(
   return mapFn === undefined
     ? partialOp
     : maybe === undefined
-      ? partialOp(mapFn)
-      : partialOp(mapFn, maybe);
+    ? partialOp(mapFn)
+    : partialOp(mapFn, maybe);
 }
 
 /**
@@ -1726,10 +1726,38 @@ export function get<T, K extends keyof T>(
   Transform a function from a normal JS function which may return `null` or
   `undefined` to a function which returns a `Maybe` instead.
 
-  For example, you might want to wrap the `Document#querySelector` DOM API so
-  you don't have to wrap its results in a `Maybe` every time you use it. Without
-  `wrapReturn`, you always have to explicitly wrap `Document#querySelector`
-  invocations with `Maybe.of`:
+  For example, dealing with the `Document#querySelector` DOM API involves a
+  *lot* of things which can be `null`:
+
+  ```ts
+  const foo = document.querySelector('#foo');
+  let width: number;
+  if (foo !== null) {
+    width = foo.getBoundingClientRect().width;
+  } else {
+    width = 0;
+  }
+
+  const getStyle = (el: HTMLElement, rule: string) => el.style[rule];
+  const bar = document.querySelector('.bar');
+  let color: string;
+  if (bar != null) {
+    let possibleColor = getStyle(bar, 'color');
+    if (possibleColor !== null) {
+      color = possibleColor;
+    } else {
+      color = 'black';
+    }
+  }
+  ```
+
+  (Imagine in this example that there were more than two options: the
+  simplifying workarounds you commonly use to make this terser in JS, like the
+  ternary operator or the short-circuiting `||` operator, eventually become very
+  confusing with more complicated flows.)
+
+  We can work around this with `Maybe`, always wrapping each layer in `Maybe.of`
+  invocations, and this is *somewhat* better:
 
   ```ts
   const aWidth = Maybe.of(document.querySelector('#foo'))
@@ -1737,30 +1765,25 @@ export function get<T, K extends keyof T>(
     .unwrapOr(0);
 
   const aColor = Maybe.of(document.querySelector('.bar'))
-    .andThen(
-      el => el instanceof HTMLElement
-        ? Maybe.of(el.style.color)
-        : Maybe.nothing()
-    );
+    .andThen(el => Maybe.of(getStyle(el, 'color'))
+    .unwrapOr('black');
   ```
 
-  With `wrapReturn`, you can create a transformed version of the function *once*
-  and then be able to use it freely throughout your codebase, *always* getting
-  back a `Maybe`:
+  With `wrapReturn`, though, you can create a transformed version of a function
+  *once* and then be able to use it freely throughout your codebase, *always*
+  getting back a `Maybe`:
 
   ```ts
   const querySelector = Maybe.wrapReturn(document.querySelector.bind(document));
+  const safelyGetStyle = Maybe.wrapReturn(getStyle);
 
   const aWidth = querySelector('#foo')
     .map(el => el.getBoundingClientRect().width)
     .unwrapOr(0);
 
   const aColor = querySelector('.bar')
-    .andThen(
-      el => el instanceof HTMLElement
-        ? Maybe.of(el.style.color)
-        : Maybe.nothing()
-    );
+    .andThen(el => safelyGetStyle(el, 'color'))
+    .unwrapOr('black');
   ```
 
   @param fn The function to transform; the resulting function will have the
