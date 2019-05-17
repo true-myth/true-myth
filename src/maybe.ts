@@ -27,13 +27,13 @@ export interface MaybeShape<T> {
   isNothing(this: Maybe<T>): this is Nothing<T>;
 
   /** Method variant for [`Maybe.map`](../modules/_maybe_.html#map) */
-  map<U>(this: Maybe<T>, mapFn: (t: T) => U): Maybe<U>;
+  map<U>(this: Maybe<T>, mapFn: (t: T) => NonNullable<U>): Maybe<U>;
 
   /** Method variant for [`Maybe.mapOr`](../modules/_maybe_.html#mapor) */
-  mapOr<U>(this: Maybe<T>, orU: U, mapFn: (t: T) => U): U;
+  mapOr<U>(this: Maybe<T>, orU: U, mapFn: (t: T) => NonNullable<U>): U;
 
   /** Method variant for [`Maybe.mapOrElse`](../modules/_maybe_.html#maporelse) */
-  mapOrElse<U>(this: Maybe<T>, orElseFn: () => U, mapFn: (t: T) => U): U;
+  mapOrElse<U>(this: Maybe<T>, orElseFn: () => U, mapFn: (t: T) => NonNullable<U>): U;
 
   /** Method variant for [`Maybe.match`](../modules/_maybe_.html#match) */
   match<U>(this: Maybe<T>, matcher: Matcher<T, U>): U;
@@ -75,7 +75,7 @@ export interface MaybeShape<T> {
   equals(this: Maybe<T>, comparison: Maybe<T>): boolean;
 
   /** Method variant for [`Maybe.ap`](../modules/_maybe_.html#ap) */
-  ap<U>(this: Maybe<(val: T) => U>, val: Maybe<T>): Maybe<U>;
+  ap<U>(this: Maybe<(val: T) => NonNullable<U>>, val: Maybe<T>): Maybe<U>;
 
   /**
     Method variant for [`Maybe.get`](../modules/_maybe_.html#prop)
@@ -203,17 +203,17 @@ export class Just<T> implements MaybeShape<T> {
   }
 
   /** Method variant for [`Maybe.map`](../modules/_maybe_.html#map) */
-  map<U>(this: Maybe<T>, mapFn: (t: T) => U): Maybe<U> {
+  map<U>(this: Maybe<T>, mapFn: (t: T) => NonNullable<U>): Maybe<U> {
     return map(mapFn, this);
   }
 
   /** Method variant for [`Maybe.mapOr`](../modules/_maybe_.html#mapor) */
-  mapOr<U>(this: Maybe<T>, orU: U, mapFn: (t: T) => U): U {
+  mapOr<U>(this: Maybe<T>, orU: U, mapFn: (t: T) => NonNullable<U>): U {
     return mapOr(orU, mapFn, this);
   }
 
   /** Method variant for [`Maybe.mapOrElse`](../modules/_maybe_.html#maporelse) */
-  mapOrElse<U>(this: Maybe<T>, orElseFn: () => U, mapFn: (t: T) => U): U {
+  mapOrElse<U>(this: Maybe<T>, orElseFn: () => U, mapFn: (t: T) => NonNullable<U>): U {
     return mapOrElse(orElseFn, mapFn, this);
   }
 
@@ -288,7 +288,7 @@ export class Just<T> implements MaybeShape<T> {
   }
 
   /** Method variant for [`Maybe.ap`](../modules/_maybe_.html#ap) */
-  ap<A, B>(this: Maybe<(val: A) => B>, val: Maybe<A>): Maybe<B> {
+  ap<A, B>(this: Maybe<(val: A) => NonNullable<B>>, val: Maybe<A>): Maybe<B> {
     return ap(this, val);
   }
 
@@ -389,17 +389,17 @@ export class Nothing<T> implements MaybeShape<T> {
   }
 
   /** Method variant for [`Maybe.map`](../modules/_maybe_.html#map) */
-  map<U>(this: Maybe<T>, mapFn: (t: T) => U): Maybe<U> {
+  map<U>(this: Maybe<T>, mapFn: (t: T) => NonNullable<U>): Maybe<U> {
     return map(mapFn, this);
   }
 
   /** Method variant for [`Maybe.mapOr`](../modules/_maybe_.html#mapor) */
-  mapOr<U>(this: Maybe<T>, orU: U, mapFn: (t: T) => U): U {
+  mapOr<U>(this: Maybe<T>, orU: U, mapFn: (t: T) => NonNullable<U>): U {
     return mapOr(orU, mapFn, this);
   }
 
   /** Method variant for [`Maybe.mapOrElse`](../modules/_maybe_.html#maporelse) */
-  mapOrElse<U>(this: Maybe<T>, orElseFn: () => U, mapFn: (t: T) => U): U {
+  mapOrElse<U>(this: Maybe<T>, orElseFn: () => U, mapFn: (t: T) => NonNullable<U>): U {
     return mapOrElse(orElseFn, mapFn, this);
   }
 
@@ -474,7 +474,7 @@ export class Nothing<T> implements MaybeShape<T> {
   }
 
   /** Method variant for [`Maybe.ap`](../modules/_maybe_.html#ap) */
-  ap<A, B>(this: Maybe<(val: A) => B>, val: Maybe<A>): Maybe<B> {
+  ap<A, B>(this: Maybe<(val: A) => NonNullable<B>>, val: Maybe<A>): Maybe<B> {
     return ap(this, val);
   }
 
@@ -655,10 +655,10 @@ export const fromNullable = of;
   @returns     A new `Maybe` with the result of applying `mapFn` to the value
                in a `Just`, or `Nothing` if `maybe` is `Nothing`.
  */
-export function map<T, U>(mapFn: (t: T) => U): (maybe: Maybe<T>) => Maybe<U>;
-export function map<T, U>(mapFn: (t: T) => U, maybe: Maybe<T>): Maybe<U>;
+export function map<T, U>(mapFn: (t: T) => NonNullable<U>): (maybe: Maybe<T>) => Maybe<U>;
+export function map<T, U>(mapFn: (t: T) => NonNullable<U>, maybe: Maybe<T>): Maybe<U>;
 export function map<T, U>(
-  mapFn: (t: T) => U,
+  mapFn: (t: T) => NonNullable<U>,
   maybe?: Maybe<T>
 ): Maybe<U> | ((maybe: Maybe<T>) => Maybe<U>) {
   const op = (m: Maybe<T>) => (m.isJust() ? just(mapFn(m.value)) : nothing<U>());
@@ -689,14 +689,14 @@ export function map<T, U>(
   @param mapFn The function to apply the value to if `Maybe` is `Just`
   @param maybe The `Maybe` instance to map over.
  */
-export function mapOr<T, U>(orU: U, mapFn: (t: T) => U, maybe: Maybe<T>): U;
-export function mapOr<T, U>(orU: U, mapFn: (t: T) => U): (maybe: Maybe<T>) => U;
-export function mapOr<T, U>(orU: U): (mapFn: (t: T) => U) => (maybe: Maybe<T>) => U;
+export function mapOr<T, U>(orU: U, mapFn: (t: T) => NonNullable<U>, maybe: Maybe<T>): U;
+export function mapOr<T, U>(orU: U, mapFn: (t: T) => NonNullable<U>): (maybe: Maybe<T>) => U;
+export function mapOr<T, U>(orU: U): (mapFn: (t: T) => NonNullable<U>) => (maybe: Maybe<T>) => U;
 export function mapOr<T, U>(
   orU: U,
   mapFn?: (t: T) => U,
   maybe?: Maybe<T>
-): U | ((maybe: Maybe<T>) => U) | ((mapFn: (t: T) => U) => (maybe: Maybe<T>) => U) {
+): U | ((maybe: Maybe<T>) => U) | ((mapFn: (t: T) => NonNullable<U>) => (maybe: Maybe<T>) => U) {
   function fullOp(fn: (t: T) => U, m: Maybe<T>) {
     return m.isJust() ? fn(m.value) : orU;
   }
@@ -741,21 +741,33 @@ export function mapOr<T, U>(
   @param mapFn    The function to apply to the wrapped value if `maybe` is `Just`
   @param maybe    The `Maybe` instance to map over.
  */
-export function mapOrElse<T, U>(orElseFn: () => U, mapFn: (t: T) => U, maybe: Maybe<T>): U;
-export function mapOrElse<T, U>(orElseFn: () => U, mapFn: (t: T) => U): (maybe: Maybe<T>) => U;
-export function mapOrElse<T, U>(orElseFn: () => U): (mapFn: (t: T) => U) => (maybe: Maybe<T>) => U;
 export function mapOrElse<T, U>(
   orElseFn: () => U,
-  mapFn?: (t: T) => U,
+  mapFn: (t: T) => NonNullable<U>,
+  maybe: Maybe<T>
+): U;
+export function mapOrElse<T, U>(
+  orElseFn: () => U,
+  mapFn: (t: T) => NonNullable<U>
+): (maybe: Maybe<T>) => U;
+export function mapOrElse<T, U>(
+  orElseFn: () => U
+): (mapFn: (t: T) => NonNullable<U>) => (maybe: Maybe<T>) => U;
+export function mapOrElse<T, U>(
+  orElseFn: () => U,
+  mapFn?: (t: T) => NonNullable<U>,
   maybe?: Maybe<T>
-): U | ((maybe: Maybe<T>) => U) | ((mapFn: (t: T) => U) => (maybe: Maybe<T>) => U) {
-  function fullOp(fn: (t: T) => U, m: Maybe<T>) {
+): U | ((maybe: Maybe<T>) => U) | ((mapFn: (t: T) => NonNullable<U>) => (maybe: Maybe<T>) => U) {
+  function fullOp(fn: (t: T) => NonNullable<U>, m: Maybe<T>) {
     return m.isJust() ? fn(m.value) : orElseFn();
   }
 
-  function partialOp(fn: (t: T) => U): (maybe: Maybe<T>) => U;
-  function partialOp(fn: (t: T) => U, curriedMaybe: Maybe<T>): U;
-  function partialOp(fn: (t: T) => U, curriedMaybe?: Maybe<T>): U | ((maybe: Maybe<T>) => U) {
+  function partialOp(fn: (t: T) => NonNullable<U>): (maybe: Maybe<T>) => U;
+  function partialOp(fn: (t: T) => NonNullable<U>, curriedMaybe: Maybe<T>): U;
+  function partialOp(
+    fn: (t: T) => NonNullable<U>,
+    curriedMaybe?: Maybe<T>
+  ): U | ((maybe: Maybe<T>) => U) {
     return curriedMaybe !== undefined
       ? fullOp(fn, curriedMaybe)
       : (extraCurriedMaybe: Maybe<T>) => fullOp(fn, extraCurriedMaybe);
@@ -1122,7 +1134,7 @@ export function toString<T>(maybe: Maybe<T>): string {
 
 /** A lightweight object defining how to handle each variant of a Maybe. */
 export type Matcher<T, A> = {
-  Just: (value: T) => A;
+  Just: (value: T) => NonNullable<A>;
   Nothing: () => A;
 };
 
@@ -1379,10 +1391,10 @@ export function equals<T>(mb: Maybe<T>, ma?: Maybe<T>): boolean | ((a: Maybe<T>)
   @param maybeFn maybe a function from T to U
   @param maybe maybe a T to apply to `fn`
  */
-export function ap<T, U>(maybeFn: Maybe<(t: T) => U>, maybe: Maybe<T>): Maybe<U>;
-export function ap<T, U>(maybeFn: Maybe<(t: T) => U>): (maybe: Maybe<T>) => Maybe<U>;
+export function ap<T, U>(maybeFn: Maybe<(t: T) => NonNullable<U>>, maybe: Maybe<T>): Maybe<U>;
+export function ap<T, U>(maybeFn: Maybe<(t: T) => NonNullable<U>>): (maybe: Maybe<T>) => Maybe<U>;
 export function ap<T, U>(
-  maybeFn: Maybe<(val: T) => U>,
+  maybeFn: Maybe<(t: T) => NonNullable<U>>,
   maybe?: Maybe<T>
 ): Maybe<U> | ((val: Maybe<T>) => Maybe<U>) {
   const op = (m: Maybe<T>) =>
