@@ -15,16 +15,16 @@ export enum Variant {
   Nothing = 'Nothing',
 }
 
-export interface JustJSONShape<T> {
+export interface JustJSONShape {
   variant: Variant.Just;
-  value: T;
+  value: any;
 }
 
 export interface NothingJSONShape {
   variant: Variant.Nothing;
 }
 
-export type MaybeJSONShape<T> = JustJSONShape<T> | NothingJSONShape
+export type MaybeJSONShape = JustJSONShape | NothingJSONShape
 
 /** Simply defines the common shape for `Just` and `Nothing`. */
 export interface MaybeShape<T> {
@@ -82,8 +82,11 @@ export interface MaybeShape<T> {
   /** Method variant for [`Maybe.toString`](../modules/_maybe_.html#tostring) */
   toString(this: Maybe<T>): string;
 
+  /** Method variant for [`Maybe.valueOf`](../modules/_maybe_.html#valueOf) */
+  valueOf(this: Maybe<T>): MaybeJSONShape;
+
   /** Method variant for [`Maybe.toJSON`](../modules/_maybe_.html#toJSON) */
-  toJSON(this: Maybe<T>): MaybeJSONShape<T>;
+  toJSON(this: Maybe<T>): MaybeJSONShape;
 
   /** Method variant for [`Maybe.equals`](../modules/_maybe_.html#equals) */
   equals(this: Maybe<T>, comparison: Maybe<T>): boolean;
@@ -296,7 +299,13 @@ export class Just<T> implements MaybeShape<T> {
     return toString(this);
   }
 
-  toJSON(this: Maybe<T>): MaybeJSONShape<T> {
+  /** Method variant for [`Maybe.valueOf`](../modules/_maybe_.html#valueOf) */
+  valueOf(this: Maybe<T>): MaybeJSONShape {
+    return valueOf(this);
+  }
+
+  /** Method variant for [`Maybe.toJSON`](../modules/_maybe_.html#toJSON) */
+  toJSON(this: Maybe<T>): MaybeJSONShape {
     return toJSON(this);
   }
 
@@ -486,7 +495,13 @@ export class Nothing<T> implements MaybeShape<T> {
     return toString(this);
   }
 
-  toJSON(this: Maybe<T>): MaybeJSONShape<T> {
+  /** Method variant for [`Maybe.valueOf`](../modules/_maybe_.html#valueOf) */
+  valueOf(this: Maybe<T>): MaybeJSONShape {
+    return valueOf(this);
+  }
+
+  /** Method variant for [`Maybe.toJSON`](../modules/_maybe_.html#toJSON) */
+  toJSON(this: Maybe<T>): MaybeJSONShape {
     return toJSON(this);
   }
 
@@ -1154,10 +1169,35 @@ export function toString<T>(maybe: Maybe<T>): string {
   return `${maybe.variant}${body}`;
 }
 
-export function toJSON<T>(maybe: Maybe<T>): MaybeJSONShape<T> {
+/**
+ * Return an `Object` representation of a `Maybe` instance.
+ * 
+ * It is meant to be used by JavaScript itself when it needs to convert the
+ * object to a primitive type.
+ * 
+ * @typeparam T The type of the wrapped value; its own `.toJSON` will be used
+ *            to transform the interior contents of the `Just` variant.
+ * @param maybe The value to convert to JSON
+ * @returns     The JSON representation of the `Maybe`
+ */
+export function valueOf(maybe: Maybe<any>): MaybeJSONShape {
   return maybe.isJust()
-    ? {variant: maybe.variant, value: maybe.value}
+    ? {variant: maybe.variant, value: maybe.value.valueOf()}
     : {variant: maybe.variant}
+}
+
+/**
+ * Create an `Object` representation of a `Maybe` instance.
+ * 
+ * Useful for serialization. `JSON.stringify()` uses it.
+ * 
+ * @typeparam T The type of the wrapped value; its own `.toJSON` will be used
+ *            to transform the interior contents of the `Just` variant.
+ * @param maybe The value to convert to JSON
+ * @returns     The JSON representation of the `Maybe`
+ */
+export function toJSON(maybe: Maybe<any>): MaybeJSONShape {
+  return valueOf(maybe);
 }
 
 /** A lightweight object defining how to handle each variant of a Maybe. */
@@ -1880,6 +1920,7 @@ export const Maybe = {
   toOkOrElseErr,
   fromResult,
   toString,
+  valueOf,
   toJSON,
   tuple,
   match,

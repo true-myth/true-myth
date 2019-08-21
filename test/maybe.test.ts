@@ -301,9 +301,22 @@ describe('`Maybe` pure functions', () => {
     expect(Maybe.toString(Maybe.nothing())).toEqual('Nothing');
   });
 
+  test('`valueOf`', () => {
+    expect(Maybe.valueOf(Maybe.of(42))).toEqual({variant: Maybe.Variant.Just, value: 42})
+    expect(Maybe.valueOf(Maybe.nothing())).toEqual({variant: Maybe.Variant.Nothing})
+    expect(Maybe.valueOf(Maybe.of({a: 42, b: null}))).toEqual({
+      variant: Maybe.Variant.Just,
+      value: {a: 42, b: null},
+    })
+  })
+
   test('`toJSON`', () => {
     expect(Maybe.toJSON(Maybe.of(42))).toEqual({variant: Maybe.Variant.Just, value: 42})
     expect(Maybe.toJSON(Maybe.nothing())).toEqual({variant: Maybe.Variant.Nothing})
+    expect(Maybe.toJSON(Maybe.of({a: 42, b: null}))).toEqual({
+      variant: Maybe.Variant.Just,
+      value: {a: 42, b: null},
+    })
   })
 
   test('`toJSON` through serialization', () => {
@@ -311,7 +324,7 @@ describe('`Maybe` pure functions', () => {
     const actualSerializedNothing = JSON.stringify(Maybe.nothing())
     const expectedSerializedJust = JSON.stringify({variant: Maybe.Variant.Just, value: 42})
     const expectedSerializedNothing = JSON.stringify({variant: Maybe.Variant.Nothing})
-    
+
     expect(actualSerializedJust).toEqual(expectedSerializedJust)
     expect(actualSerializedNothing).toEqual(expectedSerializedNothing)
   })
@@ -669,8 +682,20 @@ describe('`Maybe.Just` class', () => {
     expect(Maybe.of(42).toString()).toEqual('Just(42)');
   });
 
+  test('`valueOf` method', () => {
+    expect(Maybe.of({x: 42}).valueOf()).toEqual({variant: Maybe.Variant.Just, value: {x: 42}})
+    expect(Maybe.of(Maybe.of(42)).valueOf()).toEqual({
+      variant: Maybe.Variant.Just,
+      value: {variant: Maybe.Variant.Just, value: 42},
+    })
+  })
+
   test('`toJSON` method', () => {
-    expect(Maybe.of(42).toJSON()).toEqual({variant: Maybe.Variant.Just, value: 42})
+    expect(Maybe.of({x: 42}).toJSON()).toEqual({variant: Maybe.Variant.Just, value: {x: 42}})
+    expect(Maybe.of(Maybe.of(42)).toJSON()).toEqual({
+      variant: Maybe.Variant.Just,
+      value: {variant: Maybe.Variant.Just, value: 42},
+    })
   })
 
   test('`equals` method', () => {
@@ -834,8 +859,20 @@ describe('`Maybe.Nothing` class', () => {
     expect(Maybe.nothing().toString()).toEqual('Nothing');
   });
 
+  test('`valueOf` method', () => {
+    expect(Maybe.nothing().toJSON()).toEqual({variant: Maybe.Variant.Nothing})
+    expect(Maybe.of(Maybe.nothing()).valueOf()).toEqual({
+      variant: Maybe.Variant.Just,
+      value: {variant: Maybe.Variant.Nothing},
+    })
+  })
+
   test('`toJSON` method', () => {
     expect(Maybe.nothing().toJSON()).toEqual({variant: Maybe.Variant.Nothing})
+    expect(Maybe.of(Maybe.nothing()).toJSON()).toEqual({
+      variant: Maybe.Variant.Just,
+      value: {variant: Maybe.Variant.Nothing},
+    })
   })
 
   test('`equals` method', () => {
