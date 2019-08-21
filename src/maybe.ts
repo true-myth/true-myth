@@ -15,6 +15,17 @@ export enum Variant {
   Nothing = 'Nothing',
 }
 
+export interface JustJSONShape<T> {
+  variant: Variant.Just;
+  value: T;
+}
+
+export interface NothingJSONShape {
+  variant: Variant.Nothing;
+}
+
+export type MaybeJSONShape<T> = JustJSONShape<T> | NothingJSONShape
+
 /** Simply defines the common shape for `Just` and `Nothing`. */
 export interface MaybeShape<T> {
   /** Distinguish between the `Just` and `Nothing` [variants](../enums/_maybe_.variant). */
@@ -70,6 +81,9 @@ export interface MaybeShape<T> {
 
   /** Method variant for [`Maybe.toString`](../modules/_maybe_.html#tostring) */
   toString(this: Maybe<T>): string;
+
+  /** Method variant for [`Maybe.toJSON`](../modules/_maybe_.html#toJSON) */
+  toJSON(this: Maybe<T>): MaybeJSONShape<T>;
 
   /** Method variant for [`Maybe.equals`](../modules/_maybe_.html#equals) */
   equals(this: Maybe<T>, comparison: Maybe<T>): boolean;
@@ -282,6 +296,10 @@ export class Just<T> implements MaybeShape<T> {
     return toString(this);
   }
 
+  toJSON(this: Maybe<T>): MaybeJSONShape<T> {
+    return toJSON(this);
+  }
+
   /** Method variant for [`Maybe.equals`](../modules/_maybe_.html#equals) */
   equals(this: Maybe<T>, comparison: Maybe<T>): boolean {
     return equals(comparison, this);
@@ -466,6 +484,10 @@ export class Nothing<T> implements MaybeShape<T> {
   /** Method variant for [`Maybe.toString`](../modules/_maybe_.html#tostring) */
   toString(this: Maybe<T>): string {
     return toString(this);
+  }
+
+  toJSON(this: Maybe<T>): MaybeJSONShape<T> {
+    return toJSON(this);
   }
 
   /** Method variant for [`Maybe.equals`](../modules/_maybe_.html#equals) */
@@ -1130,6 +1152,12 @@ export function fromResult<T>(result: Result<T, any>): Maybe<T> {
 export function toString<T>(maybe: Maybe<T>): string {
   const body = maybe.isJust() ? `(${maybe.value.toString()})` : '';
   return `${maybe.variant}${body}`;
+}
+
+export function toJSON<T>(maybe: Maybe<T>): MaybeJSONShape<T> {
+  return maybe.isJust()
+    ? {variant: maybe.variant, value: maybe.value}
+    : {variant: maybe.variant}
 }
 
 /** A lightweight object defining how to handle each variant of a Maybe. */
@@ -1852,6 +1880,7 @@ export const Maybe = {
   toOkOrElseErr,
   fromResult,
   toString,
+  toJSON,
   tuple,
   match,
   cata,
