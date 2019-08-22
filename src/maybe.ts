@@ -1161,8 +1161,6 @@ export function toString<T>(maybe: Maybe<T>): string {
  * 
  * Useful for serialization. `JSON.stringify()` uses it.
  * 
- * @typeparam T The type of the wrapped value; its own `.toJSON` will be used
- *            to transform the interior contents of the `Just` variant.
  * @param maybe The value to convert to JSON
  * @returns     The JSON representation of the `Maybe`
  */
