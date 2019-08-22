@@ -82,9 +82,6 @@ export interface MaybeShape<T> {
   /** Method variant for [`Maybe.toString`](../modules/_maybe_.html#tostring) */
   toString(this: Maybe<T>): string;
 
-  /** Method variant for [`Maybe.valueOf`](../modules/_maybe_.html#valueOf) */
-  valueOf(this: Maybe<T>): MaybeJsonShape;
-
   /** Method variant for [`Maybe.toJSON`](../modules/_maybe_.html#toJSON) */
   toJSON(this: Maybe<T>): MaybeJsonShape;
 
@@ -299,11 +296,6 @@ export class Just<T> implements MaybeShape<T> {
     return toString(this);
   }
 
-  /** Method variant for [`Maybe.valueOf`](../modules/_maybe_.html#valueOf) */
-  valueOf(this: Maybe<T>): MaybeJsonShape {
-    return valueOf(this);
-  }
-
   /** Method variant for [`Maybe.toJSON`](../modules/_maybe_.html#toJSON) */
   toJSON(this: Maybe<T>): MaybeJsonShape {
     return toJSON(this);
@@ -493,11 +485,6 @@ export class Nothing<T> implements MaybeShape<T> {
   /** Method variant for [`Maybe.toString`](../modules/_maybe_.html#tostring) */
   toString(this: Maybe<T>): string {
     return toString(this);
-  }
-
-  /** Method variant for [`Maybe.valueOf`](../modules/_maybe_.html#valueOf) */
-  valueOf(this: Maybe<T>): MaybeJsonShape {
-    return valueOf(this);
   }
 
   /** Method variant for [`Maybe.toJSON`](../modules/_maybe_.html#toJSON) */
@@ -1170,23 +1157,6 @@ export function toString<T>(maybe: Maybe<T>): string {
 }
 
 /**
- * Return an `Object` representation of a `Maybe` instance.
- * 
- * It is meant to be used by JavaScript itself when it needs to convert the
- * object to a primitive type.
- * 
- * @typeparam T The type of the wrapped value; its own `.toJSON` will be used
- *            to transform the interior contents of the `Just` variant.
- * @param maybe The value to convert to JSON
- * @returns     The JSON representation of the `Maybe`
- */
-export function valueOf(maybe: Maybe<any>): MaybeJsonShape {
-  return maybe.isJust()
-    ? {variant: maybe.variant, value: maybe.value.valueOf()}
-    : {variant: maybe.variant}
-}
-
-/**
  * Create an `Object` representation of a `Maybe` instance.
  * 
  * Useful for serialization. `JSON.stringify()` uses it.
@@ -1197,7 +1167,9 @@ export function valueOf(maybe: Maybe<any>): MaybeJsonShape {
  * @returns     The JSON representation of the `Maybe`
  */
 export function toJSON(maybe: Maybe<any>): MaybeJsonShape {
-  return valueOf(maybe);
+  return maybe.isJust()
+    ? {variant: maybe.variant, value: maybe.value.valueOf()}
+    : {variant: maybe.variant};
 }
 
 /** A lightweight object defining how to handle each variant of a Maybe. */
@@ -1920,7 +1892,6 @@ export const Maybe = {
   toOkOrElseErr,
   fromResult,
   toString,
-  valueOf,
   toJSON,
   tuple,
   match,
