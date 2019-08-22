@@ -19,6 +19,18 @@ export enum Variant {
   Err = 'Err',
 }
 
+export interface OkJsonShape {
+  variant: Variant.Ok;
+  value: any;
+}
+
+export interface ErrJsonShape {
+  variant: Variant.Err;
+  error: any;
+}
+
+export type ResultJsonShape = OkJsonShape | ErrJsonShape
+
 /** Simply defines the common shape for `Ok` and `Err`. */
 export interface ResultShape<T, E> {
   /** Distinguish between the `Ok` and `Err` variants. */
@@ -80,6 +92,9 @@ export interface ResultShape<T, E> {
 
   /** Method variant for [`Result.toString`](../modules/_result_.html#tostring) */
   toString(this: Result<T, E>): string;
+
+  /** Method variant for [`Result.toJSON`](../modules/_result_.html#toJSON) */
+  toJSON(this: Result<T, E>): ResultJsonShape;
 
   /** Method variant for [`Result.equals`](../modules/_result_.html#equals) */
   equals(this: Result<T, E>, comparison: Result<T, E>): boolean;
@@ -260,6 +275,11 @@ export class Ok<T, E> implements ResultShape<T, E> {
   /** Method variant for [`Result.toString`](../modules/_result_.html#tostring) */
   toString(this: Result<T, E>): string {
     return toString(this);
+  }
+
+  /** Method variant for [`Result.toJSON`](../modules/_result_.html#toJSON) */
+  toJSON(this: Result<T, E>): ResultJsonShape {
+    return toJSON(this);
   }
 
   /** Method variant for [`Result.equals`](../modules/_result_.html#equals) */
@@ -445,6 +465,11 @@ export class Err<T, E> implements ResultShape<T, E> {
   /** Method variant for [`Result.toString`](../modules/_result_.html#tostring) */
   toString(this: Result<T, E>): string {
     return toString(this);
+  }
+
+  /** Method variant for [`Result.toJSON`](../modules/_result_.html#toJSON) */
+  toJSON(this: Result<T, E>): ResultJsonShape {
+    return toJSON(this);
   }
 
   /** Method variant for [`Result.equals`](../modules/_result_.html#equals) */
@@ -1257,6 +1282,12 @@ export const toString = <T, E>(result: Result<T, E>): string => {
   return `${result.variant.toString()}(${body})`;
 };
 
+export const toJSON = (result: Result<any, any>): ResultJsonShape => {
+  return result.isOk()
+    ? {variant: result.variant, value: result.value.valueOf()}
+    : {variant: result.variant, error: result.error.valueOf()};
+}
+
 /** A lightweight object defining how to handle each variant of a Maybe. */
 export type Matcher<T, E, A> = {
   Ok: (value: T) => A;
@@ -1606,6 +1637,7 @@ export const Result = {
   toMaybe,
   fromMaybe,
   toString,
+  toJSON,
   match,
   cata,
   equals,
