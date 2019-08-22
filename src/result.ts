@@ -1282,6 +1282,14 @@ export const toString = <T, E>(result: Result<T, E>): string => {
   return `${result.variant.toString()}(${body})`;
 };
 
+/**
+ * Create an `Object` representation of a `Result` instance.
+ * 
+ * Useful for serialization. `JSON.stringify()` uses it.
+ * 
+ * @param result  The value to convert to JSON
+ * @returns       The JSON representation of the `Result`
+ */
 export const toJSON = (result: Result<any, any>): ResultJsonShape => {
   return result.isOk()
     ? {variant: result.variant, value: result.value.valueOf()}
