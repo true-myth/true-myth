@@ -15,16 +15,16 @@ export enum Variant {
   Nothing = 'Nothing',
 }
 
-export interface JustJsonShape {
+export interface JustJSON<T> {
   variant: Variant.Just;
-  value: any;
+  value: T;
 }
 
-export interface NothingJsonShape {
+export interface NothingJSON {
   variant: Variant.Nothing;
 }
 
-export type MaybeJsonShape = JustJsonShape | NothingJsonShape
+export type MaybeJSON<T> = JustJSON<T> | NothingJSON;
 
 /** Simply defines the common shape for `Just` and `Nothing`. */
 export interface MaybeShape<T> {
@@ -83,7 +83,7 @@ export interface MaybeShape<T> {
   toString(this: Maybe<T>): string;
 
   /** Method variant for [`Maybe.toJSON`](../modules/_maybe_.html#toJSON) */
-  toJSON(this: Maybe<T>): MaybeJsonShape;
+  toJSON(this: Maybe<T>): MaybeJSON<T>;
 
   /** Method variant for [`Maybe.equals`](../modules/_maybe_.html#equals) */
   equals(this: Maybe<T>, comparison: Maybe<T>): boolean;
@@ -297,7 +297,7 @@ export class Just<T> implements MaybeShape<T> {
   }
 
   /** Method variant for [`Maybe.toJSON`](../modules/_maybe_.html#toJSON) */
-  toJSON(this: Maybe<T>): MaybeJsonShape {
+  toJSON(this: Maybe<T>): MaybeJSON<T> {
     return toJSON(this);
   }
 
@@ -488,7 +488,7 @@ export class Nothing<T> implements MaybeShape<T> {
   }
 
   /** Method variant for [`Maybe.toJSON`](../modules/_maybe_.html#toJSON) */
-  toJSON(this: Maybe<T>): MaybeJsonShape {
+  toJSON(this: Maybe<T>): MaybeJSON<T> {
     return toJSON(this);
   }
 
@@ -1164,9 +1164,9 @@ export function toString<T>(maybe: Maybe<T>): string {
  * @param maybe The value to convert to JSON
  * @returns     The JSON representation of the `Maybe`
  */
-export function toJSON(maybe: Maybe<any>): MaybeJsonShape {
+export function toJSON<T>(maybe: Maybe<T>): MaybeJSON<T> {
   return maybe.isJust()
-    ? {variant: maybe.variant, value: maybe.value.valueOf()}
+    ? { variant: maybe.variant, value: maybe.value }
     : {variant: maybe.variant};
 }
 
