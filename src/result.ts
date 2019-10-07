@@ -19,17 +19,17 @@ export enum Variant {
   Err = 'Err',
 }
 
-export interface OkJsonShape {
+export interface OkJSON<T> {
   variant: Variant.Ok;
-  value: any;
+  value: T;
 }
 
-export interface ErrJsonShape {
+export interface ErrJSON<E> {
   variant: Variant.Err;
-  error: any;
+  error: E;
 }
 
-export type ResultJsonShape = OkJsonShape | ErrJsonShape
+export type ResultJSON<T, E> = OkJSON<T> | ErrJSON<E>;
 
 /** Simply defines the common shape for `Ok` and `Err`. */
 export interface ResultShape<T, E> {
@@ -94,7 +94,7 @@ export interface ResultShape<T, E> {
   toString(this: Result<T, E>): string;
 
   /** Method variant for [`Result.toJSON`](../modules/_result_.html#toJSON) */
-  toJSON(this: Result<T, E>): ResultJsonShape;
+  toJSON(this: Result<T, E>): ResultJSON<T, E>;
 
   /** Method variant for [`Result.equals`](../modules/_result_.html#equals) */
   equals(this: Result<T, E>, comparison: Result<T, E>): boolean;
@@ -278,7 +278,7 @@ export class Ok<T, E> implements ResultShape<T, E> {
   }
 
   /** Method variant for [`Result.toJSON`](../modules/_result_.html#toJSON) */
-  toJSON(this: Result<T, E>): ResultJsonShape {
+  toJSON(this: Result<T, E>): ResultJSON<T, E> {
     return toJSON(this);
   }
 
@@ -468,7 +468,7 @@ export class Err<T, E> implements ResultShape<T, E> {
   }
 
   /** Method variant for [`Result.toJSON`](../modules/_result_.html#toJSON) */
-  toJSON(this: Result<T, E>): ResultJsonShape {
+  toJSON(this: Result<T, E>): ResultJSON<T, E> {
     return toJSON(this);
   }
 
@@ -1290,7 +1290,7 @@ export const toString = <T, E>(result: Result<T, E>): string => {
  * @param result  The value to convert to JSON
  * @returns       The JSON representation of the `Result`
  */
-export const toJSON = (result: Result<any, any>): ResultJsonShape => {
+export const toJSON = <T, E>(result: Result<T, E>): ResultJSON<T, E> => {
   return result.isOk()
     ? {variant: result.variant, value: result.value.valueOf()}
     : {variant: result.variant, error: result.error.valueOf()};
