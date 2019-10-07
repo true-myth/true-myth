@@ -1292,8 +1292,8 @@ export const toString = <T, E>(result: Result<T, E>): string => {
  */
 export const toJSON = <T, E>(result: Result<T, E>): ResultJSON<T, E> => {
   return result.isOk()
-    ? {variant: result.variant, value: result.value.valueOf()}
-    : {variant: result.variant, error: result.error.valueOf()};
+    ? {variant: result.variant, value: result.value}
+    : {variant: result.variant, error: result.error};
 }
 
 /** A lightweight object defining how to handle each variant of a Maybe. */
