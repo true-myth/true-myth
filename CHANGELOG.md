@@ -6,6 +6,35 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ## [Unreleased]
 
+## [3.1.0] (2019-10-08)
+
+### Added :star:
+
+Thanks to @MarcNq, with very helpful input from @CrossEye, True Myth now has `toJSON` functions and methods on its types. This means that there's now a stable serialization format, which you can rely on going forward!
+
+For `Maybe<T>`, the type is `{ variant: 'Just', value: T }` or `{ variant: 'Nothing' }`. For `Result`, it's `{ variant: 'Ok', value: T  }` or `{ variant: 'Err', error: E }`. Since we just hand back the wrapped item, any object's implementation of `toJSON` or similar will work as usual, so you're fully in  control of serialization.
+
+### Upgrading :gear:
+
+With yarn:
+
+```sh
+yarn upgrade true-myth@latest
+```
+
+With npm:
+
+```sh
+npm install true-myth@latest
+```
+
+### Contributors 🙇 
+
+- @MarcNq
+- @CrossEye
+- @chriskrycho
+- @bmakuh
+
 ## [3.0.0] (2019-05-17)
 
 ### Added :star:
@@ -52,5 +81,6 @@ npm install true-myth@latest
 - @chriskrycho
 - @snatvb
 
-[unreleased]: https://github.com/true-myth/true-myth/compare/v3.0.0...HEAD
+[unreleased]: https://github.com/true-myth/true-myth/compare/v3.1.0...HEAD
+[3.1.0]: https://github.com/true-myth/true-myth/compare/v3.0.0...v3.1.0
 [3.0.0]: https://github.com/true-myth/true-myth/compare/v2.2.8...v3.0.0
