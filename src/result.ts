@@ -19,17 +19,17 @@ export enum Variant {
   Err = 'Err',
 }
 
-export interface OkJSON<T> {
+interface OkJSON<T> {
   variant: Variant.Ok;
   value: T;
 }
 
-export interface ErrJSON<E> {
+interface ErrJSON<E> {
   variant: Variant.Err;
   error: E;
 }
 
-export type ResultJSON<T, E> = OkJSON<T> | ErrJSON<E>;
+type ResultJSON<T, E> = OkJSON<T> | ErrJSON<E>;
 
 /** Simply defines the common shape for `Ok` and `Err`. */
 export interface ResultShape<T, E> {
@@ -1284,17 +1284,17 @@ export const toString = <T, E>(result: Result<T, E>): string => {
 
 /**
  * Create an `Object` representation of a `Result` instance.
- * 
+ *
  * Useful for serialization. `JSON.stringify()` uses it.
- * 
+ *
  * @param result  The value to convert to JSON
  * @returns       The JSON representation of the `Result`
  */
 export const toJSON = <T, E>(result: Result<T, E>): ResultJSON<T, E> => {
   return result.isOk()
-    ? {variant: result.variant, value: result.value}
-    : {variant: result.variant, error: result.error};
-}
+    ? { variant: result.variant, value: result.value }
+    : { variant: result.variant, error: result.error };
+};
 
 /** A lightweight object defining how to handle each variant of a Maybe. */
 export type Matcher<T, E, A> = {

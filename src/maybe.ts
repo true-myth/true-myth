@@ -15,16 +15,16 @@ export enum Variant {
   Nothing = 'Nothing',
 }
 
-export interface JustJSON<T> {
+interface JustJSON<T> {
   variant: Variant.Just;
   value: T;
 }
 
-export interface NothingJSON {
+interface NothingJSON {
   variant: Variant.Nothing;
 }
 
-export type MaybeJSON<T> = JustJSON<T> | NothingJSON;
+type MaybeJSON<T> = JustJSON<T> | NothingJSON;
 
 /** Simply defines the common shape for `Just` and `Nothing`. */
 export interface MaybeShape<T> {
