@@ -38,13 +38,13 @@ export interface MaybeShape<T> {
   isNothing(this: Maybe<T>): this is Nothing<T>;
 
   /** Method variant for [`Maybe.map`](../modules/_maybe_.html#map) */
-  map<U>(this: Maybe<T>, mapFn: (t: T) => NonNullable<U>): Maybe<U>;
+  map<U>(this: Maybe<T>, mapFn: (t: T) => U): Maybe<U>;
 
   /** Method variant for [`Maybe.mapOr`](../modules/_maybe_.html#mapor) */
-  mapOr<U>(this: Maybe<T>, orU: U, mapFn: (t: T) => NonNullable<U>): U;
+  mapOr<U>(this: Maybe<T>, orU: U, mapFn: (t: T) => U): U;
 
   /** Method variant for [`Maybe.mapOrElse`](../modules/_maybe_.html#maporelse) */
-  mapOrElse<U>(this: Maybe<T>, orElseFn: () => U, mapFn: (t: T) => NonNullable<U>): U;
+  mapOrElse<U>(this: Maybe<T>, orElseFn: () => U, mapFn: (t: T) => U): U;
 
   /** Method variant for [`Maybe.match`](../modules/_maybe_.html#match) */
   match<U>(this: Maybe<T>, matcher: Matcher<T, U>): U;
@@ -89,7 +89,7 @@ export interface MaybeShape<T> {
   equals(this: Maybe<T>, comparison: Maybe<T>): boolean;
 
   /** Method variant for [`Maybe.ap`](../modules/_maybe_.html#ap) */
-  ap<U>(this: Maybe<(val: T) => NonNullable<U>>, val: Maybe<T>): Maybe<U>;
+  ap<U>(this: Maybe<(val: T) => U>, val: Maybe<T>): Maybe<U>;
 
   /**
     Method variant for [`Maybe.get`](../modules/_maybe_.html#prop)
