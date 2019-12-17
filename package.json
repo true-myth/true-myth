@@ -61,8 +61,8 @@
     "rimraf": "^2.6.2",
     "shelljs": "^0.8.2",
     "ts-jest": "^24.2.0",
-    "typedoc": "^0.14.2",
-    "typescript": "^3.3.3"
+    "typedoc": "^0.15.5",
+    "typescript": "^3.7.3"
   },
   "jest": {
     "transform": {

@@ -547,9 +547,9 @@ export function isErr<T, E>(result: Result<T, E>): result is Err<T, E> {
   @typeparam T The type of the item contained in the `Result`.
   @param value The value to wrap in a `Result.Ok`.
  */
-export function ok<T, E>(): Result<Unit, E>;
-export function ok<T, E>(value: T): Result<T, E>;
-export function ok<T, E>(value?: T): Result<Unit, E> | Result<T, E> {
+export function ok<T = unknown, E = unknown>(): Result<Unit, E>;
+export function ok<T = unknown, E = unknown>(value: T): Result<T, E>;
+export function ok<T = unknown, E = unknown>(value?: T): Result<Unit, E> | Result<T, E> {
   return value === undefined ? new Ok(Unit) : new Ok(value);
 }
 
@@ -602,9 +602,9 @@ export const of = ok;
   @typeparam T The type of the item contained in the `Result`.
   @param E The error value to wrap in a `Result.Err`.
  */
-export function err<T, E>(): Result<T, Unit>;
-export function err<T, E>(error: E): Result<T, E>;
-export function err<T, E>(error?: E): Result<T, Unit> | Result<T, E> {
+export function err<T = unknown, E = unknown>(): Result<T, Unit>;
+export function err<T = unknown, E = unknown>(error: E): Result<T, E>;
+export function err<T = unknown, E = unknown>(error?: E): Result<T, Unit> | Result<T, E> {
   return isVoid(error) ? new Err(Unit) : new Err(error);
 }
 
@@ -1277,7 +1277,9 @@ export function fromMaybe<T, E>(
   @param maybe The value to convert to a string.
   @returns     The string representation of the `Maybe`.
  */
-export const toString = <T, E>(result: Result<T, E>): string => {
+export const toString = <T extends { toString(): string }, E extends { toString(): string }>(
+  result: Result<T, E>
+): string => {
   const body = (isOk(result) ? result.value : result.error).toString();
   return `${result.variant.toString()}(${body})`;
 };

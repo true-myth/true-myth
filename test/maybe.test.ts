@@ -298,7 +298,7 @@ describe('`Maybe` pure functions', () => {
 
   test('`toString`', () => {
     expect(Maybe.toString(Maybe.of(42))).toEqual('Just(42)');
-    expect(Maybe.toString(Maybe.nothing())).toEqual('Nothing');
+    expect(Maybe.toString(Maybe.nothing<string>())).toEqual('Nothing');
   });
 
   test('`toJSON`', () => {
