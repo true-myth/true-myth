@@ -6,7 +6,6 @@
     },
     "typescript.tsdk": "node_modules/typescript/lib",
     "javascript.validate.enable": false,
-    "prettier.eslintIntegration": true,
     "eslint.autoFixOnSave": true,
     "eslint.validate": [
         "javascript",
