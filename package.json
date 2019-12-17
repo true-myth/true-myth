@@ -64,6 +64,9 @@
     "typedoc": "^0.15.5",
     "typescript": "^3.7.3"
   },
+  "engines": {
+    "node": "10.* || >= 12.*"
+  },
   "jest": {
     "transform": {
       "^.+\\.tsx?$": "ts-jest"
