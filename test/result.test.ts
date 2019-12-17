@@ -23,7 +23,7 @@ describe('`Result` pure functions', () => {
     }
 
     const withUnit = Result.ok();
-    assertType<Result<Unit, {}>>(withUnit);
+    assertType<Result<Unit, unknown>>(withUnit);
     expect(withUnit).toEqual(Result.ok(Unit));
   });
 
@@ -43,7 +43,7 @@ describe('`Result` pure functions', () => {
     }
 
     const withUnit = Result.err();
-    assertType<Result<{}, Unit>>(withUnit);
+    assertType<Result<unknown, Unit>>(withUnit);
     expect(withUnit).toEqual(Result.err(Unit));
   });
 
@@ -305,11 +305,12 @@ describe('`Result` pure functions', () => {
 
   test('toString', () => {
     const theValue = { thisIsReally: 'something' };
-    const anOk = Result.ok(theValue);
+    const errValue = ['oh', 'no'];
+
+    const anOk = Result.ok<typeof theValue, typeof errValue>(theValue);
     expect(Result.toString(anOk)).toEqual(`Ok(${theValue.toString()})`);
 
-    const errValue = ['oh', 'no'];
-    const anErr = Result.err(errValue);
+    const anErr = Result.err<typeof theValue, typeof errValue>(errValue);
     expect(Result.toString(anErr)).toEqual(`Err(${errValue.toString()})`);
   });
 
