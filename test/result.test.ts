@@ -316,25 +316,28 @@ describe('`Result` pure functions', () => {
   test('`toJSON`', () => {
     const theValue = { thisIsReally: 'something', b: null };
     const anOk = Result.ok(theValue);
-    expect(Result.toJSON(anOk)).toEqual({variant: Result.Variant.Ok, value: theValue});
-    
+    expect(Result.toJSON(anOk)).toEqual({ variant: Result.Variant.Ok, value: theValue });
+
     const errValue = ['oh', 'no', null];
     const anErr = Result.err(errValue);
-    expect(Result.toJSON(anErr)).toEqual({variant: Result.Variant.Err, error: errValue});
-  })
+    expect(Result.toJSON(anErr)).toEqual({ variant: Result.Variant.Err, error: errValue });
+  });
 
   test('`toJSON` through serialization', () => {
     const actualSerializedOk = JSON.stringify(Result.ok(42));
-    const actualSerializedErr = JSON.stringify(Result.err({someInfo: 'error'}));
+    const actualSerializedErr = JSON.stringify(Result.err({ someInfo: 'error' }));
     const actualSerializedUnitErr = JSON.stringify(Result.err(null));
-    const expectedSerializedOk = JSON.stringify({variant: Result.Variant.Ok, value: 42});
-    const expectedSerializedErr = JSON.stringify({variant: Result.Variant.Err, error: {someInfo: 'error'}});
-    const expectedSerializedUnitErr = JSON.stringify({variant: Result.Variant.Err, error: Unit});
+    const expectedSerializedOk = JSON.stringify({ variant: Result.Variant.Ok, value: 42 });
+    const expectedSerializedErr = JSON.stringify({
+      variant: Result.Variant.Err,
+      error: { someInfo: 'error' },
+    });
+    const expectedSerializedUnitErr = JSON.stringify({ variant: Result.Variant.Err, error: Unit });
 
     expect(actualSerializedOk).toEqual(expectedSerializedOk);
     expect(actualSerializedErr).toEqual(expectedSerializedErr);
     expect(actualSerializedUnitErr).toEqual(expectedSerializedUnitErr);
-  })
+  });
 
   test('`equals`', () => {
     const a = Result.ok<string, string>('a');
@@ -567,8 +570,8 @@ describe('`Result.Ok` class', () => {
   test('`toJSON` method', () => {
     const theValue = 42;
     const theOk = new Result.Ok(theValue);
-    expect(theOk.toJSON()).toEqual({variant: Result.Variant.Ok, value: theValue})
-  })
+    expect(theOk.toJSON()).toEqual({ variant: Result.Variant.Ok, value: theValue });
+  });
 
   test('`ap` method', () => {
     const fn = new Result.Ok<(val: string) => number, string>(str => str.length);
@@ -750,9 +753,9 @@ describe('`Result.Err` class', () => {
 
   test('`toJSON` method', () => {
     const theError = 'test';
-    const theErr = new Result.Err(theError)
-    expect(theErr.toJSON()).toEqual({variant: Result.Variant.Err, error: theError})
-  })
+    const theErr = new Result.Err(theError);
+    expect(theErr.toJSON()).toEqual({ variant: Result.Variant.Err, error: theError });
+  });
 
   test('`equals` method', () => {
     const a = new Result.Ok('a');

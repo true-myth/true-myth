@@ -302,23 +302,23 @@ describe('`Maybe` pure functions', () => {
   });
 
   test('`toJSON`', () => {
-    expect(Maybe.toJSON(Maybe.of(42))).toEqual({variant: Maybe.Variant.Just, value: 42})
-    expect(Maybe.toJSON(Maybe.nothing())).toEqual({variant: Maybe.Variant.Nothing})
-    expect(Maybe.toJSON(Maybe.of({a: 42, b: null}))).toEqual({
+    expect(Maybe.toJSON(Maybe.of(42))).toEqual({ variant: Maybe.Variant.Just, value: 42 });
+    expect(Maybe.toJSON(Maybe.nothing())).toEqual({ variant: Maybe.Variant.Nothing });
+    expect(Maybe.toJSON(Maybe.of({ a: 42, b: null }))).toEqual({
       variant: Maybe.Variant.Just,
-      value: {a: 42, b: null},
+      value: { a: 42, b: null },
     });
-  })
+  });
 
   test('`toJSON` through serialization', () => {
     const actualSerializedJust = JSON.stringify(Maybe.of(42));
     const actualSerializedNothing = JSON.stringify(Maybe.nothing());
-    const expectedSerializedJust = JSON.stringify({variant: Maybe.Variant.Just, value: 42});
-    const expectedSerializedNothing = JSON.stringify({variant: Maybe.Variant.Nothing});
+    const expectedSerializedJust = JSON.stringify({ variant: Maybe.Variant.Just, value: 42 });
+    const expectedSerializedNothing = JSON.stringify({ variant: Maybe.Variant.Nothing });
 
     expect(actualSerializedJust).toEqual(expectedSerializedJust);
     expect(actualSerializedNothing).toEqual(expectedSerializedNothing);
-  })
+  });
 
   test('`equals`', () => {
     const a = Maybe.of<string>('a');
@@ -382,7 +382,10 @@ describe('`Maybe` pure functions', () => {
 
     // This is more about testing the types with the currying; it's functionally
     // covered already.
-    const array: Response = [{ count: 1, name: 'potato' }, { count: 10, name: 'waffles' }];
+    const array: Response = [
+      { count: 1, name: 'potato' },
+      { count: 10, name: 'waffles' },
+    ];
     const findAtLeast5 = Maybe.find(({ count }: Item) => count > 5);
     const found = findAtLeast5(array);
     expect(found.variant).toBe(Maybe.Variant.Just);
@@ -674,12 +677,12 @@ describe('`Maybe.Just` class', () => {
   });
 
   test('`toJSON` method', () => {
-    expect(Maybe.of({x: 42}).toJSON()).toEqual({variant: Maybe.Variant.Just, value: {x: 42}})
+    expect(Maybe.of({ x: 42 }).toJSON()).toEqual({ variant: Maybe.Variant.Just, value: { x: 42 } });
     expect(Maybe.of(Maybe.of(42)).toJSON()).toEqual({
       variant: Maybe.Variant.Just,
-      value: {variant: Maybe.Variant.Just, value: 42},
-    })
-  })
+      value: { variant: Maybe.Variant.Just, value: 42 },
+    });
+  });
 
   test('`equals` method', () => {
     const a = new Maybe.Just('a');
@@ -843,12 +846,12 @@ describe('`Maybe.Nothing` class', () => {
   });
 
   test('`toJSON` method', () => {
-    expect(Maybe.nothing().toJSON()).toEqual({variant: Maybe.Variant.Nothing})
+    expect(Maybe.nothing().toJSON()).toEqual({ variant: Maybe.Variant.Nothing });
     expect(Maybe.of(Maybe.nothing()).toJSON()).toEqual({
       variant: Maybe.Variant.Just,
-      value: {variant: Maybe.Variant.Nothing},
-    })
-  })
+      value: { variant: Maybe.Variant.Nothing },
+    });
+  });
 
   test('`equals` method', () => {
     const a = new Maybe.Just<string>('a');

@@ -1158,16 +1158,16 @@ export function toString<T>(maybe: Maybe<T>): string {
 
 /**
  * Create an `Object` representation of a `Maybe` instance.
- * 
+ *
  * Useful for serialization. `JSON.stringify()` uses it.
- * 
+ *
  * @param maybe The value to convert to JSON
  * @returns     The JSON representation of the `Maybe`
  */
 export function toJSON<T>(maybe: Maybe<T>): MaybeJSON<T> {
   return maybe.isJust()
     ? { variant: maybe.variant, value: maybe.value }
-    : {variant: maybe.variant};
+    : { variant: maybe.variant };
 }
 
 /** A lightweight object defining how to handle each variant of a Maybe. */
