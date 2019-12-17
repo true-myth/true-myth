@@ -6,6 +6,13 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ## [Unreleased]
 
+### Changed :boom:
+
+- Explicitly drop support for Node 8 (and specify it going forward)
+- Reverted the use of `NonNullable` to constraint the types of callbacks like that passed to `map` and `mapOr`, because they [broke][#54] in TypeScript 3.6. (If you have ideas about how to improve this, please let us know!)
+
+[#54]: https://github.com/true-myth/true-myth/issues/54
+
 ## [3.1.0] (2019-10-08)
 
 ### Added :star:
