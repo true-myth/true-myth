@@ -106,7 +106,30 @@ import { Maybe, Result } from 'true-myth';
 
 (Normal Node imports work if you are using the library in JavaScript, but that is not recommended for many reasons. See [comments on Folktale below](#folktale) if you’re interested in a similar library for consumption in JavaScript.)
 
-The build includes both ES6 modules and CommonJS modules, so you may reference them directly from their installation in the `node_modules` directory. (This may be helpful for using the library in different contexts, with the ES modules being supplied especially so you can do tree-shaking with e.g. Rollup.)
+The build includes both ES6 modules and CommonJS modules, so you may reference them directly from their installation in the `node_modules` directory. This may be helpful for using the library in different contexts, with the ES modules being supplied especially so you can do tree-shaking with e.g. Rollup.
+
+### Tree-Shaking-friendly imports
+
+If you want to use tools like Rollup, you may prefer to use a namespace-style import. Throughout the documentation, instead of using the default imports—
+
+```ts
+import Maybe from 'true-myth/maybe';
+import Result from 'true-myth/result';
+```
+
+—prefer to use the namespace and type-only imports:
+
+```ts
+import * as Maybe from 'true-myth/maybe';
+type Maybe<T> = import('true-myth/maybe').Maybe<T>;
+
+import * as Result from 'true-myth/result';
+type Result<T, E> = import('true-myth/result').Result<T, E>;
+```
+
+These are somewhat less convenient, but unlike the default exports are totally amenable to tree-shaking.
+
+### Build output
 
 Note that the build target is ES2015, since all current evergreen browsers and the current LTS of Node support all ES2015 features. (Strictly speaking, Node 6 does not support *all* of ES2015, but this library goes nowhere near the couple features it has behind a flag.)
 
