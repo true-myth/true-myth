@@ -3,7 +3,14 @@
   [`Result`](./_result_.html). It doesn't do anything else.
  */
 
-/** (keep typedoc from getting confused by the imports) */
-export { default as Maybe } from './maybe';
-export { default as Result } from './result';
-export { default as Unit } from './unit';
+import * as MaybeNamespace from './maybe';
+export type Maybe<T> = import('./maybe').Maybe<T>;
+export const Maybe = MaybeNamespace;
+
+import * as ResultNamespace from './result';
+export type Result<T, E> = import('./result').Result<T, E>;
+export const Result = ResultNamespace;
+
+import * as UnitNamespace from './unit';
+export type Unit = import('./unit').Unit;
+export const Unit = UnitNamespace;
