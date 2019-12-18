@@ -6,12 +6,30 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ## [Unreleased]
 
+### Fixed :wrench:
+
+- Switched to using namespace-style imports (`import * as Maybe`) internally to enable users to tree-shake.
+
 ### Changed :boom:
 
 - Explicitly drop support for Node 8 (and specify it going forward)
 - Reverted the use of `NonNullable` to constraint the types of callbacks like that passed to `map` and `mapOr`, because they [broke][#54] in TypeScript 3.6. (If you have ideas about how to improve this, please let us know!)
 
 [#54]: https://github.com/true-myth/true-myth/issues/54
+
+### Upgrading :gear:
+
+With yarn:
+
+```sh
+yarn upgrade true-myth@latest
+```
+
+With npm:
+
+```sh
+npm install true-myth@latest
+```
 
 ## [3.1.0] (2019-10-08)
 
