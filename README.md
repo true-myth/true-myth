@@ -98,17 +98,13 @@ import Result from 'true-myth/result';
 import { Maybe, Result } from 'true-myth';
 ```
 
-In Node.js, the TypeScript-generated CommonJS package cannot be imported as nested modules, but the modules still can be imported directly from the top-level module:
-
-```typescript
-const { Maybe, Result } = require('true-myth');
-```
-
-With the TypeScript Node-aware transforms, you can also write this in ES6 module-style imports for Node, but the same limitations apply about the nested module imports, i.e. you just can't use them. Use the top-level imports instead:
+In Node.js, the TypeScript-generated CommonJS package cannot be imported as nested modules, but the modules still can be imported directly from the top-level module when using TypeScript:
 
 ```typescript
 import { Maybe, Result } from 'true-myth';
 ```
+
+(Normal Node imports work if you are using the library in JavaScript, but that is not recommended for many reasons. See [comments on Folktale below](#folktale) if you’re interested in a similar library for consumption in JavaScript.)
 
 The build includes both ES6 modules and CommonJS modules, so you may reference them directly from their installation in the `node_modules` directory. (This may be helpful for using the library in different contexts, with the ES modules being supplied especially so you can do tree-shaking with e.g. Rollup.)
 
