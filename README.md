@@ -129,6 +129,16 @@ type Result<T, E> = import('true-myth/result').Result<T, E>;
 
 These are somewhat less convenient, but unlike the default exports are totally amenable to tree-shaking.
 
+Gzipped size without tree-shaking, for the ES Modules (the CJS modules are slightly larger but you should use the ES modules for targeting the web):
+
+|    file     | size  | size gzipped |
+| ----------- | ----- | ------------ |
+| `index.js`  | 404KB | 239B         |
+| `maybe.js`  | 27K   | 6.1KB        |
+| `result.js` | 20K   | 4.1KB        |
+| `unit.js`   | 482B  | 345B         |
+| `utils.js`  | 473B  | 333B         |
+
 ### Build output
 
 Note that the build target is ES2015, since all current evergreen browsers and the current LTS of Node support all ES2015 features. (Strictly speaking, Node 6 does not support *all* of ES2015, but this library goes nowhere near the couple features it has behind a flag.)
