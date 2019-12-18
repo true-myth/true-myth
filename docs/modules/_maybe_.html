@@ -69,15 +69,21 @@
 			<section class="tsd-panel tsd-comment">
 				<div class="tsd-comment tsd-typography">
 					<div class="lead">
-						<h1 id="maybe">Maybe</h1>
+						<a href="#maybe" id="maybe" style="color: inherit; text-decoration: none;">
+							<h1>Maybe</h1>
+						</a>
 						<p>A <a href="#maybe"><code>Maybe&lt;T&gt;</code></a> represents a value of type <code>T</code> which may, or may not, be present.</p>
 						<p>If the value is present, it is <code>Just(value)</code>. If it&#39;s absent, it&#39;s <code>Nothing</code>. This provides a type-safe container for dealing with the possibility that there&#39;s nothing here – a container you can do many of the same things you might with an array – so that you can avoid nasty <code>null</code> and <code>undefined</code> checks throughout your codebase.</p>
 						<p>The behavior of this type is checked by TypeScript or Flow at compile time, and bears no runtime overhead other than the very small cost of the container object and some lightweight wrap/unwrap functionality.</p>
 						<p>The <code>Nothing</code> variant has a type parameter <code>&lt;T&gt;</code> so that type inference works correctly in TypeScript when operating on <code>Nothing</code> instances with functions which require a <code>T</code> to behave properly, e.g. <a href="https://chriskrycho.github.io/true-myth/modules/_maybe_.html#map"><code>map</code></a>, which cannot check that the map function satisfies the type constraints for <code>Maybe&lt;T&gt;</code> unless <code>Nothing</code> has a parameter <code>T</code> to constrain it on invocation.</p>
 						<p>Put simply: without the type parameter, if you had a <code>Nothing</code> variant of a <code>Maybe&lt;string&gt;</code>, and you tried to use it with a function which expected a <code>Maybe&lt;number&gt;</code> it would still type check – because TypeScript doesn&#39;t have enough information to check that it <em>doesn&#39;t</em> meet the requirements.</p>
-						<h2 id="using-maybe">Using <code>Maybe</code></h2>
+						<a href="#using-codemaybecode" id="using-codemaybecode" style="color: inherit; text-decoration: none;">
+							<h2>Using <code>Maybe</code></h2>
+						</a>
 						<p>The library is designed to be used with a functional style, allowing you to compose operations easily. Thus, standalone pure function versions of every operation are supplied. However, the same operations also exist on the <code>Just</code> and <code>Nothing</code> types directly, so you may also write them in a more traditional &quot;fluent&quot; object style.</p>
-						<h3 id="examples-functional-style">Examples: functional style</h3>
+						<a href="#examples-functional-style" id="examples-functional-style" style="color: inherit; text-decoration: none;">
+							<h3>Examples: functional style</h3>
+						</a>
 						<pre><code class="language-ts"><span class="hljs-keyword">import</span> Maybe <span class="hljs-keyword">from</span> <span class="hljs-string">'true-myth/maybe'</span>;
 
 <span class="hljs-comment">// Construct a `Just` where you have a value to use, and the function accepts</span>
@@ -99,7 +105,9 @@
 <span class="hljs-keyword">const</span> whoElseKnows: WhoKnows = { mightBeAThing: [<span class="hljs-literal">true</span>, <span class="hljs-literal">false</span>] };
 <span class="hljs-keyword">const</span> wrappedWhoElseKnows = Maybe.of(whoElseKnows.mightBeAThing);
 <span class="hljs-built_in">console</span>.log(toString(wrappedWhoElseKnows)); <span class="hljs-comment">// "Just(true,false)"</span></code></pre>
-						<h3 id="examples-fluent-object-invocation">Examples: fluent object invocation</h3>
+						<a href="#examples-fluent-object-invocation" id="examples-fluent-object-invocation" style="color: inherit; text-decoration: none;">
+							<h3>Examples: fluent object invocation</h3>
+						</a>
 						<p><strong>Note:</strong> in the &quot;class&quot;-style, if you are constructing a <code>Maybe</code> from an unknown source, you must either do the work to check the value yourself, or use <code>Maybe.of</code> – you can&#39;t know at that point whether it&#39;s safe to construct a <code>Just</code> without checking, but <code>of</code> will always work correctly!</p>
 						<pre><code class="language-typescript"><span class="hljs-keyword">import</span> { isVoid } <span class="hljs-keyword">from</span> <span class="hljs-string">'true-myth/utils'</span>;
 <span class="hljs-keyword">import</span> Maybe, { Just, Nothing } <span class="hljs-keyword">from</span> <span class="hljs-string">'true-myth/maybe'</span>;
@@ -138,10 +146,14 @@
 
 <span class="hljs-built_in">console</span>.log(wrappedWhoElseKnows.toString()); <span class="hljs-comment">// "Just(true,false)"</span></code></pre>
 						<p>As you can see, it&#39;s often advantageous to use <code>Maybe.of</code> even if you&#39;re otherwise inclined to use the class method approach; it dramatically cuts down the boilerplate you have to write (since, under the hood, it&#39;s doing exactly this check!).</p>
-						<h3 id="prefer-maybe-of">Prefer <a href="https://chriskrycho.github.io/true-myth/modules/_maybe_.html#of"><code>Maybe.of</code></a></h3>
+						<a href="#prefer-a-hrefhttpschriskrychogithubiotrue-mythmodules_maybe_htmlofcodemaybeofcodea" id="prefer-a-hrefhttpschriskrychogithubiotrue-mythmodules_maybe_htmlofcodemaybeofcodea" style="color: inherit; text-decoration: none;">
+							<h3>Prefer <a href="https://chriskrycho.github.io/true-myth/modules/_maybe_.html#of"><code>Maybe.of</code></a></h3>
+						</a>
 						<p>In fact, if you&#39;re dealing with data you are not constructing directly yourself, <strong><em>always</em></strong> prefer to use [<code>Maybe.of</code>] to create a new <code>Maybe</code>. If an API lies to you for some reason and hands you an <code>undefined</code> or a <code>null</code> (even though you expect it to be an actual <code>T</code> in a specific scenario), the <code>.of()</code> function will still construct it correctly for you.</p>
 						<p>By contrast, if you do <code>Maybe.just(someVariable)</code> and <code>someVariable</code> is <code>null</code> or <code>undefined</code>, the program will throw at that point. This is a simple consequence of the need to make the <code>new Just()</code> constructor work; we cannot construct <code>Just</code> safely in a way that excludes a type of <code>Maybe&lt;null&gt;</code> or <code>Maybe&lt;undefined&gt;</code> otherwise – and that would defeat the whole purpose of using a <code>Maybe</code>!</p>
-						<h3 id="writing-type-constraints">Writing type constraints</h3>
+						<a href="#writing-type-constraints" id="writing-type-constraints" style="color: inherit; text-decoration: none;">
+							<h3>Writing type constraints</h3>
+						</a>
 						<p>Especially when constructing a <code>Nothing</code>, you may need to specify what <em>kind</em> of <code>Nothing</code> it is. The TypeScript and Flow type systems can figure it out based on the value passed in for a <code>Just</code>, but there&#39;s no value to use with a <code>Nothing</code>, so you may have to specify it. In that case, you can write the type explicitly:</p>
 						<pre><code class="language-typescript"><span class="hljs-keyword">import</span> Maybe, { nothing } <span class="hljs-keyword">from</span> <span class="hljs-string">'true-myth/maybe'</span>;
 
@@ -172,7 +184,9 @@ takesAMaybeString(nothingHereEither);</code></pre>
 <span class="hljs-keyword">const</span> getAMaybeReturn = (shouldBeJust: <span class="hljs-built_in">boolean</span>): Maybe&lt;<span class="hljs-built_in">number</span>&gt; =&gt; {
   <span class="hljs-keyword">return</span> nothing();
 };</code></pre>
-						<h2 id="using-maybe-effectively">Using <code>Maybe</code> Effectively</h2>
+						<a href="#using-codemaybecode-effectively" id="using-codemaybecode-effectively" style="color: inherit; text-decoration: none;">
+							<h2>Using <code>Maybe</code> Effectively</h2>
+						</a>
 						<p>The best times to create and safely unwrap <code>Maybe</code>s are at the <em>boundaries</em> of your application. When you are deserializing data from an API, or when you are handling user input, you can use a <code>Maybe</code> instance to handle the possibility that there&#39;s just nothing there, if there is no good default value to use <em>everywhere</em> in the application. Within the business logic of your application, you can then safely deal with the data by using the <code>Maybe</code> functions or method until you hit another boundary, and then you can choose how best to handle it at that point.</p>
 						<p>You won&#39;t normally need to unwrap it at any point <em>other</em> than the boundaries, because you can simply apply any transformations using the helper functions or methods, and be confident that you&#39;ll have either correctly transformed data, or a <code>Nothing</code>, at the end, depending on your inputs.</p>
 						<p>If you are handing data off to another API, for example, you might convert a <code>Nothing</code> right back into a <code>null</code> in a JSON payload, as that&#39;s a reasonable way to send the data across the wire – the consumer can then decide how to handle it as is appropriate in its own context.</p>
@@ -212,6 +226,7 @@ takesAMaybeString(nothingHereEither);</code></pre>
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-type-alias tsd-parent-kind-external-module tsd-has-type-parameter tsd-is-not-exported"><a href="_maybe_.html#all" class="tsd-kind-icon">All</a></li>
 								<li class="tsd-kind-type-alias tsd-parent-kind-external-module tsd-has-type-parameter"><a href="_maybe_.html#matcher" class="tsd-kind-icon">Matcher</a></li>
+								<li class="tsd-kind-type-alias tsd-parent-kind-external-module tsd-has-type-parameter"><a href="_maybe_.html#maybe" class="tsd-kind-icon">Maybe</a></li>
 								<li class="tsd-kind-type-alias tsd-parent-kind-external-module tsd-has-type-parameter tsd-is-not-exported"><a href="_maybe_.html#maybejson" class="tsd-kind-icon">MaybeJSON</a></li>
 								<li class="tsd-kind-type-alias tsd-parent-kind-external-module tsd-has-type-parameter tsd-is-not-exported"><a href="_maybe_.html#predicate" class="tsd-kind-icon">Predicate</a></li>
 							</ul>
@@ -273,7 +288,7 @@ takesAMaybeString(nothingHereEither);</code></pre>
 						<section class="tsd-index-section ">
 							<h3>Object literals</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-object-literal tsd-parent-kind-external-module tsd-has-type-parameter"><a href="_maybe_.html#maybe" class="tsd-kind-icon">Maybe</a></li>
+								<li class="tsd-kind-object-literal tsd-parent-kind-external-module"><a href="_maybe_.html#maybe-1" class="tsd-kind-icon">Maybe</a></li>
 							</ul>
 						</section>
 					</div>
@@ -284,20 +299,26 @@ takesAMaybeString(nothingHereEither);</code></pre>
 				<section class="tsd-panel tsd-member tsd-kind-type-alias tsd-parent-kind-external-module tsd-has-type-parameter tsd-is-not-exported">
 					<a name="all" class="tsd-anchor"></a>
 					<h3>All</h3>
-					<div class="tsd-signature tsd-kind-icon">All<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">All&lt;T&gt;</span></div>
+					<div class="tsd-signature tsd-kind-icon">All&lt;T&gt;<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">All&lt;T&gt;</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/400a362/src/maybe.ts#L1607">maybe.ts:1607</a></li>
+							<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/316317c/src/maybe.ts#L1595">maybe.ts:1595</a></li>
 						</ul>
 					</aside>
+					<h4 class="tsd-type-parameters-title">Type parameters</h4>
+					<ul class="tsd-type-parameters">
+						<li>
+							<h4>T<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Array</span><span class="tsd-signature-symbol">&lt;</span><a href="_maybe_.html#maybe" class="tsd-signature-type">Maybe</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-type-alias tsd-parent-kind-external-module tsd-has-type-parameter">
 					<a name="matcher" class="tsd-anchor"></a>
 					<h3>Matcher</h3>
-					<div class="tsd-signature tsd-kind-icon">Matcher<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">object</span></div>
+					<div class="tsd-signature tsd-kind-icon">Matcher&lt;T, A&gt;<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">object</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/400a362/src/maybe.ts#L1174">maybe.ts:1174</a></li>
+							<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/316317c/src/maybe.ts#L1162">maybe.ts:1162</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -305,6 +326,15 @@ takesAMaybeString(nothingHereEither);</code></pre>
 							<p>A lightweight object defining how to handle each variant of a Maybe.</p>
 						</div>
 					</div>
+					<h4 class="tsd-type-parameters-title">Type parameters</h4>
+					<ul class="tsd-type-parameters">
+						<li>
+							<h4>T</h4>
+						</li>
+						<li>
+							<h4>A</h4>
+						</li>
+					</ul>
 					<div class="tsd-type-declaration">
 						<h4>Type declaration</h4>
 						<ul class="tsd-parameters">
@@ -313,7 +343,7 @@ takesAMaybeString(nothingHereEither);</code></pre>
 								<ul class="tsd-parameters">
 									<li class="tsd-parameter-siganture">
 										<ul class="tsd-signatures tsd-kind-type-literal tsd-parent-kind-variable tsd-is-not-exported">
-											<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span>value<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">NonNullable</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">A</span><span class="tsd-signature-symbol">&gt;</span></li>
+											<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span>value<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">A</span></li>
 										</ul>
 										<ul class="tsd-descriptions">
 											<li class="tsd-description">
@@ -323,7 +353,7 @@ takesAMaybeString(nothingHereEither);</code></pre>
 														<h5>value: <span class="tsd-signature-type">T</span></h5>
 													</li>
 												</ul>
-												<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">NonNullable</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">A</span><span class="tsd-signature-symbol">&gt;</span></h4>
+												<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">A</span></h4>
 											</li>
 										</ul>
 									</li>
@@ -347,25 +377,58 @@ takesAMaybeString(nothingHereEither);</code></pre>
 						</ul>
 					</div>
 				</section>
+				<section class="tsd-panel tsd-member tsd-kind-type-alias tsd-parent-kind-external-module tsd-has-type-parameter">
+					<a name="maybe" class="tsd-anchor"></a>
+					<h3>Maybe</h3>
+					<div class="tsd-signature tsd-kind-icon">Maybe&lt;T&gt;<span class="tsd-signature-symbol">:</span> <a href="../classes/_maybe_.just.html" class="tsd-signature-type">Just</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> | </span><a href="../classes/_maybe_.nothing.html" class="tsd-signature-type">Nothing</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/316317c/src/maybe.ts#L1845">maybe.ts:1845</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>A value which may (<code>Just&lt;T&gt;</code>) or may not (<code>Nothing</code>) be present.</p>
+						</div>
+					</div>
+					<h4 class="tsd-type-parameters-title">Type parameters</h4>
+					<ul class="tsd-type-parameters">
+						<li>
+							<h4>T</h4>
+						</li>
+					</ul>
+				</section>
 				<section class="tsd-panel tsd-member tsd-kind-type-alias tsd-parent-kind-external-module tsd-has-type-parameter tsd-is-not-exported">
 					<a name="maybejson" class="tsd-anchor"></a>
 					<h3>MaybeJSON</h3>
-					<div class="tsd-signature tsd-kind-icon">MaybeJSON<span class="tsd-signature-symbol">:</span> <a href="../interfaces/_maybe_.justjson.html" class="tsd-signature-type">JustJSON</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> | </span><a href="../interfaces/_maybe_.nothingjson.html" class="tsd-signature-type">NothingJSON</a></div>
+					<div class="tsd-signature tsd-kind-icon">MaybeJSON&lt;T&gt;<span class="tsd-signature-symbol">:</span> <a href="../interfaces/_maybe_.justjson.html" class="tsd-signature-type">JustJSON</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> | </span><a href="../interfaces/_maybe_.nothingjson.html" class="tsd-signature-type">NothingJSON</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/400a362/src/maybe.ts#L27">maybe.ts:27</a></li>
+							<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/316317c/src/maybe.ts#L27">maybe.ts:27</a></li>
 						</ul>
 					</aside>
+					<h4 class="tsd-type-parameters-title">Type parameters</h4>
+					<ul class="tsd-type-parameters">
+						<li>
+							<h4>T</h4>
+						</li>
+					</ul>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-type-alias tsd-parent-kind-external-module tsd-has-type-parameter tsd-is-not-exported">
 					<a name="predicate" class="tsd-anchor"></a>
 					<h3>Predicate</h3>
-					<div class="tsd-signature tsd-kind-icon">Predicate<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">function</span></div>
+					<div class="tsd-signature tsd-kind-icon">Predicate&lt;T&gt;<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">function</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/400a362/src/maybe.ts#L1456">maybe.ts:1456</a></li>
+							<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/316317c/src/maybe.ts#L1444">maybe.ts:1444</a></li>
 						</ul>
 					</aside>
+					<h4 class="tsd-type-parameters-title">Type parameters</h4>
+					<ul class="tsd-type-parameters">
+						<li>
+							<h4>T</h4>
+						</li>
+					</ul>
 					<div class="tsd-type-declaration">
 						<h4>Type declaration</h4>
 						<ul class="tsd-parameters">
@@ -403,7 +466,7 @@ takesAMaybeString(nothingHereEither);</code></pre>
 					<div class="tsd-signature tsd-kind-icon">NOTHING<span class="tsd-signature-symbol">:</span> <a href="../classes/_maybe_.nothing.html" class="tsd-signature-type">Nothing</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/400a362/src/maybe.ts#L590">maybe.ts:590</a></li>
+							<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/316317c/src/maybe.ts#L590">maybe.ts:590</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -413,7 +476,7 @@ takesAMaybeString(nothingHereEither);</code></pre>
 					<div class="tsd-signature tsd-kind-icon">cata<span class="tsd-signature-symbol">:</span> <a href="_maybe_.html#match" class="tsd-signature-type">match</a><span class="tsd-signature-symbol"> =&nbsp;match</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/400a362/src/maybe.ts#L1238">maybe.ts:1238</a></li>
+							<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/316317c/src/maybe.ts#L1226">maybe.ts:1226</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -428,7 +491,7 @@ takesAMaybeString(nothingHereEither);</code></pre>
 					<div class="tsd-signature tsd-kind-icon">chain<span class="tsd-signature-symbol">:</span> <a href="_maybe_.html#andthen" class="tsd-signature-type">andThen</a><span class="tsd-signature-symbol"> =&nbsp;andThen</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/400a362/src/maybe.ts#L916">maybe.ts:916</a></li>
+							<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/316317c/src/maybe.ts#L904">maybe.ts:904</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -443,7 +506,7 @@ takesAMaybeString(nothingHereEither);</code></pre>
 					<div class="tsd-signature tsd-kind-icon">first<span class="tsd-signature-symbol">:</span> <a href="_maybe_.html#head" class="tsd-signature-type">head</a><span class="tsd-signature-symbol"> =&nbsp;head</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/400a362/src/maybe.ts#L1545">maybe.ts:1545</a></li>
+							<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/316317c/src/maybe.ts#L1533">maybe.ts:1533</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -458,7 +521,7 @@ takesAMaybeString(nothingHereEither);</code></pre>
 					<div class="tsd-signature tsd-kind-icon">flat<wbr>Map<span class="tsd-signature-symbol">:</span> <a href="_maybe_.html#andthen" class="tsd-signature-type">andThen</a><span class="tsd-signature-symbol"> =&nbsp;andThen</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/400a362/src/maybe.ts#L919">maybe.ts:919</a></li>
+							<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/316317c/src/maybe.ts#L907">maybe.ts:907</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -473,7 +536,7 @@ takesAMaybeString(nothingHereEither);</code></pre>
 					<div class="tsd-signature tsd-kind-icon">from<wbr>Nullable<span class="tsd-signature-symbol">:</span> <a href="_maybe_.html#of" class="tsd-signature-type">of</a><span class="tsd-signature-symbol"> =&nbsp;of</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/400a362/src/maybe.ts#L638">maybe.ts:638</a></li>
+							<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/316317c/src/maybe.ts#L638">maybe.ts:638</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -488,7 +551,7 @@ takesAMaybeString(nothingHereEither);</code></pre>
 					<div class="tsd-signature tsd-kind-icon">get<wbr>Or<span class="tsd-signature-symbol">:</span> <a href="_maybe_.html#unwrapor" class="tsd-signature-type">unwrapOr</a><span class="tsd-signature-symbol"> =&nbsp;unwrapOr</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/400a362/src/maybe.ts#L1035">maybe.ts:1035</a></li>
+							<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/316317c/src/maybe.ts#L1023">maybe.ts:1023</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -503,7 +566,7 @@ takesAMaybeString(nothingHereEither);</code></pre>
 					<div class="tsd-signature tsd-kind-icon">get<wbr>OrElse<span class="tsd-signature-symbol">:</span> <a href="_maybe_.html#unwraporelse" class="tsd-signature-type">unwrapOrElse</a><span class="tsd-signature-symbol"> =&nbsp;unwrapOrElse</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/400a362/src/maybe.ts#L1074">maybe.ts:1074</a></li>
+							<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/316317c/src/maybe.ts#L1062">maybe.ts:1062</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -518,7 +581,7 @@ takesAMaybeString(nothingHereEither);</code></pre>
 					<div class="tsd-signature tsd-kind-icon">maybeify<span class="tsd-signature-symbol">:</span> <a href="_maybe_.html#wrapreturn" class="tsd-signature-type">wrapReturn</a><span class="tsd-signature-symbol"> =&nbsp;wrapReturn</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/400a362/src/maybe.ts#L1852">maybe.ts:1852</a></li>
+							<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/316317c/src/maybe.ts#L1840">maybe.ts:1840</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -533,7 +596,7 @@ takesAMaybeString(nothingHereEither);</code></pre>
 					<div class="tsd-signature tsd-kind-icon">transmogrify<span class="tsd-signature-symbol">:</span> <a href="_maybe_.html#wrapreturn" class="tsd-signature-type">wrapReturn</a><span class="tsd-signature-symbol"> =&nbsp;wrapReturn</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/400a362/src/maybe.ts#L1854">maybe.ts:1854</a></li>
+							<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/316317c/src/maybe.ts#L1842">maybe.ts:1842</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -543,7 +606,7 @@ takesAMaybeString(nothingHereEither);</code></pre>
 					<div class="tsd-signature tsd-kind-icon">unsafe<wbr>Get<span class="tsd-signature-symbol">:</span> <a href="_maybe_.html#unsafelyunwrap" class="tsd-signature-type">unsafelyUnwrap</a><span class="tsd-signature-symbol"> =&nbsp;unsafelyUnwrap</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/400a362/src/maybe.ts#L1003">maybe.ts:1003</a></li>
+							<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/316317c/src/maybe.ts#L991">maybe.ts:991</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -558,7 +621,7 @@ takesAMaybeString(nothingHereEither);</code></pre>
 					<div class="tsd-signature tsd-kind-icon">unsafely<wbr>Get<span class="tsd-signature-symbol">:</span> <a href="_maybe_.html#unsafelyunwrap" class="tsd-signature-type">unsafelyUnwrap</a><span class="tsd-signature-symbol"> =&nbsp;unsafelyUnwrap</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/400a362/src/maybe.ts#L1000">maybe.ts:1000</a></li>
+							<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/316317c/src/maybe.ts#L988">maybe.ts:988</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -580,7 +643,7 @@ takesAMaybeString(nothingHereEither);</code></pre>
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/400a362/src/maybe.ts#L1593">maybe.ts:1593</a></li>
+									<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/316317c/src/maybe.ts#L1581">maybe.ts:1581</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -588,7 +651,9 @@ takesAMaybeString(nothingHereEither);</code></pre>
 									<p>Convert the arguments to a single <code>Maybe</code>. Useful for dealing with arrays of
 									<code>Maybe</code>s, via the spread operator.</p>
 								</div>
-								<h2 id="examples">Examples</h2>
+								<a href="#examples" id="examples" style="color: inherit; text-decoration: none;">
+									<h2>Examples</h2>
+								</a>
 								<pre><code class="language-ts"><span class="hljs-keyword">import</span> Maybe <span class="hljs-keyword">from</span> <span class="hljs-string">'true-myth/maybe'</span>;
 
 <span class="hljs-keyword">let</span> valid = [Maybe.just(<span class="hljs-number">2</span>), Maybe.just(<span class="hljs-string">'three'</span>)];
@@ -596,7 +661,9 @@ Maybe.all(...valid); <span class="hljs-comment">// =&gt; Just([2, 'three']);</sp
 
 <span class="hljs-keyword">let</span> invalid = [Maybe.just(<span class="hljs-number">2</span>), Maybe.nothing&lt;<span class="hljs-built_in">string</span>&gt;()];
 Maybe.all(...invalid); <span class="hljs-comment">// =&gt; Nothing</span></code></pre>
-								<h2 id="note-on-spread">Note on Spread</h2>
+								<a href="#note-on-spread" id="note-on-spread" style="color: inherit; text-decoration: none;">
+									<h2>Note on Spread</h2>
+								</a>
 								<p>This requires the use of the spread operator because (at least as of
 									TypeScript 3.0), the type inference falls down when attempting to build this
 									same type with an array directly. Moreover, this spread-based approach handles
@@ -633,7 +700,7 @@ Maybe.all(...invalid); <span class="hljs-comment">// =&gt; Nothing</span></code>
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/400a362/src/maybe.ts#L843">maybe.ts:843</a></li>
+									<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/316317c/src/maybe.ts#L831">maybe.ts:831</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -647,7 +714,9 @@ Maybe.all(...invalid); <span class="hljs-comment">// =&gt; Nothing</span></code>
 								<code>Nothing</code>, whatever else you&#39;re handing a <code>Maybe</code> to <em>also</em> gets a <code>Nothing</code>.</p>
 								<p>Notice that, unlike in <a href="#map"><code>map</code></a> or its variants, the original <code>maybe</code> is
 								not involved in constructing the new <code>Maybe</code>.</p>
-								<h4 id="examples">Examples</h4>
+								<a href="#examples" id="examples" style="color: inherit; text-decoration: none;">
+									<h4>Examples</h4>
+								</a>
 								<pre><code class="language-ts"><span class="hljs-keyword">import</span> Maybe <span class="hljs-keyword">from</span> <span class="hljs-string">'true-myth/maybe'</span>;
 
 <span class="hljs-keyword">const</span> justA = Maybe.just(<span class="hljs-string">'A'</span>);
@@ -696,7 +765,7 @@ Maybe.all(...invalid); <span class="hljs-comment">// =&gt; Nothing</span></code>
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/400a362/src/maybe.ts#L844">maybe.ts:844</a></li>
+									<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/316317c/src/maybe.ts#L832">maybe.ts:832</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
@@ -747,7 +816,7 @@ Maybe.all(...invalid); <span class="hljs-comment">// =&gt; Nothing</span></code>
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/400a362/src/maybe.ts#L905">maybe.ts:905</a></li>
+									<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/316317c/src/maybe.ts#L893">maybe.ts:893</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -767,7 +836,9 @@ Maybe.all(...invalid); <span class="hljs-comment">// =&gt; Nothing</span></code>
 								<p>This is also commonly known as (and therefore aliased as) <a href="#flatmap"><code>flatMap</code></a>
 									or <a href="#chain"><code>chain</code></a>. It is sometimes also known as <code>bind</code>, but <em>not</em> aliased as such
 								because <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function/bind"><code>bind</code> already means something in JavaScript</a>.</p>
-								<h4 id="example">Example</h4>
+								<a href="#example" id="example" style="color: inherit; text-decoration: none;">
+									<h4>Example</h4>
+								</a>
 								<p>(This is a somewhat contrived example, but it serves to show the way the
 								function behaves.)</p>
 								<pre><code class="language-ts"><span class="hljs-keyword">import</span> Maybe <span class="hljs-keyword">from</span> <span class="hljs-string">'true-myth/maybe'</span>;
@@ -839,7 +910,7 @@ Maybe.all(...invalid); <span class="hljs-comment">// =&gt; Nothing</span></code>
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/400a362/src/maybe.ts#L906">maybe.ts:906</a></li>
+									<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/316317c/src/maybe.ts#L894">maybe.ts:894</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
@@ -908,7 +979,7 @@ Maybe.all(...invalid); <span class="hljs-comment">// =&gt; Nothing</span></code>
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/400a362/src/maybe.ts#L1432">maybe.ts:1432</a></li>
+									<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/316317c/src/maybe.ts#L1420">maybe.ts:1420</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1004,13 +1075,13 @@ Nothing: <span class="hljs-function"><span class="hljs-params">()</span> =&gt;</
 								<p>For convenience, you may want to look at Lodash&#39;s <code>_.curry</code> or Ramda&#39;s
 									<code>R.curry</code>, which allow you to create curried versions of functions
 								whenever you want:</p>
-								<pre><code>import Maybe from '<span class="hljs-literal">true</span>-myth/maybe';
-import { curry } from 'lodash';
+								<pre><code><span class="hljs-keyword">import</span> Maybe <span class="hljs-keyword">from</span> <span class="hljs-string">'true-myth/maybe'</span>;
+<span class="hljs-keyword">import</span> { curry } <span class="hljs-keyword">from</span> <span class="hljs-string">'lodash'</span>;
 
-const normalAdd =<span class="hljs-function"> (<span class="hljs-params">a</span>: <span class="hljs-params">number</span>, <span class="hljs-params">b</span>: <span class="hljs-params">number</span>) =&gt;</span> a + b;
-const curriedAdd = curry(normalAdd); <span class="hljs-comment">// (a: number) =&gt; (b: number) =&gt; a + b;</span>
+<span class="hljs-keyword">const</span> normalAdd = <span class="hljs-function">(<span class="hljs-params">a: <span class="hljs-built_in">number</span>, b: <span class="hljs-built_in">number</span></span>) =&gt;</span> a + b;
+<span class="hljs-keyword">const</span> curriedAdd = curry(normalAdd); <span class="hljs-comment">// (a: number) =&gt; (b: number) =&gt; a + b;</span>
 
-<span class="hljs-module-access"><span class="hljs-module"><span class="hljs-identifier">Maybe</span>.</span></span><span class="hljs-keyword">of</span>(curriedAdd).ap(<span class="hljs-module-access"><span class="hljs-module"><span class="hljs-identifier">Maybe</span>.</span></span><span class="hljs-keyword">of</span>(<span class="hljs-number">1</span>)).ap(<span class="hljs-module-access"><span class="hljs-module"><span class="hljs-identifier">Maybe</span>.</span></span><span class="hljs-keyword">of</span>(<span class="hljs-number">5</span>)); <span class="hljs-comment">// Just(6)</span></code></pre><ol start="2">
+Maybe.of(curriedAdd).ap(Maybe.of(<span class="hljs-number">1</span>)).ap(Maybe.of(<span class="hljs-number">5</span>)); <span class="hljs-comment">// Just(6)</span></code></pre><ol start="2">
 									<li>You will need to call <code>ap</code> as many times as there are arguments to the
 										function you&#39;re dealing with. So in the case of <code>add</code>, which has the
 										&quot;arity&quot; (function argument count) of 2 (<code>a</code> and <code>b</code>), you&#39;ll need to call
@@ -1066,7 +1137,7 @@ Maybe.of(toStr).ap(<span class="hljs-number">12</span>); <span class="hljs-comme
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/400a362/src/maybe.ts#L1433">maybe.ts:1433</a></li>
+									<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/316317c/src/maybe.ts#L1421">maybe.ts:1421</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
@@ -1117,7 +1188,7 @@ Maybe.of(toStr).ap(<span class="hljs-number">12</span>); <span class="hljs-comme
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/400a362/src/maybe.ts#L1258">maybe.ts:1258</a></li>
+									<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/316317c/src/maybe.ts#L1246">maybe.ts:1246</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1160,7 +1231,7 @@ Maybe.equals(c, d); <span class="hljs-comment">// true</span></code></pre>
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/400a362/src/maybe.ts#L1259">maybe.ts:1259</a></li>
+									<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/316317c/src/maybe.ts#L1247">maybe.ts:1247</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
@@ -1208,7 +1279,7 @@ Maybe.equals(c, d); <span class="hljs-comment">// true</span></code></pre>
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/400a362/src/maybe.ts#L1514">maybe.ts:1514</a></li>
+									<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/316317c/src/maybe.ts#L1502">maybe.ts:1502</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1217,7 +1288,9 @@ Maybe.equals(c, d); <span class="hljs-comment">// true</span></code></pre>
 								</div>
 								<p>This function behaves like <code>Array.prototype.find</code>, but returns <code>Maybe&lt;T&gt;</code>
 								instead of <code>T | undefined</code>.</p>
-								<h2 id="examples">Examples</h2>
+								<a href="#examples" id="examples" style="color: inherit; text-decoration: none;">
+									<h2>Examples</h2>
+								</a>
 								<p>The basic form is:</p>
 								<pre><code class="language-ts"><span class="hljs-keyword">import</span> Maybe <span class="hljs-keyword">from</span> <span class="hljs-string">'true-myth/maybe'</span>;
 
@@ -1280,7 +1353,7 @@ fetch(<span class="hljs-string">'https://arrays.example.com'</span>)
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/400a362/src/maybe.ts#L1515">maybe.ts:1515</a></li>
+									<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/316317c/src/maybe.ts#L1503">maybe.ts:1503</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
@@ -1327,7 +1400,7 @@ fetch(<span class="hljs-string">'https://arrays.example.com'</span>)
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/400a362/src/maybe.ts#L1131">maybe.ts:1131</a></li>
+									<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/316317c/src/maybe.ts#L1119">maybe.ts:1119</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1365,14 +1438,14 @@ fetch(<span class="hljs-string">'https://arrays.example.com'</span>)
 					<a name="get" class="tsd-anchor"></a>
 					<h3>get</h3>
 					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-external-module tsd-has-type-parameter">
-						<li class="tsd-signature tsd-kind-icon">get&lt;T, K&gt;<span class="tsd-signature-symbol">(</span>key<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">K</span>, maybeObj<span class="tsd-signature-symbol">: </span><a href="_maybe_.html#maybe" class="tsd-signature-type">Maybe</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_maybe_.html#maybe" class="tsd-signature-type">Maybe</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">NonNullable</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T[K]</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon">get&lt;T, K&gt;<span class="tsd-signature-symbol">(</span>key<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">K</span>, maybeObj<span class="tsd-signature-symbol">: </span><a href="_maybe_.html#maybe" class="tsd-signature-type">Maybe</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_maybe_.html#maybe" class="tsd-signature-type">Maybe</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T[K]</span><span class="tsd-signature-symbol">&gt;</span></li>
 						<li class="tsd-signature tsd-kind-icon">get&lt;T, K&gt;<span class="tsd-signature-symbol">(</span>key<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">K</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">function</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/400a362/src/maybe.ts#L1769">maybe.ts:1769</a></li>
+									<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/316317c/src/maybe.ts#L1757">maybe.ts:1757</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1433,12 +1506,12 @@ player2: <span class="hljs-number">1</span>
 									<h5>maybeObj: <a href="_maybe_.html#maybe" class="tsd-signature-type">Maybe</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span></h5>
 								</li>
 							</ul>
-							<h4 class="tsd-returns-title">Returns <a href="_maybe_.html#maybe" class="tsd-signature-type">Maybe</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">NonNullable</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T[K]</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></h4>
+							<h4 class="tsd-returns-title">Returns <a href="_maybe_.html#maybe" class="tsd-signature-type">Maybe</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T[K]</span><span class="tsd-signature-symbol">&gt;</span></h4>
 						</li>
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/400a362/src/maybe.ts#L1770">maybe.ts:1770</a></li>
+									<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/316317c/src/maybe.ts#L1758">maybe.ts:1758</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
@@ -1460,7 +1533,7 @@ player2: <span class="hljs-number">1</span>
 							<ul class="tsd-parameters">
 								<li class="tsd-parameter-siganture">
 									<ul class="tsd-signatures tsd-kind-type-literal tsd-is-not-exported">
-										<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span>maybeObj<span class="tsd-signature-symbol">: </span><a href="_maybe_.html#maybe" class="tsd-signature-type">Maybe</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_maybe_.html#maybe" class="tsd-signature-type">Maybe</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">NonNullable</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T[K]</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></li>
+										<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span>maybeObj<span class="tsd-signature-symbol">: </span><a href="_maybe_.html#maybe" class="tsd-signature-type">Maybe</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_maybe_.html#maybe" class="tsd-signature-type">Maybe</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T[K]</span><span class="tsd-signature-symbol">&gt;</span></li>
 									</ul>
 									<ul class="tsd-descriptions">
 										<li class="tsd-description">
@@ -1470,7 +1543,7 @@ player2: <span class="hljs-number">1</span>
 													<h5>maybeObj: <a href="_maybe_.html#maybe" class="tsd-signature-type">Maybe</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span></h5>
 												</li>
 											</ul>
-											<h4 class="tsd-returns-title">Returns <a href="_maybe_.html#maybe" class="tsd-signature-type">Maybe</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">NonNullable</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T[K]</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></h4>
+											<h4 class="tsd-returns-title">Returns <a href="_maybe_.html#maybe" class="tsd-signature-type">Maybe</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T[K]</span><span class="tsd-signature-symbol">&gt;</span></h4>
 										</li>
 									</ul>
 								</li>
@@ -1488,7 +1561,7 @@ player2: <span class="hljs-number">1</span>
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/400a362/src/maybe.ts#L1540">maybe.ts:1540</a></li>
+									<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/316317c/src/maybe.ts#L1528">maybe.ts:1528</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1496,7 +1569,9 @@ player2: <span class="hljs-number">1</span>
 									<p>Safely get the first item from a list, returning <code>Just</code> the first item if the
 									array has at least one item in it, or <code>Nothing</code> if it is empty.</p>
 								</div>
-								<h2 id="examples">Examples</h2>
+								<a href="#examples" id="examples" style="color: inherit; text-decoration: none;">
+									<h2>Examples</h2>
+								</a>
 								<pre><code class="language-ts"><span class="hljs-keyword">let</span> empty = [];
 Maybe.head(empty); <span class="hljs-comment">// =&gt; Nothing</span>
 
@@ -1526,13 +1601,13 @@ Maybe.head(full); <span class="hljs-comment">// =&gt; Just(1)</span></code></pre
 					<a name="isinstance" class="tsd-anchor"></a>
 					<h3>is<wbr>Instance</h3>
 					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-external-module tsd-has-type-parameter">
-						<li class="tsd-signature tsd-kind-icon">is<wbr>Instance&lt;T&gt;<span class="tsd-signature-symbol">(</span>item<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span></li>
+						<li class="tsd-signature tsd-kind-icon">is<wbr>Instance&lt;T&gt;<span class="tsd-signature-symbol">(</span>item<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">item</span><span class="tsd-signature-symbol"> is </span><span class="tsd-signature-type">Maybe</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/400a362/src/maybe.ts#L1452">maybe.ts:1452</a></li>
+									<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/316317c/src/maybe.ts#L1440">maybe.ts:1440</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1555,7 +1630,7 @@ Maybe.head(full); <span class="hljs-comment">// =&gt; Just(1)</span></code></pre
 									</div>
 								</li>
 							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">item</span><span class="tsd-signature-symbol"> is </span><span class="tsd-signature-type">Maybe</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span></h4>
 						</li>
 					</ul>
 				</section>
@@ -1563,13 +1638,13 @@ Maybe.head(full); <span class="hljs-comment">// =&gt; Just(1)</span></code></pre
 					<a name="isjust" class="tsd-anchor"></a>
 					<h3>is<wbr>Just</h3>
 					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-external-module tsd-has-type-parameter">
-						<li class="tsd-signature tsd-kind-icon">is<wbr>Just&lt;T&gt;<span class="tsd-signature-symbol">(</span>maybe<span class="tsd-signature-symbol">: </span><a href="_maybe_.html#maybe" class="tsd-signature-type">Maybe</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span></li>
+						<li class="tsd-signature tsd-kind-icon">is<wbr>Just&lt;T&gt;<span class="tsd-signature-symbol">(</span>maybe<span class="tsd-signature-symbol">: </span><a href="_maybe_.html#maybe" class="tsd-signature-type">Maybe</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">maybe</span><span class="tsd-signature-symbol"> is </span><span class="tsd-signature-type">Just</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/400a362/src/maybe.ts#L558">maybe.ts:558</a></li>
+									<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/316317c/src/maybe.ts#L558">maybe.ts:558</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1595,7 +1670,7 @@ Maybe.head(full); <span class="hljs-comment">// =&gt; Just(1)</span></code></pre
 									</div>
 								</li>
 							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">maybe</span><span class="tsd-signature-symbol"> is </span><span class="tsd-signature-type">Just</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span></h4>
 							<p><code>true</code> if <code>maybe</code> is <code>Just</code>, <code>false</code> otherwise. In TypeScript,
 							also narrows the type from <code>Maybe&lt;T&gt;</code> to <code>Just&lt;T&gt;</code>.</p>
 						</li>
@@ -1605,13 +1680,13 @@ Maybe.head(full); <span class="hljs-comment">// =&gt; Just(1)</span></code></pre
 					<a name="isnothing" class="tsd-anchor"></a>
 					<h3>is<wbr>Nothing</h3>
 					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-external-module tsd-has-type-parameter">
-						<li class="tsd-signature tsd-kind-icon">is<wbr>Nothing&lt;T&gt;<span class="tsd-signature-symbol">(</span>maybe<span class="tsd-signature-symbol">: </span><a href="_maybe_.html#maybe" class="tsd-signature-type">Maybe</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span></li>
+						<li class="tsd-signature tsd-kind-icon">is<wbr>Nothing&lt;T&gt;<span class="tsd-signature-symbol">(</span>maybe<span class="tsd-signature-symbol">: </span><a href="_maybe_.html#maybe" class="tsd-signature-type">Maybe</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">maybe</span><span class="tsd-signature-symbol"> is </span><span class="tsd-signature-type">Nothing</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/400a362/src/maybe.ts#L570">maybe.ts:570</a></li>
+									<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/316317c/src/maybe.ts#L570">maybe.ts:570</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1637,7 +1712,7 @@ Maybe.head(full); <span class="hljs-comment">// =&gt; Just(1)</span></code></pre
 									</div>
 								</li>
 							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">maybe</span><span class="tsd-signature-symbol"> is </span><span class="tsd-signature-type">Nothing</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span></h4>
 							<p><code>true</code> if <code>maybe</code> is <code>nothing</code>, <code>false</code> otherwise. In TypeScript,
 							also narrows the type from <code>Maybe&lt;T&gt;</code> to <code>Nothing&lt;T&gt;</code>.</p>
 						</li>
@@ -1653,7 +1728,7 @@ Maybe.head(full); <span class="hljs-comment">// =&gt; Just(1)</span></code></pre
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/400a362/src/maybe.ts#L586">maybe.ts:586</a></li>
+									<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/316317c/src/maybe.ts#L586">maybe.ts:586</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1702,7 +1777,7 @@ Maybe.head(full); <span class="hljs-comment">// =&gt; Just(1)</span></code></pre
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/400a362/src/maybe.ts#L1563">maybe.ts:1563</a></li>
+									<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/316317c/src/maybe.ts#L1551">maybe.ts:1551</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1710,7 +1785,9 @@ Maybe.head(full); <span class="hljs-comment">// =&gt; Just(1)</span></code></pre
 									<p>Safely get the last item from a list, returning <code>Just</code> the last item if the
 									array has at least one item in it, or <code>Nothing</code> if it is empty.</p>
 								</div>
-								<h2 id="examples">Examples</h2>
+								<a href="#examples" id="examples" style="color: inherit; text-decoration: none;">
+									<h2>Examples</h2>
+								</a>
 								<pre><code class="language-ts"><span class="hljs-keyword">let</span> empty = [];
 Maybe.last(empty); <span class="hljs-comment">// =&gt; Nothing</span>
 
@@ -1747,7 +1824,7 @@ Maybe.last(full); <span class="hljs-comment">// =&gt; Just(3)</span></code></pre
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/400a362/src/maybe.ts#L682">maybe.ts:682</a></li>
+									<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/316317c/src/maybe.ts#L682">maybe.ts:682</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1769,7 +1846,9 @@ Maybe.last(full); <span class="hljs-comment">// =&gt; Just(3)</span></code></pre
 									any length. With a <code>Maybe</code>, we&#39;re capturing the idea of &quot;something or
 									nothing&quot; rather than &quot;0 to n&quot; items. And this lets us implement a whole set
 								of <em>other</em> interfaces, like those in this module.)</p>
-								<h4 id="examples">Examples</h4>
+								<a href="#examples" id="examples" style="color: inherit; text-decoration: none;">
+									<h4>Examples</h4>
+								</a>
 								<pre><code class="language-ts"><span class="hljs-keyword">const</span> length = <span class="hljs-function">(<span class="hljs-params">s: <span class="hljs-built_in">string</span></span>) =&gt;</span> s.length;
 
 <span class="hljs-keyword">const</span> justAString = Maybe.just(<span class="hljs-string">'string'</span>);
@@ -1805,7 +1884,7 @@ Maybe.last(full); <span class="hljs-comment">// =&gt; Just(3)</span></code></pre
 									<ul class="tsd-parameters">
 										<li class="tsd-parameter-siganture">
 											<ul class="tsd-signatures tsd-kind-type-literal tsd-is-not-exported">
-												<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span>t<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">NonNullable</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">U</span><span class="tsd-signature-symbol">&gt;</span></li>
+												<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span>t<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">U</span></li>
 											</ul>
 											<ul class="tsd-descriptions">
 												<li class="tsd-description">
@@ -1815,7 +1894,7 @@ Maybe.last(full); <span class="hljs-comment">// =&gt; Just(3)</span></code></pre
 															<h5>t: <span class="tsd-signature-type">T</span></h5>
 														</li>
 													</ul>
-													<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">NonNullable</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">U</span><span class="tsd-signature-symbol">&gt;</span></h4>
+													<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">U</span></h4>
 												</li>
 											</ul>
 										</li>
@@ -1850,7 +1929,7 @@ Maybe.last(full); <span class="hljs-comment">// =&gt; Just(3)</span></code></pre
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/400a362/src/maybe.ts#L683">maybe.ts:683</a></li>
+									<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/316317c/src/maybe.ts#L683">maybe.ts:683</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
@@ -1869,7 +1948,7 @@ Maybe.last(full); <span class="hljs-comment">// =&gt; Just(3)</span></code></pre
 									<ul class="tsd-parameters">
 										<li class="tsd-parameter-siganture">
 											<ul class="tsd-signatures tsd-kind-type-literal tsd-is-not-exported">
-												<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span>t<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">NonNullable</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">U</span><span class="tsd-signature-symbol">&gt;</span></li>
+												<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span>t<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">U</span></li>
 											</ul>
 											<ul class="tsd-descriptions">
 												<li class="tsd-description">
@@ -1879,7 +1958,7 @@ Maybe.last(full); <span class="hljs-comment">// =&gt; Just(3)</span></code></pre
 															<h5>t: <span class="tsd-signature-type">T</span></h5>
 														</li>
 													</ul>
-													<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">NonNullable</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">U</span><span class="tsd-signature-symbol">&gt;</span></h4>
+													<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">U</span></h4>
 												</li>
 											</ul>
 										</li>
@@ -1905,7 +1984,7 @@ Maybe.last(full); <span class="hljs-comment">// =&gt; Just(3)</span></code></pre
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/400a362/src/maybe.ts#L716">maybe.ts:716</a></li>
+									<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/316317c/src/maybe.ts#L716">maybe.ts:716</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1913,7 +1992,9 @@ Maybe.last(full); <span class="hljs-comment">// =&gt; Just(3)</span></code></pre
 									<p>Map over a <code>Maybe</code> instance and get out the value if <code>maybe</code> is a <code>Just</code>, or
 									return a default value if <code>maybe</code> is a <code>Nothing</code>.</p>
 								</div>
-								<h4 id="examples">Examples</h4>
+								<a href="#examples" id="examples" style="color: inherit; text-decoration: none;">
+									<h4>Examples</h4>
+								</a>
 								<pre><code class="language-ts"><span class="hljs-keyword">const</span> length = <span class="hljs-function">(<span class="hljs-params">s: <span class="hljs-built_in">string</span></span>) =&gt;</span> s.length;
 
 <span class="hljs-keyword">const</span> justAString = Maybe.just(<span class="hljs-string">'string'</span>);
@@ -1955,7 +2036,7 @@ Maybe.last(full); <span class="hljs-comment">// =&gt; Just(3)</span></code></pre
 									<ul class="tsd-parameters">
 										<li class="tsd-parameter-siganture">
 											<ul class="tsd-signatures tsd-kind-type-literal tsd-is-not-exported">
-												<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span>t<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">NonNullable</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">U</span><span class="tsd-signature-symbol">&gt;</span></li>
+												<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span>t<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">U</span></li>
 											</ul>
 											<ul class="tsd-descriptions">
 												<li class="tsd-description">
@@ -1965,7 +2046,7 @@ Maybe.last(full); <span class="hljs-comment">// =&gt; Just(3)</span></code></pre
 															<h5>t: <span class="tsd-signature-type">T</span></h5>
 														</li>
 													</ul>
-													<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">NonNullable</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">U</span><span class="tsd-signature-symbol">&gt;</span></h4>
+													<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">U</span></h4>
 												</li>
 											</ul>
 										</li>
@@ -1983,7 +2064,7 @@ Maybe.last(full); <span class="hljs-comment">// =&gt; Just(3)</span></code></pre
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/400a362/src/maybe.ts#L717">maybe.ts:717</a></li>
+									<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/316317c/src/maybe.ts#L717">maybe.ts:717</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
@@ -2005,7 +2086,7 @@ Maybe.last(full); <span class="hljs-comment">// =&gt; Just(3)</span></code></pre
 									<ul class="tsd-parameters">
 										<li class="tsd-parameter-siganture">
 											<ul class="tsd-signatures tsd-kind-type-literal tsd-is-not-exported">
-												<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span>t<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">NonNullable</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">U</span><span class="tsd-signature-symbol">&gt;</span></li>
+												<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span>t<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">U</span></li>
 											</ul>
 											<ul class="tsd-descriptions">
 												<li class="tsd-description">
@@ -2015,7 +2096,7 @@ Maybe.last(full); <span class="hljs-comment">// =&gt; Just(3)</span></code></pre
 															<h5>t: <span class="tsd-signature-type">T</span></h5>
 														</li>
 													</ul>
-													<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">NonNullable</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">U</span><span class="tsd-signature-symbol">&gt;</span></h4>
+													<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">U</span></h4>
 												</li>
 											</ul>
 										</li>
@@ -2045,7 +2126,7 @@ Maybe.last(full); <span class="hljs-comment">// =&gt; Just(3)</span></code></pre
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/400a362/src/maybe.ts#L718">maybe.ts:718</a></li>
+									<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/316317c/src/maybe.ts#L718">maybe.ts:718</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
@@ -2078,7 +2159,7 @@ Maybe.last(full); <span class="hljs-comment">// =&gt; Just(3)</span></code></pre
 													<ul class="tsd-parameters">
 														<li class="tsd-parameter-siganture">
 															<ul class="tsd-signatures tsd-kind-type-literal tsd-is-not-exported">
-																<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span>t<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">NonNullable</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">U</span><span class="tsd-signature-symbol">&gt;</span></li>
+																<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span>t<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">U</span></li>
 															</ul>
 															<ul class="tsd-descriptions">
 																<li class="tsd-description">
@@ -2088,7 +2169,7 @@ Maybe.last(full); <span class="hljs-comment">// =&gt; Just(3)</span></code></pre
 																			<h5>t: <span class="tsd-signature-type">T</span></h5>
 																		</li>
 																	</ul>
-																	<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">NonNullable</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">U</span><span class="tsd-signature-symbol">&gt;</span></h4>
+																	<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">U</span></h4>
 																</li>
 															</ul>
 														</li>
@@ -2133,7 +2214,7 @@ Maybe.last(full); <span class="hljs-comment">// =&gt; Just(3)</span></code></pre
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/400a362/src/maybe.ts#L768">maybe.ts:768</a></li>
+									<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/316317c/src/maybe.ts#L768">maybe.ts:768</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -2141,7 +2222,9 @@ Maybe.last(full); <span class="hljs-comment">// =&gt; Just(3)</span></code></pre
 									<p>Map over a <code>Maybe</code> instance and get out the value if <code>maybe</code> is a <code>Just</code>,
 									or use a function to construct a default value if <code>maybe</code> is <code>Nothing</code>.</p>
 								</div>
-								<h4 id="examples">Examples</h4>
+								<a href="#examples" id="examples" style="color: inherit; text-decoration: none;">
+									<h4>Examples</h4>
+								</a>
 								<pre><code class="language-ts"><span class="hljs-keyword">const</span> length = <span class="hljs-function">(<span class="hljs-params">s: <span class="hljs-built_in">string</span></span>) =&gt;</span> s.length;
 <span class="hljs-keyword">const</span> getDefault = <span class="hljs-function"><span class="hljs-params">()</span> =&gt;</span> <span class="hljs-number">0</span>;
 
@@ -2196,7 +2279,7 @@ Maybe.last(full); <span class="hljs-comment">// =&gt; Just(3)</span></code></pre
 									<ul class="tsd-parameters">
 										<li class="tsd-parameter-siganture">
 											<ul class="tsd-signatures tsd-kind-type-literal tsd-is-not-exported">
-												<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span>t<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">NonNullable</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">U</span><span class="tsd-signature-symbol">&gt;</span></li>
+												<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span>t<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">U</span></li>
 											</ul>
 											<ul class="tsd-descriptions">
 												<li class="tsd-description">
@@ -2206,7 +2289,7 @@ Maybe.last(full); <span class="hljs-comment">// =&gt; Just(3)</span></code></pre
 															<h5>t: <span class="tsd-signature-type">T</span></h5>
 														</li>
 													</ul>
-													<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">NonNullable</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">U</span><span class="tsd-signature-symbol">&gt;</span></h4>
+													<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">U</span></h4>
 												</li>
 											</ul>
 										</li>
@@ -2224,7 +2307,7 @@ Maybe.last(full); <span class="hljs-comment">// =&gt; Just(3)</span></code></pre
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/400a362/src/maybe.ts#L773">maybe.ts:773</a></li>
+									<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/316317c/src/maybe.ts#L769">maybe.ts:769</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
@@ -2258,7 +2341,7 @@ Maybe.last(full); <span class="hljs-comment">// =&gt; Just(3)</span></code></pre
 									<ul class="tsd-parameters">
 										<li class="tsd-parameter-siganture">
 											<ul class="tsd-signatures tsd-kind-type-literal tsd-is-not-exported">
-												<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span>t<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">NonNullable</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">U</span><span class="tsd-signature-symbol">&gt;</span></li>
+												<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span>t<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">U</span></li>
 											</ul>
 											<ul class="tsd-descriptions">
 												<li class="tsd-description">
@@ -2268,7 +2351,7 @@ Maybe.last(full); <span class="hljs-comment">// =&gt; Just(3)</span></code></pre
 															<h5>t: <span class="tsd-signature-type">T</span></h5>
 														</li>
 													</ul>
-													<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">NonNullable</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">U</span><span class="tsd-signature-symbol">&gt;</span></h4>
+													<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">U</span></h4>
 												</li>
 											</ul>
 										</li>
@@ -2298,7 +2381,7 @@ Maybe.last(full); <span class="hljs-comment">// =&gt; Just(3)</span></code></pre
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/400a362/src/maybe.ts#L777">maybe.ts:777</a></li>
+									<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/316317c/src/maybe.ts#L770">maybe.ts:770</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
@@ -2343,7 +2426,7 @@ Maybe.last(full); <span class="hljs-comment">// =&gt; Just(3)</span></code></pre
 													<ul class="tsd-parameters">
 														<li class="tsd-parameter-siganture">
 															<ul class="tsd-signatures tsd-kind-type-literal tsd-is-not-exported">
-																<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span>t<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">NonNullable</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">U</span><span class="tsd-signature-symbol">&gt;</span></li>
+																<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span>t<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">U</span></li>
 															</ul>
 															<ul class="tsd-descriptions">
 																<li class="tsd-description">
@@ -2353,7 +2436,7 @@ Maybe.last(full); <span class="hljs-comment">// =&gt; Just(3)</span></code></pre
 																			<h5>t: <span class="tsd-signature-type">T</span></h5>
 																		</li>
 																	</ul>
-																	<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">NonNullable</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">U</span><span class="tsd-signature-symbol">&gt;</span></h4>
+																	<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">U</span></h4>
 																</li>
 															</ul>
 														</li>
@@ -2397,7 +2480,7 @@ Maybe.last(full); <span class="hljs-comment">// =&gt; Just(3)</span></code></pre
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/400a362/src/maybe.ts#L1229">maybe.ts:1229</a></li>
+									<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/316317c/src/maybe.ts#L1217">maybe.ts:1217</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -2468,7 +2551,7 @@ mightBeANumber
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/400a362/src/maybe.ts#L1230">maybe.ts:1230</a></li>
+									<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/316317c/src/maybe.ts#L1218">maybe.ts:1218</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
@@ -2518,7 +2601,7 @@ mightBeANumber
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/400a362/src/maybe.ts#L606">maybe.ts:606</a></li>
+									<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/316317c/src/maybe.ts#L606">maybe.ts:606</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -2560,7 +2643,7 @@ mightBeANumber
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/400a362/src/maybe.ts#L633">maybe.ts:633</a></li>
+									<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/316317c/src/maybe.ts#L633">maybe.ts:633</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -2613,7 +2696,7 @@ mightBeANumber
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/400a362/src/maybe.ts#L948">maybe.ts:948</a></li>
+									<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/316317c/src/maybe.ts#L936">maybe.ts:936</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -2666,7 +2749,7 @@ mightBeANumber
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/400a362/src/maybe.ts#L949">maybe.ts:949</a></li>
+									<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/316317c/src/maybe.ts#L937">maybe.ts:937</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
@@ -2714,7 +2797,7 @@ mightBeANumber
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/400a362/src/maybe.ts#L974">maybe.ts:974</a></li>
+									<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/316317c/src/maybe.ts#L962">maybe.ts:962</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -2770,7 +2853,7 @@ mightBeANumber
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/400a362/src/maybe.ts#L975">maybe.ts:975</a></li>
+									<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/316317c/src/maybe.ts#L963">maybe.ts:963</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
@@ -2830,7 +2913,7 @@ mightBeANumber
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/400a362/src/maybe.ts#L1709">maybe.ts:1709</a></li>
+									<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/316317c/src/maybe.ts#L1697">maybe.ts:1697</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -2898,7 +2981,7 @@ player2: <span class="hljs-number">1</span>
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/400a362/src/maybe.ts#L1710">maybe.ts:1710</a></li>
+									<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/316317c/src/maybe.ts#L1698">maybe.ts:1698</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
@@ -2948,7 +3031,7 @@ player2: <span class="hljs-number">1</span>
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/400a362/src/maybe.ts#L1167">maybe.ts:1167</a></li>
+									<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/316317c/src/maybe.ts#L1155">maybe.ts:1155</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -2988,7 +3071,7 @@ player2: <span class="hljs-number">1</span>
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/400a362/src/maybe.ts#L1110">maybe.ts:1110</a></li>
+									<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/316317c/src/maybe.ts#L1098">maybe.ts:1098</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -3047,7 +3130,7 @@ player2: <span class="hljs-number">1</span>
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/400a362/src/maybe.ts#L1111">maybe.ts:1111</a></li>
+									<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/316317c/src/maybe.ts#L1099">maybe.ts:1099</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
@@ -3110,7 +3193,7 @@ player2: <span class="hljs-number">1</span>
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/400a362/src/maybe.ts#L1088">maybe.ts:1088</a></li>
+									<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/316317c/src/maybe.ts#L1076">maybe.ts:1076</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -3157,7 +3240,7 @@ player2: <span class="hljs-number">1</span>
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/400a362/src/maybe.ts#L1089">maybe.ts:1089</a></li>
+									<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/316317c/src/maybe.ts#L1077">maybe.ts:1077</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
@@ -3207,7 +3290,7 @@ player2: <span class="hljs-number">1</span>
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/400a362/src/maybe.ts#L1154">maybe.ts:1154</a></li>
+									<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/316317c/src/maybe.ts#L1142">maybe.ts:1142</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -3245,7 +3328,7 @@ player2: <span class="hljs-number">1</span>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
 							<ul class="tsd-type-parameters">
 								<li>
-									<h4>T</h4>
+									<h4>T<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">object</span></h4>
 									<div class="tsd-comment tsd-typography">
 										<p>The type of the wrapped value; its own <code>.toString</code> will be used
 										to print the interior contents of the <code>Just</code> variant.</p>
@@ -3279,7 +3362,7 @@ player2: <span class="hljs-number">1</span>
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/400a362/src/maybe.ts#L1647">maybe.ts:1647</a></li>
+									<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/316317c/src/maybe.ts#L1635">maybe.ts:1635</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -3289,7 +3372,9 @@ player2: <span class="hljs-number">1</span>
 								<p>Given a tuple of type <code>[Maybe&lt;A&gt;, Maybe&lt;B&gt;]</code>, the resulting type is
 									<code>Maybe&lt;[A, B]&gt;</code>. Works with up to a 5-tuple. (If you&#39;re doing more than a
 								5-tuple, what are you doing???)</p>
-								<h2 id="examples">Examples</h2>
+								<a href="#examples" id="examples" style="color: inherit; text-decoration: none;">
+									<h2>Examples</h2>
+								</a>
 								<p>If any of the items in the tuple are <code>Nothing</code>, the whole result is <code>Nothing</code>.
 									Here, for example, <code>result</code> has the type <code>Maybe&lt;[string, number]&gt;</code> and will be
 								<code>Nothing</code>:</p>
@@ -3326,7 +3411,7 @@ player2: <span class="hljs-number">1</span>
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/400a362/src/maybe.ts#L1648">maybe.ts:1648</a></li>
+									<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/316317c/src/maybe.ts#L1636">maybe.ts:1636</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
@@ -3349,7 +3434,7 @@ player2: <span class="hljs-number">1</span>
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/400a362/src/maybe.ts#L1649">maybe.ts:1649</a></li>
+									<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/316317c/src/maybe.ts#L1637">maybe.ts:1637</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
@@ -3375,7 +3460,7 @@ player2: <span class="hljs-number">1</span>
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/400a362/src/maybe.ts#L1650">maybe.ts:1650</a></li>
+									<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/316317c/src/maybe.ts#L1638">maybe.ts:1638</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
@@ -3413,7 +3498,7 @@ player2: <span class="hljs-number">1</span>
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/400a362/src/maybe.ts#L995">maybe.ts:995</a></li>
+									<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/316317c/src/maybe.ts#L983">maybe.ts:983</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -3462,7 +3547,7 @@ player2: <span class="hljs-number">1</span>
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/400a362/src/maybe.ts#L1027">maybe.ts:1027</a></li>
+									<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/316317c/src/maybe.ts#L1015">maybe.ts:1015</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -3510,7 +3595,7 @@ player2: <span class="hljs-number">1</span>
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/400a362/src/maybe.ts#L1028">maybe.ts:1028</a></li>
+									<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/316317c/src/maybe.ts#L1016">maybe.ts:1016</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
@@ -3558,7 +3643,7 @@ player2: <span class="hljs-number">1</span>
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/400a362/src/maybe.ts#L1066">maybe.ts:1066</a></li>
+									<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/316317c/src/maybe.ts#L1054">maybe.ts:1054</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -3625,7 +3710,7 @@ player2: <span class="hljs-number">1</span>
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/400a362/src/maybe.ts#L1067">maybe.ts:1067</a></li>
+									<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/316317c/src/maybe.ts#L1055">maybe.ts:1055</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
@@ -3684,7 +3769,7 @@ player2: <span class="hljs-number">1</span>
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/400a362/src/maybe.ts#L1845">maybe.ts:1845</a></li>
+									<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/316317c/src/maybe.ts#L1833">maybe.ts:1833</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -3781,468 +3866,462 @@ color = <span class="hljs-string">'black'</span>;
 			</section>
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Object literals</h2>
-				<section class="tsd-panel tsd-member tsd-kind-object-literal tsd-parent-kind-external-module tsd-has-type-parameter">
-					<a name="maybe" class="tsd-anchor"></a>
+				<section class="tsd-panel tsd-member tsd-kind-object-literal tsd-parent-kind-external-module">
+					<a name="maybe-1" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagConst">Const</span> Maybe</h3>
 					<div class="tsd-signature tsd-kind-icon">Maybe<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">object</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/400a362/src/maybe.ts#L1857">maybe.ts:1857</a></li>
-							<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/400a362/src/maybe.ts#L1858">maybe.ts:1858</a></li>
+							<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/316317c/src/maybe.ts#L1846">maybe.ts:1846</a></li>
 						</ul>
 					</aside>
-					<div class="tsd-comment tsd-typography">
-						<div class="lead">
-							<p>A value which may (<code>Just&lt;T&gt;</code>) or may not (<code>Nothing</code>) be present.</p>
-						</div>
-					</div>
 					<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-object-literal">
-						<a name="maybe.just-3" class="tsd-anchor"></a>
+						<a name="maybe-1.just-3" class="tsd-anchor"></a>
 						<h3>Just</h3>
 						<div class="tsd-signature tsd-kind-icon">Just<span class="tsd-signature-symbol">:</span> <a href="../classes/_maybe_.just.html" class="tsd-signature-type">Just</a></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/400a362/src/maybe.ts#L1860">maybe.ts:1860</a></li>
+								<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/316317c/src/maybe.ts#L1848">maybe.ts:1848</a></li>
 							</ul>
 						</aside>
 					</section>
 					<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-object-literal">
-						<a name="maybe.nothing-4" class="tsd-anchor"></a>
+						<a name="maybe-1.nothing-4" class="tsd-anchor"></a>
 						<h3>Nothing</h3>
 						<div class="tsd-signature tsd-kind-icon">Nothing<span class="tsd-signature-symbol">:</span> <a href="../classes/_maybe_.nothing.html" class="tsd-signature-type">Nothing</a></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/400a362/src/maybe.ts#L1861">maybe.ts:1861</a></li>
+								<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/316317c/src/maybe.ts#L1849">maybe.ts:1849</a></li>
 							</ul>
 						</aside>
 					</section>
 					<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-object-literal">
-						<a name="maybe.variant-1" class="tsd-anchor"></a>
+						<a name="maybe-1.variant-1" class="tsd-anchor"></a>
 						<h3>Variant</h3>
 						<div class="tsd-signature tsd-kind-icon">Variant<span class="tsd-signature-symbol">:</span> <a href="../enums/_maybe_.variant.html" class="tsd-signature-type">Variant</a></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/400a362/src/maybe.ts#L1859">maybe.ts:1859</a></li>
+								<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/316317c/src/maybe.ts#L1847">maybe.ts:1847</a></li>
 							</ul>
 						</aside>
 					</section>
 					<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-object-literal">
-						<a name="maybe.all-2" class="tsd-anchor"></a>
+						<a name="maybe-1.all-2" class="tsd-anchor"></a>
 						<h3>all</h3>
 						<div class="tsd-signature tsd-kind-icon">all<span class="tsd-signature-symbol">:</span> <a href="_maybe_.html#all-1" class="tsd-signature-type">all</a></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/400a362/src/maybe.ts#L1862">maybe.ts:1862</a></li>
+								<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/316317c/src/maybe.ts#L1850">maybe.ts:1850</a></li>
 							</ul>
 						</aside>
 					</section>
 					<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-object-literal">
-						<a name="maybe.and-1" class="tsd-anchor"></a>
+						<a name="maybe-1.and-1" class="tsd-anchor"></a>
 						<h3>and</h3>
 						<div class="tsd-signature tsd-kind-icon">and<span class="tsd-signature-symbol">:</span> <a href="_maybe_.html#and" class="tsd-signature-type">and</a></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/400a362/src/maybe.ts#L1876">maybe.ts:1876</a></li>
+								<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/316317c/src/maybe.ts#L1864">maybe.ts:1864</a></li>
 							</ul>
 						</aside>
 					</section>
 					<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-object-literal">
-						<a name="maybe.andthen-1" class="tsd-anchor"></a>
+						<a name="maybe-1.andthen-1" class="tsd-anchor"></a>
 						<h3>and<wbr>Then</h3>
 						<div class="tsd-signature tsd-kind-icon">and<wbr>Then<span class="tsd-signature-symbol">:</span> <a href="_maybe_.html#andthen" class="tsd-signature-type">andThen</a></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/400a362/src/maybe.ts#L1877">maybe.ts:1877</a></li>
+								<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/316317c/src/maybe.ts#L1865">maybe.ts:1865</a></li>
 							</ul>
 						</aside>
 					</section>
 					<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-object-literal">
-						<a name="maybe.ap-1" class="tsd-anchor"></a>
+						<a name="maybe-1.ap-1" class="tsd-anchor"></a>
 						<h3>ap</h3>
 						<div class="tsd-signature tsd-kind-icon">ap<span class="tsd-signature-symbol">:</span> <a href="_maybe_.html#ap" class="tsd-signature-type">ap</a></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/400a362/src/maybe.ts#L1898">maybe.ts:1898</a></li>
+								<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/316317c/src/maybe.ts#L1886">maybe.ts:1886</a></li>
 							</ul>
 						</aside>
 					</section>
 					<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-object-literal">
-						<a name="maybe.cata-1" class="tsd-anchor"></a>
+						<a name="maybe-1.cata-1" class="tsd-anchor"></a>
 						<h3>cata</h3>
 						<div class="tsd-signature tsd-kind-icon">cata<span class="tsd-signature-symbol">:</span> <a href="_maybe_.html#match" class="tsd-signature-type">match</a></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/400a362/src/maybe.ts#L1896">maybe.ts:1896</a></li>
+								<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/316317c/src/maybe.ts#L1884">maybe.ts:1884</a></li>
 							</ul>
 						</aside>
 					</section>
 					<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-object-literal">
-						<a name="maybe.chain-1" class="tsd-anchor"></a>
+						<a name="maybe-1.chain-1" class="tsd-anchor"></a>
 						<h3>chain</h3>
 						<div class="tsd-signature tsd-kind-icon">chain<span class="tsd-signature-symbol">:</span> <a href="_maybe_.html#andthen" class="tsd-signature-type">andThen</a></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/400a362/src/maybe.ts#L1878">maybe.ts:1878</a></li>
+								<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/316317c/src/maybe.ts#L1866">maybe.ts:1866</a></li>
 							</ul>
 						</aside>
 					</section>
 					<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-object-literal">
-						<a name="maybe.equals-1" class="tsd-anchor"></a>
+						<a name="maybe-1.equals-1" class="tsd-anchor"></a>
 						<h3>equals</h3>
 						<div class="tsd-signature tsd-kind-icon">equals<span class="tsd-signature-symbol">:</span> <a href="_maybe_.html#equals" class="tsd-signature-type">equals</a></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/400a362/src/maybe.ts#L1897">maybe.ts:1897</a></li>
+								<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/316317c/src/maybe.ts#L1885">maybe.ts:1885</a></li>
 							</ul>
 						</aside>
 					</section>
 					<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-object-literal">
-						<a name="maybe.find-1" class="tsd-anchor"></a>
+						<a name="maybe-1.find-1" class="tsd-anchor"></a>
 						<h3>find</h3>
 						<div class="tsd-signature tsd-kind-icon">find<span class="tsd-signature-symbol">:</span> <a href="_maybe_.html#find" class="tsd-signature-type">find</a></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/400a362/src/maybe.ts#L1868">maybe.ts:1868</a></li>
+								<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/316317c/src/maybe.ts#L1856">maybe.ts:1856</a></li>
 							</ul>
 						</aside>
 					</section>
 					<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-object-literal">
-						<a name="maybe.first-1" class="tsd-anchor"></a>
+						<a name="maybe-1.first-1" class="tsd-anchor"></a>
 						<h3>first</h3>
 						<div class="tsd-signature tsd-kind-icon">first<span class="tsd-signature-symbol">:</span> <a href="_maybe_.html#head" class="tsd-signature-type">head</a></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/400a362/src/maybe.ts#L1869">maybe.ts:1869</a></li>
+								<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/316317c/src/maybe.ts#L1857">maybe.ts:1857</a></li>
 							</ul>
 						</aside>
 					</section>
 					<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-object-literal">
-						<a name="maybe.flatmap-1" class="tsd-anchor"></a>
+						<a name="maybe-1.flatmap-1" class="tsd-anchor"></a>
 						<h3>flat<wbr>Map</h3>
 						<div class="tsd-signature tsd-kind-icon">flat<wbr>Map<span class="tsd-signature-symbol">:</span> <a href="_maybe_.html#andthen" class="tsd-signature-type">andThen</a></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/400a362/src/maybe.ts#L1879">maybe.ts:1879</a></li>
+								<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/316317c/src/maybe.ts#L1867">maybe.ts:1867</a></li>
 							</ul>
 						</aside>
 					</section>
 					<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-object-literal">
-						<a name="maybe.fromnullable-1" class="tsd-anchor"></a>
+						<a name="maybe-1.fromnullable-1" class="tsd-anchor"></a>
 						<h3>from<wbr>Nullable</h3>
 						<div class="tsd-signature tsd-kind-icon">from<wbr>Nullable<span class="tsd-signature-symbol">:</span> <a href="_maybe_.html#of" class="tsd-signature-type">of</a></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/400a362/src/maybe.ts#L1870">maybe.ts:1870</a></li>
+								<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/316317c/src/maybe.ts#L1858">maybe.ts:1858</a></li>
 							</ul>
 						</aside>
 					</section>
 					<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-object-literal">
-						<a name="maybe.fromresult-1" class="tsd-anchor"></a>
+						<a name="maybe-1.fromresult-1" class="tsd-anchor"></a>
 						<h3>from<wbr>Result</h3>
 						<div class="tsd-signature tsd-kind-icon">from<wbr>Result<span class="tsd-signature-symbol">:</span> <a href="_maybe_.html#fromresult" class="tsd-signature-type">fromResult</a></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/400a362/src/maybe.ts#L1891">maybe.ts:1891</a></li>
+								<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/316317c/src/maybe.ts#L1879">maybe.ts:1879</a></li>
 							</ul>
 						</aside>
 					</section>
 					<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-object-literal">
-						<a name="maybe.get-1" class="tsd-anchor"></a>
+						<a name="maybe-1.get-1" class="tsd-anchor"></a>
 						<h3>get</h3>
 						<div class="tsd-signature tsd-kind-icon">get<span class="tsd-signature-symbol">:</span> <a href="_maybe_.html#get" class="tsd-signature-type">get</a></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/400a362/src/maybe.ts#L1901">maybe.ts:1901</a></li>
+								<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/316317c/src/maybe.ts#L1889">maybe.ts:1889</a></li>
 							</ul>
 						</aside>
 					</section>
 					<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-object-literal">
-						<a name="maybe.getor-1" class="tsd-anchor"></a>
+						<a name="maybe-1.getor-1" class="tsd-anchor"></a>
 						<h3>get<wbr>Or</h3>
 						<div class="tsd-signature tsd-kind-icon">get<wbr>Or<span class="tsd-signature-symbol">:</span> <a href="_maybe_.html#unwrapor" class="tsd-signature-type">unwrapOr</a></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/400a362/src/maybe.ts#L1886">maybe.ts:1886</a></li>
+								<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/316317c/src/maybe.ts#L1874">maybe.ts:1874</a></li>
 							</ul>
 						</aside>
 					</section>
 					<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-object-literal">
-						<a name="maybe.getorelse-1" class="tsd-anchor"></a>
+						<a name="maybe-1.getorelse-1" class="tsd-anchor"></a>
 						<h3>get<wbr>OrElse</h3>
 						<div class="tsd-signature tsd-kind-icon">get<wbr>OrElse<span class="tsd-signature-symbol">:</span> <a href="_maybe_.html#unwraporelse" class="tsd-signature-type">unwrapOrElse</a></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/400a362/src/maybe.ts#L1888">maybe.ts:1888</a></li>
+								<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/316317c/src/maybe.ts#L1876">maybe.ts:1876</a></li>
 							</ul>
 						</aside>
 					</section>
 					<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-object-literal">
-						<a name="maybe.head-1" class="tsd-anchor"></a>
+						<a name="maybe-1.head-1" class="tsd-anchor"></a>
 						<h3>head</h3>
 						<div class="tsd-signature tsd-kind-icon">head<span class="tsd-signature-symbol">:</span> <a href="_maybe_.html#head" class="tsd-signature-type">head</a></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/400a362/src/maybe.ts#L1871">maybe.ts:1871</a></li>
+								<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/316317c/src/maybe.ts#L1859">maybe.ts:1859</a></li>
 							</ul>
 						</aside>
 					</section>
 					<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-object-literal">
-						<a name="maybe.ify" class="tsd-anchor"></a>
+						<a name="maybe-1.ify" class="tsd-anchor"></a>
 						<h3>ify</h3>
 						<div class="tsd-signature tsd-kind-icon">ify<span class="tsd-signature-symbol">:</span> <a href="_maybe_.html#wrapreturn" class="tsd-signature-type">wrapReturn</a><span class="tsd-signature-symbol"> =&nbsp;wrapReturn</span></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/400a362/src/maybe.ts#L1903">maybe.ts:1903</a></li>
+								<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/316317c/src/maybe.ts#L1891">maybe.ts:1891</a></li>
 							</ul>
 						</aside>
 					</section>
 					<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-object-literal">
-						<a name="maybe.isinstance-1" class="tsd-anchor"></a>
+						<a name="maybe-1.isinstance-1" class="tsd-anchor"></a>
 						<h3>is<wbr>Instance</h3>
 						<div class="tsd-signature tsd-kind-icon">is<wbr>Instance<span class="tsd-signature-symbol">:</span> <a href="_maybe_.html#isinstance" class="tsd-signature-type">isInstance</a></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/400a362/src/maybe.ts#L1899">maybe.ts:1899</a></li>
+								<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/316317c/src/maybe.ts#L1887">maybe.ts:1887</a></li>
 							</ul>
 						</aside>
 					</section>
 					<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-object-literal">
-						<a name="maybe.isjust-1" class="tsd-anchor"></a>
+						<a name="maybe-1.isjust-1" class="tsd-anchor"></a>
 						<h3>is<wbr>Just</h3>
 						<div class="tsd-signature tsd-kind-icon">is<wbr>Just<span class="tsd-signature-symbol">:</span> <a href="_maybe_.html#isjust" class="tsd-signature-type">isJust</a></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/400a362/src/maybe.ts#L1863">maybe.ts:1863</a></li>
+								<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/316317c/src/maybe.ts#L1851">maybe.ts:1851</a></li>
 							</ul>
 						</aside>
 					</section>
 					<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-object-literal">
-						<a name="maybe.isnothing-1" class="tsd-anchor"></a>
+						<a name="maybe-1.isnothing-1" class="tsd-anchor"></a>
 						<h3>is<wbr>Nothing</h3>
 						<div class="tsd-signature tsd-kind-icon">is<wbr>Nothing<span class="tsd-signature-symbol">:</span> <a href="_maybe_.html#isnothing" class="tsd-signature-type">isNothing</a></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/400a362/src/maybe.ts#L1864">maybe.ts:1864</a></li>
+								<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/316317c/src/maybe.ts#L1852">maybe.ts:1852</a></li>
 							</ul>
 						</aside>
 					</section>
 					<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-object-literal">
-						<a name="maybe.just-4" class="tsd-anchor"></a>
+						<a name="maybe-1.just-4" class="tsd-anchor"></a>
 						<h3>just</h3>
 						<div class="tsd-signature tsd-kind-icon">just<span class="tsd-signature-symbol">:</span> <a href="_maybe_.html#just-2" class="tsd-signature-type">just</a></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/400a362/src/maybe.ts#L1865">maybe.ts:1865</a></li>
+								<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/316317c/src/maybe.ts#L1853">maybe.ts:1853</a></li>
 							</ul>
 						</aside>
 					</section>
 					<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-object-literal">
-						<a name="maybe.last-1" class="tsd-anchor"></a>
+						<a name="maybe-1.last-1" class="tsd-anchor"></a>
 						<h3>last</h3>
 						<div class="tsd-signature tsd-kind-icon">last<span class="tsd-signature-symbol">:</span> <a href="_maybe_.html#last" class="tsd-signature-type">last</a></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/400a362/src/maybe.ts#L1872">maybe.ts:1872</a></li>
+								<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/316317c/src/maybe.ts#L1860">maybe.ts:1860</a></li>
 							</ul>
 						</aside>
 					</section>
 					<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-object-literal">
-						<a name="maybe.map-1" class="tsd-anchor"></a>
+						<a name="maybe-1.map-1" class="tsd-anchor"></a>
 						<h3>map</h3>
 						<div class="tsd-signature tsd-kind-icon">map<span class="tsd-signature-symbol">:</span> <a href="_maybe_.html#map" class="tsd-signature-type">map</a></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/400a362/src/maybe.ts#L1873">maybe.ts:1873</a></li>
+								<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/316317c/src/maybe.ts#L1861">maybe.ts:1861</a></li>
 							</ul>
 						</aside>
 					</section>
 					<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-object-literal">
-						<a name="maybe.mapor-1" class="tsd-anchor"></a>
+						<a name="maybe-1.mapor-1" class="tsd-anchor"></a>
 						<h3>map<wbr>Or</h3>
 						<div class="tsd-signature tsd-kind-icon">map<wbr>Or<span class="tsd-signature-symbol">:</span> <a href="_maybe_.html#mapor" class="tsd-signature-type">mapOr</a></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/400a362/src/maybe.ts#L1874">maybe.ts:1874</a></li>
+								<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/316317c/src/maybe.ts#L1862">maybe.ts:1862</a></li>
 							</ul>
 						</aside>
 					</section>
 					<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-object-literal">
-						<a name="maybe.maporelse-1" class="tsd-anchor"></a>
+						<a name="maybe-1.maporelse-1" class="tsd-anchor"></a>
 						<h3>map<wbr>OrElse</h3>
 						<div class="tsd-signature tsd-kind-icon">map<wbr>OrElse<span class="tsd-signature-symbol">:</span> <a href="_maybe_.html#maporelse" class="tsd-signature-type">mapOrElse</a></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/400a362/src/maybe.ts#L1875">maybe.ts:1875</a></li>
+								<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/316317c/src/maybe.ts#L1863">maybe.ts:1863</a></li>
 							</ul>
 						</aside>
 					</section>
 					<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-object-literal">
-						<a name="maybe.match-1" class="tsd-anchor"></a>
+						<a name="maybe-1.match-1" class="tsd-anchor"></a>
 						<h3>match</h3>
 						<div class="tsd-signature tsd-kind-icon">match<span class="tsd-signature-symbol">:</span> <a href="_maybe_.html#match" class="tsd-signature-type">match</a></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/400a362/src/maybe.ts#L1895">maybe.ts:1895</a></li>
+								<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/316317c/src/maybe.ts#L1883">maybe.ts:1883</a></li>
 							</ul>
 						</aside>
 					</section>
 					<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-object-literal">
-						<a name="maybe.nothing-5" class="tsd-anchor"></a>
+						<a name="maybe-1.nothing-5" class="tsd-anchor"></a>
 						<h3>nothing</h3>
 						<div class="tsd-signature tsd-kind-icon">nothing<span class="tsd-signature-symbol">:</span> <a href="_maybe_.html#nothing-3" class="tsd-signature-type">nothing</a></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/400a362/src/maybe.ts#L1866">maybe.ts:1866</a></li>
+								<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/316317c/src/maybe.ts#L1854">maybe.ts:1854</a></li>
 							</ul>
 						</aside>
 					</section>
 					<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-object-literal">
-						<a name="maybe.of-1" class="tsd-anchor"></a>
+						<a name="maybe-1.of-1" class="tsd-anchor"></a>
 						<h3>of</h3>
 						<div class="tsd-signature tsd-kind-icon">of<span class="tsd-signature-symbol">:</span> <a href="_maybe_.html#of" class="tsd-signature-type">of</a></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/400a362/src/maybe.ts#L1867">maybe.ts:1867</a></li>
+								<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/316317c/src/maybe.ts#L1855">maybe.ts:1855</a></li>
 							</ul>
 						</aside>
 					</section>
 					<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-object-literal">
-						<a name="maybe.or-1" class="tsd-anchor"></a>
+						<a name="maybe-1.or-1" class="tsd-anchor"></a>
 						<h3>or</h3>
 						<div class="tsd-signature tsd-kind-icon">or<span class="tsd-signature-symbol">:</span> <a href="_maybe_.html#or" class="tsd-signature-type">or</a></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/400a362/src/maybe.ts#L1880">maybe.ts:1880</a></li>
+								<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/316317c/src/maybe.ts#L1868">maybe.ts:1868</a></li>
 							</ul>
 						</aside>
 					</section>
 					<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-object-literal">
-						<a name="maybe.orelse-1" class="tsd-anchor"></a>
+						<a name="maybe-1.orelse-1" class="tsd-anchor"></a>
 						<h3>or<wbr>Else</h3>
 						<div class="tsd-signature tsd-kind-icon">or<wbr>Else<span class="tsd-signature-symbol">:</span> <a href="_maybe_.html#orelse" class="tsd-signature-type">orElse</a></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/400a362/src/maybe.ts#L1881">maybe.ts:1881</a></li>
+								<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/316317c/src/maybe.ts#L1869">maybe.ts:1869</a></li>
 							</ul>
 						</aside>
 					</section>
 					<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-object-literal">
-						<a name="maybe.property-1" class="tsd-anchor"></a>
+						<a name="maybe-1.property-1" class="tsd-anchor"></a>
 						<h3>property</h3>
 						<div class="tsd-signature tsd-kind-icon">property<span class="tsd-signature-symbol">:</span> <a href="_maybe_.html#property" class="tsd-signature-type">property</a></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/400a362/src/maybe.ts#L1900">maybe.ts:1900</a></li>
+								<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/316317c/src/maybe.ts#L1888">maybe.ts:1888</a></li>
 							</ul>
 						</aside>
 					</section>
 					<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-object-literal">
-						<a name="maybe.tojson-1" class="tsd-anchor"></a>
+						<a name="maybe-1.tojson-1" class="tsd-anchor"></a>
 						<h3>toJSON</h3>
 						<div class="tsd-signature tsd-kind-icon">toJSON<span class="tsd-signature-symbol">:</span> <a href="_maybe_.html#tojson" class="tsd-signature-type">toJSON</a></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/400a362/src/maybe.ts#L1893">maybe.ts:1893</a></li>
+								<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/316317c/src/maybe.ts#L1881">maybe.ts:1881</a></li>
 							</ul>
 						</aside>
 					</section>
 					<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-object-literal">
-						<a name="maybe.tookorelseerr-1" class="tsd-anchor"></a>
+						<a name="maybe-1.tookorelseerr-1" class="tsd-anchor"></a>
 						<h3>to<wbr>OkOr<wbr>Else<wbr>Err</h3>
 						<div class="tsd-signature tsd-kind-icon">to<wbr>OkOr<wbr>Else<wbr>Err<span class="tsd-signature-symbol">:</span> <a href="_maybe_.html#tookorelseerr" class="tsd-signature-type">toOkOrElseErr</a></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/400a362/src/maybe.ts#L1890">maybe.ts:1890</a></li>
+								<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/316317c/src/maybe.ts#L1878">maybe.ts:1878</a></li>
 							</ul>
 						</aside>
 					</section>
 					<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-object-literal">
-						<a name="maybe.tookorerr-1" class="tsd-anchor"></a>
+						<a name="maybe-1.tookorerr-1" class="tsd-anchor"></a>
 						<h3>to<wbr>OkOr<wbr>Err</h3>
 						<div class="tsd-signature tsd-kind-icon">to<wbr>OkOr<wbr>Err<span class="tsd-signature-symbol">:</span> <a href="_maybe_.html#tookorerr" class="tsd-signature-type">toOkOrErr</a></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/400a362/src/maybe.ts#L1889">maybe.ts:1889</a></li>
+								<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/316317c/src/maybe.ts#L1877">maybe.ts:1877</a></li>
 							</ul>
 						</aside>
 					</section>
 					<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-object-literal">
-						<a name="maybe.tostring-1" class="tsd-anchor"></a>
+						<a name="maybe-1.tostring-1" class="tsd-anchor"></a>
 						<h3>to<wbr>String</h3>
 						<div class="tsd-signature tsd-kind-icon">to<wbr>String<span class="tsd-signature-symbol">:</span> <a href="_maybe_.html#tostring" class="tsd-signature-type">toString</a></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/400a362/src/maybe.ts#L1892">maybe.ts:1892</a></li>
+								<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/316317c/src/maybe.ts#L1880">maybe.ts:1880</a></li>
 							</ul>
 						</aside>
 					</section>
 					<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-object-literal">
-						<a name="maybe.tuple-1" class="tsd-anchor"></a>
+						<a name="maybe-1.tuple-1" class="tsd-anchor"></a>
 						<h3>tuple</h3>
 						<div class="tsd-signature tsd-kind-icon">tuple<span class="tsd-signature-symbol">:</span> <a href="_maybe_.html#tuple" class="tsd-signature-type">tuple</a></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/400a362/src/maybe.ts#L1894">maybe.ts:1894</a></li>
+								<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/316317c/src/maybe.ts#L1882">maybe.ts:1882</a></li>
 							</ul>
 						</aside>
 					</section>
 					<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-object-literal">
-						<a name="maybe.unsafeget-1" class="tsd-anchor"></a>
+						<a name="maybe-1.unsafeget-1" class="tsd-anchor"></a>
 						<h3>unsafe<wbr>Get</h3>
 						<div class="tsd-signature tsd-kind-icon">unsafe<wbr>Get<span class="tsd-signature-symbol">:</span> <a href="_maybe_.html#unsafelyunwrap" class="tsd-signature-type">unsafelyUnwrap</a></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/400a362/src/maybe.ts#L1884">maybe.ts:1884</a></li>
+								<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/316317c/src/maybe.ts#L1872">maybe.ts:1872</a></li>
 							</ul>
 						</aside>
 					</section>
 					<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-object-literal">
-						<a name="maybe.unsafelyget-1" class="tsd-anchor"></a>
+						<a name="maybe-1.unsafelyget-1" class="tsd-anchor"></a>
 						<h3>unsafely<wbr>Get</h3>
 						<div class="tsd-signature tsd-kind-icon">unsafely<wbr>Get<span class="tsd-signature-symbol">:</span> <a href="_maybe_.html#unsafelyunwrap" class="tsd-signature-type">unsafelyUnwrap</a></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/400a362/src/maybe.ts#L1883">maybe.ts:1883</a></li>
+								<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/316317c/src/maybe.ts#L1871">maybe.ts:1871</a></li>
 							</ul>
 						</aside>
 					</section>
 					<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-object-literal">
-						<a name="maybe.unsafelyunwrap-1" class="tsd-anchor"></a>
+						<a name="maybe-1.unsafelyunwrap-1" class="tsd-anchor"></a>
 						<h3>unsafely<wbr>Unwrap</h3>
 						<div class="tsd-signature tsd-kind-icon">unsafely<wbr>Unwrap<span class="tsd-signature-symbol">:</span> <a href="_maybe_.html#unsafelyunwrap" class="tsd-signature-type">unsafelyUnwrap</a></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/400a362/src/maybe.ts#L1882">maybe.ts:1882</a></li>
+								<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/316317c/src/maybe.ts#L1870">maybe.ts:1870</a></li>
 							</ul>
 						</aside>
 					</section>
 					<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-object-literal">
-						<a name="maybe.unwrapor-1" class="tsd-anchor"></a>
+						<a name="maybe-1.unwrapor-1" class="tsd-anchor"></a>
 						<h3>unwrap<wbr>Or</h3>
 						<div class="tsd-signature tsd-kind-icon">unwrap<wbr>Or<span class="tsd-signature-symbol">:</span> <a href="_maybe_.html#unwrapor" class="tsd-signature-type">unwrapOr</a></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/400a362/src/maybe.ts#L1885">maybe.ts:1885</a></li>
+								<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/316317c/src/maybe.ts#L1873">maybe.ts:1873</a></li>
 							</ul>
 						</aside>
 					</section>
 					<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-object-literal">
-						<a name="maybe.unwraporelse-1" class="tsd-anchor"></a>
+						<a name="maybe-1.unwraporelse-1" class="tsd-anchor"></a>
 						<h3>unwrap<wbr>OrElse</h3>
 						<div class="tsd-signature tsd-kind-icon">unwrap<wbr>OrElse<span class="tsd-signature-symbol">:</span> <a href="_maybe_.html#unwraporelse" class="tsd-signature-type">unwrapOrElse</a></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/400a362/src/maybe.ts#L1887">maybe.ts:1887</a></li>
+								<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/316317c/src/maybe.ts#L1875">maybe.ts:1875</a></li>
 							</ul>
 						</aside>
 					</section>
 					<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-object-literal">
-						<a name="maybe.wrapreturn-1" class="tsd-anchor"></a>
+						<a name="maybe-1.wrapreturn-1" class="tsd-anchor"></a>
 						<h3>wrap<wbr>Return</h3>
 						<div class="tsd-signature tsd-kind-icon">wrap<wbr>Return<span class="tsd-signature-symbol">:</span> <a href="_maybe_.html#wrapreturn" class="tsd-signature-type">wrapReturn</a></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/400a362/src/maybe.ts#L1902">maybe.ts:1902</a></li>
+								<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/316317c/src/maybe.ts#L1890">maybe.ts:1890</a></li>
 							</ul>
 						</aside>
 					</section>
@@ -4256,19 +4335,19 @@ color = <span class="hljs-string">'black'</span>;
 						<a href="../globals.html"><em>Globals</em></a>
 					</li>
 					<li class=" tsd-kind-external-module">
-						<a href="_index_.html">"index"</a>
+						<a href="_index_.html">&quot;index&quot;</a>
 					</li>
 					<li class="current tsd-kind-external-module">
-						<a href="_maybe_.html">"maybe"</a>
+						<a href="_maybe_.html">&quot;maybe&quot;</a>
 					</li>
 					<li class=" tsd-kind-external-module">
-						<a href="_result_.html">"result"</a>
+						<a href="_result_.html">&quot;result&quot;</a>
 					</li>
 					<li class=" tsd-kind-external-module">
-						<a href="_unit_.html">"unit"</a>
+						<a href="_unit_.html">&quot;unit&quot;</a>
 					</li>
 					<li class=" tsd-kind-external-module">
-						<a href="_utils_.html">"utils"</a>
+						<a href="_utils_.html">&quot;utils&quot;</a>
 					</li>
 				</ul>
 			</nav>
@@ -4297,6 +4376,9 @@ color = <span class="hljs-string">'black'</span>;
 					</li>
 					<li class=" tsd-kind-type-alias tsd-parent-kind-external-module tsd-has-type-parameter">
 						<a href="_maybe_.html#matcher" class="tsd-kind-icon">Matcher</a>
+					</li>
+					<li class=" tsd-kind-type-alias tsd-parent-kind-external-module tsd-has-type-parameter">
+						<a href="_maybe_.html#maybe" class="tsd-kind-icon">Maybe</a>
 					</li>
 					<li class=" tsd-kind-type-alias tsd-parent-kind-external-module tsd-has-type-parameter tsd-is-not-exported">
 						<a href="_maybe_.html#maybejson" class="tsd-kind-icon">MaybeJSON</a>
@@ -4436,8 +4518,8 @@ color = <span class="hljs-string">'black'</span>;
 					<li class=" tsd-kind-function tsd-parent-kind-external-module tsd-has-type-parameter">
 						<a href="_maybe_.html#wrapreturn" class="tsd-kind-icon">wrap<wbr>Return</a>
 					</li>
-					<li class=" tsd-kind-object-literal tsd-parent-kind-external-module tsd-has-type-parameter">
-						<a href="_maybe_.html#maybe" class="tsd-kind-icon">Maybe</a>
+					<li class=" tsd-kind-object-literal tsd-parent-kind-external-module">
+						<a href="_maybe_.html#maybe-1" class="tsd-kind-icon">Maybe</a>
 					</li>
 				</ul>
 			</nav>
@@ -4456,6 +4538,7 @@ color = <span class="hljs-string">'black'</span>;
 				<li class="tsd-kind-function tsd-has-type-parameter"><span class="tsd-kind-icon">Function with type parameter</span></li>
 				<li class="tsd-kind-index-signature"><span class="tsd-kind-icon">Index signature</span></li>
 				<li class="tsd-kind-type-alias"><span class="tsd-kind-icon">Type alias</span></li>
+				<li class="tsd-kind-type-alias tsd-has-type-parameter"><span class="tsd-kind-icon">Type alias with type parameter</span></li>
 			</ul>
 			<ul class="tsd-legend">
 				<li class="tsd-kind-enum"><span class="tsd-kind-icon">Enumeration</span></li>
@@ -4504,7 +4587,7 @@ color = <span class="hljs-string">'black'</span>;
 	</div>
 </footer>
 <div class="container tsd-generator">
-	<p>Generated using <a href="http://typedoc.org/" target="_blank">TypeDoc</a></p>
+	<p>Generated using <a href="https://typedoc.org/" target="_blank">TypeDoc</a></p>
 </div>
 <div class="overlay"></div>
 <script src="../assets/js/main.js"></script>
