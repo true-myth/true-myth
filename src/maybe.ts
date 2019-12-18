@@ -1,7 +1,9 @@
 /** [[include:doc/maybe.md]] */
 
 /** (keep typedoc from getting confused by the imports) */
-import Result, { err, ok } from './result';
+import * as Result from './result';
+type Result<T, E> = import('./result').Result<T, E>;
+
 import { curry1, isVoid } from './utils';
 
 /**
@@ -357,6 +359,15 @@ export class Just<T> implements MaybeShape<T> {
 }
 
 /**
+  A single instance of the `Nothing` object, to minimize memory usage. No matter
+  how many `Maybe`s are floating around, there will always be exactly and only
+  one `Nothing`.
+
+  @private
+ */
+let NOTHING: Nothing<any>;
+
+/**
   A `Nothing` instance is the *absent* variant instance of the
   [`Maybe`](../modules/_maybe_.html#maybe) type, representing the presence of a
   value which may be absent. For a full discussion, see [the module
@@ -394,7 +405,11 @@ export class Nothing<T> implements MaybeShape<T> {
     @throws      If you pass `null` or `undefined`.
    */
   constructor(_?: null) {
-    /* nothing to do */
+    if (!NOTHING) {
+      NOTHING = this;
+    }
+
+    return NOTHING;
   }
 
   /** Method variant for [`Maybe.isJust`](../modules/_maybe_.html#isjust) */
@@ -587,8 +602,6 @@ export function just<T = unknown>(value?: T | null): Maybe<T> {
   return new Just<T>(value);
 }
 
-let NOTHING: Nothing<any>;
-
 /**
   Create an instance of `Maybe.Nothing`.
 
@@ -633,6 +646,30 @@ export function nothing<T = unknown>(_?: null): Maybe<T> {
 export function of<T>(value?: T | null): Maybe<T> {
   return isVoid(value) ? nothing<T>() : just(value);
 }
+
+/**
+  Alias for [`of`](#of), convenient for a standalone import:
+
+  ```ts
+  import { maybe } from 'true-myth/maybe';
+  
+  interface Dict<T> {
+    [key: string]: T | null | undefined;
+  }
+
+  interface StrictDict<T> {
+    [key: string]: Maybe<T>;
+  }
+
+  function wrapNullables<T>(dict: Dict<T>): StrictDict<T> {
+    return Object.keys(dict).reduce((strictDict, key) => {
+      strictDict[key] = maybe(dict[key]);
+      return strictDict;
+    }, {} as StrictDict<T>);
+  }
+  ```
+ */
+export const maybe = of;
 
 /** Alias for [`of`](#of), primarily for compatibility with Folktale. */
 export const fromNullable = of;
@@ -906,6 +943,9 @@ export const chain = andThen;
 /** Alias for [`andThen`](#andthen). */
 export const flatMap = andThen;
 
+/** Alias for [`andThen`](#andthen). */
+export const bind = andThen;
+
 /**
   Provide a fallback for a given `Maybe`. Behaves like a logical `or`: if the
   `maybe` value is a `Just`, returns that `maybe`; otherwise, returns the
@@ -1079,7 +1119,7 @@ export function toOkOrErr<T, E>(
   error: E,
   maybe?: Maybe<T>
 ): Result<T, E> | ((maybe: Maybe<T>) => Result<T, E>) {
-  const op = (m: Maybe<T>) => (m.isJust() ? ok<T, E>(m.value) : err<T, E>(error));
+  const op = (m: Maybe<T>) => (m.isJust() ? Result.ok<T, E>(m.value) : Result.err<T, E>(error));
   return maybe !== undefined ? op(maybe) : op;
 }
 
@@ -1101,7 +1141,7 @@ export function toOkOrElseErr<T, E>(
   elseFn: () => E,
   maybe?: Maybe<T>
 ): Result<T, E> | ((maybe: Maybe<T>) => Result<T, E>) {
-  const op = (m: Maybe<T>) => (m.isJust() ? ok<T, E>(m.value) : err<T, E>(elseFn()));
+  const op = (m: Maybe<T>) => (m.isJust() ? Result.ok<T, E>(m.value) : Result.err<T, E>(elseFn()));
   return curry1(op, maybe);
 }
 
@@ -1426,7 +1466,7 @@ export function ap<T, U>(
   const op = (m: Maybe<T>) =>
     m.match({
       Just: val => maybeFn.map(fn => fn(val)),
-      Nothing: () => Maybe.nothing<U>(),
+      Nothing: () => nothing<U>(),
     });
 
   return curry1(op, maybe);
@@ -1505,7 +1545,7 @@ export function find<T>(
   predicate: Predicate<T>,
   array?: T[]
 ): Maybe<T> | ((array: T[]) => Maybe<T>) {
-  const op = (a: T[]) => Maybe.of(a.find(predicate));
+  const op = (a: T[]) => maybe(a.find(predicate));
   return curry1(op, array);
 }
 
@@ -1526,7 +1566,7 @@ export function find<T>(
   @param array The array to get the first item from.
  */
 export function head<T>(array: Array<T | null | undefined>): Maybe<T> {
-  return Maybe.of(array[0]);
+  return maybe(array[0]);
 }
 
 /** A convenience alias for `Maybe.head`. */
@@ -1549,7 +1589,7 @@ export const first = head;
   @param array The array to get the first item from.
  */
 export function last<T>(array: Array<T | null | undefined>): Maybe<T> {
-  return Maybe.of(array[array.length - 1]);
+  return maybe(array[array.length - 1]);
 }
 
 /**
@@ -1579,7 +1619,7 @@ export function last<T>(array: Array<T | null | undefined>): Maybe<T> {
   @param maybes The `Maybe`s to resolve to a single `Maybe`.
  */
 export function all<T extends Array<Maybe<any>>>(...maybes: T): All<T> {
-  let result: All<T> = Maybe.just([] as Maybe<any>[]) as All<T>;
+  let result: All<T> = just([] as Maybe<any>[]) as All<T>;
   maybes.forEach(maybe => {
     result = result.andThen(accumulatedMaybes =>
       maybe.map(m => {
@@ -1700,7 +1740,7 @@ export function property<T, K extends keyof T>(
   key: K,
   obj?: T
 ): Maybe<NonNullable<T[K]>> | ((obj: T) => Maybe<NonNullable<T[K]>>) {
-  const op = (a: T) => (Maybe.of(a[key]) as unknown) as Maybe<NonNullable<T[K]>>;
+  const op = (a: T) => maybe(a[key]) as Maybe<NonNullable<T[K]>>;
   return curry1(op, obj);
 }
 
@@ -1760,7 +1800,7 @@ export function get<T, K extends keyof T>(
   key: K,
   maybeObj?: Maybe<T>
 ): Maybe<T[K]> | ((maybeObj: Maybe<T>) => Maybe<T[K]>) {
-  return curry1(Maybe.andThen(property<T, K>(key)), maybeObj);
+  return curry1(bind(property<T, K>(key)), maybeObj);
 }
 
 /**
@@ -1833,7 +1873,7 @@ export function get<T, K extends keyof T>(
 export function wrapReturn<F extends (...args: any[]) => any>(
   fn: F
 ): (...args: Parameters<F>) => Maybe<NonNullable<ReturnType<F>>> {
-  return (...args: Parameters<F>) => Maybe.of(fn(...args)) as Maybe<NonNullable<ReturnType<F>>>;
+  return (...args: Parameters<F>) => of(fn(...args)) as Maybe<NonNullable<ReturnType<F>>>;
 }
 
 /** Alias for [`wrapReturn`](#wrapReturn). */

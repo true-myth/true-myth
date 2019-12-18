@@ -1,7 +1,9 @@
 /** [[include:doc/result.md]] */
 
 /** (keep typedoc from getting confused by the import) */
-import Maybe, { isJust, just, nothing } from './maybe';
+import * as Maybe from './maybe';
+type Maybe<T> = import('./maybe').Maybe<T>;
+
 import Unit from './unit';
 import { _Brand, curry1, isVoid } from './utils';
 
@@ -1228,7 +1230,7 @@ export const getOrElse = unwrapOrElse;
   @returns      `Just` the value in `result` if it is `Ok`; otherwise `Nothing`
  */
 export function toMaybe<T>(result: Result<T, any>): Maybe<T> {
-  return isOk(result) ? just(result.value) : nothing();
+  return isOk(result) ? Maybe.just(result.value) : Maybe.nothing();
 }
 
 /**
@@ -1251,7 +1253,8 @@ export function fromMaybe<T, E>(
   errValue: E,
   maybe?: Maybe<T>
 ): Result<T, E> | ((maybe: Maybe<T>) => Result<T, E>) {
-  const op = (m: Maybe<T>) => (isJust(m) ? ok<T, E>(Maybe.unsafelyUnwrap(m)) : err<T, E>(errValue));
+  const op = (m: Maybe<T>) =>
+    Maybe.isJust(m) ? ok<T, E>(Maybe.unsafelyUnwrap(m)) : err<T, E>(errValue);
   return curry1(op, maybe);
 }
 
