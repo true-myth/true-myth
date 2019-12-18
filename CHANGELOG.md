@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ## [Unreleased]
 
+## [4.0.0] (2019-12-18)
+
 ### Fixed :wrench:
 
 - Switched to using namespace-style imports (`import * as Maybe`) internally to enable users to tree-shake.
@@ -30,6 +32,11 @@ With npm:
 ```sh
 npm install true-myth@latest
 ```
+
+### Contributors 🙇 
+
+- @chriskrycho
+- @bmakuh
 
 ## [3.1.0] (2019-10-08)
 
@@ -107,5 +114,6 @@ npm install true-myth@latest
 - @snatvb
 
 [unreleased]: https://github.com/true-myth/true-myth/compare/v3.1.0...HEAD
+[4.0.0]: https://github.com/true-myth/true-myth/compare/v3.1.0...v4.0.0
 [3.1.0]: https://github.com/true-myth/true-myth/compare/v3.0.0...v3.1.0
 [3.0.0]: https://github.com/true-myth/true-myth/compare/v2.2.8...v3.0.0
