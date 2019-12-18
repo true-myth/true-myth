@@ -176,11 +176,61 @@
 
 <span class="hljs-comment">// this also works:</span>
 <span class="hljs-keyword">import</span> { Maybe, Result } <span class="hljs-keyword">from</span> <span class="hljs-string">'true-myth'</span>;</code></pre>
-				<p>In Node.js, the TypeScript-generated CommonJS package cannot be imported as nested modules, but the modules still can be imported directly from the top-level module:</p>
-				<pre><code class="language-typescript"><span class="hljs-keyword">const</span> { Maybe, Result } = <span class="hljs-built_in">require</span>(<span class="hljs-string">'true-myth'</span>);</code></pre>
-				<p>With the TypeScript Node-aware transforms, you can also write this in ES6 module-style imports for Node, but the same limitations apply about the nested module imports, i.e. you just can&#39;t use them. Use the top-level imports instead:</p>
+				<p>In Node.js, the TypeScript-generated CommonJS package cannot be imported as nested modules, but the modules still can be imported directly from the top-level module when using TypeScript:</p>
 				<pre><code class="language-typescript"><span class="hljs-keyword">import</span> { Maybe, Result } <span class="hljs-keyword">from</span> <span class="hljs-string">'true-myth'</span>;</code></pre>
-				<p>The build includes both ES6 modules and CommonJS modules, so you may reference them directly from their installation in the <code>node_modules</code> directory. (This may be helpful for using the library in different contexts, with the ES modules being supplied especially so you can do tree-shaking with e.g. Rollup.)</p>
+				<p>(Normal Node imports work if you are using the library in JavaScript, but that is not recommended for many reasons. See <a href="#folktale">comments on Folktale below</a> if you’re interested in a similar library for consumption in JavaScript.)</p>
+				<p>The build includes both ES6 modules and CommonJS modules, so you may reference them directly from their installation in the <code>node_modules</code> directory. This may be helpful for using the library in different contexts, with the ES modules being supplied especially so you can do tree-shaking with e.g. Rollup.</p>
+				<a href="#tree-shaking-friendly-imports" id="tree-shaking-friendly-imports" style="color: inherit; text-decoration: none;">
+					<h3>Tree-Shaking-friendly imports</h3>
+				</a>
+				<p>If you want to use tools like Rollup, you may prefer to use a namespace-style import. Throughout the documentation, instead of using the default imports—</p>
+				<pre><code class="language-ts"><span class="hljs-keyword">import</span> Maybe <span class="hljs-keyword">from</span> <span class="hljs-string">'true-myth/maybe'</span>;
+<span class="hljs-keyword">import</span> Result <span class="hljs-keyword">from</span> <span class="hljs-string">'true-myth/result'</span>;</code></pre>
+				<p>—prefer to use the namespace and type-only imports:</p>
+				<pre><code class="language-ts"><span class="hljs-keyword">import</span> * <span class="hljs-keyword">as</span> Maybe <span class="hljs-keyword">from</span> <span class="hljs-string">'true-myth/maybe'</span>;
+<span class="hljs-keyword">type</span> Maybe&lt;T&gt; = <span class="hljs-keyword">import</span>(<span class="hljs-string">'true-myth/maybe'</span>).Maybe&lt;T&gt;;
+
+<span class="hljs-keyword">import</span> * <span class="hljs-keyword">as</span> Result <span class="hljs-keyword">from</span> <span class="hljs-string">'true-myth/result'</span>;
+<span class="hljs-keyword">type</span> Result&lt;T, E&gt; = <span class="hljs-keyword">import</span>(<span class="hljs-string">'true-myth/result'</span>).Result&lt;T, E&gt;;</code></pre>
+				<p>These are somewhat less convenient, but unlike the default exports are totally amenable to tree-shaking.</p>
+				<p>Gzipped size without tree-shaking, for the ES Modules (the CJS modules are slightly larger but you should use the ES modules for targeting the web):</p>
+				<table>
+					<thead>
+						<tr>
+							<th>file</th>
+							<th>size</th>
+							<th>size gzipped</th>
+						</tr>
+					</thead>
+					<tbody><tr>
+							<td><code>index.js</code></td>
+							<td>404KB</td>
+							<td>239B</td>
+						</tr>
+						<tr>
+							<td><code>maybe.js</code></td>
+							<td>27K</td>
+							<td>6.1KB</td>
+						</tr>
+						<tr>
+							<td><code>result.js</code></td>
+							<td>20K</td>
+							<td>4.1KB</td>
+						</tr>
+						<tr>
+							<td><code>unit.js</code></td>
+							<td>482B</td>
+							<td>345B</td>
+						</tr>
+						<tr>
+							<td><code>utils.js</code></td>
+							<td>473B</td>
+							<td>333B</td>
+						</tr>
+				</tbody></table>
+				<a href="#build-output" id="build-output" style="color: inherit; text-decoration: none;">
+					<h3>Build output</h3>
+				</a>
 				<p>Note that the build target is ES2015, since all current evergreen browsers and the current LTS of Node support all ES2015 features. (Strictly speaking, Node 6 does not support <em>all</em> of ES2015, but this library goes nowhere near the couple features it has behind a flag.)</p>
 				<details>
 					<summary>Distributed package layout</summary>
