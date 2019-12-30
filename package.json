@@ -136,12 +136,5 @@
   "volta": {
     "node": "12.13.1",
     "yarn": "1.21.1"
-  },
-  "release-it": {
-    "git": {
-      "commitMessage": "Release v${version}",
-      "tagName": "v${version}",
-      "tagAnnotation": "Release v${version}"
-    }
   }
 }
