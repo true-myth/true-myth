@@ -141,7 +141,7 @@ Gzipped size without tree-shaking, for the ES Modules (the CJS modules are sligh
 
 ### Build output
 
-Note that the build target is ES2015, since all current evergreen browsers and the current LTS of Node support all ES2015 features. (Strictly speaking, Node 6 does not support *all* of ES2015, but this library goes nowhere near the couple features it has behind a flag.)
+Note that the build target is ES2015, since all current evergreen browsers and the current LTS of Node support all ES2015 features.
 
 <details>
 <summary>Distributed package layout</summary>
