@@ -13,13 +13,14 @@
     "baseUrl": ".",
 
     "sourceRoot": ".",
-    "sourceMap": true,
+    "sourceMap": true
   },
   "include": ["src", "test"],
   "typedocOptions": {
     "out": "./docs",
     "toc": false,
     "excludePrivate": true,
+    "stripInternal": true,
     "includes": "./src",
     "target": "ES6",
     "theme": "default",
