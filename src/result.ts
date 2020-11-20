@@ -84,7 +84,7 @@ export interface ResultShape<T, E> {
   unsafelyUnwrapErr(): E | never;
 
   /** Method variant for [`Result.unwrapOr`](../modules/_result_.html#unwrapor) */
-  unwrapOr(this: Result<T, E>, defaultValue: T): T;
+  unwrapOr<D>(this: Result<T, E>, defaultValue: D): T | D;
 
   /** Method variant for [`Result.unwrapOrElse`](../modules/_result_.html#unwrapOrElse) */
   unwrapOrElse(this: Result<T, E>, elseFn: (error: E) => T): T;
@@ -260,7 +260,7 @@ export class Ok<T, E> implements ResultShape<T, E> {
   }
 
   /** Method variant for [`Result.unwrapOr`](../modules/_result_.html#unwrapor) */
-  unwrapOr(this: Result<T, E>, defaultValue: T): T {
+  unwrapOr<D>(this: Result<T, E>, defaultValue: D): T | D {
     return unwrapOr(defaultValue, this);
   }
 
@@ -450,7 +450,7 @@ export class Err<T, E> implements ResultShape<T, E> {
   }
 
   /** Method variant for [`Result.unwrapOr`](../modules/_result_.html#unwrapor) */
-  unwrapOr(this: Result<T, E>, defaultValue: T): T {
+  unwrapOr<D>(this: Result<T, E>, defaultValue: D): T | D {
     return unwrapOr(defaultValue, this);
   }
 
@@ -1159,12 +1159,12 @@ export const unsafelyGetErr = unsafelyUnwrapErr;
   @returns            The content of `result` if it is an `Ok`, otherwise
                       `defaultValue`.
  */
-export function unwrapOr<T, E>(defaultValue: T, result: Result<T, E>): T;
-export function unwrapOr<T, E>(defaultValue: T): (result: Result<T, E>) => T;
-export function unwrapOr<T, E>(
-  defaultValue: T,
+export function unwrapOr<T, D, E>(defaultValue: D, result: Result<T, E>): D | T;
+export function unwrapOr<T, D, E>(defaultValue: D): (result: Result<T, E>) => D | T;
+export function unwrapOr<T, D, E>(
+  defaultValue: D,
   result?: Result<T, E>
-): T | ((result: Result<T, E>) => T) {
+): (T | D) | ((result: Result<T, E>) => T | D) {
   const op = (r: Result<T, E>) => (isOk(r) ? r.value : defaultValue);
   return curry1(op, result);
 }

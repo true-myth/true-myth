@@ -819,6 +819,14 @@ describe('`Maybe.Nothing` class', () => {
     const theNothing = new Maybe.Nothing<number[]>();
     const theDefaultValue: number[] = [];
     expect(theNothing.unwrapOr(theDefaultValue)).toEqual(theDefaultValue);
+    // Make sure you can unwrap to a different type, like undefined
+    // For interop with "regular" code
+    assertType<Maybe<number[]>>(theNothing);
+    const theNothingOrUndefined = theNothing.unwrapOr(undefined)
+    assertType<number[] | undefined>(theNothingOrUndefined);
+    expect(theNothingOrUndefined).toEqual(undefined);
+
+    
   });
 
   test('`unwrapOrElse` method', () => {

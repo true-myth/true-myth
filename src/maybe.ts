@@ -274,7 +274,7 @@ export class Just<T> implements MaybeShape<T> {
   }
 
   /** Method variant for [`Maybe.unwrapOr`](../modules/_maybe_.html#unwrapor) */
-  unwrapOr(this: Maybe<T>, defaultValue: T): T {
+  unwrapOr<D>(this: Maybe<T>, defaultValue: D): T | D {
     return unwrapOr(defaultValue, this);
   }
 
@@ -478,7 +478,7 @@ export class Nothing<T> implements MaybeShape<T> {
   }
 
   /** Method variant for [`Maybe.unwrapOr`](../modules/_maybe_.html#unwrapor) */
-  unwrapOr(this: Maybe<T>, defaultValue: T): T {
+  unwrapOr<D>(this: Maybe<T>, defaultValue: D): T | D {
     return unwrapOr(defaultValue, this);
   }
 
@@ -1052,9 +1052,9 @@ export const unsafeGet = unsafelyUnwrap;
   @returns            The content of `maybe` if it is a `Just`, otherwise
                       `defaultValue`.
  */
-export function unwrapOr<T>(defaultValue: T, maybe: Maybe<T>): T;
-export function unwrapOr<T>(defaultValue: T): (maybe: Maybe<T>) => T;
-export function unwrapOr<T>(defaultValue: T, maybe?: Maybe<T>) {
+export function unwrapOr<T, D>(defaultValue: D, maybe: Maybe<T>): T | D;
+export function unwrapOr<T, D>(defaultValue: D): (maybe: Maybe<T>) => T | D;
+export function unwrapOr<T, D>(defaultValue: D, maybe?: Maybe<T>) {
   const op = (m: Maybe<T>) => (m.isJust() ? m.value : defaultValue);
   return curry1(op, maybe);
 }
