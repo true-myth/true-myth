@@ -73,7 +73,7 @@ export interface MaybeShape<T> {
   unsafelyUnwrap(): T | never;
 
   /** Method variant for [`Maybe.unwrapOrElse`](../modules/_maybe_.html#unwraporelse) */
-  unwrapOrElse(this: Maybe<T>, elseFn: () => T): T;
+  unwrapOrElse<U>(this: Maybe<T>, elseFn: () => U): T | U;
 
   /** Method variant for [`Maybe.toOkOrErr`](../modules/_maybe_.html#tookorerr) */
   toOkOrErr<E>(this: Maybe<T>, error: E): Result<T, E>;
@@ -279,7 +279,7 @@ export class Just<T> implements MaybeShape<T> {
   }
 
   /** Method variant for [`Maybe.unwrapOrElse`](../modules/_maybe_.html#unwraporelse) */
-  unwrapOrElse(this: Maybe<T>, elseFn: () => T): T {
+  unwrapOrElse<U>(this: Maybe<T>, elseFn: () => U): T | U {
     return unwrapOrElse(elseFn, this);
   }
 
@@ -483,7 +483,7 @@ export class Nothing<T> implements MaybeShape<T> {
   }
 
   /** Method variant for [`Maybe.unwrapOrElse`](../modules/_maybe_.html#unwraporelse) */
-  unwrapOrElse(this: Maybe<T>, elseFn: () => T): T {
+  unwrapOrElse<U>(this: Maybe<T>, elseFn: () => U): T | U {
     return unwrapOrElse(elseFn, this);
   }
 
@@ -1091,9 +1091,9 @@ export const getOr = unwrapOr;
   @returns        Either the content of `maybe` or the value returned from
                   `orElseFn`.
  */
-export function unwrapOrElse<T>(orElseFn: () => T, maybe: Maybe<T>): T;
-export function unwrapOrElse<T>(orElseFn: () => T): (maybe: Maybe<T>) => T;
-export function unwrapOrElse<T>(orElseFn: () => T, maybe?: Maybe<T>): T | ((maybe: Maybe<T>) => T) {
+export function unwrapOrElse<T, U>(orElseFn: () => U, maybe: Maybe<T>): T | U;
+export function unwrapOrElse<T, U>(orElseFn: () => U): (maybe: Maybe<T>) => T | U;
+export function unwrapOrElse<T, U>(orElseFn: () => U, maybe?: Maybe<T>): (T | U) | ((maybe: Maybe<T>) => T | U) {
   const op = (m: Maybe<T>) => (m.isJust() ? m.value : orElseFn());
   return curry1(op, maybe);
 }

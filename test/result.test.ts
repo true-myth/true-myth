@@ -291,6 +291,17 @@ describe('`Result` pure functions', () => {
     const theErrValue = { reason: 'bad thing' };
     const anErr = Result.err<string, LocalError>(theErrValue);
     expect(Result.unwrapOrElse(errToOk, anErr)).toBe(errToOk(theErrValue));
+
+    // test unwrapping to undefined
+    const noop = (): undefined => undefined;
+
+    const anOkOrUndefined = Result.unwrapOrElse(noop, anOk);
+    assertType<string | undefined>(anOkOrUndefined);
+    expect(anOkOrUndefined).toEqual(theValue);
+
+    const anErrOrUndefined = Result.unwrapOrElse(noop, anErr);
+    assertType<string | undefined>(anErrOrUndefined);
+    expect(anErrOrUndefined).toEqual(undefined);
   });
 
   test('`toMaybe`', () => {

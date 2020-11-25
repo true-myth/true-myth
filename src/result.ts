@@ -87,7 +87,7 @@ export interface ResultShape<T, E> {
   unwrapOr<U>(this: Result<T, E>, defaultValue: U): T | U;
 
   /** Method variant for [`Result.unwrapOrElse`](../modules/_result_.html#unwrapOrElse) */
-  unwrapOrElse(this: Result<T, E>, elseFn: (error: E) => T): T;
+  unwrapOrElse<U>(this: Result<T, E>, elseFn: (error: E) => U): T | U;
 
   /** Method variant for [`Result.toMaybe`](../modules/_result_.html#tomaybe) */
   toMaybe(this: Result<T, E>): Maybe<T>;
@@ -265,7 +265,7 @@ export class Ok<T, E> implements ResultShape<T, E> {
   }
 
   /** Method variant for [`Result.unwrapOrElse`](../modules/_result_.html#unwrapOrElse) */
-  unwrapOrElse(this: Result<T, E>, elseFn: (error: E) => T): T {
+  unwrapOrElse<U>(this: Result<T, E>, elseFn: (error: E) => U): T | U{
     return unwrapOrElse(elseFn, this);
   }
 
@@ -455,7 +455,7 @@ export class Err<T, E> implements ResultShape<T, E> {
   }
 
   /** Method variant for [`Result.unwrapOrElse`](../modules/_result_.html#unwraporelse) */
-  unwrapOrElse(this: Result<T, E>, elseFn: (error: E) => T): T {
+  unwrapOrElse<U>(this: Result<T, E>, elseFn: (error: E) => U): T | U {
     return unwrapOrElse(elseFn, this);
   }
 
@@ -1202,12 +1202,12 @@ export const getOr = unwrapOr;
   @returns        The value wrapped in `result` if it is `Ok` or the value
                   returned by `orElseFn` applied to the value in `Err`.
  */
-export function unwrapOrElse<T, E>(orElseFn: (error: E) => T, result: Result<T, E>): T;
-export function unwrapOrElse<T, E>(orElseFn: (error: E) => T): (result: Result<T, E>) => T;
-export function unwrapOrElse<T, E>(
-  orElseFn: (error: E) => T,
+export function unwrapOrElse<T, U, E>(orElseFn: (error: E) => U, result: Result<T, E>): T | U;
+export function unwrapOrElse<T, U, E>(orElseFn: (error: E) => U): (result: Result<T, E>) => T | U;
+export function unwrapOrElse<T, U, E>(
+  orElseFn: (error: E) => U,
   result?: Result<T, E>
-): T | ((result: Result<T, E>) => T) {
+): (T | U) | ((result: Result<T, E>) => T | U) {
   const op = (r: Result<T, E>) => (isOk(r) ? r.value : orElseFn(r.error));
   return curry1(op, result);
 }
