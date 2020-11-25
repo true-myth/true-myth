@@ -84,7 +84,7 @@ export interface ResultShape<T, E> {
   unsafelyUnwrapErr(): E | never;
 
   /** Method variant for [`Result.unwrapOr`](../modules/_result_.html#unwrapor) */
-  unwrapOr<D>(this: Result<T, E>, defaultValue: D): T | D;
+  unwrapOr<U>(this: Result<T, E>, defaultValue: U): T | U;
 
   /** Method variant for [`Result.unwrapOrElse`](../modules/_result_.html#unwrapOrElse) */
   unwrapOrElse(this: Result<T, E>, elseFn: (error: E) => T): T;
@@ -260,7 +260,7 @@ export class Ok<T, E> implements ResultShape<T, E> {
   }
 
   /** Method variant for [`Result.unwrapOr`](../modules/_result_.html#unwrapor) */
-  unwrapOr<D>(this: Result<T, E>, defaultValue: D): T | D {
+  unwrapOr<U>(this: Result<T, E>, defaultValue: U): T | U {
     return unwrapOr(defaultValue, this);
   }
 
@@ -450,7 +450,7 @@ export class Err<T, E> implements ResultShape<T, E> {
   }
 
   /** Method variant for [`Result.unwrapOr`](../modules/_result_.html#unwrapor) */
-  unwrapOr<D>(this: Result<T, E>, defaultValue: D): T | D {
+  unwrapOr<U>(this: Result<T, E>, defaultValue: U): T | U {
     return unwrapOr(defaultValue, this);
   }
 
@@ -1159,12 +1159,12 @@ export const unsafelyGetErr = unsafelyUnwrapErr;
   @returns            The content of `result` if it is an `Ok`, otherwise
                       `defaultValue`.
  */
-export function unwrapOr<T, D, E>(defaultValue: D, result: Result<T, E>): D | T;
-export function unwrapOr<T, D, E>(defaultValue: D): (result: Result<T, E>) => D | T;
-export function unwrapOr<T, D, E>(
-  defaultValue: D,
+export function unwrapOr<T, U, E>(defaultValue: U, result: Result<T, E>): U | T;
+export function unwrapOr<T, U, E>(defaultValue: U): (result: Result<T, E>) => U | T;
+export function unwrapOr<T, U, E>(
+  defaultValue: U,
   result?: Result<T, E>
-): (T | D) | ((result: Result<T, E>) => T | D) {
+): (T | U) | ((result: Result<T, E>) => T | U) {
   const op = (r: Result<T, E>) => (isOk(r) ? r.value : defaultValue);
   return curry1(op, result);
 }
