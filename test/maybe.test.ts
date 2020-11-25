@@ -247,6 +247,15 @@ describe('`Maybe` pure functions', () => {
     expect(Maybe.unwrapOr(theDefaultValue)(theJust)).toEqual(
       Maybe.unwrapOr(theDefaultValue, theJust)
     );
+
+    // Make sure you can unwrap to a different type, like undefined
+    // For interop with "regular" code
+    assertType<Maybe<number[]>>(theJust);
+    const theJustOrUndefined = theJust.unwrapOr(undefined)
+    assertType<number[] | undefined>(theJustOrUndefined);
+    expect(theJustOrUndefined).toEqual(theValue);
+
+    
   });
 
   test('`unwrapOrElse`', () => {
@@ -258,6 +267,14 @@ describe('`Maybe` pure functions', () => {
     expect(Maybe.unwrapOrElse(getVal, Maybe.nothing())).toBe(val);
 
     expect(Maybe.unwrapOrElse(getVal)(just42)).toEqual(Maybe.unwrapOrElse(getVal, just42));
+
+    // test unwrapping to undefined
+    const noop = (): undefined => undefined;
+    const undefinedOr42 = Maybe.unwrapOrElse(noop, just42);
+    assertType<number | undefined>(undefinedOr42);
+    expect(undefinedOr42).toEqual(42);
+
+
   });
 
   test('`toOkOrErr`', () => {
@@ -819,14 +836,6 @@ describe('`Maybe.Nothing` class', () => {
     const theNothing = new Maybe.Nothing<number[]>();
     const theDefaultValue: number[] = [];
     expect(theNothing.unwrapOr(theDefaultValue)).toEqual(theDefaultValue);
-    // Make sure you can unwrap to a different type, like undefined
-    // For interop with "regular" code
-    assertType<Maybe<number[]>>(theNothing);
-    const theNothingOrUndefined = theNothing.unwrapOr(undefined)
-    assertType<number[] | undefined>(theNothingOrUndefined);
-    expect(theNothingOrUndefined).toEqual(undefined);
-
-    
   });
 
   test('`unwrapOrElse` method', () => {
