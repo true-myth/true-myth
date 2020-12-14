@@ -1,0 +1,39 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+
+jobs:
+  tests_linux:
+    name: 'Tests: ubuntu (node@${{ matrix.node_version }})'
+    runs-on: 'ubuntu-latest'
+    strategy:
+      matrix:
+        node_version: ['10', '12', '14', '15']
+
+    steps:
+      - uses: actions/checkout@v2
+      - uses: volta-cli/action@v1
+        with:
+          node_version: ${{ matrix.node-version }}
+      - run: yarn install --frozen-lockfile --non-interactive
+      - run: yarn test
+
+  tests_other:
+    name: 'Tests: ${{ matrix.os }}'
+    runs-on: '${{ matrix.os }}-latest'
+
+    strategy:
+      matrix:
+        # macOS runners are slow (at best) this week
+        # os: [macOS, windows]
+        os: [windows]
+
+    steps:
+      - uses: actions/checkout@v2
+      - uses: volta-cli/action@v1
+      - run: yarn install --frozen-lockfile --non-interactive
+      - run: yarn test
