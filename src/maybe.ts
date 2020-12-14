@@ -4,7 +4,7 @@
 import * as Result from './result';
 type Result<T, E> = import('./result').Result<T, E>;
 
-import { curry1, isVoid } from './utils';
+import { curry1, isVoid } from './-private/utils';
 
 /**
   Discriminant for the `Just` and `Nothing` variants.
@@ -1093,7 +1093,10 @@ export const getOr = unwrapOr;
  */
 export function unwrapOrElse<T, U>(orElseFn: () => U, maybe: Maybe<T>): T | U;
 export function unwrapOrElse<T, U>(orElseFn: () => U): (maybe: Maybe<T>) => T | U;
-export function unwrapOrElse<T, U>(orElseFn: () => U, maybe?: Maybe<T>): (T | U) | ((maybe: Maybe<T>) => T | U) {
+export function unwrapOrElse<T, U>(
+  orElseFn: () => U,
+  maybe?: Maybe<T>
+): (T | U) | ((maybe: Maybe<T>) => T | U) {
   const op = (m: Maybe<T>) => (m.isJust() ? m.value : orElseFn());
   return curry1(op, maybe);
 }

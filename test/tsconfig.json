@@ -1,0 +1,10 @@
+{
+  "extends": "../tsconfig.json",
+  "include": ["*.ts"],
+  "compilerOptions": {
+    "paths": {
+      "true-myth": ["src"],
+      "true-myth/*": ["src/*"]
+    }
+  }
+}

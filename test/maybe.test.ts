@@ -1,11 +1,10 @@
+import { expectTypeOf } from 'expect-type';
 import Maybe, { Variant, Nothing, Just, Matcher } from '../src/maybe';
 import { err, ok } from '../src/result';
-import { assertType } from './lib/assert';
 import { Unit } from '../src/unit';
+import { AndThenAliases } from './test-utils';
 
 type Neat = { neat: string };
-
-type AndThenAliases = 'andThen' | 'chain' | 'flatMap';
 
 const length = (s: string) => s.length;
 
@@ -43,13 +42,13 @@ describe('`Maybe` pure functions', () => {
     }
 
     const nothingOnType = Maybe.nothing<string>();
-    assertType<Maybe<string>>(nothingOnType);
+    expectTypeOf(nothingOnType).toEqualTypeOf<Maybe<string>>();
   });
 
   describe('`of`', () => {
     test('with `null', () => {
       const nothingFromNull = Maybe.of<string>(null);
-      assertType<Maybe<string>>(nothingFromNull);
+      expectTypeOf(nothingFromNull).toEqualTypeOf<Maybe<string>>();
       expect(Maybe.isJust(nothingFromNull)).toBe(false);
       expect(Maybe.isNothing(nothingFromNull)).toBe(true);
       expect(() => Maybe.unsafelyUnwrap(nothingFromNull)).toThrow();
@@ -57,7 +56,7 @@ describe('`Maybe` pure functions', () => {
 
     test('with `undefined`', () => {
       const nothingFromUndefined = Maybe.of<number>(undefined);
-      assertType<Maybe<number>>(nothingFromUndefined);
+      expectTypeOf(nothingFromUndefined).toEqualTypeOf<Maybe<number>>();
       expect(Maybe.isJust(nothingFromUndefined)).toBe(false);
       expect(Maybe.isNothing(nothingFromUndefined)).toBe(true);
       expect(() => Maybe.unsafelyUnwrap(nothingFromUndefined)).toThrow();
@@ -65,12 +64,12 @@ describe('`Maybe` pure functions', () => {
 
     test('with values', () => {
       const aJust = Maybe.of<Neat>({ neat: 'strings' });
-      assertType<Maybe<Neat>>(aJust);
+      expectTypeOf(aJust).toEqualTypeOf<Maybe<Neat>>();
       const aNothing = Maybe.of<Neat>(null);
-      assertType<Maybe<Neat>>(aNothing);
+      expectTypeOf(aNothing).toEqualTypeOf<Maybe<Neat>>();
 
       const justANumber = Maybe.of(42);
-      assertType<Maybe<number>>(justANumber);
+      expectTypeOf(justANumber).toEqualTypeOf<Maybe<number>>();
       expect(Maybe.isJust(justANumber)).toBe(true);
       expect(Maybe.isNothing(justANumber)).toBe(false);
       expect(Maybe.unsafelyUnwrap(justANumber)).toBe(42);
@@ -80,7 +79,7 @@ describe('`Maybe` pure functions', () => {
   describe('`fromNullable`', () => {
     test('with `null', () => {
       const nothingFromNull = Maybe.fromNullable<string>(null);
-      assertType<Maybe<string>>(nothingFromNull);
+      expectTypeOf(nothingFromNull).toEqualTypeOf<Maybe<string>>();
       expect(Maybe.isJust(nothingFromNull)).toBe(false);
       expect(Maybe.isNothing(nothingFromNull)).toBe(true);
       expect(() => Maybe.unsafelyUnwrap(nothingFromNull)).toThrow();
@@ -88,7 +87,7 @@ describe('`Maybe` pure functions', () => {
 
     test('with `undefined`', () => {
       const nothingFromUndefined = Maybe.fromNullable<number>(undefined);
-      assertType<Maybe<number>>(nothingFromUndefined);
+      expectTypeOf(nothingFromUndefined).toEqualTypeOf<Maybe<number>>();
       expect(Maybe.isJust(nothingFromUndefined)).toBe(false);
       expect(Maybe.isNothing(nothingFromUndefined)).toBe(true);
       expect(() => Maybe.unsafelyUnwrap(nothingFromUndefined)).toThrow();
@@ -96,12 +95,12 @@ describe('`Maybe` pure functions', () => {
 
     test('with values', () => {
       const aJust = Maybe.fromNullable<Neat>({ neat: 'strings' });
-      assertType<Maybe<Neat>>(aJust);
+      expectTypeOf(aJust).toEqualTypeOf<Maybe<Neat>>();
       const aNothing = Maybe.fromNullable<Neat>(null);
-      assertType<Maybe<Neat>>(aNothing);
+      expectTypeOf(aNothing).toEqualTypeOf<Maybe<Neat>>();
 
       const justANumber = Maybe.fromNullable(42);
-      assertType<Maybe<number>>(justANumber);
+      expectTypeOf(justANumber).toEqualTypeOf<Maybe<number>>();
       expect(Maybe.isJust(justANumber)).toBe(true);
       expect(Maybe.isNothing(justANumber)).toBe(false);
       expect(Maybe.unsafelyUnwrap(justANumber)).toBe(42);
@@ -111,12 +110,12 @@ describe('`Maybe` pure functions', () => {
   test('`map`', () => {
     const justAString = Maybe.just('string');
     const itsLength = Maybe.map(length, justAString);
-    assertType<Maybe<number>>(itsLength);
+    expectTypeOf(itsLength).toEqualTypeOf<Maybe<number>>();
     expect(itsLength).toEqual(Maybe.just('string'.length));
 
     const none = Maybe.nothing<string>();
     const noLength = Maybe.map(length, none);
-    assertType<Maybe<string>>(none);
+    expectTypeOf(none).toEqualTypeOf<Maybe<string>>();
     expect(noLength).toEqual(Maybe.nothing());
   });
 
@@ -250,12 +249,10 @@ describe('`Maybe` pure functions', () => {
 
     // Make sure you can unwrap to a different type, like undefined
     // For interop with "regular" code
-    assertType<Maybe<number[]>>(theJust);
-    const theJustOrUndefined = theJust.unwrapOr(undefined)
-    assertType<number[] | undefined>(theJustOrUndefined);
+    expectTypeOf(theJust).toEqualTypeOf<Maybe<number[]>>();
+    const theJustOrUndefined = theJust.unwrapOr(undefined);
+    expectTypeOf(theJustOrUndefined).toEqualTypeOf<number[] | undefined>();
     expect(theJustOrUndefined).toEqual(theValue);
-
-    
   });
 
   test('`unwrapOrElse`', () => {
@@ -271,10 +268,8 @@ describe('`Maybe` pure functions', () => {
     // test unwrapping to undefined
     const noop = (): undefined => undefined;
     const undefinedOr42 = Maybe.unwrapOrElse(noop, just42);
-    assertType<number | undefined>(undefinedOr42);
+    expectTypeOf(undefinedOr42).toEqualTypeOf<number | undefined>();
     expect(undefinedOr42).toEqual(42);
-
-
   });
 
   test('`toOkOrErr`', () => {
@@ -427,12 +422,12 @@ describe('`Maybe` pure functions', () => {
 
       let onlyJusts = [Maybe.just(2), Maybe.just('three')];
       let onlyJustsAll = Maybe.all(...onlyJusts);
-      assertType<ExpectedOutputType>(onlyJustsAll);
+      expectTypeOf(onlyJustsAll).toEqualTypeOf<ExpectedOutputType>();
       expect(onlyJustsAll).toEqual(Maybe.just([2, 'three']));
 
       let hasNothing = [Maybe.just(2), Maybe.nothing<string>()];
       let hasNothingAll = Maybe.all(...hasNothing);
-      assertType<ExpectedOutputType>(hasNothingAll);
+      expectTypeOf(hasNothingAll).toEqualTypeOf<ExpectedOutputType>();
       expect(hasNothingAll).toEqual(Maybe.nothing());
     });
 
@@ -442,7 +437,7 @@ describe('`Maybe` pure functions', () => {
       let nestedArrays = [Maybe.just(1), Maybe.just(['two', 'three'])];
       let nestedArraysAll = Maybe.all(...nestedArrays);
 
-      assertType<ExpectedOutputType>(nestedArraysAll);
+      expectTypeOf(nestedArraysAll).toEqualTypeOf<ExpectedOutputType>();
       expect(nestedArraysAll).toEqual(Maybe.just([1, ['two', 'three']]));
     });
   });
@@ -457,7 +452,7 @@ describe('`Maybe` pure functions', () => {
     let valid: Tuple3 = [Maybe.just('hey'), Maybe.just(4), Maybe.just({ neat: 'yeah' })];
     const result = Maybe.tuple(valid);
     expect(result).toEqual(Maybe.just(['hey', 4, { neat: 'yeah' }]));
-    assertType<Maybe<[string, number, { neat: string }]>>(result);
+    expectTypeOf(result).toEqualTypeOf<Maybe<[string, number, { neat: string }]>>();
   });
 
   test('`property`', () => {
@@ -509,7 +504,7 @@ describe('`Maybe` pure functions', () => {
     expect(mayNotBeUndefined(full)).toEqual(fullResult);
 
     const querySelector = Maybe.wrapReturn(document.querySelector.bind(document));
-    assertType<(selector: string) => Maybe<Element>>(querySelector);
+    expectTypeOf(querySelector).toEqualTypeOf<(selector: string) => Maybe<Element>>();
   });
 });
 
@@ -519,25 +514,25 @@ describe('`Maybe` pure functions', () => {
 test('narrowing', () => {
   const oneJust = Maybe.of(Unit);
   if (oneJust.isJust()) {
-    assertType<Just<Unit>>(oneJust);
+    expectTypeOf(oneJust).toEqualTypeOf<Just<Unit>>();
     expect(oneJust.value).toBeDefined();
   }
 
   // As above, narrowing directly on the type rather than with the lookup.
   const anotherJust = Maybe.of(Unit);
   if (anotherJust.variant === Variant.Just) {
-    assertType<Just<Unit>>(anotherJust);
+    expectTypeOf(anotherJust).toEqualTypeOf<Just<Unit>>();
     expect(anotherJust.value).toBeDefined();
   }
 
   const oneNothing = Maybe.nothing();
   if (oneNothing.isNothing()) {
-    assertType<Nothing<any>>(oneNothing);
+    expectTypeOf(oneNothing).toEqualTypeOf<Nothing<unknown>>();
   }
 
   const anotherNothing = Maybe.nothing();
   if (anotherNothing.variant === Variant.Nothing) {
-    assertType<Nothing<any>>(anotherNothing);
+    expectTypeOf(anotherNothing).toEqualTypeOf<Nothing<unknown>>();
   }
 
   expect('this type checked, hooray').toBeTruthy();

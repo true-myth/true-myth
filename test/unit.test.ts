@@ -1,7 +1,9 @@
+import { expectTypeOf } from 'expect-type';
 import Unit from '../src/unit';
-import { assertType } from './lib/assert';
 
 test('the unit type', () => {
+  expectTypeOf<Unit>().toEqualTypeOf();
+  expectTypeOf({}).not.toMatchTypeOf(Unit);
+
   expect(Unit).not.toEqual({});
-  assertType<Unit>(Unit);
 });

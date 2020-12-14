@@ -1,8 +1,8 @@
+import { expectTypeOf } from 'expect-type';
 import { just, nothing } from '../src/maybe';
 import Result, { Ok, Variant, Err } from '../src/result';
 import Unit from '../src/unit';
-import { AndThenAliases } from '../src/utils';
-import { assertType } from './lib/assert';
+import { AndThenAliases } from './test-utils';
 
 const length = (x: { length: number }) => x.length;
 const double = (x: number) => x * 2;
@@ -23,7 +23,7 @@ describe('`Result` pure functions', () => {
     }
 
     const withUnit = Result.ok();
-    assertType<Result<Unit, unknown>>(withUnit);
+    expectTypeOf(withUnit).toEqualTypeOf<Result<Unit, unknown>>();
     expect(withUnit).toEqual(Result.ok(Unit));
   });
 
@@ -43,7 +43,7 @@ describe('`Result` pure functions', () => {
     }
 
     const withUnit = Result.err();
-    assertType<Result<unknown, Unit>>(withUnit);
+    expectTypeOf(withUnit).toEqualTypeOf<Result<unknown, Unit>>();
     expect(withUnit).toEqual(Result.err(Unit));
   });
 
@@ -266,17 +266,16 @@ describe('`Result` pure functions', () => {
     const anErr = Result.err('pumpkins are not');
     expect(Result.unwrapOr(defaultValue, anErr)).toBe(defaultValue);
     // make sure you can unwrap to a different type, like undefined
-    assertType<Result<string, unknown>>(anOk);
-    const anOkOrUndefined = Result.unwrapOr(undefined, anOk)
-    assertType<string | undefined>(anOkOrUndefined);
+    expectTypeOf(anOk).toEqualTypeOf<Result<string, unknown>>();
+    const anOkOrUndefined = Result.unwrapOr(undefined, anOk);
+    expectTypeOf(anOkOrUndefined).toEqualTypeOf<string | undefined>();
     expect(anOkOrUndefined).toEqual(theValue);
     // test the err variant too, though in this case it's not actually a
     // different type because unknown ≡ unknown | undefined
-    assertType<Result<unknown, string>>(anErr);
-    const anErrOrUndefined = Result.unwrapOr(undefined, anErr)
-    assertType<unknown>(anErrOrUndefined); // unknown ≡ unknown | undefined
+    expectTypeOf(anErr).toEqualTypeOf<Result<unknown, string>>();
+    const anErrOrUndefined = Result.unwrapOr(undefined, anErr);
+    expectTypeOf(anErrOrUndefined).toEqualTypeOf<unknown>(); // unknown ≡ unknown | undefined
     expect(anErrOrUndefined).toEqual(undefined);
-
   });
 
   test('`unwrapOrElse`', () => {
@@ -296,11 +295,11 @@ describe('`Result` pure functions', () => {
     const noop = (): undefined => undefined;
 
     const anOkOrUndefined = Result.unwrapOrElse(noop, anOk);
-    assertType<string | undefined>(anOkOrUndefined);
+    expectTypeOf(anOkOrUndefined).toEqualTypeOf<string | undefined>();
     expect(anOkOrUndefined).toEqual(theValue);
 
     const anErrOrUndefined = Result.unwrapOrElse(noop, anErr);
-    assertType<string | undefined>(anErrOrUndefined);
+    expectTypeOf(anErrOrUndefined).toEqualTypeOf<string | undefined>();
     expect(anErrOrUndefined).toEqual(undefined);
   });
 
@@ -389,16 +388,16 @@ describe('`Result` pure functions', () => {
   });
 
   test('isInstance', () => {
-    const ok: any = Result.ok('yay');
+    const ok: unknown = Result.ok('yay');
     expect(Result.isInstance(ok)).toBe(true);
 
-    const err: any = Result.err('oh no');
+    const err: unknown = Result.err('oh no');
     expect(Result.isInstance(err)).toBe(true);
 
-    const nada: any = null;
+    const nada: unknown = null;
     expect(Result.isInstance(nada)).toBe(false);
 
-    const obj: any = { random: 'nonsense' };
+    const obj: unknown = { random: 'nonsense' };
     expect(Result.isInstance(obj)).toBe(false);
   });
 });
@@ -409,25 +408,25 @@ describe('`Result` pure functions', () => {
 test('narrowing', () => {
   const oneOk = Result.ok();
   if (oneOk.isOk()) {
-    assertType<Ok<Unit, any>>(oneOk);
+    expectTypeOf(oneOk).toEqualTypeOf<Ok<Unit, unknown>>();
     expect(oneOk.value).toBeDefined();
   }
 
   const anotherOk = Result.ok();
   if (anotherOk.variant === Variant.Ok) {
-    assertType<Ok<Unit, any>>(anotherOk);
+    expectTypeOf(anotherOk).toEqualTypeOf<Ok<Unit, unknown>>();
     expect(anotherOk.value).toBeDefined();
   }
 
   const oneErr = Result.err();
   if (oneErr.isErr()) {
-    assertType<Err<any, Unit>>(oneErr);
+    expectTypeOf(oneErr).toEqualTypeOf<Err<unknown, Unit>>();
     expect(oneErr.error).toBeDefined();
   }
 
   const anotherErr = Result.err();
   if (anotherErr.variant === Variant.Err) {
-    assertType<Err<any, Unit>>(anotherErr);
+    expectTypeOf(anotherErr).toEqualTypeOf<Err<unknown, Unit>>();
     expect(anotherErr.error).toBeDefined();
   }
 
@@ -437,10 +436,10 @@ test('narrowing', () => {
 describe('`Result.Ok` class', () => {
   test('constructor', () => {
     const fullyQualifiedOk = new Result.Ok<number, string>(42);
-    assertType<Result<number, string>>(fullyQualifiedOk);
+    expectTypeOf(fullyQualifiedOk).toMatchTypeOf<Result<number, string>>();
 
     const unqualifiedOk = new Result.Ok('string');
-    assertType<Result<string, any>>(unqualifiedOk);
+    expectTypeOf(unqualifiedOk).toMatchTypeOf<Result<string, any>>();
 
     expect(() => new Result.Ok(null)).toThrow();
     expect(() => new Result.Ok(undefined)).toThrow();
@@ -610,10 +609,10 @@ describe('`Result.Ok` class', () => {
 describe('`Result.Err` class', () => {
   test('constructor', () => {
     const fullyQualifiedErr = new Result.Err<string, number>(42);
-    assertType<Result<string, number>>(fullyQualifiedErr);
+    expectTypeOf(fullyQualifiedErr).toMatchTypeOf<Result<string, number>>();
 
     const unqualifiedErr = new Result.Err('string');
-    assertType<Result<any, string>>(unqualifiedErr);
+    expectTypeOf(unqualifiedErr).toMatchTypeOf<Result<any, string>>();
 
     expect(() => new Result.Err(null)).toThrow();
     expect(() => new Result.Err(undefined)).toThrow();

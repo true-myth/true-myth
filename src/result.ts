@@ -5,10 +5,10 @@ import * as Maybe from './maybe';
 type Maybe<T> = import('./maybe').Maybe<T>;
 
 import Unit from './unit';
-import { _Brand, curry1, isVoid } from './utils';
+import { Brand, curry1, isVoid } from './-private/utils';
 
 // So that it doesn't appear unused but can be exported.
-_Brand; // tslint:disable-line:no-unused-expression
+Brand; // tslint:disable-line:no-unused-expression
 
 /**
   Discriminant for `Ok` and `Err` variants of `Result` type.
@@ -265,7 +265,7 @@ export class Ok<T, E> implements ResultShape<T, E> {
   }
 
   /** Method variant for [`Result.unwrapOrElse`](../modules/_result_.html#unwrapOrElse) */
-  unwrapOrElse<U>(this: Result<T, E>, elseFn: (error: E) => U): T | U{
+  unwrapOrElse<U>(this: Result<T, E>, elseFn: (error: E) => U): T | U {
     return unwrapOrElse(elseFn, this);
   }
 

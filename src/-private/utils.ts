@@ -15,14 +15,10 @@ export function curry1<T, U>(op: (t: T) => U, item?: T) {
 }
 
 /** @internal */
-export type AndThenAliases = 'andThen' | 'chain' | 'flatMap';
+export class Brand<Tag extends string> {
+  protected readonly _brand: Tag;
 
-// tslint:disable-next-line:class-name
-/** @internal */
-export class _Brand<Tag extends string> {
-  // @ts-ignore
-  private _brand: Tag;
-  constructor(t: Tag) {
-    this._brand = t;
+  constructor(tag: Tag) {
+    this._brand = tag;
   }
 }
