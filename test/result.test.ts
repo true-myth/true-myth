@@ -265,6 +265,18 @@ describe('`Result` pure functions', () => {
 
     const anErr = Result.err('pumpkins are not');
     expect(Result.unwrapOr(defaultValue, anErr)).toBe(defaultValue);
+    // make sure you can unwrap to a different type, like undefined
+    assertType<Result<string, unknown>>(anOk);
+    const anOkOrUndefined = Result.unwrapOr(undefined, anOk)
+    assertType<string | undefined>(anOkOrUndefined);
+    expect(anOkOrUndefined).toEqual(theValue);
+    // test the err variant too, though in this case it's not actually a
+    // different type because unknown ≡ unknown | undefined
+    assertType<Result<unknown, string>>(anErr);
+    const anErrOrUndefined = Result.unwrapOr(undefined, anErr)
+    assertType<unknown>(anErrOrUndefined); // unknown ≡ unknown | undefined
+    expect(anErrOrUndefined).toEqual(undefined);
+
   });
 
   test('`unwrapOrElse`', () => {
@@ -279,6 +291,17 @@ describe('`Result` pure functions', () => {
     const theErrValue = { reason: 'bad thing' };
     const anErr = Result.err<string, LocalError>(theErrValue);
     expect(Result.unwrapOrElse(errToOk, anErr)).toBe(errToOk(theErrValue));
+
+    // test unwrapping to undefined
+    const noop = (): undefined => undefined;
+
+    const anOkOrUndefined = Result.unwrapOrElse(noop, anOk);
+    assertType<string | undefined>(anOkOrUndefined);
+    expect(anOkOrUndefined).toEqual(theValue);
+
+    const anErrOrUndefined = Result.unwrapOrElse(noop, anErr);
+    assertType<string | undefined>(anErrOrUndefined);
+    expect(anErrOrUndefined).toEqual(undefined);
   });
 
   test('`toMaybe`', () => {
