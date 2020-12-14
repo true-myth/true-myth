@@ -55,6 +55,7 @@
     "@types/jest": "^24.0.6",
     "@typescript-eslint/parser": "^2.12.0",
     "eslint": "^6.7.2",
+    "expect-type": "^0.11.0",
     "jest": "^24.9.0",
     "prettier": "^1.19.1",
     "prettier-eslint": "^9.0.1",
