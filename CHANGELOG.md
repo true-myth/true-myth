@@ -15,7 +15,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 ### Contributors 🙇 
 
 - @alantrick (#69)
-- @atrick-speedline (#63, discussion motivating #69)
+- @C-Saunders, @flyiniggle, @bmakuh, @atrick-speedline (#63, discussion motivating #69)
 
 ## [4.0.0] (2019-12-18)
 
