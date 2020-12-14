@@ -6,9 +6,13 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ## [Unreleased]
 
+## [4.1.0] (2020-12-13)
+
+### Added :star:
+
 - Support unwrapping to an alternative type with (backwards-compatible) tweak to type of `Maybe.unwrapOr` and `Result.unwrapOr`. For example, given `let a: Maybe<string>`, `let b = a.unwrapOr(42)` would produce a type of `string | number` for `b`. Useful particularly for interop with `null` and `undefined` at system boundaries while preserving general type safety.
 
-### Contributors
+### Contributors 🙇 
 
 - @alantrick (#69)
 - @atrick-speedline (#63, discussion motivating #69)
@@ -121,6 +125,7 @@ npm install true-myth@latest
 - @snatvb
 
 [unreleased]: https://github.com/true-myth/true-myth/compare/v3.1.0...HEAD
+[4.1.0]: https://github.com/true-myth/true-myth/compare/v4.0.0...v4.1.0
 [4.0.0]: https://github.com/true-myth/true-myth/compare/v3.1.0...v4.0.0
 [3.1.0]: https://github.com/true-myth/true-myth/compare/v3.0.0...v3.1.0
 [3.0.0]: https://github.com/true-myth/true-myth/compare/v2.2.8...v3.0.0
