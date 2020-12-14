@@ -4,23 +4,24 @@
 
 <p align="center">
   <a href='https://travis-ci.com/true-myth/true-myth'>
-    <img src='https://img.shields.io/travis/true-myth/true-myth/master.svg?style=flat-square' alt='Travis `master` build status'>
+    <img src='https://img.shields.io/travis/true-myth/true-myth/master.svg' alt='Travis `master` build status'>
   </a>
   <a href='https://github.com/true-myth/true-myth/blob/master/package.json#L78-L85'>
-    <img src='https://img.shields.io/badge/Jest-100%25-0a7c00.svg?style=flat-square' alt='Test coverage: 100%'>
+    <img src='https://img.shields.io/badge/Jest-100%25-0a7c00.svg' alt='Test coverage: 100%'>
   </a>
   <a href='https://www.npmjs.com/package/true-myth'>
-    <img src='https://img.shields.io/npm/v/true-myth.svg?style=flat-square' alt='npm'>
+    <img src='https://img.shields.io/npm/v/true-myth.svg' alt='npm'>
   </a>
-  <img src='https://img.shields.io/badge/stability-active-purple.svg?style=flat-square&colorB=663399' alt='Stability: Active'>
+  <img src='https://img.shields.io/badge/Node-10%20LTS%20%7C%2012%20LTS%20%7C%2014%20LTS-darkgreen' alt='supported Node versions'>
+  <img src='https://img.shields.io/badge/stability-active-663399' alt='Stability: Active'>
   <a href='https://github.com/true-myth/true-myth/blob/master/LICENSE'>
-    <img src='https://img.shields.io/github/license/chriskrycho/true-myth.svg?style=flat-square'>
+    <img src='https://img.shields.io/github/license/chriskrycho/true-myth.svg'>
   </a>
   <a href='https://js.org'>
-    <img src='https://img.shields.io/badge/dns-js.org-ffb400.svg?style=flat-square' alt='DNS by JS.org'>
+    <img src='https://img.shields.io/badge/dns-js.org-ffb400.svg' alt='DNS by JS.org'>
   </a>
   <a href='http://true-myth.js.org'>
-    <img src='https://img.shields.io/badge/docs-Typedoc-009fb5.svg?style=flat-square' alt='docs built with Typedoc'>
+    <img src='https://img.shields.io/badge/docs-Typedoc-009fb5.svg' alt='docs built with Typedoc'>
   </a>
 </p>
 
