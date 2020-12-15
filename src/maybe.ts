@@ -1670,9 +1670,7 @@ export function all<T extends Array<Maybe<unknown>>>(maybes: T): All<T> {
 }
 
 type Unwrapped<T> = T extends Maybe<infer U> ? U : T;
-type All<T extends Array<Maybe<unknown>>> = T extends [...infer U]
-  ? Maybe<{ [K in keyof U]: Unwrapped<U[K]> }>
-  : never;
+type All<T extends Array<Maybe<unknown>>> = Maybe<{ [K in keyof T]: Unwrapped<T[K]> }>;
 
 /**
   @deprecated use `all` instead; since True Myth 5.0.0 they are identical.
