@@ -503,8 +503,10 @@ describe('`Maybe` pure functions', () => {
     expect(mayNotBeUndefined(empty)).toEqual(emptyResult);
     expect(mayNotBeUndefined(full)).toEqual(fullResult);
 
-    const querySelector = Maybe.wrapReturn(document.querySelector.bind(document));
-    expectTypeOf(querySelector).toEqualTypeOf<(selector: string) => Maybe<Element>>();
+    const returnsNullable = (): string | null => null;
+
+    const querySelector = Maybe.wrapReturn(returnsNullable);
+    expectTypeOf(querySelector).toEqualTypeOf<() => Maybe<string>>();
   });
 });
 
