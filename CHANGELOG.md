@@ -6,6 +6,48 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ## [Unreleased]
 
+### Changed :boom:
+
+- `Maybe.all` is now type-safe and can correctly handle both array and tuple types. To support this change, it now accepts arrays or tuples directly, and the
+variadic/spread arguments to `all` have been replaced with taking an array or
+tuple directly. While `tuple` is unchanged, it is also deprecated (see below).
+
+    **Before:**
+
+    ```ts
+    import Maybe, { all, just, nothing, tuple } from 'true-myth/maybe';
+
+    // arrays
+    type ArrayResult = Maybe<Array<string | number>>;
+
+    let mixedArray = [just("hello"), nothing<number>()];
+    let mixedArrayResult: ArrayResult = all(...arrayOfMaybes);
+
+    let allJustArray = [just("hello"), just(12)];
+    let allJustArrayResult: ArrayResult = all(...allJustArray);
+    ```
+
+    **After:**
+
+    ```ts
+    import Maybe, { all, just, nothing, tuple } from 'true-myth/maybe';
+
+    // arrays
+    type ArrayResult = Maybe<Array<string | number>>;
+
+    let mixedArray = [just("hello"), nothing<number>()];
+    let mixedArrayResult: ArrayResult = all(arrayOfMaybes);
+
+    let allJustArray = [just("hello"), just(12)];
+    let allJustArrayResult: ArrayResult = all(allJustArray);
+    ```
+
+-   Support for versions of TypeScript before 4.0 have been removed, to enable the type-safe re-implementation of `Maybe.all`.
+
+### Deprecated :red-square:
+
+- Since `Maybe.all` now correctly handles both arrays and tuples, `Maybe.tuple` is deprecated.
+
 ## [4.1.0] (2020-12-13)
 
 ### Added :star:
