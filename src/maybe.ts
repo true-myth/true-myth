@@ -1291,13 +1291,13 @@ export function equals<T>(mb: Maybe<T>): (ma: Maybe<T>) => boolean;
 export function equals<T>(mb: Maybe<T>, ma?: Maybe<T>): boolean | ((a: Maybe<T>) => boolean) {
   return ma !== undefined
     ? ma.match({
-        Just: aVal => mb.isJust() && mb.unsafelyUnwrap() === aVal,
+        Just: (aVal) => mb.isJust() && mb.unsafelyUnwrap() === aVal,
         Nothing: () => isNothing(mb),
       })
     : (maybeA: Maybe<T>) =>
         maybeA.match({
           Nothing: () => isNothing(mb),
-          Just: aVal => mb.isJust() && mb.unsafelyUnwrap() === aVal,
+          Just: (aVal) => mb.isJust() && mb.unsafelyUnwrap() === aVal,
         });
 }
 
@@ -1468,7 +1468,7 @@ export function ap<T, U>(
 ): Maybe<U> | ((val: Maybe<T>) => Maybe<U>) {
   const op = (m: Maybe<T>) =>
     m.match({
-      Just: val => maybeFn.map(fn => fn(val)),
+      Just: (val) => maybeFn.map((fn) => fn(val)),
       Nothing: () => nothing<U>(),
     });
 
@@ -1623,9 +1623,9 @@ export function last<T>(array: Array<T | null | undefined>): Maybe<T> {
  */
 export function all<T extends Array<Maybe<any>>>(...maybes: T): All<T> {
   let result: All<T> = just([] as Maybe<any>[]) as All<T>;
-  maybes.forEach(maybe => {
-    result = result.andThen(accumulatedMaybes =>
-      maybe.map(m => {
+  maybes.forEach((maybe) => {
+    result = result.andThen((accumulatedMaybes) =>
+      maybe.map((m) => {
         accumulatedMaybes.push(m);
         return accumulatedMaybes;
       })

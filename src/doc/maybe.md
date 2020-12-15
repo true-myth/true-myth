@@ -55,7 +55,7 @@ import Maybe, { Just, Nothing } from 'true-myth/maybe';
 const aKnownNumber = new Just(12);
 
 // Once the item is constructed, you can apply methods directly on it.
-const fromMappedJust = aKnownNumber.map(x => x * 2).unwrapOr(0);
+const fromMappedJust = aKnownNumber.map((x) => x * 2).unwrapOr(0);
 console.log(fromMappedJust); // 24
 
 // Construct a `Nothing` where you don't have a value to use, but the
@@ -63,7 +63,7 @@ console.log(fromMappedJust); // 24
 const aKnownNothing = new Nothing();
 
 // The same operations will behave safely on a `Nothing` as on a `Just`:
-const fromMappedNothing = aKnownNothing.map(x => x * 2).unwrapOr(0);
+const fromMappedNothing = aKnownNothing.map((x) => x * 2).unwrapOr(0);
 console.log(fromMappedNothing); // 0
 
 // Construct a `Maybe` where you don't know whether the value will exist or
