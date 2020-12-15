@@ -57,6 +57,8 @@ tuple directly. While `tuple` is unchanged, it is also deprecated (see below).
 
 -   Support for versions of TypeScript before 4.0 have been removed, to enable the type-safe re-implementation of `Maybe.all`.
 
+-   The `MaybeShape` and `ResultShape` interfaces are no longer exported. These were never intended for public reimplementation, and there is accordingly no value in their continuing to be public.
+
 ### Deprecated :red-square:
 
 - `Maybe.tuple` is deprecated since `Maybe.all` now correctly handles both arrays and tuples. It will be removed not earlier than 6.0.0 (timeline not decided, certainly not before Node 10 leaves LTS on 2021-04-30).

@@ -34,7 +34,7 @@ interface ErrJSON<E> {
 type ResultJSON<T, E> = OkJSON<T> | ErrJSON<E>;
 
 /** Simply defines the common shape for `Ok` and `Err`. */
-export interface ResultShape<T, E> {
+interface ResultShape<T, E> {
   /** Distinguish between the `Ok` and `Err` variants. */
   readonly variant: Variant;
 
