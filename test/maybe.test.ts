@@ -155,7 +155,7 @@ describe('`Maybe` pure functions', () => {
     const aNothing: Maybe<string> = Maybe.nothing();
 
     const matcher: Matcher<string, string> = {
-      Just: val => val + ', yo',
+      Just: (val) => val + ', yo',
       Nothing: () => 'rats, nothing',
     };
 
@@ -598,7 +598,7 @@ describe('`Maybe.Just` class', () => {
 
     expect(
       theJust.match({
-        Just: val => val + ', yo',
+        Just: (val) => val + ', yo',
         Nothing: () => 'rats, nothing',
       })
     ).toEqual('this is a string, yo');
@@ -635,7 +635,7 @@ describe('`Maybe.Just` class', () => {
     const toDescription = (dict: { [key: string]: string }) =>
       new Maybe.Just(
         Object.keys(dict)
-          .map(key => `${dict[key]} is a ${key}`)
+          .map((key) => `${dict[key]} is a ${key}`)
           .join('\n')
       );
 
@@ -781,7 +781,7 @@ describe('`Maybe.Nothing` class', () => {
 
     expect(
       nietzsche.match({
-        Just: s => s + ', yo',
+        Just: (s) => s + ', yo',
         Nothing: () => soDeepMan,
       })
     ).toBe(soDeepMan);
@@ -901,6 +901,6 @@ test('`Maybe` classes interacting', () => {
   expect(mapped).not.toBeInstanceOf(Maybe.Just);
 
   const anotherMaybe: Maybe<number> = Maybe.just(10);
-  const anotherMapped = anotherMaybe.mapOr('nada', n => `The number was ${n}`);
+  const anotherMapped = anotherMaybe.mapOr('nada', (n) => `The number was ${n}`);
   expect(anotherMapped).toEqual('The number was 10');
 });

@@ -147,8 +147,8 @@ describe('`Result` pure functions', () => {
     expect(
       Result.match(
         {
-          Ok: val => val,
-          Err: err => err,
+          Ok: (val) => val,
+          Err: (err) => err,
         },
         nobody
       )
@@ -156,8 +156,8 @@ describe('`Result` pure functions', () => {
     expect(
       Result.match(
         {
-          Ok: val => val,
-          Err: err => err,
+          Ok: (val) => val,
+          Err: (err) => err,
         },
         toErrIs
       )
@@ -495,8 +495,8 @@ describe('`Result.Ok` class', () => {
 
     expect(
       nobody.match({
-        Ok: val => val,
-        Err: err => err,
+        Ok: (val) => val,
+        Err: (err) => err,
       })
     ).toBe('ok');
   });
@@ -597,7 +597,7 @@ describe('`Result.Ok` class', () => {
   });
 
   test('`ap` method', () => {
-    const fn = new Result.Ok<(val: string) => number, string>(str => str.length);
+    const fn = new Result.Ok<(val: string) => number, string>((str) => str.length);
     const val = new Result.Ok<string, string>('three');
 
     const result = fn.ap(val);
@@ -643,7 +643,7 @@ describe('`Result.Err` class', () => {
   test('`map` method', () => {
     const errValue = '1 billion things wrong';
     const theErr = new Result.Err<number, string>(errValue);
-    expect(theErr.map(n => n + 2)).toEqual(theErr);
+    expect(theErr.map((n) => n + 2)).toEqual(theErr);
   });
 
   test('`mapOr` method', () => {
@@ -670,8 +670,8 @@ describe('`Result.Err` class', () => {
 
     expect(
       toErrIs.match({
-        Ok: val => val,
-        Err: err => err,
+        Ok: (val) => val,
+        Err: (err) => err,
       })
     ).toBe(human);
   });

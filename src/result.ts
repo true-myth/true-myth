@@ -1396,12 +1396,12 @@ export function equals<T, E>(
   return resultA !== undefined
     ? resultA.match({
         Err: () => isErr(resultB),
-        Ok: a => isOk(resultB) && resultB.unsafelyUnwrap() === a,
+        Ok: (a) => isOk(resultB) && resultB.unsafelyUnwrap() === a,
       })
     : (curriedResultA: Result<T, E>) =>
         curriedResultA.match({
           Err: () => isErr(resultB),
-          Ok: a => isOk(resultB) && resultB.unsafelyUnwrap() === a,
+          Ok: (a) => isOk(resultB) && resultB.unsafelyUnwrap() === a,
         });
 }
 
@@ -1595,8 +1595,8 @@ export function ap<T, U, E>(
 ): Result<U, E> | ((val: Result<T, E>) => Result<U, E>) {
   const op = (r: Result<T, E>) =>
     r.match({
-      Ok: val => resultFn.map(fn => fn(val)),
-      Err: e => Result.err<U, E>(e),
+      Ok: (val) => resultFn.map((fn) => fn(val)),
+      Err: (e) => Result.err<U, E>(e),
     });
 
   return curry1(op, result);
