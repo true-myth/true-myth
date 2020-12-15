@@ -40,7 +40,7 @@
     "prepublishOnly": "yarn test && yarn build",
     "postpublish": "yarn clean",
     "preversion": "./scripts/build-docs && git add docs",
-    "test": "jest && yarn lint",
+    "test": "jest",
     "tdd": "jest --watch"
   },
   "files": [
@@ -54,6 +54,8 @@
   "devDependencies": {
     "@types/jest": "^26.0.19",
     "@typescript-eslint/parser": "^4.10.0",
+    "ember-cli": "3.23.0",
+    "ember-try": "^1.4.0",
     "eslint": "^7.15.0",
     "expect-type": "^0.11.0",
     "jest": "^26.6.3",
@@ -72,20 +74,20 @@
     "transform": {
       "^.+\\.tsx?$": "ts-jest"
     },
-    "testRegex": "(/__tests__/.*|(\\.|/)(test|spec))\\.(jsx?|tsx?)$",
+    "testRegex": "/test(\\/|\\\\).*\\.test\\.ts$",
     "moduleFileExtensions": [
-      "ts",
-      "tsx",
       "js",
-      "jsx",
-      "json"
+      "ts"
     ],
     "collectCoverage": true,
     "collectCoverageFrom": [
-      "src/*"
+      "src/**/*"
     ],
     "coveragePathIgnorePatterns": [
-      "src/index.ts"
+      "/node_modules/",
+      "/\\.node_modules/",
+      "src/index.ts",
+      "\\.+\\.d\\.ts"
     ],
     "coverageThreshold": {
       "global": {
