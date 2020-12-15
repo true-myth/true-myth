@@ -12,7 +12,12 @@
   <a href='https://www.npmjs.com/package/true-myth'>
     <img src='https://img.shields.io/npm/v/true-myth.svg' alt='npm'>
   </a>
-  <img src='https://img.shields.io/badge/Node-10%20LTS%20%7C%2012%20LTS%20%7C%2014%20LTS-darkgreen' alt='supported Node versions'>
+  <a href='https://github.com/true-myth/true-myth/blob/main/.github/workflows/CI.yml#L25'>
+    <img src='https://img.shields.io/badge/Node-10%20LTS%20%7C%2012%20LTS%20%7C%2014%20LTS-darkgreen' alt='supported Node versions'>
+  </a>
+  <a href='https://github.com/true-myth/true-myth/blob/main/.github/workflows/CI.yml#L59'>
+    <img src='https://img.shields.io/badge/TypeScript-3.6%20%7C%203.7%20%7C%203.8%20%7C%203.9%20%7C%204.0%20%7C%204.1-3178c6' alt='supported TypeScript versions'>
+  </a>
   <img src='https://img.shields.io/badge/stability-active-663399' alt='Stability: Active'>
   <a href='https://github.com/true-myth/true-myth/blob/master/LICENSE'>
     <img src='https://img.shields.io/github/license/chriskrycho/true-myth.svg'>
