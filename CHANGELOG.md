@@ -6,6 +6,61 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ## [Unreleased]
 
+### Changed :boom:
+
+- `Maybe.all` is now type-safe and can correctly handle both array and tuple types. To support this change, it now accepts arrays or tuples directly, and the
+variadic/spread arguments to `all` have been replaced with taking an array or
+tuple directly. While `tuple` is unchanged, it is also deprecated (see below).
+
+    **Before:**
+
+    ```ts
+    import Maybe, { all, just, nothing, tuple } from 'true-myth/maybe';
+
+    // arrays
+    type ArrayResult = Maybe<Array<string | number>>;
+
+    let mixedArray = [just("hello"), nothing<number>()];
+    let mixedArrayResult: ArrayResult = all(...arrayOfMaybes);
+
+    let allJustArray = [just("hello"), just(12)];
+    let allJustArrayResult: ArrayResult = all(...allJustArray);
+
+    type Tuple = [Maybe<number>, Maybe<string>];
+    type TupleResult = Maybe<[number, string]>;
+
+    let mixedTuple: Tuple = [just(12), just("hi")];
+    let mixedTupleResult: TupleResult = tuple(mixedTuple);
+    ```
+
+    **After:**
+
+    ```ts
+    import Maybe, { all, just, nothing } from 'true-myth/maybe';
+
+    // arrays
+    type ArrayResult = Maybe<Array<string | number>>;
+
+    let mixedArray = [just("hello"), nothing<number>()];
+    let mixedArrayResult: ArrayResult = all(arrayOfMaybes);
+
+    let allJustArray = [just("hello"), just(12)];
+    let allJustArrayResult: ArrayResult = all(allJustArray);
+    
+    // Tuples now work with `all` as well.
+    type Tuple = [Maybe<number>, Maybe<string>];
+    type TupleResult = Maybe<[number, string]>;
+
+    let mixedTuple: Tuple = [just(12), just("hi")];
+    let mixedTupleResult: TupleResult = all(mixedTuple);
+    ```
+
+-   Support for versions of TypeScript before 4.0 have been removed, to enable the type-safe re-implementation of `Maybe.all`.
+
+### Deprecated :red-square:
+
+- `Maybe.tuple` is deprecated since `Maybe.all` now correctly handles both arrays and tuples. It will be removed not earlier than 6.0.0 (timeline not decided, certainly not before Node 10 leaves LTS on 2021-04-30).
+
 ## [4.1.0] (2020-12-13)
 
 ### Added :star:

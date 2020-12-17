@@ -1596,58 +1596,36 @@ export function last<T>(array: Array<T | null | undefined>): Maybe<T> {
 }
 
 /**
-  Convert the arguments to a single `Maybe`. Useful for dealing with arrays of
-  `Maybe`s, via the spread operator.
+  Given an array or tuple of `Maybe`s, return a `Maybe` of the array or tuple
+  values.
 
+  -   Given an array of type `Array<Maybe<A> | Maybe<B>>`, the resulting type is
+      `Maybe<Array<A | B>>`.
+  -   Given a tuple of type `[Maybe<A>, Maybe<B>]`, the resulting type is
+      `Maybe<[A, B]>`.
+
+  If any of the items in the array or tuple are `Nothing`, the whole result is
+  `Nothing`. If all items in the array or tuple are `Just`, the whole result is
+  `Just`.
+      
   ## Examples
+
+  Given an array with a mix of `Maybe` types in it, both `allJust` and `mixed`
+  here will have the type `Maybe<Array<string | number>>`, but will be `Just`
+  and `Nothing` respectively.
 
   ```ts
   import Maybe from 'true-myth/maybe';
 
   let valid = [Maybe.just(2), Maybe.just('three')];
-  Maybe.all(...valid); // => Just([2, 'three']);
+  let allJust = Maybe.all(valid); // => Just([2, 'three']);
 
   let invalid = [Maybe.just(2), Maybe.nothing<string>()];
-  Maybe.all(...invalid); // => Nothing
+  let mixed = Maybe.all(invalid); // => Nothing
   ```
 
-  ## Note on Spread
-
-  This requires the use of the spread operator because (at least as of
-  TypeScript 3.0), the type inference falls down when attempting to build this
-  same type with an array directly. Moreover, this spread-based approach handles
-  heteregenous arrays; TS *also* fails to infer correctly for anything but
-  homogeneous arrays when using that approach.
-
-  @param maybes The `Maybe`s to resolve to a single `Maybe`.
- */
-export function all<T extends Array<Maybe<any>>>(...maybes: T): All<T> {
-  let result: All<T> = just([] as Maybe<any>[]) as All<T>;
-  maybes.forEach((maybe) => {
-    result = result.andThen((accumulatedMaybes) =>
-      maybe.map((m) => {
-        accumulatedMaybes.push(m);
-        return accumulatedMaybes;
-      })
-    ) as All<T>;
-  });
-
-  return result;
-}
-
-type All<T extends Array<Maybe<any>>> = T extends Array<Maybe<infer U>> ? Maybe<Array<U>> : never;
-
-/**
-  Given a tuple of `Maybe`s, return a `Maybe` of the tuple values.
-
-  Given a tuple of type `[Maybe<A>, Maybe<B>]`, the resulting type is
-  `Maybe<[A, B]>`. Works with up to a 5-tuple. (If you're doing more than a
-  5-tuple, what are you doing???)
-
-  ## Examples
-
-  If any of the items in the tuple are `Nothing`, the whole result is `Nothing`.
-  Here, for example, `result` has the type `Maybe<[string, number]>` and will be
+  When working with a tuple type, the structure of the tuple is preserved. Here,
+  for example, `result` has the type `Maybe<[string, number]>` and will be
   `Nothing`:
 
   ```ts
@@ -1656,7 +1634,7 @@ type All<T extends Array<Maybe<any>>> = T extends Array<Maybe<infer U>> ? Maybe<
   type Tuple = [Maybe<string>, Maybe<number>];
 
   let invalid: Tuple = [Maybe.just('wat'), Maybe.nothing()];
-  let result = Maybe.tuple(invalid);  // => Nothing
+  let result = Maybe.all(invalid);  // => Nothing
   ```
 
   If all of the items in the tuple are `Just`, the result is `Just` wrapping the
@@ -1669,24 +1647,35 @@ type All<T extends Array<Maybe<any>>> = T extends Array<Maybe<infer U>> ? Maybe<
   type Tuple = [Maybe<string>, Maybe<number>];
 
   let valid: Tuple = [Maybe.just('hey'), Maybe.just(12)];
-  let result = Maybe.tuple(valid);  // => Just(['hey', 12])
+  let result = Maybe.all(valid);  // => Just(['hey', 12])
   ```
 
-  @param maybes: the tuple of `Maybe`s to convert to a `Maybe` of tuple values.
+  **Note:** this does not work with `ReadonlyArray`. If you have a
+  `ReadonlyArray` you wish to operate on, you must cast it to `Array` insetad.
+  This cast is always safe here, because `Array` is a *wider* type than
+  `ReadonlyArray`.
+
+  @param maybes The `Maybe`s to resolve to a single `Maybe`.
  */
-// @ts-ignore -- this doesn't type-check, but it is correct!
-export function tuple<T>(maybes: [Maybe<T>]): Maybe<[T]>;
-export function tuple<T, U>(maybes: [Maybe<T>, Maybe<U>]): Maybe<[T, U]>;
-export function tuple<T, U, V>(maybes: [Maybe<T>, Maybe<U>, Maybe<V>]): Maybe<[T, U, V]>;
-export function tuple<T, U, V, W>(
-  maybes: [Maybe<T>, Maybe<U>, Maybe<V>, Maybe<W>]
-): Maybe<[T, U, V, W]>;
-export function tuple<T, U, V, W, X>(
-  maybes: [Maybe<T>, Maybe<U>, Maybe<V>, Maybe<W>, Maybe<X>]
-): Maybe<[T, U, V, W, X]> {
-  // @ts-ignore -- this doesn't type-check, but it works correctly.
-  return all(...maybes);
+export function all<T extends Array<Maybe<unknown>>>(maybes: T): All<T> {
+  // The slightly odd-seeming use of `[...ms, m]` here instead of `concat` is
+  // necessary to preserve the structure of the value passed in. The goal is for
+  // `[Maybe<string>, [Maybe<number>, Maybe<boolean>]]` not to be flattened into
+  // `Maybe<[string, number, boolean]>` (as `concat` would do) but instead to
+  // produce `Maybe<[string, [number, boolean]]>`.
+  return maybes.reduce(
+    (acc: Maybe<unknown[]>, m) => acc.andThen((ms) => m.map((m) => [...ms, m])),
+    just([] as unknown[]) as All<T>
+  ) as All<T>;
 }
+
+type Unwrapped<T> = T extends Maybe<infer U> ? U : T;
+type All<T extends Array<Maybe<unknown>>> = Maybe<{ [K in keyof T]: Unwrapped<T[K]> }>;
+
+/**
+  @deprecated use `all` instead; since True Myth 5.0.0 they are identical.
+ */
+export const tuple = all;
 
 /**
   Safely extract a key from an object, returning `Just` if the key has a value

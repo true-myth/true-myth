@@ -421,12 +421,12 @@ describe('`Maybe` pure functions', () => {
       type ExpectedOutputType = Maybe<Array<string | number>>;
 
       let onlyJusts = [Maybe.just(2), Maybe.just('three')];
-      let onlyJustsAll = Maybe.all(...onlyJusts);
+      let onlyJustsAll = Maybe.all(onlyJusts);
       expectTypeOf(onlyJustsAll).toEqualTypeOf<ExpectedOutputType>();
       expect(onlyJustsAll).toEqual(Maybe.just([2, 'three']));
 
       let hasNothing = [Maybe.just(2), Maybe.nothing<string>()];
-      let hasNothingAll = Maybe.all(...hasNothing);
+      let hasNothingAll = Maybe.all(hasNothing);
       expectTypeOf(hasNothingAll).toEqualTypeOf<ExpectedOutputType>();
       expect(hasNothingAll).toEqual(Maybe.nothing());
     });
@@ -435,10 +435,23 @@ describe('`Maybe` pure functions', () => {
       type ExpectedOutputType = Maybe<Array<number | string[]>>;
 
       let nestedArrays = [Maybe.just(1), Maybe.just(['two', 'three'])];
-      let nestedArraysAll = Maybe.all(...nestedArrays);
+      let nestedArraysAll = Maybe.all(nestedArrays);
 
       expectTypeOf(nestedArraysAll).toEqualTypeOf<ExpectedOutputType>();
       expect(nestedArraysAll).toEqual(Maybe.just([1, ['two', 'three']]));
+    });
+
+    test('`tuple`', () => {
+      type Tuple2 = [Maybe<string>, Maybe<number>];
+      let invalid: Tuple2 = [Maybe.just('wat'), Maybe.nothing()];
+      const invalidResult = Maybe.all(invalid);
+      expect(invalidResult).toEqual(Maybe.nothing());
+
+      type Tuple3 = [Maybe<string>, Maybe<number>, Maybe<{ neat: string }>];
+      let valid: Tuple3 = [Maybe.just('hey'), Maybe.just(4), Maybe.just({ neat: 'yeah' })];
+      const result = Maybe.all(valid);
+      expect(result).toEqual(Maybe.just(['hey', 4, { neat: 'yeah' }]));
+      expectTypeOf(result).toEqualTypeOf<Maybe<[string, number, { neat: string }]>>();
     });
   });
 
