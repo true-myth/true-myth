@@ -29,7 +29,7 @@ interface NothingJSON {
 type MaybeJSON<T> = JustJSON<T> | NothingJSON;
 
 /** Simply defines the common shape for `Just` and `Nothing`. */
-export interface MaybeShape<T> {
+interface MaybeShape<T> {
   /** Distinguish between the `Just` and `Nothing` [variants](../enums/_maybe_.variant). */
   readonly variant: Variant;
 
