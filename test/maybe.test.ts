@@ -360,7 +360,7 @@ describe('`Maybe` pure functions', () => {
   });
 
   test('isInstance', () => {
-    const something: any = Maybe.just('yay');
+    const something: unknown = Maybe.just('yay');
     expect(Maybe.isInstance(something)).toBe(true);
 
     const nothing = Maybe.nothing();

@@ -365,6 +365,10 @@ export class Just<T> implements MaybeShape<T> {
 
   @private
  */
+// SAFETY: `any` is required here because the whole point is that we're going to
+// use this *everywhere* there is a `Nothing`, so that there is effectively no
+// overhead of having a `Nothing` in your system: there is only ever once
+// instance of it.
 let NOTHING: Nothing<any>;
 
 /**
@@ -1159,7 +1163,7 @@ export function toOkOrElseErr<T, E>(
   @param result The `Result` to construct a `Maybe` from.
   @returns      `Just` if `result` was `Ok` or `Nothing` if it was `Err`.
  */
-export function fromResult<T>(result: Result<T, any>): Maybe<T> {
+export function fromResult<T>(result: Result<T, unknown>): Maybe<T> {
   return result.isOk() ? just(result.value) : nothing<T>();
 }
 
@@ -1480,7 +1484,7 @@ export function ap<T, U>(
 
   @param item The item to check.
  */
-export function isInstance<T = any>(item: any): item is Maybe<T> {
+export function isInstance<T = unknown>(item: unknown): item is Maybe<T> {
   return item instanceof Just || item instanceof Nothing;
 }
 
@@ -1862,6 +1866,8 @@ export function get<T, K extends keyof T>(
   @param fn The function to transform; the resulting function will have the
             exact same signature except for its return type.
  */
+// SAFETY: assignability requires the use of `any` here instead of `unknown`,
+// which would otherwise be preferable.
 export function wrapReturn<F extends (...args: any[]) => any>(
   fn: F
 ): (...args: Parameters<F>) => Maybe<NonNullable<ReturnType<F>>> {

@@ -439,7 +439,7 @@ describe('`Result.Ok` class', () => {
     expectTypeOf(fullyQualifiedOk).toMatchTypeOf<Result<number, string>>();
 
     const unqualifiedOk = new Result.Ok('string');
-    expectTypeOf(unqualifiedOk).toMatchTypeOf<Result<string, any>>();
+    expectTypeOf(unqualifiedOk).toMatchTypeOf<Result<string, unknown>>();
 
     expect(() => new Result.Ok(null)).toThrow();
     expect(() => new Result.Ok(undefined)).toThrow();
@@ -612,7 +612,7 @@ describe('`Result.Err` class', () => {
     expectTypeOf(fullyQualifiedErr).toMatchTypeOf<Result<string, number>>();
 
     const unqualifiedErr = new Result.Err('string');
-    expectTypeOf(unqualifiedErr).toMatchTypeOf<Result<any, string>>();
+    expectTypeOf(unqualifiedErr).toMatchTypeOf<Result<unknown, string>>();
 
     expect(() => new Result.Err(null)).toThrow();
     expect(() => new Result.Err(undefined)).toThrow();
@@ -701,7 +701,7 @@ describe('`Result.Err` class', () => {
     const getAnOk = (strings: string[]) => Result.ok<number, number>(length(strings));
     expect(theErr[method](getAnOk)).toEqual(theErr);
 
-    const getAnErr = (_: any) => Result.err(0);
+    const getAnErr = (_: unknown) => Result.err(0);
     expect(theErr[method](getAnErr)).toEqual(theErr);
   };
 

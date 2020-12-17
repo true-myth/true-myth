@@ -6,7 +6,7 @@
  *
  * @internal
  */
-export const isVoid = (value: any): value is undefined | null =>
+export const isVoid = (value: unknown): value is undefined | null =>
   typeof value === 'undefined' || value === null;
 
 /** @internal */
