@@ -25,12 +25,18 @@ tuple directly. While `tuple` is unchanged, it is also deprecated (see below).
 
     let allJustArray = [just("hello"), just(12)];
     let allJustArrayResult: ArrayResult = all(...allJustArray);
+
+    type Tuple = [Maybe<number>, Maybe<string>];
+    type TupleResult = Maybe<[number, string]>;
+
+    let mixedTuple: Tuple = [just(12), just("hi")];
+    let mixedTupleResult: TupleResult = tuple(mixedTuple);
     ```
 
     **After:**
 
     ```ts
-    import Maybe, { all, just, nothing, tuple } from 'true-myth/maybe';
+    import Maybe, { all, just, nothing } from 'true-myth/maybe';
 
     // arrays
     type ArrayResult = Maybe<Array<string | number>>;
@@ -40,13 +46,20 @@ tuple directly. While `tuple` is unchanged, it is also deprecated (see below).
 
     let allJustArray = [just("hello"), just(12)];
     let allJustArrayResult: ArrayResult = all(allJustArray);
+    
+    // Tuples now work with `all` as well.
+    type Tuple = [Maybe<number>, Maybe<string>];
+    type TupleResult = Maybe<[number, string]>;
+
+    let mixedTuple: Tuple = [just(12), just("hi")];
+    let mixedTupleResult: TupleResult = all(mixedTuple);
     ```
 
 -   Support for versions of TypeScript before 4.0 have been removed, to enable the type-safe re-implementation of `Maybe.all`.
 
 ### Deprecated :red-square:
 
-- Since `Maybe.all` now correctly handles both arrays and tuples, `Maybe.tuple` is deprecated.
+- `Maybe.tuple` is deprecated since `Maybe.all` now correctly handles both arrays and tuples. It will be removed not earlier than 6.0.0 (timeline not decided, certainly not before Node 10 leaves LTS on 2021-04-30).
 
 ## [4.1.0] (2020-12-13)
 
