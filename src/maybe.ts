@@ -1620,7 +1620,7 @@ export function last<T>(array: Array<T | null | undefined>): Maybe<T> {
   let valid = [Maybe.just(2), Maybe.just('three')];
   let allJust = Maybe.all(valid); // => Just([2, 'three']);
 
-  let invalid: Invalid = [Maybe.just(2), Maybe.nothing<string>()];
+  let invalid = [Maybe.just(2), Maybe.nothing<string>()];
   let mixed = Maybe.all(invalid); // => Nothing
   ```
 
