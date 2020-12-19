@@ -1677,6 +1677,7 @@ export const Result = {
   equals,
   ap,
   isInstance,
+  transpose,
 };
 
 export default Result;
