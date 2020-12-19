@@ -1622,10 +1622,10 @@ export function last<T>(array: Array<T | null | undefined>): Maybe<T> {
   import Maybe from 'true-myth/maybe';
 
   let valid = [Maybe.just(2), Maybe.just('three')];
-  let allJust = Maybe.all(valid); // => Just([2, 'three']);
+  let allJust = Maybe.arrayTranspose(valid); // => Just([2, 'three']);
 
   let invalid = [Maybe.just(2), Maybe.nothing<string>()];
-  let mixed = Maybe.all(invalid); // => Nothing
+  let mixed = Maybe.arrayTranspose(invalid); // => Nothing
   ```
 
   When working with a tuple type, the structure of the tuple is preserved. Here,
@@ -1638,7 +1638,7 @@ export function last<T>(array: Array<T | null | undefined>): Maybe<T> {
   type Tuple = [Maybe<string>, Maybe<number>];
 
   let invalid: Tuple = [Maybe.just('wat'), Maybe.nothing()];
-  let result = Maybe.all(invalid);  // => Nothing
+  let result = Maybe.arrayTranspose(invalid);  // => Nothing
   ```
 
   If all of the items in the tuple are `Just`, the result is `Just` wrapping the
@@ -1651,35 +1651,69 @@ export function last<T>(array: Array<T | null | undefined>): Maybe<T> {
   type Tuple = [Maybe<string>, Maybe<number>];
 
   let valid: Tuple = [Maybe.just('hey'), Maybe.just(12)];
-  let result = Maybe.all(valid);  // => Just(['hey', 12])
+  let result = Maybe.arrayTranspose(valid);  // => Just(['hey', 12])
   ```
 
-  **Note:** this does not work with `ReadonlyArray`. If you have a
+  __Note:__ this does not work with `ReadonlyArray`. If you have a
   `ReadonlyArray` you wish to operate on, you must cast it to `Array` insetad.
   This cast is always safe here, because `Array` is a *wider* type than
   `ReadonlyArray`.
 
   @param maybes The `Maybe`s to resolve to a single `Maybe`.
  */
-export function all<T extends Array<Maybe<unknown>>>(maybes: T): All<T> {
+export function arrayTranspose<T extends Array<Maybe<unknown>>>(m: T): TransposedArray<T> {
   // The slightly odd-seeming use of `[...ms, m]` here instead of `concat` is
   // necessary to preserve the structure of the value passed in. The goal is for
   // `[Maybe<string>, [Maybe<number>, Maybe<boolean>]]` not to be flattened into
   // `Maybe<[string, number, boolean]>` (as `concat` would do) but instead to
   // produce `Maybe<[string, [number, boolean]]>`.
-  return maybes.reduce(
+  return m.reduce(
     (acc: Maybe<unknown[]>, m) => acc.andThen((ms) => m.map((m) => [...ms, m])),
-    just([] as unknown[]) as All<T>
-  ) as All<T>;
+    just([] as unknown[]) as TransposedArray<T>
+  ) as TransposedArray<T>;
 }
 
 type Unwrapped<T> = T extends Maybe<infer U> ? U : T;
-type All<T extends Array<Maybe<unknown>>> = Maybe<{ [K in keyof T]: Unwrapped<T[K]> }>;
+type TransposedArray<T extends Array<Maybe<unknown>>> = Maybe<{ [K in keyof T]: Unwrapped<T[K]> }>;
 
 /**
-  @deprecated use `all` instead; since True Myth 5.0.0 they are identical.
+  Transposes a `Maybe` of a `Result` into a `Result` of a `Maybe`.
+
+  | Input          | Output        |
+  | -------------- | ------------- |
+  | `Just(Ok(T))`  | `Ok(Just(T))` |
+  | `Just(Err(E))` | `Err(E)`      |
+  | `Nothing`      | `Ok(Nothing)` |
+
+  @param maybe a `Maybe<Result<T, E>>` to transform to a `Result<Maybe<T>, E>>`.
  */
-export const tuple = all;
+export function transpose<T, E>(maybe: Maybe<Result<T, E>>): Result<Maybe<T>, E> {
+  return maybe.match({
+    Just: Result.match({
+      Ok: (v) => Result.ok<Maybe<T>, E>(just(v)),
+      Err: (e) => Result.err<Maybe<T>, E>(e),
+    }),
+    Nothing: () => Result.ok<Maybe<T>, E>(nothing()),
+  });
+}
+
+/**
+  @deprecated use `arrayTranspose` instead. `tuple` and `all` are now able to
+    share an implementation. Additionally, they have been renamed to
+    `arrayTranspose` to clarify that they are actually the "natural
+    transformation" of an array of maybes to a maybe of an array.
+  @since 5.0.0:
+ */
+export const all = arrayTranspose;
+
+/**
+  @deprecated use `arrayTranspose` instead. `tuple` and `all` are now able to
+    share an implementation. Additionally, they have been renamed to
+    `arrayTranspose` to clarify that they are actually the "natural
+    transformation" of an array of maybes to a maybe of an array.
+  @since 5.0.0
+ */
+export const tuple = arrayTranspose;
 
 /**
   Safely extract a key from an object, returning `Just` if the key has a value
@@ -1918,6 +1952,8 @@ export const Maybe = {
   toString,
   toJSON,
   tuple,
+  transpose,
+  arrayTranspose,
   match,
   cata,
   equals,

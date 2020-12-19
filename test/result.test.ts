@@ -1,5 +1,5 @@
 import { expectTypeOf } from 'expect-type';
-import { just, nothing } from '../src/maybe';
+import Maybe, { just, nothing } from '../src/maybe';
 import Result, { Ok, Variant, Err } from '../src/result';
 import Unit from '../src/unit';
 import { AndThenAliases } from './test-utils';
@@ -399,6 +399,29 @@ describe('`Result` pure functions', () => {
 
     const obj: unknown = { random: 'nonsense' };
     expect(Result.isInstance(obj)).toBe(false);
+  });
+
+  describe('transpose', () => {
+    test('Ok(Just(T))', () => {
+      let result = Result.ok<Maybe<number>, string>(just(12));
+      let transposed = Result.transpose(result);
+      expect(transposed).toStrictEqual(Maybe.just(Result.ok(12)));
+      expectTypeOf(transposed).toEqualTypeOf<Maybe<Result<number, string>>>();
+    });
+
+    test('Ok(Nothing)', () => {
+      let result = Result.ok<Maybe<number>, string>(nothing<number>());
+      let transposed = Result.transpose(result);
+      expect(transposed).toStrictEqual(nothing());
+      expectTypeOf(transposed).toEqualTypeOf<Maybe<Result<number, string>>>();
+    });
+
+    test('Err(E)', () => {
+      let result = Result.err<Maybe<number>, string>('hello');
+      let transposed = Result.transpose(result);
+      expect(transposed).toStrictEqual(just(Result.err('hello')));
+      expectTypeOf(transposed).toEqualTypeOf<Maybe<Result<number, string>>>();
+    });
   });
 });
 
