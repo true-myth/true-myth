@@ -8,9 +8,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ### Changed :boom:
 
-- `Maybe.all` is now type-safe and can correctly handle both array and tuple types. To support this change, it now accepts arrays or tuples directly, and the
-variadic/spread arguments to `all` have been replaced with taking an array or
-tuple directly. While `tuple` is unchanged, it is also deprecated (see below).
+- We introduced a new `Maybe.transposeArray`, which is a type-safe, renamed, merged version of `Maybe.tuple` and `Maybe.all` which can correctly handle both array and tuple types. To support this change, it now accepts arrays or tuples directly, and the variadic/spread arguments to `all` have been replaced with taking an array or tuple directly. While `tuple` is unchanged, it is also deprecated (see below).
 
     **Before:**
 
@@ -36,28 +34,49 @@ tuple directly. While `tuple` is unchanged, it is also deprecated (see below).
     **After:**
 
     ```ts
-    import Maybe, { all, just, nothing } from 'true-myth/maybe';
+    import Maybe, { arrayTranspose, just, nothing } from 'true-myth/maybe';
 
     // arrays
     type ArrayResult = Maybe<Array<string | number>>;
 
     let mixedArray = [just("hello"), nothing<number>()];
-    let mixedArrayResult: ArrayResult = all(arrayOfMaybes);
+    let mixedArrayResult: ArrayResult = arrayTranspose(arrayOfMaybes);
 
     let allJustArray = [just("hello"), just(12)];
-    let allJustArrayResult: ArrayResult = all(allJustArray);
+    let allJustArrayResult: ArrayResult = arrayTranspose(allJustArray);
     
     // Tuples now work with `all` as well.
     type Tuple = [Maybe<number>, Maybe<string>];
     type TupleResult = Maybe<[number, string]>;
 
     let mixedTuple: Tuple = [just(12), just("hi")];
-    let mixedTupleResult: TupleResult = all(mixedTuple);
+    let mixedTupleResult: TupleResult = arrayTranspose(mixedTuple);
     ```
 
 -   Support for versions of TypeScript before 4.0 have been removed, to enable the type-safe re-implementation of `Maybe.all`.
 
 -   The `MaybeShape` and `ResultShape` interfaces are no longer exported. These were never intended for public reimplementation, and there is accordingly no value in their continuing to be public.
+
+### Added :star:
+
+-   `Maybe.transpose` and `Result.transpose`: for when you have a `Maybe<Result<T, E>>` or a `Result<Maybe<T>, E>` and need to invert them.
+
+    ```ts
+    import Maybe, { just, nothing } from 'true-myth/maybe';
+    import Result, { ok, err } from 'true-myth/result';
+
+    let aJustOk: Maybe<Result<number, string>> = just(ok(12));
+    let result: Result<Maybe<number>, string> = Maybe.transpose(aJustOk);
+
+    let anOkNone: Result<Maybe<number>, string> = ok(just(12));
+    let maybe: Maybe<Result<number, string>> = Result.transpose(anOkNone);
+    ```
+
+    See the docs for further details!
+
+    **Note:** these are standalone functions, not methods, because TypeScript
+    does not support conditionally supplying a method only for one specific type
+    parameterization. (Rust, the direct inspiration for the name of this method, *does* allow that.)
 
 ### Deprecated :red-square:
 

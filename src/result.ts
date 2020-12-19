@@ -1612,6 +1612,27 @@ export function isInstance<T = unknown, E = unknown>(item: unknown): item is Res
 }
 
 /**
+  Transposes a `Result` of a `Maybe` into a `Maybe` of a `Result`.
+
+  | Input         | Output         |
+  | ------------- | -------------- |
+  | `Ok(Just(T))` | `Just(Ok(T))`  |
+  | `Err(E)`      | `Just(Err(E))` |
+  | `Ok(Nothing)` | `Nothing`      |
+
+  @param result a `Result<Maybe<T>, E>` to transform to a `Maybe<Result<T, E>>`.
+ */
+export function transpose<T, E>(result: Result<Maybe<T>, E>): Maybe<Result<T, E>> {
+  return result.match({
+    Ok: Maybe.match({
+      Just: (v) => Maybe.just(ok<T, E>(v)),
+      Nothing: () => Maybe.nothing<Result<T, E>>(),
+    }),
+    Err: (e) => Maybe.just(err<T, E>(e)),
+  });
+}
+
+/**
   A value which may (`Ok`) or may not (`Err`) be present.
 
   The behavior of this type is checked by TypeScript at compile time, and bears
