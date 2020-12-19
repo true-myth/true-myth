@@ -1654,7 +1654,7 @@ export function last<T>(array: Array<T | null | undefined>): Maybe<T> {
   let result = Maybe.arrayTranspose(valid);  // => Just(['hey', 12])
   ```
 
-  **Note:** this does not work with `ReadonlyArray`. If you have a
+  __Note:__ this does not work with `ReadonlyArray`. If you have a
   `ReadonlyArray` you wish to operate on, you must cast it to `Array` insetad.
   This cast is always safe here, because `Array` is a *wider* type than
   `ReadonlyArray`.
