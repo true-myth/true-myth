@@ -349,7 +349,7 @@ const result = transform([
   Maybe.of('oh'),
 ]);
 
-const transform = _flow(
+const transform = _.flow(
   // transform strings to their length: Just(3), Nothing, etc.
   maybeStrings => _.map(maybeStrings, maybeString => Maybe.map(length, maybeString)),
   // drop `Nothing` instances
