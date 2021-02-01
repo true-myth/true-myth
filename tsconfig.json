@@ -20,7 +20,7 @@
     "out": "./docs",
     "toc": false,
     "excludePrivate": true,
-    "stripInternal": true,
+    "excludeInternal": true,
     "includes": "./src",
     "target": "ES6",
     "theme": "default",
