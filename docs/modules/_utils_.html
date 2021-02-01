@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>&quot;unit&quot; | true-myth</title>
+	<title>&quot;utils&quot; | true-myth</title>
 	<meta name="description" content="">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="../assets/css/main.css">
@@ -56,30 +56,45 @@
 					<a href="../globals.html">Globals</a>
 				</li>
 				<li>
-					<a href="_unit_.html">&quot;unit&quot;</a>
+					<a href="_utils_.html">&quot;utils&quot;</a>
 				</li>
 			</ul>
-			<h1>External module &quot;unit&quot;</h1>
+			<h1>External module &quot;utils&quot;</h1>
 		</div>
 	</div>
 </header>
 <div class="container container-main">
 	<div class="row">
 		<div class="col-8 col-content">
+			<section class="tsd-panel tsd-comment">
+				<div class="tsd-comment tsd-typography">
+					<dl class="tsd-comment-tags">
+						<dt>internal</dt>
+						<dd></dd>
+					</dl>
+				</div>
+			</section>
 			<section class="tsd-panel-group tsd-index-group">
 				<h2>Index</h2>
 				<section class="tsd-panel tsd-index-panel">
 					<div class="tsd-index-content">
 						<section class="tsd-index-section ">
-							<h3>Type aliases</h3>
+							<h3>Classes</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-type-alias tsd-parent-kind-external-module"><a href="_unit_.html#unit" class="tsd-kind-icon">Unit</a></li>
+								<li class="tsd-kind-class tsd-parent-kind-external-module tsd-has-type-parameter"><a href="../classes/_utils_._brand.html" class="tsd-kind-icon">_<wbr>Brand</a></li>
 							</ul>
 						</section>
 						<section class="tsd-index-section ">
-							<h3>Variables</h3>
+							<h3>Type aliases</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-variable tsd-parent-kind-external-module"><a href="_unit_.html#unit-1" class="tsd-kind-icon">Unit</a></li>
+								<li class="tsd-kind-type-alias tsd-parent-kind-external-module"><a href="_utils_.html#andthenaliases" class="tsd-kind-icon">And<wbr>Then<wbr>Aliases</a></li>
+							</ul>
+						</section>
+						<section class="tsd-index-section ">
+							<h3>Functions</h3>
+							<ul class="tsd-index-list">
+								<li class="tsd-kind-function tsd-parent-kind-external-module tsd-has-type-parameter"><a href="_utils_.html#curry1" class="tsd-kind-icon">curry1</a></li>
+								<li class="tsd-kind-function tsd-parent-kind-external-module"><a href="_utils_.html#isvoid" class="tsd-kind-icon">is<wbr>Void</a></li>
 							</ul>
 						</section>
 					</div>
@@ -88,36 +103,114 @@
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Type aliases</h2>
 				<section class="tsd-panel tsd-member tsd-kind-type-alias tsd-parent-kind-external-module">
-					<a name="unit" class="tsd-anchor"></a>
-					<h3>Unit</h3>
-					<div class="tsd-signature tsd-kind-icon">Unit<span class="tsd-signature-symbol">:</span> <a href="../classes/_utils_._brand.html" class="tsd-signature-type">_Brand</a></div>
+					<a name="andthenaliases" class="tsd-anchor"></a>
+					<h3>And<wbr>Then<wbr>Aliases</h3>
+					<div class="tsd-signature tsd-kind-icon">And<wbr>Then<wbr>Aliases<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">"andThen"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"chain"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"flatMap"</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/7e22bb8/src/unit.ts#L11">unit.ts:11</a></li>
-						</ul>
-					</aside>
-				</section>
-			</section>
-			<section class="tsd-panel-group tsd-member-group ">
-				<h2>Variables</h2>
-				<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-external-module">
-					<a name="unit-1" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagConst">Const</span> Unit</h3>
-					<div class="tsd-signature tsd-kind-icon">Unit<span class="tsd-signature-symbol">:</span> <a href="../classes/_utils_._brand.html" class="tsd-signature-type">_Brand</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">"unit"</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> =&nbsp;new _Brand(&#x27;unit&#x27;)</span></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/7e22bb8/src/unit.ts#L10">unit.ts:10</a></li>
+							<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/7e22bb8/src/utils.ts#L18">utils.ts:18</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
-						<div class="lead">
-							<p>The <code>Unit</code> type exists for the cases where you want a type-safe equivalent of
-								<code>undefined</code> or <code>null</code>. It&#39;s a concrete instance, which won&#39;t blow up on you,
-								and you can safely use it with e.g. <a href="../modules/_result_.html"><code>Result</code></a>
-								without being concerned that you&#39;ll accidentally introduce <code>null</code> or
-							<code>undefined</code> back into your application.</p>
-						</div>
+						<dl class="tsd-comment-tags">
+							<dt>internal</dt>
+							<dd></dd>
+						</dl>
 					</div>
+				</section>
+			</section>
+			<section class="tsd-panel-group tsd-member-group ">
+				<h2>Functions</h2>
+				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-external-module tsd-has-type-parameter">
+					<a name="curry1" class="tsd-anchor"></a>
+					<h3>curry1</h3>
+					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-external-module tsd-has-type-parameter">
+						<li class="tsd-signature tsd-kind-icon">curry1&lt;T, U&gt;<span class="tsd-signature-symbol">(</span>op<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">function</span>, item<span class="tsd-signature-symbol">?: </span><a href="" class="tsd-signature-type">T</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">function</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">U</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/7e22bb8/src/utils.ts#L13">utils.ts:13</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<dl class="tsd-comment-tags">
+									<dt>internal</dt>
+									<dd></dd>
+								</dl>
+							</div>
+							<h4 class="tsd-type-parameters-title">Type parameters</h4>
+							<ul class="tsd-type-parameters">
+								<li>
+									<h4>T</h4>
+								</li>
+								<li>
+									<h4>U</h4>
+								</li>
+							</ul>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>op: <span class="tsd-signature-type">function</span></h5>
+									<ul class="tsd-parameters">
+										<li class="tsd-parameter-siganture">
+											<ul class="tsd-signatures tsd-kind-type-literal tsd-is-not-exported">
+												<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span>t<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">U</span></li>
+											</ul>
+											<ul class="tsd-descriptions">
+												<li class="tsd-description">
+													<h4 class="tsd-parameters-title">Parameters</h4>
+													<ul class="tsd-parameters">
+														<li>
+															<h5>t: <span class="tsd-signature-type">T</span></h5>
+														</li>
+													</ul>
+													<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">U</span></h4>
+												</li>
+											</ul>
+										</li>
+									</ul>
+								</li>
+								<li>
+									<h5><span class="tsd-flag ts-flagOptional">Optional</span> item: <a href="" class="tsd-signature-type">T</a></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">function</span>
+								<span class="tsd-signature-symbol"> | </span>
+								<span class="tsd-signature-type">U</span>
+							</h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-external-module">
+					<a name="isvoid" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagConst">Const</span> is<wbr>Void</h3>
+					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-external-module">
+						<li class="tsd-signature tsd-kind-icon">is<wbr>Void<span class="tsd-signature-symbol">(</span>value<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">value</span><span class="tsd-signature-symbol"> is </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/7e22bb8/src/utils.ts#L9">utils.ts:9</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Check if the value here is an all-consuming monstrosity which will consume
+									everything in its transdimensional rage. A.k.a. <code>null</code> or <code>undefined</code>.</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>value: <span class="tsd-signature-type">any</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">value</span><span class="tsd-signature-symbol"> is </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span></h4>
+						</li>
+					</ul>
 				</section>
 			</section>
 		</div>
@@ -136,21 +229,27 @@
 					<li class=" tsd-kind-external-module">
 						<a href="_result_.html">&quot;result&quot;</a>
 					</li>
-					<li class="current tsd-kind-external-module">
+					<li class=" tsd-kind-external-module">
 						<a href="_unit_.html">&quot;unit&quot;</a>
 					</li>
-					<li class=" tsd-kind-external-module">
+					<li class="current tsd-kind-external-module">
 						<a href="_utils_.html">&quot;utils&quot;</a>
 					</li>
 				</ul>
 			</nav>
 			<nav class="tsd-navigation secondary menu-sticky">
 				<ul class="before-current">
-					<li class=" tsd-kind-type-alias tsd-parent-kind-external-module">
-						<a href="_unit_.html#unit" class="tsd-kind-icon">Unit</a>
+					<li class=" tsd-kind-class tsd-parent-kind-external-module tsd-has-type-parameter">
+						<a href="../classes/_utils_._brand.html" class="tsd-kind-icon">_<wbr>Brand</a>
 					</li>
-					<li class=" tsd-kind-variable tsd-parent-kind-external-module">
-						<a href="_unit_.html#unit-1" class="tsd-kind-icon">Unit</a>
+					<li class=" tsd-kind-type-alias tsd-parent-kind-external-module">
+						<a href="_utils_.html#andthenaliases" class="tsd-kind-icon">And<wbr>Then<wbr>Aliases</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-external-module tsd-has-type-parameter">
+						<a href="_utils_.html#curry1" class="tsd-kind-icon">curry1</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-external-module">
+						<a href="_utils_.html#isvoid" class="tsd-kind-icon">is<wbr>Void</a>
 					</li>
 				</ul>
 			</nav>
