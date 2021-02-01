@@ -2,7 +2,7 @@
   "compilerOptions": {
     "target": "es2015",
     "declaration": true,
-    "stripInternal": true,
+    "stripInternal": false,
 
     "strict": true,
     "noUnusedLocals": true,
