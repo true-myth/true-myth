@@ -3,10 +3,11 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>JustJSON | true-myth</title>
+	<title>Variant | true-myth</title>
 	<meta name="description" content="Documentation for true-myth">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="../assets/css/main.css">
+	<script async src="../assets/js/search.js" id="search-script"></script>
 </head>
 <body>
 <header>
@@ -40,8 +41,6 @@
 							<label class="tsd-widget" for="tsd-filter-inherited">Inherited</label>
 							<input type="checkbox" id="tsd-filter-externals" checked />
 							<label class="tsd-widget" for="tsd-filter-externals">Externals</label>
-							<input type="checkbox" id="tsd-filter-only-exported" />
-							<label class="tsd-widget" for="tsd-filter-only-exported">Only exported</label>
 						</div>
 					</div>
 					<a href="#" class="tsd-widget menu no-caption" data-toggle="menu">Menu</a>
@@ -53,71 +52,64 @@
 		<div class="container">
 			<ul class="tsd-breadcrumb">
 				<li>
-					<a href="../globals.html">Globals</a>
+					<a href="../modules.html">true-myth</a>
 				</li>
 				<li>
-					<a href="../modules/_src_maybe_.html">&quot;src/maybe&quot;</a>
+					<a href="../modules/result.html">result</a>
 				</li>
 				<li>
-					<a href="_src_maybe_.justjson.html">JustJSON</a>
+					<a href="result.variant.html">Variant</a>
 				</li>
 			</ul>
-			<h1>Interface JustJSON&lt;T&gt;</h1>
+			<h1>Enumeration Variant</h1>
 		</div>
 	</div>
 </header>
 <div class="container container-main">
 	<div class="row">
 		<div class="col-8 col-content">
-			<section class="tsd-panel tsd-type-parameters">
-				<h3>Type parameters</h3>
-				<ul class="tsd-type-parameters">
-					<li>
-						<h4>T</h4>
-					</li>
-				</ul>
-			</section>
-			<section class="tsd-panel tsd-hierarchy">
-				<h3>Hierarchy</h3>
-				<ul class="tsd-hierarchy">
-					<li>
-						<span class="target">JustJSON</span>
-					</li>
-				</ul>
+			<section class="tsd-panel tsd-comment">
+				<div class="tsd-comment tsd-typography">
+					<div class="lead">
+						<p>Discriminant for <code>Ok</code> and <code>Err</code> variants of <code>Result</code> type.</p>
+					</div>
+					<p>You can use the discriminant via the <code>variant</code> property of <code>Result</code> instances
+					if you need to match explicitly on it.</p>
+				</div>
 			</section>
 			<section class="tsd-panel-group tsd-index-group">
 				<h2>Index</h2>
 				<section class="tsd-panel tsd-index-panel">
 					<div class="tsd-index-content">
-						<section class="tsd-index-section tsd-is-not-exported">
-							<h3>Properties</h3>
+						<section class="tsd-index-section ">
+							<h3>Enumeration members</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-not-exported"><a href="_src_maybe_.justjson.html#value" class="tsd-kind-icon">value</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-not-exported"><a href="_src_maybe_.justjson.html#variant" class="tsd-kind-icon">variant</a></li>
+								<li class="tsd-kind-enum-member tsd-parent-kind-enum"><a href="result.variant.html#err" class="tsd-kind-icon">Err</a></li>
+								<li class="tsd-kind-enum-member tsd-parent-kind-enum"><a href="result.variant.html#ok" class="tsd-kind-icon">Ok</a></li>
 							</ul>
 						</section>
 					</div>
 				</section>
 			</section>
-			<section class="tsd-panel-group tsd-member-group tsd-is-not-exported">
-				<h2>Properties</h2>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface tsd-is-not-exported">
-					<a name="value" class="tsd-anchor"></a>
-					<h3>value</h3>
-					<div class="tsd-signature tsd-kind-icon">value<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">T</span></div>
+			<section class="tsd-panel-group tsd-member-group ">
+				<h2>Enumeration members</h2>
+				<section class="tsd-panel tsd-member tsd-kind-enum-member tsd-parent-kind-enum">
+					<a name="err" class="tsd-anchor"></a>
+					<h3>Err</h3>
+					<div class="tsd-signature tsd-kind-icon">Err<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol"> = &quot;Err&quot;</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/95c7904/src/maybe.ts#L22">src/maybe.ts:22</a></li>
+							<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/384c481/src/result.ts#L21">result.ts:21</a></li>
 						</ul>
 					</aside>
 				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface tsd-is-not-exported">
-					<a name="variant" class="tsd-anchor"></a>
-					<h3>variant</h3>
-					<div class="tsd-signature tsd-kind-icon">variant<span class="tsd-signature-symbol">:</span> <a href="../enums/_src_maybe_.variant.html#just" class="tsd-signature-type">Just</a></div>
+				<section class="tsd-panel tsd-member tsd-kind-enum-member tsd-parent-kind-enum">
+					<a name="ok" class="tsd-anchor"></a>
+					<h3>Ok</h3>
+					<div class="tsd-signature tsd-kind-icon">Ok<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol"> = &quot;Ok&quot;</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/95c7904/src/maybe.ts#L21">src/maybe.ts:21</a></li>
+							<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/384c481/src/result.ts#L20">result.ts:20</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -126,23 +118,23 @@
 		<div class="col-4 col-menu menu-sticky-wrap menu-highlight">
 			<nav class="tsd-navigation primary">
 				<ul>
-					<li class="globals  ">
-						<a href="../globals.html"><em>Globals</em></a>
+					<li class=" ">
+						<a href="../modules.html">Exports</a>
 					</li>
 					<li class=" tsd-kind-module">
-						<a href="../modules/_src__private_utils_.html">&quot;src/-<wbr>private/utils&quot;</a>
+						<a href="../modules/_private_utils.html">-private/utils</a>
 					</li>
 					<li class=" tsd-kind-module">
-						<a href="../modules/_src_index_.html">&quot;src/index&quot;</a>
+						<a href="../modules/index.html">index</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="../modules/maybe.html">maybe</a>
 					</li>
 					<li class="current tsd-kind-module">
-						<a href="../modules/_src_maybe_.html">&quot;src/maybe&quot;</a>
+						<a href="../modules/result.html">result</a>
 					</li>
 					<li class=" tsd-kind-module">
-						<a href="../modules/_src_result_.html">&quot;src/result&quot;</a>
-					</li>
-					<li class=" tsd-kind-module">
-						<a href="../modules/_src_unit_.html">&quot;src/unit&quot;</a>
+						<a href="../modules/unit.html">unit</a>
 					</li>
 				</ul>
 			</nav>
@@ -150,14 +142,14 @@
 				<ul class="before-current">
 				</ul>
 				<ul class="current">
-					<li class="current tsd-kind-interface tsd-parent-kind-module tsd-has-type-parameter tsd-is-not-exported">
-						<a href="_src_maybe_.justjson.html" class="tsd-kind-icon">JustJSON</a>
+					<li class="current tsd-kind-enum tsd-parent-kind-module">
+						<a href="result.variant.html" class="tsd-kind-icon">Variant</a>
 						<ul>
-							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-not-exported">
-								<a href="_src_maybe_.justjson.html#value" class="tsd-kind-icon">value</a>
+							<li class=" tsd-kind-enum-member tsd-parent-kind-enum">
+								<a href="result.variant.html#err" class="tsd-kind-icon">Err</a>
 							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-not-exported">
-								<a href="_src_maybe_.justjson.html#variant" class="tsd-kind-icon">variant</a>
+							<li class=" tsd-kind-enum-member tsd-parent-kind-enum">
+								<a href="result.variant.html#ok" class="tsd-kind-icon">Ok</a>
 							</li>
 						</ul>
 					</li>
@@ -173,17 +165,11 @@
 		<h2>Legend</h2>
 		<div class="tsd-legend-group">
 			<ul class="tsd-legend">
-				<li class="tsd-kind-object-literal"><span class="tsd-kind-icon">Object literal</span></li>
 				<li class="tsd-kind-variable"><span class="tsd-kind-icon">Variable</span></li>
 				<li class="tsd-kind-function"><span class="tsd-kind-icon">Function</span></li>
 				<li class="tsd-kind-function tsd-has-type-parameter"><span class="tsd-kind-icon">Function with type parameter</span></li>
 				<li class="tsd-kind-type-alias"><span class="tsd-kind-icon">Type alias</span></li>
 				<li class="tsd-kind-type-alias tsd-has-type-parameter"><span class="tsd-kind-icon">Type alias with type parameter</span></li>
-			</ul>
-			<ul class="tsd-legend">
-				<li class="tsd-kind-interface"><span class="tsd-kind-icon">Interface</span></li>
-				<li class="tsd-kind-interface tsd-has-type-parameter"><span class="tsd-kind-icon">Interface with type parameter</span></li>
-				<li class="tsd-kind-property tsd-parent-kind-interface"><span class="tsd-kind-icon">Property</span></li>
 			</ul>
 			<ul class="tsd-legend">
 				<li class="tsd-kind-enum"><span class="tsd-kind-icon">Enumeration</span></li>
