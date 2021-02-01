@@ -3,17 +3,17 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>true-myth</title>
+	<title>&quot;src/unit&quot; | true-myth</title>
 	<meta name="description" content="Documentation for true-myth">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<link rel="stylesheet" href="assets/css/main.css">
+	<link rel="stylesheet" href="../assets/css/main.css">
 </head>
 <body>
 <header>
 	<div class="tsd-page-toolbar">
 		<div class="container">
 			<div class="table-wrap">
-				<div class="table-cell" id="tsd-search" data-index="assets/js/search.json" data-base=".">
+				<div class="table-cell" id="tsd-search" data-index="../assets/js/search.json" data-base="..">
 					<div class="field">
 						<label for="tsd-search-field" class="tsd-widget search no-caption">Search</label>
 						<input id="tsd-search-field" type="text" />
@@ -22,7 +22,7 @@
 						<li class="state loading">Preparing search index...</li>
 						<li class="state failure">The search index is not available</li>
 					</ul>
-					<a href="index.html" class="title">true-myth</a>
+					<a href="../index.html" class="title">true-myth</a>
 				</div>
 				<div class="table-cell" id="tsd-widgets">
 					<div id="tsd-filter">
@@ -53,10 +53,13 @@
 		<div class="container">
 			<ul class="tsd-breadcrumb">
 				<li>
-					<a href="globals.html">Globals</a>
+					<a href="../globals.html">Globals</a>
+				</li>
+				<li>
+					<a href="_src_unit_.html">&quot;src/unit&quot;</a>
 				</li>
 			</ul>
-			<h1>true-myth</h1>
+			<h1>Module &quot;src/unit&quot;</h1>
 		</div>
 	</div>
 </header>
@@ -68,15 +71,52 @@
 				<section class="tsd-panel tsd-index-panel">
 					<div class="tsd-index-content">
 						<section class="tsd-index-section ">
-							<h3>Modules</h3>
+							<h3>Type aliases</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-module"><a href="modules/_src__private_utils_.html" class="tsd-kind-icon">&quot;src/-<wbr>private/utils&quot;</a></li>
-								<li class="tsd-kind-module"><a href="modules/_src_index_.html" class="tsd-kind-icon">&quot;src/index&quot;</a></li>
-								<li class="tsd-kind-module"><a href="modules/_src_maybe_.html" class="tsd-kind-icon">&quot;src/maybe&quot;</a></li>
-								<li class="tsd-kind-module"><a href="modules/_src_result_.html" class="tsd-kind-icon">&quot;src/result&quot;</a></li>
-								<li class="tsd-kind-module"><a href="modules/_src_unit_.html" class="tsd-kind-icon">&quot;src/unit&quot;</a></li>
+								<li class="tsd-kind-type-alias tsd-parent-kind-module"><a href="_src_unit_.html#unit" class="tsd-kind-icon">Unit</a></li>
 							</ul>
 						</section>
+						<section class="tsd-index-section ">
+							<h3>Variables</h3>
+							<ul class="tsd-index-list">
+								<li class="tsd-kind-variable tsd-parent-kind-module"><a href="_src_unit_.html#unit-1" class="tsd-kind-icon">Unit</a></li>
+							</ul>
+						</section>
+					</div>
+				</section>
+			</section>
+			<section class="tsd-panel-group tsd-member-group ">
+				<h2>Type aliases</h2>
+				<section class="tsd-panel tsd-member tsd-kind-type-alias tsd-parent-kind-module">
+					<a name="unit" class="tsd-anchor"></a>
+					<h3>Unit</h3>
+					<div class="tsd-signature tsd-kind-icon">Unit<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">typeof </span><a href="_src_unit_.html#unit-1" class="tsd-signature-type">Unit</a></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/95c7904/src/unit.ts#L11">src/unit.ts:11</a></li>
+						</ul>
+					</aside>
+				</section>
+			</section>
+			<section class="tsd-panel-group tsd-member-group ">
+				<h2>Variables</h2>
+				<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-module">
+					<a name="unit-1" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagConst">Const</span> Unit</h3>
+					<div class="tsd-signature tsd-kind-icon">Unit<span class="tsd-signature-symbol">:</span> <a href="../classes/_src__private_utils_.brand.html" class="tsd-signature-type">Brand</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">"unit"</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> = new Brand(&#x27;unit&#x27;)</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/95c7904/src/unit.ts#L10">src/unit.ts:10</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>The <code>Unit</code> type exists for the cases where you want a type-safe equivalent of
+								<code>undefined</code> or <code>null</code>. It&#39;s a concrete instance, which won&#39;t blow up on you,
+								and you can safely use it with e.g. <a href="../modules/_result_.html"><code>Result</code></a>
+								without being concerned that you&#39;ll accidentally introduce <code>null</code> or
+							<code>undefined</code> back into your application.</p>
+						</div>
 					</div>
 				</section>
 			</section>
@@ -84,28 +124,34 @@
 		<div class="col-4 col-menu menu-sticky-wrap menu-highlight">
 			<nav class="tsd-navigation primary">
 				<ul>
-					<li class="globals current ">
-						<a href="globals.html"><em>Globals</em></a>
+					<li class="globals  ">
+						<a href="../globals.html"><em>Globals</em></a>
 					</li>
 					<li class=" tsd-kind-module">
-						<a href="modules/_src__private_utils_.html">&quot;src/-<wbr>private/utils&quot;</a>
+						<a href="_src__private_utils_.html">&quot;src/-<wbr>private/utils&quot;</a>
 					</li>
 					<li class=" tsd-kind-module">
-						<a href="modules/_src_index_.html">&quot;src/index&quot;</a>
+						<a href="_src_index_.html">&quot;src/index&quot;</a>
 					</li>
 					<li class=" tsd-kind-module">
-						<a href="modules/_src_maybe_.html">&quot;src/maybe&quot;</a>
+						<a href="_src_maybe_.html">&quot;src/maybe&quot;</a>
 					</li>
 					<li class=" tsd-kind-module">
-						<a href="modules/_src_result_.html">&quot;src/result&quot;</a>
+						<a href="_src_result_.html">&quot;src/result&quot;</a>
 					</li>
-					<li class=" tsd-kind-module">
-						<a href="modules/_src_unit_.html">&quot;src/unit&quot;</a>
+					<li class="current tsd-kind-module">
+						<a href="_src_unit_.html">&quot;src/unit&quot;</a>
 					</li>
 				</ul>
 			</nav>
 			<nav class="tsd-navigation secondary menu-sticky">
 				<ul class="before-current">
+					<li class=" tsd-kind-type-alias tsd-parent-kind-module">
+						<a href="_src_unit_.html#unit" class="tsd-kind-icon">Unit</a>
+					</li>
+					<li class=" tsd-kind-variable tsd-parent-kind-module">
+						<a href="_src_unit_.html#unit-1" class="tsd-kind-icon">Unit</a>
+					</li>
 				</ul>
 			</nav>
 		</div>
@@ -140,6 +186,6 @@
 	<p>Generated using <a href="https://typedoc.org/" target="_blank">TypeDoc</a></p>
 </div>
 <div class="overlay"></div>
-<script src="assets/js/main.js"></script>
+<script src="../assets/js/main.js"></script>
 </body>
 </html>
