@@ -39,9 +39,7 @@ jobs:
 
     strategy:
       matrix:
-        # macOS runners are slow (at best) this week
-        # os: [macOS, windows]
-        os: [windows]
+        os: [macOS, windows]
 
     steps:
       - uses: actions/checkout@v2
