@@ -54,7 +54,7 @@ jobs:
     continue-on-error: false
     strategy:
       matrix:
-        ts-version: ['4.0', '4.1', 'next']
+        ts-version: ['4.0', '4.1', '4.2', 'next']
 
     steps:
       - uses: actions/checkout@v2
