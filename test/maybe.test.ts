@@ -1,5 +1,5 @@
 import { expectTypeOf } from 'expect-type';
-import Maybe, { Variant, Nothing, Just, Matcher } from '../src/maybe';
+import Maybe, { Variant, Nothing, Just, Matcher, unwrap } from '../src/maybe';
 import * as MaybeNS from '../src/maybe';
 import Result, { err, ok } from '../src/result';
 import { Unit } from '../src/unit';
@@ -11,7 +11,7 @@ const length = (s: string) => s.length;
 describe('`Maybe` pure functions', () => {
   test('`just`', () => {
     const theJust = MaybeNS.just('string');
-    expect(theJust).toBeInstanceOf(MaybeNS.Just);
+    expect(theJust).toBeInstanceOf(Maybe);
     switch (theJust.variant) {
       case MaybeNS.Variant.Just:
         expect(theJust.unsafelyUnwrap()).toBe('string');
@@ -29,7 +29,7 @@ describe('`Maybe` pure functions', () => {
 
   test('`nothing`', () => {
     const theNothing = MaybeNS.nothing();
-    expect(theNothing).toBeInstanceOf(MaybeNS.Nothing);
+    expect(theNothing).toBeInstanceOf(Maybe);
     switch (theNothing.variant) {
       case MaybeNS.Variant.Just:
         expect(true).toBe(false); // because this should never happen
@@ -456,7 +456,7 @@ describe('`Maybe` pure functions', () => {
 // the types are narrowed as they should be.
 test('narrowing', () => {
   const oneJust = MaybeNS.of(Unit);
-  if (oneJust.isJust()) {
+  if (oneJust.isJust) {
     expectTypeOf(oneJust).toEqualTypeOf<Just<Unit>>();
     expect(oneJust.value).toBeDefined();
   }
@@ -469,7 +469,7 @@ test('narrowing', () => {
   }
 
   const oneNothing = MaybeNS.nothing();
-  if (oneNothing.isNothing()) {
+  if (oneNothing.isNothing) {
     expectTypeOf(oneNothing).toEqualTypeOf<Nothing<unknown>>();
   }
 
@@ -481,364 +481,378 @@ test('narrowing', () => {
   expect('this type checked, hooray').toBeTruthy();
 });
 
-describe('`MaybeNS.Just` class', () => {
-  test('constructor', () => {
-    const theJust = new MaybeNS.Just([]);
-    expect(theJust).toBeInstanceOf(MaybeNS.Just);
+describe('`Maybe` class', () => {
+  test('basic types', () => {
+    let maybe = Maybe.of('hello');
+    expectTypeOf(maybe);
+    expectTypeOf(maybe).toHaveProperty('isJust');
+    expectTypeOf(maybe).toHaveProperty('isJust');
+    expectTypeOf(maybe).toHaveProperty('isNothing');
+    expectTypeOf(maybe).not.toHaveProperty('value');
+    expectTypeOf(Maybe).constructorParameters.toEqualTypeOf<[value?: unknown] | []>();
   });
 
-  test('`value` property', () => {
-    const val = 'hallo';
-    const theJust = new MaybeNS.Just(val);
-    expect(theJust.value).toBe(val);
-  });
-
-  test('`unwrap` static method', () => {
-    const val = 42;
-    const theJust = new MaybeNS.Just(42);
-    expect(Just.unwrap(theJust)).toEqual(val);
-  });
-
-  test('`isJust` method', () => {
-    const theJust = new MaybeNS.Just([]);
-    expect(theJust.isJust()).toBe(true);
-  });
-
-  test('`isNothing` method', () => {
-    const theJust = new MaybeNS.Just([]);
-    expect(theJust.isNothing()).toBe(false);
-  });
-
-  test('`map` method', () => {
-    const plus2 = (x: number) => x + 2;
-    const theValue = 12;
-    const theJust = new MaybeNS.Just(theValue);
-    const theResult = new MaybeNS.Just(plus2(theValue));
-
-    expect(theJust.map(plus2)).toEqual(theResult);
-  });
-
-  test('`mapOr` method', () => {
-    const theValue = 42;
-    const theJust = new MaybeNS.Just(42);
-    const theDefault = 1;
-    const double = (n: number) => n * 2;
-
-    expect(theJust.mapOr(theDefault, double)).toEqual(double(theValue));
-  });
-
-  test('`mapOrElse` method', () => {
-    const theValue = 'this is a string';
-    const theJust = new MaybeNS.Just(theValue);
-    const aDefault = () => 0;
-
-    expect(theJust.mapOrElse(aDefault, length)).toEqual(length(theValue));
-  });
-
-  test('`match` method', () => {
-    const theValue = 'this is a string';
-    const theJust = new MaybeNS.Just(theValue);
-
-    expect(
-      theJust.match({
-        Just: (val) => val + ', yo',
-        Nothing: () => 'rats, nothing',
-      })
-    ).toEqual('this is a string, yo');
-  });
-
-  test('`or` method', () => {
-    const theJust = new MaybeNS.Just({ neat: 'thing' });
-    const anotherJust = new MaybeNS.Just({ neat: 'waffles' });
-    const aNothing = new MaybeNS.Nothing<Neat>();
-
-    expect(theJust.or(anotherJust)).toEqual(theJust);
-    expect(theJust.or(aNothing)).toEqual(theJust);
-  });
-
-  test('`orElse` method', () => {
-    const theJust = new MaybeNS.Just(12);
-    const getAnotherJust = () => MaybeNS.just(42);
-
-    expect(theJust.orElse(getAnotherJust)).toEqual(theJust);
-  });
-
-  test('`and` method', () => {
-    const theJust = new MaybeNS.Just({ neat: 'thing' });
-    const theConsequentJust = new MaybeNS.Just(['amazing', { tuple: 'thing' }]);
-    const aNothing = new MaybeNS.Nothing();
-
-    expect(theJust.and(theConsequentJust)).toEqual(theConsequentJust);
-    expect(theJust.and(aNothing)).toEqual(aNothing);
-  });
-
-  test('`andThen` method', () => {
-    const theValue = { Jedi: 'Luke Skywalker' };
-    const theJust = new MaybeNS.Just(theValue);
-    const toDescription = (dict: { [key: string]: string }) =>
-      new MaybeNS.Just(
-        Object.keys(dict)
-          .map((key) => `${dict[key]} is a ${key}`)
-          .join('\n')
-      );
-
-    const theExpectedResult = toDescription(theValue);
-    expect(theJust.andThen(toDescription)).toEqual(theExpectedResult);
-  });
-
-  test('`unwrap` method', () => {
-    const theValue = 'value';
-    const theJust = new MaybeNS.Just(theValue);
-    expect(theJust.unsafelyUnwrap()).toEqual(theValue);
-    expect(() => theJust.unsafelyUnwrap()).not.toThrow();
-  });
-
-  test('`unwrapOr` method', () => {
-    const theValue = [1, 2, 3];
-    const theJust = new MaybeNS.Just(theValue);
-    const theDefaultValue: number[] = [];
-
-    expect(theJust.unwrapOr(theDefaultValue)).toEqual(theValue);
-  });
-
-  test('`unwrapOrElse` method', () => {
-    const value = 'value';
-    const theJust = new MaybeNS.Just(value);
-    expect(theJust.unwrapOrElse(() => 'other value')).toEqual(value);
-  });
-
-  test('`toOkOrErr` method', () => {
-    const value = 'string';
-    const theJust = new MaybeNS.Just(value);
-    const errValue = { reason: 'such badness' };
-    expect(theJust.toOkOrErr(errValue)).toEqual(ok(value));
-  });
-
-  test('`toOkOrElseErr` method', () => {
-    const value = ['neat'];
-    const theJust = new MaybeNS.Just(value);
-    const errValue = 24;
-    const getErrValue = () => errValue;
-
-    expect(theJust.toOkOrElseErr(getErrValue)).toEqual(ok(value));
-  });
-
-  test('`toString` method', () => {
-    expect(MaybeNS.of(42).toString()).toEqual('Just(42)');
-  });
-
-  test('`toJSON` method', () => {
-    expect(MaybeNS.of({ x: 42 }).toJSON()).toEqual({
-      variant: MaybeNS.Variant.Just,
-      value: { x: 42 },
+  describe('Just instance', () => {
+    test('constructor', () => {
+      const theJust = new Maybe([]);
+      expect(theJust.variant).toEqual(Variant.Just);
     });
-    expect(MaybeNS.of(MaybeNS.of(42)).toJSON()).toEqual({
-      variant: MaybeNS.Variant.Just,
-      value: { variant: MaybeNS.Variant.Just, value: 42 },
+
+    test('`value` property', () => {
+      const val = 'hallo';
+      const theJust = new Maybe(val);
+      if (theJust.isJust) {
+        expectTypeOf(theJust.isJust).toEqualTypeOf<true>();
+        expectTypeOf(theJust).toHaveProperty('value');
+        expectTypeOf(theJust.value).toEqualTypeOf(val);
+        expect(theJust.value).toBe(val);
+      } else {
+        expect('wrongly instantiated').toBe(true);
+      }
     });
-  });
 
-  test('`equals` method', () => {
-    const a = new MaybeNS.Just('a');
-    const b = new MaybeNS.Just('a');
-    const c = new MaybeNS.Just('b');
-    const d = new MaybeNS.Nothing<string>();
-    expect(a.equals(b)).toBe(true);
-    expect(b.equals(c)).toBe(false);
-    expect(c.equals(d)).toBe(false);
-  });
+    test('`unwrap` static method', () => {
+      const val = 42;
+      const theJust = new Maybe(42) as Just<number>;
+      expect(unwrap(theJust)).toEqual(val);
+    });
 
-  test('`ap` method', () => {
-    const toString = (a: number) => a.toString();
-    const fn: Maybe<typeof toString> = new MaybeNS.Just(toString);
-    const val = new MaybeNS.Just(3);
+    test('`isJust` property', () => {
+      const theJust = new Maybe([]);
+      expect(theJust.isJust).toBe(true);
+    });
 
-    const result = fn.ap(val);
+    test('`isNothing` property', () => {
+      const theJust = new Maybe([]);
+      expect(theJust.isNothing).toBe(false);
+    });
 
-    expect(result.equals(MaybeNS.of('3'))).toBe(true);
-  });
+    test('`map` method', () => {
+      const plus2 = (x: number) => x + 2;
+      const theValue = 12;
+      const theJust = new Maybe(theValue);
+      const theResult = new Maybe(plus2(theValue));
 
-  test('`property` method', () => {
-    type DeepType = { something?: { with?: { deeper?: { 'key names'?: string } } } };
+      expect(theJust.map(plus2)).toEqual(theResult);
+    });
 
-    const allSet: DeepType = { something: { with: { deeper: { 'key names': 'like this' } } } };
-    const deepResult = new MaybeNS.Just(allSet)
-      .get('something')
-      .get('with')
-      .get('deeper')
-      .get('key names');
-    expect(deepResult).toEqual(MaybeNS.just('like this'));
+    test('`mapOr` method', () => {
+      const theValue = 42;
+      const theJust = new Maybe(42);
+      const theDefault = 1;
+      const double = (n: number) => n * 2;
 
-    const allEmpty: DeepType = {};
-    const emptyResult = new MaybeNS.Just(allEmpty)
-      .get('something')
-      .get('with')
-      .get('deeper')
-      .get('key names');
-    expect(emptyResult).toEqual(MaybeNS.nothing());
-  });
-});
+      expect(theJust.mapOr(theDefault, double)).toEqual(double(theValue));
+    });
 
-describe('`MaybeNS.Nothing` class', () => {
-  test('constructor', () => {
-    const theNothing = new MaybeNS.Nothing();
-    expect(theNothing).toBeInstanceOf(MaybeNS.Nothing);
-  });
+    test('`mapOrElse` method', () => {
+      const theValue = 'this is a string';
+      const theJust = new Maybe(theValue);
+      const aDefault = () => 0;
 
-  test('`isJust` method', () => {
-    const theNothing = new MaybeNS.Nothing();
-    expect(theNothing.isJust()).toBe(false);
-  });
+      expect(theJust.mapOrElse(aDefault, length)).toEqual(length(theValue));
+    });
 
-  test('`isNothing` method', () => {
-    const theNothing = new MaybeNS.Nothing();
-    expect(theNothing.isNothing()).toBe(true);
-  });
+    test('`match` method', () => {
+      const theValue = 'this is a string';
+      const theJust = new Maybe(theValue);
 
-  test('`map` method', () => {
-    const theNothing = new MaybeNS.Nothing<string>();
-    expect(theNothing.map(length)).toEqual(theNothing);
-  });
+      expect(
+        theJust.match({
+          Just: (val) => val + ', yo',
+          Nothing: () => 'rats, nothing',
+        })
+      ).toEqual('this is a string, yo');
+    });
 
-  test('`mapOr` method', () => {
-    const theNothing = new MaybeNS.Nothing<number>();
-    const theDefaultValue = 'yay';
-    expect(theNothing.mapOr(theDefaultValue, String)).toEqual(theDefaultValue);
-  });
+    test('`or` method', () => {
+      const theJust = new Maybe({ neat: 'thing' });
+      const anotherJust = new Maybe({ neat: 'waffles' });
+      const aNothing = new Maybe<Neat>();
 
-  test('`mapOrElse` method', () => {
-    const theDefaultValue = 'potatoes';
-    const getDefaultValue = () => theDefaultValue;
-    const getNeat = (x: Neat) => x.neat;
-    const theNothing = new MaybeNS.Nothing<Neat>();
-    expect(theNothing.mapOrElse(getDefaultValue, getNeat)).toBe(theDefaultValue);
-  });
+      expect(theJust.or(anotherJust)).toEqual(theJust);
+      expect(theJust.or(aNothing)).toEqual(theJust);
+    });
 
-  test('`match` method', () => {
-    const nietzsche = MaybeNS.nothing();
-    const soDeepMan = [
-      'Whoever fights monsters should see to it that in the process he does not become a monster.',
-      'And if you gaze long enough into an abyss, the abyss will gaze back into you.',
-    ].join(' ');
+    test('`orElse` method', () => {
+      const theJust = new Maybe(12);
+      const getAnotherJust = () => MaybeNS.just(42);
 
-    expect(
-      nietzsche.match({
-        Just: (s) => s + ', yo',
-        Nothing: () => soDeepMan,
-      })
-    ).toBe(soDeepMan);
-  });
+      expect(theJust.orElse(getAnotherJust)).toEqual(theJust);
+    });
 
-  test('`or` method', () => {
-    const theNothing = new MaybeNS.Nothing<boolean>(); // the worst: optional booleans!
-    const theDefaultValue = MaybeNS.just(false);
+    test('`and` method', () => {
+      const theJust = new Maybe({ neat: 'thing' });
+      const theConsequentJust = new Maybe(['amazing', { tuple: 'thing' }]);
+      const aNothing = new Maybe();
 
-    expect(theNothing.or(theDefaultValue)).toBe(theDefaultValue);
-  });
+      expect(theJust.and(theConsequentJust)).toEqual(theConsequentJust);
+      expect(theJust.and(aNothing)).toEqual(aNothing);
+    });
 
-  test('`orElse` method', () => {
-    const theNothing = new MaybeNS.Nothing<{ here: string[] }>();
-    const justTheFallback = MaybeNS.just({ here: ['to', 'see'] });
-    const getTheFallback = () => justTheFallback;
+    test('`andThen` method', () => {
+      const theValue = { Jedi: 'Luke Skywalker' };
+      const theJust = new Maybe(theValue);
+      const toDescription = (dict: { [key: string]: string }) =>
+        new Maybe(
+          Object.keys(dict)
+            .map((key) => `${dict[key]} is a ${key}`)
+            .join('\n')
+        );
 
-    expect(theNothing.orElse(getTheFallback)).toEqual(justTheFallback);
-  });
+      const theExpectedResult = toDescription(theValue);
+      expect(theJust.andThen(toDescription)).toEqual(theExpectedResult);
+    });
 
-  test('`and` method', () => {
-    const theNothing = new MaybeNS.Nothing<string[]>();
-    const theConsequentJust = new MaybeNS.Just('blaster bolts');
-    const anotherNothing = new MaybeNS.Nothing<string>();
-    expect(theNothing.and(theConsequentJust)).toEqual(theNothing);
-    expect(theNothing.and(anotherNothing)).toEqual(theNothing);
-  });
+    test('`unwrap` method', () => {
+      const theValue = 'value';
+      const theJust = new Maybe(theValue);
+      expect(theJust.unsafelyUnwrap()).toEqual(theValue);
+      expect(() => theJust.unsafelyUnwrap()).not.toThrow();
+    });
 
-  test('`andThen` method', () => {
-    const theNothing = new MaybeNS.Nothing();
-    const theDefaultValue = 'string';
-    const getDefaultValue = () => MaybeNS.just(theDefaultValue);
+    test('`unwrapOr` method', () => {
+      const theValue = [1, 2, 3];
+      const theJust = new Maybe(theValue);
+      const theDefaultValue: number[] = [];
 
-    expect(theNothing.andThen(getDefaultValue)).toEqual(theNothing);
-  });
+      expect(theJust.unwrapOr(theDefaultValue)).toEqual(theValue);
+    });
 
-  test('`unsafelyUnwrap` method', () => {
-    const noStuffAtAll = new MaybeNS.Nothing();
-    expect(() => noStuffAtAll.unsafelyUnwrap()).toThrow();
-  });
+    test('`unwrapOrElse` method', () => {
+      const value = 'value';
+      const theJust = new Maybe(value);
+      expect(theJust.unwrapOrElse(() => 'other value')).toEqual(value);
+    });
 
-  test('`unwrapOr` method', () => {
-    const theNothing = new MaybeNS.Nothing<number[]>();
-    const theDefaultValue: number[] = [];
-    expect(theNothing.unwrapOr(theDefaultValue)).toEqual(theDefaultValue);
-  });
+    test('`toOkOrErr` method', () => {
+      const value = 'string';
+      const theJust = new Maybe(value);
+      const errValue = { reason: 'such badness' };
+      expect(theJust.toOkOrErr(errValue)).toEqual(ok(value));
+    });
 
-  test('`unwrapOrElse` method', () => {
-    const theNothing = new MaybeNS.Nothing();
-    const theDefaultValue = 'it be all fine tho';
-    expect(theNothing.unwrapOrElse(() => theDefaultValue)).toEqual(theDefaultValue);
-  });
+    test('`toOkOrElseErr` method', () => {
+      const value = ['neat'];
+      const theJust = new Maybe(value);
+      const errValue = 24;
+      const getErrValue = () => errValue;
 
-  test('`toOkOrErr` method', () => {
-    const theNothing = new MaybeNS.Nothing();
-    const errValue = { reason: 'such badness' };
-    expect(theNothing.toOkOrErr(errValue)).toEqual(err(errValue));
-  });
+      expect(theJust.toOkOrElseErr(getErrValue)).toEqual(ok(value));
+    });
 
-  test('`toOkOrElseErr` method', () => {
-    const theNothing = new MaybeNS.Nothing();
-    const errValue = 24;
-    const getErrValue = () => errValue;
+    test('`toString` method', () => {
+      expect(MaybeNS.of(42).toString()).toEqual('Just(42)');
+    });
 
-    expect(theNothing.toOkOrElseErr(getErrValue)).toEqual(err(errValue));
-  });
+    test('`toJSON` method', () => {
+      expect(MaybeNS.of({ x: 42 }).toJSON()).toEqual({
+        variant: MaybeNS.Variant.Just,
+        value: { x: 42 },
+      });
+      expect(MaybeNS.of(MaybeNS.of(42)).toJSON()).toEqual({
+        variant: MaybeNS.Variant.Just,
+        value: { variant: MaybeNS.Variant.Just, value: 42 },
+      });
+    });
 
-  test('`toString` method', () => {
-    expect(MaybeNS.nothing().toString()).toEqual('Nothing');
-  });
+    test('`equals` method', () => {
+      const a = new Maybe('a');
+      const b = new Maybe('a');
+      const c = new Maybe('b');
+      const d = new Maybe<string>();
+      expect(a.equals(b)).toBe(true);
+      expect(b.equals(c)).toBe(false);
+      expect(c.equals(d)).toBe(false);
+    });
 
-  test('`toJSON` method', () => {
-    expect(MaybeNS.nothing().toJSON()).toEqual({ variant: MaybeNS.Variant.Nothing });
-    expect(MaybeNS.of(MaybeNS.nothing()).toJSON()).toEqual({
-      variant: MaybeNS.Variant.Just,
-      value: { variant: MaybeNS.Variant.Nothing },
+    test('`ap` method', () => {
+      const toString = (a: number) => a.toString();
+      const fn: Maybe<typeof toString> = new Maybe(toString);
+      const val = new Maybe(3);
+
+      const result = fn.ap(val);
+
+      expect(result.equals(MaybeNS.of('3'))).toBe(true);
+    });
+
+    test('`property` method', () => {
+      type DeepType = { something?: { with?: { deeper?: { 'key names'?: string } } } };
+
+      const allSet: DeepType = { something: { with: { deeper: { 'key names': 'like this' } } } };
+      const deepResult = new Maybe(allSet)
+        .get('something')
+        .get('with')
+        .get('deeper')
+        .get('key names');
+      expect(deepResult).toEqual(MaybeNS.just('like this'));
+
+      const allEmpty: DeepType = {};
+      const emptyResult = new Maybe(allEmpty)
+        .get('something')
+        .get('with')
+        .get('deeper')
+        .get('key names');
+      expect(emptyResult).toEqual(MaybeNS.nothing());
     });
   });
 
-  test('`equals` method', () => {
-    const a = new MaybeNS.Just<string>('a');
-    const b = new MaybeNS.Nothing<string>();
-    const c = new MaybeNS.Nothing<string>();
-    expect(a.equals(b)).toBe(false);
-    expect(b.equals(c)).toBe(true);
+  describe('`Nothing` instance', () => {
+    test('constructor', () => {
+      const theNothing = new Maybe();
+      expect(theNothing.variant).toEqual(Variant.Nothing);
+    });
+
+    test('`isJust` property', () => {
+      const theNothing = new Maybe();
+      expect(theNothing.isJust).toBe(false);
+    });
+
+    test('`value` property', () => {
+      const theNothing = new Maybe();
+      expectTypeOf(theNothing).not.toHaveProperty('value');
+      expect(() => (theNothing as any).value).toThrow();
+    });
+
+    test('`isNothing` property', () => {
+      const theNothing = new Maybe();
+      expect(theNothing.isNothing).toBe(true);
+    });
+
+    test('`map` method', () => {
+      const theNothing = new Maybe<string>();
+      expect(theNothing.map(length)).toEqual(theNothing);
+    });
+
+    test('`mapOr` method', () => {
+      const theNothing = new Maybe<number>();
+      const theDefaultValue = 'yay';
+      expect(theNothing.mapOr(theDefaultValue, String)).toEqual(theDefaultValue);
+    });
+
+    test('`mapOrElse` method', () => {
+      const theDefaultValue = 'potatoes';
+      const getDefaultValue = () => theDefaultValue;
+      const getNeat = (x: Neat) => x.neat;
+      const theNothing = new Maybe<Neat>();
+      expect(theNothing.mapOrElse(getDefaultValue, getNeat)).toBe(theDefaultValue);
+    });
+
+    test('`match` method', () => {
+      const nietzsche = MaybeNS.nothing();
+      const soDeepMan = [
+        'Whoever fights monsters should see to it that in the process he does not become a monster.',
+        'And if you gaze long enough into an abyss, the abyss will gaze back into you.',
+      ].join(' ');
+
+      expect(
+        nietzsche.match({
+          Just: (s) => s + ', yo',
+          Nothing: () => soDeepMan,
+        })
+      ).toBe(soDeepMan);
+    });
+
+    test('`or` method', () => {
+      const theNothing = new Maybe<boolean>(); // the worst: optional booleans!
+      const theDefaultValue = MaybeNS.just(false);
+
+      expect(theNothing.or(theDefaultValue)).toBe(theDefaultValue);
+    });
+
+    test('`orElse` method', () => {
+      const theNothing = new Maybe<{ here: string[] }>();
+      const justTheFallback = MaybeNS.just({ here: ['to', 'see'] });
+      const getTheFallback = () => justTheFallback;
+
+      expect(theNothing.orElse(getTheFallback)).toEqual(justTheFallback);
+    });
+
+    test('`and` method', () => {
+      const theNothing = new Maybe<string[]>();
+      const theConsequentJust = new Maybe('blaster bolts');
+      const anotherNothing = new Maybe<string>();
+      expect(theNothing.and(theConsequentJust)).toEqual(theNothing);
+      expect(theNothing.and(anotherNothing)).toEqual(theNothing);
+    });
+
+    test('`andThen` method', () => {
+      const theNothing = new Maybe();
+      const theDefaultValue = 'string';
+      const getDefaultValue = () => MaybeNS.just(theDefaultValue);
+
+      expect(theNothing.andThen(getDefaultValue)).toEqual(theNothing);
+    });
+
+    test('`unsafelyUnwrap` method', () => {
+      const noStuffAtAll = new Maybe();
+      expect(() => noStuffAtAll.unsafelyUnwrap()).toThrow();
+    });
+
+    test('`unwrapOr` method', () => {
+      const theNothing = new Maybe<number[]>();
+      const theDefaultValue: number[] = [];
+      expect(theNothing.unwrapOr(theDefaultValue)).toEqual(theDefaultValue);
+    });
+
+    test('`unwrapOrElse` method', () => {
+      const theNothing = new Maybe();
+      const theDefaultValue = 'it be all fine tho';
+      expect(theNothing.unwrapOrElse(() => theDefaultValue)).toEqual(theDefaultValue);
+    });
+
+    test('`toOkOrErr` method', () => {
+      const theNothing = new Maybe();
+      const errValue = { reason: 'such badness' };
+      expect(theNothing.toOkOrErr(errValue)).toEqual(err(errValue));
+    });
+
+    test('`toOkOrElseErr` method', () => {
+      const theNothing = new Maybe();
+      const errValue = 24;
+      const getErrValue = () => errValue;
+
+      expect(theNothing.toOkOrElseErr(getErrValue)).toEqual(err(errValue));
+    });
+
+    test('`toString` method', () => {
+      expect(MaybeNS.nothing().toString()).toEqual('Nothing');
+    });
+
+    test('`toJSON` method', () => {
+      expect(MaybeNS.nothing().toJSON()).toEqual({ variant: MaybeNS.Variant.Nothing });
+      expect(MaybeNS.of(MaybeNS.nothing()).toJSON()).toEqual({
+        variant: MaybeNS.Variant.Just,
+        value: { variant: MaybeNS.Variant.Nothing },
+      });
+    });
+
+    test('`equals` method', () => {
+      const a = new Maybe<string>('a');
+      const b = new Maybe<string>();
+      const c = new Maybe<string>();
+      expect(a.equals(b)).toBe(false);
+      expect(b.equals(c)).toBe(true);
+    });
+
+    test('`ap` method', () => {
+      const fn = new Maybe<(val: string) => number>();
+      const val = new Maybe('three');
+
+      const result = fn.ap(val);
+
+      expect(result.isNothing).toBe(true);
+    });
+
+    test('`property` method', () => {
+      type DeepType = { something?: { with?: { deeper?: { 'key names'?: string } } } };
+
+      const result = new Maybe<DeepType>()
+        .get('something')
+        .get('with')
+        .get('deeper')
+        .get('key names');
+      expect(result).toEqual(MaybeNS.nothing());
+    });
   });
-
-  test('`ap` method', () => {
-    const fn = new MaybeNS.Nothing<(val: string) => number>();
-    const val = new MaybeNS.Just('three');
-
-    const result = fn.ap(val);
-
-    expect(result.isNothing()).toBe(true);
-  });
-
-  test('`property` method', () => {
-    type DeepType = { something?: { with?: { deeper?: { 'key names'?: string } } } };
-
-    const result = new MaybeNS.Nothing<DeepType>()
-      .get('something')
-      .get('with')
-      .get('deeper')
-      .get('key names');
-    expect(result).toEqual(MaybeNS.nothing());
-  });
-});
-
-test('`Maybe` classes interacting', () => {
-  const aMaybe: Maybe<string> = MaybeNS.nothing();
-  const mapped = aMaybe.map(length);
-  expect(mapped).toBeInstanceOf(MaybeNS.Nothing);
-  expect(mapped).not.toBeInstanceOf(MaybeNS.Just);
-
-  const anotherMaybe: Maybe<number> = MaybeNS.just(10);
-  const anotherMapped = anotherMaybe.mapOr('nada', (n) => `The number was ${n}`);
-  expect(anotherMapped).toEqual('The number was 10');
 });
