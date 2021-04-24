@@ -1269,9 +1269,6 @@ export function match<T, A>(matcher: Matcher<T, A>, maybe?: Maybe<T>): A | ((m: 
     : (curriedMaybe: Maybe<T>) => mapOrElse(matcher.Nothing, matcher.Just, curriedMaybe);
 }
 
-/** Alias for [`match`](#match) */
-export const cata = match;
-
 /**
   Allows quick triple-equal equality check between the values inside two `maybe`s
   without having to unwrap them first.
@@ -1935,7 +1932,6 @@ export const Maybe = {
   transpose,
   arrayTranspose,
   match,
-  cata,
   equals,
   ap,
   isInstance,
