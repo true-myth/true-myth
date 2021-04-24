@@ -12,18 +12,20 @@ import { curry1, isVoid } from './-private/utils';
   You can use the discriminant via the `variant` property of `Maybe` instances
   if you need to match explicitly on it.
  */
-export enum Variant {
-  Just = 'Just',
-  Nothing = 'Nothing',
-}
+export const Variant = {
+  Just: 'Just',
+  Nothing: 'Nothing',
+} as const;
+
+export type Variant = keyof typeof Variant;
 
 interface JustJSON<T> {
-  variant: Variant.Just;
+  variant: 'Just';
   value: T;
 }
 
 interface NothingJSON {
-  variant: Variant.Nothing;
+  variant: 'Nothing';
 }
 
 type MaybeJSON<T> = JustJSON<T> | NothingJSON;
@@ -161,7 +163,7 @@ export class Just<T> implements MaybeShape<T> {
   }
 
   /** `Just` is always [`Variant.Just`](../enums/_maybe_.variant#just). */
-  readonly variant: Variant.Just = Variant.Just;
+  readonly variant = Variant.Just;
 
   /** The wrapped value. */
   readonly value: T;
@@ -365,7 +367,7 @@ let NOTHING: Nothing<any>;
  */
 export class Nothing<T> implements MaybeShape<T> {
   /** `Nothing` is always [`Variant.Nothing`](../enums/_maybe_.variant#nothing). */
-  readonly variant: Variant.Nothing = Variant.Nothing;
+  readonly variant = Variant.Nothing;
 
   /**
     Create an instance of `Maybe.Nothing` with `new`.

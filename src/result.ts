@@ -16,18 +16,20 @@ Brand; // tslint:disable-line:no-unused-expression
   You can use the discriminant via the `variant` property of `Result` instances
   if you need to match explicitly on it.
  */
-export enum Variant {
-  Ok = 'Ok',
-  Err = 'Err',
-}
+export const Variant = {
+  Ok: 'Ok',
+  Err: 'Err',
+} as const;
+
+type Variant = keyof typeof Variant;
 
 interface OkJSON<T> {
-  variant: Variant.Ok;
+  variant: 'Ok';
   value: T;
 }
 
 interface ErrJSON<E> {
-  variant: Variant.Err;
+  variant: 'Err';
   error: E;
 }
 
@@ -131,7 +133,7 @@ export class Ok<T, E> implements ResultShape<T, E> {
   }
 
   /** `Ok` is always [`Variant.Ok`](../enums/_result_.variant#ok). */
-  readonly variant: Variant.Ok = Variant.Ok;
+  readonly variant = Variant.Ok;
 
   /** The wrapped value. */
   readonly value: T;
@@ -311,7 +313,7 @@ export class Err<T, E> implements ResultShape<T, E> {
   }
 
   /** `Err` is always [`Variant.Err`](../enums/_result_.variant#err). */
-  readonly variant: Variant.Err = Variant.Err;
+  readonly variant = Variant.Err;
 
   /** The wrapped error value. */
   readonly error: E;
