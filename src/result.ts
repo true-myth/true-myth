@@ -1334,9 +1334,6 @@ export function match<T, E, A>(
   return curry1(op, result);
 }
 
-/** Alias for [`match`](#match) */
-export const cata = match;
-
 /**
   Allows quick triple-equal equality check between the values inside two `result`s
   without having to unwrap them first.
@@ -1639,7 +1636,6 @@ export const Result = {
   toString,
   toJSON,
   match,
-  cata,
   equals,
   ap,
   isInstance,
