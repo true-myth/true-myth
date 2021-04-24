@@ -2,7 +2,6 @@ import { expectTypeOf } from 'expect-type';
 import Maybe, { just, nothing } from '../src/maybe';
 import Result, { Ok, Variant, Err } from '../src/result';
 import Unit from '../src/unit';
-import { AndThenAliases } from './test-utils';
 
 const length = (x: { length: number }) => x.length;
 const double = (x: number) => x * 2;
@@ -187,21 +186,17 @@ describe('`Result` pure functions', () => {
     expect(Result.and(nextErr, anErr)).toEqual(anErr);
   });
 
-  const andThenTest = (fn: AndThenAliases) => () => {
+  test('`andThen`', () => {
     const theValue = 'a string';
     const toLengthResult = (s: string) => Result.ok<number, string>(length(s));
     const expected = toLengthResult(theValue);
 
     const anOk = Result.ok(theValue);
-    expect(Result[fn](toLengthResult, anOk)).toEqual(expected);
+    expect(Result.andThen(toLengthResult, anOk)).toEqual(expected);
 
     const anErr: Result<string, string> = Result.err('something wrong');
-    expect(Result[fn](toLengthResult, anErr)).toEqual(anErr);
-  };
-
-  test('`andThen`', andThenTest('andThen'));
-  test('`chain`', andThenTest('chain'));
-  test('flatMap', andThenTest('flatMap'));
+    expect(Result.andThen(toLengthResult, anErr)).toEqual(anErr);
+  });
 
   test('`or`', () => {
     const orOk: Result<number, string> = Result.ok(0);
@@ -540,19 +535,15 @@ describe('`Result.Ok` class', () => {
     expect(theOk.and(anErr)).toBe(anErr);
   });
 
-  const andThenMethodTest = (method: AndThenAliases) => () => {
+  test('`andThen` method', () => {
     const theValue = 'anything will do';
     const theOk = new Result.Ok(theValue);
     const lengthResult = (s: string) => new Result.Ok(s.length);
-    expect(theOk[method](lengthResult)).toEqual(lengthResult(theValue));
+    expect(theOk.andThen(lengthResult)).toEqual(lengthResult(theValue));
 
     const convertToErr = (s: string) => new Result.Err(s.length);
-    expect(theOk[method](convertToErr)).toEqual(convertToErr(theValue));
-  };
-
-  test('`andThen` method', andThenMethodTest('andThen'));
-  test('`chain` method', andThenMethodTest('chain'));
-  test('`flatMap` method', andThenMethodTest('flatMap'));
+    expect(theOk.andThen(convertToErr)).toEqual(convertToErr(theValue));
+  });
 
   test('`or` method', () => {
     const theValue = 100;
@@ -718,28 +709,14 @@ describe('`Result.Err` class', () => {
     expect(theErr.and(anotherErr)).toEqual(theErr);
   });
 
-  const andThenMethodTest = (method: AndThenAliases) => () => {
+  test('`andThen` method', () => {
     const theErr = new Result.Err<string[], number>(42);
 
     const getAnOk = (strings: string[]) => Result.ok<number, number>(length(strings));
-    expect(theErr[method](getAnOk)).toEqual(theErr);
+    expect(theErr.andThen(getAnOk)).toEqual(theErr);
 
     const getAnErr = (_: unknown) => Result.err(0);
-    expect(theErr[method](getAnErr)).toEqual(theErr);
-  };
-
-  test('`andThen` method', andThenMethodTest('andThen'));
-  test('`chain` method', andThenMethodTest('chain'));
-  test('`flatMap` method', andThenMethodTest('flatMap'));
-
-  test('`chain` method', () => {
-    const theErr = new Result.Err<string[], number>(42);
-
-    const getAnOk = (strings: string[]) => Result.ok<number, number>(length(strings));
-    expect(theErr.chain(getAnOk)).toEqual(theErr);
-
-    const getAnErr = () => Result.err(0);
-    expect(theErr.chain(getAnErr)).toEqual(theErr);
+    expect(theErr.andThen(getAnErr)).toEqual(theErr);
   });
 
   test('`or` method', () => {

@@ -71,12 +71,6 @@ interface ResultShape<T, E> {
   /** Method variant for [`Result.andThen`](../modules/_result_.html#andthen) */
   andThen<U>(this: Result<T, E>, andThenFn: (t: T) => Result<U, E>): Result<U, E>;
 
-  /** Method variant for [`Result.chain`](../modules/_result_.html#chain) */
-  chain<U>(this: Result<T, E>, chainFn: (t: T) => Result<U, E>): Result<U, E>;
-
-  /** Method variant for [`Result.flatMap`](../modules/_result_.html#flatmap) */
-  flatMap<U>(this: Result<T, E>, chainFn: (t: T) => Result<U, E>): Result<U, E>;
-
   /** Method variant for [`Result.unwrap`](../modules/_result_.html#unwrap) */
   unsafelyUnwrap(): T | never;
 
@@ -237,16 +231,6 @@ export class Ok<T, E> implements ResultShape<T, E> {
   /** Method variant for [`Result.andThen`](../modules/_result_.html#andthen) */
   andThen<U>(this: Result<T, E>, andThenFn: (t: T) => Result<U, E>): Result<U, E> {
     return andThen(andThenFn, this);
-  }
-
-  /** Method variant for [`Result.chain`](../modules/_result_.html#chain) */
-  chain<U>(this: Result<T, E>, chainFn: (t: T) => Result<U, E>): Result<U, E> {
-    return chain(chainFn, this);
-  }
-
-  /** Method variant for [`Result.flatMap`](../modules/_result_.html#flatmap) */
-  flatMap<U>(this: Result<T, E>, flatMapFn: (t: T) => Result<U, E>): Result<U, E> {
-    return flatMap(flatMapFn, this);
   }
 
   /** Method variant for [`Result.unwrap`](../modules/_result_.html#unwrap) */
@@ -427,16 +411,6 @@ export class Err<T, E> implements ResultShape<T, E> {
   /** Method variant for [`Result.andThen`](../modules/_result_.html#andthen) */
   andThen<U>(this: Result<T, E>, andThenFn: (t: T) => Result<U, E>): Result<U, E> {
     return andThen(andThenFn, this);
-  }
-
-  /** Method variant for [`Result.chain`](../modules/_result_.html#chain) */
-  chain<U>(this: Result<T, E>, chainFn: (t: T) => Result<U, E>): Result<U, E> {
-    return this.andThen(chainFn);
-  }
-
-  /** Method variant for [`Result.flatMap`](../modules/_result_.html#flatmap) */
-  flatMap<U>(this: Result<T, E>, flatMapFn: (t: T) => Result<U, E>): Result<U, E> {
-    return this.andThen(flatMapFn);
   }
 
   /** Method variant for [`Result.unsafelyUnwrap`](../modules/_result_.html#unsafelyunwrap) */
@@ -1024,12 +998,6 @@ export function andThen<T, U, E>(
   const op = (r: Result<T, E>) => (isOk(r) ? thenFn(r.value) : err<U, E>(r.error));
   return curry1(op, result);
 }
-
-/** Alias for [`andThen`](#andthen). */
-export const chain = andThen;
-
-/** Alias for [`andThen`](#andthen). */
-export const flatMap = andThen;
 
 /**
   Provide a fallback for a given `Result`. Behaves like a logical `or`: if the
@@ -1655,8 +1623,6 @@ export const Result = {
   mapErr,
   and,
   andThen,
-  chain,
-  flatMap,
   or,
   orElse,
   unsafelyUnwrap,
