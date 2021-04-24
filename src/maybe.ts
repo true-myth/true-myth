@@ -63,12 +63,6 @@ interface MaybeShape<T> {
   /** Method variant for [`Maybe.andThen`](../modules/_maybe_.html#andthen) */
   andThen<U>(this: Maybe<T>, andThenFn: (t: T) => Maybe<U>): Maybe<U>;
 
-  /** Method variant for [`Maybe.chain`](../modules/_maybe_.html#chain) */
-  chain<U>(this: Maybe<T>, chainFn: (t: T) => Maybe<U>): Maybe<U>;
-
-  /** Method variant for [`Maybe.flatMap`](../modules/_maybe_.html#flatmap) */
-  flatMap<U>(this: Maybe<T>, flatMapFn: (t: T) => Maybe<U>): Maybe<U>;
-
   /** Method variant for [`Maybe.unwrap`](../modules/_maybe_.html#unwrap) */
   unsafelyUnwrap(): T | never;
 
@@ -256,16 +250,6 @@ export class Just<T> implements MaybeShape<T> {
   /** Method variant for [`Maybe.andThen`](../modules/_maybe_.html#andthen) */
   andThen<U>(this: Maybe<T>, andThenFn: (t: T) => Maybe<U>): Maybe<U> {
     return andThen(andThenFn, this);
-  }
-
-  /** Method variant for [`Maybe.chain`](../modules/_maybe_.html#chain) */
-  chain<U>(this: Maybe<T>, chainFn: (t: T) => Maybe<U>): Maybe<U> {
-    return this.andThen(chainFn);
-  }
-
-  /** Method variant for [`Maybe.flatMap`](../modules/_maybe_.html#flatmap) */
-  flatMap<U>(this: Maybe<T>, flatMapFn: (t: T) => Maybe<U>): Maybe<U> {
-    return this.andThen(flatMapFn);
   }
 
   /** Method variant for [`Maybe.unsafelyUnwrap`](../modules/_maybe_.html#unsafelyunwrap) */
@@ -464,16 +448,6 @@ export class Nothing<T> implements MaybeShape<T> {
   /** Method variant for [`Maybe.andThen`](../modules/_maybe_.html#andthen) */
   andThen<U>(this: Maybe<T>, andThenFn: (t: T) => Maybe<U>): Maybe<U> {
     return andThen(andThenFn, this);
-  }
-
-  /** Method variant for [`Maybe.chain`](../modules/_maybe_.html#chain) */
-  chain<U>(this: Maybe<T>, chainFn: (t: T) => Maybe<U>): Maybe<U> {
-    return this.andThen(chainFn);
-  }
-
-  /** Method variant for [`Maybe.flatMap`](../modules/_maybe_.html#flatmap) */
-  flatMap<U>(this: Maybe<T>, flatMapFn: (t: T) => Maybe<U>): Maybe<U> {
-    return this.andThen(flatMapFn);
   }
 
   /** Method variant for [`Maybe.unsafelyUnwrap`](../modules/_maybe_.html#unsafelyunwrap) */
@@ -887,16 +861,16 @@ export function and<T, U>(
   `andThen` to combine two functions which *both* create a `Maybe` from an
   unwrapped type.
 
-  You may find the `.then` method on an ES6 `Promise` helpful for b:
-  if you have a `Promise`, you can pass its `then` method a callback which
-  returns another `Promise`, and the result will not be a *nested* promise, but
-  a single `Promise`. The difference is that `Promise#then` unwraps *all*
-  layers to only ever return a single `Promise` value, whereas `Maybe.andThen`
-  will not unwrap nested `Maybe`s.
+  You may find the `.then` method on an ES6 `Promise` helpful for b: if you have
+  a `Promise`, you can pass its `then` method a callback which returns another
+  `Promise`, and the result will not be a *nested* promise, but a single
+  `Promise`. The difference is that `Promise#then` unwraps *all* layers to only
+  ever return a single `Promise` value, whereas `Maybe.andThen` will not unwrap
+  nested `Maybe`s.
 
   This is also commonly known as (and therefore aliased as) [`flatMap`][flatMap]
-  or [`chain`][chain]. It is sometimes also known as `bind`, but *not* aliased as such
-  because [`bind` already means something in JavaScript][bind].
+  or [`chain`][chain]. It is sometimes also known as `bind`, but *not* aliased
+  as such because [`bind` already means something in JavaScript][bind].
 
   [flatMap]: #flatmap
   [chain]: #chain
@@ -940,15 +914,6 @@ export function andThen<T, U>(
   const op = (m: Maybe<T>) => (m.isJust() ? thenFn(m.value) : nothing<U>());
   return maybe !== undefined ? op(maybe) : op;
 }
-
-/** Alias for [`andThen`](#andthen). */
-export const chain = andThen;
-
-/** Alias for [`andThen`](#andthen). */
-export const flatMap = andThen;
-
-/** Alias for [`andThen`](#andthen). */
-export const bind = andThen;
 
 /**
   Provide a fallback for a given `Maybe`. Behaves like a logical `or`: if the
@@ -1809,7 +1774,7 @@ export function get<T, K extends keyof T>(
   key: K,
   maybeObj?: Maybe<T>
 ): Maybe<T[K]> | ((maybeObj: Maybe<T>) => Maybe<T[K]>) {
-  return curry1(bind(property<T, K>(key)), maybeObj);
+  return curry1(andThen(property<T, K>(key)), maybeObj);
 }
 
 /**
@@ -1913,8 +1878,6 @@ export const Maybe = {
   mapOrElse,
   and,
   andThen,
-  chain,
-  flatMap,
   or,
   orElse,
   unsafelyUnwrap,
