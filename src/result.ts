@@ -16,18 +16,20 @@ Brand; // tslint:disable-line:no-unused-expression
   You can use the discriminant via the `variant` property of `Result` instances
   if you need to match explicitly on it.
  */
-export enum Variant {
-  Ok = 'Ok',
-  Err = 'Err',
-}
+export const Variant = {
+  Ok: 'Ok',
+  Err: 'Err',
+} as const;
+
+type Variant = keyof typeof Variant;
 
 interface OkJSON<T> {
-  variant: Variant.Ok;
+  variant: 'Ok';
   value: T;
 }
 
 interface ErrJSON<E> {
-  variant: Variant.Err;
+  variant: 'Err';
   error: E;
 }
 
@@ -70,12 +72,6 @@ interface ResultShape<T, E> {
 
   /** Method variant for [`Result.andThen`](../modules/_result_.html#andthen) */
   andThen<U>(this: Result<T, E>, andThenFn: (t: T) => Result<U, E>): Result<U, E>;
-
-  /** Method variant for [`Result.chain`](../modules/_result_.html#chain) */
-  chain<U>(this: Result<T, E>, chainFn: (t: T) => Result<U, E>): Result<U, E>;
-
-  /** Method variant for [`Result.flatMap`](../modules/_result_.html#flatmap) */
-  flatMap<U>(this: Result<T, E>, chainFn: (t: T) => Result<U, E>): Result<U, E>;
 
   /** Method variant for [`Result.unwrap`](../modules/_result_.html#unwrap) */
   unsafelyUnwrap(): T | never;
@@ -137,7 +133,7 @@ export class Ok<T, E> implements ResultShape<T, E> {
   }
 
   /** `Ok` is always [`Variant.Ok`](../enums/_result_.variant#ok). */
-  readonly variant: Variant.Ok = Variant.Ok;
+  readonly variant = Variant.Ok;
 
   /** The wrapped value. */
   readonly value: T;
@@ -239,16 +235,6 @@ export class Ok<T, E> implements ResultShape<T, E> {
     return andThen(andThenFn, this);
   }
 
-  /** Method variant for [`Result.chain`](../modules/_result_.html#chain) */
-  chain<U>(this: Result<T, E>, chainFn: (t: T) => Result<U, E>): Result<U, E> {
-    return chain(chainFn, this);
-  }
-
-  /** Method variant for [`Result.flatMap`](../modules/_result_.html#flatmap) */
-  flatMap<U>(this: Result<T, E>, flatMapFn: (t: T) => Result<U, E>): Result<U, E> {
-    return flatMap(flatMapFn, this);
-  }
-
   /** Method variant for [`Result.unwrap`](../modules/_result_.html#unwrap) */
   unsafelyUnwrap(): T {
     return this.value;
@@ -327,7 +313,7 @@ export class Err<T, E> implements ResultShape<T, E> {
   }
 
   /** `Err` is always [`Variant.Err`](../enums/_result_.variant#err). */
-  readonly variant: Variant.Err = Variant.Err;
+  readonly variant = Variant.Err;
 
   /** The wrapped error value. */
   readonly error: E;
@@ -427,16 +413,6 @@ export class Err<T, E> implements ResultShape<T, E> {
   /** Method variant for [`Result.andThen`](../modules/_result_.html#andthen) */
   andThen<U>(this: Result<T, E>, andThenFn: (t: T) => Result<U, E>): Result<U, E> {
     return andThen(andThenFn, this);
-  }
-
-  /** Method variant for [`Result.chain`](../modules/_result_.html#chain) */
-  chain<U>(this: Result<T, E>, chainFn: (t: T) => Result<U, E>): Result<U, E> {
-    return this.andThen(chainFn);
-  }
-
-  /** Method variant for [`Result.flatMap`](../modules/_result_.html#flatmap) */
-  flatMap<U>(this: Result<T, E>, flatMapFn: (t: T) => Result<U, E>): Result<U, E> {
-    return this.andThen(flatMapFn);
   }
 
   /** Method variant for [`Result.unsafelyUnwrap`](../modules/_result_.html#unsafelyunwrap) */
@@ -639,9 +615,9 @@ export function tryOr<T, E>(
 ): Result<T, E> | ((callback: () => T) => Result<T, E>) {
   const op = (cb: () => T) => {
     try {
-      return Result.ok<T, E>(cb());
+      return ok<T, E>(cb());
     } catch {
-      return Result.err<T, E>(error);
+      return err<T, E>(error);
     }
   };
 
@@ -680,9 +656,9 @@ export function tryOrElse<T, E>(
 ): Result<T, E> | ((callback: () => T) => Result<T, E>) {
   const op = (cb: () => T) => {
     try {
-      return Result.ok<T, E>(cb());
+      return ok<T, E>(cb());
     } catch (e) {
-      return Result.err<T, E>(onError(e));
+      return err<T, E>(onError(e));
     }
   };
 
@@ -1025,12 +1001,6 @@ export function andThen<T, U, E>(
   return curry1(op, result);
 }
 
-/** Alias for [`andThen`](#andthen). */
-export const chain = andThen;
-
-/** Alias for [`andThen`](#andthen). */
-export const flatMap = andThen;
-
 /**
   Provide a fallback for a given `Result`. Behaves like a logical `or`: if the
   `result` value is an `Ok`, returns that `result`; otherwise, returns the
@@ -1366,9 +1336,6 @@ export function match<T, E, A>(
   return curry1(op, result);
 }
 
-/** Alias for [`match`](#match) */
-export const cata = match;
-
 /**
   Allows quick triple-equal equality check between the values inside two `result`s
   without having to unwrap them first.
@@ -1596,7 +1563,7 @@ export function ap<T, U, E>(
   const op = (r: Result<T, E>) =>
     r.match({
       Ok: (val) => resultFn.map((fn) => fn(val)),
-      Err: (e) => Result.err<U, E>(e),
+      Err: (e) => err<U, E>(e),
     });
 
   return curry1(op, result);
@@ -1639,45 +1606,5 @@ export function transpose<T, E>(result: Result<Maybe<T>, E>): Maybe<Result<T, E>
   no runtime overhead other than the very small cost of the container object.
  */
 export type Result<T, E> = Ok<T, E> | Err<T, E>;
-export const Result = {
-  Variant,
-  Ok,
-  Err,
-  isOk,
-  isErr,
-  ok,
-  err,
-  tryOr,
-  tryOrElse,
-  map,
-  mapOr,
-  mapOrElse,
-  mapErr,
-  and,
-  andThen,
-  chain,
-  flatMap,
-  or,
-  orElse,
-  unsafelyUnwrap,
-  unsafelyGet,
-  unsafeGet,
-  unsafelyUnwrapErr,
-  unsafelyGetErr,
-  unwrapOr,
-  getOr,
-  unwrapOrElse,
-  getOrElse,
-  toMaybe,
-  fromMaybe,
-  toString,
-  toJSON,
-  match,
-  cata,
-  equals,
-  ap,
-  isInstance,
-  transpose,
-};
 
 export default Result;

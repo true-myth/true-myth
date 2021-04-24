@@ -12,18 +12,20 @@ import { curry1, isVoid } from './-private/utils';
   You can use the discriminant via the `variant` property of `Maybe` instances
   if you need to match explicitly on it.
  */
-export enum Variant {
-  Just = 'Just',
-  Nothing = 'Nothing',
-}
+export const Variant = {
+  Just: 'Just',
+  Nothing: 'Nothing',
+} as const;
+
+export type Variant = keyof typeof Variant;
 
 interface JustJSON<T> {
-  variant: Variant.Just;
+  variant: 'Just';
   value: T;
 }
 
 interface NothingJSON {
-  variant: Variant.Nothing;
+  variant: 'Nothing';
 }
 
 type MaybeJSON<T> = JustJSON<T> | NothingJSON;
@@ -62,12 +64,6 @@ interface MaybeShape<T> {
 
   /** Method variant for [`Maybe.andThen`](../modules/_maybe_.html#andthen) */
   andThen<U>(this: Maybe<T>, andThenFn: (t: T) => Maybe<U>): Maybe<U>;
-
-  /** Method variant for [`Maybe.chain`](../modules/_maybe_.html#chain) */
-  chain<U>(this: Maybe<T>, chainFn: (t: T) => Maybe<U>): Maybe<U>;
-
-  /** Method variant for [`Maybe.flatMap`](../modules/_maybe_.html#flatmap) */
-  flatMap<U>(this: Maybe<T>, flatMapFn: (t: T) => Maybe<U>): Maybe<U>;
 
   /** Method variant for [`Maybe.unwrap`](../modules/_maybe_.html#unwrap) */
   unsafelyUnwrap(): T | never;
@@ -167,7 +163,7 @@ export class Just<T> implements MaybeShape<T> {
   }
 
   /** `Just` is always [`Variant.Just`](../enums/_maybe_.variant#just). */
-  readonly variant: Variant.Just = Variant.Just;
+  readonly variant = Variant.Just;
 
   /** The wrapped value. */
   readonly value: T;
@@ -256,16 +252,6 @@ export class Just<T> implements MaybeShape<T> {
   /** Method variant for [`Maybe.andThen`](../modules/_maybe_.html#andthen) */
   andThen<U>(this: Maybe<T>, andThenFn: (t: T) => Maybe<U>): Maybe<U> {
     return andThen(andThenFn, this);
-  }
-
-  /** Method variant for [`Maybe.chain`](../modules/_maybe_.html#chain) */
-  chain<U>(this: Maybe<T>, chainFn: (t: T) => Maybe<U>): Maybe<U> {
-    return this.andThen(chainFn);
-  }
-
-  /** Method variant for [`Maybe.flatMap`](../modules/_maybe_.html#flatmap) */
-  flatMap<U>(this: Maybe<T>, flatMapFn: (t: T) => Maybe<U>): Maybe<U> {
-    return this.andThen(flatMapFn);
   }
 
   /** Method variant for [`Maybe.unsafelyUnwrap`](../modules/_maybe_.html#unsafelyunwrap) */
@@ -381,7 +367,7 @@ let NOTHING: Nothing<any>;
  */
 export class Nothing<T> implements MaybeShape<T> {
   /** `Nothing` is always [`Variant.Nothing`](../enums/_maybe_.variant#nothing). */
-  readonly variant: Variant.Nothing = Variant.Nothing;
+  readonly variant = Variant.Nothing;
 
   /**
     Create an instance of `Maybe.Nothing` with `new`.
@@ -464,16 +450,6 @@ export class Nothing<T> implements MaybeShape<T> {
   /** Method variant for [`Maybe.andThen`](../modules/_maybe_.html#andthen) */
   andThen<U>(this: Maybe<T>, andThenFn: (t: T) => Maybe<U>): Maybe<U> {
     return andThen(andThenFn, this);
-  }
-
-  /** Method variant for [`Maybe.chain`](../modules/_maybe_.html#chain) */
-  chain<U>(this: Maybe<T>, chainFn: (t: T) => Maybe<U>): Maybe<U> {
-    return this.andThen(chainFn);
-  }
-
-  /** Method variant for [`Maybe.flatMap`](../modules/_maybe_.html#flatmap) */
-  flatMap<U>(this: Maybe<T>, flatMapFn: (t: T) => Maybe<U>): Maybe<U> {
-    return this.andThen(flatMapFn);
   }
 
   /** Method variant for [`Maybe.unsafelyUnwrap`](../modules/_maybe_.html#unsafelyunwrap) */
@@ -887,16 +863,16 @@ export function and<T, U>(
   `andThen` to combine two functions which *both* create a `Maybe` from an
   unwrapped type.
 
-  You may find the `.then` method on an ES6 `Promise` helpful for b:
-  if you have a `Promise`, you can pass its `then` method a callback which
-  returns another `Promise`, and the result will not be a *nested* promise, but
-  a single `Promise`. The difference is that `Promise#then` unwraps *all*
-  layers to only ever return a single `Promise` value, whereas `Maybe.andThen`
-  will not unwrap nested `Maybe`s.
+  You may find the `.then` method on an ES6 `Promise` helpful for b: if you have
+  a `Promise`, you can pass its `then` method a callback which returns another
+  `Promise`, and the result will not be a *nested* promise, but a single
+  `Promise`. The difference is that `Promise#then` unwraps *all* layers to only
+  ever return a single `Promise` value, whereas `Maybe.andThen` will not unwrap
+  nested `Maybe`s.
 
   This is also commonly known as (and therefore aliased as) [`flatMap`][flatMap]
-  or [`chain`][chain]. It is sometimes also known as `bind`, but *not* aliased as such
-  because [`bind` already means something in JavaScript][bind].
+  or [`chain`][chain]. It is sometimes also known as `bind`, but *not* aliased
+  as such because [`bind` already means something in JavaScript][bind].
 
   [flatMap]: #flatmap
   [chain]: #chain
@@ -940,15 +916,6 @@ export function andThen<T, U>(
   const op = (m: Maybe<T>) => (m.isJust() ? thenFn(m.value) : nothing<U>());
   return maybe !== undefined ? op(maybe) : op;
 }
-
-/** Alias for [`andThen`](#andthen). */
-export const chain = andThen;
-
-/** Alias for [`andThen`](#andthen). */
-export const flatMap = andThen;
-
-/** Alias for [`andThen`](#andthen). */
-export const bind = andThen;
 
 /**
   Provide a fallback for a given `Maybe`. Behaves like a logical `or`: if the
@@ -1269,9 +1236,6 @@ export function match<T, A>(matcher: Matcher<T, A>, maybe?: Maybe<T>): A | ((m: 
     : (curriedMaybe: Maybe<T>) => mapOrElse(matcher.Nothing, matcher.Just, curriedMaybe);
 }
 
-/** Alias for [`match`](#match) */
-export const cata = match;
-
 /**
   Allows quick triple-equal equality check between the values inside two `maybe`s
   without having to unwrap them first.
@@ -1488,194 +1452,6 @@ export function isInstance<T = unknown>(item: unknown): item is Maybe<T> {
   return item instanceof Just || item instanceof Nothing;
 }
 
-type Predicate<T> = (element: T, index: number, array: T[]) => boolean;
-
-// NOTE: documentation is lightly adapted from the MDN and TypeScript docs for
-// `Array.prototype.find`.
-/**
-  Safely search for an element in an array.
-  
-  This function behaves like `Array.prototype.find`, but returns `Maybe<T>`
-  instead of `T | undefined`.
-  
-  ## Examples
-
-  The basic form is:
-
-  ```ts
-  import Maybe from 'true-myth/maybe';
-
-  let array = [1, 2, 3];
-  Maybe.find(v => v > 1, array); // Just(2)
-  Maybe.find(v => v < 1, array); // Nothing
-  ```
-
-  The function is curried so you can use it in a functional chain. For example
-  (leaving aside error handling on a bad response for simplicity), suppose the
-  url `https://arrays.example.com` returned a JSON payload with the type
-  `Array<{ count: number, name: string }>`, and we wanted to get the first
-  of these where `count` was at least 100. We could write this:
-
-  ```ts
-  import Maybe from 'true-myth/maybe';
-
-  type Item = { count: number; name: string };
-  type Response = Array<Item>;
-
-  // curried variant!
-  const findAtLeast100 = Maybe.find(({ count }: Item) => count > 100);
-
-  fetch('https://arrays.example.com')
-    .then(response => response.json() as Response)
-    .then(findAtLeast100)
-    .then(found => {
-      if (found.isJust()) {
-        console.log(`The matching value is ${found.value.name}!`);
-      }
-    });
-  ```
-  
-  @param predicate  A function to execute on each value in the array, returning
-                    `true` when the item in the array matches the condition. The
-                    signature for `predicate` is identical to the signature for
-                    the first argument to `Array.prototype.find`. The function
-                    is called once for each element of the array, in ascending
-                    order, until it finds one where predicate returns true. If
-                    such an element is found, find immediately returns that
-                    element value wrapped in `Just`. Otherwise, `Maybe.find`
-                    returns `Nothing`.
- * @param array     The array to search using the predicate.
- */
-export function find<T>(predicate: Predicate<T>, array: T[]): Maybe<T>;
-export function find<T>(predicate: Predicate<T>): (array: T[]) => Maybe<T>;
-export function find<T>(
-  predicate: Predicate<T>,
-  array?: T[]
-): Maybe<T> | ((array: T[]) => Maybe<T>) {
-  const op = (a: T[]) => maybe(a.find(predicate));
-  return curry1(op, array);
-}
-
-/**
-  Safely get the first item from a list, returning `Just` the first item if the
-  array has at least one item in it, or `Nothing` if it is empty.
-
-  ## Examples
-
-  ```ts
-  let empty = [];
-  Maybe.head(empty); // => Nothing
-
-  let full = [1, 2, 3];
-  Maybe.head(full); // => Just(1)
-  ```
-
-  @param array The array to get the first item from.
- */
-export function head<T>(array: Array<T | null | undefined>): Maybe<T> {
-  return maybe(array[0]);
-}
-
-/** A convenience alias for `Maybe.head`. */
-export const first = head;
-
-/**
-  Safely get the last item from a list, returning `Just` the last item if the
-  array has at least one item in it, or `Nothing` if it is empty.
-
-  ## Examples
-
-  ```ts
-  let empty = [];
-  Maybe.last(empty); // => Nothing
-
-  let full = [1, 2, 3];
-  Maybe.last(full); // => Just(3)
-  ```
-
-  @param array The array to get the first item from.
- */
-export function last<T>(array: Array<T | null | undefined>): Maybe<T> {
-  return maybe(array[array.length - 1]);
-}
-
-/**
-  Given an array or tuple of `Maybe`s, return a `Maybe` of the array or tuple
-  values.
-
-  -   Given an array of type `Array<Maybe<A> | Maybe<B>>`, the resulting type is
-      `Maybe<Array<A | B>>`.
-  -   Given a tuple of type `[Maybe<A>, Maybe<B>]`, the resulting type is
-      `Maybe<[A, B]>`.
-
-  If any of the items in the array or tuple are `Nothing`, the whole result is
-  `Nothing`. If all items in the array or tuple are `Just`, the whole result is
-  `Just`.
-      
-  ## Examples
-
-  Given an array with a mix of `Maybe` types in it, both `allJust` and `mixed`
-  here will have the type `Maybe<Array<string | number>>`, but will be `Just`
-  and `Nothing` respectively.
-
-  ```ts
-  import Maybe from 'true-myth/maybe';
-
-  let valid = [Maybe.just(2), Maybe.just('three')];
-  let allJust = Maybe.arrayTranspose(valid); // => Just([2, 'three']);
-
-  let invalid = [Maybe.just(2), Maybe.nothing<string>()];
-  let mixed = Maybe.arrayTranspose(invalid); // => Nothing
-  ```
-
-  When working with a tuple type, the structure of the tuple is preserved. Here,
-  for example, `result` has the type `Maybe<[string, number]>` and will be
-  `Nothing`:
-
-  ```ts
-  import Maybe from 'true-myth/maybe';
-
-  type Tuple = [Maybe<string>, Maybe<number>];
-
-  let invalid: Tuple = [Maybe.just('wat'), Maybe.nothing()];
-  let result = Maybe.arrayTranspose(invalid);  // => Nothing
-  ```
-
-  If all of the items in the tuple are `Just`, the result is `Just` wrapping the
-  tuple of the values of the items. Here, for example, `result` again has the
-  type `Maybe<[string, number]>` and will be `Just(['hey', 12]`:
-
-  ```ts
-  import Maybe from 'true-myth/maybe';
-
-  type Tuple = [Maybe<string>, Maybe<number>];
-
-  let valid: Tuple = [Maybe.just('hey'), Maybe.just(12)];
-  let result = Maybe.arrayTranspose(valid);  // => Just(['hey', 12])
-  ```
-
-  __Note:__ this does not work with `ReadonlyArray`. If you have a
-  `ReadonlyArray` you wish to operate on, you must cast it to `Array` insetad.
-  This cast is always safe here, because `Array` is a *wider* type than
-  `ReadonlyArray`.
-
-  @param maybes The `Maybe`s to resolve to a single `Maybe`.
- */
-export function arrayTranspose<T extends Array<Maybe<unknown>>>(m: T): TransposedArray<T> {
-  // The slightly odd-seeming use of `[...ms, m]` here instead of `concat` is
-  // necessary to preserve the structure of the value passed in. The goal is for
-  // `[Maybe<string>, [Maybe<number>, Maybe<boolean>]]` not to be flattened into
-  // `Maybe<[string, number, boolean]>` (as `concat` would do) but instead to
-  // produce `Maybe<[string, [number, boolean]]>`.
-  return m.reduce(
-    (acc: Maybe<unknown[]>, m) => acc.andThen((ms) => m.map((m) => [...ms, m])),
-    just([] as unknown[]) as TransposedArray<T>
-  ) as TransposedArray<T>;
-}
-
-type Unwrapped<T> = T extends Maybe<infer U> ? U : T;
-type TransposedArray<T extends Array<Maybe<unknown>>> = Maybe<{ [K in keyof T]: Unwrapped<T[K]> }>;
-
 /**
   Transposes a `Maybe` of a `Result` into a `Result` of a `Maybe`.
 
@@ -1696,24 +1472,6 @@ export function transpose<T, E>(maybe: Maybe<Result<T, E>>): Result<Maybe<T>, E>
     Nothing: () => Result.ok<Maybe<T>, E>(nothing()),
   });
 }
-
-/**
-  @deprecated use `arrayTranspose` instead. `tuple` and `all` are now able to
-    share an implementation. Additionally, they have been renamed to
-    `arrayTranspose` to clarify that they are actually the "natural
-    transformation" of an array of maybes to a maybe of an array.
-  @since 5.0.0:
- */
-export const all = arrayTranspose;
-
-/**
-  @deprecated use `arrayTranspose` instead. `tuple` and `all` are now able to
-    share an implementation. Additionally, they have been renamed to
-    `arrayTranspose` to clarify that they are actually the "natural
-    transformation" of an array of maybes to a maybe of an array.
-  @since 5.0.0
- */
-export const tuple = arrayTranspose;
 
 /**
   Safely extract a key from an object, returning `Just` if the key has a value
@@ -1830,7 +1588,7 @@ export function get<T, K extends keyof T>(
   key: K,
   maybeObj?: Maybe<T>
 ): Maybe<T[K]> | ((maybeObj: Maybe<T>) => Maybe<T[K]>) {
-  return curry1(bind(property<T, K>(key)), maybeObj);
+  return curry1(andThen(property<T, K>(key)), maybeObj);
 }
 
 /**
@@ -1908,61 +1666,7 @@ export function wrapReturn<F extends (...args: any[]) => any>(
   return (...args: Parameters<F>) => of(fn(...args)) as Maybe<NonNullable<ReturnType<F>>>;
 }
 
-/** Alias for [`wrapReturn`](#wrapReturn). */
-export const maybeify = wrapReturn;
-
-export const transmogrify = wrapReturn;
-
 /** A value which may (`Just<T>`) or may not (`Nothing`) be present. */
 export type Maybe<T> = Just<T> | Nothing<T>;
-export const Maybe = {
-  Variant,
-  Just,
-  Nothing,
-  all,
-  isJust,
-  isNothing,
-  just,
-  nothing,
-  of,
-  find,
-  first,
-  fromNullable,
-  head,
-  last,
-  map,
-  mapOr,
-  mapOrElse,
-  and,
-  andThen,
-  chain,
-  flatMap,
-  or,
-  orElse,
-  unsafelyUnwrap,
-  unsafelyGet,
-  unsafeGet,
-  unwrapOr,
-  getOr,
-  unwrapOrElse,
-  getOrElse,
-  toOkOrErr,
-  toOkOrElseErr,
-  fromResult,
-  toString,
-  toJSON,
-  tuple,
-  transpose,
-  arrayTranspose,
-  match,
-  cata,
-  equals,
-  ap,
-  isInstance,
-  property,
-  get,
-  wrapReturn,
-  ify: wrapReturn,
-};
 
 export default Maybe;
