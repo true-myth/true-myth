@@ -615,9 +615,9 @@ export function tryOr<T, E>(
 ): Result<T, E> | ((callback: () => T) => Result<T, E>) {
   const op = (cb: () => T) => {
     try {
-      return Result.ok<T, E>(cb());
+      return ok<T, E>(cb());
     } catch {
-      return Result.err<T, E>(error);
+      return err<T, E>(error);
     }
   };
 
@@ -656,9 +656,9 @@ export function tryOrElse<T, E>(
 ): Result<T, E> | ((callback: () => T) => Result<T, E>) {
   const op = (cb: () => T) => {
     try {
-      return Result.ok<T, E>(cb());
+      return ok<T, E>(cb());
     } catch (e) {
-      return Result.err<T, E>(onError(e));
+      return err<T, E>(onError(e));
     }
   };
 
@@ -1563,7 +1563,7 @@ export function ap<T, U, E>(
   const op = (r: Result<T, E>) =>
     r.match({
       Ok: (val) => resultFn.map((fn) => fn(val)),
-      Err: (e) => Result.err<U, E>(e),
+      Err: (e) => err<U, E>(e),
     });
 
   return curry1(op, result);
@@ -1606,42 +1606,5 @@ export function transpose<T, E>(result: Result<Maybe<T>, E>): Maybe<Result<T, E>
   no runtime overhead other than the very small cost of the container object.
  */
 export type Result<T, E> = Ok<T, E> | Err<T, E>;
-export const Result = {
-  Variant,
-  Ok,
-  Err,
-  isOk,
-  isErr,
-  ok,
-  err,
-  tryOr,
-  tryOrElse,
-  map,
-  mapOr,
-  mapOrElse,
-  mapErr,
-  and,
-  andThen,
-  or,
-  orElse,
-  unsafelyUnwrap,
-  unsafelyGet,
-  unsafeGet,
-  unsafelyUnwrapErr,
-  unsafelyGetErr,
-  unwrapOr,
-  getOr,
-  unwrapOrElse,
-  getOrElse,
-  toMaybe,
-  fromMaybe,
-  toString,
-  toJSON,
-  match,
-  equals,
-  ap,
-  isInstance,
-  transpose,
-};
 
 export default Result;
