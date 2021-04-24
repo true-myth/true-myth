@@ -1,5 +1,6 @@
 import { expectTypeOf } from 'expect-type';
 import Maybe, { Variant, Nothing, Just, Matcher } from '../src/maybe';
+import * as MaybeNS from '../src/maybe';
 import Result, { err, ok } from '../src/result';
 import { Unit } from '../src/unit';
 
@@ -9,237 +10,241 @@ const length = (s: string) => s.length;
 
 describe('`Maybe` pure functions', () => {
   test('`just`', () => {
-    const theJust = Maybe.just('string');
-    expect(theJust).toBeInstanceOf(Maybe.Just);
+    const theJust = MaybeNS.just('string');
+    expect(theJust).toBeInstanceOf(MaybeNS.Just);
     switch (theJust.variant) {
-      case Maybe.Variant.Just:
+      case MaybeNS.Variant.Just:
         expect(theJust.unsafelyUnwrap()).toBe('string');
         break;
-      case Maybe.Variant.Nothing:
+      case MaybeNS.Variant.Nothing:
         expect(false).toBe(true); // because this should never happen
         break;
       default:
         expect(false).toBe(true); // because those are the only cases
     }
 
-    expect(() => Maybe.just(null)).toThrow();
-    expect(() => Maybe.just(undefined)).toThrow();
+    expect(() => MaybeNS.just(null)).toThrow();
+    expect(() => MaybeNS.just(undefined)).toThrow();
   });
 
   test('`nothing`', () => {
-    const theNothing = Maybe.nothing();
-    expect(theNothing).toBeInstanceOf(Maybe.Nothing);
+    const theNothing = MaybeNS.nothing();
+    expect(theNothing).toBeInstanceOf(MaybeNS.Nothing);
     switch (theNothing.variant) {
-      case Maybe.Variant.Just:
+      case MaybeNS.Variant.Just:
         expect(true).toBe(false); // because this should never happen
         break;
-      case Maybe.Variant.Nothing:
+      case MaybeNS.Variant.Nothing:
         expect(true).toBe(true); // yay
         break;
       default:
         expect(false).toBe(true); // because those are the only cases
     }
 
-    const nothingOnType = Maybe.nothing<string>();
+    const nothingOnType = MaybeNS.nothing<string>();
     expectTypeOf(nothingOnType).toEqualTypeOf<Maybe<string>>();
   });
 
   describe('`of`', () => {
     test('with `null', () => {
-      const nothingFromNull = Maybe.of<string>(null);
+      const nothingFromNull = MaybeNS.of<string>(null);
       expectTypeOf(nothingFromNull).toEqualTypeOf<Maybe<string>>();
-      expect(Maybe.isJust(nothingFromNull)).toBe(false);
-      expect(Maybe.isNothing(nothingFromNull)).toBe(true);
-      expect(() => Maybe.unsafelyUnwrap(nothingFromNull)).toThrow();
+      expect(MaybeNS.isJust(nothingFromNull)).toBe(false);
+      expect(MaybeNS.isNothing(nothingFromNull)).toBe(true);
+      expect(() => MaybeNS.unsafelyUnwrap(nothingFromNull)).toThrow();
     });
 
     test('with `undefined`', () => {
-      const nothingFromUndefined = Maybe.of<number>(undefined);
+      const nothingFromUndefined = MaybeNS.of<number>(undefined);
       expectTypeOf(nothingFromUndefined).toEqualTypeOf<Maybe<number>>();
-      expect(Maybe.isJust(nothingFromUndefined)).toBe(false);
-      expect(Maybe.isNothing(nothingFromUndefined)).toBe(true);
-      expect(() => Maybe.unsafelyUnwrap(nothingFromUndefined)).toThrow();
+      expect(MaybeNS.isJust(nothingFromUndefined)).toBe(false);
+      expect(MaybeNS.isNothing(nothingFromUndefined)).toBe(true);
+      expect(() => MaybeNS.unsafelyUnwrap(nothingFromUndefined)).toThrow();
     });
 
     test('with values', () => {
-      const aJust = Maybe.of<Neat>({ neat: 'strings' });
+      const aJust = MaybeNS.of<Neat>({ neat: 'strings' });
       expectTypeOf(aJust).toEqualTypeOf<Maybe<Neat>>();
-      const aNothing = Maybe.of<Neat>(null);
+      const aNothing = MaybeNS.of<Neat>(null);
       expectTypeOf(aNothing).toEqualTypeOf<Maybe<Neat>>();
 
-      const justANumber = Maybe.of(42);
+      const justANumber = MaybeNS.of(42);
       expectTypeOf(justANumber).toEqualTypeOf<Maybe<number>>();
-      expect(Maybe.isJust(justANumber)).toBe(true);
-      expect(Maybe.isNothing(justANumber)).toBe(false);
-      expect(Maybe.unsafelyUnwrap(justANumber)).toBe(42);
+      expect(MaybeNS.isJust(justANumber)).toBe(true);
+      expect(MaybeNS.isNothing(justANumber)).toBe(false);
+      expect(MaybeNS.unsafelyUnwrap(justANumber)).toBe(42);
     });
   });
 
   describe('`fromNullable`', () => {
     test('with `null', () => {
-      const nothingFromNull = Maybe.fromNullable<string>(null);
+      const nothingFromNull = MaybeNS.fromNullable<string>(null);
       expectTypeOf(nothingFromNull).toEqualTypeOf<Maybe<string>>();
-      expect(Maybe.isJust(nothingFromNull)).toBe(false);
-      expect(Maybe.isNothing(nothingFromNull)).toBe(true);
-      expect(() => Maybe.unsafelyUnwrap(nothingFromNull)).toThrow();
+      expect(MaybeNS.isJust(nothingFromNull)).toBe(false);
+      expect(MaybeNS.isNothing(nothingFromNull)).toBe(true);
+      expect(() => MaybeNS.unsafelyUnwrap(nothingFromNull)).toThrow();
     });
 
     test('with `undefined`', () => {
-      const nothingFromUndefined = Maybe.fromNullable<number>(undefined);
+      const nothingFromUndefined = MaybeNS.fromNullable<number>(undefined);
       expectTypeOf(nothingFromUndefined).toEqualTypeOf<Maybe<number>>();
-      expect(Maybe.isJust(nothingFromUndefined)).toBe(false);
-      expect(Maybe.isNothing(nothingFromUndefined)).toBe(true);
-      expect(() => Maybe.unsafelyUnwrap(nothingFromUndefined)).toThrow();
+      expect(MaybeNS.isJust(nothingFromUndefined)).toBe(false);
+      expect(MaybeNS.isNothing(nothingFromUndefined)).toBe(true);
+      expect(() => MaybeNS.unsafelyUnwrap(nothingFromUndefined)).toThrow();
     });
 
     test('with values', () => {
-      const aJust = Maybe.fromNullable<Neat>({ neat: 'strings' });
+      const aJust = MaybeNS.fromNullable<Neat>({ neat: 'strings' });
       expectTypeOf(aJust).toEqualTypeOf<Maybe<Neat>>();
-      const aNothing = Maybe.fromNullable<Neat>(null);
+      const aNothing = MaybeNS.fromNullable<Neat>(null);
       expectTypeOf(aNothing).toEqualTypeOf<Maybe<Neat>>();
 
-      const justANumber = Maybe.fromNullable(42);
+      const justANumber = MaybeNS.fromNullable(42);
       expectTypeOf(justANumber).toEqualTypeOf<Maybe<number>>();
-      expect(Maybe.isJust(justANumber)).toBe(true);
-      expect(Maybe.isNothing(justANumber)).toBe(false);
-      expect(Maybe.unsafelyUnwrap(justANumber)).toBe(42);
+      expect(MaybeNS.isJust(justANumber)).toBe(true);
+      expect(MaybeNS.isNothing(justANumber)).toBe(false);
+      expect(MaybeNS.unsafelyUnwrap(justANumber)).toBe(42);
     });
   });
 
   test('`map`', () => {
-    const justAString = Maybe.just('string');
-    const itsLength = Maybe.map(length, justAString);
+    const justAString = MaybeNS.just('string');
+    const itsLength = MaybeNS.map(length, justAString);
     expectTypeOf(itsLength).toEqualTypeOf<Maybe<number>>();
-    expect(itsLength).toEqual(Maybe.just('string'.length));
+    expect(itsLength).toEqual(MaybeNS.just('string'.length));
 
-    const none = Maybe.nothing<string>();
-    const noLength = Maybe.map(length, none);
+    const none = MaybeNS.nothing<string>();
+    const noLength = MaybeNS.map(length, none);
     expectTypeOf(none).toEqualTypeOf<Maybe<string>>();
-    expect(noLength).toEqual(Maybe.nothing());
+    expect(noLength).toEqual(MaybeNS.nothing());
   });
 
   test('`mapOr`', () => {
-    const justAString = Maybe.of('string');
+    const justAString = MaybeNS.of('string');
 
-    expect(Maybe.mapOr(0, length, justAString)).toEqual('string'.length);
-    expect(Maybe.mapOr(0, length, Maybe.of<string>(null))).toEqual(0);
+    expect(MaybeNS.mapOr(0, length, justAString)).toEqual('string'.length);
+    expect(MaybeNS.mapOr(0, length, MaybeNS.of<string>(null))).toEqual(0);
 
-    expect(Maybe.mapOr<string, number>(0)(length)(justAString)).toEqual(
-      Maybe.mapOr(0, length, justAString)
+    expect(MaybeNS.mapOr<string, number>(0)(length)(justAString)).toEqual(
+      MaybeNS.mapOr(0, length, justAString)
     );
-    expect(Maybe.mapOr(0, length)(justAString)).toEqual(Maybe.mapOr(0, length, justAString));
+    expect(MaybeNS.mapOr(0, length)(justAString)).toEqual(MaybeNS.mapOr(0, length, justAString));
   });
 
   test('`mapOrElse`', () => {
     const theValue = 'a string';
     const theDefault = 0;
     const toDefault = () => theDefault;
-    const aJust = Maybe.just(theValue);
-    const aNothing: Maybe<string> = Maybe.nothing();
+    const aJust = MaybeNS.just(theValue);
+    const aNothing: Maybe<string> = MaybeNS.nothing();
 
-    expect(Maybe.mapOrElse(toDefault, length, aJust)).toBe(theValue.length);
-    expect(Maybe.mapOrElse(toDefault, length, aNothing)).toBe(theDefault);
+    expect(MaybeNS.mapOrElse(toDefault, length, aJust)).toBe(theValue.length);
+    expect(MaybeNS.mapOrElse(toDefault, length, aNothing)).toBe(theDefault);
 
-    expect(Maybe.mapOrElse<string, number>(toDefault)(length)(aJust)).toEqual(
-      Maybe.mapOrElse(toDefault, length, aJust)
+    expect(MaybeNS.mapOrElse<string, number>(toDefault)(length)(aJust)).toEqual(
+      MaybeNS.mapOrElse(toDefault, length, aJust)
     );
-    expect(Maybe.mapOrElse(toDefault, length)(aJust)).toEqual(
-      Maybe.mapOrElse(toDefault, length, aJust)
+    expect(MaybeNS.mapOrElse(toDefault, length)(aJust)).toEqual(
+      MaybeNS.mapOrElse(toDefault, length, aJust)
     );
   });
 
   test('`match`', () => {
     const theValue = 'a string';
-    const aJust = Maybe.just(theValue);
-    const aNothing: Maybe<string> = Maybe.nothing();
+    const aJust = MaybeNS.just(theValue);
+    const aNothing: Maybe<string> = MaybeNS.nothing();
 
     const matcher: Matcher<string, string> = {
       Just: (val) => val + ', yo',
       Nothing: () => 'rats, nothing',
     };
 
-    expect(Maybe.match(matcher, aJust)).toEqual('a string, yo');
-    expect(Maybe.match(matcher, aNothing)).toEqual('rats, nothing');
+    expect(MaybeNS.match(matcher, aJust)).toEqual('a string, yo');
+    expect(MaybeNS.match(matcher, aNothing)).toEqual('rats, nothing');
 
-    expect(Maybe.match(matcher)(aJust)).toEqual(Maybe.match(matcher, aJust));
+    expect(MaybeNS.match(matcher)(aJust)).toEqual(MaybeNS.match(matcher, aJust));
   });
 
   test('`and`', () => {
-    const aJust = Maybe.just(42);
-    const anotherJust = Maybe.just('a string');
-    const aNothing: Maybe<{}> = Maybe.nothing();
-    expect(Maybe.and(anotherJust, aJust)).toBe(anotherJust);
+    const aJust = MaybeNS.just(42);
+    const anotherJust = MaybeNS.just('a string');
+    const aNothing: Maybe<{}> = MaybeNS.nothing();
+    expect(MaybeNS.and(anotherJust, aJust)).toBe(anotherJust);
 
-    expect(Maybe.and(aNothing, aJust)).toEqual(aNothing);
-    expect(Maybe.and(aNothing, aJust)).toEqual(aNothing);
-    expect(Maybe.and(aNothing, aNothing)).toEqual(aNothing);
+    expect(MaybeNS.and(aNothing, aJust)).toEqual(aNothing);
+    expect(MaybeNS.and(aNothing, aJust)).toEqual(aNothing);
+    expect(MaybeNS.and(aNothing, aNothing)).toEqual(aNothing);
 
-    expect(Maybe.and<number, {}>(aNothing)(aJust)).toEqual(Maybe.and(aNothing, aJust));
+    expect(MaybeNS.and<number, {}>(aNothing)(aJust)).toEqual(MaybeNS.and(aNothing, aJust));
   });
 
   test('`andThen`', () => {
-    const toMaybeNumber = (x: string) => Maybe.just(Number(x));
-    const toNothing = (_: string) => Maybe.nothing<number>();
+    const toMaybeNumber = (x: string) => MaybeNS.just(Number(x));
+    const toNothing = (_: string) => MaybeNS.nothing<number>();
 
     const theValue = '42';
-    const theJust = Maybe.just(theValue);
+    const theJust = MaybeNS.just(theValue);
     const theExpectedResult = toMaybeNumber(theValue);
-    const noString = Maybe.nothing<string>();
-    const noNumber = Maybe.nothing<number>();
+    const noString = MaybeNS.nothing<string>();
+    const noNumber = MaybeNS.nothing<number>();
 
-    expect(Maybe.andThen(toMaybeNumber, theJust)).toEqual(theExpectedResult);
-    expect(Maybe.andThen(toNothing, theJust)).toEqual(noNumber);
-    expect(Maybe.andThen(toMaybeNumber, noString)).toEqual(noNumber);
-    expect(Maybe.andThen(toNothing, noString)).toEqual(noNumber);
+    expect(MaybeNS.andThen(toMaybeNumber, theJust)).toEqual(theExpectedResult);
+    expect(MaybeNS.andThen(toNothing, theJust)).toEqual(noNumber);
+    expect(MaybeNS.andThen(toMaybeNumber, noString)).toEqual(noNumber);
+    expect(MaybeNS.andThen(toNothing, noString)).toEqual(noNumber);
 
-    expect(Maybe.andThen(toMaybeNumber)(theJust)).toEqual(Maybe.andThen(toMaybeNumber, theJust));
+    expect(MaybeNS.andThen(toMaybeNumber)(theJust)).toEqual(
+      MaybeNS.andThen(toMaybeNumber, theJust)
+    );
   });
 
   test('`or`', () => {
-    const justAnswer = Maybe.of('42');
-    const justWaffles = Maybe.of('waffles');
-    const nothing: Maybe<string> = Maybe.nothing();
+    const justAnswer = MaybeNS.of('42');
+    const justWaffles = MaybeNS.of('waffles');
+    const nothing: Maybe<string> = MaybeNS.nothing();
 
-    expect(Maybe.or(justAnswer, justWaffles)).toBe(justWaffles);
-    expect(Maybe.or(nothing, justWaffles)).toBe(justWaffles);
-    expect(Maybe.or(justAnswer, nothing)).toBe(justAnswer);
-    expect(Maybe.or(nothing, nothing)).toBe(nothing);
+    expect(MaybeNS.or(justAnswer, justWaffles)).toBe(justWaffles);
+    expect(MaybeNS.or(nothing, justWaffles)).toBe(justWaffles);
+    expect(MaybeNS.or(justAnswer, nothing)).toBe(justAnswer);
+    expect(MaybeNS.or(nothing, nothing)).toBe(nothing);
 
-    expect(Maybe.or(justAnswer)(justWaffles)).toEqual(Maybe.or(justAnswer, justWaffles));
+    expect(MaybeNS.or(justAnswer)(justWaffles)).toEqual(MaybeNS.or(justAnswer, justWaffles));
   });
 
   test('`orElse`', () => {
-    const getWaffles = () => Maybe.of('waffles');
-    const just42 = Maybe.of('42');
-    expect(Maybe.orElse(getWaffles, just42)).toEqual(Maybe.just('42'));
-    expect(Maybe.orElse(getWaffles, Maybe.of(null as string | null))).toEqual(
-      Maybe.just('waffles')
+    const getWaffles = () => MaybeNS.of('waffles');
+    const just42 = MaybeNS.of('42');
+    expect(MaybeNS.orElse(getWaffles, just42)).toEqual(MaybeNS.just('42'));
+    expect(MaybeNS.orElse(getWaffles, MaybeNS.of(null as string | null))).toEqual(
+      MaybeNS.just('waffles')
     );
-    expect(Maybe.orElse(() => Maybe.of(null as string | null), just42)).toEqual(Maybe.just('42'));
+    expect(MaybeNS.orElse(() => MaybeNS.of(null as string | null), just42)).toEqual(
+      MaybeNS.just('42')
+    );
     expect(
-      Maybe.orElse(() => Maybe.of(null as string | null), Maybe.of(null as string | null))
-    ).toEqual(Maybe.nothing());
+      MaybeNS.orElse(() => MaybeNS.of(null as string | null), MaybeNS.of(null as string | null))
+    ).toEqual(MaybeNS.nothing());
 
-    expect(Maybe.orElse(getWaffles)(just42)).toEqual(Maybe.orElse(getWaffles, just42));
+    expect(MaybeNS.orElse(getWaffles)(just42)).toEqual(MaybeNS.orElse(getWaffles, just42));
   });
 
   test('`unwrap`', () => {
-    expect(Maybe.unsafelyUnwrap(Maybe.of('42'))).toBe('42');
-    expect(() => Maybe.unsafelyUnwrap(Maybe.nothing())).toThrow();
+    expect(MaybeNS.unsafelyUnwrap(MaybeNS.of('42'))).toBe('42');
+    expect(() => MaybeNS.unsafelyUnwrap(MaybeNS.nothing())).toThrow();
   });
 
   test('`unwrapOr`', () => {
     const theValue = [1, 2, 3];
     const theDefaultValue: number[] = [];
 
-    const theJust = Maybe.of(theValue);
-    const theNothing = Maybe.nothing();
+    const theJust = MaybeNS.of(theValue);
+    const theNothing = MaybeNS.nothing();
 
-    expect(Maybe.unwrapOr(theDefaultValue, theJust)).toEqual(theValue);
-    expect(Maybe.unwrapOr(theDefaultValue, theNothing)).toEqual(theDefaultValue);
+    expect(MaybeNS.unwrapOr(theDefaultValue, theJust)).toEqual(theValue);
+    expect(MaybeNS.unwrapOr(theDefaultValue, theNothing)).toEqual(theDefaultValue);
 
-    expect(Maybe.unwrapOr(theDefaultValue)(theJust)).toEqual(
-      Maybe.unwrapOr(theDefaultValue, theJust)
+    expect(MaybeNS.unwrapOr(theDefaultValue)(theJust)).toEqual(
+      MaybeNS.unwrapOr(theDefaultValue, theJust)
     );
 
     // Make sure you can unwrap to a different type, like undefined
@@ -253,119 +258,119 @@ describe('`Maybe` pure functions', () => {
   test('`unwrapOrElse`', () => {
     const val = 100;
     const getVal = () => val;
-    const just42 = Maybe.of(42);
+    const just42 = MaybeNS.of(42);
 
-    expect(Maybe.unwrapOrElse(getVal, just42)).toBe(42);
-    expect(Maybe.unwrapOrElse(getVal, Maybe.nothing())).toBe(val);
+    expect(MaybeNS.unwrapOrElse(getVal, just42)).toBe(42);
+    expect(MaybeNS.unwrapOrElse(getVal, MaybeNS.nothing())).toBe(val);
 
-    expect(Maybe.unwrapOrElse(getVal)(just42)).toEqual(Maybe.unwrapOrElse(getVal, just42));
+    expect(MaybeNS.unwrapOrElse(getVal)(just42)).toEqual(MaybeNS.unwrapOrElse(getVal, just42));
 
     // test unwrapping to undefined
     const noop = (): undefined => undefined;
-    const undefinedOr42 = Maybe.unwrapOrElse(noop, just42);
+    const undefinedOr42 = MaybeNS.unwrapOrElse(noop, just42);
     expectTypeOf(undefinedOr42).toEqualTypeOf<number | undefined>();
     expect(undefinedOr42).toEqual(42);
   });
 
   test('`toOkOrErr`', () => {
     const theValue = 'string';
-    const theJust = Maybe.of(theValue);
+    const theJust = MaybeNS.of(theValue);
     const errValue = { reason: 'such badness' };
 
-    expect(Maybe.toOkOrErr(errValue, theJust)).toEqual(ok(theValue));
-    expect(Maybe.toOkOrErr(errValue, Maybe.nothing())).toEqual(err(errValue));
+    expect(MaybeNS.toOkOrErr(errValue, theJust)).toEqual(ok(theValue));
+    expect(MaybeNS.toOkOrErr(errValue, MaybeNS.nothing())).toEqual(err(errValue));
 
-    expect(Maybe.toOkOrErr<string, typeof errValue>(errValue)(theJust)).toEqual(
-      Maybe.toOkOrErr(errValue, theJust)
+    expect(MaybeNS.toOkOrErr<string, typeof errValue>(errValue)(theJust)).toEqual(
+      MaybeNS.toOkOrErr(errValue, theJust)
     );
   });
 
   test('`toOkOrElseErr`', () => {
-    const theJust = Maybe.of(12);
+    const theJust = MaybeNS.of(12);
     const errValue = 24;
     const getErrValue = () => errValue;
 
-    expect(Maybe.toOkOrElseErr(getErrValue, theJust)).toEqual(ok(12));
-    expect(Maybe.toOkOrElseErr(getErrValue, Maybe.nothing())).toEqual(err(errValue));
+    expect(MaybeNS.toOkOrElseErr(getErrValue, theJust)).toEqual(ok(12));
+    expect(MaybeNS.toOkOrElseErr(getErrValue, MaybeNS.nothing())).toEqual(err(errValue));
 
-    expect(Maybe.toOkOrElseErr<number, number>(getErrValue)(theJust)).toEqual(
-      Maybe.toOkOrElseErr(getErrValue, theJust)
+    expect(MaybeNS.toOkOrElseErr<number, number>(getErrValue)(theJust)).toEqual(
+      MaybeNS.toOkOrElseErr(getErrValue, theJust)
     );
   });
 
   test('`fromResult`', () => {
     const value = 1000;
     const anOk = ok(value);
-    expect(Maybe.fromResult(anOk)).toEqual(Maybe.just(value));
+    expect(MaybeNS.fromResult(anOk)).toEqual(MaybeNS.just(value));
 
     const reason = 'oh teh noes';
     const anErr = err(reason);
-    expect(Maybe.fromResult(anErr)).toEqual(Maybe.nothing());
+    expect(MaybeNS.fromResult(anErr)).toEqual(MaybeNS.nothing());
   });
 
   test('`toString`', () => {
-    expect(Maybe.toString(Maybe.of(42))).toEqual('Just(42)');
-    expect(Maybe.toString(Maybe.nothing<string>())).toEqual('Nothing');
+    expect(MaybeNS.toString(MaybeNS.of(42))).toEqual('Just(42)');
+    expect(MaybeNS.toString(MaybeNS.nothing<string>())).toEqual('Nothing');
   });
 
   test('`toJSON`', () => {
-    expect(Maybe.toJSON(Maybe.of(42))).toEqual({ variant: Maybe.Variant.Just, value: 42 });
-    expect(Maybe.toJSON(Maybe.nothing())).toEqual({ variant: Maybe.Variant.Nothing });
-    expect(Maybe.toJSON(Maybe.of({ a: 42, b: null }))).toEqual({
-      variant: Maybe.Variant.Just,
+    expect(MaybeNS.toJSON(MaybeNS.of(42))).toEqual({ variant: MaybeNS.Variant.Just, value: 42 });
+    expect(MaybeNS.toJSON(MaybeNS.nothing())).toEqual({ variant: MaybeNS.Variant.Nothing });
+    expect(MaybeNS.toJSON(MaybeNS.of({ a: 42, b: null }))).toEqual({
+      variant: MaybeNS.Variant.Just,
       value: { a: 42, b: null },
     });
   });
 
   test('`toJSON` through serialization', () => {
-    const actualSerializedJust = JSON.stringify(Maybe.of(42));
-    const actualSerializedNothing = JSON.stringify(Maybe.nothing());
-    const expectedSerializedJust = JSON.stringify({ variant: Maybe.Variant.Just, value: 42 });
-    const expectedSerializedNothing = JSON.stringify({ variant: Maybe.Variant.Nothing });
+    const actualSerializedJust = JSON.stringify(MaybeNS.of(42));
+    const actualSerializedNothing = JSON.stringify(MaybeNS.nothing());
+    const expectedSerializedJust = JSON.stringify({ variant: MaybeNS.Variant.Just, value: 42 });
+    const expectedSerializedNothing = JSON.stringify({ variant: MaybeNS.Variant.Nothing });
 
     expect(actualSerializedJust).toEqual(expectedSerializedJust);
     expect(actualSerializedNothing).toEqual(expectedSerializedNothing);
   });
 
   test('`equals`', () => {
-    const a = Maybe.of<string>('a');
-    const b = Maybe.of<string>('a');
-    const c = Maybe.nothing<string>();
-    const d = Maybe.nothing<string>();
-    expect(Maybe.equals(b, a)).toBe(true);
-    expect(Maybe.equals(b)(a)).toBe(true);
-    expect(Maybe.equals(c, b)).toBe(false);
-    expect(Maybe.equals(c)(b)).toBe(false);
-    expect(Maybe.equals(d, c)).toBe(true);
-    expect(Maybe.equals(d)(c)).toBe(true);
+    const a = MaybeNS.of<string>('a');
+    const b = MaybeNS.of<string>('a');
+    const c = MaybeNS.nothing<string>();
+    const d = MaybeNS.nothing<string>();
+    expect(MaybeNS.equals(b, a)).toBe(true);
+    expect(MaybeNS.equals(b)(a)).toBe(true);
+    expect(MaybeNS.equals(c, b)).toBe(false);
+    expect(MaybeNS.equals(c)(b)).toBe(false);
+    expect(MaybeNS.equals(d, c)).toBe(true);
+    expect(MaybeNS.equals(d)(c)).toBe(true);
   });
 
   test('`ap`', () => {
     const add = (a: number) => (b: number) => a + b;
-    const maybeAdd = Maybe.of(add);
+    const maybeAdd = MaybeNS.of(add);
 
-    expect(maybeAdd.ap(Maybe.of(1)).ap(Maybe.of(5))).toEqual(Maybe.of(6));
+    expect(maybeAdd.ap(MaybeNS.of(1)).ap(MaybeNS.of(5))).toEqual(MaybeNS.of(6));
 
-    const maybeAdd3 = Maybe.of<(val: number) => number>(add(3));
-    const val = Maybe.of(2);
-    const nada: Maybe<number> = Maybe.of(null as number | null | undefined);
+    const maybeAdd3 = MaybeNS.of<(val: number) => number>(add(3));
+    const val = MaybeNS.of(2);
+    const nada: Maybe<number> = MaybeNS.of(null as number | null | undefined);
 
-    expect(Maybe.ap(maybeAdd3, val)).toEqual(Maybe.just(5));
-    expect(Maybe.ap(maybeAdd3)(nada)).toEqual(Maybe.nothing());
+    expect(MaybeNS.ap(maybeAdd3, val)).toEqual(MaybeNS.just(5));
+    expect(MaybeNS.ap(maybeAdd3)(nada)).toEqual(MaybeNS.nothing());
   });
 
   test('isInstance', () => {
-    const something: unknown = Maybe.just('yay');
-    expect(Maybe.isInstance(something)).toBe(true);
+    const something: unknown = MaybeNS.just('yay');
+    expect(MaybeNS.isInstance(something)).toBe(true);
 
-    const nothing = Maybe.nothing();
-    expect(Maybe.isInstance(nothing)).toBe(true);
+    const nothing = MaybeNS.nothing();
+    expect(MaybeNS.isInstance(nothing)).toBe(true);
 
     const nada = null;
-    expect(Maybe.isInstance(nada)).toBe(false);
+    expect(MaybeNS.isInstance(nada)).toBe(false);
 
     const obj = { random: 'nonsense' };
-    expect(Maybe.isInstance(obj)).toBe(false);
+    expect(MaybeNS.isInstance(obj)).toBe(false);
   });
 
   test('`find`', () => {
@@ -374,14 +379,14 @@ describe('`Maybe` pure functions', () => {
 
     const empty: number[] = [];
 
-    expect(Maybe.find(pred, empty).variant).toBe(Maybe.Variant.Nothing);
+    expect(MaybeNS.find(pred, empty).variant).toBe(MaybeNS.Variant.Nothing);
 
     const missingTheValue = [1, 2, 3];
-    expect(Maybe.find(pred, missingTheValue).variant).toBe(Maybe.Variant.Nothing);
+    expect(MaybeNS.find(pred, missingTheValue).variant).toBe(MaybeNS.Variant.Nothing);
 
     const hasTheValue = [1, 2, 3, theValue];
-    const result = Maybe.find(pred, hasTheValue);
-    expect(result.variant).toBe(Maybe.Variant.Just);
+    const result = MaybeNS.find(pred, hasTheValue);
+    expect(result.variant).toBe(MaybeNS.Variant.Just);
     expect((result as Just<number>).value).toBe(theValue);
 
     type Item = { count: number; name: string };
@@ -393,82 +398,82 @@ describe('`Maybe` pure functions', () => {
       { count: 1, name: 'potato' },
       { count: 10, name: 'waffles' },
     ];
-    const findAtLeast5 = Maybe.find(({ count }: Item) => count > 5);
+    const findAtLeast5 = MaybeNS.find(({ count }: Item) => count > 5);
     const found = findAtLeast5(array);
-    expect(found.variant).toBe(Maybe.Variant.Just);
+    expect(found.variant).toBe(MaybeNS.Variant.Just);
     expect((found as Just<Item>).value).toEqual(array[1]);
   });
 
   test('`head`', () => {
-    expect(Maybe.head([])).toEqual(Maybe.nothing());
-    expect(Maybe.head([1])).toEqual(Maybe.just(1));
-    expect(Maybe.head([1, 2, 3])).toEqual(Maybe.just(1));
+    expect(MaybeNS.head([])).toEqual(MaybeNS.nothing());
+    expect(MaybeNS.head([1])).toEqual(MaybeNS.just(1));
+    expect(MaybeNS.head([1, 2, 3])).toEqual(MaybeNS.just(1));
   });
 
   test('`last`', () => {
-    expect(Maybe.last([])).toEqual(Maybe.nothing());
-    expect(Maybe.last([1])).toEqual(Maybe.just(1));
-    expect(Maybe.last([1, 2, 3])).toEqual(Maybe.just(3));
+    expect(MaybeNS.last([])).toEqual(MaybeNS.nothing());
+    expect(MaybeNS.last([1])).toEqual(MaybeNS.just(1));
+    expect(MaybeNS.last([1, 2, 3])).toEqual(MaybeNS.just(3));
   });
 
   describe('`arrayTranspose`', () => {
     test('with basic types', () => {
       type ExpectedOutputType = Maybe<Array<string | number>>;
 
-      let onlyJusts = [Maybe.just(2), Maybe.just('three')];
-      let onlyJustsAll = Maybe.arrayTranspose(onlyJusts);
+      let onlyJusts = [MaybeNS.just(2), MaybeNS.just('three')];
+      let onlyJustsAll = MaybeNS.arrayTranspose(onlyJusts);
       expectTypeOf(onlyJustsAll).toEqualTypeOf<ExpectedOutputType>();
-      expect(onlyJustsAll).toEqual(Maybe.just([2, 'three']));
+      expect(onlyJustsAll).toEqual(MaybeNS.just([2, 'three']));
 
-      let hasNothing = [Maybe.just(2), Maybe.nothing<string>()];
-      let hasNothingAll = Maybe.arrayTranspose(hasNothing);
+      let hasNothing = [MaybeNS.just(2), MaybeNS.nothing<string>()];
+      let hasNothingAll = MaybeNS.arrayTranspose(hasNothing);
       expectTypeOf(hasNothingAll).toEqualTypeOf<ExpectedOutputType>();
-      expect(hasNothingAll).toEqual(Maybe.nothing());
+      expect(hasNothingAll).toEqual(MaybeNS.nothing());
     });
 
     test('with arrays', () => {
       type ExpectedOutputType = Maybe<Array<number | string[]>>;
 
-      let nestedArrays = [Maybe.just(1), Maybe.just(['two', 'three'])];
-      let nestedArraysAll = Maybe.arrayTranspose(nestedArrays);
+      let nestedArrays = [MaybeNS.just(1), MaybeNS.just(['two', 'three'])];
+      let nestedArraysAll = MaybeNS.arrayTranspose(nestedArrays);
 
       expectTypeOf(nestedArraysAll).toEqualTypeOf<ExpectedOutputType>();
-      expect(nestedArraysAll).toEqual(Maybe.just([1, ['two', 'three']]));
+      expect(nestedArraysAll).toEqual(MaybeNS.just([1, ['two', 'three']]));
     });
 
     test('`tuple`', () => {
       type Tuple2 = [Maybe<string>, Maybe<number>];
-      let invalid: Tuple2 = [Maybe.just('wat'), Maybe.nothing()];
-      const invalidResult = Maybe.arrayTranspose(invalid);
-      expect(invalidResult).toEqual(Maybe.nothing());
+      let invalid: Tuple2 = [MaybeNS.just('wat'), MaybeNS.nothing()];
+      const invalidResult = MaybeNS.arrayTranspose(invalid);
+      expect(invalidResult).toEqual(MaybeNS.nothing());
 
       type Tuple3 = [Maybe<string>, Maybe<number>, Maybe<{ neat: string }>];
-      let valid: Tuple3 = [Maybe.just('hey'), Maybe.just(4), Maybe.just({ neat: 'yeah' })];
-      const result = Maybe.arrayTranspose(valid);
-      expect(result).toEqual(Maybe.just(['hey', 4, { neat: 'yeah' }]));
+      let valid: Tuple3 = [MaybeNS.just('hey'), MaybeNS.just(4), MaybeNS.just({ neat: 'yeah' })];
+      const result = MaybeNS.arrayTranspose(valid);
+      expect(result).toEqual(MaybeNS.just(['hey', 4, { neat: 'yeah' }]));
       expectTypeOf(result).toEqualTypeOf<Maybe<[string, number, { neat: string }]>>();
     });
   });
 
   describe('transpose', () => {
     test('Just(Ok(T))', () => {
-      let maybe = Maybe.just(ok<number, string>(12));
-      let transposed = Maybe.transpose(maybe);
-      expect(transposed).toStrictEqual(ok(Maybe.just(12)));
+      let maybe = MaybeNS.just(ok<number, string>(12));
+      let transposed = MaybeNS.transpose(maybe);
+      expect(transposed).toStrictEqual(ok(MaybeNS.just(12)));
       expectTypeOf(transposed).toEqualTypeOf<Result<Maybe<number>, string>>();
     });
 
     test('Just(Err(E))', () => {
-      let maybe = Maybe.just(err<number, string>('whoops'));
-      let transposed = Maybe.transpose(maybe);
+      let maybe = MaybeNS.just(err<number, string>('whoops'));
+      let transposed = MaybeNS.transpose(maybe);
       expect(transposed).toStrictEqual(err('whoops'));
       expectTypeOf(transposed).toEqualTypeOf<Result<Maybe<number>, string>>();
     });
 
     test('Nothing', () => {
-      let maybe = Maybe.nothing<Result<number, string>>();
-      let transposed = Maybe.transpose(maybe);
-      expect(transposed).toStrictEqual(ok(Maybe.nothing()));
+      let maybe = MaybeNS.nothing<Result<number, string>>();
+      let transposed = MaybeNS.transpose(maybe);
+      expect(transposed).toStrictEqual(ok(MaybeNS.nothing()));
       expectTypeOf(transposed).toEqualTypeOf<Result<Maybe<number>, string>>();
     });
   });
@@ -476,54 +481,54 @@ describe('`Maybe` pure functions', () => {
   test('`property`', () => {
     type Person = { name?: string };
     let chris: Person = { name: 'chris' };
-    expect(Maybe.property('name', chris)).toEqual(Maybe.just(chris.name));
+    expect(MaybeNS.property('name', chris)).toEqual(MaybeNS.just(chris.name));
 
     let nobody: Person = {};
-    expect(Maybe.property('name', nobody)).toEqual(Maybe.nothing());
+    expect(MaybeNS.property('name', nobody)).toEqual(MaybeNS.nothing());
 
     type Dict<T> = { [key: string]: T };
     let dict: Dict<string> = { quux: 'warble' };
-    expect(Maybe.property('quux', dict)).toEqual(Maybe.just('warble'));
-    expect(Maybe.property('wat', dict)).toEqual(Maybe.nothing());
+    expect(MaybeNS.property('quux', dict)).toEqual(MaybeNS.just('warble'));
+    expect(MaybeNS.property('wat', dict)).toEqual(MaybeNS.nothing());
   });
 
   test('`get`', () => {
     type Person = { name?: string };
     let chris: Person = { name: 'chris' };
-    let justChris: Maybe<Person> = Maybe.just(chris);
-    expect(Maybe.get('name', justChris)).toEqual(Maybe.just(chris.name));
+    let justChris: Maybe<Person> = MaybeNS.just(chris);
+    expect(MaybeNS.get('name', justChris)).toEqual(MaybeNS.just(chris.name));
 
-    let nobody: Maybe<Person> = Maybe.nothing();
-    expect(Maybe.get('name', nobody)).toEqual(Maybe.nothing());
+    let nobody: Maybe<Person> = MaybeNS.nothing();
+    expect(MaybeNS.get('name', nobody)).toEqual(MaybeNS.nothing());
 
     type Dict<T> = { [key: string]: T };
-    let dict = Maybe.just({ quux: 'warble' } as Dict<string>);
-    expect(Maybe.get('quux', dict)).toEqual(Maybe.just('warble'));
-    expect(Maybe.get('wat', dict)).toEqual(Maybe.nothing());
+    let dict = MaybeNS.just({ quux: 'warble' } as Dict<string>);
+    expect(MaybeNS.get('quux', dict)).toEqual(MaybeNS.just('warble'));
+    expect(MaybeNS.get('wat', dict)).toEqual(MaybeNS.nothing());
   });
 
   test('`wrapReturn`', () => {
     const empty = '';
-    const emptyResult = Maybe.nothing();
+    const emptyResult = MaybeNS.nothing();
 
     const full = 'hello';
-    const fullResult = Maybe.just(full.length);
+    const fullResult = MaybeNS.just(full.length);
 
     const mayBeNull = (s: string): number | null => (s.length > 0 ? s.length : null);
-    const mayNotBeNull = Maybe.wrapReturn(mayBeNull);
+    const mayNotBeNull = MaybeNS.wrapReturn(mayBeNull);
 
     expect(mayNotBeNull(empty)).toEqual(emptyResult);
     expect(mayNotBeNull(full)).toEqual(fullResult);
 
     const mayBeUndefined = (s: string): number | undefined => (s.length > 0 ? s.length : undefined);
-    const mayNotBeUndefined = Maybe.wrapReturn(mayBeUndefined);
+    const mayNotBeUndefined = MaybeNS.wrapReturn(mayBeUndefined);
 
     expect(mayNotBeUndefined(empty)).toEqual(emptyResult);
     expect(mayNotBeUndefined(full)).toEqual(fullResult);
 
     const returnsNullable = (): string | null => null;
 
-    const querySelector = Maybe.wrapReturn(returnsNullable);
+    const querySelector = MaybeNS.wrapReturn(returnsNullable);
     expectTypeOf(querySelector).toEqualTypeOf<() => Maybe<string>>();
   });
 });
@@ -532,25 +537,25 @@ describe('`Maybe` pure functions', () => {
 // know to be correct from other tests. Instead, this test just checks whether
 // the types are narrowed as they should be.
 test('narrowing', () => {
-  const oneJust = Maybe.of(Unit);
+  const oneJust = MaybeNS.of(Unit);
   if (oneJust.isJust()) {
     expectTypeOf(oneJust).toEqualTypeOf<Just<Unit>>();
     expect(oneJust.value).toBeDefined();
   }
 
   // As above, narrowing directly on the type rather than with the lookup.
-  const anotherJust = Maybe.of(Unit);
+  const anotherJust = MaybeNS.of(Unit);
   if (anotherJust.variant === Variant.Just) {
     expectTypeOf(anotherJust).toEqualTypeOf<Just<Unit>>();
     expect(anotherJust.value).toBeDefined();
   }
 
-  const oneNothing = Maybe.nothing();
+  const oneNothing = MaybeNS.nothing();
   if (oneNothing.isNothing()) {
     expectTypeOf(oneNothing).toEqualTypeOf<Nothing<unknown>>();
   }
 
-  const anotherNothing = Maybe.nothing();
+  const anotherNothing = MaybeNS.nothing();
   if (anotherNothing.variant === Variant.Nothing) {
     expectTypeOf(anotherNothing).toEqualTypeOf<Nothing<unknown>>();
   }
@@ -558,46 +563,46 @@ test('narrowing', () => {
   expect('this type checked, hooray').toBeTruthy();
 });
 
-describe('`Maybe.Just` class', () => {
+describe('`MaybeNS.Just` class', () => {
   test('constructor', () => {
-    const theJust = new Maybe.Just([]);
-    expect(theJust).toBeInstanceOf(Maybe.Just);
+    const theJust = new MaybeNS.Just([]);
+    expect(theJust).toBeInstanceOf(MaybeNS.Just);
   });
 
   test('`value` property', () => {
     const val = 'hallo';
-    const theJust = new Maybe.Just(val);
+    const theJust = new MaybeNS.Just(val);
     expect(theJust.value).toBe(val);
   });
 
   test('`unwrap` static method', () => {
     const val = 42;
-    const theJust = new Maybe.Just(42);
+    const theJust = new MaybeNS.Just(42);
     expect(Just.unwrap(theJust)).toEqual(val);
   });
 
   test('`isJust` method', () => {
-    const theJust = new Maybe.Just([]);
+    const theJust = new MaybeNS.Just([]);
     expect(theJust.isJust()).toBe(true);
   });
 
   test('`isNothing` method', () => {
-    const theJust = new Maybe.Just([]);
+    const theJust = new MaybeNS.Just([]);
     expect(theJust.isNothing()).toBe(false);
   });
 
   test('`map` method', () => {
     const plus2 = (x: number) => x + 2;
     const theValue = 12;
-    const theJust = new Maybe.Just(theValue);
-    const theResult = new Maybe.Just(plus2(theValue));
+    const theJust = new MaybeNS.Just(theValue);
+    const theResult = new MaybeNS.Just(plus2(theValue));
 
     expect(theJust.map(plus2)).toEqual(theResult);
   });
 
   test('`mapOr` method', () => {
     const theValue = 42;
-    const theJust = new Maybe.Just(42);
+    const theJust = new MaybeNS.Just(42);
     const theDefault = 1;
     const double = (n: number) => n * 2;
 
@@ -606,7 +611,7 @@ describe('`Maybe.Just` class', () => {
 
   test('`mapOrElse` method', () => {
     const theValue = 'this is a string';
-    const theJust = new Maybe.Just(theValue);
+    const theJust = new MaybeNS.Just(theValue);
     const aDefault = () => 0;
 
     expect(theJust.mapOrElse(aDefault, length)).toEqual(length(theValue));
@@ -614,7 +619,7 @@ describe('`Maybe.Just` class', () => {
 
   test('`match` method', () => {
     const theValue = 'this is a string';
-    const theJust = new Maybe.Just(theValue);
+    const theJust = new MaybeNS.Just(theValue);
 
     expect(
       theJust.match({
@@ -625,25 +630,25 @@ describe('`Maybe.Just` class', () => {
   });
 
   test('`or` method', () => {
-    const theJust = new Maybe.Just({ neat: 'thing' });
-    const anotherJust = new Maybe.Just({ neat: 'waffles' });
-    const aNothing = new Maybe.Nothing<Neat>();
+    const theJust = new MaybeNS.Just({ neat: 'thing' });
+    const anotherJust = new MaybeNS.Just({ neat: 'waffles' });
+    const aNothing = new MaybeNS.Nothing<Neat>();
 
     expect(theJust.or(anotherJust)).toEqual(theJust);
     expect(theJust.or(aNothing)).toEqual(theJust);
   });
 
   test('`orElse` method', () => {
-    const theJust = new Maybe.Just(12);
-    const getAnotherJust = () => Maybe.just(42);
+    const theJust = new MaybeNS.Just(12);
+    const getAnotherJust = () => MaybeNS.just(42);
 
     expect(theJust.orElse(getAnotherJust)).toEqual(theJust);
   });
 
   test('`and` method', () => {
-    const theJust = new Maybe.Just({ neat: 'thing' });
-    const theConsequentJust = new Maybe.Just(['amazing', { tuple: 'thing' }]);
-    const aNothing = new Maybe.Nothing();
+    const theJust = new MaybeNS.Just({ neat: 'thing' });
+    const theConsequentJust = new MaybeNS.Just(['amazing', { tuple: 'thing' }]);
+    const aNothing = new MaybeNS.Nothing();
 
     expect(theJust.and(theConsequentJust)).toEqual(theConsequentJust);
     expect(theJust.and(aNothing)).toEqual(aNothing);
@@ -651,9 +656,9 @@ describe('`Maybe.Just` class', () => {
 
   test('`andThen` method', () => {
     const theValue = { Jedi: 'Luke Skywalker' };
-    const theJust = new Maybe.Just(theValue);
+    const theJust = new MaybeNS.Just(theValue);
     const toDescription = (dict: { [key: string]: string }) =>
-      new Maybe.Just(
+      new MaybeNS.Just(
         Object.keys(dict)
           .map((key) => `${dict[key]} is a ${key}`)
           .join('\n')
@@ -665,14 +670,14 @@ describe('`Maybe.Just` class', () => {
 
   test('`unwrap` method', () => {
     const theValue = 'value';
-    const theJust = new Maybe.Just(theValue);
+    const theJust = new MaybeNS.Just(theValue);
     expect(theJust.unsafelyUnwrap()).toEqual(theValue);
     expect(() => theJust.unsafelyUnwrap()).not.toThrow();
   });
 
   test('`unwrapOr` method', () => {
     const theValue = [1, 2, 3];
-    const theJust = new Maybe.Just(theValue);
+    const theJust = new MaybeNS.Just(theValue);
     const theDefaultValue: number[] = [];
 
     expect(theJust.unwrapOr(theDefaultValue)).toEqual(theValue);
@@ -680,20 +685,20 @@ describe('`Maybe.Just` class', () => {
 
   test('`unwrapOrElse` method', () => {
     const value = 'value';
-    const theJust = new Maybe.Just(value);
+    const theJust = new MaybeNS.Just(value);
     expect(theJust.unwrapOrElse(() => 'other value')).toEqual(value);
   });
 
   test('`toOkOrErr` method', () => {
     const value = 'string';
-    const theJust = new Maybe.Just(value);
+    const theJust = new MaybeNS.Just(value);
     const errValue = { reason: 'such badness' };
     expect(theJust.toOkOrErr(errValue)).toEqual(ok(value));
   });
 
   test('`toOkOrElseErr` method', () => {
     const value = ['neat'];
-    const theJust = new Maybe.Just(value);
+    const theJust = new MaybeNS.Just(value);
     const errValue = 24;
     const getErrValue = () => errValue;
 
@@ -701,22 +706,25 @@ describe('`Maybe.Just` class', () => {
   });
 
   test('`toString` method', () => {
-    expect(Maybe.of(42).toString()).toEqual('Just(42)');
+    expect(MaybeNS.of(42).toString()).toEqual('Just(42)');
   });
 
   test('`toJSON` method', () => {
-    expect(Maybe.of({ x: 42 }).toJSON()).toEqual({ variant: Maybe.Variant.Just, value: { x: 42 } });
-    expect(Maybe.of(Maybe.of(42)).toJSON()).toEqual({
-      variant: Maybe.Variant.Just,
-      value: { variant: Maybe.Variant.Just, value: 42 },
+    expect(MaybeNS.of({ x: 42 }).toJSON()).toEqual({
+      variant: MaybeNS.Variant.Just,
+      value: { x: 42 },
+    });
+    expect(MaybeNS.of(MaybeNS.of(42)).toJSON()).toEqual({
+      variant: MaybeNS.Variant.Just,
+      value: { variant: MaybeNS.Variant.Just, value: 42 },
     });
   });
 
   test('`equals` method', () => {
-    const a = new Maybe.Just('a');
-    const b = new Maybe.Just('a');
-    const c = new Maybe.Just('b');
-    const d = new Maybe.Nothing<string>();
+    const a = new MaybeNS.Just('a');
+    const b = new MaybeNS.Just('a');
+    const c = new MaybeNS.Just('b');
+    const d = new MaybeNS.Nothing<string>();
     expect(a.equals(b)).toBe(true);
     expect(b.equals(c)).toBe(false);
     expect(c.equals(d)).toBe(false);
@@ -724,58 +732,58 @@ describe('`Maybe.Just` class', () => {
 
   test('`ap` method', () => {
     const toString = (a: number) => a.toString();
-    const fn: Maybe<typeof toString> = new Maybe.Just(toString);
-    const val = new Maybe.Just(3);
+    const fn: Maybe<typeof toString> = new MaybeNS.Just(toString);
+    const val = new MaybeNS.Just(3);
 
     const result = fn.ap(val);
 
-    expect(result.equals(Maybe.of('3'))).toBe(true);
+    expect(result.equals(MaybeNS.of('3'))).toBe(true);
   });
 
   test('`property` method', () => {
     type DeepType = { something?: { with?: { deeper?: { 'key names'?: string } } } };
 
     const allSet: DeepType = { something: { with: { deeper: { 'key names': 'like this' } } } };
-    const deepResult = new Maybe.Just(allSet)
+    const deepResult = new MaybeNS.Just(allSet)
       .get('something')
       .get('with')
       .get('deeper')
       .get('key names');
-    expect(deepResult).toEqual(Maybe.just('like this'));
+    expect(deepResult).toEqual(MaybeNS.just('like this'));
 
     const allEmpty: DeepType = {};
-    const emptyResult = new Maybe.Just(allEmpty)
+    const emptyResult = new MaybeNS.Just(allEmpty)
       .get('something')
       .get('with')
       .get('deeper')
       .get('key names');
-    expect(emptyResult).toEqual(Maybe.nothing());
+    expect(emptyResult).toEqual(MaybeNS.nothing());
   });
 });
 
-describe('`Maybe.Nothing` class', () => {
+describe('`MaybeNS.Nothing` class', () => {
   test('constructor', () => {
-    const theNothing = new Maybe.Nothing();
-    expect(theNothing).toBeInstanceOf(Maybe.Nothing);
+    const theNothing = new MaybeNS.Nothing();
+    expect(theNothing).toBeInstanceOf(MaybeNS.Nothing);
   });
 
   test('`isJust` method', () => {
-    const theNothing = new Maybe.Nothing();
+    const theNothing = new MaybeNS.Nothing();
     expect(theNothing.isJust()).toBe(false);
   });
 
   test('`isNothing` method', () => {
-    const theNothing = new Maybe.Nothing();
+    const theNothing = new MaybeNS.Nothing();
     expect(theNothing.isNothing()).toBe(true);
   });
 
   test('`map` method', () => {
-    const theNothing = new Maybe.Nothing<string>();
+    const theNothing = new MaybeNS.Nothing<string>();
     expect(theNothing.map(length)).toEqual(theNothing);
   });
 
   test('`mapOr` method', () => {
-    const theNothing = new Maybe.Nothing<number>();
+    const theNothing = new MaybeNS.Nothing<number>();
     const theDefaultValue = 'yay';
     expect(theNothing.mapOr(theDefaultValue, String)).toEqual(theDefaultValue);
   });
@@ -784,12 +792,12 @@ describe('`Maybe.Nothing` class', () => {
     const theDefaultValue = 'potatoes';
     const getDefaultValue = () => theDefaultValue;
     const getNeat = (x: Neat) => x.neat;
-    const theNothing = new Maybe.Nothing<Neat>();
+    const theNothing = new MaybeNS.Nothing<Neat>();
     expect(theNothing.mapOrElse(getDefaultValue, getNeat)).toBe(theDefaultValue);
   });
 
   test('`match` method', () => {
-    const nietzsche = Maybe.nothing();
+    const nietzsche = MaybeNS.nothing();
     const soDeepMan = [
       'Whoever fights monsters should see to it that in the process he does not become a monster.',
       'And if you gaze long enough into an abyss, the abyss will gaze back into you.',
@@ -804,61 +812,61 @@ describe('`Maybe.Nothing` class', () => {
   });
 
   test('`or` method', () => {
-    const theNothing = new Maybe.Nothing<boolean>(); // the worst: optional booleans!
-    const theDefaultValue = Maybe.just(false);
+    const theNothing = new MaybeNS.Nothing<boolean>(); // the worst: optional booleans!
+    const theDefaultValue = MaybeNS.just(false);
 
     expect(theNothing.or(theDefaultValue)).toBe(theDefaultValue);
   });
 
   test('`orElse` method', () => {
-    const theNothing = new Maybe.Nothing<{ here: string[] }>();
-    const justTheFallback = Maybe.just({ here: ['to', 'see'] });
+    const theNothing = new MaybeNS.Nothing<{ here: string[] }>();
+    const justTheFallback = MaybeNS.just({ here: ['to', 'see'] });
     const getTheFallback = () => justTheFallback;
 
     expect(theNothing.orElse(getTheFallback)).toEqual(justTheFallback);
   });
 
   test('`and` method', () => {
-    const theNothing = new Maybe.Nothing<string[]>();
-    const theConsequentJust = new Maybe.Just('blaster bolts');
-    const anotherNothing = new Maybe.Nothing<string>();
+    const theNothing = new MaybeNS.Nothing<string[]>();
+    const theConsequentJust = new MaybeNS.Just('blaster bolts');
+    const anotherNothing = new MaybeNS.Nothing<string>();
     expect(theNothing.and(theConsequentJust)).toEqual(theNothing);
     expect(theNothing.and(anotherNothing)).toEqual(theNothing);
   });
 
   test('`andThen` method', () => {
-    const theNothing = new Maybe.Nothing();
+    const theNothing = new MaybeNS.Nothing();
     const theDefaultValue = 'string';
-    const getDefaultValue = () => Maybe.just(theDefaultValue);
+    const getDefaultValue = () => MaybeNS.just(theDefaultValue);
 
     expect(theNothing.andThen(getDefaultValue)).toEqual(theNothing);
   });
 
   test('`unsafelyUnwrap` method', () => {
-    const noStuffAtAll = new Maybe.Nothing();
+    const noStuffAtAll = new MaybeNS.Nothing();
     expect(() => noStuffAtAll.unsafelyUnwrap()).toThrow();
   });
 
   test('`unwrapOr` method', () => {
-    const theNothing = new Maybe.Nothing<number[]>();
+    const theNothing = new MaybeNS.Nothing<number[]>();
     const theDefaultValue: number[] = [];
     expect(theNothing.unwrapOr(theDefaultValue)).toEqual(theDefaultValue);
   });
 
   test('`unwrapOrElse` method', () => {
-    const theNothing = new Maybe.Nothing();
+    const theNothing = new MaybeNS.Nothing();
     const theDefaultValue = 'it be all fine tho';
     expect(theNothing.unwrapOrElse(() => theDefaultValue)).toEqual(theDefaultValue);
   });
 
   test('`toOkOrErr` method', () => {
-    const theNothing = new Maybe.Nothing();
+    const theNothing = new MaybeNS.Nothing();
     const errValue = { reason: 'such badness' };
     expect(theNothing.toOkOrErr(errValue)).toEqual(err(errValue));
   });
 
   test('`toOkOrElseErr` method', () => {
-    const theNothing = new Maybe.Nothing();
+    const theNothing = new MaybeNS.Nothing();
     const errValue = 24;
     const getErrValue = () => errValue;
 
@@ -866,28 +874,28 @@ describe('`Maybe.Nothing` class', () => {
   });
 
   test('`toString` method', () => {
-    expect(Maybe.nothing().toString()).toEqual('Nothing');
+    expect(MaybeNS.nothing().toString()).toEqual('Nothing');
   });
 
   test('`toJSON` method', () => {
-    expect(Maybe.nothing().toJSON()).toEqual({ variant: Maybe.Variant.Nothing });
-    expect(Maybe.of(Maybe.nothing()).toJSON()).toEqual({
-      variant: Maybe.Variant.Just,
-      value: { variant: Maybe.Variant.Nothing },
+    expect(MaybeNS.nothing().toJSON()).toEqual({ variant: MaybeNS.Variant.Nothing });
+    expect(MaybeNS.of(MaybeNS.nothing()).toJSON()).toEqual({
+      variant: MaybeNS.Variant.Just,
+      value: { variant: MaybeNS.Variant.Nothing },
     });
   });
 
   test('`equals` method', () => {
-    const a = new Maybe.Just<string>('a');
-    const b = new Maybe.Nothing<string>();
-    const c = new Maybe.Nothing<string>();
+    const a = new MaybeNS.Just<string>('a');
+    const b = new MaybeNS.Nothing<string>();
+    const c = new MaybeNS.Nothing<string>();
     expect(a.equals(b)).toBe(false);
     expect(b.equals(c)).toBe(true);
   });
 
   test('`ap` method', () => {
-    const fn = new Maybe.Nothing<(val: string) => number>();
-    const val = new Maybe.Just('three');
+    const fn = new MaybeNS.Nothing<(val: string) => number>();
+    const val = new MaybeNS.Just('three');
 
     const result = fn.ap(val);
 
@@ -897,22 +905,22 @@ describe('`Maybe.Nothing` class', () => {
   test('`property` method', () => {
     type DeepType = { something?: { with?: { deeper?: { 'key names'?: string } } } };
 
-    const result = new Maybe.Nothing<DeepType>()
+    const result = new MaybeNS.Nothing<DeepType>()
       .get('something')
       .get('with')
       .get('deeper')
       .get('key names');
-    expect(result).toEqual(Maybe.nothing());
+    expect(result).toEqual(MaybeNS.nothing());
   });
 });
 
 test('`Maybe` classes interacting', () => {
-  const aMaybe: Maybe<string> = Maybe.nothing();
+  const aMaybe: Maybe<string> = MaybeNS.nothing();
   const mapped = aMaybe.map(length);
-  expect(mapped).toBeInstanceOf(Maybe.Nothing);
-  expect(mapped).not.toBeInstanceOf(Maybe.Just);
+  expect(mapped).toBeInstanceOf(MaybeNS.Nothing);
+  expect(mapped).not.toBeInstanceOf(MaybeNS.Just);
 
-  const anotherMaybe: Maybe<number> = Maybe.just(10);
+  const anotherMaybe: Maybe<number> = MaybeNS.just(10);
   const anotherMapped = anotherMaybe.mapOr('nada', (n) => `The number was ${n}`);
   expect(anotherMapped).toEqual('The number was 10');
 });

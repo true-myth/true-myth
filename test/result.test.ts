@@ -405,7 +405,7 @@ describe('`Result` pure functions', () => {
     test('Ok(Just(T))', () => {
       let result = Result.ok<Maybe<number>, string>(just(12));
       let transposed = Result.transpose(result);
-      expect(transposed).toStrictEqual(Maybe.just(Result.ok(12)));
+      expect(transposed).toStrictEqual(just(Result.ok(12)));
       expectTypeOf(transposed).toEqualTypeOf<Maybe<Result<number, string>>>();
     });
 
