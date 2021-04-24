@@ -1852,11 +1852,6 @@ export function wrapReturn<F extends (...args: any[]) => any>(
   return (...args: Parameters<F>) => of(fn(...args)) as Maybe<NonNullable<ReturnType<F>>>;
 }
 
-/** Alias for [`wrapReturn`](#wrapReturn). */
-export const maybeify = wrapReturn;
-
-export const transmogrify = wrapReturn;
-
 /** A value which may (`Just<T>`) or may not (`Nothing`) be present. */
 export type Maybe<T> = Just<T> | Nothing<T>;
 export const Maybe = {
