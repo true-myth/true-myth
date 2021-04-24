@@ -1698,24 +1698,6 @@ export function transpose<T, E>(maybe: Maybe<Result<T, E>>): Result<Maybe<T>, E>
 }
 
 /**
-  @deprecated use `arrayTranspose` instead. `tuple` and `all` are now able to
-    share an implementation. Additionally, they have been renamed to
-    `arrayTranspose` to clarify that they are actually the "natural
-    transformation" of an array of maybes to a maybe of an array.
-  @since 5.0.0:
- */
-export const all = arrayTranspose;
-
-/**
-  @deprecated use `arrayTranspose` instead. `tuple` and `all` are now able to
-    share an implementation. Additionally, they have been renamed to
-    `arrayTranspose` to clarify that they are actually the "natural
-    transformation" of an array of maybes to a maybe of an array.
-  @since 5.0.0
- */
-export const tuple = arrayTranspose;
-
-/**
   Safely extract a key from an object, returning `Just` if the key has a value
   on the object and `Nothing` if it does not.
 
@@ -1919,7 +1901,6 @@ export const Maybe = {
   Variant,
   Just,
   Nothing,
-  all,
   isJust,
   isNothing,
   just,
@@ -1951,7 +1932,6 @@ export const Maybe = {
   fromResult,
   toString,
   toJSON,
-  tuple,
   transpose,
   arrayTranspose,
   match,

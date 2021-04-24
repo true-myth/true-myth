@@ -455,19 +455,6 @@ describe('`Maybe` pure functions', () => {
     });
   });
 
-  test('`tuple`', () => {
-    type Tuple2 = [Maybe<string>, Maybe<number>];
-    let invalid: Tuple2 = [Maybe.just('wat'), Maybe.nothing()];
-    const invalidResult = Maybe.tuple(invalid);
-    expect(invalidResult).toEqual(Maybe.nothing());
-
-    type Tuple3 = [Maybe<string>, Maybe<number>, Maybe<{ neat: string }>];
-    let valid: Tuple3 = [Maybe.just('hey'), Maybe.just(4), Maybe.just({ neat: 'yeah' })];
-    const result = Maybe.tuple(valid);
-    expect(result).toEqual(Maybe.just(['hey', 4, { neat: 'yeah' }]));
-    expectTypeOf(result).toEqualTypeOf<Maybe<[string, number, { neat: string }]>>();
-  });
-
   describe('transpose', () => {
     test('Just(Ok(T))', () => {
       let maybe = Maybe.just(ok<number, string>(12));
