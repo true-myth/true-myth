@@ -2,11 +2,16 @@
   "name": "true-myth",
   "description": "A library for safe functional programming in JavaScript, with first-class support for TypeScript and Flow",
   "homepage": "https://true-myth.js.org",
-  "author": {
-    "name": "Chris Krycho",
-    "email": "hello@chriskrycho.com",
-    "url": "http://www.chriskrycho.com"
-  },
+  "contributors": [
+    {
+      "name": "Chris Krycho",
+      "email": "hello@chriskrycho.com",
+      "url": "http://www.chriskrycho.com"
+    },
+    {
+      "name": "Ben Makuh"
+    }
+  ],
   "repository": {
     "type": "git",
     "url": "https://github.com/true-myth/true-myth"
@@ -78,7 +83,7 @@
     "typescript": "^4.0.5"
   },
   "engines": {
-    "node": "10.* || 12.* || >= 14.*"
+    "node": "12.* || >= 14.*"
   },
   "jest": {
     "transform": {
