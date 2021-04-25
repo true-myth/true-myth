@@ -13,12 +13,3 @@ export const isVoid = (value: unknown): value is undefined | null =>
 export function curry1<T, U>(op: (t: T) => U, item?: T) {
   return item !== undefined ? op(item) : op;
 }
-
-/** @internal */
-export class Brand<Tag extends string> {
-  protected readonly _brand: Tag;
-
-  constructor(tag: Tag) {
-    this._brand = tag;
-  }
-}

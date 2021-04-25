@@ -30,319 +30,7 @@ interface NothingJSON {
 
 type MaybeJSON<T> = JustJSON<T> | NothingJSON;
 
-/** Simply defines the common shape for `Just` and `Nothing`. */
-interface MaybeShape<T> {
-  /** Distinguish between the `Just` and `Nothing` [variants](../enums/_maybe_.variant). */
-  readonly variant: Variant;
-
-  /** Method variant for [`Maybe.isJust`](../modules/_maybe_.html#isjust) */
-  isJust(this: Maybe<T>): this is Just<T>;
-
-  /** Method variant for [`Maybe.isNothing`](../modules/_maybe_.html#isnothing) */
-  isNothing(this: Maybe<T>): this is Nothing<T>;
-
-  /** Method variant for [`Maybe.map`](../modules/_maybe_.html#map) */
-  map<U>(this: Maybe<T>, mapFn: (t: T) => U): Maybe<U>;
-
-  /** Method variant for [`Maybe.mapOr`](../modules/_maybe_.html#mapor) */
-  mapOr<U>(this: Maybe<T>, orU: U, mapFn: (t: T) => U): U;
-
-  /** Method variant for [`Maybe.mapOrElse`](../modules/_maybe_.html#maporelse) */
-  mapOrElse<U>(this: Maybe<T>, orElseFn: () => U, mapFn: (t: T) => U): U;
-
-  /** Method variant for [`Maybe.match`](../modules/_maybe_.html#match) */
-  match<U>(this: Maybe<T>, matcher: Matcher<T, U>): U;
-
-  /** Method variant for [`Maybe.or`](../modules/_maybe_.html#or) */
-  or(this: Maybe<T>, mOr: Maybe<T>): Maybe<T>;
-
-  /** Method variant for [`Maybe.orElse`](../modules/_maybe_.html#orelse) */
-  orElse(this: Maybe<T>, orElseFn: () => Maybe<T>): Maybe<T>;
-
-  /** Method variant for [`Maybe.and`](../modules/_maybe_.html#and) */
-  and<U>(this: Maybe<T>, mAnd: Maybe<U>): Maybe<U>;
-
-  /** Method variant for [`Maybe.andThen`](../modules/_maybe_.html#andthen) */
-  andThen<U>(this: Maybe<T>, andThenFn: (t: T) => Maybe<U>): Maybe<U>;
-
-  /** Method variant for [`Maybe.unwrap`](../modules/_maybe_.html#unwrap) */
-  unsafelyUnwrap(): T | never;
-
-  /** Method variant for [`Maybe.unwrapOrElse`](../modules/_maybe_.html#unwraporelse) */
-  unwrapOrElse<U>(this: Maybe<T>, elseFn: () => U): T | U;
-
-  /** Method variant for [`Maybe.toOkOrErr`](../modules/_maybe_.html#tookorerr) */
-  toOkOrErr<E>(this: Maybe<T>, error: E): Result<T, E>;
-
-  /** Method variant for [`Maybe.toOkOrElseErr`](../modules/_maybe_.html#tookorelseerr) */
-  toOkOrElseErr<E>(this: Maybe<T>, elseFn: () => E): Result<T, E>;
-
-  /** Method variant for [`Maybe.toString`](../modules/_maybe_.html#tostring) */
-  toString(this: Maybe<T>): string;
-
-  /** Method variant for [`Maybe.toJSON`](../modules/_maybe_.html#toJSON) */
-  toJSON(this: Maybe<T>): MaybeJSON<T>;
-
-  /** Method variant for [`Maybe.equals`](../modules/_maybe_.html#equals) */
-  equals(this: Maybe<T>, comparison: Maybe<T>): boolean;
-
-  /** Method variant for [`Maybe.ap`](../modules/_maybe_.html#ap) */
-  ap<U>(this: Maybe<(val: T) => U>, val: Maybe<T>): Maybe<U>;
-
-  /**
-    Method variant for [`Maybe.get`](../modules/_maybe_.html#prop)
-
-        If you have a `Maybe` of an object type, you can do `thatMaybe.get('a key')`
-    to look up the next layer down in the object.
-
-    ```ts
-    type DeepOptionalType = {
-      something?: {
-        with?: {
-          deeperKeys?: string;
-        }
-      }
-    };
-
-    const fullySet: DeepType = {
-      something: {
-        with: {
-          deeperKeys: 'like this'
-        }
-      }
-    };
-
-    const deepJust = Maybe.of(fullySet)
-      .get('something')
-      .get('with')
-      .get('deeperKeys');
-
-    console.log(deepJust); // Just('like this');
-
-    const partiallyUnset: DeepType = { something: { } };
-
-    const deepEmpty = Maybe.of(partiallyUnset)
-      .get('something')
-      .get('with')
-      .get('deeperKeys');
-
-    console.log(deepEmpty); // Nothing
-    ```
-   */
-  get<K extends keyof T>(this: Maybe<T>, key: K): Maybe<NonNullable<T[K]>>;
-}
-
-/**
-  A `Just` instance is the *present* variant instance of the
-  [`Maybe`](../modules/_maybe_.html#maybe) type, representing the presence of a
-  value which may be absent. For a full discussion, see [the module
-  docs](../modules/_maybe_.html).
-
-  @typeparam T The type wrapped in this `Just` variant of `Maybe`.
- */
-export class Just<T> implements MaybeShape<T> {
-  /**
-    Unwrap the contained value. A convenience method for functional idioms.
-
-    A common scenario where you might want to use this is in a pipeline of
-    functions:
-
-    ```ts
-    import Maybe, { Just } from 'true-myth/maybe';
-
-    function getLengths(maybeStrings: Array<Maybe<string>>): Array<number> {
-      return maybeStrings
-        .filter(Maybe.isJust)
-        .map(Just.unwrap)
-        .map(s => s.length);
-    }
-    ```
-   */
-  static unwrap<J>(theJust: Just<J>): J {
-    return theJust.value;
-  }
-
-  /** `Just` is always [`Variant.Just`](../enums/_maybe_.variant#just). */
-  readonly variant = Variant.Just;
-
-  /** The wrapped value. */
-  readonly value: T;
-
-  /**
-    Create an instance of `Maybe.Just` with `new`.
-
-    @note While you *may* create the `Just` type via normal JavaScript
-    class construction, it is not recommended for the functional style for
-    which the library is intended. Instead, use [`Maybe.of`] (for the general
-    case) or [`Maybe.just`] for this specific case.
-
-    [`Maybe.of`]: ../modules/_maybe_.html#of
-    [`Maybe.just`]: ../modules/_maybe_.html#just
-
-    ```ts
-    // Avoid:
-    const aString = new Maybe.Just('characters');
-
-    // Prefer:
-    const aString = Maybe.just('characters);
-    ```
-
-    @param value
-    The value to wrap in a `Maybe.Just`.
-
-    `null` and `undefined` are allowed by the type signature so that the
-    constructor may `throw` on those rather than constructing a type like
-    `Maybe<undefined>`.
-
-    @throws      If you pass `null` or `undefined`.
-   */
-  constructor(value?: T | null) {
-    if (isVoid(value)) {
-      throw new Error('Tried to construct `Just` with `null` or `undefined`');
-    }
-
-    this.value = value;
-  }
-
-  /** Method variant for [`Maybe.isJust`](../modules/_maybe_.html#isjust) */
-  isJust(this: Maybe<T>): this is Just<T> {
-    return true;
-  }
-
-  /** Method variant for [`Maybe.isNothing`](../modules/_maybe_.html#isnothing) */
-  isNothing(this: Maybe<T>): this is Nothing<T> {
-    return false;
-  }
-
-  /** Method variant for [`Maybe.map`](../modules/_maybe_.html#map) */
-  map<U>(this: Maybe<T>, mapFn: (t: T) => U): Maybe<U> {
-    return map(mapFn, this);
-  }
-
-  /** Method variant for [`Maybe.mapOr`](../modules/_maybe_.html#mapor) */
-  mapOr<U>(this: Maybe<T>, orU: U, mapFn: (t: T) => U): U {
-    return mapOr(orU, mapFn, this);
-  }
-
-  /** Method variant for [`Maybe.mapOrElse`](../modules/_maybe_.html#maporelse) */
-  mapOrElse<U>(this: Maybe<T>, orElseFn: () => U, mapFn: (t: T) => U): U {
-    return mapOrElse(orElseFn, mapFn, this);
-  }
-
-  /** Method variant for [`Maybe.match`](../modules/_maybe_.html#match) */
-  match<U>(this: Maybe<T>, matcher: Matcher<T, U>): U {
-    return match(matcher, this);
-  }
-
-  /** Method variant for [`Maybe.or`](../modules/_maybe_.html#or) */
-  or(this: Maybe<T>, mOr: Maybe<T>): Maybe<T> {
-    return or(mOr, this);
-  }
-
-  /** Method variant for [`Maybe.orElse`](../modules/_maybe_.html#orelse) */
-  orElse(this: Maybe<T>, orElseFn: () => Maybe<T>): Maybe<T> {
-    return orElse(orElseFn, this);
-  }
-
-  /** Method variant for [`Maybe.and`](../modules/_maybe_.html#and) */
-  and<U>(this: Maybe<T>, mAnd: Maybe<U>): Maybe<U> {
-    return and(mAnd, this);
-  }
-
-  /** Method variant for [`Maybe.andThen`](../modules/_maybe_.html#andthen) */
-  andThen<U>(this: Maybe<T>, andThenFn: (t: T) => Maybe<U>): Maybe<U> {
-    return andThen(andThenFn, this);
-  }
-
-  /** Method variant for [`Maybe.unsafelyUnwrap`](../modules/_maybe_.html#unsafelyunwrap) */
-  unsafelyUnwrap(): T {
-    return this.value;
-  }
-
-  /** Method variant for [`Maybe.unwrapOr`](../modules/_maybe_.html#unwrapor) */
-  unwrapOr<U>(this: Maybe<T>, defaultValue: U): T | U {
-    return unwrapOr(defaultValue, this);
-  }
-
-  /** Method variant for [`Maybe.unwrapOrElse`](../modules/_maybe_.html#unwraporelse) */
-  unwrapOrElse<U>(this: Maybe<T>, elseFn: () => U): T | U {
-    return unwrapOrElse(elseFn, this);
-  }
-
-  /** Method variant for [`Maybe.toOkOrErr`](../modules/_maybe_.html#tookorerr) */
-  toOkOrErr<E>(this: Maybe<T>, error: E): Result<T, E> {
-    return toOkOrErr(error, this);
-  }
-
-  /** Method variant for [`Maybe.toOkOrElseErr`](../modules/_maybe_.html#tookorelseerr) */
-  toOkOrElseErr<E>(this: Maybe<T>, elseFn: () => E): Result<T, E> {
-    return toOkOrElseErr(elseFn, this);
-  }
-
-  /** Method variant for [`Maybe.toString`](../modules/_maybe_.html#tostring) */
-  toString(this: Maybe<T>): string {
-    return toString(this);
-  }
-
-  /** Method variant for [`Maybe.toJSON`](../modules/_maybe_.html#toJSON) */
-  toJSON(this: Maybe<T>): MaybeJSON<T> {
-    return toJSON(this);
-  }
-
-  /** Method variant for [`Maybe.equals`](../modules/_maybe_.html#equals) */
-  equals(this: Maybe<T>, comparison: Maybe<T>): boolean {
-    return equals(comparison, this);
-  }
-
-  /** Method variant for [`Maybe.ap`](../modules/_maybe_.html#ap) */
-  ap<A, B>(this: Maybe<(val: A) => B>, val: Maybe<A>): Maybe<B> {
-    return ap(this, val);
-  }
-
-  /**
-    Method variant for [`Maybe.get`](../modules/_maybe_.html#prop)
-
-        If you have a `Maybe` of an object type, you can do `thatMaybe.get('a key')`
-    to look up the next layer down in the object.
-
-    ```ts
-    type DeepOptionalType = {
-      something?: {
-        with?: {
-          deeperKeys?: string;
-        }
-      }
-    };
-
-    const fullySet: DeepType = {
-      something: {
-        with: {
-          deeperKeys: 'like this'
-        }
-      }
-    };
-
-    const deepJust = Maybe.of(fullySet)
-      .get('something')
-      .get('with')
-      .get('deeperKeys');
-
-    console.log(deepJust); // Just('like this');
-
-    const partiallyUnset: DeepType = { something: { } };
-
-    const deepEmpty = Maybe.of(partiallyUnset)
-      .get('something')
-      .get('with')
-      .get('deeperKeys');
-
-    console.log(deepEmpty); // Nothing
-    ```
-   */
-  get<K extends keyof T>(this: Maybe<T>, key: K): Maybe<NonNullable<T[K]>> {
-    return this.andThen(property(key));
-  }
-}
+type Repr<T> = [tag: 'Just', value: T] | [tag: 'Nothing'];
 
 /**
   A single instance of the `Nothing` object, to minimize memory usage. No matter
@@ -357,59 +45,112 @@ export class Just<T> implements MaybeShape<T> {
 // instance of it.
 let NOTHING: Nothing<any>;
 
-/**
-  A `Nothing` instance is the *absent* variant instance of the
-  [`Maybe`](../modules/_maybe_.html#maybe) type, representing the presence of a
-  value which may be absent. For a full discussion, see [the module
-  docs](../modules/_maybe_.html).
+// Defines the *implementation*, but not the *types*. See the exports below.
+class _Maybe<T> {
+  private repr: Repr<T>;
 
-  @typeparam T The type which would be wrapped in a `Just` variant of `Maybe`.
- */
-export class Nothing<T> implements MaybeShape<T> {
-  /** `Nothing` is always [`Variant.Nothing`](../enums/_maybe_.variant#nothing). */
-  readonly variant = Variant.Nothing;
+  constructor(value?: T | null | undefined) {
+    if (isVoid(value)) {
+      // SAFETY: there is only a single `Nothing` in the system, because the
+      // only difference between `Nothing<string>` and `Nothing<number>` is at
+      // the type-checking level.
+      this.repr = [Variant.Nothing];
+      if (!NOTHING) {
+        NOTHING = (this as Maybe<any>) as Nothing<any>;
+      }
+
+      return (NOTHING as Maybe<any>) as this;
+    } else {
+      this.repr = [Variant.Just, value];
+    }
+  }
 
   /**
-    Create an instance of `Maybe.Nothing` with `new`.
+    Create a `Maybe` from any value.
 
-    @note While you *may* create the `Nothing` type via normal JavaScript
-    class construction, it is not recommended for the functional style for
-    which the library is intended. Instead, use [`Maybe.of`] (for the general
-    case) or [`Maybe.nothing`] for this specific case.
-
-    [`Maybe.of`]: ../modules/_maybe_.html#of
-    [`Maybe.nothing`]: ../modules/_maybe_.html#nothing
+    To specify that the result should be interpreted as a specific type, you may
+    invoke `Maybe.of` with an explicit type parameter:
 
     ```ts
-    // Avoid:
-    const aNothing = new Maybe.Err();
-
-    // Prefer:
-    const aNothing = Maybe.nothing();
+    const foo = Maybe.of<string>(null);
     ```
 
-    `null` and `undefined` are allowed so that you may explicitly construct the
-    `Err` type with a known `null` or `undefined` value. (This maybe helpful
-    primarily when transitioning a codebase to the use of `Maybe`.)
+    This is usually only important in two cases:
 
+    1.  If you are intentionally constructing a `Nothing` from a known `null` or
+        undefined value *which is untyped*.
+    2.  If you are specifying that the type is more general than the value passed
+        (since TypeScript can define types as literals).
+
+    @typeparam T The type of the item contained in the `Maybe`.
+    @param value The value to wrap in a `Maybe`. If it is `undefined` or `null`,
+                the result will be `Nothing`; otherwise it will be the type of
+                the value passed.
+  */
+  static of<T>(value: T | null | undefined): Maybe<T> {
+    return new _Maybe(value) as Maybe<T>;
+  }
+
+  /**
+    Create an instance of `Maybe.Just`.
+
+    `null` and `undefined` are allowed by the type signature so that the
+    function may `throw` on those rather than constructing a type like
+    `Maybe<undefined>`.
+
+    @typeparam T The type of the item contained in the `Maybe`.
+    @param value The value to wrap in a `Maybe.Just`.
+    @returns     An instance of `Maybe.Just<T>`.
     @throws      If you pass `null` or `undefined`.
    */
-  constructor(_?: null) {
-    if (!NOTHING) {
-      NOTHING = this;
+  static just<T>(value?: T | null): Maybe<T> {
+    if (isVoid(value)) {
+      throw new Error(`attempted to call "just" with ${value}`);
     }
 
-    return NOTHING;
+    return new Maybe<T>(value);
   }
 
-  /** Method variant for [`Maybe.isJust`](../modules/_maybe_.html#isjust) */
-  isJust(this: Maybe<T>): this is Just<T> {
-    return false;
+  /**
+    Create an instance of `Maybe.Nothing`.
+
+    If you want to create an instance with a specific type, e.g. for use in a
+    function which expects a `Maybe<T>` where the `<T>` is known but you have no
+    value to give it, you can use a type parameter:
+
+    ```ts
+    const notString = Maybe.nothing<string>();
+    ```
+
+    @typeparam T The type of the item contained in the `Maybe`.
+    @returns     An instance of `Maybe.Nothing<T>`.
+   */
+  static nothing<T>(_?: null): Maybe<T> {
+    return new _Maybe() as Maybe<T>;
   }
 
-  /** Method variant for [`Maybe.isNothing`](../modules/_maybe_.html#isnothing) */
-  isNothing(this: Maybe<T>): this is Nothing<T> {
-    return true;
+  /** Distinguish between the `Just` and `Nothing` [variants](../enums/_maybe_.variant). */
+  get variant(): Variant {
+    return this.repr[0];
+  }
+
+  /** The wrapped value. */
+  get value(): T | never {
+    if (this.repr[0] === Variant.Nothing) {
+      throw new Error('Cannot get the value of `Nothing`');
+    }
+
+    return this.repr[1];
+  }
+
+  /** Is the `Maybe` a `Just`? */
+  get isJust(): boolean {
+    return this.repr[0] === Variant.Just;
+  }
+
+  /** Is the `Maybe` a `Nothing`? */
+  get isNothing(): boolean {
+    return this.repr[0] === Variant.Nothing;
   }
 
   /** Method variant for [`Maybe.map`](../modules/_maybe_.html#map) */
@@ -452,12 +193,6 @@ export class Nothing<T> implements MaybeShape<T> {
     return andThen(andThenFn, this);
   }
 
-  /** Method variant for [`Maybe.unsafelyUnwrap`](../modules/_maybe_.html#unsafelyunwrap) */
-  unsafelyUnwrap(): never {
-    throw new Error('Tried to `unsafelyUnwrap(Nothing)`');
-  }
-
-  /** Method variant for [`Maybe.unwrapOr`](../modules/_maybe_.html#unwrapor) */
   unwrapOr<U>(this: Maybe<T>, defaultValue: U): T | U {
     return unwrapOr(defaultValue, this);
   }
@@ -483,7 +218,7 @@ export class Nothing<T> implements MaybeShape<T> {
   }
 
   /** Method variant for [`Maybe.toJSON`](../modules/_maybe_.html#toJSON) */
-  toJSON(this: Maybe<T>): MaybeJSON<T> {
+  toJSON(this: Maybe<T>): MaybeJSON<unknown> {
     return toJSON(this);
   }
 
@@ -500,7 +235,7 @@ export class Nothing<T> implements MaybeShape<T> {
   /**
     Method variant for [`Maybe.get`](../modules/_maybe_.html#prop)
 
-        If you have a `Maybe` of an object type, you can do `thatMaybe.get('a key')`
+    If you have a `Maybe` of an object type, you can do `thatMaybe.get('a key')`
     to look up the next layer down in the object.
 
     ```ts
@@ -538,32 +273,40 @@ export class Nothing<T> implements MaybeShape<T> {
     ```
    */
   get<K extends keyof T>(this: Maybe<T>, key: K): Maybe<NonNullable<T[K]>> {
-    return this.andThen(property(key));
+    return get(key, this);
   }
 }
 
 /**
-  Is this result a `Just` instance?
+  A `Just` instance is the *present* variant instance of the
+  [`Maybe`](../modules/_maybe_.html#maybe) type, representing the presence of a
+  value which may be absent. For a full discussion, see [the module
+  docs](../modules/_maybe_.html).
 
-  @typeparam T The type of the wrapped value.
-  @param maybe The `Maybe` instance to check.
-  @returns     `true` if `maybe` is `Just`, `false` otherwise. In TypeScript,
-               also narrows the type from `Maybe<T>` to `Just<T>`.
+  @typeparam T The type wrapped in this `Just` variant of `Maybe`.
  */
-export function isJust<T>(maybe: Maybe<T>): maybe is Just<T> {
-  return maybe.variant === Variant.Just;
+export interface Just<T> extends _Maybe<T> {
+  /** `Just` is always [`Variant.Just`](../enums/_maybe_.variant#just). */
+  variant: 'Just';
+  value: T;
+  isJust: true;
+  isNothing: false;
 }
 
 /**
-  Is this result a `Nothing` instance?
+  A `Nothing` instance is the *absent* variant instance of the
+  [`Maybe`](../modules/_maybe_.html#maybe) type, representing the presence of a
+  value which may be absent. For a full discussion, see [the module
+  docs](../modules/_maybe_.html).
 
-  @typeparam T The type of the wrapped value.
-  @param maybe The `Maybe` instance to check.
-  @returns     `true` if `maybe` is `nothing`, `false` otherwise. In TypeScript,
-               also narrows the type from `Maybe<T>` to `Nothing<T>`.
+  @typeparam T The type which would be wrapped in a `Just` variant of `Maybe`.
  */
-export function isNothing<T>(maybe: Maybe<T>): maybe is Nothing<T> {
-  return maybe.variant === Variant.Nothing;
+export interface Nothing<T> extends _Maybe<T> {
+  /** `Nothing` is always [`Variant.Nothing`](../enums/_maybe_.variant#nothing). */
+  readonly variant: 'Nothing';
+  value: never;
+  isJust: false;
+  isNothing: true;
 }
 
 /**
@@ -578,9 +321,7 @@ export function isNothing<T>(maybe: Maybe<T>): maybe is Nothing<T> {
   @returns     An instance of `Maybe.Just<T>`.
   @throws      If you pass `null` or `undefined`.
  */
-export function just<T = unknown>(value?: T | null): Maybe<T> {
-  return new Just<T>(value);
-}
+export const just = _Maybe.just;
 
 /**
   Create an instance of `Maybe.Nothing`.
@@ -596,10 +337,7 @@ export function just<T = unknown>(value?: T | null): Maybe<T> {
   @typeparam T The type of the item contained in the `Maybe`.
   @returns     An instance of `Maybe.Nothing<T>`.
  */
-export function nothing<T = unknown>(_?: null): Maybe<T> {
-  if (!NOTHING) NOTHING = new Nothing();
-  return NOTHING;
-}
+export const nothing = _Maybe.nothing;
 
 /**
   Create a `Maybe` from any value.
@@ -624,7 +362,7 @@ export function nothing<T = unknown>(_?: null): Maybe<T> {
                the value passed.
  */
 export function of<T>(value?: T | null): Maybe<T> {
-  return isVoid(value) ? nothing<T>() : just(value);
+  return Maybe.of(value);
 }
 
 /**
@@ -702,7 +440,7 @@ export function map<T, U>(
   mapFn: (t: T) => U,
   maybe?: Maybe<T>
 ): Maybe<U> | ((maybe: Maybe<T>) => Maybe<U>) {
-  const op = (m: Maybe<T>) => (m.isJust() ? just(mapFn(m.value)) : nothing<U>());
+  const op = (m: Maybe<T>) => (m.isJust ? just(mapFn(m.value)) : nothing<U>());
   return curry1(op, maybe);
 }
 
@@ -739,7 +477,7 @@ export function mapOr<T, U>(
   maybe?: Maybe<T>
 ): U | ((maybe: Maybe<T>) => U) | ((mapFn: (t: T) => U) => (maybe: Maybe<T>) => U) {
   function fullOp(fn: (t: T) => U, m: Maybe<T>) {
-    return m.isJust() ? fn(m.value) : orU;
+    return m.isJust ? fn(m.value) : orU;
   }
 
   function partialOp(fn: (t: T) => U): (maybe: Maybe<T>) => U;
@@ -791,7 +529,7 @@ export function mapOrElse<T, U>(
   maybe?: Maybe<T>
 ): U | ((maybe: Maybe<T>) => U) | ((mapFn: (t: T) => U) => (maybe: Maybe<T>) => U) {
   function fullOp(fn: (t: T) => U, m: Maybe<T>) {
-    return m.isJust() ? fn(m.value) : orElseFn();
+    return m.isJust ? fn(m.value) : orElseFn();
   }
 
   function partialOp(fn: (t: T) => U): (maybe: Maybe<T>) => U;
@@ -851,7 +589,7 @@ export function and<T, U>(
   andMaybe: Maybe<U>,
   maybe?: Maybe<T>
 ): Maybe<U> | ((maybe: Maybe<T>) => Maybe<U>) {
-  const op = (m: Maybe<T>) => (m.isJust() ? andMaybe : nothing<U>());
+  const op = (m: Maybe<T>) => (m.isJust ? andMaybe : nothing<U>());
   return curry1(op, maybe);
 }
 
@@ -913,7 +651,7 @@ export function andThen<T, U>(
   thenFn: (t: T) => Maybe<U>,
   maybe?: Maybe<T>
 ): Maybe<U> | ((maybe: Maybe<T>) => Maybe<U>) {
-  const op = (m: Maybe<T>) => (m.isJust() ? thenFn(m.value) : nothing<U>());
+  const op = (m: Maybe<T>) => (m.isJust ? thenFn(m.value) : nothing<U>());
   return maybe !== undefined ? op(maybe) : op;
 }
 
@@ -950,7 +688,7 @@ export function or<T>(
   defaultMaybe: Maybe<T>,
   maybe?: Maybe<T>
 ): Maybe<T> | ((maybe: Maybe<T>) => Maybe<T>) {
-  const op = (m: Maybe<T>) => (m.isJust() ? m : defaultMaybe);
+  const op = (m: Maybe<T>) => (m.isJust ? m : defaultMaybe);
   return maybe !== undefined ? op(maybe) : op;
 }
 
@@ -976,30 +714,9 @@ export function orElse<T>(
   elseFn: () => Maybe<T>,
   maybe?: Maybe<T>
 ): Maybe<T> | ((maybe: Maybe<T>) => Maybe<T>) {
-  const op = (m: Maybe<T>) => (m.isJust() ? m : elseFn());
+  const op = (m: Maybe<T>) => (m.isJust ? m : elseFn());
   return curry1(op, maybe);
 }
-
-/**
-  Get the value out of the `Maybe`.
-
-  Returns the content of a `Just`, but **throws if the `Maybe` is `Nothing`**.
-  Prefer to use [`unwrapOr`](#unwrapor) or [`unwrapOrElse`](#unwraporelse).
-
-  @typeparam T The type of the wrapped value.
-  @param maybe The value to unwrap
-  @returns     The unwrapped value if the `Maybe` instance is `Just`.
-  @throws      If the `maybe` is `Nothing`.
- */
-export function unsafelyUnwrap<T>(maybe: Maybe<T>): T {
-  return maybe.unsafelyUnwrap();
-}
-
-/** Alias for [`unsafelyUnwrap`](#unsafelyunwrap) */
-export const unsafelyGet = unsafelyUnwrap;
-
-/** Alias for [`unsafelyUnwrap`](#unsafelyunwrap) */
-export const unsafeGet = unsafelyUnwrap;
 
 /**
   Safely get the value out of a `Maybe`.
@@ -1026,7 +743,7 @@ export const unsafeGet = unsafelyUnwrap;
 export function unwrapOr<T, U>(defaultValue: U, maybe: Maybe<T>): T | U;
 export function unwrapOr<T, U>(defaultValue: U): (maybe: Maybe<T>) => T | U;
 export function unwrapOr<T, U>(defaultValue: U, maybe?: Maybe<T>) {
-  const op = (m: Maybe<T>) => (m.isJust() ? m.value : defaultValue);
+  const op = (m: Maybe<T>) => (m.isJust ? m.value : defaultValue);
   return curry1(op, maybe);
 }
 
@@ -1068,7 +785,7 @@ export function unwrapOrElse<T, U>(
   orElseFn: () => U,
   maybe?: Maybe<T>
 ): (T | U) | ((maybe: Maybe<T>) => T | U) {
-  const op = (m: Maybe<T>) => (m.isJust() ? m.value : orElseFn());
+  const op = (m: Maybe<T>) => (m.isJust ? m.value : orElseFn());
   return curry1(op, maybe);
 }
 
@@ -1093,7 +810,7 @@ export function toOkOrErr<T, E>(
   error: E,
   maybe?: Maybe<T>
 ): Result<T, E> | ((maybe: Maybe<T>) => Result<T, E>) {
-  const op = (m: Maybe<T>) => (m.isJust() ? Result.ok<T, E>(m.value) : Result.err<T, E>(error));
+  const op = (m: Maybe<T>) => (m.isJust ? Result.ok<T, E>(m.value) : Result.err<T, E>(error));
   return maybe !== undefined ? op(maybe) : op;
 }
 
@@ -1115,7 +832,7 @@ export function toOkOrElseErr<T, E>(
   elseFn: () => E,
   maybe?: Maybe<T>
 ): Result<T, E> | ((maybe: Maybe<T>) => Result<T, E>) {
-  const op = (m: Maybe<T>) => (m.isJust() ? Result.ok<T, E>(m.value) : Result.err<T, E>(elseFn()));
+  const op = (m: Maybe<T>) => (m.isJust ? Result.ok<T, E>(m.value) : Result.err<T, E>(elseFn()));
   return curry1(op, maybe);
 }
 
@@ -1131,7 +848,7 @@ export function toOkOrElseErr<T, E>(
   @returns      `Just` if `result` was `Ok` or `Nothing` if it was `Err`.
  */
 export function fromResult<T>(result: Result<T, unknown>): Maybe<T> {
-  return result.isOk() ? just(result.value) : nothing<T>();
+  return result.isOk ? just(result.value) : nothing<T>();
 }
 
 /**
@@ -1154,7 +871,7 @@ export function fromResult<T>(result: Result<T, unknown>): Maybe<T> {
   @returns     The string representation of the `Maybe`.
  */
 export function toString<T extends { toString(): string }>(maybe: Maybe<T>): string {
-  const body = maybe.isJust() ? `(${maybe.value.toString()})` : '';
+  const body = maybe.isJust ? `(${maybe.value.toString()})` : '';
   return `${maybe.variant}${body}`;
 }
 
@@ -1166,9 +883,12 @@ export function toString<T extends { toString(): string }>(maybe: Maybe<T>): str
  * @param maybe The value to convert to JSON
  * @returns     The JSON representation of the `Maybe`
  */
-export function toJSON<T>(maybe: Maybe<T>): MaybeJSON<T> {
-  return maybe.isJust()
-    ? { variant: maybe.variant, value: maybe.value }
+export function toJSON<T>(maybe: Maybe<T>): MaybeJSON<unknown> {
+  return maybe.isJust
+    ? {
+        variant: maybe.variant,
+        value: isInstance(maybe.value) ? maybe.value.toJSON() : maybe.value,
+      }
     : { variant: maybe.variant };
 }
 
@@ -1193,7 +913,7 @@ export type Matcher<T, A> = {
   import Maybe from 'true-myth/maybe';
 
   const logValue = (mightBeANumber: Maybe<number>) => {
-    const valueToLog = Maybe.mightBeANumber.isJust()
+    const valueToLog = Maybe.mightBeANumber.isJust
       ? Maybe.unsafelyUnwrap(mightBeANumber).toString()
       : 'Nothing to log.';
 
@@ -1231,9 +951,8 @@ export type Matcher<T, A> = {
 export function match<T, A>(matcher: Matcher<T, A>, maybe: Maybe<T>): A;
 export function match<T, A>(matcher: Matcher<T, A>): (m: Maybe<T>) => A;
 export function match<T, A>(matcher: Matcher<T, A>, maybe?: Maybe<T>): A | ((m: Maybe<T>) => A) {
-  return maybe !== undefined
-    ? mapOrElse(matcher.Nothing, matcher.Just, maybe)
-    : (curriedMaybe: Maybe<T>) => mapOrElse(matcher.Nothing, matcher.Just, curriedMaybe);
+  const op = (curriedMaybe: Maybe<T>) => mapOrElse(matcher.Nothing, matcher.Just, curriedMaybe);
+  return curry1(op, maybe);
 }
 
 /**
@@ -1257,16 +976,13 @@ export function match<T, A>(matcher: Matcher<T, A>, maybe?: Maybe<T>): A | ((m: 
 export function equals<T>(mb: Maybe<T>, ma: Maybe<T>): boolean;
 export function equals<T>(mb: Maybe<T>): (ma: Maybe<T>) => boolean;
 export function equals<T>(mb: Maybe<T>, ma?: Maybe<T>): boolean | ((a: Maybe<T>) => boolean) {
-  return ma !== undefined
-    ? ma.match({
-        Just: (aVal) => mb.isJust() && mb.unsafelyUnwrap() === aVal,
-        Nothing: () => isNothing(mb),
-      })
-    : (maybeA: Maybe<T>) =>
-        maybeA.match({
-          Nothing: () => isNothing(mb),
-          Just: (aVal) => mb.isJust() && mb.unsafelyUnwrap() === aVal,
-        });
+  const op = (maybeA: Maybe<T>) =>
+    maybeA.match({
+      Just: (aVal) => mb.isJust && mb.value === aVal,
+      Nothing: () => mb.isNothing,
+    });
+
+  return curry1(op, ma);
 }
 
 /**
@@ -1434,12 +1150,7 @@ export function ap<T, U>(
   maybeFn: Maybe<(t: T) => U>,
   maybe?: Maybe<T>
 ): Maybe<U> | ((val: Maybe<T>) => Maybe<U>) {
-  const op = (m: Maybe<T>) =>
-    m.match({
-      Just: (val) => maybeFn.map((fn) => fn(val)),
-      Nothing: () => nothing<U>(),
-    });
-
+  const op = (m: Maybe<T>) => m.andThen((val) => maybeFn.map((fn) => fn(val)));
   return curry1(op, maybe);
 }
 
@@ -1448,8 +1159,8 @@ export function ap<T, U>(
 
   @param item The item to check.
  */
-export function isInstance<T = unknown>(item: unknown): item is Maybe<T> {
-  return item instanceof Just || item instanceof Nothing;
+export function isInstance<T>(item: unknown): item is Maybe<T> {
+  return item instanceof Maybe;
 }
 
 /**
@@ -1582,12 +1293,12 @@ export function property<T, K extends keyof T>(
   @param key The key to pull out of the object.
   @param obj The object to look up the key from.
  */
-export function get<T, K extends keyof T>(key: K, maybeObj: Maybe<T>): Maybe<T[K]>;
-export function get<T, K extends keyof T>(key: K): (maybeObj: Maybe<T>) => Maybe<T[K]>;
+export function get<T, K extends keyof T>(key: K, maybeObj: Maybe<T>): Maybe<NonNullable<T[K]>>;
+export function get<T, K extends keyof T>(key: K): (maybeObj: Maybe<T>) => Maybe<NonNullable<T[K]>>;
 export function get<T, K extends keyof T>(
   key: K,
   maybeObj?: Maybe<T>
-): Maybe<T[K]> | ((maybeObj: Maybe<T>) => Maybe<T[K]>) {
+): Maybe<NonNullable<T[K]>> | ((maybeObj: Maybe<T>) => Maybe<NonNullable<T[K]>>) {
   return curry1(andThen(property<T, K>(key)), maybeObj);
 }
 
@@ -1666,7 +1377,16 @@ export function wrapReturn<F extends (...args: any[]) => any>(
   return (...args: Parameters<F>) => of(fn(...args)) as Maybe<NonNullable<ReturnType<F>>>;
 }
 
+// The public interface for the Maybe class *as a value*: a constructor and the
+// single associated static property.
+interface M {
+  new <T>(value?: T | null | undefined): Maybe<T>;
+  of: typeof _Maybe.of;
+  just: typeof _Maybe.just;
+  nothing: typeof _Maybe.nothing;
+}
+
 /** A value which may (`Just<T>`) or may not (`Nothing`) be present. */
 export type Maybe<T> = Just<T> | Nothing<T>;
-
+export const Maybe = _Maybe as M;
 export default Maybe;
