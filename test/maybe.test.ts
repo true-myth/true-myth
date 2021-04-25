@@ -1,5 +1,5 @@
 import { expectTypeOf } from 'expect-type';
-import Maybe, { Variant, Nothing, Just, Matcher, unwrap } from '../src/maybe';
+import Maybe, { Variant, Nothing, Just, Matcher } from '../src/maybe';
 import * as MaybeNS from '../src/maybe';
 import Result, { err, ok } from '../src/result';
 import { Unit } from '../src/unit';
@@ -14,7 +14,7 @@ describe('`Maybe` pure functions', () => {
     expect(theJust).toBeInstanceOf(Maybe);
     switch (theJust.variant) {
       case MaybeNS.Variant.Just:
-        expect(theJust.unsafelyUnwrap()).toBe('string');
+        expect(theJust.value).toBe('string');
         break;
       case MaybeNS.Variant.Nothing:
         expect(false).toBe(true); // because this should never happen
@@ -49,17 +49,17 @@ describe('`Maybe` pure functions', () => {
     test('with `null', () => {
       const nothingFromNull = MaybeNS.of<string>(null);
       expectTypeOf(nothingFromNull).toEqualTypeOf<Maybe<string>>();
-      expect(MaybeNS.isJust(nothingFromNull)).toBe(false);
-      expect(MaybeNS.isNothing(nothingFromNull)).toBe(true);
-      expect(() => MaybeNS.unsafelyUnwrap(nothingFromNull)).toThrow();
+      expect(nothingFromNull.isJust).toBe(false);
+      expect(nothingFromNull.isNothing).toBe(true);
+      expect(() => nothingFromNull.value).toThrow();
     });
 
     test('with `undefined`', () => {
       const nothingFromUndefined = MaybeNS.of<number>(undefined);
       expectTypeOf(nothingFromUndefined).toEqualTypeOf<Maybe<number>>();
-      expect(MaybeNS.isJust(nothingFromUndefined)).toBe(false);
-      expect(MaybeNS.isNothing(nothingFromUndefined)).toBe(true);
-      expect(() => MaybeNS.unsafelyUnwrap(nothingFromUndefined)).toThrow();
+      expect(nothingFromUndefined.isJust).toBe(false);
+      expect(nothingFromUndefined.isNothing).toBe(true);
+      expect(() => nothingFromUndefined.value).toThrow();
     });
 
     test('with values', () => {
@@ -70,9 +70,9 @@ describe('`Maybe` pure functions', () => {
 
       const justANumber = MaybeNS.of(42);
       expectTypeOf(justANumber).toEqualTypeOf<Maybe<number>>();
-      expect(MaybeNS.isJust(justANumber)).toBe(true);
-      expect(MaybeNS.isNothing(justANumber)).toBe(false);
-      expect(MaybeNS.unsafelyUnwrap(justANumber)).toBe(42);
+      expect(justANumber.isJust).toBe(true);
+      expect(justANumber.isNothing).toBe(false);
+      expect((justANumber as Just<number>).value).toBe(42);
     });
   });
 
@@ -80,17 +80,17 @@ describe('`Maybe` pure functions', () => {
     test('with `null', () => {
       const nothingFromNull = MaybeNS.fromNullable<string>(null);
       expectTypeOf(nothingFromNull).toEqualTypeOf<Maybe<string>>();
-      expect(MaybeNS.isJust(nothingFromNull)).toBe(false);
-      expect(MaybeNS.isNothing(nothingFromNull)).toBe(true);
-      expect(() => MaybeNS.unsafelyUnwrap(nothingFromNull)).toThrow();
+      expect(nothingFromNull.isJust).toBe(false);
+      expect(nothingFromNull.isNothing).toBe(true);
+      expect(() => nothingFromNull.value).toThrow();
     });
 
     test('with `undefined`', () => {
       const nothingFromUndefined = MaybeNS.fromNullable<number>(undefined);
       expectTypeOf(nothingFromUndefined).toEqualTypeOf<Maybe<number>>();
-      expect(MaybeNS.isJust(nothingFromUndefined)).toBe(false);
-      expect(MaybeNS.isNothing(nothingFromUndefined)).toBe(true);
-      expect(() => MaybeNS.unsafelyUnwrap(nothingFromUndefined)).toThrow();
+      expect(nothingFromUndefined.isJust).toBe(false);
+      expect(nothingFromUndefined.isNothing).toBe(true);
+      expect(() => nothingFromUndefined.value).toThrow();
     });
 
     test('with values', () => {
@@ -101,9 +101,9 @@ describe('`Maybe` pure functions', () => {
 
       const justANumber = MaybeNS.fromNullable(42);
       expectTypeOf(justANumber).toEqualTypeOf<Maybe<number>>();
-      expect(MaybeNS.isJust(justANumber)).toBe(true);
-      expect(MaybeNS.isNothing(justANumber)).toBe(false);
-      expect(MaybeNS.unsafelyUnwrap(justANumber)).toBe(42);
+      expect(justANumber.isJust).toBe(true);
+      expect(justANumber.isNothing).toBe(false);
+      expect(justANumber.value).toBe(42);
     });
   });
 
@@ -229,8 +229,8 @@ describe('`Maybe` pure functions', () => {
   });
 
   test('`unwrap`', () => {
-    expect(MaybeNS.unsafelyUnwrap(MaybeNS.of('42'))).toBe('42');
-    expect(() => MaybeNS.unsafelyUnwrap(MaybeNS.nothing())).toThrow();
+    expect((MaybeNS.of('42') as Just<string>).value).toBe('42');
+    expect(() => MaybeNS.nothing().value).toThrow();
   });
 
   test('`unwrapOr`', () => {
@@ -488,14 +488,24 @@ describe('`Maybe` class', () => {
     expectTypeOf(maybe).toHaveProperty('isJust');
     expectTypeOf(maybe).toHaveProperty('isJust');
     expectTypeOf(maybe).toHaveProperty('isNothing');
-    expectTypeOf(maybe).not.toHaveProperty('value');
+    expectTypeOf(maybe).toHaveProperty('value');
     expectTypeOf(Maybe).constructorParameters.toEqualTypeOf<[value?: unknown] | []>();
   });
 
   describe('Just instance', () => {
     test('constructor', () => {
-      const theJust = new Maybe([]);
+      const theJust = new Maybe('cool');
       expect(theJust.variant).toEqual(Variant.Just);
+      expect(theJust.value).toEqual('cool');
+    });
+
+    test('static constructor', () => {
+      const theJust = Maybe.just(123);
+      expect(theJust.variant).toEqual(Variant.Just);
+      expect(theJust.value).toEqual(123);
+
+      expect(() => Maybe.just(null)).toThrow();
+      expect(() => Maybe.just(undefined)).toThrow();
     });
 
     test('`value` property', () => {
@@ -514,7 +524,7 @@ describe('`Maybe` class', () => {
     test('`unwrap` static method', () => {
       const val = 42;
       const theJust = new Maybe(42) as Just<number>;
-      expect(unwrap(theJust)).toEqual(val);
+      expect(theJust.value).toEqual(val);
     });
 
     test('`isJust` property', () => {
@@ -607,8 +617,8 @@ describe('`Maybe` class', () => {
     test('`unwrap` method', () => {
       const theValue = 'value';
       const theJust = new Maybe(theValue);
-      expect(theJust.unsafelyUnwrap()).toEqual(theValue);
-      expect(() => theJust.unsafelyUnwrap()).not.toThrow();
+      expect((theJust as Just<string>).value).toEqual(theValue);
+      expect(() => (theJust as Just<string>).value).not.toThrow();
     });
 
     test('`unwrapOr` method', () => {
@@ -703,6 +713,20 @@ describe('`Maybe` class', () => {
       expect(theNothing.variant).toEqual(Variant.Nothing);
     });
 
+    test('static constructor', () => {
+      const theNothing = Maybe.nothing();
+      expect(theNothing.variant).toEqual(Variant.Nothing);
+      expect(() => theNothing.value).toThrow();
+
+      const fromNull = Maybe.nothing(null);
+      expect(fromNull.variant).toEqual(Variant.Nothing);
+      expect(() => fromNull.value).toThrow();
+
+      const nothingFromUndefined = Maybe.nothing(undefined);
+      expect(nothingFromUndefined.variant).toEqual(Variant.Nothing);
+      expect(() => nothingFromUndefined.value).toThrow();
+    });
+
     test('`isJust` property', () => {
       const theNothing = new Maybe();
       expect(theNothing.isJust).toBe(false);
@@ -710,8 +734,7 @@ describe('`Maybe` class', () => {
 
     test('`value` property', () => {
       const theNothing = new Maybe();
-      expectTypeOf(theNothing).not.toHaveProperty('value');
-      expect(() => (theNothing as any).value).toThrow();
+      expect(() => theNothing.value).toThrow();
     });
 
     test('`isNothing` property', () => {
@@ -786,7 +809,7 @@ describe('`Maybe` class', () => {
 
     test('`unsafelyUnwrap` method', () => {
       const noStuffAtAll = new Maybe();
-      expect(() => noStuffAtAll.unsafelyUnwrap()).toThrow();
+      expect(() => noStuffAtAll.value).toThrow();
     });
 
     test('`unwrapOr` method', () => {

@@ -51,12 +51,15 @@ class _Maybe<T> {
 
   constructor(value?: T | null | undefined) {
     if (isVoid(value)) {
+      // SAFETY: there is only a single `Nothing` in the system, because the
+      // only difference between `Nothing<string>` and `Nothing<number>` is at
+      // the type-checking level.
       this.repr = [Variant.Nothing];
       if (!NOTHING) {
-        NOTHING = this as Nothing<any>;
+        NOTHING = (this as Maybe<any>) as Nothing<any>;
       }
 
-      return NOTHING as this;
+      return (NOTHING as Maybe<any>) as this;
     } else {
       this.repr = [Variant.Just, value];
     }
@@ -88,11 +91,50 @@ class _Maybe<T> {
     return new _Maybe(value) as Maybe<T>;
   }
 
+  /**
+    Create an instance of `Maybe.Just`.
+
+    `null` and `undefined` are allowed by the type signature so that the
+    function may `throw` on those rather than constructing a type like
+    `Maybe<undefined>`.
+
+    @typeparam T The type of the item contained in the `Maybe`.
+    @param value The value to wrap in a `Maybe.Just`.
+    @returns     An instance of `Maybe.Just<T>`.
+    @throws      If you pass `null` or `undefined`.
+   */
+  static just<T>(value?: T | null): Maybe<T> {
+    if (isVoid(value)) {
+      throw new Error(`attempted to call "just" with ${value}`);
+    }
+
+    return new Maybe<T>(value);
+  }
+
+  /**
+    Create an instance of `Maybe.Nothing`.
+
+    If you want to create an instance with a specific type, e.g. for use in a
+    function which expects a `Maybe<T>` where the `<T>` is known but you have no
+    value to give it, you can use a type parameter:
+
+    ```ts
+    const notString = Maybe.nothing<string>();
+    ```
+
+    @typeparam T The type of the item contained in the `Maybe`.
+    @returns     An instance of `Maybe.Nothing<T>`.
+   */
+  static nothing<T>(_?: null): Maybe<T> {
+    return new _Maybe() as Maybe<T>;
+  }
+
   /** Distinguish between the `Just` and `Nothing` [variants](../enums/_maybe_.variant). */
   get variant(): Variant {
     return this.repr[0];
   }
 
+  /** The wrapped value. */
   get value(): T | never {
     if (this.repr[0] === Variant.Nothing) {
       throw new Error('Cannot get the value of `Nothing`');
@@ -101,12 +143,12 @@ class _Maybe<T> {
     return this.repr[1];
   }
 
-  /** Method variant for [`Maybe.isJust`](../modules/_maybe_.html#isjust) */
+  /** Is the `Maybe` a `Just`? */
   get isJust(): boolean {
     return this.repr[0] === Variant.Just;
   }
 
-  /** Method variant for [`Maybe.isNothing`](../modules/_maybe_.html#isnothing) */
+  /** Is the `Maybe` a `Nothing`? */
   get isNothing(): boolean {
     return this.repr[0] === Variant.Nothing;
   }
@@ -149,11 +191,6 @@ class _Maybe<T> {
   /** Method variant for [`Maybe.andThen`](../modules/_maybe_.html#andthen) */
   andThen<U>(this: Maybe<T>, andThenFn: (t: T) => Maybe<U>): Maybe<U> {
     return andThen(andThenFn, this);
-  }
-
-  /** Method variant for [`Maybe.unwrap`](../modules/_maybe_.html#unwrap) */
-  unsafelyUnwrap(this: Maybe<T>): T | never {
-    return unsafelyUnwrap(this);
   }
 
   unwrapOr<U>(this: Maybe<T>, defaultValue: U): T | U {
@@ -251,37 +288,9 @@ class _Maybe<T> {
 export interface Just<T> extends _Maybe<T> {
   /** `Just` is always [`Variant.Just`](../enums/_maybe_.variant#just). */
   variant: 'Just';
-
-  /** The wrapped value. */
   value: T;
-
-  /** Method variant for [`Maybe.isJust`](../modules/_maybe_.html#isjust) */
   isJust: true;
-
-  /** Method variant for [`Maybe.isNothing`](../modules/_maybe_.html#isnothing) */
   isNothing: false;
-}
-
-/**
-  Unwrap the contained value. A convenience method for functional idioms, which
-  is typesafe: it only works with a `Just<T>`, *not* with a `Maybe<T>`.
-
-  A common scenario where you might want to use this is in a pipeline of
-  functions:
-
-  ```ts
-  import Maybe, { unwrap } from 'true-myth/maybe';
-
-  function getLengths(maybeStrings: Array<Maybe<string>>): Array<number> {
-    return maybeStrings
-      .filter(Maybe.isJust)
-      .map(unwrap)
-      .map(s => s.length);
-  }
-  ```
-  */
-export function unwrap<T>(theJust: Just<T>): T {
-  return theJust.value;
 }
 
 /**
@@ -292,39 +301,12 @@ export function unwrap<T>(theJust: Just<T>): T {
 
   @typeparam T The type which would be wrapped in a `Just` variant of `Maybe`.
  */
-export interface Nothing<T> extends Pick<_Maybe<T>, Exclude<keyof _Maybe<T>, 'value'>> {
+export interface Nothing<T> extends _Maybe<T> {
   /** `Nothing` is always [`Variant.Nothing`](../enums/_maybe_.variant#nothing). */
   readonly variant: 'Nothing';
-
-  /** Method variant for [`Maybe.isJust`](../modules/_maybe_.html#isjust) */
+  value: never;
   isJust: false;
-
-  /** Method variant for [`Maybe.isNothing`](../modules/_maybe_.html#isnothing) */
   isNothing: true;
-}
-
-/**
-  Is this result a `Just` instance?
-
-  @typeparam T The type of the wrapped value.
-  @param maybe The `Maybe` instance to check.
-  @returns     `true` if `maybe` is `Just`, `false` otherwise. In TypeScript,
-               also narrows the type from `Maybe<T>` to `Just<T>`.
- */
-export function isJust<T>(maybe: Maybe<T>): maybe is Just<T> {
-  return maybe.variant === Variant.Just;
-}
-
-/**
-  Is this result a `Nothing` instance?
-
-  @typeparam T The type of the wrapped value.
-  @param maybe The `Maybe` instance to check.
-  @returns     `true` if `maybe` is `nothing`, `false` otherwise. In TypeScript,
-               also narrows the type from `Maybe<T>` to `Nothing<T>`.
- */
-export function isNothing<T>(maybe: Maybe<T>): maybe is Nothing<T> {
-  return maybe.variant === Variant.Nothing;
 }
 
 /**
@@ -339,13 +321,7 @@ export function isNothing<T>(maybe: Maybe<T>): maybe is Nothing<T> {
   @returns     An instance of `Maybe.Just<T>`.
   @throws      If you pass `null` or `undefined`.
  */
-export function just<T = unknown>(value?: T | null): Maybe<T> {
-  if (isVoid(value)) {
-    throw new Error(`attempted to call "just" with ${value}`);
-  }
-
-  return new Maybe<T>(value);
-}
+export const just = _Maybe.just;
 
 /**
   Create an instance of `Maybe.Nothing`.
@@ -361,10 +337,7 @@ export function just<T = unknown>(value?: T | null): Maybe<T> {
   @typeparam T The type of the item contained in the `Maybe`.
   @returns     An instance of `Maybe.Nothing<T>`.
  */
-export function nothing<T = unknown>(_?: null): Maybe<T> {
-  if (!NOTHING) NOTHING = new Maybe() as Nothing<T>;
-  return NOTHING;
-}
+export const nothing = _Maybe.nothing;
 
 /**
   Create a `Maybe` from any value.
@@ -746,25 +719,6 @@ export function orElse<T>(
 }
 
 /**
-  Get the value out of the `Maybe`.
-
-  Returns the content of a `Just`, but **throws if the `Maybe` is `Nothing`**.
-  Prefer to use [`unwrapOr`](#unwrapor) or [`unwrapOrElse`](#unwraporelse).
-
-  @typeparam T The type of the wrapped value.
-  @param maybe The value to unwrap
-  @returns     The unwrapped value if the `Maybe` instance is `Just`.
-  @throws      If the `maybe` is `Nothing`.
- */
-export function unsafelyUnwrap<T>(maybe: Maybe<T>): T {
-  if (maybe.isNothing) {
-    throw new Error('Tried to `unsafelyUnwrap(Nothing)`');
-  }
-
-  return maybe.value;
-}
-
-/**
   Safely get the value out of a `Maybe`.
 
   Returns the content of a `Just` or `defaultValue` if `Nothing`. This is the
@@ -894,7 +848,7 @@ export function toOkOrElseErr<T, E>(
   @returns      `Just` if `result` was `Ok` or `Nothing` if it was `Err`.
  */
 export function fromResult<T>(result: Result<T, unknown>): Maybe<T> {
-  return result.isOk() ? just(result.value) : nothing<T>();
+  return result.isOk ? just(result.value) : nothing<T>();
 }
 
 /**
@@ -1024,8 +978,8 @@ export function equals<T>(mb: Maybe<T>): (ma: Maybe<T>) => boolean;
 export function equals<T>(mb: Maybe<T>, ma?: Maybe<T>): boolean | ((a: Maybe<T>) => boolean) {
   const op = (maybeA: Maybe<T>) =>
     maybeA.match({
-      Just: (aVal) => mb.isJust && mb.unsafelyUnwrap() === aVal,
-      Nothing: () => isNothing(mb),
+      Just: (aVal) => mb.isJust && mb.value === aVal,
+      Nothing: () => mb.isNothing,
     });
 
   return curry1(op, ma);
@@ -1205,7 +1159,7 @@ export function ap<T, U>(
 
   @param item The item to check.
  */
-export function isInstance<T = unknown>(item: unknown): item is Maybe<T> {
+export function isInstance<T>(item: unknown): item is Maybe<T> {
   return item instanceof Maybe;
 }
 
@@ -1428,6 +1382,8 @@ export function wrapReturn<F extends (...args: any[]) => any>(
 interface M {
   new <T>(value?: T | null | undefined): Maybe<T>;
   of: typeof _Maybe.of;
+  just: typeof _Maybe.just;
+  nothing: typeof _Maybe.nothing;
 }
 
 /** A value which may (`Just<T>`) or may not (`Nothing`) be present. */
