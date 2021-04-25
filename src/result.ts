@@ -1085,12 +1085,6 @@ export function unsafelyUnwrap<T, E>(result: Result<T, E>): T {
   return result.unsafelyUnwrap();
 }
 
-/** Alias for [`unsafelyUnwrap`](#unsafelyunwrap) */
-export const unsafelyGet = unsafelyUnwrap;
-
-/** Alias for [`unsafelyUnwrap`](#unsafelyunwrap) */
-export const unsafeGet = unsafelyUnwrap;
-
 /**
   Get the error value out of the [`Result`](#result).
 
@@ -1103,9 +1097,6 @@ export const unsafeGet = unsafelyUnwrap;
 export function unsafelyUnwrapErr<T, E>(result: Result<T, E>): E {
   return result.unsafelyUnwrapErr();
 }
-
-/** Alias for [`unsafelyUnwrapErr`](#unsafelyunwraperr) */
-export const unsafelyGetErr = unsafelyUnwrapErr;
 
 /**
   Safely get the value out of the `Ok` variant of a [`Result`](#result).

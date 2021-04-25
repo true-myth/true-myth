@@ -995,11 +995,6 @@ export function unsafelyUnwrap<T>(maybe: Maybe<T>): T {
   return maybe.unsafelyUnwrap();
 }
 
-/** Alias for [`unsafelyUnwrap`](#unsafelyunwrap) */
-export const unsafelyGet = unsafelyUnwrap;
-
-/** Alias for [`unsafelyUnwrap`](#unsafelyunwrap) */
-export const unsafeGet = unsafelyUnwrap;
 
 /**
   Safely get the value out of a `Maybe`.
