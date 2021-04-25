@@ -1,4 +1,6 @@
-import { Brand } from './-private/utils';
+class Brand<Tag extends string> {
+  constructor(protected readonly __tag: Tag) {}
+}
 
 /**
   The `Unit` type exists for the cases where you want a type-safe equivalent of
