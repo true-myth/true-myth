@@ -5,10 +5,7 @@ import * as Maybe from './maybe';
 type Maybe<T> = import('./maybe').Maybe<T>;
 
 import Unit from './unit';
-import { Brand, curry1, isVoid } from './-private/utils';
-
-// So that it doesn't appear unused but can be exported.
-Brand; // tslint:disable-line:no-unused-expression
+import { curry1, isVoid } from './-private/utils';
 
 /**
   Discriminant for `Ok` and `Err` variants of `Result` type.
@@ -35,108 +32,10 @@ interface ErrJSON<E> {
 
 type ResultJSON<T, E> = OkJSON<T> | ErrJSON<E>;
 
-/** Simply defines the common shape for `Ok` and `Err`. */
-interface ResultShape<T, E> {
-  /** Distinguish between the `Ok` and `Err` variants. */
-  readonly variant: Variant;
+type Repr<T, E> = [tag: 'Ok', value: T] | [tag: 'Err', error: E];
 
-  /** Method variant for [`Result.isOk`](../modules/_result_.html#isok) */
-  isOk(this: Result<T, E>): this is Ok<T, E>;
-
-  /** Method variant for [`Result.isErr`](../modules/_result_.html#iserr) */
-  isErr(this: Result<T, E>): this is Err<T, E>;
-
-  /** Method variant for [`Result.map`](../modules/_result_.html#map) */
-  map<U>(this: Result<T, E>, mapFn: (t: T) => U): Result<U, E>;
-
-  /** Method variant for [`Result.mapOr`](../modules/_result_.html#mapor) */
-  mapOr<U>(this: Result<T, E>, orU: U, mapFn: (t: T) => U): U;
-
-  /** Method variant for [`Result.mapOrElse`](../modules/_result_.html#maporelse) */
-  mapOrElse<U>(this: Result<T, E>, orElseFn: (err: E) => U, mapFn: (t: T) => U): U;
-
-  /** Method variant for [`Result.match`](../modules/_result_.html#match) */
-  match<U>(this: Result<T, E>, matcher: Matcher<T, E, U>): U;
-
-  /** Method variant for [`Result.mapErr`](../modules/_result_.html#maperr) */
-  mapErr<F>(this: Result<T, E>, mapErrFn: (e: E) => F): Result<T, F>;
-
-  /** Method variant for [`Result.or`](../modules/_result_.html#or) */
-  or<F>(this: Result<T, E>, orResult: Result<T, F>): Result<T, F>;
-
-  /** Method variant for [`Result.orElse`](../modules/_result_.html#orelse) */
-  orElse<F>(this: Result<T, E>, orElseFn: (err: E) => Result<T, F>): Result<T, F>;
-
-  /** Method variant for [`Result.and`](../modules/_result_.html#and) */
-  and<U>(this: Result<T, E>, mAnd: Result<U, E>): Result<U, E>;
-
-  /** Method variant for [`Result.andThen`](../modules/_result_.html#andthen) */
-  andThen<U>(this: Result<T, E>, andThenFn: (t: T) => Result<U, E>): Result<U, E>;
-
-  /** Method variant for [`Result.unwrap`](../modules/_result_.html#unwrap) */
-  unsafelyUnwrap(): T | never;
-
-  /** Method variant for [`Result.unwrapErr`](../modules/_result_.html#unwraperr) */
-  unsafelyUnwrapErr(): E | never;
-
-  /** Method variant for [`Result.unwrapOr`](../modules/_result_.html#unwrapor) */
-  unwrapOr<U>(this: Result<T, E>, defaultValue: U): T | U;
-
-  /** Method variant for [`Result.unwrapOrElse`](../modules/_result_.html#unwrapOrElse) */
-  unwrapOrElse<U>(this: Result<T, E>, elseFn: (error: E) => U): T | U;
-
-  /** Method variant for [`Result.toMaybe`](../modules/_result_.html#tomaybe) */
-  toMaybe(this: Result<T, E>): Maybe<T>;
-
-  /** Method variant for [`Result.toString`](../modules/_result_.html#tostring) */
-  toString(this: Result<T, E>): string;
-
-  /** Method variant for [`Result.toJSON`](../modules/_result_.html#toJSON) */
-  toJSON(this: Result<T, E>): ResultJSON<T, E>;
-
-  /** Method variant for [`Result.equals`](../modules/_result_.html#equals) */
-  equals(this: Result<T, E>, comparison: Result<T, E>): boolean;
-
-  /** Method variant for [`Result.ap`](../modules/_result_.html#ap) */
-  ap<A, B>(this: Result<(a: A) => B, E>, r: Result<A, E>): Result<B, E>;
-}
-
-/**
-  An `Ok` instance is the *successful* variant instance of the
-  [`Result`](../modules/_result_.html#result) type, representing a successful
-  outcome from an operation which may fail. For a full discussion, see [the
-  module docs](../modules/_result_.html).
-
-  @typeparam T The type wrapped in this `Ok` variant of `Result`.
-  @typeparam E The type which would be wrapped in an `Err` variant of `Result`.
- */
-export class Ok<T, E> implements ResultShape<T, E> {
-  /**
-    Unwrap the contained value. A convenience method for functional idioms.
-
-    A common scenario where you might want to use this is in a pipeline of
-    functions:
-
-    ```ts
-    import Result, { Ok } from 'true-myth/result';
-
-    function getLengths(results: Array<Result<string, string>>): Array<number> {
-      return results
-        .filter(Result.isOk)
-        .map(Ok.unwrap)
-        .map(s => s.length);
-    }
-    ```
-   */
-  static unwrap<O>(theOk: Ok<O, unknown>): O {
-    return theOk.value;
-  }
-
-  /** `Ok` is always [`Variant.Ok`](../enums/_result_.variant#ok). */
-  readonly variant = Variant.Ok;
-
-  /** The wrapped value. */
-  readonly value: T;
+export class _Result<T, E> {
+  private constructor(private repr: Repr<T, E>) {}
 
   /**
     Create an instance of `Result.Ok` with `new`.
@@ -170,24 +69,81 @@ export class Ok<T, E> implements ResultShape<T, E> {
 
     @throws If you pass `null`.
    */
-  constructor(value?: T | null) {
+  static ok<T, E>(value?: T | null): Result<T, E> {
     if (isVoid(value)) {
+      throw new Error('Tried to construct `Ok` with `null`. Maybe you want `Maybe.Nothing`?');
+    }
+
+    return new _Result<T, E>(['Ok', value]) as Result<T, E>;
+  }
+
+  /**
+    Create an instance of `Result.Err` with `new`.
+
+    Note: While you *may* create the `Result` type via normal
+    JavaScript class construction, it is not recommended for the functional
+    style for which the library is intended. Instead, use [`Result.err`].
+
+    [`Result.err`]: ../modules/_result_.html#err
+
+    ```ts
+    // Avoid:
+    const anErr = new Result.Err('alas, failure');
+
+    // Prefer:
+    const anErr = Result.err('alas, failure');
+    ```
+
+    @param error
+    The value to wrap in a `Result.Err`.
+
+    `Note: null` and `undefined` are allowed by the type signature so that the
+    constructor may `throw` on those rather than constructing a type like
+    `Result<number, undefined>`.
+
+    @throws If you pass `null` or `undefined`.
+   */
+  static err<T, E>(error: E | null): Result<T, E> {
+    if (isVoid(error)) {
       throw new Error(
-        'Tried to construct `Ok` with `null` or `undefined`. Maybe you want `Maybe.Nothing`?'
+        'Tried to construct `Err` with `null` or `undefined`. Maybe you want `Maybe.Nothing`?'
       );
     }
 
-    this.value = value;
+    return new _Result<T, E>(['Err', error]) as Result<T, E>;
   }
 
-  /** Method variant for [`Result.isOk`](../modules/_result_.html#isok) */
-  isOk(this: Result<T, E>): this is Ok<T, E> {
-    return true;
+  /** Distinguish between the `Ok` and `Err` [variants](../enums/_result_.variant). */
+  get variant(): Variant {
+    return this.repr[0];
   }
 
-  /** Method variant for [`Result.isErr`](../modules/_result_.html#iserr) */
-  isErr(this: Result<T, E>): this is Err<T, E> {
-    return false;
+  /** The wrapped value. */
+  get value(): T | never {
+    if (this.repr[0] === Variant.Err) {
+      throw new Error('Cannot get the value of Err');
+    }
+
+    return this.repr[1];
+  }
+
+  /** The wrapped error value. */
+  get error(): E | never {
+    if (this.repr[0] === Variant.Ok) {
+      throw new Error('Cannot get the error of Ok');
+    }
+
+    return this.repr[1];
+  }
+
+  /** Is the `Result` an `Ok`? */
+  get isOk() {
+    return this.repr[0] === Variant.Ok;
+  }
+
+  /** Is the `Result` an `Err`? */
+  get isErr() {
+    return this.repr[0] === Variant.Err;
   }
 
   /** Method variant for [`Result.map`](../modules/_result_.html#map) */
@@ -235,16 +191,6 @@ export class Ok<T, E> implements ResultShape<T, E> {
     return andThen(andThenFn, this);
   }
 
-  /** Method variant for [`Result.unwrap`](../modules/_result_.html#unwrap) */
-  unsafelyUnwrap(): T {
-    return this.value;
-  }
-
-  /** Method variant for [`Result.unwrapErr`](../modules/_result_.html#unwraperr) */
-  unsafelyUnwrapErr(): never {
-    throw new Error('Tried to `unsafelyUnwrapErr` an `Ok`');
-  }
-
   /** Method variant for [`Result.unwrapOr`](../modules/_result_.html#unwrapor) */
   unwrapOr<U>(this: Result<T, E>, defaultValue: U): T | U {
     return unwrapOr(defaultValue, this);
@@ -282,6 +228,24 @@ export class Ok<T, E> implements ResultShape<T, E> {
 }
 
 /**
+  An `Ok` instance is the *successful* variant instance of the
+  [`Result`](../modules/_result_.html#result) type, representing a successful
+  outcome from an operation which may fail. For a full discussion, see [the
+  module docs](../modules/_result_.html).
+
+  @typeparam T The type wrapped in this `Ok` variant of `Result`.
+  @typeparam E The type which would be wrapped in an `Err` variant of `Result`.
+ */
+export interface Ok<T, E> extends _Result<T, E> {
+  /** `Ok` is always [`Variant.Ok`](../enums/_result_.variant#ok). */
+  variant: 'Ok';
+  isOk: true;
+  isErr: false;
+  value: T;
+  error: never;
+}
+
+/**
   An `Err` instance is the *failure* variant instance of the
   [`Result`](../modules/_result_.html#result) type, representing a failure
   outcome from an operation which may fail. For a full discussion, see [the
@@ -290,193 +254,51 @@ export class Ok<T, E> implements ResultShape<T, E> {
   @typeparam T The type which would be wrapped in an `Ok` variant of `Result`.
   @typeparam E The type wrapped in this `Err` variant of `Result`.
   */
-export class Err<T, E> implements ResultShape<T, E> {
-  /**
-    Unwrap the contained error . A convenience method for functional idioms.
-
-    A common scenario where you might want to use this is in a pipeline of
-    functions:
-
-    ```ts
-    import Result, { Ok } from 'true-myth/result';
-
-    function getMessages(results: Array<Result<string, Error>>): Array<number> {
-      return maybeStrings
-        .filter(Result.isErr)
-        .map(Err.unwrapErr)
-        .map(e => e.message);
-    }
-    ```
-   */
-  static unwrapErr<F>(theErr: Err<unknown, F>): F {
-    return theErr.error;
-  }
-
+export interface Err<T, E> extends _Result<T, E> {
   /** `Err` is always [`Variant.Err`](../enums/_result_.variant#err). */
-  readonly variant = Variant.Err;
+  readonly variant: 'Err';
+  isOk: false;
+  isErr: true;
+  value: never;
+  error: E;
+}
 
-  /** The wrapped error value. */
-  readonly error: E;
+/**
+  Execute the provided callback, wrapping the return value in `Result.Ok` or
+  `Result.Err(error)` if there is an exception.
 
-  /**
-    Create an instance of `Result.Err` with `new`.
+  ```ts
+  const aSuccessfulOperation = () => 2 + 2;
 
-    Note: While you *may* create the `Result` type via normal
-    JavaScript class construction, it is not recommended for the functional
-    style for which the library is intended. Instead, use [`Result.err`].
+  const anOkResult = Result.tryOr('Oh noes!!1', () => {
+    aSuccessfulOperation()
+  }); // => Ok(4)
 
-    [`Result.err`]: ../modules/_result_.html#err
+  const thisOperationThrows = () => throw new Error('Bummer');
 
-    ```ts
-    // Avoid:
-    const anErr = new Result.Err('alas, failure');
+  const anErrResult = Result.tryOr('Oh noes!!1', () => {
+    thisOperationThrows();
+  }); // => Err('Oh noes!!1')
+ ```
 
-    // Prefer:
-    const anErr = Result.err('alas, failure');
-    ```
-
-    Note that you may explicitly pass `Unit` to the `Err` constructor to create
-    a `Result<T, Unit>`. However, you may *not* call the `Err` constructor with
-    `null` or `undefined` to get that result (the type system won't allow you to
-    construct it that way). Instead, for convenience, you can simply call
-    `Result.err()`, which will construct the type correctly.
-
-    @param error
-    The value to wrap in a `Result.Err`.
-
-    `Note: null` and `undefined` are allowed by the type signature so that the
-    constructor may `throw` on those rather than constructing a type like
-    `Result<number, undefined>`.
-
-    @throws If you pass `null` or `undefined`.
-   */
-  constructor(error: E | null) {
-    if (isVoid(error)) {
-      throw new Error(
-        'Tried to construct `Err` with `null` or `undefined`. Maybe you want `Maybe.Nothing`?'
-      );
+  @param error The error value in case of an exception
+  @param callback The callback to try executing
+ */
+export function tryOr<T, E>(error: E, callback: () => T): Result<T, E>;
+export function tryOr<T, E>(error: E): (callback: () => T) => Result<T, E>;
+export function tryOr<T, E>(
+  error: E,
+  callback?: () => T
+): Result<T, E> | ((callback: () => T) => Result<T, E>) {
+  const op = (cb: () => T) => {
+    try {
+      return ok<T, E>(cb());
+    } catch {
+      return err<T, E>(error);
     }
+  };
 
-    this.error = error;
-  }
-
-  /** Method variant for [`Result.isOk`](../modules/_result_.html#isok) */
-  isOk(this: Result<T, E>): this is Ok<T, E> {
-    return false;
-  }
-
-  /** Method variant for [`Result.isErr`](../modules/_result_.html#iserr) */
-  isErr(this: Result<T, E>): this is Err<T, E> {
-    return true;
-  }
-
-  /** Method variant for [`Result.map`](../modules/_result_.html#map) */
-  map<U>(this: Result<T, E>, mapFn: (t: T) => U): Result<U, E> {
-    return map(mapFn, this);
-  }
-
-  /** Method variant for [`Result.mapOr`](../modules/_result_.html#mapor) */
-  mapOr<U>(this: Result<T, E>, orU: U, mapFn: (t: T) => U): U {
-    return mapOr(orU, mapFn, this);
-  }
-
-  /** Method variant for [`Result.mapOrElse`](../modules/_result_.html#maporelse) */
-  mapOrElse<U>(this: Result<T, E>, orElseFn: (err: E) => U, mapFn: (t: T) => U): U {
-    return mapOrElse(orElseFn, mapFn, this);
-  }
-
-  /** Method variant for [`Result.match`](../modules/_result_.html#match) */
-  match<U>(this: Result<T, E>, matchObj: Matcher<T, E, U>): U {
-    return match(matchObj, this);
-  }
-
-  /** Method variant for [`Result.mapErr`](../modules/_result_.html#maperr) */
-  mapErr<F>(this: Result<T, E>, mapErrFn: (e: E) => F): Result<T, F> {
-    return mapErr(mapErrFn, this);
-  }
-
-  /** Method variant for [`Result.or`](../modules/_result_.html#or) */
-  or<F>(this: Result<T, E>, orResult: Result<T, F>): Result<T, F> {
-    return or(orResult, this);
-  }
-
-  /** Method variant for [`Result.orElse`](../modules/_result_.html#orelse) */
-  orElse<F>(this: Result<T, E>, orElseFn: (err: E) => Result<T, F>): Result<T, F> {
-    return orElse(orElseFn, this);
-  }
-
-  /** Method variant for [`Result.and`](../modules/_result_.html#and) */
-  and<U>(this: Result<T, E>, mAnd: Result<U, E>): Result<U, E> {
-    return and(mAnd, this);
-  }
-
-  /** Method variant for [`Result.andThen`](../modules/_result_.html#andthen) */
-  andThen<U>(this: Result<T, E>, andThenFn: (t: T) => Result<U, E>): Result<U, E> {
-    return andThen(andThenFn, this);
-  }
-
-  /** Method variant for [`Result.unsafelyUnwrap`](../modules/_result_.html#unsafelyunwrap) */
-  unsafelyUnwrap(): never {
-    throw new Error('Tried to `unsafelyUnwrap an Err`');
-  }
-
-  /** Method variant for [`Result.unsafelyUnwrapErr`](../modules/_result_.html#unsafelyunwraperr) */
-  unsafelyUnwrapErr(): E {
-    return this.error;
-  }
-
-  /** Method variant for [`Result.unwrapOr`](../modules/_result_.html#unwrapor) */
-  unwrapOr<U>(this: Result<T, E>, defaultValue: U): T | U {
-    return unwrapOr(defaultValue, this);
-  }
-
-  /** Method variant for [`Result.unwrapOrElse`](../modules/_result_.html#unwraporelse) */
-  unwrapOrElse<U>(this: Result<T, E>, elseFn: (error: E) => U): T | U {
-    return unwrapOrElse(elseFn, this);
-  }
-
-  /** Method variant for [`Result.toMaybe`](../modules/_result_.html#tomaybe) */
-  toMaybe(this: Result<T, E>): Maybe<T> {
-    return toMaybe(this);
-  }
-
-  /** Method variant for [`Result.toString`](../modules/_result_.html#tostring) */
-  toString(this: Result<T, E>): string {
-    return toString(this);
-  }
-
-  /** Method variant for [`Result.toJSON`](../modules/_result_.html#toJSON) */
-  toJSON(this: Result<T, E>): ResultJSON<T, E> {
-    return toJSON(this);
-  }
-
-  /** Method variant for [`Result.equals`](../modules/_result_.html#equals) */
-  equals(this: Result<T, E>, comparison: Result<T, E>): boolean {
-    return equals(comparison, this);
-  }
-
-  /** Method variant for [`Result.ap`](../modules/_result_.html#ap) */
-  ap<A, B>(this: Result<(a: A) => B, E>, r: Result<A, E>): Result<B, E> {
-    return ap(this, r);
-  }
-}
-
-/**
-  Is this `Result` an `Ok` instance?
-
-  In TypeScript, narrows the type from `Result<T, E>` to `Ok<T, E>`.
- */
-export function isOk<T, E>(result: Result<T, E>): result is Ok<T, E> {
-  return result.variant === Variant.Ok;
-}
-
-/**
-  Is this `Result` an `Err` instance?
-
-  In TypeScript, narrows the type from `Result<T, E>` to `Err<T, E>`.
- */
-export function isErr<T, E>(result: Result<T, E>): result is Err<T, E> {
-  return result.variant === Variant.Err;
+  return curry1(op, callback);
 }
 
 /**
@@ -528,7 +350,7 @@ export function isErr<T, E>(result: Result<T, E>): result is Err<T, E> {
 export function ok<T = unknown, E = unknown>(): Result<Unit, E>;
 export function ok<T = unknown, E = unknown>(value: T): Result<T, E>;
 export function ok<T = unknown, E = unknown>(value?: T): Result<Unit, E> | Result<T, E> {
-  return value === undefined ? new Ok(Unit) : new Ok(value);
+  return value === undefined ? Result.ok(Unit) : Result.ok(value);
 }
 
 /** `Result.of` is an alias for `Result.ok`. */
@@ -580,49 +402,7 @@ export const of = ok;
   @typeparam T The type of the item contained in the `Result`.
   @param E The error value to wrap in a `Result.Err`.
  */
-export function err<T = unknown, E = unknown>(): Result<T, Unit>;
-export function err<T = unknown, E = unknown>(error: E): Result<T, E>;
-export function err<T = unknown, E = unknown>(error?: E): Result<T, Unit> | Result<T, E> {
-  return isVoid(error) ? new Err(Unit) : new Err(error);
-}
-
-/**
-  Execute the provided callback, wrapping the return value in `Result.Ok` or
-  `Result.Err(error)` if there is an exception.
-
-  ```ts
-  const aSuccessfulOperation = () => 2 + 2;
-
-  const anOkResult = Result.tryOr('Oh noes!!1', () => {
-    aSuccessfulOperation()
-  }); // => Ok(4)
-
-  const thisOperationThrows = () => throw new Error('Bummer');
-
-  const anErrResult = Result.tryOr('Oh noes!!1', () => {
-    thisOperationThrows();
-  }); // => Err('Oh noes!!1')
- ```
-
-  @param error The error value in case of an exception
-  @param callback The callback to try executing
- */
-export function tryOr<T, E>(error: E, callback: () => T): Result<T, E>;
-export function tryOr<T, E>(error: E): (callback: () => T) => Result<T, E>;
-export function tryOr<T, E>(
-  error: E,
-  callback?: () => T
-): Result<T, E> | ((callback: () => T) => Result<T, E>) {
-  const op = (cb: () => T) => {
-    try {
-      return ok<T, E>(cb());
-    } catch {
-      return err<T, E>(error);
-    }
-  };
-
-  return curry1(op, callback);
-}
+export const err = _Result.err;
 
 /**
   Execute the provided callback, wrapping the return value in `Result.Ok`.
@@ -723,7 +503,7 @@ export function map<T, U, E>(
   mapFn: (t: T) => U,
   result?: Result<T, E>
 ): Result<U, E> | ((result: Result<T, E>) => Result<U, E>) {
-  const op = (r: Result<T, E>) => (isOk(r) ? ok(mapFn(r.value)) : r) as Result<U, E>;
+  const op = (r: Result<T, E>) => (r.isOk ? ok(mapFn(r.value)) : r) as Result<U, E>;
   return curry1(op, result);
 }
 
@@ -760,7 +540,7 @@ export function mapOr<T, U, E>(
   result?: Result<T, E>
 ): U | ((result: Result<T, E>) => U) | ((mapFn: (t: T) => U) => (result: Result<T, E>) => U) {
   function fullOp(fn: (t: T) => U, r: Result<T, E>): U {
-    return isOk(r) ? fn(r.value) : orU;
+    return r.isOk ? fn(r.value) : orU;
   }
 
   function partialOp(fn: (t: T) => U): (maybe: Result<T, E>) => U;
@@ -834,7 +614,7 @@ export function mapOrElse<T, U, E>(
   result?: Result<T, E>
 ): U | ((result: Result<T, E>) => U) | ((mapFn: (t: T) => U) => (result: Result<T, E>) => U) {
   function fullOp(fn: (t: T) => U, r: Result<T, E>) {
-    return isOk(r) ? fn(r.value) : orElseFn(r.error);
+    return r.isOk ? fn(r.value) : orElseFn(r.error);
   }
 
   function partialOp(fn: (t: T) => U): (maybe: Result<T, E>) => U;
@@ -891,7 +671,7 @@ export function mapErr<T, E, F>(
   mapErrFn: (e: E) => F,
   result?: Result<T, E>
 ): Result<T, F> | ((result: Result<T, E>) => Result<T, F>) {
-  const op = (r: Result<T, E>) => (isOk(r) ? r : err(mapErrFn(r.error))) as Result<T, F>;
+  const op = (r: Result<T, E>) => (r.isOk ? r : err(mapErrFn(r.error))) as Result<T, F>;
   return curry1(op, result);
 }
 
@@ -936,7 +716,7 @@ export function and<T, U, E>(
   andResult: Result<U, E>,
   result?: Result<T, E>
 ): Result<U, E> | ((result: Result<T, E>) => Result<U, E>) {
-  const op = (r: Result<T, E>) => (isOk(r) ? andResult : err<U, E>(r.error));
+  const op = (r: Result<T, E>) => (r.isOk ? andResult : err<U, E>(r.error));
   return curry1(op, result);
 }
 
@@ -997,7 +777,7 @@ export function andThen<T, U, E>(
   thenFn: (t: T) => Result<U, E>,
   result?: Result<T, E>
 ): Result<U, E> | ((result: Result<T, E>) => Result<U, E>) {
-  const op = (r: Result<T, E>) => (isOk(r) ? thenFn(r.value) : err<U, E>(r.error));
+  const op = (r: Result<T, E>) => (r.isOk ? thenFn(r.value) : err<U, E>(r.error));
   return curry1(op, result);
 }
 
@@ -1037,7 +817,7 @@ export function or<T, E, F>(
   defaultResult: Result<T, F>,
   result?: Result<T, E>
 ): Result<T, F> | ((result: Result<T, E>) => Result<T, F>) {
-  const op = (r: Result<T, E>) => (isOk(r) ? ok<T, F>(r.value) : defaultResult);
+  const op = (r: Result<T, E>) => (r.isOk ? ok<T, F>(r.value) : defaultResult);
   return curry1(op, result);
 }
 
@@ -1069,33 +849,8 @@ export function orElse<T, E, F>(
   elseFn: (err: E) => Result<T, F>,
   result?: Result<T, E>
 ): Result<T, F> | ((result: Result<T, E>) => Result<T, F>) {
-  const op = (r: Result<T, E>) => (isOk(r) ? ok<T, F>(r.value) : elseFn(r.unsafelyUnwrapErr()));
+  const op = (r: Result<T, E>) => (r.isOk ? ok<T, F>(r.value) : elseFn(r.error));
   return curry1(op, result);
-}
-
-/**
-  Get the value out of the `Result`.
-
-  Returns the content of an `Ok`, but **throws if the `Result` is `Err`.**
-  Prefer to use [`unwrapOr`](#unwrapor) or [`unwrapOrElse`](#unwraporelse).
-
-  @throws If the `Result` instance is `Nothing`.
- */
-export function unsafelyUnwrap<T, E>(result: Result<T, E>): T {
-  return result.unsafelyUnwrap();
-}
-
-/**
-  Get the error value out of the [`Result`](#result).
-
-  Returns the content of an `Err`, but **throws if the `Result` is `Ok`**.
-  Prefer to use [`unwrapOrElse`](#unwraporelse).
-
-  @param result
-  @throws Error If the `Result` instance is `Nothing`.
- */
-export function unsafelyUnwrapErr<T, E>(result: Result<T, E>): E {
-  return result.unsafelyUnwrapErr();
 }
 
 /**
@@ -1126,7 +881,7 @@ export function unwrapOr<T, U, E>(
   defaultValue: U,
   result?: Result<T, E>
 ): (T | U) | ((result: Result<T, E>) => T | U) {
-  const op = (r: Result<T, E>) => (isOk(r) ? r.value : defaultValue);
+  const op = (r: Result<T, E>) => (r.isOk ? r.value : defaultValue);
   return curry1(op, result);
 }
 
@@ -1169,7 +924,7 @@ export function unwrapOrElse<T, U, E>(
   orElseFn: (error: E) => U,
   result?: Result<T, E>
 ): (T | U) | ((result: Result<T, E>) => T | U) {
-  const op = (r: Result<T, E>) => (isOk(r) ? r.value : orElseFn(r.error));
+  const op = (r: Result<T, E>) => (r.isOk ? r.value : orElseFn(r.error));
   return curry1(op, result);
 }
 
@@ -1191,7 +946,7 @@ export const getOrElse = unwrapOrElse;
   @returns      `Just` the value in `result` if it is `Ok`; otherwise `Nothing`
  */
 export function toMaybe<T>(result: Result<T, unknown>): Maybe<T> {
-  return isOk(result) ? Maybe.just(result.value) : Maybe.nothing();
+  return result.isOk ? Maybe.just(result.value) : Maybe.nothing();
 }
 
 /**
@@ -1214,8 +969,7 @@ export function fromMaybe<T, E>(
   errValue: E,
   maybe?: Maybe<T>
 ): Result<T, E> | ((maybe: Maybe<T>) => Result<T, E>) {
-  const op = (m: Maybe<T>) =>
-    Maybe.isJust(m) ? ok<T, E>(Maybe.unsafelyUnwrap(m)) : err<T, E>(errValue);
+  const op = (m: Maybe<T>) => (m.isJust ? ok<T, E>(m.value) : err<T, E>(errValue));
   return curry1(op, maybe);
 }
 
@@ -1244,7 +998,7 @@ export function fromMaybe<T, E>(
 export const toString = <T extends { toString(): string }, E extends { toString(): string }>(
   result: Result<T, E>
 ): string => {
-  const body = (isOk(result) ? result.value : result.error).toString();
+  const body = (result.isOk ? result.value : result.error).toString();
   return `${result.variant.toString()}(${body})`;
 };
 
@@ -1257,7 +1011,7 @@ export const toString = <T extends { toString(): string }, E extends { toString(
  * @returns       The JSON representation of the `Result`
  */
 export const toJSON = <T, E>(result: Result<T, E>): ResultJSON<T, E> => {
-  return result.isOk()
+  return result.isOk
     ? { variant: result.variant, value: result.value }
     : { variant: result.variant, error: result.error };
 };
@@ -1353,13 +1107,13 @@ export function equals<T, E>(
 ): boolean | ((a: Result<T, E>) => boolean) {
   return resultA !== undefined
     ? resultA.match({
-        Err: () => isErr(resultB),
-        Ok: (a) => isOk(resultB) && resultB.unsafelyUnwrap() === a,
+        Err: () => resultB.isErr,
+        Ok: (a) => resultB.isOk && resultB.value === a,
       })
     : (curriedResultA: Result<T, E>) =>
         curriedResultA.match({
-          Err: () => isErr(resultB),
-          Ok: (a) => isOk(resultB) && resultB.unsafelyUnwrap() === a,
+          Err: () => resultB.isErr,
+          Ok: (a) => resultB.isOk && resultB.value === a,
         });
 }
 
@@ -1551,12 +1305,7 @@ export function ap<T, U, E>(
   resultFn: Result<(val: T) => U, E>,
   result?: Result<T, E>
 ): Result<U, E> | ((val: Result<T, E>) => Result<U, E>) {
-  const op = (r: Result<T, E>) =>
-    r.match({
-      Ok: (val) => resultFn.map((fn) => fn(val)),
-      Err: (e) => err<U, E>(e),
-    });
-
+  const op = (r: Result<T, E>) => r.andThen((val) => resultFn.map((fn) => fn(val)));
   return curry1(op, result);
 }
 
@@ -1566,7 +1315,7 @@ export function ap<T, U, E>(
   @param item The item to check.
  */
 export function isInstance<T = unknown, E = unknown>(item: unknown): item is Result<T, E> {
-  return item instanceof Ok || item instanceof Err;
+  return item instanceof _Result;
 }
 
 /**
@@ -1590,6 +1339,13 @@ export function transpose<T, E>(result: Result<Maybe<T>, E>): Maybe<Result<T, E>
   });
 }
 
+// The public interface for the Result class *as a value*: a constructor and the
+// single associated static property.
+interface R {
+  ok: typeof _Result.ok;
+  err: typeof _Result.err;
+}
+
 /**
   A value which may (`Ok`) or may not (`Err`) be present.
 
@@ -1597,5 +1353,5 @@ export function transpose<T, E>(result: Result<Maybe<T>, E>): Maybe<Result<T, E>
   no runtime overhead other than the very small cost of the container object.
  */
 export type Result<T, E> = Ok<T, E> | Err<T, E>;
-
+export const Result = _Result as R;
 export default Result;
