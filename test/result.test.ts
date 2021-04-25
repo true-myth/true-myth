@@ -333,7 +333,7 @@ describe('`Result` pure functions', () => {
   test('`toJSON` through serialization', () => {
     const actualSerializedOk = JSON.stringify(ResultNS.ok(42));
     const actualSerializedErr = JSON.stringify(ResultNS.err({ someInfo: 'error' }));
-    const actualSerializedUnitErr = JSON.stringify(ResultNS.err(null));
+    const actualSerializedUnitErr = JSON.stringify(ResultNS.err());
     const expectedSerializedOk = JSON.stringify({ variant: ResultNS.Variant.Ok, value: 42 });
     const expectedSerializedErr = JSON.stringify({
       variant: ResultNS.Variant.Err,

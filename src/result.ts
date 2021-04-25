@@ -347,14 +347,11 @@ export function tryOr<T, E>(
   @typeparam T The type of the item contained in the `Result`.
   @param value The value to wrap in a `Result.Ok`.
  */
-export function ok<T = unknown, E = unknown>(): Result<Unit, E>;
-export function ok<T = unknown, E = unknown>(value: T): Result<T, E>;
-export function ok<T = unknown, E = unknown>(value?: T): Result<Unit, E> | Result<T, E> {
+export function ok<T, E>(): Result<Unit, E>;
+export function ok<T, E>(value: T): Result<T, E>;
+export function ok<T, E>(value?: T): Result<Unit, E> | Result<T, E> {
   return value === undefined ? Result.ok(Unit) : Result.ok(value);
 }
-
-/** `Result.of` is an alias for `Result.ok`. */
-export const of = ok;
 
 /**
   Create an instance of `Result.Error`.
@@ -402,7 +399,11 @@ export const of = ok;
   @typeparam T The type of the item contained in the `Result`.
   @param E The error value to wrap in a `Result.Err`.
  */
-export const err = _Result.err;
+export function err<T, E>(): Result<T, Unit>;
+export function err<T, E>(error: E): Result<T, E>;
+export function err<T, E>(error?: E): Result<T, Unit> | Result<T, E> {
+  return isVoid(error) ? Result.err(Unit) : Result.err(error);
+}
 
 /**
   Execute the provided callback, wrapping the return value in `Result.Ok`.
@@ -1314,7 +1315,7 @@ export function ap<T, U, E>(
 
   @param item The item to check.
  */
-export function isInstance<T = unknown, E = unknown>(item: unknown): item is Result<T, E> {
+export function isInstance<T, E>(item: unknown): item is Result<T, E> {
   return item instanceof _Result;
 }
 
