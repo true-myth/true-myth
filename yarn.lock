@@ -6893,8 +6893,8 @@ tree-sync@^2.0.0, tree-sync@^2.1.0:
     walk-sync "^0.3.3"
 
 ts-jest@^26.4.4:
-  version "26.5.5"
-  resolved "https://registry.yarnpkg.com/ts-jest/-/ts-jest-26.5.5.tgz#e40481b6ee4dd162626ba481a2be05fa57160ea5"
+  version "26.5.6"
+  resolved "https://registry.yarnpkg.com/ts-jest/-/ts-jest-26.5.6.tgz#c32e0746425274e1dfe333f43cd3c800e014ec35"
   dependencies:
     bs-logger "0.x"
     buffer-from "1.x"
