@@ -52,7 +52,7 @@
   ],
   "license": "MIT",
   "devDependencies": {
-    "@types/jest": "^26.0.19",
+    "@types/jest": "^27.0.0",
     "@typescript-eslint/parser": "^4.10.0",
     "ember-cli": "3.27.0",
     "ember-try": "^1.4.0",
