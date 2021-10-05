@@ -54,7 +54,7 @@
   "devDependencies": {
     "@types/jest": "^27.0.1",
     "@typescript-eslint/parser": "^4.10.0",
-    "ember-cli": "3.27.0",
+    "ember-cli": "3.28.1",
     "ember-try": "^1.4.0",
     "eslint": "^7.15.0",
     "expect-type": "^0.12.0",
