@@ -1533,6 +1533,18 @@ broccoli-funnel@^2.0.0, broccoli-funnel@^2.0.1, broccoli-funnel@^2.0.2:
     symlink-or-copy "^1.0.0"
     walk-sync "^0.3.1"
 
+broccoli-funnel@^3.0.5:
+  version "3.0.8"
+  resolved "https://registry.yarnpkg.com/broccoli-funnel/-/broccoli-funnel-3.0.8.tgz#f5b62e2763c3918026a15a3c833edc889971279b"
+  dependencies:
+    array-equal "^1.0.0"
+    broccoli-plugin "^4.0.7"
+    debug "^4.1.1"
+    fs-tree-diff "^2.0.1"
+    heimdalljs "^0.2.0"
+    minimatch "^3.0.0"
+    walk-sync "^2.0.2"
+
 broccoli-kitchen-sink-helpers@^0.3.1:
   version "0.3.1"
   resolved "https://registry.yarnpkg.com/broccoli-kitchen-sink-helpers/-/broccoli-kitchen-sink-helpers-0.3.1.tgz"
@@ -1568,7 +1580,7 @@ broccoli-node-info@^2.1.0:
   version "2.1.0"
   resolved "https://registry.yarnpkg.com/broccoli-node-info/-/broccoli-node-info-2.1.0.tgz"
 
-broccoli-output-wrapper@^3.2.1:
+broccoli-output-wrapper@^3.2.1, broccoli-output-wrapper@^3.2.5:
   version "3.2.5"
   resolved "https://registry.yarnpkg.com/broccoli-output-wrapper/-/broccoli-output-wrapper-3.2.5.tgz"
   dependencies:
@@ -1642,6 +1654,18 @@ broccoli-plugin@^4.0.2:
     quick-temp "^0.1.3"
     rimraf "^3.0.0"
     symlink-or-copy "^1.3.0"
+
+broccoli-plugin@^4.0.7:
+  version "4.0.7"
+  resolved "https://registry.yarnpkg.com/broccoli-plugin/-/broccoli-plugin-4.0.7.tgz#dd176a85efe915ed557d913744b181abe05047db"
+  dependencies:
+    broccoli-node-api "^1.7.0"
+    broccoli-output-wrapper "^3.2.5"
+    fs-merger "^3.2.1"
+    promise-map-series "^0.3.0"
+    quick-temp "^0.1.8"
+    rimraf "^3.0.2"
+    symlink-or-copy "^1.3.1"
 
 broccoli-slow-trees@^3.0.1, broccoli-slow-trees@^3.1.0:
   version "3.1.0"
@@ -2446,9 +2470,9 @@ ember-cli-string-utils@^1.1.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/ember-cli-string-utils/-/ember-cli-string-utils-1.1.0.tgz"
 
-ember-cli@3.27.0:
-  version "3.27.0"
-  resolved "https://registry.yarnpkg.com/ember-cli/-/ember-cli-3.27.0.tgz#8ccf9db51d7b462f86210b853d086a4543605c34"
+ember-cli@3.28.3:
+  version "3.28.3"
+  resolved "https://registry.yarnpkg.com/ember-cli/-/ember-cli-3.28.3.tgz#3384c3fb018b58111e30efed15a2f6a9b66b84c3"
   dependencies:
     "@babel/core" "^7.13.8"
     "@babel/plugin-transform-modules-amd" "^7.12.1"
@@ -2464,7 +2488,7 @@ ember-cli@3.27.0:
     broccoli-config-loader "^1.0.1"
     broccoli-config-replace "^1.1.2"
     broccoli-debug "^0.6.5"
-    broccoli-funnel "^2.0.2"
+    broccoli-funnel "^3.0.5"
     broccoli-funnel-reducer "^1.0.0"
     broccoli-merge-trees "^3.0.2"
     broccoli-middleware "^2.1.1"
@@ -2530,7 +2554,7 @@ ember-cli@3.27.0:
     sane "^4.1.0"
     semver "^7.3.4"
     silent-error "^1.1.1"
-    sort-package-json "^1.48.0"
+    sort-package-json "^1.49.0"
     symlink-or-copy "^1.3.1"
     temp "0.9.4"
     testem "^3.2.0"
@@ -2539,7 +2563,7 @@ ember-cli@3.27.0:
     uuid "^8.3.2"
     walk-sync "^2.2.0"
     watch-detector "^1.0.0"
-    workerpool "^6.0.3"
+    workerpool "^6.1.4"
     yam "^1.0.0"
 
 ember-source-channel-url@^1.0.1:
@@ -3281,6 +3305,16 @@ fs-merger@^3.1.0:
     fs-tree-diff "^2.0.1"
     rimraf "^2.6.3"
     walk-sync "^2.0.2"
+
+fs-merger@^3.2.1:
+  version "3.2.1"
+  resolved "https://registry.yarnpkg.com/fs-merger/-/fs-merger-3.2.1.tgz#a225b11ae530426138294b8fbb19e82e3d4e0b3b"
+  dependencies:
+    broccoli-node-api "^1.7.0"
+    broccoli-node-info "^2.1.0"
+    fs-extra "^8.0.1"
+    fs-tree-diff "^2.0.1"
+    walk-sync "^2.2.0"
 
 fs-tree-diff@^0.5.2, fs-tree-diff@^0.5.3, fs-tree-diff@^0.5.6:
   version "0.5.9"
@@ -6419,9 +6453,9 @@ sort-object-keys@^1.1.3:
   version "1.1.3"
   resolved "https://registry.yarnpkg.com/sort-object-keys/-/sort-object-keys-1.1.3.tgz"
 
-sort-package-json@^1.48.0:
-  version "1.49.0"
-  resolved "https://registry.yarnpkg.com/sort-package-json/-/sort-package-json-1.49.0.tgz#82845ab598501bb35875f326e4768a5ab5f15335"
+sort-package-json@^1.49.0:
+  version "1.52.0"
+  resolved "https://registry.yarnpkg.com/sort-package-json/-/sort-package-json-1.52.0.tgz#f960fe7cfae3120a4ce1b9eed7e010ac4bec998e"
   dependencies:
     detect-indent "^6.0.0"
     detect-newline "3.1.0"
@@ -7355,9 +7389,9 @@ workerpool@^3.1.1:
     object-assign "4.1.1"
     rsvp "^4.8.4"
 
-workerpool@^6.0.3:
-  version "6.1.4"
-  resolved "https://registry.yarnpkg.com/workerpool/-/workerpool-6.1.4.tgz#6a972b6df82e38d50248ee2820aa98e2d0ad3090"
+workerpool@^6.1.4:
+  version "6.1.5"
+  resolved "https://registry.yarnpkg.com/workerpool/-/workerpool-6.1.5.tgz#0f7cf076b6215fd7e1da903ff6f22ddd1886b581"
 
 wrap-ansi@^6.2.0:
   version "6.2.0"
