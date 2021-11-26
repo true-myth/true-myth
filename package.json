@@ -20,8 +20,9 @@
     "url": "https://github.com/true-myth/true-myth/issues"
   },
   "version": "4.1.1",
-  "main": "dist/cjs/index.js",
-  "module": "dist/es/index.js",
+  "type": "module",
+  "main": "dist/index.js",
+  "module": "dist/index.js",
   "types": "index.d.ts",
   "ember-addon": {
     "main": "ember-addon.js"
@@ -34,10 +35,9 @@
     "result"
   ],
   "scripts": {
-    "ts:cjs": "yarn tsc -p ts/cjs.tsconfig.json",
     "ts:es": "yarn tsc -p ts/es.tsconfig.json",
     "ts:typedefs": "yarn tsc -p ts/types.tsconfig.json && mv defs/* . && rmdir defs",
-    "ts:all": "yarn ts:cjs && yarn ts:es && yarn ts:typedefs",
+    "ts:all": "yarn ts:es && yarn ts:typedefs",
     "build": "yarn clean && yarn ts:all",
     "clean": "rimraf ./*.d.ts ./*.d.ts.map ./dist ./-private",
     "doc": "./scripts/build-docs",

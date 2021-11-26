@@ -1,11 +1,10 @@
 {
-    "extends": "../tsconfig.json",
-    "include": ["../src"],
-    "compilerOptions": {
-        "module": "ESNext",
-        "declaration": true,
-        "declarationMap": true,
-        "emitDeclarationOnly": true,
-        "declarationDir": "../defs"
-    }
+  "extends": "../tsconfig.json",
+  "include": ["../src"],
+  "compilerOptions": {
+    "declaration": true,
+    "declarationMap": true,
+    "emitDeclarationOnly": true,
+    "declarationDir": "../defs"
+  }
 }
