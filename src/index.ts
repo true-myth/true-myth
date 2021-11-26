@@ -4,6 +4,6 @@
   a root-level entry amenable to use with node.
  */
 
-export { Maybe } from './maybe';
-export { Result } from './result';
-export { Unit } from './unit';
+export { Maybe } from './maybe.js';
+export { Result } from './result.js';
+export { Unit } from './unit.js';

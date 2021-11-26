@@ -1,11 +1,11 @@
 /** [[include:doc/result.md]] */
 
 /** (keep typedoc from getting confused by the import) */
-import * as Maybe from './maybe';
+import * as Maybe from './maybe.js';
 type Maybe<T> = import('./maybe').Maybe<T>;
 
-import Unit from './unit';
-import { curry1, isVoid } from './-private/utils';
+import Unit from './unit.js';
+import { curry1, isVoid } from './-private/utils.js';
 
 /**
   Discriminant for `Ok` and `Err` variants of `Result` type.
