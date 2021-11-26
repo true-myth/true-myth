@@ -23,6 +23,11 @@
   "type": "module",
   "main": "dist/index.js",
   "module": "dist/index.js",
+  "exports": {
+    ".": "./dist/index.js",
+    "./maybe": "./dist/maybe.js",
+    "./result": "./dist/result.js"
+  },
   "types": "index.d.ts",
   "ember-addon": {
     "main": "ember-addon.js"
@@ -55,16 +60,6 @@
     "src",
     "ember-addon.js"
   ],
-  "exports": {
-    "./maybe": {
-      "node": "./dist/cjs/maybe.js",
-      "default": "./dist/es/maybe.js"
-    },
-    "./result": {
-      "node": "./dist/cjs/result.js",
-      "default": "./dist/es/result.js"
-    }
-  },
   "license": "MIT",
   "devDependencies": {
     "@types/jest": "^27.0.1",
