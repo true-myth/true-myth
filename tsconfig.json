@@ -13,7 +13,7 @@
     "moduleResolution": "node",
     "baseUrl": ".",
 
-    "sourceRoot": ".",
+    "sourceRoot": "./src",
     "sourceMap": true
   },
   "include": ["src", "test"],
