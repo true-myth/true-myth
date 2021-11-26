@@ -37,7 +37,7 @@
   <a href='https://github.com/true-myth/true-myth'>README</a> • <a href='https://true-myth.js.org'>API docs</a> • <a href='https://github.com/true-myth/true-myth/tree/master/src'>Source</a>  • <a href='http://www.chriskrycho.com/2017/announcing-true-myth-10.html'>Intro blog post</a>
 </p>
 
-## Overview
+## Overview <!-- omit in toc -->
 
 True Myth provides standard, type-safe wrappers and helper functions to help help you with two *extremely* common cases in programming:
 
@@ -46,38 +46,37 @@ True Myth provides standard, type-safe wrappers and helper functions to help hel
 
 You could implement all of these yourself – it's not hard! – but it's much easier to just have one extremely well-tested library you can use everywhere to solve this problem once and for all.
 
-### Contents
+### Contents <!-- omit in toc -->
 
 - [Setup](#setup)
-    - [TypeScript](#typescript)
+  - [Basic bundle size info](#basic-bundle-size-info)
+- [Compatibility](#compatibility)
 - [Just the API, please](#just-the-api-please)
-    - [`Result` with a functional style](#result-with-a-functional-style)
-    - [`Maybe` with the method style](#maybe-with-the-method-style)
-    - [Constructing `Maybe`](#constructing-maybe)
-    - [Safely getting at values](#safely-getting-at-values)
-    - [Curried variants](#curried-variants)
+  - [`Result` with a functional style](#result-with-a-functional-style)
+  - [`Maybe` with the method style](#maybe-with-the-method-style)
+  - [Constructing `Maybe`](#constructing-maybe)
+  - [Safely getting at values](#safely-getting-at-values)
+  - [Curried variants](#curried-variants)
 - [Why do I need this?](#why-do-i-need-this)
-    - [1. Nothingness: `null` and `undefined`](#1-nothingness-null-and-undefined)
-    - [2. Failure handling: callbacks and exceptions](#2-failure-handling-callbacks-and-exceptions)
+  - [1. Nothingness: `null` and `undefined`](#1-nothingness-null-and-undefined)
+  - [2. Failure handling: callbacks and exceptions](#2-failure-handling-callbacks-and-exceptions)
 - [Solutions: `Maybe` and `Result`](#solutions-maybe-and-result)
-    - [How it works: `Maybe`](#how-it-works-maybe)
-    - [How it works: `Result`](#how-it-works-result)
+  - [How it works: `Maybe`](#how-it-works-maybe)
+  - [How it works: `Result`](#how-it-works-result)
 - [Design philosophy](#design-philosophy)
-    - [A note on reference types: no deep copies here!](#a-note-on-reference-types-no-deep-copies-here)
-    - [The type names](#the-type-names)
-        - [`Maybe`](#maybe)
-            - [The `Maybe` variants: `Just` and `Nothing`](#the-maybe-variants-just-and-nothing)
-        - [`Result`](#result)
-            - [The `Result` variants: `Ok` and `Err`](#the-result-variants-ok-and-err)
-    - [Inspiration](#inspiration)
+  - [A note on reference types: no deep copies here!](#a-note-on-reference-types-no-deep-copies-here)
+  - [The type names](#the-type-names)
+    - [`Maybe`](#maybe)
+    - [`Result`](#result)
+  - [Inspiration](#inspiration)
 - [Why not...](#why-not)
-    - [Folktale](#folktale)
-    - [Sanctuary](#sanctuary)
+  - [Folktale?](#folktale)
+  - [Sanctuary?](#sanctuary)
 - [Migrating from other libraries](#migrating-from-other-libraries)
-    - [From Folktale](#from-folktale)
-        - [1.x](#from-folktale-1x)
-        - [2.x](#from-folktale-2x)
-    - [Sanctuary](#from-sanctuary)
+  - [From Folktale](#from-folktale)
+    - [From Folktale 1.x](#from-folktale-1x)
+    - [From Folktale 2.x](#from-folktale-2x)
+  - [From Sanctuary](#from-sanctuary)
 - [What's with the name?](#whats-with-the-name)
 
 ## Setup
@@ -96,7 +95,7 @@ Add True Myth to your dependencies:
     npm install true-myth
     ```
 
-For ES6-module-friendly consumers, you can import the modules directly, or import them from the root module:
+This package ships ES6-modules so you can import the modules directly, or import the re-exports from the root module:
 
 ```typescript
 // this works:
@@ -107,38 +106,9 @@ import Result from 'true-myth/result';
 import { Maybe, Result } from 'true-myth';
 ```
 
-In Node.js, the TypeScript-generated CommonJS package cannot be imported as nested modules, but the modules still can be imported directly from the top-level module when using TypeScript:
+### Basic bundle size info
 
-```typescript
-import { Maybe, Result } from 'true-myth';
-```
-
-(Normal Node imports work if you are using the library in JavaScript, but that is not recommended for many reasons. See [comments on Folktale below](#folktale) if you’re interested in a similar library for consumption in JavaScript.)
-
-The build includes both ES6 modules and CommonJS modules, so you may reference them directly from their installation in the `node_modules` directory. This may be helpful for using the library in different contexts, with the ES modules being supplied especially so you can do tree-shaking with e.g. Rollup.
-
-### Tree-Shaking-friendly imports
-
-If you want to use tools like Rollup, you may prefer to use a namespace-style import. Throughout the documentation, instead of using the default imports—
-
-```ts
-import Maybe from 'true-myth/maybe';
-import Result from 'true-myth/result';
-```
-
-—prefer to use the namespace and type-only imports:
-
-```ts
-import * as Maybe from 'true-myth/maybe';
-type Maybe<T> = import('true-myth/maybe').Maybe<T>;
-
-import * as Result from 'true-myth/result';
-type Result<T, E> = import('true-myth/result').Result<T, E>;
-```
-
-These are somewhat less convenient, but unlike the default exports are totally amenable to tree-shaking.
-
-Size without tree-shaking, for the ES Modules (the CJS modules are slightly larger but you should use the ES modules for targeting the web):
+Size without tree-shaking:
 
 |     file     | size (KB) | terser[1] (KB) | terser and gzip[2] (KB) |
 | ------------ | --------- | -------------- | ----------------------- |
@@ -153,41 +123,16 @@ Size without tree-shaking, for the ES Modules (the CJS modules are slightly larg
 2. Generated by running `gzip -k9` on the result of the `terser` invocation.
 3. This is just the sum of the previous lines. Real-world bundle size is a function of what you actually use, how your bundler handles tree-shaking, and how the results of bundling compresses. Notice that sufficiently small files can end up *larger* after compression; this stops being an issue once part of a bundle.
 
-### Build output
+## Compatibility
 
-Note that the build target is ES2015, since all current evergreen browsers and the current LTS of Node support all ES2015 features.
+This project follows the current draft of [the Semantic Versioning for TypeScript Types][semver] proposal.
 
-<details>
-<summary>Distributed package layout</summary>
+- **Currently supported TypeScript versions:** v4.2, v4.3, v4.4, and v4.5
+- **Compiler support policy:** [simple majors][sm]
+- **Public API:** all published types not in a `-private` module are public
 
-```
-node_modules/
-  true-myth/
-    index.d.ts
-    maybe.d.ts
-    result.d.ts
-    unit.d.ts
-    utils.d.ts
-    dist/
-      cjs/
-        index.js
-        maybe.js
-        result.js
-        unit.js
-        utils.js
-      es/
-        index.js
-        maybe.js
-        result.js
-        unit.js
-        utils.js
-```
-
-</details>
-
-### TypeScript
-
-TypeScript should resolve the types in both a Node and a bundler (Webpack, Parcel, Broccoli/Ember CLI, etc.) context automatically. If it doesn't, please [open an issue](https://github.com/chriskrycho/true-myth/issues/new)!
+[semver]: https://github.com/chriskrycho/ember-rfcs/blob/semver-for-ts/text/0730-semver-for-ts.md
+[sm]: https://github.com/chriskrycho/ember-rfcs/blob/semver-for-ts/text/0730-semver-for-ts.md#simple-majors
 
 ## Just the API, please
 
