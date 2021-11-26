@@ -34,7 +34,7 @@
     "ts:typedefs": "yarn tsc -p ts/types.tsconfig.json && mv defs/* . && rmdir defs",
     "ts:all": "yarn ts:cjs && yarn ts:es && yarn ts:typedefs",
     "build": "yarn clean && yarn ts:all",
-    "clean": "rimraf ./*.d.ts ./*.d.ts.map dist",
+    "clean": "rimraf ./*.d.ts ./*.d.ts.map ./dist ./-private",
     "doc": "./scripts/build-docs",
     "lint": "yarn eslint src/*.ts test/*.ts",
     "prepublishOnly": "yarn test && yarn build",
