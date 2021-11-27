@@ -1,4 +1,7 @@
-/** @internal */
+/**
+  @module
+  @internal
+*/
 
 /**
  * Check if the value here is an all-consuming monstrosity which will consume
