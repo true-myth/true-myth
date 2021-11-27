@@ -375,33 +375,6 @@ export const nothing = MaybeClass.nothing;
 export const of = MaybeClass.of;
 
 /**
-  Alias for {@link of}, convenient for a standalone import:
-
-  ```ts
-  import { maybe } from 'true-myth/maybe';
-  
-  interface Dict<T> {
-    [key: string]: T | null | undefined;
-  }
-
-  interface StrictDict<T> {
-    [key: string]: Maybe<T>;
-  }
-
-  function wrapNullables<T>(dict: Dict<T>): StrictDict<T> {
-    return Object.keys(dict).reduce((strictDict, key) => {
-      strictDict[key] = maybe(dict[key]);
-      return strictDict;
-    }, {} as StrictDict<T>);
-  }
-  ```
- */
-export const maybe = of;
-
-/** Alias for {@link of}, primarily for compatibility with Folktale. */
-export const fromNullable = of;
-
-/**
   Map over a {@linkcode Maybe} instance: apply the function to the wrapped value
   if the instance is {@linkcode Just}, and return {@linkcode Nothing} if the
   instance is `Nothing`.
@@ -760,9 +733,6 @@ export function unwrapOr<T, U>(defaultValue: U, maybe?: Maybe<T>) {
   return curry1(op, maybe);
 }
 
-/** Alias for {@linkcode unwrapOr} */
-export const getOr = unwrapOr;
-
 /**
   Safely get the value out of a {@linkcode Maybe} by returning the wrapped value
   if it is {@linkcode Just}, or by applying `orElseFn` if it is
@@ -802,9 +772,6 @@ export function unwrapOrElse<T, U>(
   const op = (m: Maybe<T>) => (m.isJust ? m.value : orElseFn());
   return curry1(op, maybe);
 }
-
-/** Alias for {@linkcode unwrapOrElse} */
-export const getOrElse = unwrapOrElse;
 
 /**
   Transform the {@linkcode Maybe} into a {@linkcode Result.Result Result}, using
@@ -1235,7 +1202,7 @@ export function find<T>(
   predicate: Predicate<T>,
   array?: T[]
 ): Maybe<T> | ((array: T[]) => Maybe<T>) {
-  const op = (a: T[]) => maybe(a.find(predicate));
+  const op = (a: T[]) => Maybe.of(a.find(predicate));
   return curry1(op, array);
 }
 
@@ -1257,7 +1224,7 @@ export function find<T>(
   @param array The array to get the first item from.
  */
 export function head<T>(array: Array<T | null | undefined>): Maybe<T> {
-  return maybe(array[0]);
+  return Maybe.of(array[0]);
 }
 
 /** A convenience alias for `Maybe.head`. */
@@ -1281,7 +1248,7 @@ export const first = head;
   @param array The array to get the first item from.
  */
 export function last<T>(array: Array<T | null | undefined>): Maybe<T> {
-  return maybe(array[array.length - 1]);
+  return Maybe.of(array[array.length - 1]);
 }
 
 /**
@@ -1455,7 +1422,7 @@ export function property<T, K extends keyof T>(
   key: K,
   obj?: T
 ): Maybe<NonNullable<T[K]>> | ((obj: T) => Maybe<NonNullable<T[K]>>) {
-  const op = (a: T) => maybe(a[key]) as Maybe<NonNullable<T[K]>>;
+  const op = (a: T) => Maybe.of(a[key]) as Maybe<NonNullable<T[K]>>;
   return curry1(op, obj);
 }
 
