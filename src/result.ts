@@ -1309,23 +1309,23 @@ export function isInstance<T, E>(item: unknown): item is Result<T, E> {
 }
 
 /**
-  Transposes a `Result` of a `Maybe` into a `Maybe` of a `Result`.
+  Transposes a `Maybe` of a `Result` into a `Result` of a `Maybe`.
 
-  | Input         | Output         |
-  | ------------- | -------------- |
-  | `Ok(Just(T))` | `Just(Ok(T))`  |
-  | `Err(E)`      | `Just(Err(E))` |
-  | `Ok(Nothing)` | `Nothing`      |
+  | Input          | Output        |
+  | -------------- | ------------- |
+  | `Just(Ok(T))`  | `Ok(Just(T))` |
+  | `Just(Err(E))` | `Err(E)`      |
+  | `Nothing`      | `Ok(Nothing)` |
 
-  @param result a `Result<Maybe<T>, E>` to transform to a `Maybe<Result<T, E>>`.
+  @param maybe a `Maybe<Result<T, E>>` to transform to a `Result<Maybe<T>, E>>`.
  */
-export function transpose<T, E>(result: Result<Maybe<T>, E>): Maybe<Result<T, E>> {
-  return result.match({
-    Ok: Maybe.match({
-      Just: (v) => Maybe.just(ok<T, E>(v)),
-      Nothing: () => Maybe.nothing<Result<T, E>>(),
+export function transposeMaybe<T, E>(maybe: Maybe<Result<T, E>>): Result<Maybe<T>, E> {
+  return maybe.match({
+    Just: match({
+      Ok: (v) => Result.ok(Maybe.just(v)),
+      Err: (e) => Result.err(e),
     }),
-    Err: (e) => Maybe.just(err<T, E>(e)),
+    Nothing: () => Result.ok(Maybe.nothing()),
   });
 }
 

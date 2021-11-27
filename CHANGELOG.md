@@ -8,7 +8,13 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ### Changed :boom:
 
-- We introduced a new `Maybe.transposeArray`, which is a type-safe, renamed, merged version of `Maybe.tuple` and `Maybe.all` which can correctly handle both array and tuple types. To support this change, it now accepts arrays or tuples directly, and the variadic/spread arguments to `all` have been replaced with taking an array or tuple directly. While `tuple` is unchanged, it is also deprecated (see below).
+- Support for versions of TypeScript before 4.0 have been removed, to enable the type-safe re-implementation of `Maybe.all`.
+
+- The `MaybeShape` and `ResultShape` interfaces are no longer exported. These were never intended for public reimplementation, and there is accordingly no value in their continuing to be public.
+
+### Added :star:
+
+- We introduced a new `Maybe.transposeArray`, which is a type-safe, renamed, merged version of `Maybe.tuple` and `Maybe.all` which can correctly handle both array and tuple types. To support this change, it now accepts arrays or tuples directly, and the variadic/spread arguments to `all` have been replaced with taking an array or tuple directly. While `tuple` and `all` are unchanged, they are also deprecated (see below).
 
     **Before:**
 
@@ -53,30 +59,26 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
     let mixedTupleResult: TupleResult = arrayTranspose(mixedTuple);
     ```
 
--   Support for versions of TypeScript before 4.0 have been removed, to enable the type-safe re-implementation of `Maybe.all`.
-
--   The `MaybeShape` and `ResultShape` interfaces are no longer exported. These were never intended for public reimplementation, and there is accordingly no value in their continuing to be public.
-
-### Added :star:
-
 -   `Maybe.transpose` and `Result.transpose`: for when you have a `Maybe<Result<T, E>>` or a `Result<Maybe<T>, E>` and need to invert them.
 
     ```ts
     import Maybe, { just, nothing } from 'true-myth/maybe';
     import Result, { ok, err } from 'true-myth/result';
 
-    let aJustOk: Maybe<Result<number, string>> = just(ok(12));
-    let result: Result<Maybe<number>, string> = Maybe.transpose(aJustOk);
+    let anOkJust: Result<Maybe<number>, string> = ok(just(12));
+    let maybe: Maybe<number>, string> = Maybe.transposeResult(anOkJust);
+    console.log(maybe); // Just(Ok(12))
 
-    let anOkNone: Result<Maybe<number>, string> = ok(just(12));
-    let maybe: Maybe<Result<number, string>> = Result.transpose(anOkNone);
+    let aJustOk: Maybe<Result<number, string>> = just(ok(12));
+    let result: Maybe<Result<number, string>> = Result.transposeMaybe(aJustOk);
+    console.log(result); // Ok(Just(12))
     ```
 
     See the docs for further details!
 
     **Note:** these are standalone functions, not methods, because TypeScript
     does not support conditionally supplying a method only for one specific type
-    parameterization. (Rust, the direct inspiration for the name of this method, *does* allow that.)
+    parameterization.
 
 ### Deprecated :red-square:
 

@@ -388,26 +388,26 @@ describe('`Result` pure functions', () => {
     expect(ResultNS.isInstance(obj)).toBe(false);
   });
 
-  describe('transpose', () => {
-    test('Ok(Just(T))', () => {
-      let result = ResultNS.ok<Maybe<number>, string>(just(12));
-      let transposed = ResultNS.transpose(result);
-      expect(transposed).toStrictEqual(just(ResultNS.ok(12)));
-      expectTypeOf(transposed).toEqualTypeOf<Maybe<Result<number, string>>>();
+  describe('transposeMaybe', () => {
+    test('Just(Ok(T))', () => {
+      let maybe = Maybe.just(Result.ok<number, string>(12));
+      let transposed = ResultNS.transposeMaybe(maybe);
+      expect(transposed).toStrictEqual(Result.ok(Maybe.just(12)));
+      expectTypeOf(transposed).toEqualTypeOf<Result<Maybe<number>, string>>();
     });
 
-    test('Ok(Nothing)', () => {
-      let result = ResultNS.ok<Maybe<number>, string>(nothing<number>());
-      let transposed = ResultNS.transpose(result);
-      expect(transposed).toStrictEqual(nothing());
-      expectTypeOf(transposed).toEqualTypeOf<Maybe<Result<number, string>>>();
+    test('Just(Err(E))', () => {
+      let maybe = Maybe.just(Result.err<number, string>('whoops'));
+      let transposed = ResultNS.transposeMaybe(maybe);
+      expect(transposed).toStrictEqual(Result.err('whoops'));
+      expectTypeOf(transposed).toEqualTypeOf<Result<Maybe<number>, string>>();
     });
 
-    test('Err(E)', () => {
-      let result = ResultNS.err<Maybe<number>, string>('hello');
-      let transposed = ResultNS.transpose(result);
-      expect(transposed).toStrictEqual(just(ResultNS.err('hello')));
-      expectTypeOf(transposed).toEqualTypeOf<Maybe<Result<number, string>>>();
+    test('Nothing', () => {
+      let maybe = Maybe.nothing<Result<number, string>>();
+      let transposed = ResultNS.transposeMaybe(maybe);
+      expect(transposed).toStrictEqual(Result.ok(Maybe.nothing()));
+      expectTypeOf(transposed).toEqualTypeOf<Result<Maybe<number>, string>>();
     });
   });
 });
