@@ -54,10 +54,11 @@ jobs:
     continue-on-error: false
     strategy:
       matrix:
-        ts-version: ['4.2', '4.3', '4.4', '4.5', 'next']
+        ts-version: ['~4.2', '~4.3', '~4.4', '~4.5', 'next']
 
     steps:
       - uses: actions/checkout@v2
       - uses: volta-cli/action@v1
       - run: yarn install --frozen-lockfile --non-interactive
-      - run: './node_modules/.bin/ember try:one ts-${{ matrix.ts-version }} --config-path=./config/ember-try.cjs'
+      - run: 'yarn add -D typescript@{{ matrix.ts-version }}'
+      - run: './node_modules/.bin/jest'
