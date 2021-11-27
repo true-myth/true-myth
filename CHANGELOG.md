@@ -84,6 +84,11 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 - `Maybe.tuple` and `Maybe.all` are deprecated in favor of `Maybe.arrayTranspose` now correctly handles both arrays and tuples. They will be removed not earlier than 6.0.0 (timeline not decided, but not sooner than when Node 12 LTS reaches end of life on April 30, 2022).
 
+## [4.1.1] (2021-01-31)
+
+### Fixed :wrench:
+
+- Set `stripInternal` to false for generated types (#97), so that they type-check.
 
 ## [4.1.0] (2020-12-13)
 
@@ -203,7 +208,8 @@ npm install true-myth@latest
 - @chriskrycho
 - @snatvb
 
-[unreleased]: https://github.com/true-myth/true-myth/compare/v3.1.0...HEAD
+[unreleased]: https://github.com/true-myth/true-myth/compare/v4.1.1...HEAD
+[4.1.1]: https://github.com/true-myth/true-myth/compare/v4.1.0...v4.1.1
 [4.1.0]: https://github.com/true-myth/true-myth/compare/v4.0.0...v4.1.0
 [4.0.0]: https://github.com/true-myth/true-myth/compare/v3.1.0...v4.0.0
 [3.1.0]: https://github.com/true-myth/true-myth/compare/v3.0.0...v3.1.0
