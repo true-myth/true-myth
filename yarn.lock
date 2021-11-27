@@ -1884,9 +1884,10 @@ exit@^0.1.2:
   version "0.1.2"
   resolved "https://registry.yarnpkg.com/exit/-/exit-0.1.2.tgz"
 
-expect-type@^0.12.0:
-  version "0.12.0"
-  resolved "https://registry.yarnpkg.com/expect-type/-/expect-type-0.12.0.tgz#133534b5e2561158c371e74af63fd8f18a9f3d42"
+expect-type@^0.13.0:
+  version "0.13.0"
+  resolved "https://registry.yarnpkg.com/expect-type/-/expect-type-0.13.0.tgz#916646a7a73f3ee77039a634ee9035efe1876eb2"
+  integrity sha512-CclevazQfrqo8EvbLPmP7osnb1SZXkw47XPPvUUpeMz4HuGzDltE7CaIt3RLyT9UQrwVK/LDn+KVcC0hcgjgDg==
 
 expect@^27.3.1:
   version "27.3.1"
