@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "target": "es2020",
-    "declaration": true,
+    "module": "es2020",
     "stripInternal": false,
     "removeComments": true,
 
@@ -16,15 +16,5 @@
     "sourceRoot": "./src",
     "sourceMap": true
   },
-  "include": ["src", "test"],
-  "typedocOptions": {
-    "out": "./docs",
-    "toc": false,
-    "excludePrivate": true,
-    "excludeInternal": true,
-    "includes": "./src",
-    "target": "ES6",
-    "theme": "default",
-    "name": "True Myth"
-  }
+  "include": ["src", "test"]
 }

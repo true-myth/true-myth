@@ -4,5 +4,15 @@
   "compilerOptions": {
     "sourceMap": false,
     "sourceRoot": null
+  },
+  "typedocOptions": {
+    "out": "./docs",
+    "toc": false,
+    "excludePrivate": true,
+    "excludeInternal": true,
+    "includes": "./src",
+    "target": "ES6",
+    "theme": "default",
+    "name": "True Myth"
   }
 }

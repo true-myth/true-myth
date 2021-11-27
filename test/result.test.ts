@@ -1,8 +1,8 @@
 import { expectTypeOf } from 'expect-type';
-import Maybe, { just, nothing } from '../src/maybe';
-import Result, { Ok, Variant, Err } from '../src/result';
-import * as ResultNS from '../src/result';
-import Unit from '../src/unit';
+import Maybe, { just, nothing } from 'true-myth/maybe';
+import Result, { Ok, Variant, Err } from 'true-myth/result';
+import * as ResultNS from 'true-myth/result';
+import Unit from 'true-myth/unit';
 
 const length = (x: { length: number }) => x.length;
 const double = (x: number) => x * 2;

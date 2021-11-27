@@ -20,12 +20,16 @@
     "url": "https://github.com/true-myth/true-myth/issues"
   },
   "version": "4.1.1",
-  "main": "dist/cjs/index.js",
-  "module": "dist/es/index.js",
-  "types": "index.d.ts",
-  "ember-addon": {
-    "main": "ember-addon.js"
+  "type": "module",
+  "main": "dist/index.js",
+  "module": "dist/index.js",
+  "exports": {
+    ".": "./dist/index.js",
+    "./maybe": "./dist/maybe.js",
+    "./result": "./dist/result.js",
+    "./unit": "./dist/unit.js"
   },
+  "types": "index.d.ts",
   "keywords": [
     "ember-addon",
     "typescript",
@@ -34,10 +38,9 @@
     "result"
   ],
   "scripts": {
-    "ts:cjs": "yarn tsc -p ts/cjs.tsconfig.json",
     "ts:es": "yarn tsc -p ts/es.tsconfig.json",
     "ts:typedefs": "yarn tsc -p ts/types.tsconfig.json && mv defs/* . && rmdir defs",
-    "ts:all": "yarn ts:cjs && yarn ts:es && yarn ts:typedefs",
+    "ts:all": "yarn ts:es && yarn ts:typedefs",
     "build": "yarn clean && yarn ts:all",
     "clean": "rimraf ./*.d.ts ./*.d.ts.map ./dist ./-private",
     "doc": "./scripts/build-docs",
@@ -52,35 +55,22 @@
     "*.d.ts",
     "*.d.ts.map",
     "dist",
-    "src",
-    "ember-addon.js"
+    "src"
   ],
-  "exports": {
-    "./maybe": {
-      "node": "./dist/cjs/maybe.js",
-      "default": "./dist/es/maybe.js"
-    },
-    "./result": {
-      "node": "./dist/cjs/result.js",
-      "default": "./dist/es/result.js"
-    }
-  },
   "license": "MIT",
   "devDependencies": {
     "@types/jest": "^27.0.1",
     "@typescript-eslint/parser": "^4.10.0",
-    "ember-cli": "3.28.4",
-    "ember-try": "^1.4.0",
     "eslint": "^7.15.0",
     "expect-type": "^0.12.0",
-    "jest": "^26.6.3",
+    "jest": "^27.3.1",
     "prettier": "^2.2.1",
     "prettier-eslint": "^13.0.0",
     "release-it": "^14.11.8",
     "release-it-lerna-changelog": "^4.0.1",
     "rimraf": "^3.0.2",
     "shelljs": "^0.8.2",
-    "ts-jest": "^26.4.4",
+    "ts-jest": "^27.0.7",
     "typedoc": "^0.22.10",
     "typescript": "^4.0.5"
   },
@@ -88,13 +78,17 @@
     "node": "12.* || >= 14.*"
   },
   "jest": {
-    "transform": {
-      "^.+\\.tsx?$": "ts-jest"
+    "preset": "ts-jest/presets/default-esm",
+    "extensionsToTreatAsEsm": [
+      ".ts"
+    ],
+    "moduleNameMapper": {
+      "^true-myth/(.*)$": "<rootDir>/src/$1",
+      "^(\\.{1,2}/.*)\\.js$": "$1"
     },
-    "testRegex": "/test(\\/|\\\\).*\\.test\\.ts$",
-    "moduleFileExtensions": [
-      "js",
-      "ts"
+    "moduleDirectories": [
+      "node_modules",
+      "src"
     ],
     "collectCoverage": true,
     "collectCoverageFrom": [
@@ -120,7 +114,8 @@
           "ignoreCodes": [
             151001
           ]
-        }
+        },
+        "tsconfig": "test/tsconfig.json"
       }
     }
   },

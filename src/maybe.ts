@@ -1,10 +1,10 @@
 /** [[include:doc/maybe.md]] */
 
 /** (keep typedoc from getting confused by the imports) */
-import * as Result from './result';
+import * as Result from './result.js';
 type Result<T, E> = import('./result').Result<T, E>;
 
-import { curry1, isVoid } from './-private/utils';
+import { curry1, isVoid } from './-private/utils.js';
 
 /**
   Discriminant for the `Just` and `Nothing` variants.
@@ -56,10 +56,10 @@ class _Maybe<T> {
       // the type-checking level.
       this.repr = [Variant.Nothing];
       if (!NOTHING) {
-        NOTHING = (this as Maybe<any>) as Nothing<any>;
+        NOTHING = this as Maybe<any> as Nothing<any>;
       }
 
-      return (NOTHING as Maybe<any>) as this;
+      return NOTHING as Maybe<any> as this;
     } else {
       this.repr = [Variant.Just, value];
     }
