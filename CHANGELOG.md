@@ -114,35 +114,35 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ## [4.1.1] (2021-01-31)
 
-### Fixed :wrench:
+### :wrench: Fixed
 
 - Set `stripInternal` to false for generated types (#97), so that they type-check.
 
 ## [4.1.0] (2020-12-13)
 
-### Added :star:
+### :star: Added
 
 - Support unwrapping to an alternative type with (backwards-compatible) tweak to type of `Maybe.unwrapOr` and `Result.unwrapOr`. For example, given `let a: Maybe<string>`, `let b = a.unwrapOr(42)` would produce a type of `string | number` for `b`. Useful particularly for interop with `null` and `undefined` at system boundaries while preserving general type safety.
 
-### Contributors 🙇 
+### 🙇 Contributors
 
 - @alantrick (#69)
 - @C-Saunders, @flyiniggle, @bmakuh, @atrick-speedline (#63, discussion motivating #69)
 
 ## [4.0.0] (2019-12-18)
 
-### Fixed :wrench:
+### :wrench: Fixed
 
 - Switched to using namespace-style imports (`import * as Maybe`) internally to enable users to tree-shake.
 
-### Changed :boom:
+### :boom: Changed
 
 - Explicitly drop support for Node 8 (and specify it going forward)
 - Reverted the use of `NonNullable` to constraint the types of callbacks like that passed to `map` and `mapOr`, because they [broke][#54] in TypeScript 3.6. (If you have ideas about how to improve this, please let us know!)
 
 [#54]: https://github.com/true-myth/true-myth/issues/54
 
-### Upgrading :gear:
+### :gear: Upgrading
 
 With yarn:
 
@@ -156,20 +156,20 @@ With npm:
 npm install true-myth@latest
 ```
 
-### Contributors 🙇 
+### 🙇 Contributors
 
 - @chriskrycho
 - @bmakuh
 
 ## [3.1.0] (2019-10-08)
 
-### Added :star:
+### :star: Added
 
 Thanks to @MarcNq, with very helpful input from @CrossEye, True Myth now has `toJSON` functions and methods on its types. This means that there's now a stable serialization format, which you can rely on going forward!
 
 For `Maybe<T>`, the type is `{ variant: 'Just', value: T }` or `{ variant: 'Nothing' }`. For `Result`, it's `{ variant: 'Ok', value: T  }` or `{ variant: 'Err', error: E }`. Since we just hand back the wrapped item, any object's implementation of `toJSON` or similar will work as usual, so you're fully in  control of serialization.
 
-### Upgrading :gear:
+### :gear: Upgrading
 
 With yarn:
 
@@ -183,7 +183,7 @@ With npm:
 npm install true-myth@latest
 ```
 
-### Contributors 🙇 
+### 🙇 Contributors
 
 - @MarcNq
 - @CrossEye
@@ -192,7 +192,7 @@ npm install true-myth@latest
 
 ## [3.0.0] (2019-05-17)
 
-### Added :star:
+### :star: Added
 
 True Myth now includes the `Maybe.wrapReturn` function, conveniently aliased as `maybeify` and `Maybe.ify`, which lets you take any function which includes `null` or `undefined` in its return type (like [`Document#querySelector`][qs] and friends) and convert it to a function which returns a `Maybe` instead:
 
@@ -205,7 +205,7 @@ querySelector('#neat'); // Maybe<Element>
 
 See [the docs](https://true-myth.js.org/modules/_maybe_.html#wrapreturn) for more!
 
-### Changed :boom:
+### :boom: Changed
 
 All `Maybe` helper functions must now return `NonNullable<T>`. This example, which previously compiled and resulted in the type `Maybe<string | null>`, will now cause a type error:
 
@@ -216,7 +216,7 @@ Maybe.of(document.querySelector('#neat'))
 
 **SemVer note:** The new behavior was the ordinary expectation for those types before—doing otherwise would cause a runtime error—and so could reasonably be described as a bugfix. Any place this type-checked before was causing a runtime error. However, it seems clearer simply to mark it as a breaking change, since it *may* cause your build to fail, and encourage you all to upgrade directly and fix those bugs if so!
 
-### Upgrading :gear:
+### :gear: Upgrading
 
 With yarn:
 
@@ -230,7 +230,7 @@ With npm:
 npm install true-myth@latest
 ```
 
-### Contributors 🙇 
+### 🙇 Contributors
 
 - @bmakuh
 - @chriskrycho
