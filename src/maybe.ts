@@ -1341,7 +1341,18 @@ type Unwrapped<T> = T extends Maybe<infer U> ? U : T;
 type TransposedArray<T extends Array<Maybe<unknown>>> = Maybe<{ [K in keyof T]: Unwrapped<T[K]> }>;
 
 /**
-  Transposes a `Maybe` of a `Result` into a `Result` of a `Maybe`.
+ * Legacy alias for `arrayTranspose`.
+ * @deprecated
+ */
+export const all = transposeArray;
+
+/**
+ * Legacy alias for `arrayTranspose`.
+ * @deprecated
+ */
+export const tuple = transposeArray;
+
+/**
 
   | Input          | Output        |
   | -------------- | ------------- |

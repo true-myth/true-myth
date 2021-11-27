@@ -45,7 +45,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
     let allJustArray = [just("hello"), just(12)];
     let allJustArrayResult: ArrayResult = arrayTranspose(allJustArray);
     
-    // Tuples now work with `all` as well.
+    // Tuples now work with `arrayTranspose` as well.
     type Tuple = [Maybe<number>, Maybe<string>];
     type TupleResult = Maybe<[number, string]>;
 
@@ -80,7 +80,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ### Deprecated :red-square:
 
-- `Maybe.tuple` is deprecated since `Maybe.all` now correctly handles both arrays and tuples. It will be removed not earlier than 6.0.0 (timeline not decided, certainly not before Node 10 leaves LTS on 2021-04-30).
+- `Maybe.tuple` and `Maybe.all` are deprecated in favor of `Maybe.arrayTranspose` now correctly handles both arrays and tuples. They will be removed not earlier than 6.0.0 (timeline not decided, but not sooner than when Node 12 LTS reaches end of life on April 30, 2022).
+
 
 ## [4.1.0] (2020-12-13)
 
