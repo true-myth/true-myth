@@ -1,8 +1,8 @@
 import { expectTypeOf } from 'expect-type';
-import Maybe, { Variant, Nothing, Just, Matcher } from '../src/maybe';
-import * as MaybeNS from '../src/maybe';
-import Result, { err, ok } from '../src/result';
-import { Unit } from '../src/unit';
+import Maybe, { Variant, Nothing, Just, Matcher } from 'true-myth/maybe';
+import * as MaybeNS from 'true-myth/maybe';
+import Result, { err, ok } from 'true-myth/result';
+import { Unit } from 'true-myth/unit';
 
 type Neat = { neat: string };
 

@@ -1,5 +1,5 @@
 import { expectTypeOf } from 'expect-type';
-import Unit from '../src/unit';
+import Unit from 'true-myth/unit';
 
 test('the unit type', () => {
   expectTypeOf<Unit>().toEqualTypeOf();
