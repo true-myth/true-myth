@@ -2,6 +2,7 @@
 
 module.exports = {
   command: './node_modules/.bin/jest',
+  useYarn: true,
   scenarios: [
     {
       name: 'ts-4.2',

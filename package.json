@@ -31,7 +31,7 @@
   },
   "types": "index.d.ts",
   "ember-addon": {
-    "main": "ember-addon.js"
+    "main": "ember-addon.cjs"
   },
   "keywords": [
     "ember-addon",
