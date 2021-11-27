@@ -416,17 +416,17 @@ describe('`Maybe` pure functions', () => {
     expect(MaybeNS.last([1, 2, 3])).toEqual(MaybeNS.just(3));
   });
 
-  describe('`arrayTranspose`', () => {
+  describe('`transposeArray`', () => {
     test('with basic types', () => {
       type ExpectedOutputType = Maybe<Array<string | number>>;
 
       let onlyJusts = [MaybeNS.just(2), MaybeNS.just('three')];
-      let onlyJustsAll = MaybeNS.arrayTranspose(onlyJusts);
+      let onlyJustsAll = MaybeNS.transposeArray(onlyJusts);
       expectTypeOf(onlyJustsAll).toEqualTypeOf<ExpectedOutputType>();
       expect(onlyJustsAll).toEqual(MaybeNS.just([2, 'three']));
 
       let hasNothing = [MaybeNS.just(2), MaybeNS.nothing<string>()];
-      let hasNothingAll = MaybeNS.arrayTranspose(hasNothing);
+      let hasNothingAll = MaybeNS.transposeArray(hasNothing);
       expectTypeOf(hasNothingAll).toEqualTypeOf<ExpectedOutputType>();
       expect(hasNothingAll).toEqual(MaybeNS.nothing());
     });
@@ -435,7 +435,7 @@ describe('`Maybe` pure functions', () => {
       type ExpectedOutputType = Maybe<Array<number | string[]>>;
 
       let nestedArrays = [MaybeNS.just(1), MaybeNS.just(['two', 'three'])];
-      let nestedArraysAll = MaybeNS.arrayTranspose(nestedArrays);
+      let nestedArraysAll = MaybeNS.transposeArray(nestedArrays);
 
       expectTypeOf(nestedArraysAll).toEqualTypeOf<ExpectedOutputType>();
       expect(nestedArraysAll).toEqual(MaybeNS.just([1, ['two', 'three']]));
@@ -444,37 +444,37 @@ describe('`Maybe` pure functions', () => {
     test('`tuple`', () => {
       type Tuple2 = [Maybe<string>, Maybe<number>];
       let invalid: Tuple2 = [MaybeNS.just('wat'), MaybeNS.nothing()];
-      const invalidResult = MaybeNS.arrayTranspose(invalid);
+      const invalidResult = MaybeNS.tuple(invalid);
       expect(invalidResult).toEqual(MaybeNS.nothing());
 
       type Tuple3 = [Maybe<string>, Maybe<number>, Maybe<{ neat: string }>];
       let valid: Tuple3 = [MaybeNS.just('hey'), MaybeNS.just(4), MaybeNS.just({ neat: 'yeah' })];
-      const result = MaybeNS.arrayTranspose(valid);
+      const result = MaybeNS.tuple(valid);
       expect(result).toEqual(MaybeNS.just(['hey', 4, { neat: 'yeah' }]));
       expectTypeOf(result).toEqualTypeOf<Maybe<[string, number, { neat: string }]>>();
     });
   });
 
-  describe('transpose', () => {
-    test('Just(Ok(T))', () => {
-      let maybe = MaybeNS.just(ok<number, string>(12));
-      let transposed = MaybeNS.transpose(maybe);
-      expect(transposed).toStrictEqual(ok(MaybeNS.just(12)));
-      expectTypeOf(transposed).toEqualTypeOf<Result<Maybe<number>, string>>();
+  describe('transposeResult', () => {
+    test('Ok(Just(T))', () => {
+      let result = Result.ok<Maybe<number>, string>(Maybe.just(12));
+      let transposed = MaybeNS.transposeResult(result);
+      expect(transposed).toStrictEqual(Maybe.just(Result.ok(12)));
+      expectTypeOf(transposed).toEqualTypeOf<Maybe<Result<number, string>>>();
     });
 
-    test('Just(Err(E))', () => {
-      let maybe = MaybeNS.just(err<number, string>('whoops'));
-      let transposed = MaybeNS.transpose(maybe);
-      expect(transposed).toStrictEqual(err('whoops'));
-      expectTypeOf(transposed).toEqualTypeOf<Result<Maybe<number>, string>>();
+    test('Ok(Nothing)', () => {
+      let result = Result.ok<Maybe<number>, string>(Maybe.nothing<number>());
+      let transposed = MaybeNS.transposeResult(result);
+      expect(transposed).toStrictEqual(Maybe.nothing());
+      expectTypeOf(transposed).toEqualTypeOf<Maybe<Result<number, string>>>();
     });
 
-    test('Nothing', () => {
-      let maybe = MaybeNS.nothing<Result<number, string>>();
-      let transposed = MaybeNS.transpose(maybe);
-      expect(transposed).toStrictEqual(ok(MaybeNS.nothing()));
-      expectTypeOf(transposed).toEqualTypeOf<Result<Maybe<number>, string>>();
+    test('Err(E)', () => {
+      let result = Result.err<Maybe<number>, string>('hello');
+      let transposed = MaybeNS.transposeResult(result);
+      expect(transposed).toStrictEqual(Maybe.just(Result.err('hello')));
+      expectTypeOf(transposed).toEqualTypeOf<Maybe<Result<number, string>>>();
     });
   });
 

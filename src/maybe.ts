@@ -1325,13 +1325,13 @@ export function last<T>(array: Array<T | null | undefined>): Maybe<T> {
 
   @param maybes The `Maybe`s to resolve to a single `Maybe`.
  */
-export function arrayTranspose<T extends Array<Maybe<unknown>>>(m: T): TransposedArray<T> {
+export function transposeArray<T extends Array<Maybe<unknown>>>(maybes: T): TransposedArray<T> {
   // The slightly odd-seeming use of `[...ms, m]` here instead of `concat` is
   // necessary to preserve the structure of the value passed in. The goal is for
   // `[Maybe<string>, [Maybe<number>, Maybe<boolean>]]` not to be flattened into
   // `Maybe<[string, number, boolean]>` (as `concat` would do) but instead to
   // produce `Maybe<[string, [number, boolean]]>`.
-  return m.reduce(
+  return maybes.reduce(
     (acc: Maybe<unknown[]>, m) => acc.andThen((ms) => m.map((m) => [...ms, m])),
     just([] as unknown[]) as TransposedArray<T>
   ) as TransposedArray<T>;
@@ -1341,23 +1341,35 @@ type Unwrapped<T> = T extends Maybe<infer U> ? U : T;
 type TransposedArray<T extends Array<Maybe<unknown>>> = Maybe<{ [K in keyof T]: Unwrapped<T[K]> }>;
 
 /**
-  Transposes a `Maybe` of a `Result` into a `Result` of a `Maybe`.
-
-  | Input          | Output        |
-  | -------------- | ------------- |
-  | `Just(Ok(T))`  | `Ok(Just(T))` |
-  | `Just(Err(E))` | `Err(E)`      |
-  | `Nothing`      | `Ok(Nothing)` |
-
-  @param maybe a `Maybe<Result<T, E>>` to transform to a `Result<Maybe<T>, E>>`.
+ * Legacy alias for `arrayTranspose`.
+ * @deprecated
  */
-export function transpose<T, E>(maybe: Maybe<Result<T, E>>): Result<Maybe<T>, E> {
-  return maybe.match({
-    Just: Result.match({
-      Ok: (v) => Result.ok<Maybe<T>, E>(just(v)),
-      Err: (e) => Result.err<Maybe<T>, E>(e),
+export const all = transposeArray;
+
+/**
+ * Legacy alias for `arrayTranspose`.
+ * @deprecated
+ */
+export const tuple = transposeArray;
+
+/**
+  Transposes a `Result` of a `Maybe` into a `Maybe` of a `Result`.
+
+  | Input         | Output         |
+  | ------------- | -------------- |
+  | `Ok(Just(T))` | `Just(Ok(T))`  |
+  | `Err(E)`      | `Just(Err(E))` |
+  | `Ok(Nothing)` | `Nothing`      |
+
+  @param result a `Result<Maybe<T>, E>` to transform to a `Maybe<Result<T, E>>`.
+ */
+export function transposeResult<T, E>(result: Result<Maybe<T>, E>): Maybe<Result<T, E>> {
+  return result.match({
+    Ok: match({
+      Just: (v) => just(Result.ok<T, E>(v)),
+      Nothing: () => nothing<Result<T, E>>(),
     }),
-    Nothing: () => Result.ok<Maybe<T>, E>(nothing()),
+    Err: (e) => Maybe.just(Result.err<T, E>(e)),
   });
 }
 
@@ -1556,7 +1568,7 @@ export function wrapReturn<F extends (...args: any[]) => any>(
 
 // The public interface for the Maybe class *as a value*: a constructor and the
 // single associated static property.
-interface M {
+interface MaybeConstructor {
   new <T>(value?: T | null | undefined): Maybe<T>;
   of: typeof _Maybe.of;
   just: typeof _Maybe.just;
@@ -1565,5 +1577,5 @@ interface M {
 
 /** A value which may (`Just<T>`) or may not (`Nothing`) be present. */
 export type Maybe<T> = Just<T> | Nothing<T>;
-export const Maybe = _Maybe as M;
+export const Maybe = _Maybe as MaybeConstructor;
 export default Maybe;
