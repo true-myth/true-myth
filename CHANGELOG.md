@@ -6,13 +6,41 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ## [Unreleased]
 
-### Changed :boom:
+### :boom: Changed
+
+- The top-level namespace-style export has been removed. If you were relying on the static members to be present when doing `import Maybe from 'true-myth/maybe'` or `import Result from 'true-myth/result';`, you can replace them with `import * as Maybe from 'true-myth/maybe';` or `import * as Result from 'true-myth/result';`. This should make for much better tree-shaking with bundlers like Rollup, which can see “through” a namespace import in a way they cannot with a manually-created namespace object. Where you want to maintain the type *and* namespace imports, you can do this:
+
+    ```ts
+    import * as Maybe from 'true-myth/maybe';
+    type Maybe<T> = Maybe.Maybe<T>; // convenience alias
+    ```
+
+    In general, though, you should prefer to simply import the named functions instead:
+
+    ```ts
+    import Maybe, { transposeArray } from 'true-myth/maybe';
+    ```
+
+- There are no longer separate classes for `Just`, `Nothing`, `Ok`, and `Err`. This substantially reduces the size of the library, and should hopefully improve browsers' ability to optimize code using these, since there is now only one class in each case: `Maybe` and `Result`. The public API for the classes is unchanged, but if you relied on `instanceof` checks against those classes anywhere, those checks will no longer work.
+
+- The exported `Variant` types are now frozen, constant objects, not TypeScript `enum`s. This *should* not break anyone, since the only difference in observable behavior between an `enum` and a `const` is the ability to do a “reverse lookup” on an `enum`—but since the field names and their values are identical, this just means shipping less, and faster, code.
+
+- We no longer publish CommonJS modules, only ES Modules.
+
+- Dropped support for Node versions earlier than Node 12 LTS.
 
 - Support for versions of TypeScript before 4.0 have been removed, to enable the type-safe re-implementation of `Maybe.all`.
 
 - The `MaybeShape` and `ResultShape` interfaces are no longer exported. These were never intended for public reimplementation, and there is accordingly no value in their continuing to be public.
 
-### Added :star:
+- A number of aliases (originally designed to make migration from e.g. Folktale easier) have been removed:
+    - `cata`: use `match`
+    - `chain` and `flatMap`: use `andThen`
+    - `maybeify` and `transmogrify`: use `wrapReturn`
+    - `unsafelyGet` and `unsafeGet`: use `.isJust`/`.isOk` then `.value`
+    - `unsafelyGetErr` and `unsafelyUnwrapErr`: use `.isErr` then `.error`
+
+### :star: Added
 
 - We introduced a new `Maybe.transposeArray`, which is a type-safe, renamed, merged version of `Maybe.tuple` and `Maybe.all` which can correctly handle both array and tuple types. To support this change, it now accepts arrays or tuples directly, and the variadic/spread arguments to `all` have been replaced with taking an array or tuple directly. While `tuple` and `all` are unchanged, they are also deprecated (see below).
 
@@ -80,7 +108,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
     does not support conditionally supplying a method only for one specific type
     parameterization.
 
-### Deprecated :red-square:
+### :red_square: Deprecated
 
 - `Maybe.tuple` and `Maybe.all` are deprecated in favor of `Maybe.arrayTranspose` now correctly handles both arrays and tuples. They will be removed not earlier than 6.0.0 (timeline not decided, but not sooner than when Node 12 LTS reaches end of life on April 30, 2022).
 
