@@ -25,6 +25,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 - The exported `Variant` types are now frozen, constant objects, not TypeScript `enum`s. This *should* not break anyone, since the only difference in observable behavior between an `enum` and a `const` is the ability to do a “reverse lookup” on an `enum`—but since the field names and their values are identical, this just means shipping less, and faster, code.
 
+- The `isJust`, `isNothing`, `isOk`, and `isErr` methods have been converted to getters. This makes them muchmore immediately useful in contexts where invoking a function is annoying, for any reason—for example, in Ember templates.
+
 - We no longer publish CommonJS modules, only ES Modules.
 
 - Dropped support for Node versions earlier than Node 12 LTS.
