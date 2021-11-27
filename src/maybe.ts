@@ -986,11 +986,11 @@ export function equals<T>(mb: Maybe<T>, ma?: Maybe<T>): boolean | ((a: Maybe<T>)
 }
 
 /**
-  Allows you to *apply* (thus `ap`) a value to a function without having to
-  take either out of the context of their `Maybe`s. This does mean that the
-  transforming function is itself within a `Maybe`, which can be hard to grok
-  at first but lets you do some very elegant things. For example, `ap` allows
-  you to this:
+  Allows you to *apply* (thus `ap`) a value to a function without having to take
+  either out of the context of their `Maybe`s. This does mean that the
+  transforming function is itself within a `Maybe`, which can be hard to grok at
+  first but lets you do some very elegant things. For example, `ap` allows you
+  to this:
 
   ```ts
   import { just, nothing } from 'true-myth/maybe';
@@ -1050,13 +1050,13 @@ export function equals<T>(mb: Maybe<T>, ma?: Maybe<T>): boolean | ((a: Maybe<T>)
 
   ```ts
   import Maybe from 'true-myth/maybe';
-  import Immutable from 'immutable';
-  import { curry } from 'lodash'
+  import { is as immutableIs, Set } from 'immutable';
 
-  const is = curry(Immutable.is);
+  const is = (first: unknown) =>  (second: unknown) => 
+    immutableIs(first, second);
 
-  const x = Maybe.of(Immutable.Set.of(1, 2, 3));
-  const y = Maybe.of(Immutable.Set.of(2, 3, 4));
+  const x = Maybe.of(Set.of(1, 2, 3));
+  const y = Maybe.of(Set.of(2, 3, 4));
 
   Maybe.of(is).ap(x).ap(y); // Just(false)
   ```
@@ -1064,18 +1064,15 @@ export function equals<T>(mb: Maybe<T>, ma?: Maybe<T>): boolean | ((a: Maybe<T>)
   Without `ap`, we're back to that gnarly nested `match`:
 
   ```ts
-   * import Maybe, { just, nothing } from 'true-myth/maybe';
-  import Immutable from 'immutable';
-  import { curry } from 'lodash'
+  import Maybe, { just, nothing } from 'true-myth/maybe';
+  import { is, Set } from 'immutable';
 
-  const is = curry(Immutable.is);
-
-  const x = Maybe.of(Immutable.Set.of(1, 2, 3));
-  const y = Maybe.of(Immutable.Set.of(2, 3, 4));
+  const x = Maybe.of(Set.of(1, 2, 3));
+  const y = Maybe.of(Set.of(2, 3, 4));
 
   x.match({
     Just: iX => y.match({
-      Just: iY => Maybe.just(Immutable.is(iX, iY)),
+      Just: iY => Maybe.just(is(iX, iY)),
       Nothing: () => Maybe.nothing(),
     })
     Nothing: () => Maybe.nothing(),
@@ -1091,32 +1088,24 @@ export function equals<T>(mb: Maybe<T>, ma?: Maybe<T>): boolean | ((a: Maybe<T>)
       form (for add) `(a: number) => (b: number) => a + b`, *not* the more usual
       `(a: number, b: number) => a + b` you see in JavaScript more generally.
 
-      For convenience, you may want to look at Lodash's `_.curry` or Ramda's
-      `R.curry`, which allow you to create curried versions of functions
-      whenever you want:
-
-      ```
-      import Maybe from 'true-myth/maybe';
-      import { curry } from 'lodash';
-
-      const normalAdd = (a: number, b: number) => a + b;
-      const curriedAdd = curry(normalAdd); // (a: number) => (b: number) => a + b;
-
-      Maybe.of(curriedAdd).ap(Maybe.of(1)).ap(Maybe.of(5)); // Just(6)
-      ```
+      (Unfortunately, these do not currently work with lodash or Ramda's `curry`
+      helper functions. A future update to the type definitions may make that
+      work, but the intermediate types produced by those helpers and the more
+      general function types expected by this function do not currently align.)
 
   2.  You will need to call `ap` as many times as there are arguments to the
-      function you're dealing with. So in the case of `add`, which has the
-      "arity" (function argument count) of 2 (`a` and `b`), you'll need to call
-      `ap` twice: once for `a`, and once for `b`. To see why, let's look at what
-      the result in each phase is:
+      function you're dealing with. So in the case of this `add3` function,
+      which has the "arity" (function argument count) of 3 (`a` and `b`), you'll
+      need to call `ap` twice: once for `a`, and once for `b`. To see why, let's
+      look at what the result in each phase is:
 
       ```ts
-      const add = (a: number) => (b: number) => a + b;
+      const add3 = (a: number) => (b: number) => (c: number) => a + b + c;
 
-      const maybeAdd = Maybe.of(add); // Just((a: number) => (b: number) => a + b)
-      const maybeAdd1 = maybeAdd.ap(Maybe.of(1)); // Just((b: number) => 1 + b)
-      const final = maybeAdd1.ap(Maybe.of(3)); // Just(4)
+      const maybeAdd = just(add); // Just((a: number) => (b: number) => (c: number) => a + b + c)
+      const maybeAdd1 = maybeAdd.ap(just(1)); // Just((b: number) => (c: number) => 1 + b + c)
+      const maybeAdd1And2 = maybeAdd1.ap(just(2)) // Just((c: number) => 1 + 2 + c)
+      const final = maybeAdd1.ap(just(3)); // Just(4)
       ```
 
       So for `toString`, which just takes a single argument, you would only need
@@ -1124,7 +1113,7 @@ export function equals<T>(mb: Maybe<T>, ma?: Maybe<T>): boolean | ((a: Maybe<T>)
 
       ```ts
       const toStr = (v: { toString(): string }) => v.toString();
-      Maybe.of(toStr).ap(12); // Just("12")
+      just(toStr).ap(12); // Just("12")
       ```
 
   One other scenario which doesn't come up *quite* as often but is conceivable
@@ -1133,7 +1122,7 @@ export function equals<T>(mb: Maybe<T>, ma?: Maybe<T>): boolean | ((a: Maybe<T>)
   possibly-present in `ap` and then wrap the values to apply to the function to
   in `Maybe` themselves.
 
-  **Aside:** `ap` is not named `apply` because of the overlap with JavaScript's
+  __Aside:__ `ap` is not named `apply` because of the overlap with JavaScript's
   existing [`apply`] function – and although strictly speaking, there isn't any
   direct overlap (`Maybe.apply` and `Function.prototype.apply` don't intersect
   at all) it's useful to have a different name to avoid implying that they're

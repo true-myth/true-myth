@@ -192,7 +192,7 @@ export class _Result<T, E> {
   }
 
   /** Method variant for [`Result.unwrapOr`](../modules/_result_.html#unwrapor) */
-  unwrapOr<U>(this: Result<T, E>, defaultValue: U): T | U {
+  unwrapOr<U = T>(this: Result<T, E>, defaultValue: U): T | U {
     return unwrapOr(defaultValue, this);
   }
 
@@ -1119,8 +1119,8 @@ export function equals<T, E>(
 }
 
 /**
-  Allows you to *apply* (thus `ap`) a value to a function without having to
-  take either out of the context of their `Result`s. This does mean that the
+  Allows you to *apply* (thus `ap`) a value to a function without having to take
+  either out of the context of their `Result`s. This does mean that the
   transforming function is itself within a `Result`, which can be hard to grok
   at first but lets you do some very elegant things. For example, `ap` allows
   you to do this:
@@ -1183,13 +1183,13 @@ export function equals<T, E>(
 
   ```ts
   import { ok } from 'true-myth/result';
-  import Immutable from 'immutable';
-  import { curry } from 'lodash'
+  import { is as immutableIs, Set } from 'immutable';
 
-  const is = curry(Immutable.is);
+  const is = (first: unknown) =>  (second: unknown) => 
+    immutableIs(first, second);
 
-  const x = ok(Immutable.Set.of(1, 2, 3));
-  const y = ok(Immutable.Set.of(2, 3, 4));
+  const x = ok(Set.of(1, 2, 3));
+  const y = ok(Set.of(2, 3, 4));
 
   ok(is).ap(x).ap(y); // Ok(false)
   ```
@@ -1197,18 +1197,15 @@ export function equals<T, E>(
   Without `ap`, we're back to that gnarly nested `match`:
 
   ```ts
-   * import Result, { ok, err } from 'true-myth/result';
-  import Immutable from 'immutable';
-  import { curry } from 'lodash'
+  import Result, { ok, err } from 'true-myth/result';
+  import { is, Set } from 'immutable';
 
-  const is = curry(Immutable.is);
-
-  const x = ok(Immutable.Set.of(1, 2, 3));
-  const y = ok(Immutable.Set.of(2, 3, 4));
+  const x = ok(Set.of(1, 2, 3));
+  const y = ok(Set.of(2, 3, 4));
 
   x.match({
     Ok: iX => y.match({
-      Ok: iY => Result.of(Immutable.is(iX, iY)),
+      Ok: iY => Result.of(is(iX, iY)),
       Err: (e) => ok(false),
     })
     Err: (e) => ok(false),
@@ -1224,32 +1221,24 @@ export function equals<T, E>(
       form (for add) `(a: number) => (b: number) => a + b`, *not* the more usual
       `(a: number, b: number) => a + b` you see in JavaScript more generally.
 
-      For convenience, you may want to look at Lodash's `_.curry` or Ramda's
-      `R.curry`, which allow you to create curried versions of functions
-      whenever you want:
-
-      ```
-      import Result from 'true-myth/result';
-      import { curry } from 'lodash';
-
-      const normalAdd = (a: number, b: number) => a + b;
-      const curriedAdd = curry(normalAdd); // (a: number) => (b: number) => a + b;
-
-      Result.of(curriedAdd).ap(Result.of(1)).ap(Result.of(5)); // Ok(6)
-      ```
+      (Unfortunately, these do not currently work with lodash or Ramda's `curry`
+      helper functions. A future update to the type definitions may make that
+      work, but the intermediate types produced by those helpers and the more
+      general function types expected by this function do not currently align.)
 
   2.  You will need to call `ap` as many times as there are arguments to the
-      function you're dealing with. So in the case of `add`, which has the
-      "arity" (function argument count) of 2 (`a` and `b`), you'll need to call
-      `ap` twice: once for `a`, and once for `b`. To see why, let's look at what
-      the result in each phase is:
+      function you're dealing with. So in the case of this `add3` function,
+      which has the "arity" (function argument count) of 3 (`a` and `b`), you'll
+      need to call `ap` twice: once for `a`, and once for `b`. To see why, let's
+      look at what the result in each phase is:
 
       ```ts
-      const add = (a: number) => (b: number) => a + b;
+      const add3 = (a: number) => (b: number) => (c: number) => a + b + c;
 
-      const maybeAdd = Result.of(add); // Ok((a: number) => (b: number) => a + b)
-      const maybeAdd1 = maybeAdd.ap(Result.of(1)); // Ok((b: number) => 1 + b)
-      const final = maybeAdd1.ap(Result.of(3)); // Ok(4)
+      const resultAdd = ok(add); // Ok((a: number) => (b: number) => (c: number) => a + b + c)
+      const resultAdd1 = resultAdd.ap(ok(1)); // Ok((b: number) => (c: number) => 1 + b + c)
+      const resultAdd1And2 = resultAdd1.ap(ok(2)) // Ok((c: number) => 1 + 2 + c)
+      const final = maybeAdd1.ap(ok(3)); // Ok(4)
       ```
 
       So for `toString`, which just takes a single argument, you would only need
@@ -1257,7 +1246,7 @@ export function equals<T, E>(
 
       ```ts
       const toStr = (v: { toString(): string }) => v.toString();
-      Result.of(toStr).ap(12); // Ok("12")
+      ok(toStr).ap(12); // Ok("12")
       ```
 
   One other scenario which doesn't come up *quite* as often but is conceivable
