@@ -1,6 +1,9 @@
-/** [[include:doc/result.md]] */
+/**
+  [[include:doc/result.md]]
+  
+  @module
+ */
 
-/** (keep typedoc from getting confused by the import) */
 import * as Maybe from './maybe.js';
 type Maybe<T> = import('./maybe').Maybe<T>;
 
@@ -8,7 +11,8 @@ import Unit from './unit.js';
 import { curry1, isVoid } from './-private/utils.js';
 
 /**
-  Discriminant for `Ok` and `Err` variants of `Result` type.
+  Discriminant for {@linkcode Ok} and {@linkcode Err} variants of the
+  {@linkcode Result} type.
 
   You can use the discriminant via the `variant` property of `Result` instances
   if you need to match explicitly on it.
@@ -34,17 +38,16 @@ type ResultJSON<T, E> = OkJSON<T> | ErrJSON<E>;
 
 type Repr<T, E> = [tag: 'Ok', value: T] | [tag: 'Err', error: E];
 
-export class _Result<T, E> {
+// Defines the *implementation*, but not the *types*. See the exports below.
+class ResultClass<T, E> {
   private constructor(private repr: Repr<T, E>) {}
 
   /**
-    Create an instance of `Result.Ok` with `new`.
+    Create an instance of {@linkcode Ok}.
 
-    Note: While you *may* create the `Result` type via normal
+    Note: While you *may* create the {@linkcode Result} type via normal
     JavaScript class construction, it is not recommended for the functional
-    style for which the library is intended. Instead, use [`Result.ok`].
-
-    [`Result.ok`]: ../modules/_result_.html#ok
+    style for which the library is intended. Instead, use {@linkcode ok}.
 
     ```ts
     // Avoid:
@@ -54,14 +57,14 @@ export class _Result<T, E> {
     const aString = Result.ok('characters);
     ```
 
-    Note that you may explicitly pass `Unit` to the `Ok` constructor to create
-    a `Result<Unit, E>`. However, you may *not* call the `Ok` constructor with
-    `null` or `undefined` to get that result (the type system won't allow you to
-    construct it that way). Instead, for convenience, you can simply call
-    `Result.ok()`, which will construct the type correctly.
+    Note that you may explicitly pass {@linkcode Unit.Unit Unit} to the
+    {@linkcode Ok} constructor to create a `Result<Unit, E>`. However, you may
+    *not* call the `Ok` constructor with `null` or `undefined` to get that
+    result (the type system won't allow you to construct it that way). Instead,
+    for convenience, you can simply call {@linkcode ok}, which will construct
+    the type correctly.
 
-    @param value
-    The value to wrap in a `Result.Ok`.
+    @param value The value to wrap in an `Ok`.
 
     Note: `null` and `undefined` are allowed by the type signature so that the
     constructor may `throw` on those rather than constructing a type like
@@ -74,17 +77,15 @@ export class _Result<T, E> {
       throw new Error('Tried to construct `Ok` with `null`. Maybe you want `Maybe.Nothing`?');
     }
 
-    return new _Result<T, E>(['Ok', value]) as Result<T, E>;
+    return new ResultClass<T, E>(['Ok', value]) as Result<T, E>;
   }
 
   /**
-    Create an instance of `Result.Err` with `new`.
+    Create an instance of {@linkcode Err}.
 
-    Note: While you *may* create the `Result` type via normal
+    Note: While you *may* create the {@linkcode Result} type via normal
     JavaScript class construction, it is not recommended for the functional
-    style for which the library is intended. Instead, use [`Result.err`].
-
-    [`Result.err`]: ../modules/_result_.html#err
+    style for which the library is intended. Instead, use {@linkcode err}.
 
     ```ts
     // Avoid:
@@ -94,8 +95,7 @@ export class _Result<T, E> {
     const anErr = Result.err('alas, failure');
     ```
 
-    @param error
-    The value to wrap in a `Result.Err`.
+    @param error The value to wrap in an `Err`.
 
     `Note: null` and `undefined` are allowed by the type signature so that the
     constructor may `throw` on those rather than constructing a type like
@@ -110,15 +110,19 @@ export class _Result<T, E> {
       );
     }
 
-    return new _Result<T, E>(['Err', error]) as Result<T, E>;
+    return new ResultClass<T, E>(['Err', error]) as Result<T, E>;
   }
 
-  /** Distinguish between the `Ok` and `Err` [variants](../enums/_result_.variant). */
+  /** Distinguish between the {@linkcode Variant.Ok} and {@linkcode Variant.Err} {@linkcode Variant variants}. */
   get variant(): Variant {
     return this.repr[0];
   }
 
-  /** The wrapped value. */
+  /**
+    The wrapped value.
+
+    @throws if you access when the {@linkcode Result} is not {@linkcode Ok}
+   */
   get value(): T | never {
     if (this.repr[0] === Variant.Err) {
       throw new Error('Cannot get the value of Err');
@@ -127,7 +131,11 @@ export class _Result<T, E> {
     return this.repr[1];
   }
 
-  /** The wrapped error value. */
+  /**
+    The wrapped error value.
+
+    @throws if you access when the {@linkcode Result} is not {@linkcode Err}
+   */
   get error(): E | never {
     if (this.repr[0] === Variant.Ok) {
       throw new Error('Cannot get the error of Ok');
@@ -136,7 +144,7 @@ export class _Result<T, E> {
     return this.repr[1];
   }
 
-  /** Is the `Result` an `Ok`? */
+  /** Is the {@linkcode Result} an {@linkcode Ok}? */
   get isOk() {
     return this.repr[0] === Variant.Ok;
   }
@@ -146,82 +154,82 @@ export class _Result<T, E> {
     return this.repr[0] === Variant.Err;
   }
 
-  /** Method variant for [`Result.map`](../modules/_result_.html#map) */
+  /** Method variant for {@linkcode map} */
   map<U>(this: Result<T, E>, mapFn: (t: T) => U): Result<U, E> {
     return map(mapFn, this);
   }
 
-  /** Method variant for [`Result.mapOr`](../modules/_result_.html#mapor) */
+  /** Method variant for {@linkcode mapOr} */
   mapOr<U>(this: Result<T, E>, orU: U, mapFn: (t: T) => U): U {
     return mapOr(orU, mapFn, this);
   }
 
-  /** Method variant for [`Result.mapOrElse`](../modules/_result_.html#maporelse) */
+  /** Method variant for {@linkcode mapOrElse} */
   mapOrElse<U>(this: Result<T, E>, orElseFn: (err: E) => U, mapFn: (t: T) => U): U {
     return mapOrElse(orElseFn, mapFn, this);
   }
 
-  /** Method variant for [`Result.match`](../modules/_result_.html#match) */
+  /** Method variant for {@linkcode match} */
   match<U>(this: Result<T, E>, matcher: Matcher<T, E, U>): U {
     return match(matcher, this);
   }
 
-  /** Method variant for [`Result.mapErr`](../modules/_result_.html#maperr) */
+  /** Method variant for {@linkcode mapErr} */
   mapErr<F>(this: Result<T, E>, mapErrFn: (e: E) => F): Result<T, F> {
     return mapErr(mapErrFn, this);
   }
 
-  /** Method variant for [`Result.or`](../modules/_result_.html#or) */
+  /** Method variant for {@linkcode or} */
   or<F>(this: Result<T, E>, orResult: Result<T, F>): Result<T, F> {
     return or(orResult, this);
   }
 
-  /** Method variant for [`Result.orElse`](../modules/_result_.html#orelse) */
+  /** Method variant for {@linkcode orElse} */
   orElse<F>(this: Result<T, E>, orElseFn: (err: E) => Result<T, F>): Result<T, F> {
     return orElse(orElseFn, this);
   }
 
-  /** Method variant for [`Result.and`](../modules/_result_.html#and) */
+  /** Method variant for {@linkcode and} */
   and<U>(this: Result<T, E>, mAnd: Result<U, E>): Result<U, E> {
     return and(mAnd, this);
   }
 
-  /** Method variant for [`Result.andThen`](../modules/_result_.html#andthen) */
+  /** Method variant for {@linkcode andThen} */
   andThen<U>(this: Result<T, E>, andThenFn: (t: T) => Result<U, E>): Result<U, E> {
     return andThen(andThenFn, this);
   }
 
-  /** Method variant for [`Result.unwrapOr`](../modules/_result_.html#unwrapor) */
+  /** Method variant for {@linkcode unwrapOr} */
   unwrapOr<U = T>(this: Result<T, E>, defaultValue: U): T | U {
     return unwrapOr(defaultValue, this);
   }
 
-  /** Method variant for [`Result.unwrapOrElse`](../modules/_result_.html#unwrapOrElse) */
+  /** Method variant for {@linkcode unwrapOrElse} */
   unwrapOrElse<U>(this: Result<T, E>, elseFn: (error: E) => U): T | U {
     return unwrapOrElse(elseFn, this);
   }
 
-  /** Method variant for [`Result.toMaybe`](../modules/_result_.html#tomaybe) */
+  /** Method variant for {@linkcode toMaybe} */
   toMaybe(this: Result<T, E>): Maybe<T> {
     return toMaybe(this);
   }
 
-  /** Method variant for [`Result.toString`](../modules/_result_.html#tostring) */
+  /** Method variant for {@linkcode toString} */
   toString(this: Result<T, E>): string {
     return toString(this);
   }
 
-  /** Method variant for [`Result.toJSON`](../modules/_result_.html#toJSON) */
+  /** Method variant for {@linkcode toJSON} */
   toJSON(this: Result<T, E>): ResultJSON<T, E> {
     return toJSON(this);
   }
 
-  /** Method variant for [`Result.equals`](../modules/_result_.html#equals) */
+  /** Method variant for {@linkcode equals} */
   equals(this: Result<T, E>, comparison: Result<T, E>): boolean {
     return equals(comparison, this);
   }
 
-  /** Method variant for [`Result.ap`](../modules/_result_.html#ap) */
+  /** Method variant for {@linkcode ap} */
   ap<A, B>(this: Result<(a: A) => B, E>, r: Result<A, E>): Result<B, E> {
     return ap(this, r);
   }
@@ -229,43 +237,45 @@ export class _Result<T, E> {
 
 /**
   An `Ok` instance is the *successful* variant instance of the
-  [`Result`](../modules/_result_.html#result) type, representing a successful
-  outcome from an operation which may fail. For a full discussion, see [the
-  module docs](../modules/_result_.html).
+  {@linkcode Result} type, representing a successful outcome from an operation
+  which may fail. For a full discussion, see the module docs.
 
   @typeparam T The type wrapped in this `Ok` variant of `Result`.
   @typeparam E The type which would be wrapped in an `Err` variant of `Result`.
  */
-export interface Ok<T, E> extends _Result<T, E> {
+export interface Ok<T, E> extends ResultClass<T, E> {
   /** `Ok` is always [`Variant.Ok`](../enums/_result_.variant#ok). */
   variant: 'Ok';
   isOk: true;
   isErr: false;
+  /** The wrapped value */
   value: T;
+  /** @internal */
   error: never;
 }
 
 /**
-  An `Err` instance is the *failure* variant instance of the
-  [`Result`](../modules/_result_.html#result) type, representing a failure
-  outcome from an operation which may fail. For a full discussion, see [the
-  module docs](../modules/_result_.html).
+  An `Err` instance is the *failure* variant instance of the {@linkcode Result}
+  type, representing a failure outcome from an operation which may fail. For a
+  full discussion, see the module docs.
 
   @typeparam T The type which would be wrapped in an `Ok` variant of `Result`.
   @typeparam E The type wrapped in this `Err` variant of `Result`.
   */
-export interface Err<T, E> extends _Result<T, E> {
+export interface Err<T, E> extends ResultClass<T, E> {
   /** `Err` is always [`Variant.Err`](../enums/_result_.variant#err). */
   readonly variant: 'Err';
   isOk: false;
   isErr: true;
+  /** @internal */
   value: never;
+  /** The wrapped error value. */
   error: E;
 }
 
 /**
-  Execute the provided callback, wrapping the return value in `Result.Ok` or
-  `Result.Err(error)` if there is an exception.
+  Execute the provided callback, wrapping the return value in {@linkcode Ok} or
+  {@linkcode Err Err(error)} if there is an exception.
 
   ```ts
   const aSuccessfulOperation = () => 2 + 2;
@@ -302,7 +312,7 @@ export function tryOr<T, E>(
 }
 
 /**
-  Create an instance of `Result.Ok`.
+  Create an instance of {@linkcode Ok}.
 
   If you need to create an instance with a specific type (as you do whenever you
   are not constructing immediately for a function return or as an argument to a
@@ -354,7 +364,7 @@ export function ok<T, E>(value?: T): Result<Unit, E> | Result<T, E> {
 }
 
 /**
-  Create an instance of `Result.Error`.
+  Create an instance of {@linkcode Err}.
 
   If you need to create an instance with a specific type (as you do whenever you
   are not constructing immediately for a function return or as an argument to a
@@ -406,8 +416,8 @@ export function err<T, E>(error?: E): Result<T, Unit> | Result<T, E> {
 }
 
 /**
-  Execute the provided callback, wrapping the return value in `Result.Ok`.
-  If there is an exception, return a `Result.Err` of whatever the `onError`
+  Execute the provided callback, wrapping the return value in {@linkcode Ok}.
+  If there is an exception, return a {@linkcode Err} of whatever the `onError`
   function returns.
 
   ```ts
@@ -426,7 +436,7 @@ export function err<T, E>(error?: E): Result<T, Unit> | Result<T, E> {
  ```
 
   @param onError A function that takes `e` exception and returns what will
-  be wrapped in a `Result.Err`
+    be wrapped in a `Result.Err`
   @param callback The callback to try executing
  */
 export function tryOrElse<T, E>(onError: (e: unknown) => E, callback: () => T): Result<T, E>;
@@ -447,11 +457,12 @@ export function tryOrElse<T, E>(
 }
 
 /**
-  Map over a `Result` instance: apply the function to the wrapped value if the
-  instance is `Ok`, and return the wrapped error value wrapped as a new `Err` of
-  the correct type (`Result<U, E>`) if the instance is `Err`.
+  Map over a {@linkcode Result} instance: apply the function to the wrapped
+  value if the instance is {@linkcode Ok}, and return the wrapped error value
+  wrapped as a new {@linkcode Err} of the correct type (`Result<U, E>`) if the
+  instance is `Err`.
 
-  `Result.map` works a lot like `Array.prototype.map`, but with one important
+  `map` works a lot like `Array.prototype.map`, but with one important
   difference. Both `Result` and `Array` are containers for other kinds of items,
   but where `Array.prototype.map` has 0 to _n_ items, a `Result` always has
   exactly one item, which is *either* a success or an error instance.
@@ -460,14 +471,14 @@ export function tryOrElse<T, E>(
   the array (if there are any), `Result.map` will only apply the mapping
   function to the (single) element if an `Ok` instance, if there is one.
 
-  If you have no items in an array of
-  numbers named `foo` and call `foo.map(x => x + 1)`, you'll still some have an
-  array with nothing in it. But if you have any items in the array (`[2, 3]`),
-  and you call `foo.map(x => x + 1)` on it, you'll get a new array with each of
-  those items inside the array "container" transformed (`[3, 4]`).
+  If you have no items in an array of numbers named `foo` and call `foo.map(x =>
+  x + 1)`, you'll still some have an array with nothing in it. But if you have
+  any items in the array (`[2, 3]`), and you call `foo.map(x => x + 1)` on it,
+  you'll get a new array with each of those items inside the array "container"
+  transformed (`[3, 4]`).
 
-  With `Result.map`, the `Err` variant is treated *by the `map` function* kind
-  of the same way as the empty array case: it's just ignored, and you get back a
+  With this `map`, the `Err` variant is treated *by the `map` function* kind of
+  the same way as the empty array case: it's just ignored, and you get back a
   new `Result` that is still just the same `Err` instance. But if you have an
   `Ok` variant, the map function is applied to it, and you get back a new
   `Result` with the value transformed, and still wrapped in an `Ok`.
@@ -509,8 +520,9 @@ export function map<T, U, E>(
 }
 
 /**
-  Map over a `Result` instance as in [`map`](#map) and get out the value
-  if `result` is an `Ok`, or return a default value if `result` is an `Err`.
+  Map over a {@linkcode Result} instance as in [`map`](#map) and get out the
+  value if `result` is an {@linkcode Ok}, or return a default value if `result`
+  is an {@linkcode Err}.
 
   #### Examples
 
@@ -563,11 +575,11 @@ export function mapOr<T, U, E>(
 }
 
 /**
-  Map over a `Result` instance as in [`map`](#map) and get out the value if
-  `result` is `Ok`, or apply a function (`orElseFn`) to the value wrapped in
-  the `Err` to get a default value.
+  Map over a {@linkcode Result} instance as in {@linkcode map} and get out the
+  value if `result` is {@linkcode Ok}, or apply a function (`orElseFn`) to the
+  value wrapped in the {@linkcode Err} to get a default value.
 
-  Like [`mapOr`](#mapor) but using a function to transform the error into a
+  Like {@linkcode mapOr} but using a function to transform the error into a
   usable value instead of simply using a default value.
 
   #### Examples
@@ -637,11 +649,11 @@ export function mapOrElse<T, U, E>(
 }
 
 /**
-  Map over a `Result`, exactly as in [`map`](#map), but operating on the value
-  wrapped in an `Err` instead of the value wrapped in the `Ok`. This is handy
-  for when you need to line up a bunch of different types of errors, or if you
-  need an error of one shape to be in a different shape to use somewhere else in
-  your codebase.
+  Map over a {@linkcode Ok}, exactly as in {@linkcode map}, but operating on the
+  value wrapped in an {@linkcode Err} instead of the value wrapped in the
+  {@linkcode Ok}. This is handy for when you need to line up a bunch of
+  different types of errors, or if you need an error of one shape to be in a
+  different shape to use somewhere else in your codebase.
 
   #### Examples
 
@@ -663,7 +675,8 @@ export function mapOrElse<T, U, E>(
   @typeparam E    The type of the value wrapped in the `Err` of the `Result`.
   @typeparam F    The type of the value wrapped in the `Err` of a new `Result`,
                   returned by the `mapErrFn`.
-  @param mapErrFn The function to apply to the value wrapped in `Err` if `result` is an `Err`.
+  @param mapErrFn The function to apply to the value wrapped in `Err` if
+  `result` is an `Err`.
   @param result   The `Result` instance to map over an error case for.
  */
 export function mapErr<T, E, F>(mapErrFn: (e: E) => F, result: Result<T, E>): Result<T, F>;
@@ -678,11 +691,11 @@ export function mapErr<T, E, F>(
 
 /**
   You can think of this like a short-circuiting logical "and" operation on a
-  `Result` type. If `result` is `Ok`, then the result is the `andResult`. If
-  `result` is `Err`, the result is the `Err`.
+  {@linkcode Result} type. If `result` is {@linkcode Ok}, then the result is the
+  `andResult`. If `result` is {@linkcode Err}, the result is the `Err`.
 
-  This is useful when you have another `Result` value you want to provide if
-  and *only if* you have an `Ok` – that is, when you need to make sure that if you
+  This is useful when you have another `Result` value you want to provide if and
+  *only if* you have an `Ok` – that is, when you need to make sure that if you
   `Err`, whatever else you're handing a `Result` to *also* gets that `Err`.
 
   Notice that, unlike in [`map`](#map) or its variants, the original `result` is
@@ -722,26 +735,24 @@ export function and<T, U, E>(
 }
 
 /**
-  Apply a function to the wrapped value if `Ok` and return a new `Ok`
-  containing the resulting value; or if it is `Err` return it unmodified.
+  Apply a function to the wrapped value if {@linkcode Ok} and return a new `Ok`
+  containing the resulting value; or if it is {@linkcode Err} return it
+  unmodified.
 
-  This differs from `map` in that `thenFn` returns another `Result`. You can use
-  `andThen` to combine two functions which *both* create a `Result` from an
-  unwrapped type.
+  This differs from `map` in that `thenFn` returns another {@linkcode Result}.
+  You can use `andThen` to combine two functions which *both* create a `Result`
+  from an unwrapped type.
 
   You may find the `.then` method on an ES6 `Promise` helpful for comparison: if
-  you have a `Promise`, you can pass its `then` method a callback which
-  returns another `Promise`, and the result will not be a *nested* promise, but
-  a single `Promise`. The difference is that `Promise#then` unwraps *all*
-  layers to only ever return a single `Promise` value, whereas `Result.andThen`
-  will not unwrap nested `Result`s.
+  you have a `Promise`, you can pass its `then` method a callback which returns
+  another `Promise`, and the result will not be a *nested* promise, but a single
+  `Promise`. The difference is that `Promise#then` unwraps *all* layers to only
+  ever return a single `Promise` value, whereas `Result.andThen` will not unwrap
+  nested `Result`s.
 
-  This is also commonly known as (and therefore aliased as) [`flatMap`] or
-  [`chain`]. It is sometimes also known as `bind`, but *not* aliased as such
-  because [`bind` already means something in JavaScript][bind].
+  This is is sometimes also known as `bind`, but *not* aliased as such because
+  [`bind` already means something in JavaScript][bind].
 
-  [`flatMap`]: #flatmap
-  [`chain`]: #chain
   [bind]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function/bind
 
   #### Examples
@@ -783,13 +794,13 @@ export function andThen<T, U, E>(
 }
 
 /**
-  Provide a fallback for a given `Result`. Behaves like a logical `or`: if the
-  `result` value is an `Ok`, returns that `result`; otherwise, returns the
-  `defaultResult` value.
+  Provide a fallback for a given {@linkcode Result}. Behaves like a logical
+  `or`: if the `result` value is an {@linkcode Ok}, returns that `result`;
+  otherwise, returns the `defaultResult` value.
 
   This is useful when you want to make sure that something which takes a
   `Result` always ends up getting an `Ok` variant, by supplying a default value
-  for the case that you currently have an `Err`.
+  for the case that you currently have an {@linkcode Err}.
 
   ```ts
   import { ok, err, Result, or } from 'true-utils/result';
@@ -823,13 +834,14 @@ export function or<T, E, F>(
 }
 
 /**
-  Like `or`, but using a function to construct the alternative `Result`.
+  Like {@linkcode or}, but using a function to construct the alternative
+  {@linkcode Result}.
 
   Sometimes you need to perform an operation using other data in the environment
   to construct the fallback value. In these situations, you can pass a function
   (which may be a closure) as the `elseFn` to generate the fallback `Result<T>`.
-  It can then transform the data in the `Err` to something usable as an `Ok`, or
-  generate a new `Err` instance as appropriate.
+  It can then transform the data in the `Err` to something usable as an
+  {@linkcode Ok}, or generate a new {@linkcode Err} instance as appropriate.
 
   Useful for transforming failures to usable data.
 
@@ -855,7 +867,7 @@ export function orElse<T, E, F>(
 }
 
 /**
-  Safely get the value out of the `Ok` variant of a [`Result`](#result).
+  Safely get the value out of the {@linkcode Ok} variant of a {@linkcode Result}.
 
   This is the recommended way to get a value out of a `Result` most of the time.
 
@@ -886,16 +898,17 @@ export function unwrapOr<T, U, E>(
   return curry1(op, result);
 }
 
-/** Alias for [`unwrapOr`](#unwrapor) */
+/** Alias for {@linkcode unwrapOr} */
 export const getOr = unwrapOr;
 
 /**
-  Safely get the value out of a [`Result`](#result) by returning the wrapped
-  value if it is `Ok`, or by applying `orElseFn` to the value in the `Err`.
+  Safely get the value out of a {@linkcode Result} by returning the wrapped
+  value if it is {@linkcode Ok}, or by applying `orElseFn` to the value in the
+  {@linkcode Err}.
 
   This is useful when you need to *generate* a value (e.g. by using current
   values in the environment – whether preloaded or by local closure) instead of
-  having a single default value available (as in [`unwrapOr`](#unwrapor)).
+  having a single default value available (as in {@linkcode unwrapOr}).
 
   ```ts
   import { ok, err, unwrapOrElse } from 'true-myth/result';
@@ -933,15 +946,11 @@ export function unwrapOrElse<T, U, E>(
 export const getOrElse = unwrapOrElse;
 
 /**
-  Convert a [`Result`](#result) to a [`Maybe`](../modules/_maybe_.html#maybe).
+  Convert a {@linkcode Result} to a {@linkcode Maybe.Maybe Maybe}.
 
-  The converted type will be [`Just`] if the `Result` is [`Ok`] or [`Nothing`]
-  if the `Result` is [`Err`]; the wrapped error value will be discarded.
-
-  [`Just`]: ../classes/_maybe_.just.html
-  [`Nothing`]: ../classes/_maybe_.nothing.html
-  [`Ok`]: ../classes/_result_.ok.html
-  [`Err`]: ../classes/_result_.err.html
+  The converted type will be {@linkcode Maybe.Just Just} if the `Result` is
+  {@linkcode Ok} or {@linkcode Maybe.Nothing Nothing} if the `Result` is
+  {@linkcode Err}; the wrapped error value will be discarded.
 
   @param result The `Result` to convert to a `Maybe`
   @returns      `Just` the value in `result` if it is `Ok`; otherwise `Nothing`
@@ -951,15 +960,11 @@ export function toMaybe<T>(result: Result<T, unknown>): Maybe<T> {
 }
 
 /**
-  Transform a [`Maybe`](../modules/_maybe_.html#maybe) into a [`Result`](#result).
+  Transform a {@linkcode Maybe.Maybe Maybe} into a {@linkcode Result}.
 
-  If the `Maybe` is a [`Just`], its value will be wrapped in the [`Ok`] variant;
-  if it is a [`Nothing`] the `errValue` will be wrapped in the [`Err`] variant.
-
-  [`Just`]: ../classes/_maybe_.just.html
-  [`Nothing`]: ../classes/_maybe_.nothing.html
-  [`Ok`]: ../classes/_result_.ok.html
-  [`Err`]: ../classes/_result_.err.html
+  If the `Maybe` is a {@linkcode Maybe.Just Just}, its value will be wrapped in
+  the {@linkcode Ok} variant; if it is a {@linkcode Maybe.Nothing Nothing} the
+  `errValue` will be wrapped in the {@linkcode Err} variant.
 
   @param errValue A value to wrap in an `Err` if `maybe` is a `Nothing`.
   @param maybe    The `Maybe` to convert to a `Result`.
@@ -975,12 +980,12 @@ export function fromMaybe<T, E>(
 }
 
 /**
-  Create a `String` representation of a `result` instance.
+  Create a `String` representation of a {@linkcode Result} instance.
 
-  An `Ok` instance will be printed as `Ok(<representation of the value>)`, and
-  an `Err` instance will be printed as `Err(<representation of the error>)`,
-  where the representation of the value or error is simply the value or error's
-  own `toString` representation. For example:
+  An {@linkcode Ok} instance will be `Ok(<representation of the value>)`, and an
+  {@linkcode Err} instance will be `Err(<representation of the error>)`, where
+  the representation of the value or error is simply the value or error's own
+  `toString` representation. For example:
 
                 call                |         output
   --------------------------------- | ----------------------
@@ -1004,7 +1009,7 @@ export const toString = <T extends { toString(): string }, E extends { toString(
 };
 
 /**
- * Create an `Object` representation of a `Result` instance.
+ * Create an `Object` representation of a {@linkcode Result} instance.
  *
  * Useful for serialization. `JSON.stringify()` uses it.
  *
@@ -1017,17 +1022,21 @@ export const toJSON = <T, E>(result: Result<T, E>): ResultJSON<T, E> => {
     : { variant: result.variant, error: result.error };
 };
 
-/** A lightweight object defining how to handle each variant of a Maybe. */
+/**
+  A lightweight object defining how to handle each variant of a
+  {@linkcode Result}.
+ */
 export type Matcher<T, E, A> = {
   Ok: (value: T) => A;
   Err: (error: E) => A;
 };
 
 /**
-  Performs the same basic functionality as `getOrElse`, but instead of simply
-  unwrapping the value if it is `Ok` and applying a value to generate the same
-  default type if it is `Nothing`, lets you supply functions which may transform
-  the wrapped type if it is `Ok` or get a default value for `Nothing`.
+  Performs the same basic functionality as {@linkcode unwrapOrElse}, but instead
+  of simply unwrapping the value if it is {@linkcode Ok} and applying a value to
+  generate the same default type if it is {@linkcode Err}, lets you supply
+  functions which may transform the wrapped type if it is `Ok` or get a default
+  value for `Err`.
 
   This is kind of like a poor man's version of pattern matching, which
   JavaScript currently lacks.
@@ -1035,7 +1044,7 @@ export type Matcher<T, E, A> = {
   Instead of code like this:
 
   ```ts
-  import { Result, isOk, match } from 'true-myth/result';
+  import Result, { isOk, match } from 'true-myth/result';
 
   const logValue = (mightBeANumber: Result<number, string>) => {
     console.log(
@@ -1049,7 +1058,7 @@ export type Matcher<T, E, A> = {
   ...we can write code like this:
 
   ```ts
-  import { Result, match } from 'true-myth/result';
+  import Result, { match } from 'true-myth/result';
 
   const logValue = (mightBeANumber: Result<number, string>) => {
     const value = match(
@@ -1083,8 +1092,8 @@ export function match<T, E, A>(
 }
 
 /**
-  Allows quick triple-equal equality check between the values inside two `result`s
-  without having to unwrap them first.
+  Allows quick triple-equal equality check between the values inside two
+  {@linkcode Result}s without having to unwrap them first.
 
   ```ts
   const a = Result.of(3)
@@ -1120,27 +1129,28 @@ export function equals<T, E>(
 
 /**
   Allows you to *apply* (thus `ap`) a value to a function without having to take
-  either out of the context of their `Result`s. This does mean that the
-  transforming function is itself within a `Result`, which can be hard to grok
-  at first but lets you do some very elegant things. For example, `ap` allows
-  you to do this:
+  either out of the context of their {@linkcode Result}s. This does mean that
+  the transforming function is itself within a `Result`, which can be hard to
+  grok at first but lets you do some very elegant things. For example, `ap`
+  allows you to do this (using the method form, since nesting `ap` calls is
+  awkward):
 
   ```ts
-  import Result from 'true-myth/result';
+  import { ap, ok, err } from 'true-myth/result';
 
-  const one = Result.ok<number, string>(1);
-  const five = Result.ok<number, string>(5);
-  const whoops = Result.err<number, string>('oh no');
+  const one = ok<number, string>(1);
+  const five = ok<number, string>(5);
+  const whoops = err<number, string>('oh no');
 
   const add = (a: number) => (b: number) => a + b;
-  const resultAdd = Result.ok<typeof add, string>(add);
+  const resultAdd = ok<typeof add, string>(add);
 
   resultAdd.ap(one).ap(five); // Ok(6)
   resultAdd.ap(one).ap(whoops); // Err('oh no')
   resultAdd.ap(whoops).ap(five) // Err('oh no')
   ```
 
-  Without `Result.ap`, you'd need to do something like a nested `Result.match`:
+  Without `ap`, you'd need to do something like a nested `match`:
 
   ```ts
   import { ok, err } from 'true-myth/result';
@@ -1174,8 +1184,8 @@ export function equals<T, E>(
   }); // Err('oh no')
   ```
 
-  And this kind of thing comes up quite often once you're using `Maybe` to
-  handle optionality throughout your application.
+  And this kind of thing comes up quite often once you're using `Result` to
+  handle errors throughout your application.
 
   For another example, imagine you need to compare the equality of two
   ImmutableJS data structures, where a `===` comparison won't work. With `ap`,
@@ -1212,7 +1222,7 @@ export function equals<T, E>(
   }); // Ok(false)
   ```
 
-  In summary: anywhere you have two `Maybe` instances and need to perform an
+  In summary: anywhere you have two `Result` instances and need to perform an
   operation that uses both of them, `ap` is your friend.
 
   Two things to note, both regarding *currying*:
@@ -1300,16 +1310,17 @@ export function ap<T, U, E>(
 }
 
 /**
-  Determine whether an item is an instance of `Just` or `Nothing`.
+  Determine whether an item is an instance of {@linkcode Result}.
 
   @param item The item to check.
  */
 export function isInstance<T, E>(item: unknown): item is Result<T, E> {
-  return item instanceof _Result;
+  return item instanceof ResultClass;
 }
 
 /**
-  Transposes a `Maybe` of a `Result` into a `Result` of a `Maybe`.
+  Transposes a {@linkcode Maybe.Maybe Maybe} of a {@linkcode Result} into a
+  `Result` of a `Maybe`.
 
   | Input          | Output        |
   | -------------- | ------------- |
@@ -1329,19 +1340,19 @@ export function transposeMaybe<T, E>(maybe: Maybe<Result<T, E>>): Result<Maybe<T
   });
 }
 
-// The public interface for the Result class *as a value*: a constructor and the
+// The public interface for the {@linkcode Result} class *as a value*: a constructor and the
 // single associated static property.
-interface R {
-  ok: typeof _Result.ok;
-  err: typeof _Result.err;
+interface ResultConstructor {
+  ok: typeof ResultClass.ok;
+  err: typeof ResultClass.err;
 }
 
 /**
-  A value which may (`Ok`) or may not (`Err`) be present.
+  A value which may ({@linkcode Ok}) or may not ({@linkcode Err}) be present.
 
   The behavior of this type is checked by TypeScript at compile time, and bears
   no runtime overhead other than the very small cost of the container object.
  */
 export type Result<T, E> = Ok<T, E> | Err<T, E>;
-export const Result = _Result as R;
+export const Result = ResultClass as ResultConstructor;
 export default Result;
