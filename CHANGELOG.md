@@ -6,13 +6,41 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ## [Unreleased]
 
-### Changed :boom:
+### :boom: Changed
+
+- The top-level namespace-style export has been removed. If you were relying on the static members to be present when doing `import Maybe from 'true-myth/maybe'` or `import Result from 'true-myth/result';`, you can replace them with `import * as Maybe from 'true-myth/maybe';` or `import * as Result from 'true-myth/result';`. This should make for much better tree-shaking with bundlers like Rollup, which can see “through” a namespace import in a way they cannot with a manually-created namespace object. Where you want to maintain the type *and* namespace imports, you can do this:
+
+    ```ts
+    import * as Maybe from 'true-myth/maybe';
+    type Maybe<T> = Maybe.Maybe<T>; // convenience alias
+    ```
+
+    In general, though, you should prefer to simply import the named functions instead:
+
+    ```ts
+    import Maybe, { transposeArray } from 'true-myth/maybe';
+    ```
+
+- There are no longer separate classes for `Just`, `Nothing`, `Ok`, and `Err`. This substantially reduces the size of the library, and should hopefully improve browsers' ability to optimize code using these, since there is now only one class in each case: `Maybe` and `Result`. The public API for the classes is unchanged, but if you relied on `instanceof` checks against those classes anywhere, those checks will no longer work.
+
+- The exported `Variant` types are now frozen, constant objects, not TypeScript `enum`s. This *should* not break anyone, since the only difference in observable behavior between an `enum` and a `const` is the ability to do a “reverse lookup” on an `enum`—but since the field names and their values are identical, this just means shipping less, and faster, code.
+
+- We no longer publish CommonJS modules, only ES Modules.
+
+- Dropped support for Node versions earlier than Node 12 LTS.
 
 - Support for versions of TypeScript before 4.0 have been removed, to enable the type-safe re-implementation of `Maybe.all`.
 
 - The `MaybeShape` and `ResultShape` interfaces are no longer exported. These were never intended for public reimplementation, and there is accordingly no value in their continuing to be public.
 
-### Added :star:
+- A number of aliases (originally designed to make migration from e.g. Folktale easier) have been removed:
+    - `cata`: use `match`
+    - `chain` and `flatMap`: use `andThen`
+    - `maybeify` and `transmogrify`: use `wrapReturn`
+    - `unsafelyGet` and `unsafeGet`: use `.isJust`/`.isOk` then `.value`
+    - `unsafelyGetErr` and `unsafelyUnwrapErr`: use `.isErr` then `.error`
+
+### :star: Added
 
 - We introduced a new `Maybe.transposeArray`, which is a type-safe, renamed, merged version of `Maybe.tuple` and `Maybe.all` which can correctly handle both array and tuple types. To support this change, it now accepts arrays or tuples directly, and the variadic/spread arguments to `all` have been replaced with taking an array or tuple directly. While `tuple` and `all` are unchanged, they are also deprecated (see below).
 
@@ -80,36 +108,41 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
     does not support conditionally supplying a method only for one specific type
     parameterization.
 
-### Deprecated :red-square:
+### :red_square: Deprecated
 
 - `Maybe.tuple` and `Maybe.all` are deprecated in favor of `Maybe.arrayTranspose` now correctly handles both arrays and tuples. They will be removed not earlier than 6.0.0 (timeline not decided, but not sooner than when Node 12 LTS reaches end of life on April 30, 2022).
 
+## [4.1.1] (2021-01-31)
+
+### :wrench: Fixed
+
+- Set `stripInternal` to false for generated types (#97), so that they type-check.
 
 ## [4.1.0] (2020-12-13)
 
-### Added :star:
+### :star: Added
 
 - Support unwrapping to an alternative type with (backwards-compatible) tweak to type of `Maybe.unwrapOr` and `Result.unwrapOr`. For example, given `let a: Maybe<string>`, `let b = a.unwrapOr(42)` would produce a type of `string | number` for `b`. Useful particularly for interop with `null` and `undefined` at system boundaries while preserving general type safety.
 
-### Contributors 🙇 
+### 🙇 Contributors
 
 - @alantrick (#69)
 - @C-Saunders, @flyiniggle, @bmakuh, @atrick-speedline (#63, discussion motivating #69)
 
 ## [4.0.0] (2019-12-18)
 
-### Fixed :wrench:
+### :wrench: Fixed
 
 - Switched to using namespace-style imports (`import * as Maybe`) internally to enable users to tree-shake.
 
-### Changed :boom:
+### :boom: Changed
 
 - Explicitly drop support for Node 8 (and specify it going forward)
 - Reverted the use of `NonNullable` to constraint the types of callbacks like that passed to `map` and `mapOr`, because they [broke][#54] in TypeScript 3.6. (If you have ideas about how to improve this, please let us know!)
 
 [#54]: https://github.com/true-myth/true-myth/issues/54
 
-### Upgrading :gear:
+### :gear: Upgrading
 
 With yarn:
 
@@ -123,20 +156,20 @@ With npm:
 npm install true-myth@latest
 ```
 
-### Contributors 🙇 
+### 🙇 Contributors
 
 - @chriskrycho
 - @bmakuh
 
 ## [3.1.0] (2019-10-08)
 
-### Added :star:
+### :star: Added
 
 Thanks to @MarcNq, with very helpful input from @CrossEye, True Myth now has `toJSON` functions and methods on its types. This means that there's now a stable serialization format, which you can rely on going forward!
 
 For `Maybe<T>`, the type is `{ variant: 'Just', value: T }` or `{ variant: 'Nothing' }`. For `Result`, it's `{ variant: 'Ok', value: T  }` or `{ variant: 'Err', error: E }`. Since we just hand back the wrapped item, any object's implementation of `toJSON` or similar will work as usual, so you're fully in  control of serialization.
 
-### Upgrading :gear:
+### :gear: Upgrading
 
 With yarn:
 
@@ -150,7 +183,7 @@ With npm:
 npm install true-myth@latest
 ```
 
-### Contributors 🙇 
+### 🙇 Contributors
 
 - @MarcNq
 - @CrossEye
@@ -159,7 +192,7 @@ npm install true-myth@latest
 
 ## [3.0.0] (2019-05-17)
 
-### Added :star:
+### :star: Added
 
 True Myth now includes the `Maybe.wrapReturn` function, conveniently aliased as `maybeify` and `Maybe.ify`, which lets you take any function which includes `null` or `undefined` in its return type (like [`Document#querySelector`][qs] and friends) and convert it to a function which returns a `Maybe` instead:
 
@@ -172,7 +205,7 @@ querySelector('#neat'); // Maybe<Element>
 
 See [the docs](https://true-myth.js.org/modules/_maybe_.html#wrapreturn) for more!
 
-### Changed :boom:
+### :boom: Changed
 
 All `Maybe` helper functions must now return `NonNullable<T>`. This example, which previously compiled and resulted in the type `Maybe<string | null>`, will now cause a type error:
 
@@ -183,7 +216,7 @@ Maybe.of(document.querySelector('#neat'))
 
 **SemVer note:** The new behavior was the ordinary expectation for those types before—doing otherwise would cause a runtime error—and so could reasonably be described as a bugfix. Any place this type-checked before was causing a runtime error. However, it seems clearer simply to mark it as a breaking change, since it *may* cause your build to fail, and encourage you all to upgrade directly and fix those bugs if so!
 
-### Upgrading :gear:
+### :gear: Upgrading
 
 With yarn:
 
@@ -197,13 +230,14 @@ With npm:
 npm install true-myth@latest
 ```
 
-### Contributors 🙇 
+### 🙇 Contributors
 
 - @bmakuh
 - @chriskrycho
 - @snatvb
 
-[unreleased]: https://github.com/true-myth/true-myth/compare/v3.1.0...HEAD
+[unreleased]: https://github.com/true-myth/true-myth/compare/v4.1.1...HEAD
+[4.1.1]: https://github.com/true-myth/true-myth/compare/v4.1.0...v4.1.1
 [4.1.0]: https://github.com/true-myth/true-myth/compare/v4.0.0...v4.1.0
 [4.0.0]: https://github.com/true-myth/true-myth/compare/v3.1.0...v4.0.0
 [3.1.0]: https://github.com/true-myth/true-myth/compare/v3.0.0...v3.1.0
