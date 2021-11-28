@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ## [Unreleased]
 
+## [5.0.0]
+
 ### :boom: Changed
 
 - The top-level namespace-style export has been removed. If you were relying on the static members to be present when doing `import Maybe from 'true-myth/maybe'` or `import Result from 'true-myth/result';`, you can replace them with `import * as Maybe from 'true-myth/maybe';` or `import * as Result from 'true-myth/result';`. This should make for much better tree-shaking with bundlers like Rollup, which can see “through” a namespace import in a way they cannot with a manually-created namespace object. Where you want to maintain the type *and* namespace imports, you can do this:
@@ -244,7 +246,8 @@ npm install true-myth@latest
 - @chriskrycho
 - @snatvb
 
-[unreleased]: https://github.com/true-myth/true-myth/compare/v4.1.1...HEAD
+[unreleased]: https://github.com/true-myth/true-myth/compare/v5.0.0...HEAD
+[5.0.0]: https://github.com/true-myth/true-myth/compare/v4.1.1...v5.0.0
 [4.1.1]: https://github.com/true-myth/true-myth/compare/v4.1.0...v4.1.1
 [4.1.0]: https://github.com/true-myth/true-myth/compare/v4.0.0...v4.1.0
 [4.0.0]: https://github.com/true-myth/true-myth/compare/v3.1.0...v4.0.0
