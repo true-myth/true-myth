@@ -76,37 +76,6 @@ describe('`Maybe` pure functions', () => {
     });
   });
 
-  describe('`fromNullable`', () => {
-    test('with `null', () => {
-      const nothingFromNull = MaybeNS.fromNullable<string>(null);
-      expectTypeOf(nothingFromNull).toEqualTypeOf<Maybe<string>>();
-      expect(nothingFromNull.isJust).toBe(false);
-      expect(nothingFromNull.isNothing).toBe(true);
-      expect(() => nothingFromNull.value).toThrow();
-    });
-
-    test('with `undefined`', () => {
-      const nothingFromUndefined = MaybeNS.fromNullable<number>(undefined);
-      expectTypeOf(nothingFromUndefined).toEqualTypeOf<Maybe<number>>();
-      expect(nothingFromUndefined.isJust).toBe(false);
-      expect(nothingFromUndefined.isNothing).toBe(true);
-      expect(() => nothingFromUndefined.value).toThrow();
-    });
-
-    test('with values', () => {
-      const aJust = MaybeNS.fromNullable<Neat>({ neat: 'strings' });
-      expectTypeOf(aJust).toEqualTypeOf<Maybe<Neat>>();
-      const aNothing = MaybeNS.fromNullable<Neat>(null);
-      expectTypeOf(aNothing).toEqualTypeOf<Maybe<Neat>>();
-
-      const justANumber = MaybeNS.fromNullable(42);
-      expectTypeOf(justANumber).toEqualTypeOf<Maybe<number>>();
-      expect(justANumber.isJust).toBe(true);
-      expect(justANumber.isNothing).toBe(false);
-      expect(justANumber.value).toBe(42);
-    });
-  });
-
   test('`map`', () => {
     const justAString = MaybeNS.just('string');
     const itsLength = MaybeNS.map(length, justAString);

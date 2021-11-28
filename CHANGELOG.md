@@ -41,6 +41,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
     - `maybeify` and `transmogrify`: use `wrapReturn`
     - `unsafelyGet` and `unsafeGet`: use `.isJust`/`.isOk` then `.value`
     - `unsafelyGetErr` and `unsafelyUnwrapErr`: use `.isErr` then `.error`
+    - `getOr`: use `unwrapOr`
+    - `getOrElse`: use `unwrapOrElse`
+    - `fromNullable` and `maybe`:
+        - import `Maybe` and use its static constructor `Maybe.of`
+        - import the module as namespace and use `Maybe.of`
+        - import `of` and alias it as you like
 
 ### :star: Added
 

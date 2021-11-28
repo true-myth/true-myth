@@ -898,9 +898,6 @@ export function unwrapOr<T, U, E>(
   return curry1(op, result);
 }
 
-/** Alias for {@linkcode unwrapOr} */
-export const getOr = unwrapOr;
-
 /**
   Safely get the value out of a {@linkcode Result} by returning the wrapped
   value if it is {@linkcode Ok}, or by applying `orElseFn` to the value in the
@@ -941,9 +938,6 @@ export function unwrapOrElse<T, U, E>(
   const op = (r: Result<T, E>) => (r.isOk ? r.value : orElseFn(r.error));
   return curry1(op, result);
 }
-
-/** Alias for [`unwrapOrElse`](#unwraporelse) */
-export const getOrElse = unwrapOrElse;
 
 /**
   Convert a {@linkcode Result} to a {@linkcode Maybe.Maybe Maybe}.
