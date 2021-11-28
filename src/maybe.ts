@@ -23,16 +23,16 @@ export const Variant = {
 
 export type Variant = keyof typeof Variant;
 
-interface JustJSON<T> {
+export interface JustJSON<T> {
   variant: 'Just';
   value: T;
 }
 
-interface NothingJSON {
+export interface NothingJSON {
   variant: 'Nothing';
 }
 
-type MaybeJSON<T> = JustJSON<T> | NothingJSON;
+export type MaybeJSON<T> = JustJSON<T> | NothingJSON;
 
 type Repr<T> = [tag: 'Just', value: T] | [tag: 'Nothing'];
 
@@ -50,7 +50,7 @@ type Repr<T> = [tag: 'Just', value: T] | [tag: 'Nothing'];
 let NOTHING: Nothing<any>;
 
 // Defines the *implementation*, but not the *types*. See the exports below.
-class MaybeClass<T> {
+class MaybeImpl<T> {
   private repr: Repr<T>;
 
   constructor(value?: T | null | undefined) {
@@ -92,7 +92,7 @@ class MaybeClass<T> {
                 the value passed.
   */
   static of<T>(value: T | null | undefined): Maybe<T> {
-    return new MaybeClass(value) as Maybe<T>;
+    return new MaybeImpl(value) as Maybe<T>;
   }
 
   /**
@@ -130,7 +130,7 @@ class MaybeClass<T> {
     @returns     An instance of `Maybe.Nothing<T>`.
    */
   static nothing<T>(_?: null): Maybe<T> {
-    return new MaybeClass() as Maybe<T>;
+    return new MaybeImpl() as Maybe<T>;
   }
 
   /** Distinguish between the `Just` and `Nothing` {@link Variant variants}. */
@@ -293,7 +293,7 @@ class MaybeClass<T> {
 
   @typeparam T The type wrapped in this `Just` variant of `Maybe`.
  */
-export interface Just<T> extends MaybeClass<T> {
+export interface Just<T> extends MaybeImpl<T> {
   /** `Just` is always {@linkcode Variant.Just}. */
   variant: 'Just';
   /** The wrapped value. */
@@ -310,7 +310,7 @@ export interface Just<T> extends MaybeClass<T> {
   @typeparam T The type which would be wrapped in a {@linkcode Just} variant of
     the {@linkcode Maybe}.
  */
-export interface Nothing<T> extends MaybeClass<T> {
+export interface Nothing<T> extends MaybeImpl<T> {
   /** `Nothing` is always {@linkcode Variant.Nothing}. */
   readonly variant: 'Nothing';
   /** @internal */
@@ -331,7 +331,7 @@ export interface Nothing<T> extends MaybeClass<T> {
   @returns     An instance of `Maybe.Just<T>`.
   @throws      If you pass `null` or `undefined`.
  */
-export const just = MaybeClass.just;
+export const just = MaybeImpl.just;
 
 /**
   Create a {@linkcode Maybe} instance which is a {@linkcode Nothing}.
@@ -347,7 +347,7 @@ export const just = MaybeClass.just;
   @typeparam T The type of the item contained in the `Maybe`.
   @returns     An instance of `Maybe.Nothing<T>`.
  */
-export const nothing = MaybeClass.nothing;
+export const nothing = MaybeImpl.nothing;
 
 /**
   Create a {@linkcode Maybe} from any value.
@@ -372,7 +372,7 @@ export const nothing = MaybeClass.nothing;
                the result will be `Nothing`; otherwise it will be the type of
                the value passed.
  */
-export const of = MaybeClass.of;
+export const of = MaybeImpl.of;
 
 /**
   Map over a {@linkcode Maybe} instance: apply the function to the wrapped value
@@ -1138,7 +1138,7 @@ export function isInstance<T>(item: unknown): item is Maybe<T> {
   return item instanceof Maybe;
 }
 
-type Predicate<T> = (element: T, index: number, array: T[]) => boolean;
+export type Predicate<T> = (element: T, index: number, array: T[]) => boolean;
 
 // NOTE: documentation is lightly adapted from the MDN and TypeScript docs for
 // `Array.prototype.find`.
@@ -1584,15 +1584,15 @@ export type AnyFunction = (...args: never[]) => unknown;
   The public interface for the {@linkcode Maybe} class *as a value*: a
   constructor and the associated static properties.
  */
-interface MaybeConstructor {
+export interface MaybeConstructor {
   new <T>(value?: T | null | undefined): Maybe<T>;
-  of: typeof MaybeClass.of;
-  just: typeof MaybeClass.just;
-  nothing: typeof MaybeClass.nothing;
+  of: typeof MaybeImpl.of;
+  just: typeof MaybeImpl.just;
+  nothing: typeof MaybeImpl.nothing;
 }
 
 /** A value which may ({@linkcode Just `Just<T>`}) or may not
  * ({@linkcode Nothing}) be present. */
 export type Maybe<T> = Just<T> | Nothing<T>;
-export const Maybe = MaybeClass as MaybeConstructor;
+export const Maybe = MaybeImpl as MaybeConstructor;
 export default Maybe;

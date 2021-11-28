@@ -22,24 +22,24 @@ export const Variant = {
   Err: 'Err',
 } as const;
 
-type Variant = keyof typeof Variant;
+export type Variant = keyof typeof Variant;
 
-interface OkJSON<T> {
+export interface OkJSON<T> {
   variant: 'Ok';
   value: T;
 }
 
-interface ErrJSON<E> {
+export interface ErrJSON<E> {
   variant: 'Err';
   error: E;
 }
 
-type ResultJSON<T, E> = OkJSON<T> | ErrJSON<E>;
+export type ResultJSON<T, E> = OkJSON<T> | ErrJSON<E>;
 
 type Repr<T, E> = [tag: 'Ok', value: T] | [tag: 'Err', error: E];
 
 // Defines the *implementation*, but not the *types*. See the exports below.
-class ResultClass<T, E> {
+class ResultImpl<T, E> {
   private constructor(private repr: Repr<T, E>) {}
 
   /**
@@ -77,7 +77,7 @@ class ResultClass<T, E> {
       throw new Error('Tried to construct `Ok` with `null`. Maybe you want `Maybe.Nothing`?');
     }
 
-    return new ResultClass<T, E>(['Ok', value]) as Result<T, E>;
+    return new ResultImpl<T, E>(['Ok', value]) as Result<T, E>;
   }
 
   /**
@@ -110,7 +110,7 @@ class ResultClass<T, E> {
       );
     }
 
-    return new ResultClass<T, E>(['Err', error]) as Result<T, E>;
+    return new ResultImpl<T, E>(['Err', error]) as Result<T, E>;
   }
 
   /** Distinguish between the {@linkcode Variant.Ok} and {@linkcode Variant.Err} {@linkcode Variant variants}. */
@@ -243,7 +243,7 @@ class ResultClass<T, E> {
   @typeparam T The type wrapped in this `Ok` variant of `Result`.
   @typeparam E The type which would be wrapped in an `Err` variant of `Result`.
  */
-export interface Ok<T, E> extends ResultClass<T, E> {
+export interface Ok<T, E> extends ResultImpl<T, E> {
   /** `Ok` is always [`Variant.Ok`](../enums/_result_.variant#ok). */
   variant: 'Ok';
   isOk: true;
@@ -262,7 +262,7 @@ export interface Ok<T, E> extends ResultClass<T, E> {
   @typeparam T The type which would be wrapped in an `Ok` variant of `Result`.
   @typeparam E The type wrapped in this `Err` variant of `Result`.
   */
-export interface Err<T, E> extends ResultClass<T, E> {
+export interface Err<T, E> extends ResultImpl<T, E> {
   /** `Err` is always [`Variant.Err`](../enums/_result_.variant#err). */
   readonly variant: 'Err';
   isOk: false;
@@ -1309,7 +1309,7 @@ export function ap<T, U, E>(
   @param item The item to check.
  */
 export function isInstance<T, E>(item: unknown): item is Result<T, E> {
-  return item instanceof ResultClass;
+  return item instanceof ResultImpl;
 }
 
 /**
@@ -1336,9 +1336,9 @@ export function transposeMaybe<T, E>(maybe: Maybe<Result<T, E>>): Result<Maybe<T
 
 // The public interface for the {@linkcode Result} class *as a value*: a constructor and the
 // single associated static property.
-interface ResultConstructor {
-  ok: typeof ResultClass.ok;
-  err: typeof ResultClass.err;
+export interface ResultConstructor {
+  ok: typeof ResultImpl.ok;
+  err: typeof ResultImpl.err;
 }
 
 /**
@@ -1348,5 +1348,5 @@ interface ResultConstructor {
   no runtime overhead other than the very small cost of the container object.
  */
 export type Result<T, E> = Ok<T, E> | Err<T, E>;
-export const Result = ResultClass as ResultConstructor;
+export const Result = ResultImpl as ResultConstructor;
 export default Result;
