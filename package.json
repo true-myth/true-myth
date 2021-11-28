@@ -1,6 +1,6 @@
 {
   "name": "true-myth",
-  "description": "A library for safe functional programming in JavaScript, with first-class support for TypeScript and Flow",
+  "description": "A library for safe functional programming in JavaScript, with first-class support for TypeScript",
   "homepage": "https://true-myth.js.org",
   "contributors": [
     {

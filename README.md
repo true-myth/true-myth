@@ -249,7 +249,7 @@ All static functions which take two or more parameters are automatically partial
 
 ```ts
 import * as _ from 'lodash-fp';
-import Maybe from 'true-myth/maybe';
+import { map, isJust } from 'true-myth/maybe';
 
 const length = (s: string) => s.length;
 const even = (n: number) => n % 2 === 0;
@@ -266,11 +266,11 @@ const result = transform([
 
 const transform = _.flow(
   // transform strings to their length: Just(3), Nothing, etc.
-  _.map(Maybe.map(length)),
+  _.map(map(length)),
   // drop `Nothing` instances
-  _.filter(Maybe.isJust),
+  _.filter(_.prop('isJust')),
   // get value now that it's safe to do so (TS will not allow it earlier)
-  _.map(maybe => maybe.value),
+  _.map(_.prop('value')),
   // only keep the even numbers ('fish' => 4)
   _.filter(even),
   // multiply by three
@@ -286,7 +286,7 @@ This makes for a much nicer API than needing to include the parameters for every
 
 ```ts
 import * as _ from 'lodash';
-import Maybe from 'true-myth/maybe';
+import { map } from 'true-myth/maybe';
 
 const length = (s: string) => s.length;
 const even = (n: number) => n % 2 === 0;
@@ -303,9 +303,9 @@ const result = transform([
 
 const transform = _.flow(
   // transform strings to their length: Just(3), Nothing, etc.
-  maybeStrings => _.map(maybeStrings, maybeString => Maybe.map(length, maybeString)),
+  maybeStrings => _.map(maybeStrings, maybeString => map(length, maybeString)),
   // drop `Nothing` instances
-  maybeLengths => _.filter(maybeLengths, Maybe.isJust),
+  maybeLengths => _.filter(maybeLengths, maybe => maybe.isJust),
   // get value now that it's safe to do so (TS will not allow it earlier)
   justLengths => _.map(justLengths, maybe => maybe.value),
   // only keep the even numbers ('fish' => 4)
@@ -369,9 +369,8 @@ function doAThing(withAString) {
 
 If you forget that check, or simply assume, "Look, I'll *never* call this without including the argument," eventually you or someone else will get it wrong. Usually somewhere far away from the actual invocation of `doAThing`, so that it's not obvious why that value ended up being `null` there.
 
-TypeScript takes us a big step in that direction, so long as our type annotations are good enough. (Use of `any` will leave us sad, though.) We can specify that type *may* be present, using the [maybe]/[optional] annotation. This at least helps keep us honest. But we still end up writing a ton of repeated boilerplate to deal with this problem. Rather than just handling it once and being done with it, we play a never-ending game of whack-a-mole. We must be constantly vigilant and proactive so that our users don't get into broken error states.
+TypeScript takes us a big step in that direction, so long as our type annotations are good enough. (Use of `any` will leave us sad, though.) We can specify that type *may* be present, using the [optional] annotation. This at least helps keep us honest. But we still end up writing a ton of repeated boilerplate to deal with this problem. Rather than just handling it once and being done with it, we play a never-ending game of whack-a-mole. We must be constantly vigilant and proactive so that our users don't get into broken error states.
 
-[maybe]: https://flow.org/en/docs/types/maybe/
 [optional]: http://www.typescriptlang.org/docs/handbook/interfaces.html#optional-properties
 
 ### 2. Failure handling: callbacks and exceptions
