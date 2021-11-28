@@ -6,13 +6,15 @@
     "sourceRoot": null
   },
   "typedocOptions": {
-    "out": "./docs",
-    "toc": false,
+    "out": "../docs",
     "excludePrivate": true,
     "excludeInternal": true,
-    "includes": "./src",
-    "target": "ES6",
+    "includes": "../src",
     "theme": "default",
-    "name": "True Myth"
+    "name": "True Myth",
+    "entryPointStrategy": "expand",
+    "readme": "../README.md",
+    "includeVersion": true,
+    "githubPages": true
   }
 }
