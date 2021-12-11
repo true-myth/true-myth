@@ -4,8 +4,7 @@
   @module
  */
 
-import * as Maybe from './maybe.js';
-type Maybe<T> = import('./maybe').Maybe<T>;
+import Maybe from './maybe.js';
 
 import Unit from './unit.js';
 import { curry1, isVoid } from './-private/utils.js';
@@ -155,83 +154,85 @@ class ResultImpl<T, E> {
   }
 
   /** Method variant for {@linkcode map} */
-  map<U>(this: Result<T, E>, mapFn: (t: T) => U): Result<U, E> {
-    return map(mapFn, this);
+  map<U>(mapFn: (t: T) => U): Result<U, E> {
+    return (this.repr[0] === 'Ok' ? Result.ok(mapFn(this.repr[1])) : this) as Result<U, E>;
   }
 
   /** Method variant for {@linkcode mapOr} */
-  mapOr<U>(this: Result<T, E>, orU: U, mapFn: (t: T) => U): U {
-    return mapOr(orU, mapFn, this);
+  mapOr<U>(orU: U, mapFn: (t: T) => U): U {
+    return this.repr[0] === 'Ok' ? mapFn(this.repr[1]) : orU;
   }
 
   /** Method variant for {@linkcode mapOrElse} */
-  mapOrElse<U>(this: Result<T, E>, orElseFn: (err: E) => U, mapFn: (t: T) => U): U {
-    return mapOrElse(orElseFn, mapFn, this);
+  mapOrElse<U>(orElseFn: (err: E) => U, mapFn: (t: T) => U): U {
+    return this.repr[0] === 'Ok' ? mapFn(this.repr[1]) : orElseFn(this.repr[1]);
   }
 
   /** Method variant for {@linkcode match} */
-  match<U>(this: Result<T, E>, matcher: Matcher<T, E, U>): U {
-    return match(matcher, this);
+  match<U>(matcher: Matcher<T, E, U>): U {
+    return this.repr[0] === 'Ok' ? matcher.Ok(this.repr[1]) : matcher.Err(this.repr[1]);
   }
 
   /** Method variant for {@linkcode mapErr} */
-  mapErr<F>(this: Result<T, E>, mapErrFn: (e: E) => F): Result<T, F> {
-    return mapErr(mapErrFn, this);
+  mapErr<F>(mapErrFn: (e: E) => F): Result<T, F> {
+    return (this.repr[0] === 'Ok' ? this : Result.err(mapErrFn(this.repr[1]))) as Result<T, F>;
   }
 
   /** Method variant for {@linkcode or} */
-  or<F>(this: Result<T, E>, orResult: Result<T, F>): Result<T, F> {
-    return or(orResult, this);
+  or<F>(orResult: Result<T, F>): Result<T, F> {
+    return (this.repr[0] === 'Ok' ? this : orResult) as Result<T, F>;
   }
 
   /** Method variant for {@linkcode orElse} */
-  orElse<F>(this: Result<T, E>, orElseFn: (err: E) => Result<T, F>): Result<T, F> {
-    return orElse(orElseFn, this);
+  orElse<F>(orElseFn: (err: E) => Result<T, F>): Result<T, F> {
+    return (this.repr[0] === 'Ok' ? this : orElseFn(this.repr[1])) as Result<T, F>;
   }
 
   /** Method variant for {@linkcode and} */
-  and<U>(this: Result<T, E>, mAnd: Result<U, E>): Result<U, E> {
-    return and(mAnd, this);
+  and<U>(mAnd: Result<U, E>): Result<U, E> {
+    // (r.isOk ? andResult : err<U, E>(r.error))
+    return (this.repr[0] === 'Ok' ? mAnd : this) as Result<U, E>;
   }
 
   /** Method variant for {@linkcode andThen} */
-  andThen<U>(this: Result<T, E>, andThenFn: (t: T) => Result<U, E>): Result<U, E> {
-    return andThen(andThenFn, this);
+  andThen<U>(andThenFn: (t: T) => Result<U, E>): Result<U, E> {
+    return (this.repr[0] === 'Ok' ? andThenFn(this.repr[1]) : this) as Result<U, E>;
   }
 
   /** Method variant for {@linkcode unwrapOr} */
-  unwrapOr<U = T>(this: Result<T, E>, defaultValue: U): T | U {
-    return unwrapOr(defaultValue, this);
+  unwrapOr<U = T>(defaultValue: U): T | U {
+    return this.repr[0] === 'Ok' ? this.repr[1] : defaultValue;
   }
 
   /** Method variant for {@linkcode unwrapOrElse} */
-  unwrapOrElse<U>(this: Result<T, E>, elseFn: (error: E) => U): T | U {
-    return unwrapOrElse(elseFn, this);
+  unwrapOrElse<U>(elseFn: (error: E) => U): T | U {
+    return this.repr[0] === 'Ok' ? this.repr[1] : elseFn(this.repr[1]);
   }
 
   /** Method variant for {@linkcode toMaybe} */
-  toMaybe(this: Result<T, E>): Maybe<T> {
-    return toMaybe(this);
+  toMaybe(): Maybe<T> {
+    return this.repr[0] === 'Ok' ? Maybe.just(this.repr[1]) : Maybe.nothing();
   }
 
   /** Method variant for {@linkcode toString} */
-  toString(this: Result<T, E>): string {
-    return toString(this);
+  toString(): string {
+    return `${this.repr[0]}(${this.repr[1]})`;
   }
 
   /** Method variant for {@linkcode toJSON} */
-  toJSON(this: Result<T, E>): ResultJSON<T, E> {
-    return toJSON(this);
+  toJSON(): ResultJSON<T, E> {
+    const variant = this.repr[0];
+    return variant === 'Ok' ? { variant, value: this.repr[1] } : { variant, error: this.repr[1] };
   }
 
   /** Method variant for {@linkcode equals} */
-  equals(this: Result<T, E>, comparison: Result<T, E>): boolean {
-    return equals(comparison, this);
+  equals(comparison: Result<T, E>): boolean {
+    return this.repr[0] === comparison.repr[0] && this.repr[1] === comparison.repr[1];
   }
 
   /** Method variant for {@linkcode ap} */
   ap<A, B>(this: Result<(a: A) => B, E>, r: Result<A, E>): Result<B, E> {
-    return ap(this, r);
+    return r.andThen((val) => this.map((fn) => fn(val)));
   }
 }
 
@@ -515,7 +516,7 @@ export function map<T, U, E>(
   mapFn: (t: T) => U,
   result?: Result<T, E>
 ): Result<U, E> | ((result: Result<T, E>) => Result<U, E>) {
-  const op = (r: Result<T, E>) => (r.isOk ? ok(mapFn(r.value)) : r) as Result<U, E>;
+  const op = (r: Result<T, E>) => r.map(mapFn);
   return curry1(op, result);
 }
 
@@ -553,7 +554,7 @@ export function mapOr<T, U, E>(
   result?: Result<T, E>
 ): U | ((result: Result<T, E>) => U) | ((mapFn: (t: T) => U) => (result: Result<T, E>) => U) {
   function fullOp(fn: (t: T) => U, r: Result<T, E>): U {
-    return r.isOk ? fn(r.value) : orU;
+    return r.mapOr(orU, fn);
   }
 
   function partialOp(fn: (t: T) => U): (maybe: Result<T, E>) => U;
@@ -627,10 +628,10 @@ export function mapOrElse<T, U, E>(
   result?: Result<T, E>
 ): U | ((result: Result<T, E>) => U) | ((mapFn: (t: T) => U) => (result: Result<T, E>) => U) {
   function fullOp(fn: (t: T) => U, r: Result<T, E>) {
-    return r.isOk ? fn(r.value) : orElseFn(r.error);
+    return r.mapOrElse(orElseFn, fn);
   }
 
-  function partialOp(fn: (t: T) => U): (maybe: Result<T, E>) => U;
+  function partialOp(fn: (t: T) => U): (result: Result<T, E>) => U;
   function partialOp(fn: (t: T) => U, curriedResult: Result<T, E>): U;
   function partialOp(
     fn: (t: T) => U,
@@ -685,7 +686,7 @@ export function mapErr<T, E, F>(
   mapErrFn: (e: E) => F,
   result?: Result<T, E>
 ): Result<T, F> | ((result: Result<T, E>) => Result<T, F>) {
-  const op = (r: Result<T, E>) => (r.isOk ? r : err(mapErrFn(r.error))) as Result<T, F>;
+  const op = (r: Result<T, E>) => r.mapErr(mapErrFn);
   return curry1(op, result);
 }
 
@@ -730,7 +731,7 @@ export function and<T, U, E>(
   andResult: Result<U, E>,
   result?: Result<T, E>
 ): Result<U, E> | ((result: Result<T, E>) => Result<U, E>) {
-  const op = (r: Result<T, E>) => (r.isOk ? andResult : err<U, E>(r.error));
+  const op = (r: Result<T, E>) => r.and(andResult);
   return curry1(op, result);
 }
 
@@ -789,7 +790,7 @@ export function andThen<T, U, E>(
   thenFn: (t: T) => Result<U, E>,
   result?: Result<T, E>
 ): Result<U, E> | ((result: Result<T, E>) => Result<U, E>) {
-  const op = (r: Result<T, E>) => (r.isOk ? thenFn(r.value) : err<U, E>(r.error));
+  const op = (r: Result<T, E>) => r.andThen(thenFn);
   return curry1(op, result);
 }
 
@@ -829,7 +830,7 @@ export function or<T, E, F>(
   defaultResult: Result<T, F>,
   result?: Result<T, E>
 ): Result<T, F> | ((result: Result<T, E>) => Result<T, F>) {
-  const op = (r: Result<T, E>) => (r.isOk ? ok<T, F>(r.value) : defaultResult);
+  const op = (r: Result<T, E>) => r.or(defaultResult);
   return curry1(op, result);
 }
 
@@ -862,7 +863,7 @@ export function orElse<T, E, F>(
   elseFn: (err: E) => Result<T, F>,
   result?: Result<T, E>
 ): Result<T, F> | ((result: Result<T, E>) => Result<T, F>) {
-  const op = (r: Result<T, E>) => (r.isOk ? ok<T, F>(r.value) : elseFn(r.error));
+  const op = (r: Result<T, E>) => r.orElse(elseFn);
   return curry1(op, result);
 }
 
@@ -894,7 +895,7 @@ export function unwrapOr<T, U, E>(
   defaultValue: U,
   result?: Result<T, E>
 ): (T | U) | ((result: Result<T, E>) => T | U) {
-  const op = (r: Result<T, E>) => (r.isOk ? r.value : defaultValue);
+  const op = (r: Result<T, E>) => r.unwrapOr(defaultValue);
   return curry1(op, result);
 }
 
@@ -935,7 +936,7 @@ export function unwrapOrElse<T, U, E>(
   orElseFn: (error: E) => U,
   result?: Result<T, E>
 ): (T | U) | ((result: Result<T, E>) => T | U) {
-  const op = (r: Result<T, E>) => (r.isOk ? r.value : orElseFn(r.error));
+  const op = (r: Result<T, E>) => r.unwrapOrElse(orElseFn);
   return curry1(op, result);
 }
 
@@ -950,7 +951,7 @@ export function unwrapOrElse<T, U, E>(
   @returns      `Just` the value in `result` if it is `Ok`; otherwise `Nothing`
  */
 export function toMaybe<T>(result: Result<T, unknown>): Maybe<T> {
-  return result.isOk ? Maybe.just(result.value) : Maybe.nothing();
+  return result.toMaybe();
 }
 
 /**
@@ -995,11 +996,8 @@ export function fromMaybe<T, E>(
   @param maybe The value to convert to a string.
   @returns     The string representation of the `Maybe`.
  */
-export const toString = <T extends { toString(): string }, E extends { toString(): string }>(
-  result: Result<T, E>
-): string => {
-  const body = (result.isOk ? result.value : result.error).toString();
-  return `${result.variant.toString()}(${body})`;
+export const toString = <T, E>(result: Result<T, E>): string => {
+  return result.toString();
 };
 
 /**
@@ -1011,9 +1009,7 @@ export const toString = <T extends { toString(): string }, E extends { toString(
  * @returns       The JSON representation of the `Result`
  */
 export const toJSON = <T, E>(result: Result<T, E>): ResultJSON<T, E> => {
-  return result.isOk
-    ? { variant: result.variant, value: result.value }
-    : { variant: result.variant, error: result.error };
+  return result.toJSON();
 };
 
 /**
@@ -1081,7 +1077,7 @@ export function match<T, E, A>(
   matcher: Matcher<T, E, A>,
   result?: Result<T, E>
 ): A | ((result: Result<T, E>) => A) {
-  const op = (r: Result<T, E>) => mapOrElse(matcher.Err, matcher.Ok, r);
+  const op = (r: Result<T, E>) => r.mapOrElse(matcher.Err, matcher.Ok);
   return curry1(op, result);
 }
 
@@ -1109,16 +1105,8 @@ export function equals<T, E>(
   resultB: Result<T, E>,
   resultA?: Result<T, E>
 ): boolean | ((a: Result<T, E>) => boolean) {
-  return resultA !== undefined
-    ? resultA.match({
-        Err: () => resultB.isErr,
-        Ok: (a) => resultB.isOk && resultB.value === a,
-      })
-    : (curriedResultA: Result<T, E>) =>
-        curriedResultA.match({
-          Err: () => resultB.isErr,
-          Ok: (a) => resultB.isOk && resultB.value === a,
-        });
+  const op = (rA: Result<T, E>) => rA.equals(resultB);
+  return curry1(op, resultA);
 }
 
 /**
@@ -1291,15 +1279,15 @@ export function equals<T, E>(
   @param resultFn result of a function from T to U
   @param result result of a T to apply to `fn`
  */
-export function ap<T, U, E>(resultFn: Result<(t: T) => U, E>, result: Result<T, E>): Result<U, E>;
-export function ap<T, U, E>(
-  resultFn: Result<(t: T) => U, E>
-): (result: Result<T, E>) => Result<U, E>;
-export function ap<T, U, E>(
-  resultFn: Result<(val: T) => U, E>,
-  result?: Result<T, E>
-): Result<U, E> | ((val: Result<T, E>) => Result<U, E>) {
-  const op = (r: Result<T, E>) => r.andThen((val) => resultFn.map((fn) => fn(val)));
+export function ap<A, B, E>(resultFn: Result<(a: A) => B, E>, result: Result<A, E>): Result<B, E>;
+export function ap<A, B, E>(
+  resultFn: Result<(a: A) => B, E>
+): (result: Result<A, E>) => Result<B, E>;
+export function ap<A, B, E>(
+  resultFn: Result<(a: A) => B, E>,
+  result?: Result<A, E>
+): Result<B, E> | ((val: Result<A, E>) => Result<B, E>) {
+  const op = (r: Result<A, E>) => resultFn.ap(r);
   return curry1(op, result);
 }
 
