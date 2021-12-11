@@ -16,5 +16,5 @@
     "sourceRoot": "./src",
     "sourceMap": true
   },
-  "include": ["src", "test"]
+  "include": ["**/src", "**/test"]
 }

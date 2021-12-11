@@ -1,0 +1,61 @@
+{
+  "name": "@true-myth/utils",
+  "description": "Tiny utilities shared by True Myth libraries. You should not consume this directly",
+  "homepage": "https://true-myth.js.org",
+  "contributors": [
+    {
+      "name": "Chris Krycho",
+      "email": "hello@chriskrycho.com",
+      "url": "http://www.chriskrycho.com"
+    },
+    {
+      "name": "Ben Makuh"
+    }
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/true-myth/true-myth"
+  },
+  "bugs": {
+    "url": "https://github.com/true-myth/true-myth/issues"
+  },
+  "version": "5.0.0",
+  "type": "module",
+  "main": "dist/index.js",
+  "module": "dist/index.js",
+  "exports": {
+    ".": "./dist/index.js",
+    "./maybe": "./dist/maybe.js",
+    "./result": "./dist/result.js",
+    "./unit": "./dist/unit.js"
+  },
+  "types": "index.d.ts",
+  "keywords": [
+    "ember-addon",
+    "typescript",
+    "functional programming",
+    "maybe",
+    "result"
+  ],
+  "files": [
+    "*.d.ts",
+    "*.d.ts.map",
+    "dist",
+    "src"
+  ],
+  "license": "MIT",
+  "devDependencies": {
+    "prettier": "^2.2.1",
+    "prettier-eslint": "^13.0.0",
+    "release-it": "^14.11.8",
+    "release-it-lerna-changelog": "^4.0.1",
+    "rimraf": "^3.0.2",
+    "shelljs": "^0.8.2",
+    "ts-jest": "^27.0.7",
+    "typedoc": "^0.22.10",
+    "typescript": "~4.5.2"
+  },
+  "volta": {
+    "extends": "../../package.json"
+  }
+}

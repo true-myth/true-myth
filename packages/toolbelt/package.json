@@ -1,0 +1,8 @@
+{
+  "name": "@true-myth/toolbelt",
+  "version": "5.0.0",
+  "dependencies": {},
+  "volta": {
+    "extends": "../../package.json"
+  }
+}

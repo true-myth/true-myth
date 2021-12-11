@@ -1,4 +1,6 @@
 {
+  "private": true,
+  "workspaces": ["packages/*"],
   "name": "true-myth",
   "description": "A library for safe functional programming in JavaScript, with first-class support for TypeScript",
   "homepage": "https://true-myth.js.org",
@@ -19,25 +21,6 @@
   "bugs": {
     "url": "https://github.com/true-myth/true-myth/issues"
   },
-  "version": "5.0.1",
-  "type": "module",
-  "main": "dist/index.js",
-  "module": "dist/index.js",
-  "exports": {
-    ".": "./dist/index.js",
-    "./maybe": "./dist/maybe.js",
-    "./result": "./dist/result.js",
-    "./unit": "./dist/unit.js",
-    "./package.json": "./package.json"
-  },
-  "types": "index.d.ts",
-  "keywords": [
-    "ember-addon",
-    "typescript",
-    "functional programming",
-    "maybe",
-    "result"
-  ],
   "scripts": {
     "ts:es": "yarn tsc -p ts/es.tsconfig.json",
     "ts:typedefs": "yarn tsc -p ts/types.tsconfig.json && mv defs/* . && rmdir defs",

@@ -1,0 +1,10 @@
+{
+  "name": "@true-myth/maybe",
+  "version": "5.0.0",
+  "dependencies": {
+    "@true-myth/utils": "5.0.0"
+  },
+  "volta": {
+    "extends": "../../package.json"
+  }
+}

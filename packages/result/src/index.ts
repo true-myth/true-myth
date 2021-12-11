@@ -4,10 +4,10 @@
   @module
  */
 
-import Maybe from './maybe.js';
+import Maybe from '../../maybe/src/maybe.js';
 
 import Unit from './unit.js';
-import { curry1, isVoid } from './-private/utils.js';
+import { curry1, isVoid } from '../../utils/src/-private/utils.js';
 
 /**
   Discriminant for {@linkcode Ok} and {@linkcode Err} variants of the
