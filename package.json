@@ -150,6 +150,7 @@
     }
   },
   "release-it": {
+    "github": true,
     "plugins": {
       "release-it-lerna-changelog": {
         "infile": "CHANGELOG.md",
