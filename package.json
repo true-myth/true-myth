@@ -27,7 +27,8 @@
     ".": "./dist/index.js",
     "./maybe": "./dist/maybe.js",
     "./result": "./dist/result.js",
-    "./unit": "./dist/unit.js"
+    "./unit": "./dist/unit.js",
+    "./package.json": "./package.json"
   },
   "types": "index.d.ts",
   "keywords": [
