@@ -16,8 +16,6 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 #### Committers: 1
 - Chris Krycho ([@chriskrycho](https://github.com/chriskrycho))
 
-## [Unreleased]
-
 ## [5.0.0]
 
 ### :boom: Changed
