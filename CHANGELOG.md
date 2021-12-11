@@ -4,6 +4,18 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
+
+## 5.0.1 (2021-12-11)
+
+#### :bug: Bug Fix
+* [#243](https://github.com/true-myth/true-myth/pull/243) Add `package.json` to `exports` ([@chriskrycho](https://github.com/chriskrycho))
+
+#### :memo: Documentation
+* [#226](https://github.com/true-myth/true-myth/pull/226) Export useful internal types, improve docs ([@chriskrycho](https://github.com/chriskrycho))
+
+#### Committers: 1
+- Chris Krycho ([@chriskrycho](https://github.com/chriskrycho))
+
 ## [Unreleased]
 
 ## [5.0.0]
