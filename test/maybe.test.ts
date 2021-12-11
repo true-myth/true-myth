@@ -277,10 +277,26 @@ describe('`Maybe` pure functions', () => {
     expect(MaybeNS.fromResult(anErr)).toEqual(MaybeNS.nothing());
   });
 
-  test('`toString`', () => {
-    expect(MaybeNS.toString(MaybeNS.of(42))).toEqual('Just(42)');
-    expect(MaybeNS.toString(MaybeNS.nothing<string>())).toEqual('Nothing');
+  describe('`toString`', () => {
+    test('with simple values', () => {
+      expect(MaybeNS.toString(MaybeNS.of(42))).toEqual('Just(42)');
+      expect(MaybeNS.toString(MaybeNS.nothing<string>())).toEqual('Nothing');
+    });
+
+    test('with complex values', () => {
+      expect(MaybeNS.toString(MaybeNS.of([1, 2, 3]))).toEqual('Just(1,2,3)');
+      expect(MaybeNS.toString(MaybeNS.of({ neato: true }))).toEqual('Just([object Object])');
+
+      class HasToString {
+        toString() {
+          return 'This has toString';
+        }
+      }
+      expect(MaybeNS.toString(MaybeNS.of(new HasToString()))).toEqual('Just(This has toString)');
+    });
   });
+
+  test('`toString`', () => {});
 
   test('`toJSON`', () => {
     expect(MaybeNS.toJSON(MaybeNS.of(42))).toEqual({ variant: MaybeNS.Variant.Just, value: 42 });
