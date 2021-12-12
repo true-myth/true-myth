@@ -218,6 +218,8 @@ class MaybeImpl<T> {
     ```ts
     import { toOkOrErr } from 'true-myth/toolbelt';
     ```
+
+    @deprecated until 6.0
    */
   toOkOrErr<E>(this: Maybe<T>, error: E): Result<T, E> {
     return Toolbelt.toOkOrErr(error, this);
@@ -230,6 +232,8 @@ class MaybeImpl<T> {
     ```ts
     import { toOkOrElseErr } from 'true-myth/toolbelt';
     ```
+
+    @deprecated until 6.0
    */
   toOkOrElseErr<E>(this: Maybe<T>, elseFn: () => E): Result<T, E> {
     return Toolbelt.toOkOrElseErr(elseFn, this);
@@ -803,6 +807,8 @@ export function unwrapOrElse<T, U>(
   ```ts
   import { transposeResult } from 'true-myth/toolbelt';
   ```
+
+  @deprecated until 6.0
  */
 export function fromResult<T>(result: Result<T, unknown>): Maybe<T> {
   return Toolbelt.fromResult(result);
@@ -1316,6 +1322,8 @@ export const tuple = transposeArray;
   ```ts
   import { transposeResult } from 'true-myth/toolbelt';
   ```
+
+  @deprecated until 6.0
  */
 export function transposeResult<T, E>(result: Result<Maybe<T>, E>) {
   return Toolbelt.transposeResult(result);
@@ -1329,6 +1337,8 @@ export function transposeResult<T, E>(result: Result<Maybe<T>, E>) {
   ```ts
   import { toOkOrErr } from 'true-myth/toolbelt';
   ```
+
+  @deprecated until 6.0
  */
 export function toOkOrErr<T, E>(error: E, maybe: Maybe<T>): Result<T, E>;
 export function toOkOrErr<T, E>(error: E): (maybe: Maybe<T>) => Result<T, E>;
@@ -1348,6 +1358,8 @@ export function toOkOrErr<T, E>(
   ```ts
   import { toOkOrElseErr } from 'true-myth/toolbelt';
   ```
+
+  @deprecated until 6.0
  */
 export function toOkOrElseErr<T, E>(elseFn: () => E, maybe: Maybe<T>): Result<T, E>;
 export function toOkOrElseErr<T, E>(elseFn: () => E): (maybe: Maybe<T>) => Result<T, E>;
