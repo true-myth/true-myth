@@ -12,10 +12,10 @@ describe('`Result` pure functions', () => {
     const theOk = ResultNS.ok(42);
     expect(theOk).toBeInstanceOf(Result);
     switch (theOk.variant) {
-      case ResultNS.Variant.Ok:
+      case Variant.Ok:
         expect(theOk.value).toBe(42);
         break;
-      case ResultNS.Variant.Err:
+      case Variant.Err:
         expect(false).toBe(true); // because this should never happen
         break;
       default:
@@ -32,10 +32,10 @@ describe('`Result` pure functions', () => {
     const theErr = ResultNS.err(reason);
     expect(theErr).toBeInstanceOf(Result);
     switch (theErr.variant) {
-      case ResultNS.Variant.Ok:
+      case Variant.Ok:
         expect(true).toBe(false); // because this should never happen
         break;
-      case ResultNS.Variant.Err:
+      case Variant.Err:
         expect(theErr.error).toBe(reason);
         break;
       default:
@@ -323,24 +323,24 @@ describe('`Result` pure functions', () => {
   test('`toJSON`', () => {
     const theValue = { thisIsReally: 'something', b: null };
     const anOk = ResultNS.ok(theValue);
-    expect(ResultNS.toJSON(anOk)).toEqual({ variant: ResultNS.Variant.Ok, value: theValue });
+    expect(ResultNS.toJSON(anOk)).toEqual({ variant: Variant.Ok, value: theValue });
 
     const errValue = ['oh', 'no', null];
     const anErr = ResultNS.err(errValue);
-    expect(ResultNS.toJSON(anErr)).toEqual({ variant: ResultNS.Variant.Err, error: errValue });
+    expect(ResultNS.toJSON(anErr)).toEqual({ variant: Variant.Err, error: errValue });
   });
 
   test('`toJSON` through serialization', () => {
     const actualSerializedOk = JSON.stringify(ResultNS.ok(42));
     const actualSerializedErr = JSON.stringify(ResultNS.err({ someInfo: 'error' }));
     const actualSerializedUnitErr = JSON.stringify(ResultNS.err());
-    const expectedSerializedOk = JSON.stringify({ variant: ResultNS.Variant.Ok, value: 42 });
+    const expectedSerializedOk = JSON.stringify({ variant: Variant.Ok, value: 42 });
     const expectedSerializedErr = JSON.stringify({
-      variant: ResultNS.Variant.Err,
+      variant: Variant.Err,
       error: { someInfo: 'error' },
     });
     const expectedSerializedUnitErr = JSON.stringify({
-      variant: ResultNS.Variant.Err,
+      variant: Variant.Err,
       error: Unit,
     });
 
@@ -388,7 +388,7 @@ describe('`Result` pure functions', () => {
     expect(ResultNS.isInstance(obj)).toBe(false);
   });
 
-  describe('transposeMaybe', () => {
+  describe('deprecated transposeMaybe re-export', () => {
     test('Just(Ok(T))', () => {
       let maybe = Maybe.just(Result.ok<number, string>(12));
       let transposed = ResultNS.transposeMaybe(maybe);
@@ -603,7 +603,7 @@ describe('`Ok` instance', () => {
   test('`toJSON` method', () => {
     const theValue = 42;
     const theOk = Result.ok(theValue);
-    expect(theOk.toJSON()).toEqual({ variant: ResultNS.Variant.Ok, value: theValue });
+    expect(theOk.toJSON()).toEqual({ variant: Variant.Ok, value: theValue });
   });
 
   test('`ap` method', () => {
@@ -767,7 +767,7 @@ describe('`ResultNS.Err` class', () => {
   test('`toJSON` method', () => {
     const theError = 'test';
     const theErr = Result.err(theError);
-    expect(theErr.toJSON()).toEqual({ variant: ResultNS.Variant.Err, error: theError });
+    expect(theErr.toJSON()).toEqual({ variant: Variant.Err, error: theError });
   });
 
   test('`equals` method', () => {
