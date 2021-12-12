@@ -1,5 +1,4 @@
 import { expectTypeOf } from 'expect-type';
-import Maybe, { just, nothing } from 'true-myth/maybe';
 import Result, { Ok, Variant, Err } from 'true-myth/result';
 import * as ResultNS from 'true-myth/result';
 import Unit from 'true-myth/unit';
@@ -287,28 +286,6 @@ describe('`Result` pure functions', () => {
     expect(anErrOrUndefined).toEqual(undefined);
   });
 
-  test('`toMaybe`', () => {
-    const theValue = 'huzzah';
-    const anOk = ResultNS.ok(theValue);
-    expect(ResultNS.toMaybe(anOk)).toEqual(just(theValue));
-
-    const anErr = ResultNS.err('uh uh');
-    expect(ResultNS.toMaybe(anErr)).toEqual(nothing());
-  });
-
-  test('fromMaybe', () => {
-    const theValue = 'something';
-    const errValue = 'what happened?';
-
-    const aJust = just(theValue);
-    const anOk = ResultNS.ok(theValue);
-    expect(ResultNS.fromMaybe(errValue, aJust)).toEqual(anOk);
-
-    const aNothing = nothing();
-    const anErr = ResultNS.err(errValue);
-    expect(ResultNS.fromMaybe(errValue, aNothing)).toEqual(anErr);
-  });
-
   test('toString', () => {
     const theValue = { thisIsReally: 'something' };
     const errValue = ['oh', 'no'];
@@ -386,29 +363,6 @@ describe('`Result` pure functions', () => {
 
     const obj: unknown = { random: 'nonsense' };
     expect(ResultNS.isInstance(obj)).toBe(false);
-  });
-
-  describe('deprecated transposeMaybe re-export', () => {
-    test('Just(Ok(T))', () => {
-      let maybe = Maybe.just(Result.ok<number, string>(12));
-      let transposed = ResultNS.transposeMaybe(maybe);
-      expect(transposed).toStrictEqual(Result.ok(Maybe.just(12)));
-      expectTypeOf(transposed).toEqualTypeOf<Result<Maybe<number>, string>>();
-    });
-
-    test('Just(Err(E))', () => {
-      let maybe = Maybe.just(Result.err<number, string>('whoops'));
-      let transposed = ResultNS.transposeMaybe(maybe);
-      expect(transposed).toStrictEqual(Result.err('whoops'));
-      expectTypeOf(transposed).toEqualTypeOf<Result<Maybe<number>, string>>();
-    });
-
-    test('Nothing', () => {
-      let maybe = Maybe.nothing<Result<number, string>>();
-      let transposed = ResultNS.transposeMaybe(maybe);
-      expect(transposed).toStrictEqual(Result.ok(Maybe.nothing()));
-      expectTypeOf(transposed).toEqualTypeOf<Result<Maybe<number>, string>>();
-    });
   });
 });
 
@@ -588,12 +542,6 @@ describe('`Ok` instance', () => {
     expect(theOk.unwrapOrElse(getDefault)).toBe(theValue);
   });
 
-  test('`toMaybe` method', () => {
-    const theValue = { something: 'fun' };
-    const theOk = Result.ok(theValue);
-    expect(theOk.toMaybe()).toEqual(just(theValue));
-  });
-
   test('`toString` method', () => {
     const theValue = 42;
     const theOk = Result.ok(theValue);
@@ -751,11 +699,6 @@ describe('`ResultNS.Err` class', () => {
     const theReason = 'alas';
     const theErr = Result.err<number, string>(theReason);
     expect(theErr.unwrapOrElse(length)).toEqual(length(theReason));
-  });
-
-  test('`toMaybe` method', () => {
-    const theErr = Result.err('so sad');
-    expect(theErr.toMaybe()).toEqual(nothing());
   });
 
   test('`toString` method', () => {

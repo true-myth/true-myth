@@ -1,7 +1,6 @@
 import { expectTypeOf } from 'expect-type';
 import Maybe, { Variant, Nothing, Just, Matcher } from 'true-myth/maybe';
 import * as MaybeNS from 'true-myth/maybe';
-import Result, { err, ok } from 'true-myth/result';
 import { Unit } from 'true-myth/unit';
 
 type Neat = { neat: string };
@@ -241,42 +240,6 @@ describe('`Maybe` pure functions', () => {
     expect(undefinedOr42).toEqual(42);
   });
 
-  test('`toOkOrErr`', () => {
-    const theValue = 'string';
-    const theJust = MaybeNS.of(theValue);
-    const errValue = { reason: 'such badness' };
-
-    expect(MaybeNS.toOkOrErr(errValue, theJust)).toEqual(ok(theValue));
-    expect(MaybeNS.toOkOrErr(errValue, MaybeNS.nothing())).toEqual(err(errValue));
-
-    expect(MaybeNS.toOkOrErr<string, typeof errValue>(errValue)(theJust)).toEqual(
-      MaybeNS.toOkOrErr(errValue, theJust)
-    );
-  });
-
-  test('`toOkOrElseErr`', () => {
-    const theJust = MaybeNS.of(12);
-    const errValue = 24;
-    const getErrValue = () => errValue;
-
-    expect(MaybeNS.toOkOrElseErr(getErrValue, theJust)).toEqual(ok(12));
-    expect(MaybeNS.toOkOrElseErr(getErrValue, MaybeNS.nothing())).toEqual(err(errValue));
-
-    expect(MaybeNS.toOkOrElseErr<number, number>(getErrValue)(theJust)).toEqual(
-      MaybeNS.toOkOrElseErr(getErrValue, theJust)
-    );
-  });
-
-  test('`fromResult`', () => {
-    const value = 1000;
-    const anOk = ok(value);
-    expect(MaybeNS.fromResult(anOk)).toEqual(MaybeNS.just(value));
-
-    const reason = 'oh teh noes';
-    const anErr = err(reason);
-    expect(MaybeNS.fromResult(anErr)).toEqual(MaybeNS.nothing());
-  });
-
   describe('`toString`', () => {
     test('with simple values', () => {
       expect(MaybeNS.toString(MaybeNS.of(42))).toEqual('Just(42)');
@@ -390,10 +353,10 @@ describe('`Maybe` pure functions', () => {
       expect((found as Just<Item>).value).toEqual(array[1]);
     });
 
-    test('`head`', () => {
-      expect(MaybeNS.head([])).toEqual(MaybeNS.nothing());
-      expect(MaybeNS.head([1])).toEqual(MaybeNS.just(1));
-      expect(MaybeNS.head([1, 2, 3])).toEqual(MaybeNS.just(1));
+    test('`first`', () => {
+      expect(MaybeNS.first([])).toEqual(MaybeNS.nothing());
+      expect(MaybeNS.first([1])).toEqual(MaybeNS.just(1));
+      expect(MaybeNS.first([1, 2, 3])).toEqual(MaybeNS.just(1));
     });
 
     test('`last`', () => {
@@ -426,42 +389,6 @@ describe('`Maybe` pure functions', () => {
         expectTypeOf(nestedArraysAll).toEqualTypeOf<ExpectedOutputType>();
         expect(nestedArraysAll).toEqual(MaybeNS.just([1, ['two', 'three']]));
       });
-
-      test('`tuple`', () => {
-        type Tuple2 = [Maybe<string>, Maybe<number>];
-        let invalid: Tuple2 = [MaybeNS.just('wat'), MaybeNS.nothing()];
-        const invalidResult = MaybeNS.tuple(invalid);
-        expect(invalidResult).toEqual(MaybeNS.nothing());
-
-        type Tuple3 = [Maybe<string>, Maybe<number>, Maybe<{ neat: string }>];
-        let valid: Tuple3 = [MaybeNS.just('hey'), MaybeNS.just(4), MaybeNS.just({ neat: 'yeah' })];
-        const result = MaybeNS.tuple(valid);
-        expect(result).toEqual(MaybeNS.just(['hey', 4, { neat: 'yeah' }]));
-        expectTypeOf(result).toEqualTypeOf<Maybe<[string, number, { neat: string }]>>();
-      });
-    });
-  });
-
-  describe('deprecated transposeResult re-export', () => {
-    test('Ok(Just(T))', () => {
-      let result = Result.ok<Maybe<number>, string>(Maybe.just(12));
-      let transposed = MaybeNS.transposeResult(result);
-      expect(transposed).toStrictEqual(Maybe.just(Result.ok(12)));
-      expectTypeOf(transposed).toEqualTypeOf<Maybe<Result<number, string>>>();
-    });
-
-    test('Ok(Nothing)', () => {
-      let result = Result.ok<Maybe<number>, string>(Maybe.nothing<number>());
-      let transposed = MaybeNS.transposeResult(result);
-      expect(transposed).toStrictEqual(Maybe.nothing());
-      expectTypeOf(transposed).toEqualTypeOf<Maybe<Result<number, string>>>();
-    });
-
-    test('Err(E)', () => {
-      let result = Result.err<Maybe<number>, string>('hello');
-      let transposed = MaybeNS.transposeResult(result);
-      expect(transposed).toStrictEqual(Maybe.just(Result.err('hello')));
-      expectTypeOf(transposed).toEqualTypeOf<Maybe<Result<number, string>>>();
     });
   });
 
@@ -704,22 +631,6 @@ describe('`Maybe` class', () => {
       expect(theJust.unwrapOrElse(() => 'other value')).toEqual(value);
     });
 
-    test('`toOkOrErr` method', () => {
-      const value = 'string';
-      const theJust = new Maybe(value);
-      const errValue = { reason: 'such badness' };
-      expect(theJust.toOkOrErr(errValue)).toEqual(ok(value));
-    });
-
-    test('`toOkOrElseErr` method', () => {
-      const value = ['neat'];
-      const theJust = new Maybe(value);
-      const errValue = 24;
-      const getErrValue = () => errValue;
-
-      expect(theJust.toOkOrElseErr(getErrValue)).toEqual(ok(value));
-    });
-
     test('`toString` method', () => {
       expect(MaybeNS.of(42).toString()).toEqual('Just(42)');
     });
@@ -891,20 +802,6 @@ describe('`Maybe` class', () => {
       const theNothing = new Maybe();
       const theDefaultValue = 'it be all fine tho';
       expect(theNothing.unwrapOrElse(() => theDefaultValue)).toEqual(theDefaultValue);
-    });
-
-    test('`toOkOrErr` method', () => {
-      const theNothing = new Maybe();
-      const errValue = { reason: 'such badness' };
-      expect(theNothing.toOkOrErr(errValue)).toEqual(err(errValue));
-    });
-
-    test('`toOkOrElseErr` method', () => {
-      const theNothing = new Maybe();
-      const errValue = 24;
-      const getErrValue = () => errValue;
-
-      expect(theNothing.toOkOrElseErr(getErrValue)).toEqual(err(errValue));
     });
 
     test('`toString` method', () => {

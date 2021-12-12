@@ -4,13 +4,8 @@
   @module
  */
 
-import type Maybe from './maybe.js';
-
 import Unit from './unit.js';
 import { curry1, isVoid } from './-private/utils.js';
-
-// Import for backwards-compatibility re-export
-import * as Toolbelt from './toolbelt.js';
 
 /**
   Discriminant for {@linkcode Ok} and {@linkcode Err} variants of the
@@ -210,20 +205,6 @@ class ResultImpl<T, E> {
   /** Method variant for {@linkcode unwrapOrElse} */
   unwrapOrElse<U>(elseFn: (error: E) => U): T | U {
     return this.repr[0] === 'Ok' ? this.repr[1] : elseFn(this.repr[1]);
-  }
-
-  /**
-    Method variant for {@linkcode Toolbelt.toMaybe toMaybe} from
-    {@linkcode Toolbelt}. Prefer to import and use it directly instead:
-
-    ```ts
-    import { toMaybe } from 'true-myth/toolbelt';
-    ```
-
-    @deprecated until 6.0
-   */
-  toMaybe(this: Result<T, E>): Maybe<T> {
-    return Toolbelt.toMaybe(this);
   }
 
   /** Method variant for {@linkcode toString} */
@@ -953,27 +934,6 @@ export function unwrapOrElse<T, U, E>(
 }
 
 /**
-  Local implementation of {@linkcode Toolbelt.toOkOrErr toOkOrErr} from
-  {@linkcode Toolbelt} for backwards compatibility. Prefer to import it from
-  there instead:
-
-  ```ts
-  import type { toOkOrErr } from 'true-myth/toolbelt';
-  ```
-
-  @deprecated until 6.0
- */
-export function fromMaybe<T, E>(errValue: E, maybe: Maybe<T>): Result<T, E>;
-export function fromMaybe<T, E>(errValue: E): (maybe: Maybe<T>) => Result<T, E>;
-export function fromMaybe<T, E>(
-  errValue: E,
-  maybe?: Maybe<T>
-): Result<T, E> | ((maybe: Maybe<T>) => Result<T, E>) {
-  const op = (m: Maybe<T>) => (m.isJust ? ok<T, E>(m.value) : err<T, E>(errValue));
-  return curry1(op, maybe);
-}
-
-/**
   Create a `String` representation of a {@linkcode Result} instance.
 
   An {@linkcode Ok} instance will be `Ok(<representation of the value>)`, and an
@@ -1297,36 +1257,6 @@ export function ap<A, B, E>(
  */
 export function isInstance<T, E>(item: unknown): item is Result<T, E> {
   return item instanceof ResultImpl;
-}
-
-/**
-  Re-export of {@linkcode Toolbelt.transposeMaybe transposeMaybe} from
-  {@linkcode Toolbelt} for backwards compatibility.Prefer to import it from
-  there instead:
-
-  ```ts
-  import type { transposeMaybe } from 'true-myth/toolbelt';
-  ```
-
-  @deprecated until 6.0
- */
-export function transposeMaybe<T, E>(maybe: Maybe<Result<T, E>>) {
-  return Toolbelt.transposeMaybe(maybe);
-}
-
-/**
-  Re-export of {@linkcode Toolbelt.toMaybe toMaybe} from
-  {@linkcode Toolbelt} for backwards compatibility.Prefer to import it from
-  there instead:
-
-  ```ts
-  import type { toMaybe } from 'true-myth/toolbelt';
-  ```
-
-  @deprecated until 6.0
- */
-export function toMaybe<T, E>(result: Result<T, E>): Maybe<T> {
-  return Toolbelt.toMaybe(result);
 }
 
 // The public interface for the {@linkcode Result} class *as a value*: a constructor and the
