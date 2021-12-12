@@ -358,89 +358,91 @@ describe('`Maybe` pure functions', () => {
     expect(MaybeNS.isInstance(obj)).toBe(false);
   });
 
-  test('`find`', () => {
-    const theValue = 4;
-    const pred = (v: number) => v === theValue;
+  describe('deprecated toolbox/array re-exports', () => {
+    test('`find`', () => {
+      const theValue = 4;
+      const pred = (v: number) => v === theValue;
 
-    const empty: number[] = [];
+      const empty: number[] = [];
 
-    expect(MaybeNS.find(pred, empty).variant).toBe(MaybeNS.Variant.Nothing);
+      expect(MaybeNS.find(pred, empty).variant).toBe(MaybeNS.Variant.Nothing);
 
-    const missingTheValue = [1, 2, 3];
-    expect(MaybeNS.find(pred, missingTheValue).variant).toBe(MaybeNS.Variant.Nothing);
+      const missingTheValue = [1, 2, 3];
+      expect(MaybeNS.find(pred, missingTheValue).variant).toBe(MaybeNS.Variant.Nothing);
 
-    const hasTheValue = [1, 2, 3, theValue];
-    const result = MaybeNS.find(pred, hasTheValue);
-    expect(result.variant).toBe(MaybeNS.Variant.Just);
-    expect((result as Just<number>).value).toBe(theValue);
+      const hasTheValue = [1, 2, 3, theValue];
+      const result = MaybeNS.find(pred, hasTheValue);
+      expect(result.variant).toBe(MaybeNS.Variant.Just);
+      expect((result as Just<number>).value).toBe(theValue);
 
-    type Item = { count: number; name: string };
-    type Response = Array<Item>;
+      type Item = { count: number; name: string };
+      type Response = Array<Item>;
 
-    // This is more about testing the types with the currying; it's functionally
-    // covered already.
-    const array: Response = [
-      { count: 1, name: 'potato' },
-      { count: 10, name: 'waffles' },
-    ];
-    const findAtLeast5 = MaybeNS.find(({ count }: Item) => count > 5);
-    const found = findAtLeast5(array);
-    expect(found.variant).toBe(MaybeNS.Variant.Just);
-    expect((found as Just<Item>).value).toEqual(array[1]);
-  });
-
-  test('`head`', () => {
-    expect(MaybeNS.head([])).toEqual(MaybeNS.nothing());
-    expect(MaybeNS.head([1])).toEqual(MaybeNS.just(1));
-    expect(MaybeNS.head([1, 2, 3])).toEqual(MaybeNS.just(1));
-  });
-
-  test('`last`', () => {
-    expect(MaybeNS.last([])).toEqual(MaybeNS.nothing());
-    expect(MaybeNS.last([1])).toEqual(MaybeNS.just(1));
-    expect(MaybeNS.last([1, 2, 3])).toEqual(MaybeNS.just(3));
-  });
-
-  describe('`transposeArray`', () => {
-    test('with basic types', () => {
-      type ExpectedOutputType = Maybe<Array<string | number>>;
-
-      let onlyJusts = [MaybeNS.just(2), MaybeNS.just('three')];
-      let onlyJustsAll = MaybeNS.transposeArray(onlyJusts);
-      expectTypeOf(onlyJustsAll).toEqualTypeOf<ExpectedOutputType>();
-      expect(onlyJustsAll).toEqual(MaybeNS.just([2, 'three']));
-
-      let hasNothing = [MaybeNS.just(2), MaybeNS.nothing<string>()];
-      let hasNothingAll = MaybeNS.transposeArray(hasNothing);
-      expectTypeOf(hasNothingAll).toEqualTypeOf<ExpectedOutputType>();
-      expect(hasNothingAll).toEqual(MaybeNS.nothing());
+      // This is more about testing the types with the currying; it's functionally
+      // covered already.
+      const array: Response = [
+        { count: 1, name: 'potato' },
+        { count: 10, name: 'waffles' },
+      ];
+      const findAtLeast5 = MaybeNS.find(({ count }: Item) => count > 5);
+      const found = findAtLeast5(array);
+      expect(found.variant).toBe(MaybeNS.Variant.Just);
+      expect((found as Just<Item>).value).toEqual(array[1]);
     });
 
-    test('with arrays', () => {
-      type ExpectedOutputType = Maybe<Array<number | string[]>>;
-
-      let nestedArrays = [MaybeNS.just(1), MaybeNS.just(['two', 'three'])];
-      let nestedArraysAll = MaybeNS.transposeArray(nestedArrays);
-
-      expectTypeOf(nestedArraysAll).toEqualTypeOf<ExpectedOutputType>();
-      expect(nestedArraysAll).toEqual(MaybeNS.just([1, ['two', 'three']]));
+    test('`head`', () => {
+      expect(MaybeNS.head([])).toEqual(MaybeNS.nothing());
+      expect(MaybeNS.head([1])).toEqual(MaybeNS.just(1));
+      expect(MaybeNS.head([1, 2, 3])).toEqual(MaybeNS.just(1));
     });
 
-    test('`tuple`', () => {
-      type Tuple2 = [Maybe<string>, Maybe<number>];
-      let invalid: Tuple2 = [MaybeNS.just('wat'), MaybeNS.nothing()];
-      const invalidResult = MaybeNS.tuple(invalid);
-      expect(invalidResult).toEqual(MaybeNS.nothing());
+    test('`last`', () => {
+      expect(MaybeNS.last([])).toEqual(MaybeNS.nothing());
+      expect(MaybeNS.last([1])).toEqual(MaybeNS.just(1));
+      expect(MaybeNS.last([1, 2, 3])).toEqual(MaybeNS.just(3));
+    });
 
-      type Tuple3 = [Maybe<string>, Maybe<number>, Maybe<{ neat: string }>];
-      let valid: Tuple3 = [MaybeNS.just('hey'), MaybeNS.just(4), MaybeNS.just({ neat: 'yeah' })];
-      const result = MaybeNS.tuple(valid);
-      expect(result).toEqual(MaybeNS.just(['hey', 4, { neat: 'yeah' }]));
-      expectTypeOf(result).toEqualTypeOf<Maybe<[string, number, { neat: string }]>>();
+    describe('`transposeArray`', () => {
+      test('with basic types', () => {
+        type ExpectedOutputType = Maybe<Array<string | number>>;
+
+        let onlyJusts = [MaybeNS.just(2), MaybeNS.just('three')];
+        let onlyJustsAll = MaybeNS.transposeArray(onlyJusts);
+        expectTypeOf(onlyJustsAll).toEqualTypeOf<ExpectedOutputType>();
+        expect(onlyJustsAll).toEqual(MaybeNS.just([2, 'three']));
+
+        let hasNothing = [MaybeNS.just(2), MaybeNS.nothing<string>()];
+        let hasNothingAll = MaybeNS.transposeArray(hasNothing);
+        expectTypeOf(hasNothingAll).toEqualTypeOf<ExpectedOutputType>();
+        expect(hasNothingAll).toEqual(MaybeNS.nothing());
+      });
+
+      test('with arrays', () => {
+        type ExpectedOutputType = Maybe<Array<number | string[]>>;
+
+        let nestedArrays = [MaybeNS.just(1), MaybeNS.just(['two', 'three'])];
+        let nestedArraysAll = MaybeNS.transposeArray(nestedArrays);
+
+        expectTypeOf(nestedArraysAll).toEqualTypeOf<ExpectedOutputType>();
+        expect(nestedArraysAll).toEqual(MaybeNS.just([1, ['two', 'three']]));
+      });
+
+      test('`tuple`', () => {
+        type Tuple2 = [Maybe<string>, Maybe<number>];
+        let invalid: Tuple2 = [MaybeNS.just('wat'), MaybeNS.nothing()];
+        const invalidResult = MaybeNS.tuple(invalid);
+        expect(invalidResult).toEqual(MaybeNS.nothing());
+
+        type Tuple3 = [Maybe<string>, Maybe<number>, Maybe<{ neat: string }>];
+        let valid: Tuple3 = [MaybeNS.just('hey'), MaybeNS.just(4), MaybeNS.just({ neat: 'yeah' })];
+        const result = MaybeNS.tuple(valid);
+        expect(result).toEqual(MaybeNS.just(['hey', 4, { neat: 'yeah' }]));
+        expectTypeOf(result).toEqualTypeOf<Maybe<[string, number, { neat: string }]>>();
+      });
     });
   });
 
-  describe('transposeResult', () => {
+  describe('deprecated transposeResult re-export', () => {
     test('Ok(Just(T))', () => {
       let result = Result.ok<Maybe<number>, string>(Maybe.just(12));
       let transposed = MaybeNS.transposeResult(result);
