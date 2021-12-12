@@ -218,6 +218,8 @@ class ResultImpl<T, E> {
     ```ts
     import { toMaybe } from 'true-myth/toolbelt';
     ```
+
+    @deprecated until 6.0
    */
   toMaybe(this: Result<T, E>): Maybe<T> {
     return Toolbelt.toMaybe(this);
@@ -956,6 +958,8 @@ export function unwrapOrElse<T, U, E>(
   ```ts
   import type { toOkOrErr } from 'true-myth/toolbelt';
   ```
+
+  @deprecated until 6.0
  */
 export function fromMaybe<T, E>(errValue: E, maybe: Maybe<T>): Result<T, E>;
 export function fromMaybe<T, E>(errValue: E): (maybe: Maybe<T>) => Result<T, E>;
@@ -1314,6 +1318,8 @@ export function isInstance<T, E>(item: unknown): item is Result<T, E> {
   ```ts
   import type { transposeMaybe } from 'true-myth/toolbelt';
   ```
+
+  @deprecated until 6.0
  */
 export function transposeMaybe<T, E>(maybe: Maybe<Result<T, E>>) {
   return Toolbelt.transposeMaybe(maybe);
@@ -1327,6 +1333,8 @@ export function transposeMaybe<T, E>(maybe: Maybe<Result<T, E>>) {
   ```ts
   import type { toMaybe } from 'true-myth/toolbelt';
   ```
+
+  @deprecated until 6.0
  */
 export function toMaybe<T, E>(result: Result<T, E>): Maybe<T> {
   return Toolbelt.toMaybe(result);
