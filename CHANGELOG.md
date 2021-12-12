@@ -5,6 +5,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 
+
+## 5.1.0 (2021-12-12)
+
+#### :rocket: Enhancement
+* [#248](https://github.com/true-myth/true-myth/pull/248) Deprecate Maybe.head for 6.0, preferring Maybe.first ([@chriskrycho](https://github.com/chriskrycho))
+* [#247](https://github.com/true-myth/true-myth/pull/247) Deprecate non-Toolbelt versions of toolbelt utils ([@chriskrycho](https://github.com/chriskrycho))
+* [#246](https://github.com/true-myth/true-myth/pull/246) Introduce `true-myth/toolbelt` module for better tree shaking ([@chriskrycho](https://github.com/chriskrycho))
+
+#### Committers: 1
+- Chris Krycho ([@chriskrycho](https://github.com/chriskrycho))
+
 ## 5.0.1 (2021-12-11)
 
 #### :bug: Bug Fix
