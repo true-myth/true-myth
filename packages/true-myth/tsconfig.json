@@ -1,10 +1,15 @@
 {
   "extends": "../../tsconfig.json",
   "include": ["src/**/*"],
-  "references": [{ "path": "../maybe" }, { "path": "../result" }],
   "compilerOptions": {
     "outDir": "dist",
     "rootDir": "src",
     "sourceRoot": "src"
-  }
+  },
+  "references": [
+    { "path": "../maybe" },
+    { "path": "../result" },
+    { "path": "../toolbelt" },
+    { "path": "../utils" }
+  ]
 }

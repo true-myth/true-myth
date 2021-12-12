@@ -1,8 +1,8 @@
 import { expectTypeOf } from 'expect-type';
-import Maybe, { just, nothing } from '@true-myth/maybe';
-import Result, { Ok, Variant, Err } from '@true-myth/result';
-import * as ResultNS from '@true-myth/result';
-import Unit from '@true-myth/unit';
+import Maybe, { just, nothing } from 'true-myth/maybe';
+import Result, { Ok, Variant, Err } from 'true-myth/result';
+import * as ResultNS from 'true-myth/result';
+import Unit from 'true-myth/unit';
 
 const length = (x: { length: number }) => x.length;
 const double = (x: number) => x * 2;
@@ -12,7 +12,7 @@ describe('`Result` pure functions', () => {
     const theOk = ResultNS.ok(42);
     expect(theOk).toBeInstanceOf(Result);
     switch (theOk.variant) {
-      case ResultNS.Variant.Ok:
+      case Variant.Ok:
         expect(theOk.value).toBe(42);
         break;
       case ResultNS.Variant.Err:
@@ -135,8 +135,8 @@ describe('`Result` pure functions', () => {
     expect(
       ResultNS.match(
         {
-          Ok: (val) => val,
-          Err: (err) => err,
+          Ok: val => val,
+          Err: err => err,
         },
         nobody
       )
@@ -144,8 +144,8 @@ describe('`Result` pure functions', () => {
     expect(
       ResultNS.match(
         {
-          Ok: (val) => val,
-          Err: (err) => err,
+          Ok: val => val,
+          Err: err => err,
         },
         toErrIs
       )
@@ -509,8 +509,8 @@ describe('`Ok` instance', () => {
 
     expect(
       nobody.match({
-        Ok: (val) => val,
-        Err: (err) => err,
+        Ok: val => val,
+        Err: err => err,
       })
     ).toBe('ok');
   });
@@ -607,7 +607,7 @@ describe('`Ok` instance', () => {
   });
 
   test('`ap` method', () => {
-    const fn = Result.ok<(val: string) => number, string>((str) => str.length);
+    const fn = Result.ok<(val: string) => number, string>(str => str.length);
     const val = Result.ok<string, string>('three');
 
     const result = fn.ap(val);
@@ -647,7 +647,7 @@ describe('`ResultNS.Err` class', () => {
   test('`map` method', () => {
     const errValue = '1 billion things wrong';
     const theErr = Result.err<number, string>(errValue);
-    expect(theErr.map((n) => n + 2)).toEqual(theErr);
+    expect(theErr.map(n => n + 2)).toEqual(theErr);
   });
 
   test('`mapOr` method', () => {
@@ -674,8 +674,8 @@ describe('`ResultNS.Err` class', () => {
 
     expect(
       toErrIs.match({
-        Ok: (val) => val,
-        Err: (err) => err,
+        Ok: val => val,
+        Err: err => err,
       })
     ).toBe(human);
   });

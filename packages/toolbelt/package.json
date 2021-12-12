@@ -1,6 +1,13 @@
 {
   "name": "@true-myth/toolbelt",
   "version": "5.0.0",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "exports": {
+    ".": "./dist/index.js",
+    "./*": "./dist/*",
+    "./package.json": "./package.json"
+  },
   "dependencies": {},
   "volta": {
     "extends": "../../package.json"

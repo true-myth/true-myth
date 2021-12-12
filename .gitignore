@@ -62,6 +62,7 @@ typings/
 dist
 *.d.ts
 *.map
+tsconfig.tsbuildinfo
 
 # Exclude auto-created jsconfig.json
 jsconfig.json

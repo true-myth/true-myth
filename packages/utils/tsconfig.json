@@ -1,7 +1,6 @@
 {
   "extends": "../../tsconfig.json",
   "include": ["src/**/*"],
-  "references": [{ "path": "../maybe" }, { "path": "../result" }],
   "compilerOptions": {
     "outDir": "dist",
     "rootDir": "src",

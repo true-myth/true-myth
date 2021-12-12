@@ -1,1 +1,1 @@
-export { default as default } from '@true-myth/result';
+export * from '@true-myth/result';

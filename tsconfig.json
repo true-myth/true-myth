@@ -1,7 +1,8 @@
 {
+  "$schema": "https://json.schemastore.org/tsconfig",
   "compilerOptions": {
-    "target": "es2020",
-    "module": "es2020",
+    "target": "ES2020",
+    "module": "esnext",
     "stripInternal": false,
     "removeComments": true,
 
@@ -11,10 +12,10 @@
     "noImplicitReturns": true,
 
     "moduleResolution": "node",
-    "baseUrl": ".",
 
-    "sourceRoot": "./src",
-    "sourceMap": true
+    "sourceMap": true,
+
+    "composite": true
   },
-  "include": ["**/src", "**/test"]
+  "references": [{ "path": "packages/true-myth" }]
 }

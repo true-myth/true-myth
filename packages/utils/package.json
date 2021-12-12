@@ -21,15 +21,14 @@
   },
   "version": "5.0.0",
   "type": "module",
-  "main": "dist/index.js",
-  "module": "dist/index.js",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
   "exports": {
     ".": "./dist/index.js",
-    "./maybe": "./dist/maybe.js",
-    "./result": "./dist/result.js",
-    "./unit": "./dist/unit.js"
+    "./*": "./dist/*",
+    "./package.json": "./package.json"
   },
-  "types": "index.d.ts",
+  "types": "dist/index.d.ts",
   "keywords": [
     "ember-addon",
     "typescript",

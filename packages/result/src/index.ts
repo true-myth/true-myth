@@ -1,13 +1,12 @@
 /**
-  [[include:doc/result.md]]
+  [[include:README.md]]
   
   @module
  */
 
-import Maybe from '../../maybe/src/maybe.js';
-
-import Unit from './unit.js';
-import { curry1, isVoid } from '../../utils/src/-private/utils.js';
+import { curry1, isVoid } from '@true-myth/utils';
+import Unit from './unit';
+export {Unit};
 
 /**
   Discriminant for {@linkcode Ok} and {@linkcode Err} variants of the
@@ -207,11 +206,6 @@ class ResultImpl<T, E> {
   /** Method variant for {@linkcode unwrapOrElse} */
   unwrapOrElse<U>(elseFn: (error: E) => U): T | U {
     return this.repr[0] === 'Ok' ? this.repr[1] : elseFn(this.repr[1]);
-  }
-
-  /** Method variant for {@linkcode toMaybe} */
-  toMaybe(): Maybe<T> {
-    return this.repr[0] === 'Ok' ? Maybe.just(this.repr[1]) : Maybe.nothing();
   }
 
   /** Method variant for {@linkcode toString} */
@@ -941,40 +935,6 @@ export function unwrapOrElse<T, U, E>(
 }
 
 /**
-  Convert a {@linkcode Result} to a {@linkcode Maybe.Maybe Maybe}.
-
-  The converted type will be {@linkcode Maybe.Just Just} if the `Result` is
-  {@linkcode Ok} or {@linkcode Maybe.Nothing Nothing} if the `Result` is
-  {@linkcode Err}; the wrapped error value will be discarded.
-
-  @param result The `Result` to convert to a `Maybe`
-  @returns      `Just` the value in `result` if it is `Ok`; otherwise `Nothing`
- */
-export function toMaybe<T>(result: Result<T, unknown>): Maybe<T> {
-  return result.toMaybe();
-}
-
-/**
-  Transform a {@linkcode Maybe.Maybe Maybe} into a {@linkcode Result}.
-
-  If the `Maybe` is a {@linkcode Maybe.Just Just}, its value will be wrapped in
-  the {@linkcode Ok} variant; if it is a {@linkcode Maybe.Nothing Nothing} the
-  `errValue` will be wrapped in the {@linkcode Err} variant.
-
-  @param errValue A value to wrap in an `Err` if `maybe` is a `Nothing`.
-  @param maybe    The `Maybe` to convert to a `Result`.
- */
-export function fromMaybe<T, E>(errValue: E, maybe: Maybe<T>): Result<T, E>;
-export function fromMaybe<T, E>(errValue: E): (maybe: Maybe<T>) => Result<T, E>;
-export function fromMaybe<T, E>(
-  errValue: E,
-  maybe?: Maybe<T>
-): Result<T, E> | ((maybe: Maybe<T>) => Result<T, E>) {
-  const op = (m: Maybe<T>) => (m.isJust ? ok<T, E>(m.value) : err<T, E>(errValue));
-  return curry1(op, maybe);
-}
-
-/**
   Create a `String` representation of a {@linkcode Result} instance.
 
   An {@linkcode Ok} instance will be `Ok(<representation of the value>)`, and an
@@ -1298,28 +1258,6 @@ export function ap<A, B, E>(
  */
 export function isInstance<T, E>(item: unknown): item is Result<T, E> {
   return item instanceof ResultImpl;
-}
-
-/**
-  Transposes a {@linkcode Maybe.Maybe Maybe} of a {@linkcode Result} into a
-  `Result` of a `Maybe`.
-
-  | Input          | Output        |
-  | -------------- | ------------- |
-  | `Just(Ok(T))`  | `Ok(Just(T))` |
-  | `Just(Err(E))` | `Err(E)`      |
-  | `Nothing`      | `Ok(Nothing)` |
-
-  @param maybe a `Maybe<Result<T, E>>` to transform to a `Result<Maybe<T>, E>>`.
- */
-export function transposeMaybe<T, E>(maybe: Maybe<Result<T, E>>): Result<Maybe<T>, E> {
-  return maybe.match({
-    Just: match({
-      Ok: (v) => Result.ok(Maybe.just(v)),
-      Err: (e) => Result.err(e),
-    }),
-    Nothing: () => Result.ok(Maybe.nothing()),
-  });
 }
 
 // The public interface for the {@linkcode Result} class *as a value*: a constructor and the
