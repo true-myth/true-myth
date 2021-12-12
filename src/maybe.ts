@@ -4,11 +4,7 @@
   @module
  */
 
-import Result from './result.js';
 import { curry1, isVoid } from './-private/utils.js';
-
-// Import for backwards-compatibility re-export
-import * as Toolbelt from './toolbelt.js';
 
 /**
   Discriminant for the {@linkcode Just} and {@linkcode Nothing} type instances.
@@ -209,34 +205,6 @@ class MaybeImpl<T> {
   /** Method variant for {@linkcode unwrapOrElse} */
   unwrapOrElse<U>(elseFn: () => U): T | U {
     return this.repr[0] === 'Just' ? this.repr[1] : elseFn();
-  }
-
-  /**
-    Method variant for {@linkcode Toolbelt.toOkOrErr toOkOrErr} from
-    {@linkcode Toolbelt}. Prefer to import and use it directly instead:
-
-    ```ts
-    import { toOkOrErr } from 'true-myth/toolbelt';
-    ```
-
-    @deprecated until 6.0
-   */
-  toOkOrErr<E>(this: Maybe<T>, error: E): Result<T, E> {
-    return Toolbelt.toOkOrErr(error, this);
-  }
-
-  /**
-    Method variant for {@linkcode Toolbelt.toOkOrElseErr toOkOrElseErr} from
-    {@linkcode Toolbelt}. Prefer to import and use it directly instead:
-
-    ```ts
-    import { toOkOrElseErr } from 'true-myth/toolbelt';
-    ```
-
-    @deprecated until 6.0
-   */
-  toOkOrElseErr<E>(this: Maybe<T>, elseFn: () => E): Result<T, E> {
-    return Toolbelt.toOkOrElseErr(elseFn, this);
   }
 
   /** Method variant for {@linkcode toString} */
@@ -800,21 +768,6 @@ export function unwrapOrElse<T, U>(
 }
 
 /**
-  Re-export of {@linkcode Toolbelt.transposeResult transposeResult} from
-  {@linkcode Toolbelt} for backwards compatibility. Prefer to import it from
-  there instead:
-
-  ```ts
-  import { transposeResult } from 'true-myth/toolbelt';
-  ```
-
-  @deprecated until 6.0
- */
-export function fromResult<T>(result: Result<T, unknown>): Maybe<T> {
-  return Toolbelt.fromResult(result);
-}
-
-/**
   Create a `String` representation of a {@linkcode Maybe} instance.
 
   A {@linkcode Just} instance will be `Just(<representation of the value>)`,
@@ -1197,12 +1150,6 @@ export function first<T>(array: Array<T | null | undefined>): Maybe<T> {
 }
 
 /**
-  A convenience alias for `Maybe.first`.
-  @deprecated until 6.0
- */
-export const head = first;
-
-/**
   Safely get the last item from a list, returning {@linkcode Just} the last item
   if the array has at least one item in it, or {@linkcode Nothing} if it is
   empty.
@@ -1302,77 +1249,6 @@ export type Unwrapped<T> = T extends Maybe<infer U> ? U : T;
 export type TransposedArray<T extends Array<Maybe<unknown>>> = Maybe<{
   [K in keyof T]: Unwrapped<T[K]>;
 }>;
-
-/**
-  Legacy alias for {@linkcode transposeArray}.
-
-  @deprecated
- */
-export const all = transposeArray;
-
-/**
-  Legacy alias for {@linkcode transposeArray}.
-
-  @deprecated
- */
-export const tuple = transposeArray;
-
-/**
-  Re-export of {@linkcode Toolbelt.transposeResult transposeResult} from
-  {@linkcode Toolbelt} for backwards compatibility. Prefer to import it from
-  there instead:
-
-  ```ts
-  import { transposeResult } from 'true-myth/toolbelt';
-  ```
-
-  @deprecated until 6.0
- */
-export function transposeResult<T, E>(result: Result<Maybe<T>, E>) {
-  return Toolbelt.transposeResult(result);
-}
-
-/**
-  Local implementation of {@linkcode Toolbelt.toOkOrErr toOkOrErr} from
-  {@linkcode Toolbelt} for backwards compatibility. Prefer to import it from
-  there instead:
-
-  ```ts
-  import { toOkOrErr } from 'true-myth/toolbelt';
-  ```
-
-  @deprecated until 6.0
- */
-export function toOkOrErr<T, E>(error: E, maybe: Maybe<T>): Result<T, E>;
-export function toOkOrErr<T, E>(error: E): (maybe: Maybe<T>) => Result<T, E>;
-export function toOkOrErr<T, E>(
-  error: E,
-  maybe?: Maybe<T>
-): Result<T, E> | ((maybe: Maybe<T>) => Result<T, E>) {
-  const op = (m: Maybe<T>) => (m.isJust ? Result.ok<T, E>(m.value) : Result.err<T, E>(error));
-  return maybe !== undefined ? op(maybe) : op;
-}
-
-/**
-  Local implementation of {@linkcode Toolbelt.toOkOrElseErr toOkOrElseErr} from
-  {@linkcode Toolbelt} for backwards compatibility. Prefer to import it from
-  there instead:
-
-  ```ts
-  import { toOkOrElseErr } from 'true-myth/toolbelt';
-  ```
-
-  @deprecated until 6.0
- */
-export function toOkOrElseErr<T, E>(elseFn: () => E, maybe: Maybe<T>): Result<T, E>;
-export function toOkOrElseErr<T, E>(elseFn: () => E): (maybe: Maybe<T>) => Result<T, E>;
-export function toOkOrElseErr<T, E>(
-  elseFn: () => E,
-  maybe?: Maybe<T>
-): Result<T, E> | ((maybe: Maybe<T>) => Result<T, E>) {
-  const op = (m: Maybe<T>) => (m.isJust ? Result.ok<T, E>(m.value) : Result.err<T, E>(elseFn()));
-  return curry1(op, maybe);
-}
 
 /**
   Safely extract a key from an object, returning {@linkcode Just} if the key has

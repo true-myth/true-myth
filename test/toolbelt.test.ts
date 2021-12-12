@@ -8,6 +8,7 @@ import {
   toOkOrErr,
   fromResult,
   fromMaybe,
+  toMaybe,
 } from 'true-myth/toolbelt';
 
 describe('transposeResult', () => {
@@ -31,6 +32,15 @@ describe('transposeResult', () => {
     expect(transposed).toStrictEqual(Maybe.just(Result.err('hello')));
     expectTypeOf(transposed).toEqualTypeOf<Maybe<Result<number, string>>>();
   });
+});
+
+test('`toMaybe`', () => {
+  const theValue = 'huzzah';
+  const anOk = Result.ok(theValue);
+  expect(toMaybe(anOk)).toEqual(Maybe.just(theValue));
+
+  const anErr = Result.err('uh uh');
+  expect(toMaybe(anErr)).toEqual(Maybe.nothing());
 });
 
 test('fromMaybe', () => {
