@@ -4,10 +4,13 @@
   @module
  */
 
-import Maybe from './maybe.js';
+import type Maybe from './maybe.js';
 
 import Unit from './unit.js';
 import { curry1, isVoid } from './-private/utils.js';
+
+// Import for backwards-compatibility re-export
+import * as Toolbelt from './toolbelt.js';
 
 /**
   Discriminant for {@linkcode Ok} and {@linkcode Err} variants of the
@@ -209,9 +212,16 @@ class ResultImpl<T, E> {
     return this.repr[0] === 'Ok' ? this.repr[1] : elseFn(this.repr[1]);
   }
 
-  /** Method variant for {@linkcode toMaybe} */
-  toMaybe(): Maybe<T> {
-    return this.repr[0] === 'Ok' ? Maybe.just(this.repr[1]) : Maybe.nothing();
+  /**
+    Method variant for {@linkcode Toolbelt.toMaybe toMaybe} from
+    {@linkcode Toolbelt}. Prefer to import and use it directly instead:
+
+    ```ts
+    import { toMaybe } from 'true-myth/toolbelt';
+    ```
+   */
+  toMaybe(this: Result<T, E>): Maybe<T> {
+    return Toolbelt.toMaybe(this);
   }
 
   /** Method variant for {@linkcode toString} */
@@ -941,28 +951,13 @@ export function unwrapOrElse<T, U, E>(
 }
 
 /**
-  Convert a {@linkcode Result} to a {@linkcode Maybe.Maybe Maybe}.
+  Local implementation of {@linkcode Toolbelt.toOkOrErr toOkOrErr} from
+  {@linkcode Toolbelt} for backwards compatibility. Prefer to import it from
+  there instead:
 
-  The converted type will be {@linkcode Maybe.Just Just} if the `Result` is
-  {@linkcode Ok} or {@linkcode Maybe.Nothing Nothing} if the `Result` is
-  {@linkcode Err}; the wrapped error value will be discarded.
-
-  @param result The `Result` to convert to a `Maybe`
-  @returns      `Just` the value in `result` if it is `Ok`; otherwise `Nothing`
- */
-export function toMaybe<T>(result: Result<T, unknown>): Maybe<T> {
-  return result.toMaybe();
-}
-
-/**
-  Transform a {@linkcode Maybe.Maybe Maybe} into a {@linkcode Result}.
-
-  If the `Maybe` is a {@linkcode Maybe.Just Just}, its value will be wrapped in
-  the {@linkcode Ok} variant; if it is a {@linkcode Maybe.Nothing Nothing} the
-  `errValue` will be wrapped in the {@linkcode Err} variant.
-
-  @param errValue A value to wrap in an `Err` if `maybe` is a `Nothing`.
-  @param maybe    The `Maybe` to convert to a `Result`.
+  ```ts
+  import type { toOkOrErr } from 'true-myth/toolbelt';
+  ```
  */
 export function fromMaybe<T, E>(errValue: E, maybe: Maybe<T>): Result<T, E>;
 export function fromMaybe<T, E>(errValue: E): (maybe: Maybe<T>) => Result<T, E>;
@@ -1301,25 +1296,29 @@ export function isInstance<T, E>(item: unknown): item is Result<T, E> {
 }
 
 /**
-  Transposes a {@linkcode Maybe.Maybe Maybe} of a {@linkcode Result} into a
-  `Result` of a `Maybe`.
+  Re-export of {@linkcode Toolbelt.transposeMaybe transposeMaybe} from
+  {@linkcode Toolbelt} for backwards compatibility.Prefer to import it from
+  there instead:
 
-  | Input          | Output        |
-  | -------------- | ------------- |
-  | `Just(Ok(T))`  | `Ok(Just(T))` |
-  | `Just(Err(E))` | `Err(E)`      |
-  | `Nothing`      | `Ok(Nothing)` |
-
-  @param maybe a `Maybe<Result<T, E>>` to transform to a `Result<Maybe<T>, E>>`.
+  ```ts
+  import type { transposeMaybe } from 'true-myth/toolbelt';
+  ```
  */
-export function transposeMaybe<T, E>(maybe: Maybe<Result<T, E>>): Result<Maybe<T>, E> {
-  return maybe.match({
-    Just: match({
-      Ok: (v) => Result.ok(Maybe.just(v)),
-      Err: (e) => Result.err(e),
-    }),
-    Nothing: () => Result.ok(Maybe.nothing()),
-  });
+export function transposeMaybe<T, E>(maybe: Maybe<Result<T, E>>) {
+  return Toolbelt.transposeMaybe(maybe);
+}
+
+/**
+  Re-export of {@linkcode Toolbelt.toMaybe toMaybe} from
+  {@linkcode Toolbelt} for backwards compatibility.Prefer to import it from
+  there instead:
+
+  ```ts
+  import type { toMaybe } from 'true-myth/toolbelt';
+  ```
+ */
+export function toMaybe<T, E>(result: Result<T, E>): Maybe<T> {
+  return Toolbelt.toMaybe(result);
 }
 
 // The public interface for the {@linkcode Result} class *as a value*: a constructor and the
