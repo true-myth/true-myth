@@ -1,7 +1,8 @@
 {
   "private": true,
-  "workspaces": ["packages/*"],
-  "name": "true-myth",
+  "workspaces": [
+    "packages/*"
+  ],
   "description": "A library for safe functional programming in JavaScript, with first-class support for TypeScript",
   "homepage": "https://true-myth.js.org",
   "contributors": [
