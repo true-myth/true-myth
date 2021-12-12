@@ -1192,12 +1192,15 @@ export function find<T>(
 
   @param array The array to get the first item from.
  */
-export function head<T>(array: Array<T | null | undefined>): Maybe<T> {
+export function first<T>(array: Array<T | null | undefined>): Maybe<T> {
   return Maybe.of(array[0]);
 }
 
-/** A convenience alias for `Maybe.head`. */
-export const first = head;
+/**
+  A convenience alias for `Maybe.first`.
+  @deprecated until 6.0
+ */
+export const head = first;
 
 /**
   Safely get the last item from a list, returning {@linkcode Just} the last item
