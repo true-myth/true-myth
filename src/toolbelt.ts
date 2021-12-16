@@ -72,6 +72,14 @@ export function fromMaybe<T, E>(
   @param maybe a `Maybe<Result<T, E>>` to transform to a `Result<Maybe<T>, E>>`.
  */
 export function transposeMaybe<T, E>(maybe: Maybe<Result<T, E>>): Result<Maybe<T>, E> {
+  // SAFETY: TS is unable to unify this expression throughout without explicitly
+  // casting at the end: it thinks that the `T` and `E` values here may be
+  // nullable and so may end up with `Unit` instead of one or the other. Alas,
+  // there is no way around this: `extends NonNullable<_>` doesn't actually do
+  // anything here. However, we can see that this will actually always hold,
+  // because it's impossible to get here without having *already* filled in the
+  // fully-resolved type for `T` or `E`: if it's `Unit`, it is `Unit` by the
+  // time this function is called.
   return maybe.match({
     Just: (result) =>
       result.match({
@@ -79,7 +87,7 @@ export function transposeMaybe<T, E>(maybe: Maybe<Result<T, E>>): Result<Maybe<T
         Err: (e) => Result.err(e),
       }),
     Nothing: () => Result.ok(Maybe.nothing()),
-  });
+  }) as Result<Maybe<T>, E>;
 }
 
 /**
