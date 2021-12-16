@@ -168,14 +168,14 @@ console.log(toString(mappedBad)); // "Err({ reason: 'was not valid' })"
 ### `Maybe` with the method style
 
 ```typescript
-import Maybe, { Just, Nothing } from 'true-myth/maybe';
+import Maybe, { just, nothing } from 'true-myth/maybe';
 
 function safeLength(mightBeAString: Maybe<string>): Maybe<number> {
   return mightBeAString.map(s => s.length);
 }
 
-const justAString = new Just('a string');
-const nothingHere = new Nothing<string>();
+const justAString = just('a string');
+const nothingHere = nothing<string>();
 console.log(safeLength(justAString).toString()); // Just(8)
 console.log(safeLength(nothingHere).toString()); // Nothing
 ```
@@ -514,10 +514,10 @@ In practice, that means:
 -   You can construct the variant types in the traditional JavaScript way or with a pure function:
 
     ```typescript
-    import { Just, just, Nothing, nothing } from 'true-myth/maybe';
+    import Maybe, { just, nothing } from 'true-myth/maybe';
 
-    const classicalJust = new Just('value');
-    const classicalNothing = new Nothing();
+    const classicalJust = new Maybe('value');
+    const classicalNothing = new Maybe<string>();
 
     const functionalJust = just('value');
     const functionalNothing = nothing();
@@ -720,109 +720,6 @@ Note that much of the content between these sections is the same; it's presented
 
 [s-ts]: https://github.com/sanctuary-js/sanctuary/pull/431
 
-## Migrating from other libraries
-
-### From Folktale
-
-Migrating from Folktale should be *very* straightforward: many of the names are the same, and the behavior of many of the functions is as well.
-
-#### From Folktale 1.x
-
-In many cases, you can simple rename your imports and some of the function invocations for Folktale to switch to True Myth – several imports are supplied with exactly that pattern in mind. If a given item is not mentioned, you can assume no change other than the import is required.
-
-##### Update imports
-
-```diff
--import Maybe from 'data.maybe'
-+import Maybe from 'true-myth/maybe'
-```
-
-##### Update `Nothing`/`Just` constructors
-
-```diff
--Maybe.Nothing()
--Maybe.Just('foo')
-+Maybe.nothing()
-+Maybe.just('foo)
-```
-
-##### Update `getOrElse` -> `unwrapOr`
-
-```diff
--foo.getOrElse('oh noes')
-+foo.unwrapOr('oh noes')
-```
-
-##### Update `get` -> `unsafelyUnwrap`
-
-*Note: the method is called `unsafelyUnwrap` because it's not a good idea to use it. It's technically the equivalent of `get`, but it would be much better to change your logic to work with `match` instead because it's safer.*
-
-```diff
--foo.get()
-+foo.unsafelyUnwrap()
-```
-
-```js
-// a better alternative:
-foo.match({
-  Just: (foo) => foo,
-  Nothing: () => 'fallback value'
-})
-```
-
-- [ ] TODO: migration path from data.either -> Result
-
-#### From Folktale 2.x
-
-In many cases, you can simple rename your imports and some of the function invocations for Folktale to switch to True Myth – several imports are supplied with exactly that pattern in mind. If a given item is not mentioned, you can assume no change other than the import is required.
-
-- [ ] TODO: rest of the migration path from Folktale 2.0
-
-| Folktale               | True Myth                | Notes                                                                                                                                                          |
-| ---------------------- | ------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `Maybe`                | `Maybe `                 |                                                                                                                                                                |
-| `Maybe.hasInstance`    | no equivalent            |                                                                                                                                                                |
-| `Maybe.empty`          | `Maybe.nothing`          |                                                                                                                                                                |
-| `Maybe.of`             | `Maybe.just`             | Because True Myth's `Maybe.of` correctly handles `null` and `undefined`, you *can* simply keep using `Maybe.of`, but the semantics will be somewhat different. |
-| `Maybe.fromNullable`   | `Maybe.of`               | `Maybe.fromNullable` also exists and accordingly you do not *need* to migrate. `Maybe.of` is nicer, though!                                                    |
-| `Maybe.fromResult`     | `Maybe.fromResult`       |                                                                                                                                                                |
-| `Maybe.fromValidation` | no equivalent            | You can use `Maybe.fromResult` as type-signature equivalent                                                                                                    |
-| `Maybe.fromJSON`       | no equivalent            |                                                                                                                                                                |
-| `Maybe.Just`           | `Maybe.just`             | You may also use `new Maybe.Just`, but the standalone function is recommended                                                                                  |
-| `Maybe.Nothing`        | `Maybe.nothing`          | You may also use `new Maybe.Nothing`, but the standalone function is recommended                                                                               |
-| `Maybe.matchWith`      | `Maybe.match`            | The value is supplied unwrapped, i.e. you do not need to do `item.value`, merely `item` in True Myth, as in Folktale 1.0                                       |
-| `Just#inspect`         | `Just#toString`          | You can also use the static method `Maybe.toString`                                                                                                            |
-| `Nothing#inspect`      | `Nothing#toString`       | You can also use the static method `Maybe.toString`                                                                                                            |
-| `Just#get`             | `Just#unsafelyUnwrap`    | You can also use the static method `Maybe.unsafelyUnwrap`, aliased as `Maybe.unsafeGet` and `Maybe.unsafelyGet`                                                |
-| `Nothing#get`          | `Nothing#unsafelyUnwrap` | You can also use the static method `Maybe.unsafelyUnwrap`, aliased as `Maybe.unsafeGet` and `Maybe.unsafelyGet`                                                |
-| `Just#getOrElse`       | `Just#unwrapOrElse`      | You can also use the static method `Maybe.unwrapOrElse`, aliased as `Maybe.getOrElse`                                                                          |
-| `Nothing#getOrElse`    | `Nothing#unwrapOrElse`   | You can also use the static method `Maybe.unwrapOrElse`, aliased as `Maybe.getOrElse`                                                                          |
-| `Just#tag`             | `Just#variant`           |                                                                                                                                                                |
-| `Nothing#tag`          | `Nothing#variant`        |                                                                                                                                                                |
-| `Just#type`            | no equivalent            |                                                                                                                                                                |
-| `Nothing#type`         | no equivalent            |                                                                                                                                                                |
-| `Just#concat`          | no equivalent            |                                                                                                                                                                |
-| `Nothing#concat`       | no equivalent            |                                                                                                                                                                |
-| `Just#equals`          | `Just#equals`            | You can also use the static method `Maybe.equals`                                                                                                              |
-| `Nothing#equals`       | `Nothing#equals`         | You can also use the static method `Maybe.equals`                                                                                                              |
-| `Result`               | `Result`                 |                                                                                                                                                                |
-| `Validation`           | no equivalent            | You can use `Result` instead: a `Validation<Success, Failure>` has identical semantics to `Result<T, E>`                                                       |
-
-[`_.isEqual`]: https://lodash.com/docs/4.17.4#isEqual
-[`R.equals`]: http://ramdajs.com/docs/#equals
-
-### From Sanctuary
-
-There are straightforward conversions from most Sanctuary functions to True Myth functions.
-
-| Sanctuary   | True Myth  | Notes |
-| ----------- | ---------- | ----- |
-| `S.Either`  | `Result`   |       |
-| `Left`      | `Err`      |       |
-| `Right`     | `Ok`       |       |
-| `S.toMaybe` | `Maybe.of` |       |
-
-- [ ] TODO: migration path from Sanctuary
 
 ## What's with the name?
 
