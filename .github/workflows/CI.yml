@@ -7,17 +7,7 @@ on:
   pull_request:
 
 jobs:
-  lint:
-    name: 'Linting'
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - uses: volta-cli/action@v1
-      - run: yarn install --frozen-lockfile --non-interactive
-      - run: yarn lint
-
   tests_linux:
-    needs: lint
     name: 'Tests: ubuntu (node@${{ matrix.node-version }})'
     runs-on: ubuntu-latest
     strategy:
@@ -33,7 +23,6 @@ jobs:
       - run: yarn test
 
   tests_other:
-    needs: lint
     name: 'Tests: ${{ matrix.os }}'
     runs-on: '${{ matrix.os }}-latest'
 
@@ -48,7 +37,6 @@ jobs:
       - run: yarn test
 
   tests_ts:
-    needs: lint
     name: 'Tests: TS ${{ matrix.ts-version }}'
     runs-on: ubuntu-latest
     continue-on-error: false
