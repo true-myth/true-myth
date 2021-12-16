@@ -25,6 +25,10 @@ describe('`Result` pure functions', () => {
     const withUnit = ResultNS.ok();
     expectTypeOf(withUnit).toEqualTypeOf<Result<Unit, unknown>>();
     expect(withUnit).toEqual(ResultNS.ok(Unit));
+
+    const withUnitFromImport = Result.ok();
+    expectTypeOf(withUnit).toEqualTypeOf<Result<Unit, unknown>>();
+    expect(withUnitFromImport).toEqual(Result.ok(Unit));
   });
 
   test('`err`', () => {
@@ -451,8 +455,8 @@ describe('`Ok` instance', () => {
     const unqualifiedOk = Result.ok('string');
     expectTypeOf(unqualifiedOk).toMatchTypeOf<Result<string, unknown>>();
 
-    expect(() => Result.ok(null)).toThrow();
-    expect(() => Result.ok(undefined)).toThrow();
+    expect(() => Result.ok(null)).not.toThrow();
+    expect(() => Result.ok(undefined)).not.toThrow();
   });
 
   test('`value` property', () => {
@@ -624,8 +628,8 @@ describe('`ResultNS.Err` class', () => {
     const unqualifiedErr = Result.err('string');
     expectTypeOf(unqualifiedErr).toMatchTypeOf<Result<unknown, string>>();
 
-    expect(() => Result.err(null)).toThrow();
-    expect(() => Result.err(undefined)).toThrow();
+    expect(() => Result.err(null)).not.toThrow();
+    expect(() => Result.err(undefined)).not.toThrow();
   });
 
   test('`error` property', () => {
