@@ -72,11 +72,6 @@ You could implement all of these yourself – it's not hard! – but it's much 
 - [Why not...](#why-not)
   - [Folktale?](#folktale)
   - [Sanctuary?](#sanctuary)
-- [Migrating from other libraries](#migrating-from-other-libraries)
-  - [From Folktale](#from-folktale)
-    - [From Folktale 1.x](#from-folktale-1x)
-    - [From Folktale 2.x](#from-folktale-2x)
-  - [From Sanctuary](#from-sanctuary)
 - [What's with the name?](#whats-with-the-name)
 
 ## Setup
