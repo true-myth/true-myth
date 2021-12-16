@@ -69,12 +69,14 @@ class ResultImpl<T, E> {
 
     @throws If you pass `null`.
    */
-  static ok<T, E>(value?: T | null): Result<T, E> {
-    if (isVoid(value)) {
-      throw new Error('Tried to construct `Ok` with `null`. Maybe you want `Maybe.Nothing`?');
-    }
-
-    return new ResultImpl<T, E>(['Ok', value]) as Result<T, E>;
+  static ok<T, E>(): Result<Unit, E>;
+  static ok<T, E>(value: null): Result<Unit, E>;
+  static ok<T, E>(value: undefined): Result<Unit, E>;
+  static ok<T, E>(value: T): Result<T, E>;
+  static ok<T, E>(value?: T): Result<Unit, E> | Result<T, E> {
+    return isVoid(value)
+      ? (new ResultImpl<Unit, E>(['Ok', Unit]) as Result<Unit, E>)
+      : (new ResultImpl<T, E>(['Ok', value]) as Result<T, E>);
   }
 
   /**
@@ -100,14 +102,14 @@ class ResultImpl<T, E> {
 
     @throws If you pass `null` or `undefined`.
    */
-  static err<T, E>(error: E | null): Result<T, E> {
-    if (isVoid(error)) {
-      throw new Error(
-        'Tried to construct `Err` with `null` or `undefined`. Maybe you want `Maybe.Nothing`?'
-      );
-    }
-
-    return new ResultImpl<T, E>(['Err', error]) as Result<T, E>;
+  static err<T, E>(): Result<T, Unit>;
+  static err<T, E>(error: null): Result<T, Unit>;
+  static err<T, E>(error: undefined): Result<T, Unit>;
+  static err<T, E>(error: E): Result<T, E>;
+  static err<T, E>(error?: E): Result<T, Unit> | Result<T, E> {
+    return isVoid(error)
+      ? (new ResultImpl<T, Unit>(['Err', Unit]) as Result<T, Unit>)
+      : (new ResultImpl<T, E>(['Err', error]) as Result<T, E>);
   }
 
   /** Distinguish between the {@linkcode Variant.Ok} and {@linkcode Variant.Err} {@linkcode Variant variants}. */
@@ -351,11 +353,7 @@ export function tryOr<T, E>(
   @typeparam T The type of the item contained in the `Result`.
   @param value The value to wrap in a `Result.Ok`.
  */
-export function ok<T, E>(): Result<Unit, E>;
-export function ok<T, E>(value: T): Result<T, E>;
-export function ok<T, E>(value?: T): Result<Unit, E> | Result<T, E> {
-  return value === undefined ? Result.ok(Unit) : Result.ok(value);
-}
+export const ok = ResultImpl.ok;
 
 /**
   Create an instance of {@linkcode Err}.
@@ -403,11 +401,7 @@ export function ok<T, E>(value?: T): Result<Unit, E> | Result<T, E> {
   @typeparam T The type of the item contained in the `Result`.
   @param E The error value to wrap in a `Result.Err`.
  */
-export function err<T, E>(): Result<T, Unit>;
-export function err<T, E>(error: E): Result<T, E>;
-export function err<T, E>(error?: E): Result<T, Unit> | Result<T, E> {
-  return isVoid(error) ? Result.err(Unit) : Result.err(error);
-}
+export const err = ResultImpl.err;
 
 /**
   Execute the provided callback, wrapping the return value in {@linkcode Ok}.
