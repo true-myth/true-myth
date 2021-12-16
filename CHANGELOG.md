@@ -6,6 +6,22 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 
 
+
+## 5.1.1 (2021-12-16)
+
+#### :rocket: Enhancement
+* [#263](https://github.com/true-myth/true-myth/pull/263) Fix regression of `Result.ok()` ([@chriskrycho](https://github.com/chriskrycho))
+
+#### :bug: Bug Fix
+* [#263](https://github.com/true-myth/true-myth/pull/263) Fix regression of `Result.ok()` ([@chriskrycho](https://github.com/chriskrycho))
+
+#### :house: Internal
+* [#262](https://github.com/true-myth/true-myth/pull/262) Remove ESLint ([@chriskrycho](https://github.com/chriskrycho))
+* [#253](https://github.com/true-myth/true-myth/pull/253) Target both `main` and `next` with Dependabot ([@chriskrycho](https://github.com/chriskrycho))
+
+#### Committers: 1
+- Chris Krycho ([@chriskrycho](https://github.com/chriskrycho))
+
 ## 5.1.0 (2021-12-12)
 
 #### :rocket: Enhancement
