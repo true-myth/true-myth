@@ -67,12 +67,6 @@ class ResultImpl<T, E> {
     the type correctly.
 
     @param value The value to wrap in an `Ok`.
-
-    Note: `null` and `undefined` are allowed by the type signature so that the
-    constructor may `throw` on those rather than constructing a type like
-    `Result<undefined>`.
-
-    @throws If you pass `null`.
    */
   static ok<T, E>(): Result<Unit, E>;
   static ok<T, E>(value: null): Result<Unit, E>;
@@ -100,12 +94,6 @@ class ResultImpl<T, E> {
     ```
 
     @param error The value to wrap in an `Err`.
-
-    `Note: null` and `undefined` are allowed by the type signature so that the
-    constructor may `throw` on those rather than constructing a type like
-    `Result<number, undefined>`.
-
-    @throws If you pass `null` or `undefined`.
    */
   static err<T, E>(): Result<T, Unit>;
   static err<T, E>(error: null): Result<T, Unit>;
@@ -335,10 +323,10 @@ export function tryOr<T, E>(
   const yayNumber = Result.ok<number, string>(12);
   ```
 
-  Note: `null` is allowed by the type signature so that so that the function
-  may be used to  `throw` on passing `null` rather than constructing a type like
-  `Result<null, string>`. `undefined` is allowed as a convenience method for
-  constructing a `Result<Unit, E>`.
+  Note: passing nothing, or passing `null` or `undefined` explicitly, will
+  produce a `Result<Unit, E>`, rather than producing the nonsensical and in
+  practice quite annoying `Result<null, string>` etc. See {@linkcode Unit} for
+  more.
 
   ```ts
   const normalResult = Result.ok<number, string>(42);
@@ -383,10 +371,10 @@ export const ok = ResultImpl.ok;
   const notString = Result.err<number, string>('something went wrong');
   ```
 
-  Note: `null` is allowed by the type signature so that so that the function
-  may be used to  `throw` on passing `null` rather than constructing a type like
-  `Result<null, string>`. `undefined` is allowed as a convenience method for
-  constructing a `Result<Unit, E>`.
+  Note: passing nothing, or passing `null` or `undefined` explicitly, will
+  produce a `Result<T, Unit>`, rather than producing the nonsensical and in
+  practice quite annoying `Result<null, string>` etc. See {@linkcode Unit} for
+  more.
 
   ```ts
   const normalResult = Result.err<number, string>('oh no');
