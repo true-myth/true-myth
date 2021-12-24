@@ -112,7 +112,7 @@ class MaybeImpl<T> {
       throw new Error(`attempted to call "just" with ${value}`);
     }
 
-    return new Maybe<T>(value);
+    return new MaybeImpl<T>(value) as Maybe<T>;
   }
 
   /**
@@ -129,8 +129,8 @@ class MaybeImpl<T> {
     @typeparam T The type of the item contained in the `Maybe`.
     @returns     An instance of `Maybe.Nothing<T>`.
    */
-  static nothing<T>(_?: null): Maybe<T> {
-    return new MaybeImpl() as Maybe<T>;
+  static nothing<T>(_?: null): Nothing<T> {
+    return new MaybeImpl() as Nothing<T>;
   }
 
   /** Distinguish between the `Just` and `Nothing` {@link Variant variants}. */
@@ -143,7 +143,7 @@ class MaybeImpl<T> {
 
     @warning throws if you access this from a {@linkcode Just}
    */
-  get value(): T | never {
+  get value(): T {
     if (this.repr[0] === Variant.Nothing) {
       throw new Error('Cannot get the value of `Nothing`');
     }
@@ -328,11 +328,10 @@ export interface Just<T> extends MaybeImpl<T> {
   @typeparam T The type which would be wrapped in a {@linkcode Just} variant of
     the {@linkcode Maybe}.
  */
-export interface Nothing<T> extends MaybeImpl<T> {
+export interface Nothing<T> extends Pick<MaybeImpl<T>, Exclude<keyof MaybeImpl<T>, 'value'>> {
   /** `Nothing` is always {@linkcode Variant.Nothing}. */
   readonly variant: 'Nothing';
-  /** @internal */
-  value: never;
+
   isJust: false;
   isNothing: true;
 }
