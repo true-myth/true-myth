@@ -16,7 +16,7 @@ describe('`Maybe` pure functions', () => {
         expect(theJust.value).toBe('string');
         break;
       case MaybeNS.Variant.Nothing:
-        expect(false).toBe(true); // because this should never happen
+        expect(true).toBe(false); // Not possible
         break;
       default:
         expect(false).toBe(true); // because those are the only cases
@@ -30,6 +30,8 @@ describe('`Maybe` pure functions', () => {
     const theNothing = MaybeNS.nothing();
     expect(theNothing).toBeInstanceOf(Maybe);
     switch (theNothing.variant) {
+      // @ts-expect-error -- this cannot happen! Should fail to type-check if it
+      // *does* happen.
       case MaybeNS.Variant.Just:
         expect(true).toBe(false); // because this should never happen
         break;
@@ -41,7 +43,7 @@ describe('`Maybe` pure functions', () => {
     }
 
     const nothingOnType = MaybeNS.nothing<string>();
-    expectTypeOf(nothingOnType).toEqualTypeOf<Maybe<string>>();
+    expectTypeOf(nothingOnType).toMatchTypeOf<Maybe<string>>();
   });
 
   describe('`of`', () => {
@@ -50,6 +52,7 @@ describe('`Maybe` pure functions', () => {
       expectTypeOf(nothingFromNull).toEqualTypeOf<Maybe<string>>();
       expect(nothingFromNull.isJust).toBe(false);
       expect(nothingFromNull.isNothing).toBe(true);
+      // @ts-expect-error -- `value` isn't accessible without narrowing
       expect(() => nothingFromNull.value).toThrow();
     });
 
@@ -58,6 +61,7 @@ describe('`Maybe` pure functions', () => {
       expectTypeOf(nothingFromUndefined).toEqualTypeOf<Maybe<number>>();
       expect(nothingFromUndefined.isJust).toBe(false);
       expect(nothingFromUndefined.isNothing).toBe(true);
+      // @ts-expect-error -- `value` isn't accessible without narrowing
       expect(() => nothingFromUndefined.value).toThrow();
     });
 
@@ -83,7 +87,7 @@ describe('`Maybe` pure functions', () => {
 
     const none = MaybeNS.nothing<string>();
     const noLength = MaybeNS.map(length, none);
-    expectTypeOf(none).toEqualTypeOf<Maybe<string>>();
+    expectTypeOf(none).toMatchTypeOf<Maybe<string>>();
     expect(noLength).toEqual(MaybeNS.nothing());
   });
 
@@ -198,6 +202,7 @@ describe('`Maybe` pure functions', () => {
 
   test('`unwrap`', () => {
     expect((MaybeNS.of('42') as Just<string>).value).toBe('42');
+    // @ts-expect-error -- `value` isn't accessible without narrowing
     expect(() => MaybeNS.nothing().value).toThrow();
   });
 
@@ -484,7 +489,9 @@ describe('`Maybe` class', () => {
     expectTypeOf(maybe).toHaveProperty('isJust');
     expectTypeOf(maybe).toHaveProperty('isJust');
     expectTypeOf(maybe).toHaveProperty('isNothing');
-    expectTypeOf(maybe).toHaveProperty('value');
+    if (maybe.isJust) {
+      expectTypeOf(maybe).toHaveProperty('value');
+    }
     expectTypeOf(Maybe).constructorParameters.toEqualTypeOf<[value?: unknown] | []>();
   });
 
@@ -492,13 +499,13 @@ describe('`Maybe` class', () => {
     test('constructor', () => {
       const theJust = new Maybe('cool');
       expect(theJust.variant).toEqual(Variant.Just);
-      expect(theJust.value).toEqual('cool');
+      expect((theJust as Just<string>).value).toEqual('cool');
     });
 
     test('static constructor', () => {
       const theJust = Maybe.just(123);
       expect(theJust.variant).toEqual(Variant.Just);
-      expect(theJust.value).toEqual(123);
+      expect((theJust as Just<number>).value).toEqual(123);
 
       expect(() => Maybe.just(null)).toThrow();
       expect(() => Maybe.just(undefined)).toThrow();
@@ -696,14 +703,17 @@ describe('`Maybe` class', () => {
     test('static constructor', () => {
       const theNothing = Maybe.nothing();
       expect(theNothing.variant).toEqual(Variant.Nothing);
+      // @ts-expect-error -- `value` isn't accessible without narrowing
       expect(() => theNothing.value).toThrow();
 
       const fromNull = Maybe.nothing(null);
       expect(fromNull.variant).toEqual(Variant.Nothing);
+      // @ts-expect-error -- `value` isn't accessible without narrowing
       expect(() => fromNull.value).toThrow();
 
       const nothingFromUndefined = Maybe.nothing(undefined);
       expect(nothingFromUndefined.variant).toEqual(Variant.Nothing);
+      // @ts-expect-error -- `value` isn't accessible without narrowing
       expect(() => nothingFromUndefined.value).toThrow();
     });
 
@@ -714,6 +724,7 @@ describe('`Maybe` class', () => {
 
     test('`value` property', () => {
       const theNothing = new Maybe();
+      // @ts-expect-error -- `value` isn't accessible without narrowing
       expect(() => theNothing.value).toThrow();
     });
 
@@ -787,8 +798,9 @@ describe('`Maybe` class', () => {
       expect(theNothing.andThen(getDefaultValue)).toEqual(theNothing);
     });
 
-    test('`unsafelyUnwrap` method', () => {
+    test('`value` access', () => {
       const noStuffAtAll = new Maybe();
+      // @ts-expect-error -- `value` isn't accessible without narrowing
       expect(() => noStuffAtAll.value).toThrow();
     });
 
