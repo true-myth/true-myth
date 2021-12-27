@@ -29,6 +29,11 @@ describe('`Result` pure functions', () => {
     const withUnitFromImport = Result.ok();
     expectTypeOf(withUnit).toEqualTypeOf<Result<Unit, unknown>>();
     expect(withUnitFromImport).toEqual(Result.ok(Unit));
+
+    function inferenceFun(): Result<Maybe<string>, number> {
+      return Result.ok(Maybe.nothing());
+    }
+    inferenceFun();
   });
 
   test('`err`', () => {
