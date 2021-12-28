@@ -208,12 +208,12 @@ class MaybeImpl<T> {
   }
 
   /** Method variant for {@linkcode toString} */
-  toString(this: Maybe<T>): string {
+  toString(): string {
     return this.repr[0] === 'Just' ? `Just(${this.repr[1]})` : 'Nothing';
   }
 
   /** Method variant for {@linkcode toJSON} */
-  toJSON(this: Maybe<T>): MaybeJSON<unknown> {
+  toJSON(): MaybeJSON<unknown> {
     const variant = this.repr[0];
 
     if (variant === 'Just') {
