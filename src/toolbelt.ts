@@ -87,7 +87,7 @@ export function transposeMaybe<T, E>(maybe: Maybe<Result<T, E>>): Result<Maybe<T
         Err: (e) => Result.err(e),
       }),
     Nothing: () => Result.ok(Maybe.nothing()),
-  }) as Result<Maybe<T>, E>;
+  });
 }
 
 /**
