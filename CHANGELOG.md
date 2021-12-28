@@ -17,7 +17,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 #### :memo: Documentation
 * [#266](https://github.com/true-myth/true-myth/pull/266) Fix out-of-date parts of README ([@chriskrycho](https://github.com/chriskrycho))
 
-#### Committers: 2
+#### Committers: 1
 - Chris Krycho ([@chriskrycho](https://github.com/chriskrycho))
 
 ## 5.1.1 (2021-12-16)
