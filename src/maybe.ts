@@ -47,19 +47,22 @@ let NOTHING: Nothing<any>;
 
 // Defines the *implementation*, but not the *types*. See the exports below.
 class MaybeImpl<T> {
-  private repr: Repr<T>;
+  // SAFETY: this is definitely assigned in the constructor for every *actual*
+  // instance, but TS cannot see that: it is only set for `Nothing` instances
+  // when `NOTHING` does not already exist.
+  private repr!: Repr<T>;
 
   constructor(value?: T | null | undefined) {
     if (isVoid(value)) {
       // SAFETY: there is only a single `Nothing` in the system, because the
       // only difference between `Nothing<string>` and `Nothing<number>` is at
       // the type-checking level.
-      this.repr = [Variant.Nothing];
       if (!NOTHING) {
-        NOTHING = this as Maybe<any> as Nothing<any>;
+        this.repr = [Variant.Nothing];
+        NOTHING = this as Nothing<any>;
       }
 
-      return NOTHING as Maybe<any> as this;
+      return NOTHING as MaybeImpl<T>;
     } else {
       this.repr = [Variant.Just, value];
     }
