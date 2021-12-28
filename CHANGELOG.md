@@ -11,14 +11,13 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 ## 5.1.2 (2021-12-27)
 
 #### :bug: Bug Fix
-* 5.1.1 regression: type inference for Result.ok ([@krivachy](https://github.com/krivachy))
 * [#272](https://github.com/true-myth/true-myth/pull/272) Fix v5 regression of checks on `.value` ([@chriskrycho](https://github.com/chriskrycho))
+* [#273](https://github.com/true-myth/true-myth/pull/273) Revert handling of explicit `null` and `undefined` ([@chriskrycho](https://github.com/chriskrycho))
 
 #### :memo: Documentation
 * [#266](https://github.com/true-myth/true-myth/pull/266) Fix out-of-date parts of README ([@chriskrycho](https://github.com/chriskrycho))
 
 #### Committers: 2
-- Akos Krivachy ([@krivachy](https://github.com/krivachy))
 - Chris Krycho ([@chriskrycho](https://github.com/chriskrycho))
 
 ## 5.1.1 (2021-12-16)
