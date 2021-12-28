@@ -82,6 +82,7 @@
     ],
     "moduleNameMapper": {
       "^true-myth/(.*)$": "<rootDir>/src/$1",
+      "^true-myth$": "<rootDir>/src/index.ts",
       "^(\\.{1,2}/.*)\\.js$": "$1"
     },
     "moduleDirectories": [

@@ -64,8 +64,6 @@ class ResultImpl<T, E> {
     @param value The value to wrap in an `Ok`.
    */
   static ok<T, E>(): Result<Unit, E>;
-  static ok<T, E>(value: null): Result<Unit, E>;
-  static ok<T, E>(value: undefined): Result<Unit, E>;
   static ok<T, E>(value: T): Result<T, E>;
   static ok<T, E>(value?: T): Result<Unit, E> | Result<T, E> {
     return isVoid(value)
@@ -91,8 +89,6 @@ class ResultImpl<T, E> {
     @param error The value to wrap in an `Err`.
    */
   static err<T, E>(): Result<T, Unit>;
-  static err<T, E>(error: null): Result<T, Unit>;
-  static err<T, E>(error: undefined): Result<T, Unit>;
   static err<T, E>(error: E): Result<T, E>;
   static err<T, E>(error?: E): Result<T, Unit> | Result<T, E> {
     return isVoid(error)
