@@ -1111,6 +1111,12 @@ export function isInstance<T>(item: unknown): item is Maybe<T> {
 
 export type Predicate<T> = (element: T, index: number, array: T[]) => boolean;
 
+export type NarrowingPredicate<T, S extends T> = (
+  element: T,
+  index: number,
+  array: T[]
+) => element is S;
+
 // NOTE: documentation is lightly adapted from the MDN and TypeScript docs for
 // `Array.prototype.find`.
 /**
@@ -1167,10 +1173,12 @@ export type Predicate<T> = (element: T, index: number, array: T[]) => boolean;
                     returns `Nothing`.
  * @param array     The array to search using the predicate.
  */
+export function find<T, S extends T>(predicate: NarrowingPredicate<T, S>, array: T[]): Maybe<S>;
+export function find<T, S extends T>(predicate: NarrowingPredicate<T, S>): (array: T[]) => Maybe<S>;
 export function find<T>(predicate: Predicate<T>, array: T[]): Maybe<T>;
 export function find<T>(predicate: Predicate<T>): (array: T[]) => Maybe<T>;
-export function find<T>(
-  predicate: Predicate<T>,
+export function find<T, S extends T>(
+  predicate: NarrowingPredicate<T, S> | Predicate<T>,
   array?: T[]
 ): Maybe<T> | ((array: T[]) => Maybe<T>) {
   const op = (a: T[]) => Maybe.of(a.find(predicate));
