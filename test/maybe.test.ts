@@ -356,6 +356,15 @@ describe('`Maybe` pure functions', () => {
       const found = findAtLeast5(array);
       expect(found.variant).toBe(MaybeNS.Variant.Just);
       expect((found as Just<Item>).value).toEqual(array[1]);
+
+      // Type narrowing via predicates.
+      // https://www.typescriptlang.org/docs/handbook/2/narrowing.html#using-type-predicates
+      const findByName = <T extends string>(name: T) =>
+        MaybeNS.find((item: Item): item is Item & { name: T } => item.name === name);
+      const waffles = findByName('waffles')(array);
+      expect(waffles.variant).toBe(MaybeNS.Variant.Just);
+      expect((waffles as Just<Item>).value).toEqual(array[1]);
+      expectTypeOf(waffles).toMatchTypeOf<Maybe<{ name: 'waffles' }>>();
     });
 
     test('`first`', () => {
