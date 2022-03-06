@@ -32,7 +32,6 @@
   },
   "types": "index.d.ts",
   "keywords": [
-    "ember-addon",
     "typescript",
     "functional programming",
     "maybe",
