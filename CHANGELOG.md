@@ -15,9 +15,6 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 #### Committers: 1
 - Luc Boissaye ([@ombr](https://github.com/ombr))
 
-## Unreleased
-* [#312](https://github.com/true-myth/true-myth/pull/312) ember-addon keyword in package.json break ember builds ([@ombr])
-
 ## 5.1.2 (2021-12-27)
 
 #### :bug: Bug Fix
