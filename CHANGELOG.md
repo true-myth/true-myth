@@ -6,6 +6,15 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 
 
+
+## 5.1.3 (2022-03-06)
+
+#### :bug: Bug Fix
+* [#312](https://github.com/true-myth/true-myth/pull/312) Fix ember build ([@ombr](https://github.com/ombr))
+
+#### Committers: 1
+- Luc Boissaye ([@ombr](https://github.com/ombr))
+
 ## Unreleased
 * [#312](https://github.com/true-myth/true-myth/pull/312) ember-addon keyword in package.json break ember builds ([@ombr])
 
