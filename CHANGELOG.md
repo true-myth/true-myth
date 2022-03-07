@@ -7,6 +7,15 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 
 
+
+## 5.2.0 (2022-03-07)
+
+#### :rocket: Enhancement
+* [#299](https://github.com/true-myth/true-myth/pull/299) feat(maybe/find): type narrowing via predicates ([@buschtoens](https://github.com/buschtoens))
+
+#### Committers: 1
+- Jan Buschtöns ([@buschtoens](https://github.com/buschtoens))
+
 ## 5.1.3 (2022-03-06)
 
 #### :bug: Bug Fix
