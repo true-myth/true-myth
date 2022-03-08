@@ -22,7 +22,7 @@
     <img src='https://github.com/true-myth/true-myth/workflows/Nightly%20TypeScript%20Run/badge.svg' alt='Nightly TypeScript Run'>
   </a>
   <img src='https://img.shields.io/badge/stability-active-663399' alt='Stability: Active'>
-  <a href='https://github.com/true-myth/true-myth/blob/master/LICENSE'>
+  <a href='https://github.com/true-myth/true-myth/blob/main/LICENSE'>
     <img src='https://img.shields.io/github/license/chriskrycho/true-myth.svg'>
   </a>
   <a href='https://js.org'>
