@@ -23,7 +23,7 @@
   </a>
   <img src='https://img.shields.io/badge/stability-active-663399' alt='Stability: Active'>
   <a href='https://github.com/true-myth/true-myth/blob/main/LICENSE'>
-    <img src='https://img.shields.io/github/license/chriskrycho/true-myth.svg'>
+    <img src='https://img.shields.io/github/license/true-myth/true-myth.svg'>
   </a>
   <a href='https://js.org'>
     <img src='https://img.shields.io/badge/dns-js.org-ffb400.svg' alt='DNS by JS.org'>
@@ -34,7 +34,7 @@
 </p>
 
 <p align="center">
-  <a href='https://github.com/true-myth/true-myth'>README</a> • <a href='https://true-myth.js.org'>API docs</a> • <a href='https://github.com/true-myth/true-myth/tree/master/src'>Source</a>  • <a href='http://www.chriskrycho.com/2017/announcing-true-myth-10.html'>Intro blog post</a>
+  <a href='https://github.com/true-myth/true-myth'>README</a> • <a href='https://true-myth.js.org'>API docs</a> • <a href='https://github.com/true-myth/true-myth/tree/main/src'>Source</a>  • <a href='http://www.chriskrycho.com/2017/announcing-true-myth-10.html'>Intro blog post</a>
 </p>
 
 ## Overview <!-- omit in toc -->
