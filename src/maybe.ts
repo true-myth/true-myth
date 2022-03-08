@@ -1156,7 +1156,7 @@ export type NarrowingPredicate<T, U extends T> = (
     .then(response => response.json() as Response)
     .then(findAtLeast100)
     .then(found => {
-      if (found.isJust()) {
+      if (found.isJust) {
         console.log(`The matching value is ${found.value.name}!`);
       }
     });

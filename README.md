@@ -217,7 +217,7 @@ const couldBeSomething = Maybe.of('Hello!');
 // type error, because `value` does not exist on `Nothing`:
 // couldBeSomething.value;
 
-if (couldBeSomething.isJust()) {
+if (couldBeSomething.isJust) {
   // valid, because `couldBeSomething` is "narrowed" to `Just` here:
   console.log(couldBeSomething.value);
 }
