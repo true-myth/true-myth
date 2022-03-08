@@ -1018,8 +1018,8 @@ export type Matcher<T, E, A> = {
 
   const logValue = (mightBeANumber: Result<number, string>) => {
     console.log(
-      isOk(mightBeANumber)
-        ? unsafelyUnwrap(mightBeANumber).toString()
+      mightBeANumber.isOk
+        ? mightBeANumber.value.toString()
         : `There was an error: ${unsafelyGetErr(mightBeANumber)}`
     );
   };

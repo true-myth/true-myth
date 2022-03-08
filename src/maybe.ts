@@ -871,7 +871,7 @@ export type Matcher<T, A> = {
 
   const logValue = (mightBeANumber: Maybe<number>) => {
     const valueToLog = Maybe.mightBeANumber.isJust
-      ? Maybe.unsafelyUnwrap(mightBeANumber).toString()
+      ? mightBeANumber.value.toString()
       : 'Nothing to log.';
 
     console.log(valueToLog);

@@ -188,16 +188,16 @@ function acceptsANullOhNo(value: number | null): Maybe<string> {
 
 ### Safely getting at values
 
-Helpers are supplied to allow you to get at the values wrapped in the type:
+The library provides smart type narrowing tools to allow you to get at the values wrapped in the type:
 
 ```typescript
-import { ok, unsafelyUnwrap } from 'true-myth/result';
+import { ok } from 'true-myth/result';
 
 const theAnswer = ok(42);
-const theAnswerValue = unsafelyUnwrap(theAnswer);
+const theAnswerValue = theAnswer.isOk ? theAnswer.value : 0;
 ```
 
-However, as its name makes explicit `unsafelyUnwrap` is not a safe operation; if the item being unwrapped is an `Err`, this will throw an `Error`. Instead, you can use one of the safe unwrap methods:
+However, ternaries like this can be annoying at times, and don't necessarily fit into functional composition pipelines when the expressions become more complicated. For situations like those, you can use one of the safe unwrap methods:
 
 ```typescript
 import { ok, unwrapOr } from 'true-myth/result';
@@ -206,7 +206,7 @@ const theAnswer = ok(42);
 const theAnswerValue = unwrapOr(0, theAnswer);
 ```
 
-You can also use TypeScript's "type narrowing" capabilities: if you _check_ which variant you are accessing, TypeScript will "narrow" the type to that variant and allow you to access the `value` directly if it is available.
+TypeScript's "type narrowing" capabilities work for both `Result` and `Maybe`: if you _check_ which variant you are accessing, TypeScript will "narrow" the type to that variant and allow you to access the `value` directly if it is available.
 
 ```typescript
 import Maybe from 'true-myth/maybe';
@@ -223,17 +223,18 @@ if (couldBeSomething.isJust()) {
 }
 ```
 
-This is especially convenient in functional style pipelines, and there are convenience methods available to make it even more ergonomic:
+This can also be convenient in functional style pipelines:
 
 ```typescript
-import Result, { Err } from 'true-myth/result';
+import { filter, map, pipe, prop } from 'ramda';
+import Result from 'true-myth/result';
 
-function getErrorMessages(results: Array<Result<string, Error>>) {
-  return results
-    .filter(Result.isErr)
-    .map(Err.unwrapErr) // would not type-checkout with previous line
-    .map((error) => error.message);
-}
+type GetErrorMessages = (results: Array<Result<string, Error>>) => string[];
+const getErrorMessages: GetErrorMessages = pipe(
+  filter((r: Result<string, Error>) => r.isErr),
+  map(prop('error')),
+  map(prop('message'))
+);
 ```
 
 ### Curried variants
@@ -241,21 +242,12 @@ function getErrorMessages(results: Array<Result<string, Error>>) {
 All static functions which take two or more parameters are automatically partially applied/curried so you can supply only _some_ of the arguments as makes sense. For example, if you were using [lodash], you might have something like this:
 
 ```ts
-import * as _ from 'lodash-fp';
-import { map, isJust } from 'true-myth/maybe';
+import * as _ from 'lodash/fp';
+import { just, nothing, map } from 'true-myth/maybe';
 
 const length = (s: string) => s.length;
 const even = (n: number) => n % 2 === 0;
 const timesThree = (n: number) => n * 3;
-
-const result = transform([
-  Maybe.of('yay'),
-  Maybe.nothing(),
-  Maybe.nothing(),
-  Maybe.of('waffles'),
-  Maybe.of('fish'),
-  Maybe.of('oh'),
-]);
 
 const transform = _.flow(
   // transform strings to their length: Just(3), Nothing, etc.
@@ -271,6 +263,15 @@ const transform = _.flow(
   // add them up!
   _.sum
 );
+
+const result = transform([
+  just('yay'),
+  nothing(),
+  nothing(),
+  just('waffles'),
+  just('fish'),
+  just('oh'),
+]);
 
 console.log(result); // 18
 ```
@@ -547,7 +548,7 @@ The hope is that a team just picking up these ideas for the first time can use t
 One important note: True Myth does _not_ attempt to deeply-clone the wrapped values when performing operations on them. Instead, the library assumes that you will _not_ mutate those objects in place. (Doing more than this would require taking on a dependency on e.g. [lodash]). If you violate that constraint, you can and will see surprising outcomes. Accordingly, you should take care not to mutate reference types, or to use deep cloning yourself when e.g. mapping over reference types.
 
 ```typescript
-import { just, map, unsafelyUnwrap } from 'true-myth/maybe';
+import { just, map } from 'true-myth/maybe';
 
 const anObjectToWrap = {
   desc: ['this', ' ', 'is a string'],
@@ -557,17 +558,17 @@ const anObjectToWrap = {
 const wrapped = just(anObjectToWrap);
 const updated = map((obj) => ({ ...obj, val: 92 }), wrapped);
 
-console.log(unsafelyUnwrap(anObjectToWrap).val); // 42
-console.log(unsafelyUnwrap(updated).val); // 92
-console.log(unsafelyUnwrap(anObjectToWrap).desc); // ["this", " ", "is a string"]
-console.log(unsafelyUnwrap(updated).desc); // ["this", " ", "is a string"]
+console.log((anObjectToWrap as Just<number>).val); // 42
+console.log((updated as Just<number>).val); // 92
+console.log((anObjectToWrap as Just<string[]>).desc); // ["this", " ", "is a string"]
+console.log((updated as Just<string[]>).desc); // ["this", " ", "is a string"]
 
 // Now mutate the original
 anObjectToWrap.desc.push('.');
 
 // And… 😱 we've mutated the new one, too:
-console.log(unsafelyUnwrap(anObjectToWrap).desc); // ["this", " ", "is a string", "."]
-console.log(unsafelyUnwrap(updated).desc); // ["this", " ", "is a string", "."]
+console.log((anObjectToWrap as Just<string[]>).desc); // ["this", " ", "is a string", "."]
+console.log((updated as Just<string[]>).desc); // ["this", " ", "is a string", "."]
 ```
 
 In other words: you _must_ use other tools along with True Myth if you're going to mutate objects you're wrapping in `Maybe` or `Result`.
