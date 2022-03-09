@@ -70,7 +70,7 @@
     "shelljs": "^0.8.2",
     "ts-jest": "^27.0.7",
     "typedoc": "^0.22.10",
-    "typescript": "~4.5.2"
+    "typescript": "~4.6.2"
   },
   "engines": {
     "node": "12.* || >= 14.*"
@@ -126,6 +126,9 @@
     "tabWidth": 2
   },
   "release-it": {
+    "github": {
+      "release": true
+    },
     "plugins": {
       "release-it-lerna-changelog": {
         "infile": "CHANGELOG.md",
