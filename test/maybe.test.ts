@@ -475,6 +475,18 @@ describe('`Maybe` pure functions', () => {
 
     expect(MaybeNS.isJust(testNothing)).toEqual(false);
   });
+
+  test('`isNothing` with a Just', () => {
+    const testJust: Maybe<string> = MaybeNS.just('test');
+
+    expect(MaybeNS.isNothing(testJust)).toEqual(false);
+  });
+
+  test('`isNothing` with a Nothing', () => {
+    const testNothing: Maybe<string> = MaybeNS.nothing();
+
+    expect(MaybeNS.isNothing(testNothing)).toEqual(true);
+  });
 });
 
 // We aren't even really concerned with the "runtime" behavior here, which we
