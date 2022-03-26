@@ -459,6 +459,22 @@ describe('`Maybe` pure functions', () => {
     const querySelector = MaybeNS.wrapReturn(returnsNullable);
     expectTypeOf(querySelector).toEqualTypeOf<() => Maybe<string>>();
   });
+
+  test('`isJust` with a Just', () => {
+    const testJust: Maybe<string> = MaybeNS.just('test');
+
+    if (MaybeNS.isJust(testJust)) {
+      expect(testJust.value).toEqual('test');
+    } else {
+      fail('Expected a Just');
+    }
+  });
+
+  test('`isJust` with a Nothing', () => {
+    const testNothing: Maybe<string> = MaybeNS.nothing();
+
+    expect(MaybeNS.isJust(testNothing)).toEqual(false);
+  });
 });
 
 // We aren't even really concerned with the "runtime" behavior here, which we

@@ -329,6 +329,17 @@ export interface Nothing<T> extends Pick<MaybeImpl<T>, Exclude<keyof MaybeImpl<T
 export const just = MaybeImpl.just;
 
 /**
+  Is the {@linkcode Maybe} a {@linkcode Just}?
+ 
+  @typeparam T The type of the item contained in the `Maybe`.
+  @param maybe The `Maybe` to check.
+  @returns A type guarded `Just`.
+ */
+export function isJust<T>(maybe: Maybe<T>): maybe is Just<T> {
+  return maybe.isJust;
+}
+
+/**
   Create a {@linkcode Maybe} instance which is a {@linkcode Nothing}.
 
   If you want to create an instance with a specific type, e.g. for use in a
