@@ -313,7 +313,7 @@ class MaybeImpl<T> {
  */
 export interface Just<T> extends MaybeImpl<T> {
   /** `Just` is always {@linkcode Variant.Just}. */
-  variant: 'Just';
+  readonly variant: 'Just';
   /** The wrapped value. */
   value: T;
   isJust: true;
