@@ -357,6 +357,17 @@ export function tryOr<T, E>(
 export const ok = ResultImpl.ok;
 
 /**
+  Is the {@linkcode Result} an {@linkcode Ok}?
+ 
+  @typeparam T The type of the item contained in the `Result`.
+  @param result The `Result` to check.
+  @returns A type guarded `Ok`.
+ */
+export function isOk<T, E>(result: Result<T, E>): result is Ok<T, E> {
+  return result.isOk;
+}
+
+/**
   Create an instance of {@linkcode Err}.
 
   If you need to create an instance with a specific type (as you do whenever you
