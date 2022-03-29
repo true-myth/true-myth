@@ -360,7 +360,7 @@ export const ok = ResultImpl.ok;
   Is the {@linkcode Result} an {@linkcode Ok}?
  
   @typeparam T The type of the item contained in the `Result`.
-  @param maybe The `Result` to check.
+  @param result The `Result` to check.
   @returns A type guarded `Ok`.
  */
 export function isOk<T, E>(result: Result<T, E>): result is Ok<T, E> {
