@@ -242,7 +242,7 @@ class ResultImpl<T, E> {
  */
 export interface Ok<T, E> extends ResultImpl<T, E> {
   /** `Ok` is always [`Variant.Ok`](../enums/_result_.variant#ok). */
-  variant: 'Ok';
+  readonly variant: 'Ok';
   isOk: true;
   isErr: false;
   /** The wrapped value */
