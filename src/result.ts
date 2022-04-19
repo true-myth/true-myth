@@ -368,6 +368,17 @@ export function isOk<T, E>(result: Result<T, E>): result is Ok<T, E> {
 }
 
 /**
+  Is the {@linkcode Result} an {@linkcode Err}?
+  
+  @typeparam T The type of the item contained in the `Result`.
+  @param result The `Result` to check.
+  @returns A type guarded `Err`.
+*/
+export function isErr<T, E>(result: Result<T, E>): result is Err<T, E> {
+  return result.isErr;
+}
+
+/**
   Create an instance of {@linkcode Err}.
 
   If you need to create an instance with a specific type (as you do whenever you
