@@ -9,6 +9,15 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 
 
+
+## 5.3.1 (2022-04-22)
+
+#### :bug: Bug Fix
+* [#336](https://github.com/true-myth/true-myth/pull/336) Don't expose Result.error when it's an Ok ([@screendriver](https://github.com/screendriver))
+
+#### Committers: 1
+- Christian Rackerseder ([@screendriver](https://github.com/screendriver))
+
 ## 5.3.0 (2022-04-22)
 
 #### :rocket: Enhancement
