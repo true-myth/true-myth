@@ -328,7 +328,7 @@ export interface Just<T> extends MaybeImpl<T> {
   @typeparam T The type which would be wrapped in a {@linkcode Just} variant of
     the {@linkcode Maybe}.
  */
-export interface Nothing<T> extends Pick<MaybeImpl<T>, Exclude<keyof MaybeImpl<T>, 'value'>> {
+export interface Nothing<T> extends Omit<MaybeImpl<T>, 'value'> {
   /** `Nothing` is always {@linkcode Variant.Nothing}. */
   readonly variant: 'Nothing';
 
