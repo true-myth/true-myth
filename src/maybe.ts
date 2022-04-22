@@ -5,7 +5,7 @@
  */
 
 import Result from './result.js';
-import { curry1, isVoid } from './-private/utils.js';
+import { curry1, isVoid, safeToString } from './-private/utils.js';
 
 // Import for backwards-compatibility re-export
 import * as Toolbelt from './toolbelt.js';
@@ -846,8 +846,8 @@ export function fromResult<T>(result: Result<T, unknown>): Maybe<T> {
   @param maybe The value to convert to a string.
   @returns     The string representation of the `Maybe`.
  */
-export function toString<T extends { toString(): string }>(maybe: Maybe<T>): string {
-  const body = maybe.isJust ? `(${maybe.value.toString()})` : '';
+export function toString<T>(maybe: Maybe<T>): string {
+  const body = maybe.map((value) => `(${safeToString(value)})`).unwrapOr('');
   return `${maybe.variant}${body}`;
 }
 
