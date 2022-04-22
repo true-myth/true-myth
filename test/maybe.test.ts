@@ -282,9 +282,33 @@ describe('`Maybe` pure functions', () => {
     expect(MaybeNS.fromResult(anErr)).toEqual(MaybeNS.nothing());
   });
 
-  test('`toString`', () => {
-    expect(MaybeNS.toString(MaybeNS.of(42))).toEqual('Just(42)');
-    expect(MaybeNS.toString(MaybeNS.nothing<string>())).toEqual('Nothing');
+  describe('`toString`', () => {
+    test('normal cases', () => {
+      expect(MaybeNS.toString(MaybeNS.of(42))).toEqual('Just(42)');
+      expect(MaybeNS.toString(MaybeNS.nothing<string>())).toEqual('Nothing');
+    });
+
+    test('custom `toString`s', () => {
+      const withNotAFunction = {
+        whyThough: 'because JS bro',
+        toString: '🤨',
+      };
+
+      expect(MaybeNS.toString(Maybe.of(withNotAFunction))).toEqual(
+        `Just(${JSON.stringify(withNotAFunction)})`
+      );
+
+      const withBadFunction = {
+        cueSobbing: true,
+        toString() {
+          return { lol: 123 };
+        },
+      };
+
+      expect(MaybeNS.toString(Maybe.of(withBadFunction))).toEqual(
+        `Just(${JSON.stringify(withBadFunction)})`
+      );
+    });
   });
 
   test('`toJSON`', () => {

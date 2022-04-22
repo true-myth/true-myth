@@ -7,7 +7,7 @@
 import type Maybe from './maybe.js';
 
 import Unit from './unit.js';
-import { curry1, isVoid } from './-private/utils.js';
+import { curry1, isVoid, safeToString } from './-private/utils.js';
 
 // Import for backwards-compatibility re-export
 import * as Toolbelt from './toolbelt.js';
@@ -988,15 +988,13 @@ export function fromMaybe<T, E>(
   `toString(err([1, 2, 3]))`        | `Err(1,2,3)`
   `toString(err({ an: 'object' }))` | `Err([object Object])`
 
-  @typeparam T The type of the wrapped value; its own `.toString` will be used
-               to print the interior contents of the `Just` variant.
-  @param maybe The value to convert to a string.
-  @returns     The string representation of the `Maybe`.
+  @typeparam T  The type of the wrapped value; its own `.toString` will be used
+                to print the interior contents of the `Just` variant.
+  @param result The value to convert to a string.
+  @returns      The string representation of the `Maybe`.
  */
-export const toString = <T extends { toString(): string }, E extends { toString(): string }>(
-  result: Result<T, E>
-): string => {
-  const body = (result.isOk ? result.value : result.error).toString();
+export const toString = <T, E>(result: Result<T, E>): string => {
+  const body = result.match({ Ok: safeToString, Err: safeToString });
   return `${result.variant.toString()}(${body})`;
 };
 
