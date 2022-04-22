@@ -206,7 +206,13 @@ class ResultImpl<T, E> {
 
   /** Method variant for {@linkcode equals} */
   equals(comparison: Result<T, E>): boolean {
-    return this.repr[0] === comparison.repr[0] && this.repr[1] === comparison.repr[1];
+    // SAFETY: these casts are stripping away the `Ok`/`Err` distinction and
+    // simply testing what `comparison` *actually* is, which is always an
+    // instance of `ResultImpl` (the same as this method itself).
+    return (
+      this.repr[0] === (comparison as ResultImpl<T, E>).repr[0] &&
+      this.repr[1] === (comparison as ResultImpl<T, E>).repr[1]
+    );
   }
 
   /** Method variant for {@linkcode ap} */
@@ -223,15 +229,13 @@ class ResultImpl<T, E> {
   @typeparam T The type wrapped in this `Ok` variant of `Result`.
   @typeparam E The type which would be wrapped in an `Err` variant of `Result`.
  */
-export interface Ok<T, E> extends ResultImpl<T, E> {
+export interface Ok<T, E> extends Omit<ResultImpl<T, E>, 'error'> {
   /** `Ok` is always [`Variant.Ok`](../enums/_result_.variant#ok). */
-  variant: 'Ok';
+  readonly variant: 'Ok';
   isOk: true;
   isErr: false;
   /** The wrapped value */
   value: T;
-  /** @internal */
-  error: never;
 }
 
 /**
@@ -242,13 +246,11 @@ export interface Ok<T, E> extends ResultImpl<T, E> {
   @typeparam T The type which would be wrapped in an `Ok` variant of `Result`.
   @typeparam E The type wrapped in this `Err` variant of `Result`.
   */
-export interface Err<T, E> extends ResultImpl<T, E> {
+export interface Err<T, E> extends Omit<ResultImpl<T, E>, 'value'> {
   /** `Err` is always [`Variant.Err`](../enums/_result_.variant#err). */
   readonly variant: 'Err';
   isOk: false;
   isErr: true;
-  /** @internal */
-  value: never;
   /** The wrapped error value. */
   error: E;
 }
@@ -338,6 +340,28 @@ export function tryOr<T, E>(
   @param value The value to wrap in a `Result.Ok`.
  */
 export const ok = ResultImpl.ok;
+
+/**
+  Is the {@linkcode Result} an {@linkcode Ok}?
+ 
+  @typeparam T The type of the item contained in the `Result`.
+  @param maybe The `Result` to check.
+  @returns A type guarded `Ok`.
+ */
+export function isOk<T, E>(result: Result<T, E>): result is Ok<T, E> {
+  return result.isOk;
+}
+
+/**
+  Is the {@linkcode Result} an {@linkcode Err}?
+  
+  @typeparam T The type of the item contained in the `Result`.
+  @param result The `Result` to check.
+  @returns A type guarded `Err`.
+*/
+export function isErr<T, E>(result: Result<T, E>): result is Err<T, E> {
+  return result.isErr;
+}
 
 /**
   Create an instance of {@linkcode Err}.

@@ -224,23 +224,43 @@ describe('`Result` pure functions', () => {
   test('`value` property', () => {
     const theValue = 'hooray';
     const anOk = ResultNS.ok(theValue);
-    expect(() => anOk.value).not.toThrow();
-    expect(anOk.value).toBe(theValue);
+
+    if (anOk.isOk) {
+      expect(() => anOk.value).not.toThrow();
+      expect(anOk.value).toBe(theValue);
+    } else {
+      fail('Not an Ok');
+    }
 
     const theErrValue = 'oh no';
     const anErr = ResultNS.err(theErrValue);
-    expect(() => anErr.value).toThrow();
+    if (anErr.isErr) {
+      // @ts-expect-error
+      expect(() => anErr.value).toThrow();
+    } else {
+      fail('Not an Err');
+    }
   });
 
   test('`error` property', () => {
     const theValue = 'hooray';
     const anOk = ResultNS.ok(theValue);
-    expect(() => anOk.error).toThrow();
+
+    if (anOk.isOk) {
+      // @ts-expect-error
+      expect(() => anOk.error).toThrow();
+    } else {
+      fail('Not an Ok');
+    }
 
     const theErrValue = 'oh no';
     const anErr = ResultNS.err(theErrValue);
-    expect(() => anErr.error).not.toThrow();
-    expect(anErr.error).toBe(theErrValue);
+    if (anErr.isErr) {
+      expect(() => anErr.error).not.toThrow();
+      expect(anErr.error).toBe(theErrValue);
+    } else {
+      fail('Not an Err');
+    }
   });
 
   test('`unwrapOr`', () => {
@@ -368,6 +388,34 @@ describe('`Result` pure functions', () => {
     const obj: unknown = { random: 'nonsense' };
     expect(ResultNS.isInstance(obj)).toBe(false);
   });
+
+  test('`isOk` with an Ok', () => {
+    const testOk: Result<number, string> = ResultNS.ok(42);
+
+    if (ResultNS.isOk(testOk)) {
+      expect(testOk.value).toEqual(42);
+    } else {
+      fail('Expected an Ok');
+    }
+  });
+
+  test('`isOk` with an Err', () => {
+    const testErr: Result<number, string> = ResultNS.err('');
+
+    expect(ResultNS.isOk(testErr)).toEqual(false);
+  });
+
+  test('`isErr` with an Ok', () => {
+    const testOk: Result<number, string> = ResultNS.ok(42);
+
+    expect(ResultNS.isErr(testOk)).toEqual(false);
+  });
+
+  test('`isErr` with an Err', () => {
+    const testErr: Result<number, string> = ResultNS.err('');
+
+    expect(ResultNS.isErr(testErr)).toEqual(true);
+  });
 });
 
 // We aren't even really concerned with the "runtime" behavior here, which we
@@ -416,13 +464,22 @@ describe('`Ok` instance', () => {
   test('`value` property', () => {
     const okValue = 'yay';
     const theOk = Result.ok(okValue);
-    expect(theOk.value).toEqual(okValue);
+
+    if (theOk.isOk) {
+      expect(theOk.value).toEqual(okValue);
+    } else {
+      fail('Not an Ok');
+    }
   });
 
   test('`error` property', () => {
     let result = Result.ok('yeat');
-    expectTypeOf<typeof result['error']>().toBeUnknown();
+
+    if (result.isErr) {
+      expectTypeOf<typeof result['error']>().toBeUnknown();
+    }
     if (result.isOk) {
+      // @ts-expect-error
       expect(() => result.error).toThrow();
     } else {
       expect('wrong branch').toEqual(true);
@@ -520,13 +577,24 @@ describe('`Ok` instance', () => {
   test('`value` property', () => {
     const theValue = 42;
     const theOk = Result.ok(theValue);
-    expect(() => theOk.value).not.toThrow();
-    expect(theOk.value).toEqual(theValue);
+
+    if (theOk.isOk) {
+      expect(() => theOk.value).not.toThrow();
+      expect(theOk.value).toEqual(theValue);
+    } else {
+      fail('Not an Ok');
+    }
   });
 
   test('`error` property', () => {
     const theOk = Result.ok('anything');
-    expect(() => theOk.error).toThrow();
+
+    if (theOk.isOk) {
+      // @ts-expect-error
+      expect(() => theOk.error).toThrow();
+    } else {
+      fail('Not an Ok');
+    }
   });
 
   test('`unwrapOr` method', () => {
@@ -583,7 +651,12 @@ describe('`ResultNS.Err` class', () => {
   test('`error` property', () => {
     const errValue = 'boo';
     const theErr = Result.err(errValue);
-    expect(theErr.error).toBe(errValue);
+
+    if (theErr.isErr) {
+      expect(theErr.error).toBe(errValue);
+    } else {
+      fail('Not an Err');
+    }
   });
 
   test('`isOk` method', () => {
@@ -683,14 +756,24 @@ describe('`ResultNS.Err` class', () => {
 
   test('`value` property', () => {
     const theErr = Result.err('a pity');
-    expect(() => theErr.value).toThrow();
+
+    if (theErr.isErr) {
+      // @ts-expect-error
+      expect(() => theErr.value).toThrow();
+    } else {
+      fail('Not an Err');
+    }
   });
 
   test('`error` property', () => {
     const theReason = 'phooey';
     const theErr = Result.err(theReason);
-    expect(() => theErr.error).not.toThrow();
-    expect(theErr.error).toBe(theReason);
+    if (theErr.isErr) {
+      expect(() => theErr.error).not.toThrow();
+      expect(theErr.error).toBe(theReason);
+    } else {
+      fail('Not an Err');
+    }
   });
 
   test('`unwrapOr` method', () => {

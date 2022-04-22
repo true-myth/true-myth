@@ -291,7 +291,7 @@ class MaybeImpl<T> {
  */
 export interface Just<T> extends MaybeImpl<T> {
   /** `Just` is always {@linkcode Variant.Just}. */
-  variant: 'Just';
+  readonly variant: 'Just';
   /** The wrapped value. */
   value: T;
   isJust: true;
@@ -327,6 +327,28 @@ export interface Nothing<T> extends Pick<MaybeImpl<T>, Exclude<keyof MaybeImpl<T
   @throws      If you pass `null` or `undefined`.
  */
 export const just = MaybeImpl.just;
+
+/**
+  Is the {@linkcode Maybe} a {@linkcode Just}?
+ 
+  @typeparam T The type of the item contained in the `Maybe`.
+  @param maybe The `Maybe` to check.
+  @returns A type guarded `Just`.
+ */
+export function isJust<T>(maybe: Maybe<T>): maybe is Just<T> {
+  return maybe.isJust;
+}
+
+/**
+  Is the {@linkcode Maybe} a {@linkcode Nothing}?
+  
+  @typeparam T The type of the item contained in the `Maybe`.
+  @param maybe The `Maybe` to check.
+  @returns A type guarded `Nothing`.
+*/
+export function isNothing<T>(maybe: Maybe<T>): maybe is Nothing<T> {
+  return maybe.isNothing;
+}
 
 /**
   Create a {@linkcode Maybe} instance which is a {@linkcode Nothing}.
@@ -1063,6 +1085,12 @@ export function isInstance<T>(item: unknown): item is Maybe<T> {
 
 export type Predicate<T> = (element: T, index: number, array: T[]) => boolean;
 
+export type NarrowingPredicate<T, U extends T> = (
+  element: T,
+  index: number,
+  array: T[]
+) => element is U;
+
 // NOTE: documentation is lightly adapted from the MDN and TypeScript docs for
 // `Array.prototype.find`.
 /**
@@ -1119,10 +1147,12 @@ export type Predicate<T> = (element: T, index: number, array: T[]) => boolean;
                     returns `Nothing`.
  * @param array     The array to search using the predicate.
  */
+export function find<T, U extends T>(predicate: NarrowingPredicate<T, U>, array: T[]): Maybe<U>;
+export function find<T, U extends T>(predicate: NarrowingPredicate<T, U>): (array: T[]) => Maybe<U>;
 export function find<T>(predicate: Predicate<T>, array: T[]): Maybe<T>;
 export function find<T>(predicate: Predicate<T>): (array: T[]) => Maybe<T>;
-export function find<T>(
-  predicate: Predicate<T>,
+export function find<T, U extends T>(
+  predicate: NarrowingPredicate<T, U> | Predicate<T>,
   array?: T[]
 ): Maybe<T> | ((array: T[]) => Maybe<T>) {
   const op = (a: T[]) => Maybe.of(a.find(predicate));
