@@ -39,11 +39,7 @@ type Repr<T> = [tag: 'Just', value: T] | [tag: 'Nothing'];
 
   @private
  */
-// SAFETY: `any` is required here because the whole point is that we're going to
-// use this *everywhere* there is a `Nothing`, so that there is effectively no
-// overhead of having a `Nothing` in your system: there is only ever once
-// instance of it.
-let NOTHING: Nothing<any>;
+let NOTHING: Nothing<unknown>;
 
 // Defines the *implementation*, but not the *types*. See the exports below.
 class MaybeImpl<T> {
@@ -59,7 +55,7 @@ class MaybeImpl<T> {
       // the type-checking level.
       if (!NOTHING) {
         this.repr = [Variant.Nothing];
-        NOTHING = this as Nothing<any>;
+        NOTHING = this as Nothing<unknown>;
       }
 
       return NOTHING as MaybeImpl<T>;
