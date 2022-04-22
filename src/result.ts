@@ -240,7 +240,7 @@ class ResultImpl<T, E> {
   @typeparam T The type wrapped in this `Ok` variant of `Result`.
   @typeparam E The type which would be wrapped in an `Err` variant of `Result`.
  */
-export interface Ok<T, E> extends Pick<ResultImpl<T, E>, Exclude<keyof ResultImpl<T, E>, 'error'>> {
+export interface Ok<T, E> extends Omit<ResultImpl<T, E>, 'error'> {
   /** `Ok` is always [`Variant.Ok`](../enums/_result_.variant#ok). */
   variant: 'Ok';
   isOk: true;
@@ -257,8 +257,7 @@ export interface Ok<T, E> extends Pick<ResultImpl<T, E>, Exclude<keyof ResultImp
   @typeparam T The type which would be wrapped in an `Ok` variant of `Result`.
   @typeparam E The type wrapped in this `Err` variant of `Result`.
   */
-export interface Err<T, E>
-  extends Pick<ResultImpl<T, E>, Exclude<keyof ResultImpl<T, E>, 'value'>> {
+export interface Err<T, E> extends Omit<ResultImpl<T, E>, 'value'> {
   /** `Err` is always [`Variant.Err`](../enums/_result_.variant#err). */
   readonly variant: 'Err';
   isOk: false;
