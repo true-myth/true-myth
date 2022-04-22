@@ -5,7 +5,7 @@
  */
 
 import Unit from './unit.js';
-import { curry1, isVoid } from './-private/utils.js';
+import { curry1, isVoid, safeToString } from './-private/utils.js';
 
 /**
   Discriminant for {@linkcode Ok} and {@linkcode Err} variants of the
@@ -195,7 +195,7 @@ class ResultImpl<T, E> {
 
   /** Method variant for {@linkcode toString} */
   toString(): string {
-    return `${this.repr[0]}(${this.repr[1]})`;
+    return `${this.repr[0]}(${safeToString(this.repr[1])})`;
   }
 
   /** Method variant for {@linkcode toJSON} */
@@ -952,10 +952,10 @@ export function unwrapOrElse<T, U, E>(
   `toString(err([1, 2, 3]))`        | `Err(1,2,3)`
   `toString(err({ an: 'object' }))` | `Err([object Object])`
 
-  @typeparam T The type of the wrapped value; its own `.toString` will be used
-               to print the interior contents of the `Just` variant.
-  @param maybe The value to convert to a string.
-  @returns     The string representation of the `Maybe`.
+  @typeparam T  The type of the wrapped value; its own `.toString` will be used
+                to print the interior contents of the `Just` variant.
+  @param result The value to convert to a string.
+  @returns      The string representation of the `Maybe`.
  */
 export const toString = <T, E>(result: Result<T, E>): string => {
   return result.toString();

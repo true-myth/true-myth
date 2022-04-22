@@ -4,7 +4,7 @@
   @module
  */
 
-import { curry1, isVoid } from './-private/utils.js';
+import { curry1, isVoid, safeToString } from './-private/utils.js';
 
 /**
   Discriminant for the {@linkcode Just} and {@linkcode Nothing} type instances.
@@ -208,7 +208,7 @@ class MaybeImpl<T> {
 
   /** Method variant for {@linkcode toString} */
   toString(): string {
-    return this.repr[0] === 'Just' ? `Just(${this.repr[1]})` : 'Nothing';
+    return this.repr[0] === 'Just' ? `Just(${safeToString(this.repr[1])})` : 'Nothing';
   }
 
   /** Method variant for {@linkcode toJSON} */
