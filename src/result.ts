@@ -7,7 +7,7 @@
 import type Maybe from './maybe.js';
 
 import Unit from './unit.js';
-import { curry1, isVoid } from './-private/utils.js';
+import { curry1, isVoid, safeToString } from './-private/utils.js';
 
 // Import for backwards-compatibility re-export
 import * as Toolbelt from './toolbelt.js';
@@ -242,7 +242,7 @@ class ResultImpl<T, E> {
  */
 export interface Ok<T, E> extends Omit<ResultImpl<T, E>, 'error'> {
   /** `Ok` is always [`Variant.Ok`](../enums/_result_.variant#ok). */
-  variant: 'Ok';
+  readonly variant: 'Ok';
   isOk: true;
   isErr: false;
   /** The wrapped value */
@@ -361,6 +361,17 @@ export const ok = ResultImpl.ok;
  */
 export function isOk<T, E>(result: Result<T, E>): result is Ok<T, E> {
   return result.isOk;
+}
+
+/**
+  Is the {@linkcode Result} an {@linkcode Err}?
+  
+  @typeparam T The type of the item contained in the `Result`.
+  @param result The `Result` to check.
+  @returns A type guarded `Err`.
+*/
+export function isErr<T, E>(result: Result<T, E>): result is Err<T, E> {
+  return result.isErr;
 }
 
 /**
@@ -973,15 +984,13 @@ export function fromMaybe<T, E>(
   `toString(err([1, 2, 3]))`        | `Err(1,2,3)`
   `toString(err({ an: 'object' }))` | `Err([object Object])`
 
-  @typeparam T The type of the wrapped value; its own `.toString` will be used
-               to print the interior contents of the `Just` variant.
-  @param maybe The value to convert to a string.
-  @returns     The string representation of the `Maybe`.
+  @typeparam T  The type of the wrapped value; its own `.toString` will be used
+                to print the interior contents of the `Just` variant.
+  @param result The value to convert to a string.
+  @returns      The string representation of the `Maybe`.
  */
-export const toString = <T extends { toString(): string }, E extends { toString(): string }>(
-  result: Result<T, E>
-): string => {
-  const body = (result.isOk ? result.value : result.error).toString();
+export const toString = <T, E>(result: Result<T, E>): string => {
+  const body = result.match({ Ok: safeToString, Err: safeToString });
   return `${result.variant.toString()}(${body})`;
 };
 

@@ -8,6 +8,23 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 
 
+
+## 5.3.0 (2022-04-22)
+
+#### :rocket: Enhancement
+* [#349](https://github.com/true-myth/true-myth/pull/349) Add support for TypeScript 4.7 ([@chriskrycho](https://github.com/chriskrycho))
+* [#334](https://github.com/true-myth/true-myth/pull/334) Export pure isErr() function ([@screendriver](https://github.com/screendriver))
+* [#332](https://github.com/true-myth/true-myth/pull/332) Export pure isNothing() function ([@screendriver](https://github.com/screendriver))
+* [#333](https://github.com/true-myth/true-myth/pull/333) Export pure isOk() function ([@screendriver](https://github.com/screendriver))
+* [#331](https://github.com/true-myth/true-myth/pull/331) Export pure isJust() function ([@screendriver](https://github.com/screendriver))
+
+#### :bug: Bug Fix
+* [#335](https://github.com/true-myth/true-myth/pull/335) Add missing readonly variants modifiers ([@screendriver](https://github.com/screendriver))
+
+#### Committers: 2
+- Chris Krycho ([@chriskrycho](https://github.com/chriskrycho))
+- Christian Rackerseder ([@screendriver](https://github.com/screendriver))
+
 ## 5.2.0 (2022-03-07)
 
 #### :rocket: Enhancement

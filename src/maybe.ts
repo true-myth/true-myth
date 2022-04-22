@@ -5,7 +5,7 @@
  */
 
 import Result from './result.js';
-import { curry1, isVoid } from './-private/utils.js';
+import { curry1, isVoid, safeToString } from './-private/utils.js';
 
 // Import for backwards-compatibility re-export
 import * as Toolbelt from './toolbelt.js';
@@ -313,7 +313,7 @@ class MaybeImpl<T> {
  */
 export interface Just<T> extends MaybeImpl<T> {
   /** `Just` is always {@linkcode Variant.Just}. */
-  variant: 'Just';
+  readonly variant: 'Just';
   /** The wrapped value. */
   value: T;
   isJust: true;
@@ -359,6 +359,17 @@ export const just = MaybeImpl.just;
  */
 export function isJust<T>(maybe: Maybe<T>): maybe is Just<T> {
   return maybe.isJust;
+}
+
+/**
+  Is the {@linkcode Maybe} a {@linkcode Nothing}?
+  
+  @typeparam T The type of the item contained in the `Maybe`.
+  @param maybe The `Maybe` to check.
+  @returns A type guarded `Nothing`.
+*/
+export function isNothing<T>(maybe: Maybe<T>): maybe is Nothing<T> {
+  return maybe.isNothing;
 }
 
 /**
@@ -835,8 +846,8 @@ export function fromResult<T>(result: Result<T, unknown>): Maybe<T> {
   @param maybe The value to convert to a string.
   @returns     The string representation of the `Maybe`.
  */
-export function toString<T extends { toString(): string }>(maybe: Maybe<T>): string {
-  const body = maybe.isJust ? `(${maybe.value.toString()})` : '';
+export function toString<T>(maybe: Maybe<T>): string {
+  const body = maybe.map((value) => `(${safeToString(value)})`).unwrapOr('');
   return `${maybe.variant}${body}`;
 }
 

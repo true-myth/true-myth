@@ -338,15 +338,39 @@ describe('`Result` pure functions', () => {
     expect(ResultNS.fromMaybe(errValue, aNothing)).toEqual(anErr);
   });
 
-  test('toString', () => {
-    const theValue = { thisIsReally: 'something' };
-    const errValue = ['oh', 'no'];
+  describe('toString', () => {
+    test('normal cases', () => {
+      const theValue = { thisIsReally: 'something' };
+      const errValue = ['oh', 'no'];
 
-    const anOk = ResultNS.ok<typeof theValue, typeof errValue>(theValue);
-    expect(ResultNS.toString(anOk)).toEqual(`Ok(${theValue.toString()})`);
+      const anOk = ResultNS.ok<typeof theValue, typeof errValue>(theValue);
+      expect(ResultNS.toString(anOk)).toEqual(`Ok(${theValue.toString()})`);
 
-    const anErr = ResultNS.err<typeof theValue, typeof errValue>(errValue);
-    expect(ResultNS.toString(anErr)).toEqual(`Err(${errValue.toString()})`);
+      const anErr = ResultNS.err<typeof theValue, typeof errValue>(errValue);
+      expect(ResultNS.toString(anErr)).toEqual(`Err(${errValue.toString()})`);
+    });
+
+    test('custom `toString`s', () => {
+      const withNotAFunction = {
+        whyThough: 'because JS bro',
+        toString: '🤨',
+      };
+
+      expect(ResultNS.toString(Result.ok(withNotAFunction))).toEqual(
+        `Ok(${JSON.stringify(withNotAFunction)})`
+      );
+
+      const withBadFunction = {
+        cueSobbing: true,
+        toString() {
+          return { lol: 123 };
+        },
+      };
+
+      expect(ResultNS.toString(Result.err(withBadFunction))).toEqual(
+        `Err(${JSON.stringify(withBadFunction)})`
+      );
+    });
   });
 
   test('`toJSON`', () => {
@@ -454,6 +478,18 @@ describe('`Result` pure functions', () => {
     const testErr: Result<number, string> = ResultNS.err('');
 
     expect(ResultNS.isOk(testErr)).toEqual(false);
+  });
+
+  test('`isErr` with an Ok', () => {
+    const testOk: Result<number, string> = ResultNS.ok(42);
+
+    expect(ResultNS.isErr(testOk)).toEqual(false);
+  });
+
+  test('`isErr` with an Err', () => {
+    const testErr: Result<number, string> = ResultNS.err('');
+
+    expect(ResultNS.isErr(testErr)).toEqual(true);
   });
 });
 
@@ -868,6 +904,6 @@ describe('`ResultNS.Err` class', () => {
 
     const result = fn.ap(val);
 
-    expect(result.toString()).toEqual(`Err(ERR_ALLURBASE)`);
+    expect(result.toString()).toEqual(`Err("ERR_ALLURBASE")`);
   });
 });
