@@ -206,7 +206,13 @@ class ResultImpl<T, E> {
 
   /** Method variant for {@linkcode equals} */
   equals(comparison: Result<T, E>): boolean {
-    return this.repr[0] === comparison.repr[0] && this.repr[1] === comparison.repr[1];
+    // SAFETY: these casts are stripping away the `Ok`/`Err` distinction and
+    // simply testing what `comparison` *actually* is, which is always an
+    // instance of `ResultImpl` (the same as this method itself).
+    return (
+      this.repr[0] === (comparison as ResultImpl<T, E>).repr[0] &&
+      this.repr[1] === (comparison as ResultImpl<T, E>).repr[1]
+    );
   }
 
   /** Method variant for {@linkcode ap} */
