@@ -2,6 +2,12 @@
 
 <p align="center">A library for safe, idiomatic null and error handling in TypeScript, with <code>Maybe</code> and <code>Result</code> types, supporting both a functional style and a more traditional method-call style.</p>
 
+---
+
+<p align="center">🚧 This is the README for the upcoming True Myth v6 release. 🚧<br> For the current v5 release, see <a href="https://github.com/true-myth/true-myth/tree/v5.x">here</a>.</p>
+
+---
+
 <p align="center">
   <a href='https://github.com/true-myth/true-myth/blob/main/.github/workflows/CI.yml'>
     <img src='https://github.com/true-myth/true-myth/workflows/CI/badge.svg?branch=main' title='CI'>
@@ -16,7 +22,7 @@
     <img src='https://img.shields.io/badge/Node-12%20LTS%20%7C%2014%20LTS%20%7C%2016%20LTS-darkgreen' alt='supported Node versions'>
   </a>
   <a href='https://github.com/true-myth/true-myth/blob/main/.github/workflows/CI.yml#L59'>
-    <img src='https://img.shields.io/badge/TypeScript-4.4%20%7C%204.5%20%7C%204.6%20%7C%20next-3178c6' alt='supported TypeScript versions'>
+    <img src='https://img.shields.io/badge/TypeScript-next-3178c6' alt='supported TypeScript versions'>
   </a>
   <a href='https://github.com/true-myth/true-myth/blob/main/.github/workflows/Nightly.yml'>
     <img src='https://github.com/true-myth/true-myth/workflows/Nightly%20TypeScript%20Run/badge.svg' alt='Nightly TypeScript Run'>
@@ -120,14 +126,14 @@ Size without tree-shaking:
 
 ## Compatibility
 
-This project follows the current draft of [the Semantic Versioning for TypeScript Types][semver] proposal.
+This project follows the current draft of [the Semantic Versioning for TypeScript Types][semver] specification.
 
-- **Currently supported TypeScript versions:** v4.2, v4.3, v4.4, v4.5, and v4.6
+- **Currently supported TypeScript versions:** 4.7 Beta
 - **Compiler support policy:** [simple majors][sm]
 - **Public API:** all published types not in a `-private` module are public
 
-[semver]: https://github.com/chriskrycho/ember-rfcs/blob/semver-for-ts/text/0730-semver-for-ts.md
-[sm]: https://github.com/chriskrycho/ember-rfcs/blob/semver-for-ts/text/0730-semver-for-ts.md#simple-majors
+[semver]: https://www.semver-ts.org
+[sm]: https://www.semver-ts.org/#simple-majors
 
 ## Just the API, please
 
