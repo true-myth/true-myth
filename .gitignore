@@ -65,3 +65,6 @@ dist
 
 # Exclude auto-created jsconfig.json
 jsconfig.json
+
+# macOS ugh
+.DS_Store
