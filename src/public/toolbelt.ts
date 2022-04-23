@@ -14,7 +14,7 @@
 
 import Result from './result.js';
 import Maybe from './maybe.js';
-import { curry1 } from './-private/utils.js';
+import { curry1 } from '../-private/utils.js';
 
 /**
   Transposes a {@linkcode Result} of a {@linkcode Maybe} into a `Maybe` of a
