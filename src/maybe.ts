@@ -4,11 +4,7 @@
   @module
  */
 
-import Result from './result.js';
 import { curry1, isVoid, safeToString } from './-private/utils.js';
-
-// Import for backwards-compatibility re-export
-import * as Toolbelt from './toolbelt.js';
 
 /**
   Discriminant for the {@linkcode Just} and {@linkcode Nothing} type instances.
@@ -43,27 +39,26 @@ type Repr<T> = [tag: 'Just', value: T] | [tag: 'Nothing'];
 
   @private
  */
-// SAFETY: `any` is required here because the whole point is that we're going to
-// use this *everywhere* there is a `Nothing`, so that there is effectively no
-// overhead of having a `Nothing` in your system: there is only ever once
-// instance of it.
-let NOTHING: Nothing<any>;
+let NOTHING: Nothing<unknown>;
 
 // Defines the *implementation*, but not the *types*. See the exports below.
 class MaybeImpl<T> {
-  private repr: Repr<T>;
+  // SAFETY: this is definitely assigned in the constructor for every *actual*
+  // instance, but TS cannot see that: it is only set for `Nothing` instances
+  // when `NOTHING` does not already exist.
+  private repr!: Repr<T>;
 
   constructor(value?: T | null | undefined) {
     if (isVoid(value)) {
       // SAFETY: there is only a single `Nothing` in the system, because the
       // only difference between `Nothing<string>` and `Nothing<number>` is at
       // the type-checking level.
-      this.repr = [Variant.Nothing];
       if (!NOTHING) {
-        NOTHING = this as Maybe<any> as Nothing<any>;
+        this.repr = [Variant.Nothing];
+        NOTHING = this as Nothing<unknown>;
       }
 
-      return NOTHING as Maybe<any> as this;
+      return NOTHING as MaybeImpl<T>;
     } else {
       this.repr = [Variant.Just, value];
     }
@@ -92,7 +87,7 @@ class MaybeImpl<T> {
                 the value passed.
   */
   static of<T>(value: T | null | undefined): Maybe<T> {
-    return new MaybeImpl(value) as Maybe<T>;
+    return new Maybe(value);
   }
 
   /**
@@ -112,7 +107,7 @@ class MaybeImpl<T> {
       throw new Error(`attempted to call "just" with ${value}`);
     }
 
-    return new MaybeImpl<T>(value) as Maybe<T>;
+    return new Maybe(value);
   }
 
   /**
@@ -162,101 +157,84 @@ class MaybeImpl<T> {
   }
 
   /** Method variant for {@linkcode map} */
-  map<U>(this: Maybe<T>, mapFn: (t: T) => U): Maybe<U> {
-    return map(mapFn, this);
+  map<U>(mapFn: (t: T) => U): Maybe<U> {
+    return (this.repr[0] === 'Just' ? Maybe.just(mapFn(this.repr[1])) : this) as Maybe<U>;
   }
 
   /** Method variant for {@link mapOr|`mapOr`} */
-  mapOr<U>(this: Maybe<T>, orU: U, mapFn: (t: T) => U): U {
-    return mapOr(orU, mapFn, this);
+  mapOr<U>(orU: U, mapFn: (t: T) => U): U {
+    return this.repr[0] === 'Just' ? mapFn(this.repr[1]) : orU;
   }
 
   /** Method variant for {@linkcode mapOrElse} */
-  mapOrElse<U>(this: Maybe<T>, orElseFn: () => U, mapFn: (t: T) => U): U {
-    return mapOrElse(orElseFn, mapFn, this);
+  mapOrElse<U>(orElseFn: () => U, mapFn: (t: T) => U): U {
+    return this.repr[0] === 'Just' ? mapFn(this.repr[1]) : orElseFn();
   }
 
   /** Method variant for {@linkcode match} */
-  match<U>(this: Maybe<T>, matcher: Matcher<T, U>): U {
-    return match(matcher, this);
+  match<U>(matcher: Matcher<T, U>): U {
+    return this.repr[0] === 'Just' ? matcher.Just(this.repr[1]) : matcher.Nothing();
   }
 
   /** Method variant for {@linkcode or} */
-  or(this: Maybe<T>, mOr: Maybe<T>): Maybe<T> {
-    return or(mOr, this);
+  or(mOr: Maybe<T>): Maybe<T> {
+    return this.repr[0] === 'Just' ? (this as Maybe<T>) : mOr;
   }
 
   /** Method variant for {@linkcode orElse} */
-  orElse(this: Maybe<T>, orElseFn: () => Maybe<T>): Maybe<T> {
-    return orElse(orElseFn, this);
+  orElse(orElseFn: () => Maybe<T>): Maybe<T> {
+    return this.repr[0] === 'Just' ? (this as Maybe<T>) : orElseFn();
   }
 
   /** Method variant for {@linkcode and} */
-  and<U>(this: Maybe<T>, mAnd: Maybe<U>): Maybe<U> {
-    return and(mAnd, this);
+  and<U>(mAnd: Maybe<U>): Maybe<U> {
+    return (this.repr[0] === 'Just' ? mAnd : this) as Maybe<U>;
   }
 
   /** Method variant for {@linkcode andThen} */
-  andThen<U>(this: Maybe<T>, andThenFn: (t: T) => Maybe<U>): Maybe<U> {
-    return andThen(andThenFn, this);
+  andThen<U>(andThenFn: (t: T) => Maybe<U>): Maybe<U> {
+    return (this.repr[0] === 'Just' ? andThenFn(this.repr[1]) : this) as Maybe<U>;
   }
 
   /** Method variant for {@linkcode unwrapOr} */
-  unwrapOr<U>(this: Maybe<T>, defaultValue: U): T | U {
-    return unwrapOr(defaultValue, this);
+  unwrapOr<U>(defaultValue: U): T | U {
+    return this.repr[0] === 'Just' ? this.repr[1] : defaultValue;
   }
 
   /** Method variant for {@linkcode unwrapOrElse} */
-  unwrapOrElse<U>(this: Maybe<T>, elseFn: () => U): T | U {
-    return unwrapOrElse(elseFn, this);
-  }
-
-  /**
-    Method variant for {@linkcode Toolbelt.toOkOrErr toOkOrErr} from
-    {@linkcode Toolbelt}. Prefer to import and use it directly instead:
-
-    ```ts
-    import { toOkOrErr } from 'true-myth/toolbelt';
-    ```
-
-    @deprecated until 6.0
-   */
-  toOkOrErr<E>(this: Maybe<T>, error: E): Result<T, E> {
-    return Toolbelt.toOkOrErr(error, this);
-  }
-
-  /**
-    Method variant for {@linkcode Toolbelt.toOkOrElseErr toOkOrElseErr} from
-    {@linkcode Toolbelt}. Prefer to import and use it directly instead:
-
-    ```ts
-    import { toOkOrElseErr } from 'true-myth/toolbelt';
-    ```
-
-    @deprecated until 6.0
-   */
-  toOkOrElseErr<E>(this: Maybe<T>, elseFn: () => E): Result<T, E> {
-    return Toolbelt.toOkOrElseErr(elseFn, this);
+  unwrapOrElse<U>(elseFn: () => U): T | U {
+    return this.repr[0] === 'Just' ? this.repr[1] : elseFn();
   }
 
   /** Method variant for {@linkcode toString} */
-  toString(this: Maybe<T>): string {
-    return toString(this);
+  toString(): string {
+    return this.repr[0] === 'Just' ? `Just(${safeToString(this.repr[1])})` : 'Nothing';
   }
 
   /** Method variant for {@linkcode toJSON} */
-  toJSON(this: Maybe<T>): MaybeJSON<unknown> {
-    return toJSON(this);
+  toJSON(): MaybeJSON<unknown> {
+    const variant = this.repr[0];
+
+    if (variant === 'Just') {
+      // Handle nested Maybes
+      let value = isInstance(this.repr[1]) ? this.repr[1].toJSON() : this.repr[1];
+      return { variant, value };
+    } else {
+      return { variant };
+    }
   }
 
   /** Method variant for {@linkcode equals} */
-  equals(this: Maybe<T>, comparison: Maybe<T>): boolean {
-    return equals(comparison, this);
+  equals(comparison: Maybe<T>): boolean {
+    return (
+      this.repr[0] === (comparison as MaybeImpl<T>).repr[0] &&
+      this.repr[1] === (comparison as MaybeImpl<T>).repr[1]
+    );
   }
 
   /** Method variant for {@linkcode ap} */
   ap<A, B>(this: Maybe<(val: A) => B>, val: Maybe<A>): Maybe<B> {
-    return ap(this, val);
+    return val.andThen((val) => this.map((fn) => fn(val)));
   }
 
   /**
@@ -299,8 +277,8 @@ class MaybeImpl<T> {
     console.log(deepEmpty); // Nothing
     ```
    */
-  get<K extends keyof T>(this: Maybe<T>, key: K): Maybe<NonNullable<T[K]>> {
-    return get(key, this);
+  get<K extends keyof T>(key: K): Maybe<NonNullable<T[K]>> {
+    return this.andThen(property(key));
   }
 }
 
@@ -462,7 +440,7 @@ export function map<T, U>(
   mapFn: (t: T) => U,
   maybe?: Maybe<T>
 ): Maybe<U> | ((maybe: Maybe<T>) => Maybe<U>) {
-  const op = (m: Maybe<T>) => (m.isJust ? just(mapFn(m.value)) : nothing<U>());
+  const op = (m: Maybe<T>) => m.map(mapFn);
   return curry1(op, maybe);
 }
 
@@ -500,7 +478,7 @@ export function mapOr<T, U>(
   maybe?: Maybe<T>
 ): U | ((maybe: Maybe<T>) => U) | ((mapFn: (t: T) => U) => (maybe: Maybe<T>) => U) {
   function fullOp(fn: (t: T) => U, m: Maybe<T>) {
-    return m.isJust ? fn(m.value) : orU;
+    return m.mapOr(orU, fn);
   }
 
   function partialOp(fn: (t: T) => U): (maybe: Maybe<T>) => U;
@@ -554,7 +532,7 @@ export function mapOrElse<T, U>(
   maybe?: Maybe<T>
 ): U | ((maybe: Maybe<T>) => U) | ((mapFn: (t: T) => U) => (maybe: Maybe<T>) => U) {
   function fullOp(fn: (t: T) => U, m: Maybe<T>) {
-    return m.isJust ? fn(m.value) : orElseFn();
+    return m.mapOrElse(orElseFn, fn);
   }
 
   function partialOp(fn: (t: T) => U): (maybe: Maybe<T>) => U;
@@ -614,7 +592,7 @@ export function and<T, U>(
   andMaybe: Maybe<U>,
   maybe?: Maybe<T>
 ): Maybe<U> | ((maybe: Maybe<T>) => Maybe<U>) {
-  const op = (m: Maybe<T>) => (m.isJust ? andMaybe : nothing<U>());
+  const op = (m: Maybe<T>) => m.and(andMaybe);
   return curry1(op, maybe);
 }
 
@@ -675,7 +653,7 @@ export function andThen<T, U>(
   thenFn: (t: T) => Maybe<U>,
   maybe?: Maybe<T>
 ): Maybe<U> | ((maybe: Maybe<T>) => Maybe<U>) {
-  const op = (m: Maybe<T>) => (m.isJust ? thenFn(m.value) : nothing<U>());
+  const op = (m: Maybe<T>) => m.andThen(thenFn);
   return maybe !== undefined ? op(maybe) : op;
 }
 
@@ -712,7 +690,7 @@ export function or<T>(
   defaultMaybe: Maybe<T>,
   maybe?: Maybe<T>
 ): Maybe<T> | ((maybe: Maybe<T>) => Maybe<T>) {
-  const op = (m: Maybe<T>) => (m.isJust ? m : defaultMaybe);
+  const op = (m: Maybe<T>) => m.or(defaultMaybe);
   return maybe !== undefined ? op(maybe) : op;
 }
 
@@ -738,7 +716,7 @@ export function orElse<T>(
   elseFn: () => Maybe<T>,
   maybe?: Maybe<T>
 ): Maybe<T> | ((maybe: Maybe<T>) => Maybe<T>) {
-  const op = (m: Maybe<T>) => (m.isJust ? m : elseFn());
+  const op = (m: Maybe<T>) => m.orElse(elseFn);
   return curry1(op, maybe);
 }
 
@@ -768,7 +746,7 @@ export function orElse<T>(
 export function unwrapOr<T, U>(defaultValue: U, maybe: Maybe<T>): T | U;
 export function unwrapOr<T, U>(defaultValue: U): (maybe: Maybe<T>) => T | U;
 export function unwrapOr<T, U>(defaultValue: U, maybe?: Maybe<T>) {
-  const op = (m: Maybe<T>) => (m.isJust ? m.value : defaultValue);
+  const op = (m: Maybe<T>) => m.unwrapOr(defaultValue);
   return curry1(op, maybe);
 }
 
@@ -808,23 +786,8 @@ export function unwrapOrElse<T, U>(
   orElseFn: () => U,
   maybe?: Maybe<T>
 ): (T | U) | ((maybe: Maybe<T>) => T | U) {
-  const op = (m: Maybe<T>) => (m.isJust ? m.value : orElseFn());
+  const op = (m: Maybe<T>) => m.unwrapOrElse(orElseFn);
   return curry1(op, maybe);
-}
-
-/**
-  Re-export of {@linkcode Toolbelt.transposeResult transposeResult} from
-  {@linkcode Toolbelt} for backwards compatibility. Prefer to import it from
-  there instead:
-
-  ```ts
-  import type { transposeResult } from 'true-myth/toolbelt';
-  ```
-
-  @deprecated until 6.0
- */
-export function fromResult<T>(result: Result<T, unknown>): Maybe<T> {
-  return Toolbelt.fromResult(result);
 }
 
 /**
@@ -847,8 +810,7 @@ export function fromResult<T>(result: Result<T, unknown>): Maybe<T> {
   @returns     The string representation of the `Maybe`.
  */
 export function toString<T>(maybe: Maybe<T>): string {
-  const body = maybe.map((value) => `(${safeToString(value)})`).unwrapOr('');
-  return `${maybe.variant}${body}`;
+  return maybe.toString();
 }
 
 /**
@@ -860,12 +822,7 @@ export function toString<T>(maybe: Maybe<T>): string {
  * @returns     The JSON representation of the `Maybe`
  */
 export function toJSON<T>(maybe: Maybe<T>): MaybeJSON<unknown> {
-  return maybe.isJust
-    ? {
-        variant: maybe.variant,
-        value: isInstance(maybe.value) ? maybe.value.toJSON() : maybe.value,
-      }
-    : { variant: maybe.variant };
+  return maybe.toJSON();
 }
 
 /**
@@ -930,7 +887,7 @@ export type Matcher<T, A> = {
 export function match<T, A>(matcher: Matcher<T, A>, maybe: Maybe<T>): A;
 export function match<T, A>(matcher: Matcher<T, A>): (m: Maybe<T>) => A;
 export function match<T, A>(matcher: Matcher<T, A>, maybe?: Maybe<T>): A | ((m: Maybe<T>) => A) {
-  const op = (curriedMaybe: Maybe<T>) => mapOrElse(matcher.Nothing, matcher.Just, curriedMaybe);
+  const op = (curriedMaybe: Maybe<T>) => curriedMaybe.match(matcher);
   return curry1(op, maybe);
 }
 
@@ -955,12 +912,7 @@ export function match<T, A>(matcher: Matcher<T, A>, maybe?: Maybe<T>): A | ((m: 
 export function equals<T>(mb: Maybe<T>, ma: Maybe<T>): boolean;
 export function equals<T>(mb: Maybe<T>): (ma: Maybe<T>) => boolean;
 export function equals<T>(mb: Maybe<T>, ma?: Maybe<T>): boolean | ((a: Maybe<T>) => boolean) {
-  const op = (maybeA: Maybe<T>) =>
-    maybeA.match({
-      Just: (aVal) => mb.isJust && mb.value === aVal,
-      Nothing: () => mb.isNothing,
-    });
-
+  const op = (maybeA: Maybe<T>) => maybeA.equals(mb);
   return curry1(op, ma);
 }
 
@@ -1118,7 +1070,7 @@ export function ap<T, U>(
   maybeFn: Maybe<(t: T) => U>,
   maybe?: Maybe<T>
 ): Maybe<U> | ((val: Maybe<T>) => Maybe<U>) {
-  const op = (m: Maybe<T>) => m.andThen((val) => maybeFn.map((fn) => fn(val)));
+  const op = (m: Maybe<T>) => maybeFn.ap(m);
   return curry1(op, maybe);
 }
 
@@ -1229,12 +1181,6 @@ export function first<T>(array: Array<T | null | undefined>): Maybe<T> {
 }
 
 /**
-  A convenience alias for `Maybe.first`.
-  @deprecated until 6.0
- */
-export const head = first;
-
-/**
   Safely get the last item from a list, returning {@linkcode Just} the last item
   if the array has at least one item in it, or {@linkcode Nothing} if it is
   empty.
@@ -1336,77 +1282,6 @@ export type TransposedArray<T extends Array<Maybe<unknown>>> = Maybe<{
 }>;
 
 /**
-  Legacy alias for {@linkcode transposeArray}.
-
-  @deprecated
- */
-export const all = transposeArray;
-
-/**
-  Legacy alias for {@linkcode transposeArray}.
-
-  @deprecated
- */
-export const tuple = transposeArray;
-
-/**
-  Re-export of {@linkcode Toolbelt.transposeResult transposeResult} from
-  {@linkcode Toolbelt} for backwards compatibility. Prefer to import it from
-  there instead:
-
-  ```ts
-  import type { transposeResult } from 'true-myth/toolbelt';
-  ```
-
-  @deprecated until 6.0
- */
-export function transposeResult<T, E>(result: Result<Maybe<T>, E>) {
-  return Toolbelt.transposeResult(result);
-}
-
-/**
-  Local implementation of {@linkcode Toolbelt.toOkOrErr toOkOrErr} from
-  {@linkcode Toolbelt} for backwards compatibility. Prefer to import it from
-  there instead:
-
-  ```ts
-  import type { toOkOrErr } from 'true-myth/toolbelt';
-  ```
-
-  @deprecated until 6.0
- */
-export function toOkOrErr<T, E>(error: E, maybe: Maybe<T>): Result<T, E>;
-export function toOkOrErr<T, E>(error: E): (maybe: Maybe<T>) => Result<T, E>;
-export function toOkOrErr<T, E>(
-  error: E,
-  maybe?: Maybe<T>
-): Result<T, E> | ((maybe: Maybe<T>) => Result<T, E>) {
-  const op = (m: Maybe<T>) => (m.isJust ? Result.ok<T, E>(m.value) : Result.err<T, E>(error));
-  return maybe !== undefined ? op(maybe) : op;
-}
-
-/**
-  Local implementation of {@linkcode Toolbelt.toOkOrElseErr toOkOrElseErr} from
-  {@linkcode Toolbelt} for backwards compatibility. Prefer to import it from
-  there instead:
-
-  ```ts
-  import type { toOkOrElseErr } from 'true-myth/toolbelt';
-  ```
-
-  @deprecated until 6.0
- */
-export function toOkOrElseErr<T, E>(elseFn: () => E, maybe: Maybe<T>): Result<T, E>;
-export function toOkOrElseErr<T, E>(elseFn: () => E): (maybe: Maybe<T>) => Result<T, E>;
-export function toOkOrElseErr<T, E>(
-  elseFn: () => E,
-  maybe?: Maybe<T>
-): Result<T, E> | ((maybe: Maybe<T>) => Result<T, E>) {
-  const op = (m: Maybe<T>) => (m.isJust ? Result.ok<T, E>(m.value) : Result.err<T, E>(elseFn()));
-  return curry1(op, maybe);
-}
-
-/**
   Safely extract a key from an object, returning {@linkcode Just} if the key has
   a value on the object and {@linkcode Nothing} if it does not.
 
@@ -1461,7 +1336,7 @@ export function property<T, K extends keyof T>(
   key: K,
   obj?: T
 ): Maybe<NonNullable<T[K]>> | ((obj: T) => Maybe<NonNullable<T[K]>>) {
-  const op = (a: T) => Maybe.of(a[key]) as Maybe<NonNullable<T[K]>>;
+  const op = (t: T) => Maybe.of(t[key]) as Maybe<NonNullable<T[K]>>;
   return curry1(op, obj);
 }
 

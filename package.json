@@ -72,7 +72,7 @@
     "typescript": "~4.6.2"
   },
   "engines": {
-    "node": "12.* || >= 14.*"
+    "node": "14.* || 16.* || >= 18.*"
   },
   "jest": {
     "preset": "ts-jest/presets/default-esm",
@@ -81,6 +81,7 @@
     ],
     "moduleNameMapper": {
       "^true-myth/(.*)$": "<rootDir>/src/$1",
+      "^true-myth$": "<rootDir>/src/index.ts",
       "^(\\.{1,2}/.*)\\.js$": "$1"
     },
     "moduleDirectories": [
@@ -135,7 +136,7 @@
     }
   },
   "volta": {
-    "node": "12.22.7",
+    "node": "14.19.1",
     "yarn": "1.22.17",
     "npm": "7.1.2"
   }

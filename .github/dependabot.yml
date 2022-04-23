@@ -8,4 +8,4 @@ updates:
     directory: '/'
     schedule:
       interval: daily
-    target-branch: next
+    target-branch: v5.x
