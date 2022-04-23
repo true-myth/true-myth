@@ -63,6 +63,9 @@ dist
 *.d.ts
 *.map
 
+# Or docs!
+docs-dist
+
 # Exclude auto-created jsconfig.json
 jsconfig.json
 
