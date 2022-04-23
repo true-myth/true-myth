@@ -120,14 +120,14 @@ Size without tree-shaking:
 
 ## Compatibility
 
-This project follows the current draft of [the Semantic Versioning for TypeScript Types][semver] proposal.
+This project follows the current draft of [the Semantic Versioning for TypeScript Types][semver] specification.
 
 - **Currently supported TypeScript versions:** v4.2, v4.3, v4.4, v4.5, and v4.6
 - **Compiler support policy:** [simple majors][sm]
 - **Public API:** all published types not in a `-private` module are public
 
-[semver]: https://github.com/chriskrycho/ember-rfcs/blob/semver-for-ts/text/0730-semver-for-ts.md
-[sm]: https://github.com/chriskrycho/ember-rfcs/blob/semver-for-ts/text/0730-semver-for-ts.md#simple-majors
+[semver]: https://www.semver-ts.org
+[sm]: https://www.semver-ts.org/#simple-majors
 
 ## Just the API, please
 
