@@ -1,0 +1,13 @@
+{
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "extends": "./base.tsconfig.json",
+  "include": ["../src"],
+  "compilerOptions": {
+    "removeComments": true,
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true,
+    "sourceRoot": "../src",
+    "outDir": "../dist"
+  }
+}

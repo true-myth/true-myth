@@ -21,16 +21,20 @@
   },
   "version": "5.3.1",
   "type": "module",
-  "main": "dist/index.js",
-  "module": "dist/index.js",
+  "main": "dist/public/index.js",
+  "module": "dist/public/index.js",
   "exports": {
-    ".": "./dist/index.js",
-    "./maybe": "./dist/maybe.js",
-    "./result": "./dist/result.js",
-    "./unit": "./dist/unit.js",
+    ".": {
+      "import": "./dist/public/index.js",
+      "types": "./dist/public/index.d.ts"
+    },
+    "./*": {
+      "types": "./dist/public/*.d.ts",
+      "import": "./dist/public/*.js"
+    },
     "./package.json": "./package.json"
   },
-  "types": "index.d.ts",
+  "types": "dist/public/index.d.ts",
   "keywords": [
     "typescript",
     "functional programming",
@@ -38,11 +42,10 @@
     "result"
   ],
   "scripts": {
-    "ts:es": "yarn tsc -p ts/es.tsconfig.json",
-    "ts:typedefs": "yarn tsc -p ts/types.tsconfig.json && mv defs/* . && rmdir defs",
+    "ts:es": "yarn tsc --project ts/publish.tsconfig.json",
     "ts:all": "yarn ts:es && yarn ts:typedefs",
     "build": "yarn clean && yarn ts:all",
-    "clean": "rimraf ./*.d.ts ./*.d.ts.map ./dist ./-private",
+    "clean": "rimraf ./dist",
     "doc": "./scripts/build-docs",
     "lint": "yarn eslint src/*.ts test/*.ts",
     "prepublishOnly": "yarn test && yarn build",
@@ -69,7 +72,7 @@
     "shelljs": "^0.8.2",
     "ts-jest": "^27.0.7",
     "typedoc": "^0.22.10",
-    "typescript": "~4.6.2"
+    "typescript": "^4.7.0-dev.20220422"
   },
   "engines": {
     "node": "14.* || 16.* || >= 18.*"
@@ -80,8 +83,8 @@
       ".ts"
     ],
     "moduleNameMapper": {
-      "^true-myth/(.*)$": "<rootDir>/src/$1",
-      "^true-myth$": "<rootDir>/src/index.ts",
+      "^true-myth/(.*)$": "<rootDir>/src/public/$1",
+      "^true-myth$": "<rootDir>/src/public/index.ts",
       "^(\\.{1,2}/.*)\\.js$": "$1"
     },
     "moduleDirectories": [
@@ -113,7 +116,7 @@
             151001
           ]
         },
-        "tsconfig": "test/tsconfig.json"
+        "tsconfig": "./tsconfig.json"
       }
     }
   },

@@ -1,20 +1,17 @@
+// Development-mode tsconfig, which correctly resolves tests
 {
+  "extends": "./ts/base.tsconfig.json",
   "compilerOptions": {
-    "target": "es2020",
-    "module": "es2020",
-    "stripInternal": false,
-    "removeComments": true,
-
-    "strict": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
-    "noImplicitReturns": true,
-
-    "moduleResolution": "node",
+    "noEmit": true,
     "baseUrl": ".",
-
-    "sourceRoot": "./src",
-    "sourceMap": true
+    "paths": {
+      // These correspond to the public API imports as defined in `"exports"` in
+      // `package.json`. (This way the tests can run -- and, critically, they
+      // are usable in the editor! -- without having to prebuild the `src`
+      // directory.)
+      "true-myth": ["./src/public/index.js"],
+      "true-myth/*": ["./src/public/*.js"]
+    }
   },
-  "include": ["src", "test"]
+  "include": ["./src/**/*", "./test/**/*"]
 }

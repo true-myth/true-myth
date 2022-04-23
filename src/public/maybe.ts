@@ -4,7 +4,7 @@
   @module
  */
 
-import { curry1, isVoid, safeToString } from './-private/utils.js';
+import { curry1, isVoid, safeToString } from '../-private/utils.js';
 
 /**
   Discriminant for the {@linkcode Just} and {@linkcode Nothing} type instances.
