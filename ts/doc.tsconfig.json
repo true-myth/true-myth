@@ -6,7 +6,7 @@
     "sourceRoot": null
   },
   "typedocOptions": {
-    "out": "../docs",
+    "out": "../docs-dist",
     "excludePrivate": true,
     "excludeInternal": true,
     "includes": "../src",
