@@ -4741,9 +4741,9 @@ typedoc@^0.22.10:
     shiki "^0.10.1"
 
 typescript@^4.7.0-dev.20220422:
-  version "4.7.0-dev.20220429"
-  resolved "https://registry.yarnpkg.com/typescript/-/typescript-4.7.0-dev.20220429.tgz#f31e3edc406b6bd9f137f8f8b6befcd2563a929f"
-  integrity sha512-RpltV2YSqWFVLLsBLW6gAPnYBLC4KQpxtPcuwTx0PmYVFpwzYRtsR8iemeEFr3yBALG21cxbm2a0xF3GRrihsg==
+  version "4.7.0-dev.20220503"
+  resolved "https://registry.yarnpkg.com/typescript/-/typescript-4.7.0-dev.20220503.tgz#95f2a1177842606451880fb0a0016763b2357617"
+  integrity sha512-HXUE+tusfAC6MQ9hz+PA+4KJfHa1Qd6tzcHAm7uS5pnOLVMdoVKDE1z5KYr/eXMTEekITZVnUcuGtXlWYg7ZqQ==
 
 unbox-primitive@^1.0.1:
   version "1.0.1"
