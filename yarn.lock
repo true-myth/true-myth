@@ -4992,10 +4992,10 @@ typedoc@^0.22.10:
     minimatch "^5.0.1"
     shiki "^0.10.1"
 
-typescript@^4.7.0-dev.20220422:
-  version "4.7.0-dev.20220503"
-  resolved "https://registry.yarnpkg.com/typescript/-/typescript-4.7.0-dev.20220503.tgz#95f2a1177842606451880fb0a0016763b2357617"
-  integrity sha512-HXUE+tusfAC6MQ9hz+PA+4KJfHa1Qd6tzcHAm7uS5pnOLVMdoVKDE1z5KYr/eXMTEekITZVnUcuGtXlWYg7ZqQ==
+typescript@^4.7.0-dev.20220504:
+  version "4.7.0-dev.20220504"
+  resolved "https://registry.yarnpkg.com/typescript/-/typescript-4.7.0-dev.20220504.tgz#1ee6e6de3ded0aec3f0638ac24eaf432c91aa51b"
+  integrity sha512-H/moHCIlyBqlIEZh/JGmIYaJ1uD3nh3XA61OcwGjUMDIb007v7jurz71lo1tI4dSQacbLA43QAqqkgaqo5bjfw==
 
 unbox-primitive@^1.0.1:
   version "1.0.1"
