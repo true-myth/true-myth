@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: ['12', '14', '16']
+        node-version: ['12', '14', '16', '18']
 
     steps:
       - uses: actions/checkout@v2
@@ -42,7 +42,7 @@ jobs:
     continue-on-error: false
     strategy:
       matrix:
-        ts-version: ['~4.2', '~4.3', '~4.4', '~4.5', '4.6', 'next']
+        ts-version: ['~4.2', '~4.3', '~4.4', '~4.5', '4.6', '4.7', 'next']
 
     steps:
       - uses: actions/checkout@v2
