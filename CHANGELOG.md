@@ -4,10 +4,18 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
-
-
-
 ## 6.0.0 (2022-05-25)
+
+There are two significant breaking changes in v6.0:
+
+1. It now requires **TypeScript 4.7+ and Node 14+**. This allows us to use Node's `exports` syntax without hacks.
+2. It removes items deprecated in the 4.x and 5.x cycles. This allows us to provide **better tree-shaking**. Previously, using either the `Result` or `Maybe` classes meant you also pulled in the other, since they had code to interoperate with each other. These now live only in the `toolbelt` module, along with the `Array` helpers.
+
+To upgrade:
+
+- Update your project to at least Node 14 and TypeScript 4.7.
+- Switch from using any deprecated code to the supported replacements (as described in the docs for each deprecated function).
+- Update to True Myth v6. :tada:
 
 #### :boom: Breaking Change
 * [#357](https://github.com/true-myth/true-myth/pull/357) Update publication mechanics with "exports" ([@chriskrycho](https://github.com/chriskrycho))
