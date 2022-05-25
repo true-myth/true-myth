@@ -6,6 +6,59 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 
 
+
+## 6.0.0 (2022-05-25)
+
+#### :boom: Breaking Change
+* [#357](https://github.com/true-myth/true-myth/pull/357) Update publication mechanics with "exports" ([@chriskrycho](https://github.com/chriskrycho))
+* [#352](https://github.com/true-myth/true-myth/pull/352) Update minimum Node to v14, add v18 ([@chriskrycho](https://github.com/chriskrycho))
+* [#252](https://github.com/true-myth/true-myth/pull/252) Enable tree-shaking by removing deprecated code ([@chriskrycho](https://github.com/chriskrycho))
+* [#242](https://github.com/true-myth/true-myth/pull/242) Improve performance by switching to a 'methods-first' implementation ([@chriskrycho](https://github.com/chriskrycho))
+
+#### :rocket: Enhancement
+* [#360](https://github.com/true-myth/true-myth/pull/360) Decrease Unit implementation runtime size ([@chriskrycho](https://github.com/chriskrycho))
+* [#356](https://github.com/true-myth/true-myth/pull/356) Improve `toString` handling (forward-port from v5) ([@chriskrycho](https://github.com/chriskrycho))
+* [#351](https://github.com/true-myth/true-myth/pull/351) More forward ports ([@chriskrycho](https://github.com/chriskrycho))
+* [#275](https://github.com/true-myth/true-myth/pull/275) One fewer assignment in Nothing construction ([@chriskrycho](https://github.com/chriskrycho))
+* [#252](https://github.com/true-myth/true-myth/pull/252) Enable tree-shaking by removing deprecated code ([@chriskrycho](https://github.com/chriskrycho))
+* [#251](https://github.com/true-myth/true-myth/pull/251) [Forward] Deprecate Maybe.head for 6.0, preferring Maybe.first ([@chriskrycho](https://github.com/chriskrycho))
+* [#250](https://github.com/true-myth/true-myth/pull/250) [Forward] Deprecate non-Toolbelt versions of toolbelt utils ([@chriskrycho](https://github.com/chriskrycho))
+* [#249](https://github.com/true-myth/true-myth/pull/249) [Forward] Introduce `true-myth/toolbelt` module for better tree shaking ([@chriskrycho](https://github.com/chriskrycho))
+* [#242](https://github.com/true-myth/true-myth/pull/242) Improve performance by switching to a 'methods-first' implementation ([@chriskrycho](https://github.com/chriskrycho))
+
+#### :bug: Bug Fix
+* [#351](https://github.com/true-myth/true-myth/pull/351) More forward ports ([@chriskrycho](https://github.com/chriskrycho))
+* [#276](https://github.com/true-myth/true-myth/pull/276) Finish forward-porting null/undefined reversion ([@chriskrycho](https://github.com/chriskrycho))
+* [#274](https://github.com/true-myth/true-myth/pull/274) Forward port more fixes ([@chriskrycho](https://github.com/chriskrycho))
+* 5.1.1 regression: type inference for Result.ok ([@krivachy](https://github.com/krivachy))
+
+#### :memo: Documentation
+* [#387](https://github.com/true-myth/true-myth/pull/387) Final updates ([@chriskrycho](https://github.com/chriskrycho))
+* [#383](https://github.com/true-myth/true-myth/pull/383) Incorporate TS 4.7 *and* next in support matrix ([@chriskrycho](https://github.com/chriskrycho))
+* [#355](https://github.com/true-myth/true-myth/pull/355) Update the CHANGELOG and `package.json` to actual current ([@chriskrycho](https://github.com/chriskrycho))
+* [#350](https://github.com/true-myth/true-myth/pull/350) Improve doc comments on Maybe and Toolbelt ([@chriskrycho](https://github.com/chriskrycho))
+* [#317](https://github.com/true-myth/true-myth/pull/317) Forward-port CI, docs updates ([@chriskrycho](https://github.com/chriskrycho))
+* [#267](https://github.com/true-myth/true-myth/pull/267) [Forward] Fix out-of-date parts of README ([@chriskrycho](https://github.com/chriskrycho))
+
+#### :house: Internal
+* [#387](https://github.com/true-myth/true-myth/pull/387) Final updates ([@chriskrycho](https://github.com/chriskrycho))
+* [#386](https://github.com/true-myth/true-myth/pull/386) Drop `preversion` npm script ([@chriskrycho](https://github.com/chriskrycho))
+* [#384](https://github.com/true-myth/true-myth/pull/384) Simplify `exports` definitions for types ([@chriskrycho](https://github.com/chriskrycho))
+* [#383](https://github.com/true-myth/true-myth/pull/383) Incorporate TS 4.7 *and* next in support matrix ([@chriskrycho](https://github.com/chriskrycho))
+* [#377](https://github.com/true-myth/true-myth/pull/377) Add option to run Nightly TS run manually ([@chriskrycho](https://github.com/chriskrycho))
+* [#376](https://github.com/true-myth/true-myth/pull/376) Use 'Node16' to support TS 4.7 ([@chriskrycho](https://github.com/chriskrycho))
+* [#362](https://github.com/true-myth/true-myth/pull/362) Add Code of Conduct and Contributing guide ([@chriskrycho](https://github.com/chriskrycho))
+* [#359](https://github.com/true-myth/true-myth/pull/359) Actually run yarn so TypeDoc is available ([@chriskrycho](https://github.com/chriskrycho))
+* [#358](https://github.com/true-myth/true-myth/pull/358) Switch docs publishing to use gh-pages on release ([@chriskrycho](https://github.com/chriskrycho))
+* [#353](https://github.com/true-myth/true-myth/pull/353) Use `Omit` rather than `Exclude` + `keyof` in Maybe ([@chriskrycho](https://github.com/chriskrycho))
+* [#354](https://github.com/true-myth/true-myth/pull/354) Use `Omit` rather than `Exclude` + `keyof` in Maybe ([@chriskrycho](https://github.com/chriskrycho))
+* [#264](https://github.com/true-myth/true-myth/pull/264) [Forward] no ESLint ([@chriskrycho](https://github.com/chriskrycho))
+* [#242](https://github.com/true-myth/true-myth/pull/242) Improve performance by switching to a 'methods-first' implementation ([@chriskrycho](https://github.com/chriskrycho))
+
+#### Committers: 2
+- Akos Krivachy ([@krivachy](https://github.com/krivachy))
+- Chris Krycho ([@chriskrycho](https://github.com/chriskrycho))
+
 ## 5.4.0 (2022-05-25)
 
 This is the final release for v5.x, and only exists to make sure there are fully overlapping supported TypeScript versions for True Myth v5 and v6. See the release notes for the upcoming v6.0 release for upgrade notes.
