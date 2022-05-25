@@ -124,7 +124,7 @@ Size without tree-shaking:
 
 This project follows the current draft of [the Semantic Versioning for TypeScript Types][semver] specification.
 
-- **Currently supported TypeScript versions:** 4.7 Beta
+- **Currently supported TypeScript versions:** 4.7
 - **Compiler support policy:** [simple majors][sm]
 - **Public API:** all published types not in a `-private` module are public
 
