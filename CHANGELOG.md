@@ -41,7 +41,7 @@ To upgrade:
 * 5.1.1 regression: type inference for Result.ok ([@krivachy](https://github.com/krivachy))
 
 #### :memo: Documentation
-* [#387](https://github.com/true-myth/true-myth/pull/387) Final updates ([@chriskrycho](https://github.com/chriskrycho))
+* [#387](https://github.com/true-myth/true-myth/pull/387) Prep for v6 release ([@chriskrycho](https://github.com/chriskrycho))
 * [#383](https://github.com/true-myth/true-myth/pull/383) Incorporate TS 4.7 *and* next in support matrix ([@chriskrycho](https://github.com/chriskrycho))
 * [#355](https://github.com/true-myth/true-myth/pull/355) Update the CHANGELOG and `package.json` to actual current ([@chriskrycho](https://github.com/chriskrycho))
 * [#350](https://github.com/true-myth/true-myth/pull/350) Improve doc comments on Maybe and Toolbelt ([@chriskrycho](https://github.com/chriskrycho))
