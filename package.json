@@ -47,7 +47,6 @@
     "lint": "yarn eslint src/*.ts test/*.ts",
     "prepublishOnly": "yarn test && yarn build",
     "postpublish": "yarn clean",
-    "preversion": "./scripts/build-docs && git add docs",
     "test": "jest",
     "tdd": "jest --watch"
   },
