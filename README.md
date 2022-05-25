@@ -211,11 +211,7 @@ const theAnswer = ok(42);
 const theAnswerValue = unwrapOr(0, theAnswer);
 ```
 
-<<<<<<< HEAD
-TypeScript's "type narrowing" capabilities work for both `Result` and `Maybe`: if you _check_ which variant you are accessing, TypeScript will "narrow" the type to that variant and allow you to access the `value` directly if it is available.
-=======
 You can also use TypeScript's "type narrowing" capabilities: if you _check_ which variant you are accessing, TypeScript will "narrow" the type to that variant and allow you to access the `value` directly if it is available.
->>>>>>> next
 
 ```typescript
 import Maybe from 'true-myth/maybe';
@@ -238,21 +234,12 @@ This can also be convenient in functional style pipelines:
 import { filter, map, pipe, prop } from 'ramda';
 import Result from 'true-myth/result';
 
-<<<<<<< HEAD
-type GetErrorMessages = (results: Array<Result<string, Error>>) => string[];
-const getErrorMessages: GetErrorMessages = pipe(
-  filter((r: Result<string, Error>) => r.isErr),
-  map(prop('error')),
-  map(prop('message'))
-);
-=======
 function getErrorMessages(results: Array<Result<string, Error>>) {
   return results
     .filter(Result.isErr)
     .map(Err.unwrapErr) // would not type-checkout with previous line
     .map((error) => error.message);
 }
->>>>>>> next
 ```
 
 ### Curried variants
@@ -282,7 +269,6 @@ const transform = _.flow(
   _.sum
 );
 
-<<<<<<< HEAD
 const result = transform([
   just('yay'),
   nothing(),
@@ -292,8 +278,6 @@ const result = transform([
   just('oh'),
 ]);
 
-=======
->>>>>>> next
 console.log(result); // 18
 ```
 
@@ -579,29 +563,17 @@ const anObjectToWrap = {
 const wrapped = just(anObjectToWrap);
 const updated = map((obj) => ({ ...obj, val: 92 }), wrapped);
 
-<<<<<<< HEAD
 console.log((anObjectToWrap as Just<number>).val); // 42
 console.log((updated as Just<number>).val); // 92
 console.log((anObjectToWrap as Just<string[]>).desc); // ["this", " ", "is a string"]
 console.log((updated as Just<string[]>).desc); // ["this", " ", "is a string"]
-=======
-console.log(unsafelyUnwrap(anObjectToWrap).val); // 42
-console.log(unsafelyUnwrap(updated).val); // 92
-console.log(unsafelyUnwrap(anObjectToWrap).desc); // ["this", " ", "is a string"]
-console.log(unsafelyUnwrap(updated).desc); // ["this", " ", "is a string"]
->>>>>>> next
 
 // Now mutate the original
 anObjectToWrap.desc.push('.');
 
 // And… 😱 we've mutated the new one, too:
-<<<<<<< HEAD
 console.log((anObjectToWrap as Just<string[]>).desc); // ["this", " ", "is a string", "."]
 console.log((updated as Just<string[]>).desc); // ["this", " ", "is a string", "."]
-=======
-console.log(unsafelyUnwrap(anObjectToWrap).desc); // ["this", " ", "is a string", "."]
-console.log(unsafelyUnwrap(updated).desc); // ["this", " ", "is a string", "."]
->>>>>>> next
 ```
 
 In other words: you _must_ use other tools along with True Myth if you're going to mutate objects you're wrapping in `Maybe` or `Result`.
