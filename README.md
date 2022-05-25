@@ -4,10 +4,6 @@
 
 ---
 
-<p align="center">🚧 This is the README for the upcoming True Myth v6 release. 🚧<br> For the current v5 release, see <a href="https://github.com/true-myth/true-myth/tree/v5.x">here</a>.</p>
-
----
-
 <p align="center">
   <a href='https://github.com/true-myth/true-myth/blob/main/.github/workflows/CI.yml'>
     <img src='https://github.com/true-myth/true-myth/workflows/CI/badge.svg?branch=main' title='CI'>
