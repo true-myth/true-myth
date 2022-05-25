@@ -5,6 +5,20 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 
+
+## 5.4.0 (2022-05-25)
+
+#### :rocket: Enhancement
+* [#382](https://github.com/true-myth/true-myth/pull/382) v5.x: Add Node 18 and TS 4.7 ([@chriskrycho](https://github.com/chriskrycho))
+
+#### :house: Internal
+* [#385](https://github.com/true-myth/true-myth/pull/385) v5.x: Drop `preversion` npm script ([@chriskrycho](https://github.com/chriskrycho))
+* [#361](https://github.com/true-myth/true-myth/pull/361) Add conduct and contributing (v5.x) ([@chriskrycho](https://github.com/chriskrycho))
+* [#354](https://github.com/true-myth/true-myth/pull/354) Use `Omit` rather than `Exclude` + `keyof` in Maybe ([@chriskrycho](https://github.com/chriskrycho))
+
+#### Committers: 1
+- Chris Krycho ([@chriskrycho](https://github.com/chriskrycho))
+
 ## 5.3.1 (2022-04-22)
 
 #### :bug: Bug Fix
