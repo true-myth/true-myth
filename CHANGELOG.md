@@ -8,6 +8,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ## 5.4.0 (2022-05-25)
 
+This is the final release for v5.x, and only exists to make sure there are fully overlapping supported TypeScript versions for True Myth v5 and v6. See the release notes for the upcoming v6.0 release for upgrade notes.
+
 #### :rocket: Enhancement
 * [#382](https://github.com/true-myth/true-myth/pull/382) v5.x: Add Node 18 and TS 4.7 ([@chriskrycho](https://github.com/chriskrycho))
 
