@@ -24,15 +24,9 @@
   "main": "dist/public/index.js",
   "module": "dist/public/index.js",
   "exports": {
-    ".": {
-      "import": "./dist/public/index.js",
-      "types": "./dist/public/index.d.ts"
-    },
-    "./*": {
-      "types": "./dist/public/*.d.ts",
-      "import": "./dist/public/*.js"
-    },
-    "./package.json": "./package.json"
+    ".": "./dist/public/index.js",
+    "./package.json": "./package.json",
+    "./*": "./dist/public/*.js"
   },
   "types": "dist/public/index.d.ts",
   "keywords": [
