@@ -2,8 +2,6 @@
 
 <p align="center">A library for safe, idiomatic null and error handling in TypeScript, with <code>Maybe</code> and <code>Result</code> types, supporting both a functional style and a more traditional method-call style.</p>
 
----
-
 <p align="center">
   <a href='https://github.com/true-myth/true-myth/blob/main/.github/workflows/CI.yml'>
     <img src='https://github.com/true-myth/true-myth/workflows/CI/badge.svg?branch=main' title='CI'>
