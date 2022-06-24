@@ -13,9 +13,13 @@ There are two significant breaking changes in v6.0:
 
 To upgrade:
 
-- Update your project to at least Node 14 and TypeScript 4.7.
-- Switch from using any deprecated code to the supported replacements (as described in the docs for each deprecated function).
-- Update to True Myth v6. :tada:
+1. Update your project to at least Node 14 and TypeScript 4.7.
+
+2. Switch from using any deprecated code to the supported replacements (as described in the docs for each deprecated function).
+
+3. Set `compilerOptions.module` to `Node16` or `nodenext` in your `tsconfig.json`. **Note:** this is the most significant breaking change here: it requires that every other TS package you consume also be compatible with the new mode, and if you are using True Myth in a library, cascades that requirement to *your* consumers as well.
+
+4. Update to True Myth v6. :tada:
 
 #### :boom: Breaking Change
 * [#357](https://github.com/true-myth/true-myth/pull/357) Update publication mechanics with "exports" ([@chriskrycho](https://github.com/chriskrycho))
