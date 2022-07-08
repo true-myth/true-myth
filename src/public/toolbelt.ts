@@ -54,9 +54,9 @@ export function toMaybe<T>(result: Result<T, unknown>): Maybe<T> {
 }
 
 /**
-  Transform a {@linkcode Maybe.Maybe Maybe} into a {@linkcode Result}.
+  Transform a {@linkcode true-myth.maybe!Maybe Maybe} into a {@linkcode Result}.
 
-  If the `Maybe` is a {@linkcode Maybe.Just Just}, its value will be wrapped in
+  If the `Maybe` is a {@linkcode true-myth.maybe!Just Just}, its value will be wrapped in
   the {@linkcode Ok} variant; if it is a {@linkcode Maybe.Nothing Nothing} the
   `errValue` will be wrapped in the {@linkcode Err} variant.
 

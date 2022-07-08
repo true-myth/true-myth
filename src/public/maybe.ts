@@ -1343,7 +1343,7 @@ export function property<T, K extends keyof T>(
 /**
   Safely extract a key from a {@linkcode Maybe} of an object, returning
   {@linkcode Just} if the key has a value on the object and
-  {@linkcode MaybNothing} if it does not. (Like {@linkcode property} but
+  {@linkcode Nothing} if it does not. (Like {@linkcode property} but
   operating on a `Maybe<T>` rather than directly on a `T`.)
 
   The check is type-safe: you won't even be able to compile if you try to look
@@ -1395,7 +1395,7 @@ export function property<T, K extends keyof T>(
   ```
 
   @param key The key to pull out of the object.
-  @param obj The object to look up the key from.
+  @param maybeObj The object to look up the key from.
  */
 export function get<T, K extends keyof T>(key: K, maybeObj: Maybe<T>): Maybe<NonNullable<T[K]>>;
 export function get<T, K extends keyof T>(key: K): (maybeObj: Maybe<T>) => Maybe<NonNullable<T[K]>>;
