@@ -7,6 +7,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ## 6.1.0 (2022-07-08)
 
+#### :rocket: Enhancement
+
+* Re-export `Toolbelt` from root for consumers not using TS 4.7’s `exports` support ([@chriskrycho](https://github.com/chriskrycho))
+
 #### :house: Internal
 * [#388](https://github.com/true-myth/true-myth/pull/388) Remove v5 CI configuration ([@chriskrycho](https://github.com/chriskrycho))
 
