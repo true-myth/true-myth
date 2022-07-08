@@ -19,7 +19,7 @@
   "bugs": {
     "url": "https://github.com/true-myth/true-myth/issues"
   },
-  "version": "6.0.0",
+  "version": "6.1.0",
   "type": "module",
   "main": "dist/public/index.js",
   "module": "dist/public/index.js",
