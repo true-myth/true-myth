@@ -17,7 +17,9 @@
 <section class="tsd-panel tsd-hierarchy">
 <h4>Hierarchy</h4>
 <ul class="tsd-hierarchy">
-<li><span class="target">ResultConstructor</span></li></ul></section>
+<li><span class="target">ResultConstructor</span></li></ul></section><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/8bd4068/src/public/result.ts#L1266">public/result.ts:1266</a></li></ul></aside>
 <section class="tsd-panel-group tsd-index-group">
 <section class="tsd-panel tsd-index-panel">
 <details class="tsd-index-content tsd-index-accordion" open><summary class="tsd-accordion-summary tsd-index-summary">
@@ -39,13 +41,11 @@
 <li class="tsd-parameter-signature">
 <ul class="tsd-signatures tsd-kind-type-literal tsd-parent-kind-interface">
 <li class="tsd-signature" id="__type.__type-1"><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type" data-tsd-kind="Type parameter">T</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type" data-tsd-kind="Type parameter">E</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../variables/public_result.Result-1.html" class="tsd-signature-type" data-tsd-kind="Variable">Result</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type" data-tsd-kind="Type parameter">T</span><span class="tsd-signature-symbol">, </span><a href="../variables/public_unit.Unit-1.html" class="tsd-signature-type" data-tsd-kind="Variable">Unit</a><span class="tsd-signature-symbol">&gt;</span></li>
-<li class="tsd-signature" id="__type.__type-2"><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type" data-tsd-kind="Type parameter">T</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type" data-tsd-kind="Type parameter">E</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">(</span>error<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type" data-tsd-kind="Type parameter">E</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../variables/public_result.Result-1.html" class="tsd-signature-type" data-tsd-kind="Variable">Result</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type" data-tsd-kind="Type parameter">T</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type" data-tsd-kind="Type parameter">E</span><span class="tsd-signature-symbol">&gt;</span></li></ul>
-<ul class="tsd-descriptions">
 <li class="tsd-description">
 <div class="tsd-comment tsd-typography"><p>Create an instance of <a href="public_result.Err.html"><code>Err</code></a>.</p>
 <p>Note: While you <em>may</em> create the <a href="../types/public_result.Result.html"><code>Result</code></a> type via normal
 JavaScript class construction, it is not recommended for the functional
-style for which the library is intended. Instead, use <a href="../functions/public_result.err.html"><code>err</code></a>.</p>
+style for which the library is intended. Instead, use <a href="../functions/public_result.err-1.html"><code>err</code></a>.</p>
 <pre><code class="language-ts"><span class="hl-1">// Avoid:</span><br/><span class="hl-5">const</span><span class="hl-0"> </span><span class="hl-8">anErr</span><span class="hl-0"> = </span><span class="hl-5">new</span><span class="hl-0"> </span><span class="hl-3">Result</span><span class="hl-0">.</span><span class="hl-6">Err</span><span class="hl-0">(</span><span class="hl-4">&#39;alas, failure&#39;</span><span class="hl-0">);</span><br/><br/><span class="hl-1">// Prefer:</span><br/><span class="hl-5">const</span><span class="hl-0"> </span><span class="hl-8">anErr</span><span class="hl-0"> = </span><span class="hl-3">Result</span><span class="hl-0">.</span><span class="hl-6">err</span><span class="hl-0">(</span><span class="hl-4">&#39;alas, failure&#39;</span><span class="hl-0">);</span>
 </code></pre>
 </div>
@@ -57,6 +57,7 @@ style for which the library is intended. Instead, use <a href="../functions/publ
 <li>
 <h4>E</h4></li></ul></div>
 <h4 class="tsd-returns-title">Returns <a href="../variables/public_result.Result-1.html" class="tsd-signature-type" data-tsd-kind="Variable">Result</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type" data-tsd-kind="Type parameter">T</span><span class="tsd-signature-symbol">, </span><a href="../variables/public_unit.Unit-1.html" class="tsd-signature-type" data-tsd-kind="Variable">Unit</a><span class="tsd-signature-symbol">&gt;</span></h4></li>
+<li class="tsd-signature" id="__type.__type-2"><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type" data-tsd-kind="Type parameter">T</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type" data-tsd-kind="Type parameter">E</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">(</span>error<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type" data-tsd-kind="Type parameter">E</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../variables/public_result.Result-1.html" class="tsd-signature-type" data-tsd-kind="Variable">Result</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type" data-tsd-kind="Type parameter">T</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type" data-tsd-kind="Type parameter">E</span><span class="tsd-signature-symbol">&gt;</span></li>
 <li class="tsd-description">
 <div class="tsd-type-parameters">
 <h4 class="tsd-type-parameters-title">Type Parameters</h4>
@@ -72,7 +73,7 @@ style for which the library is intended. Instead, use <a href="../functions/publ
 <h5>error: <span class="tsd-signature-type" data-tsd-kind="Type parameter">E</span></h5></li></ul></div>
 <h4 class="tsd-returns-title">Returns <a href="../variables/public_result.Result-1.html" class="tsd-signature-type" data-tsd-kind="Variable">Result</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type" data-tsd-kind="Type parameter">T</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type" data-tsd-kind="Type parameter">E</span><span class="tsd-signature-symbol">&gt;</span></h4></li></ul></li></ul></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/90e1ded/src/public/result.ts#L1268">public/result.ts:1268</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/8bd4068/src/public/result.ts#L1268">public/result.ts:1268</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface"><a id="ok" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>ok</span><a href="#ok" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <div class="tsd-signature">ok<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">{ </span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type" data-tsd-kind="Type parameter">T</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type" data-tsd-kind="Type parameter">E</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../variables/public_result.Result-1.html" class="tsd-signature-type" data-tsd-kind="Variable">Result</a><span class="tsd-signature-symbol">&lt;</span><a href="../variables/public_unit.Unit-1.html" class="tsd-signature-type" data-tsd-kind="Variable">Unit</a><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type" data-tsd-kind="Type parameter">E</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">; </span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type" data-tsd-kind="Type parameter">T</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type" data-tsd-kind="Type parameter">E</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">(</span>value<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type" data-tsd-kind="Type parameter">T</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../variables/public_result.Result-1.html" class="tsd-signature-type" data-tsd-kind="Variable">Result</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type" data-tsd-kind="Type parameter">T</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type" data-tsd-kind="Type parameter">E</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> }</span></div>
@@ -82,20 +83,18 @@ style for which the library is intended. Instead, use <a href="../functions/publ
 <li class="tsd-parameter-signature">
 <ul class="tsd-signatures tsd-kind-type-literal tsd-parent-kind-interface">
 <li class="tsd-signature" id="__type-3.__type-4"><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type" data-tsd-kind="Type parameter">T</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type" data-tsd-kind="Type parameter">E</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../variables/public_result.Result-1.html" class="tsd-signature-type" data-tsd-kind="Variable">Result</a><span class="tsd-signature-symbol">&lt;</span><a href="../variables/public_unit.Unit-1.html" class="tsd-signature-type" data-tsd-kind="Variable">Unit</a><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type" data-tsd-kind="Type parameter">E</span><span class="tsd-signature-symbol">&gt;</span></li>
-<li class="tsd-signature" id="__type-3.__type-5"><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type" data-tsd-kind="Type parameter">T</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type" data-tsd-kind="Type parameter">E</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">(</span>value<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type" data-tsd-kind="Type parameter">T</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../variables/public_result.Result-1.html" class="tsd-signature-type" data-tsd-kind="Variable">Result</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type" data-tsd-kind="Type parameter">T</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type" data-tsd-kind="Type parameter">E</span><span class="tsd-signature-symbol">&gt;</span></li></ul>
-<ul class="tsd-descriptions">
 <li class="tsd-description">
 <div class="tsd-comment tsd-typography"><p>Create an instance of <a href="public_result.Ok.html"><code>Ok</code></a>.</p>
 <p>Note: While you <em>may</em> create the <a href="../types/public_result.Result.html"><code>Result</code></a> type via normal
 JavaScript class construction, it is not recommended for the functional
-style for which the library is intended. Instead, use <a href="../functions/public_result.ok.html"><code>ok</code></a>.</p>
+style for which the library is intended. Instead, use <a href="../functions/public_result.ok-1.html"><code>ok</code></a>.</p>
 <pre><code class="language-ts"><span class="hl-1">// Avoid:</span><br/><span class="hl-5">const</span><span class="hl-0"> </span><span class="hl-8">aString</span><span class="hl-0"> = </span><span class="hl-5">new</span><span class="hl-0"> </span><span class="hl-3">Result</span><span class="hl-0">.</span><span class="hl-6">Ok</span><span class="hl-0">(</span><span class="hl-4">&#39;characters&#39;</span><span class="hl-0">);</span><br/><br/><span class="hl-1">// Prefer:</span><br/><span class="hl-5">const</span><span class="hl-0"> </span><span class="hl-8">aString</span><span class="hl-0"> = </span><span class="hl-3">Result</span><span class="hl-0">.</span><span class="hl-6">ok</span><span class="hl-0">(</span><span class="hl-4">&#39;characters)</span><span class="hl-11">;</span>
 </code></pre>
 <p>Note that you may explicitly pass Unit.Unit Unit to the
 <a href="public_result.Ok.html"><code>Ok</code></a> constructor to create a <code>Result&lt;Unit, E&gt;</code>. However, you may
 <em>not</em> call the <code>Ok</code> constructor with <code>null</code> or <code>undefined</code> to get that
 result (the type system won&#39;t allow you to construct it that way). Instead,
-for convenience, you can simply call <a href="../functions/public_result.ok.html"><code>ok</code></a>, which will construct
+for convenience, you can simply call <a href="../functions/public_result.ok-1.html"><code>ok</code></a>, which will construct
 the type correctly.</p>
 </div>
 <div class="tsd-type-parameters">
@@ -106,6 +105,7 @@ the type correctly.</p>
 <li>
 <h4>E</h4></li></ul></div>
 <h4 class="tsd-returns-title">Returns <a href="../variables/public_result.Result-1.html" class="tsd-signature-type" data-tsd-kind="Variable">Result</a><span class="tsd-signature-symbol">&lt;</span><a href="../variables/public_unit.Unit-1.html" class="tsd-signature-type" data-tsd-kind="Variable">Unit</a><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type" data-tsd-kind="Type parameter">E</span><span class="tsd-signature-symbol">&gt;</span></h4></li>
+<li class="tsd-signature" id="__type-3.__type-5"><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type" data-tsd-kind="Type parameter">T</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type" data-tsd-kind="Type parameter">E</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">(</span>value<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type" data-tsd-kind="Type parameter">T</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../variables/public_result.Result-1.html" class="tsd-signature-type" data-tsd-kind="Variable">Result</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type" data-tsd-kind="Type parameter">T</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type" data-tsd-kind="Type parameter">E</span><span class="tsd-signature-symbol">&gt;</span></li>
 <li class="tsd-description">
 <div class="tsd-type-parameters">
 <h4 class="tsd-type-parameters-title">Type Parameters</h4>
@@ -121,7 +121,7 @@ the type correctly.</p>
 <h5>value: <span class="tsd-signature-type" data-tsd-kind="Type parameter">T</span></h5></li></ul></div>
 <h4 class="tsd-returns-title">Returns <a href="../variables/public_result.Result-1.html" class="tsd-signature-type" data-tsd-kind="Variable">Result</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type" data-tsd-kind="Type parameter">T</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type" data-tsd-kind="Type parameter">E</span><span class="tsd-signature-symbol">&gt;</span></h4></li></ul></li></ul></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/90e1ded/src/public/result.ts#L1267">public/result.ts:1267</a></li></ul></aside></section></section></div>
+<li>Defined in <a href="https://github.com/true-myth/true-myth/blob/8bd4068/src/public/result.ts#L1267">public/result.ts:1267</a></li></ul></aside></section></section></div>
 <div class="col-4 col-menu menu-sticky-wrap menu-highlight">
 <div class="tsd-navigation settings">
 <details class="tsd-index-accordion"><summary class="tsd-accordion-summary">
