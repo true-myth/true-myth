@@ -5,6 +5,26 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 
+
+## 6.2.0 (2022-09-08)
+
+#### :rocket: Enhancement
+* [#438](https://github.com/true-myth/true-myth/pull/438) Add explicit support for TS 4.8 ([@chriskrycho](https://github.com/chriskrycho))
+
+#### :bug: Bug Fix
+* [#437](https://github.com/true-myth/true-myth/pull/437) docs: include doc comments in published types ([@chriskrycho](https://github.com/chriskrycho))
+
+#### :memo: Documentation
+* [#437](https://github.com/true-myth/true-myth/pull/437) docs: include doc comments in published types ([@chriskrycho](https://github.com/chriskrycho))
+* [#434](https://github.com/true-myth/true-myth/pull/434) Update readme with v6.x requirements ([@bmakuh](https://github.com/bmakuh))
+
+#### :house: Internal
+* [#436](https://github.com/true-myth/true-myth/pull/436) chore: remove defunct parts of package ([@chriskrycho](https://github.com/chriskrycho))
+
+#### Committers: 2
+- Ben Makuh ([@bmakuh](https://github.com/bmakuh))
+- Chris Krycho ([@chriskrycho](https://github.com/chriskrycho))
+
 ## 6.1.0 (2022-07-08)
 
 #### :rocket: Enhancement
