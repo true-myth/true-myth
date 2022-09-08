@@ -1,0 +1,23 @@
+name: Greetings
+
+on: [pull_request_target, issues]
+
+jobs:
+  greeting:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/first-interaction@v1
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          issue-message: >
+            Thanks so much for filing this issue, and for using True Myth!
+
+            This repo is actively supported, but maintainers are busy. One of us
+            will be by soon to give it a look. If you don't hear from us within a
+            week, feel free to give us a gentle nudge.
+          pr-message: >
+            Thanks so much for this PR, and for using True Myth!
+
+            This repo is actively supported, but maintainers are busy. One of us
+            will be by soon to give it a look. If you don't hear from us within a
+            week, feel free to give us a gentle nudge.

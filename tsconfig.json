@@ -1,35 +1,17 @@
+// Development-mode tsconfig, which correctly resolves tests
 {
+  "extends": "./ts/base.tsconfig.json",
   "compilerOptions": {
-    "target": "es2015",
-    "declaration": true,
-    "stripInternal": true,
-
-    "strict": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
-    "noImplicitReturns": true,
-
-    "moduleResolution": "node",
-    "baseUrl": "./",
-
-    "rootDirs": [
-      "src"
-    ],
-
-    "sourceRoot": "./",
-    "sourceMap": true,
-    "inlineSources": true,
-
-    "experimentalDecorators": true
+    "noEmit": true,
+    "baseUrl": ".",
+    "paths": {
+      // These correspond to the public API imports as defined in `"exports"` in
+      // `package.json`. (This way the tests can run -- and, critically, they
+      // are usable in the editor! -- without having to prebuild the `src`
+      // directory.)
+      "true-myth": ["./src/public/index.js"],
+      "true-myth/*": ["./src/public/*.js"]
+    }
   },
-  "include": ["src"],
-  "typedocOptions": {
-    "out": "./docs",
-    "toc": false,
-    "excludePrivate": true,
-    "includes": "./src",
-    "target": "ES6",
-    "theme": "default",
-    "name": "True Myth"
-  }
+  "include": ["./src/**/*", "./test/**/*"]
 }

@@ -1,14 +1,14 @@
 # Maybe
 
-A [`Maybe<T>`](#maybe) represents a value of type `T` which may, or may not, be present.
+A [`Maybe<T>`](#Maybe) represents a value of type `T` which may, or may not, be present.
 
 If the value is present, it is `Just(value)`. If it's absent, it's `Nothing`. This provides a type-safe container for dealing with the possibility that there's nothing here – a container you can do many of the same things you might with an array – so that you can avoid nasty `null` and `undefined` checks throughout your codebase.
 
-The behavior of this type is checked by TypeScript or Flow at compile time, and bears no runtime overhead other than the very small cost of the container object and some lightweight wrap/unwrap functionality.
+The behavior of this type is checked by TypeScript at compile time, and bears no runtime overhead other than the very small cost of the container object and some lightweight wrap/unwrap functionality.
 
 The `Nothing` variant has a type parameter `<T>` so that type inference works correctly in TypeScript when operating on `Nothing` instances with functions which require a `T` to behave properly, e.g. [`map`][map], which cannot check that the map function satisfies the type constraints for `Maybe<T>` unless `Nothing` has a parameter `T` to constrain it on invocation.
 
-[map]: https://chriskrycho.github.io/true-myth/modules/_maybe_.html#map
+[map]: https://true-myth.js.org/modules/maybe.html#map
 
 Put simply: without the type parameter, if you had a `Nothing` variant of a `Maybe<string>`, and you tried to use it with a function which expected a `Maybe<number>` it would still type check – because TypeScript doesn't have enough information to check that it _doesn't_ meet the requirements.
 
@@ -55,7 +55,7 @@ import Maybe, { Just, Nothing } from 'true-myth/maybe';
 const aKnownNumber = new Just(12);
 
 // Once the item is constructed, you can apply methods directly on it.
-const fromMappedJust = aKnownNumber.map(x => x * 2).unwrapOr(0);
+const fromMappedJust = aKnownNumber.map((x) => x * 2).unwrapOr(0);
 console.log(fromMappedJust); // 24
 
 // Construct a `Nothing` where you don't have a value to use, but the
@@ -63,7 +63,7 @@ console.log(fromMappedJust); // 24
 const aKnownNothing = new Nothing();
 
 // The same operations will behave safely on a `Nothing` as on a `Just`:
-const fromMappedNothing = aKnownNothing.map(x => x * 2).unwrapOr(0);
+const fromMappedNothing = aKnownNothing.map((x) => x * 2).unwrapOr(0);
 console.log(fromMappedNothing); // 0
 
 // Construct a `Maybe` where you don't know whether the value will exist or
@@ -89,7 +89,7 @@ As you can see, it's often advantageous to use `Maybe.of` even if you're otherwi
 
 ### Prefer [`Maybe.of`][of]
 
-[of]: https://chriskrycho.github.io/true-myth/modules/_maybe_.html#of
+[of]: https://true-myth.js.org/modules/maybe.html#of
 
 In fact, if you're dealing with data you are not constructing directly yourself, **_always_** prefer to use [`Maybe.of`] to create a new `Maybe`. If an API lies to you for some reason and hands you an `undefined` or a `null` (even though you expect it to be an actual `T` in a specific scenario), the `.of()` function will still construct it correctly for you.
 
@@ -97,7 +97,7 @@ By contrast, if you do `Maybe.just(someVariable)` and `someVariable` is `null` o
 
 ### Writing type constraints
 
-Especially when constructing a `Nothing`, you may need to specify what _kind_ of `Nothing` it is. The TypeScript and Flow type systems can figure it out based on the value passed in for a `Just`, but there's no value to use with a `Nothing`, so you may have to specify it. In that case, you can write the type explicitly:
+Especially when constructing a `Nothing`, you may need to specify what _kind_ of `Nothing` it is. The TypeScript type system can figure it out based on the value passed in for a `Just`, but there's no value to use with a `Nothing`, so you may have to specify it. In that case, you can write the type explicitly:
 
 ```typescript
 import Maybe, { nothing } from 'true-myth/maybe';

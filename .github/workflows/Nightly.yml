@@ -1,0 +1,19 @@
+name: Nightly TypeScript Run
+
+# run the typescript@next Ember Try job...
+jobs:
+  ts-next:
+    name: typescript@next
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: volta-cli/action@v1
+      - run: yarn install --frozen-lockfile --non-interactive
+      - run: 'yarn add -D typescript@next'
+      - run: './node_modules/.bin/jest'
+
+# ...nightly at midnight
+on:
+  schedule:
+    - cron: 0 0 * * *
+  workflow_dispatch:

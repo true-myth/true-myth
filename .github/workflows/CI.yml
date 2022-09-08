@@ -1,0 +1,52 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  tests_linux:
+    name: 'Tests: ubuntu (node@${{ matrix.node-version }})'
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: ['14', '16', '18']
+
+    steps:
+      - uses: actions/checkout@v2
+      - uses: volta-cli/action@v1
+        with:
+          node-version: ${{ matrix.node-version }}
+      - run: yarn install --frozen-lockfile --non-interactive
+      - run: yarn test
+
+  tests_other:
+    name: 'Tests: ${{ matrix.os }}'
+    runs-on: '${{ matrix.os }}-latest'
+
+    strategy:
+      matrix:
+        os: [macOS, windows]
+
+    steps:
+      - uses: actions/checkout@v2
+      - uses: volta-cli/action@v1
+      - run: yarn install --frozen-lockfile --non-interactive
+      - run: yarn test
+
+  tests_ts:
+    name: 'Tests: TS ${{ matrix.ts-version }}'
+    runs-on: ubuntu-latest
+    continue-on-error: false
+    strategy:
+      matrix:
+        ts-version: ['4.7', 'next']
+
+    steps:
+      - uses: actions/checkout@v2
+      - uses: volta-cli/action@v1
+      - run: yarn install --frozen-lockfile --non-interactive
+      - run: yarn add -D typescript@${{ matrix.ts-version }}
+      - run: ./node_modules/.bin/jest

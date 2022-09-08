@@ -1,7 +1,12 @@
-import Unit from '../src/unit';
-import { assertType } from './lib/assert';
+import { expectTypeOf } from 'expect-type';
+import Unit from 'true-myth/unit';
+import { Unit as RexportedUnit } from 'true-myth';
 
 test('the unit type', () => {
-  expect(Unit).not.toEqual({});
-  assertType<Unit>(Unit);
+  expectTypeOf<Unit>().toEqualTypeOf<{}>();
+  expectTypeOf({}).toEqualTypeOf(Unit);
+  expectTypeOf<Unit>().toEqualTypeOf<RexportedUnit>();
+
+  expect(Unit).toEqual({});
+  expect(RexportedUnit).toEqual({});
 });
