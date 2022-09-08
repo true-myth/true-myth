@@ -39,6 +39,8 @@
 
 ## Overview <!-- omit in toc -->
 
+*NOTE: this documentation is for version 6.x onwards, [which requires using Node 16 module resolution](#requirements). If you cannot use that yet, please use version 5.x.*
+
 True Myth provides standard, type-safe wrappers and helper functions to help help you with two _extremely_ common cases in programming:
 
 - not having a value
@@ -48,6 +50,7 @@ You could implement all of these yourself – it's not hard! – but it's much 
 
 ### Contents <!-- omit in toc -->
 
+- [Requirements](#requirements)
 - [Setup](#setup)
   - [Basic bundle size info](#basic-bundle-size-info)
 - [Compatibility](#compatibility)
@@ -73,6 +76,17 @@ You could implement all of these yourself – it's not hard! – but it's much 
   - [Folktale?](#folktale)
   - [Sanctuary?](#sanctuary)
 - [What's with the name?](#whats-with-the-name)
+
+## Requirements
+- Node 14+
+
+*and if using TypeScript:*
+
+- TS 4.7+
+- `tsconfig.json`:
+  - `moduleResolution: "Node16"`
+  - `type: "module"` (or else use `import()` to import True Myth into a commonJS build)
+
 
 ## Setup
 
