@@ -39,7 +39,6 @@
     "build": "yarn clean && yarn tsc --project ts/publish.tsconfig.json",
     "clean": "rimraf ./dist",
     "doc": "./scripts/build-docs",
-    "lint": "yarn eslint src/*.ts test/*.ts",
     "prepublishOnly": "yarn test && yarn build",
     "postpublish": "yarn clean",
     "test": "jest",
