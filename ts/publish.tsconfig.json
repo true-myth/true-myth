@@ -3,7 +3,7 @@
   "extends": "./base.tsconfig.json",
   "include": ["../src"],
   "compilerOptions": {
-    "removeComments": true,
+    "removeComments": false,
     "declaration": true,
     "declarationMap": true,
     "sourceMap": true,
