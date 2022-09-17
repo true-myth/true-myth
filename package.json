@@ -52,9 +52,9 @@
   ],
   "license": "MIT",
   "devDependencies": {
-    "@types/jest": "^28.1.4",
+    "@types/jest": "^29.0.2",
     "expect-type": "^0.14.0",
-    "jest": "^28.1.2",
+    "jest": "^29.0.3",
     "prettier": "^2.7.1",
     "release-it": "^15.1.1",
     "release-it-lerna-changelog": "^5.0.0",
