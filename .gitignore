@@ -69,5 +69,8 @@ docs-dist
 # Exclude auto-created jsconfig.json
 jsconfig.json
 
+# Not intermediate/cache for TS
+*.tsbuildinfo
+
 # macOS ugh
 .DS_Store
