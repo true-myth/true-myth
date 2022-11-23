@@ -78,15 +78,15 @@ You could implement all of these yourself – it's not hard! – but it's much 
 - [What's with the name?](#whats-with-the-name)
 
 ## Requirements
+
 - Node 14+
-
-*and if using TypeScript:*
-
 - TS 4.7+
 - `tsconfig.json`:
   - `moduleResolution: "Node16"`
+- `package.json`
   - `type: "module"` (or else use `import()` to import True Myth into a commonJS build)
 
+For details on using a pure ES modules package in TypeScript, see [the TypeScript handbook's guide](https://www.typescriptlang.org/docs/handbook/esm-node.html).
 
 ## Setup
 
