@@ -1033,7 +1033,7 @@ export function equals<T>(mb: Maybe<T>, ma?: Maybe<T>): boolean | ((a: Maybe<T>)
       ```ts
       const add3 = (a: number) => (b: number) => (c: number) => a + b + c;
 
-      const maybeAdd = just(add); // Just((a: number) => (b: number) => (c: number) => a + b + c)
+      const maybeAdd = just(add3); // Just((a: number) => (b: number) => (c: number) => a + b + c)
       const maybeAdd1 = maybeAdd.ap(just(1)); // Just((b: number) => (c: number) => 1 + b + c)
       const maybeAdd1And2 = maybeAdd1.ap(just(2)) // Just((c: number) => 1 + 2 + c)
       const final = maybeAdd1.ap(just(3)); // Just(4)
