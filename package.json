@@ -41,8 +41,8 @@
     "doc": "./scripts/build-docs",
     "prepublishOnly": "yarn test && yarn build",
     "postpublish": "yarn clean",
-    "test": "jest",
-    "tdd": "jest --watch"
+    "test": "vitest run --coverage",
+    "tdd": "vitest"
   },
   "files": [
     "*.d.ts",
@@ -52,63 +52,18 @@
   ],
   "license": "MIT",
   "devDependencies": {
-    "@types/jest": "^29.0.2",
-    "expect-type": "^0.15.0",
-    "jest": "^29.0.3",
+    "@vitest/coverage-c8": "^0.29.8",
     "prettier": "^2.7.1",
     "release-it": "^15.1.1",
     "release-it-lerna-changelog": "^5.0.0",
     "rimraf": "^4.1.2",
     "shelljs": "^0.8.5",
-    "ts-jest": "^29.0.3",
     "typedoc": "^0.24.4",
-    "typescript": "~5.0"
+    "typescript": "~5.0",
+    "vitest": "^0.29.8"
   },
   "engines": {
     "node": "14.* || 16.* || >= 18.*"
-  },
-  "jest": {
-    "preset": "ts-jest/presets/default-esm",
-    "extensionsToTreatAsEsm": [
-      ".ts"
-    ],
-    "moduleNameMapper": {
-      "^true-myth/(.*)$": "<rootDir>/src/public/$1",
-      "^true-myth$": "<rootDir>/src/public/index.ts",
-      "^(\\.{1,2}/.*)\\.js$": "$1"
-    },
-    "moduleDirectories": [
-      "node_modules",
-      "src"
-    ],
-    "collectCoverage": true,
-    "collectCoverageFrom": [
-      "src/**/*"
-    ],
-    "coveragePathIgnorePatterns": [
-      "/node_modules/",
-      "/\\.node_modules/",
-      "src/index.ts",
-      "\\.+\\.d\\.ts"
-    ],
-    "coverageThreshold": {
-      "global": {
-        "branches": 100,
-        "functions": 100,
-        "statements": 100,
-        "lines": 100
-      }
-    },
-    "globals": {
-      "ts-jest": {
-        "diagnostics": {
-          "ignoreCodes": [
-            151001
-          ]
-        },
-        "tsconfig": "./tsconfig.json"
-      }
-    }
   },
   "prettier": {
     "printWidth": 100,

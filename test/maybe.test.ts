@@ -1,7 +1,7 @@
-import { expectTypeOf } from 'expect-type';
 import Maybe, { Variant, Nothing, Just, Matcher } from 'true-myth/maybe';
 import * as MaybeNS from 'true-myth/maybe';
 import { Unit } from 'true-myth/unit';
+import { describe, expect, expectTypeOf, test } from 'vitest';
 
 type Neat = { neat: string };
 
@@ -493,7 +493,7 @@ describe('`Maybe` pure functions', () => {
     if (MaybeNS.isJust(testJust)) {
       expect(testJust.value).toEqual('test');
     } else {
-      fail('Expected a Just');
+      expect.fail('Expected a Just');
     }
   });
 
