@@ -4953,10 +4953,10 @@ typedarray-to-buffer@^3.1.5:
   dependencies:
     is-typedarray "^1.0.0"
 
-typedoc@^0.23.6:
-  version "0.23.28"
-  resolved "https://registry.yarnpkg.com/typedoc/-/typedoc-0.23.28.tgz#3ce9c36ef1c273fa849d2dea18651855100d3ccd"
-  integrity sha512-9x1+hZWTHEQcGoP7qFmlo4unUoVJLB0H/8vfO/7wqTnZxg4kPuji9y3uRzEu0ZKez63OJAUmiGhUrtukC6Uj3w==
+typedoc@^0.24.1:
+  version "0.24.1"
+  resolved "https://registry.yarnpkg.com/typedoc/-/typedoc-0.24.1.tgz#6b793a800400d46ec1b93246d175608626275c0b"
+  integrity sha512-u4HwjZcSQhQSkkhLjgcs0ooAf6HrFVLDHHrwU2xZW8WxH0KnGZlNkaWxiOcK5Gagj7mxJSgwWx0dv8ACDAOXAQ==
   dependencies:
     lunr "^2.3.9"
     marked "^4.2.12"
