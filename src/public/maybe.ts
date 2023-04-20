@@ -330,7 +330,7 @@ export const just = MaybeImpl.just;
 
 /**
   Is the {@linkcode Maybe} a {@linkcode Just}?
- 
+
   @typeparam T The type of the item contained in the `Maybe`.
   @param maybe The `Maybe` to check.
   @returns A type guarded `Just`.
@@ -341,7 +341,7 @@ export function isJust<T>(maybe: Maybe<T>): maybe is Just<T> {
 
 /**
   Is the {@linkcode Maybe} a {@linkcode Nothing}?
-  
+
   @typeparam T The type of the item contained in the `Maybe`.
   @param maybe The `Maybe` to check.
   @returns A type guarded `Nothing`.
@@ -983,7 +983,7 @@ export function equals<T>(mb: Maybe<T>, ma?: Maybe<T>): boolean | ((a: Maybe<T>)
   import Maybe from 'true-myth/maybe';
   import { is as immutableIs, Set } from 'immutable';
 
-  const is = (first: unknown) =>  (second: unknown) => 
+  const is = (first: unknown) =>  (second: unknown) =>
     immutableIs(first, second);
 
   const x = Maybe.of(Set.of(1, 2, 3));
@@ -1095,10 +1095,10 @@ export type NarrowingPredicate<T, U extends T> = (
 // `Array.prototype.find`.
 /**
   Safely search for an element in an array.
-  
+
   This function behaves like `Array.prototype.find`, but returns `Maybe<T>`
   instead of `T | undefined`.
-  
+
   ## Examples
 
   The basic form is:
@@ -1135,7 +1135,7 @@ export type NarrowingPredicate<T, U extends T> = (
       }
     });
   ```
-  
+
   @param predicate  A function to execute on each value in the array, returning
                     `true` when the item in the array matches the condition. The
                     signature for `predicate` is identical to the signature for
@@ -1221,13 +1221,13 @@ export function last<T>(array: Array<T | null | undefined>): Maybe<T> {
   and `Nothing` respectively.
 
   ```ts
-  import Maybe from 'true-myth/maybe';
+  import {Maybe, transposeArray} from 'true-myth/maybe';
 
   let valid = [Maybe.just(2), Maybe.just('three')];
-  let allJust = Maybe.arrayTranspose(valid); // => Just([2, 'three']);
+  let allJust = transposeArray(valid); // => Just([2, 'three']);
 
   let invalid = [Maybe.just(2), Maybe.nothing<string>()];
-  let mixed = Maybe.arrayTranspose(invalid); // => Nothing
+  let mixed = transposeArray(invalid); // => Nothing
   ```
 
   When working with a tuple type, the structure of the tuple is preserved. Here,
@@ -1235,12 +1235,12 @@ export function last<T>(array: Array<T | null | undefined>): Maybe<T> {
   `Nothing`:
 
   ```ts
-  import Maybe from 'true-myth/maybe';
+  import {Maybe, transposeArray} from 'true-myth/maybe';
 
   type Tuple = [Maybe<string>, Maybe<number>];
 
   let invalid: Tuple = [Maybe.just('wat'), Maybe.nothing()];
-  let result = Maybe.arrayTranspose(invalid);  // => Nothing
+  let result = transposeArray(invalid);  // => Nothing
   ```
 
   If all of the items in the tuple are `Just`, the result is `Just` wrapping the
@@ -1248,16 +1248,16 @@ export function last<T>(array: Array<T | null | undefined>): Maybe<T> {
   type `Maybe<[string, number]>` and will be `Just(['hey', 12]`:
 
   ```ts
-  import Maybe from 'true-myth/maybe';
+  import {Maybe, transposeArray} from 'true-myth/maybe';
 
   type Tuple = [Maybe<string>, Maybe<number>];
 
   let valid: Tuple = [Maybe.just('hey'), Maybe.just(12)];
-  let result = Maybe.arrayTranspose(valid);  // => Just(['hey', 12])
+  let result = transposeArray(valid);  // => Just(['hey', 12])
   ```
 
   __Note:__ this does not work with `ReadonlyArray`. If you have a
-  `ReadonlyArray` you wish to operate on, you must cast it to `Array` insetad.
+  `ReadonlyArray` you wish to operate on, you must cast it to `Array` instead.
   This cast is always safe here, because `Array` is a *wider* type than
   `ReadonlyArray`.
 
@@ -1480,7 +1480,7 @@ export function get<T, K extends keyof T>(
 export function wrapReturn<
   F extends AnyFunction,
   P extends Parameters<F>,
-  R extends NonNullable<ReturnType<F>>
+  R extends NonNullable<ReturnType<F>>,
 >(fn: F): (...args: P) => Maybe<R> {
   return (...args) => Maybe.of(fn(...args)) as Maybe<R>;
 }
