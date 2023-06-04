@@ -49,4 +49,4 @@ jobs:
       - uses: volta-cli/action@v1
       - run: yarn install --frozen-lockfile --non-interactive
       - run: yarn add -D typescript@${{ matrix.ts-version }}
-      - run: yarn test
+      - run: yarn type-check

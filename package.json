@@ -42,7 +42,8 @@
     "prepublishOnly": "yarn test && yarn build",
     "postpublish": "yarn clean",
     "test": "vitest run --coverage",
-    "tdd": "vitest"
+    "tdd": "vitest",
+    "type-check": "tsc --noEmit --skipLibCheck"
   },
   "files": [
     "*.d.ts",
