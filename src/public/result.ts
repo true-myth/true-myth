@@ -1,6 +1,6 @@
 /**
   [[include:doc/result.md]]
-  
+
   @module
  */
 
@@ -219,6 +219,10 @@ class ResultImpl<T, E> {
   ap<A, B>(this: Result<(a: A) => B, E>, r: Result<A, E>): Result<B, E> {
     return r.andThen((val) => this.map((fn) => fn(val)));
   }
+
+  cast() {
+    return this;
+  }
 }
 
 /**
@@ -229,13 +233,14 @@ class ResultImpl<T, E> {
   @typeparam T The type wrapped in this `Ok` variant of `Result`.
   @typeparam E The type which would be wrapped in an `Err` variant of `Result`.
  */
-export interface Ok<T, E> extends Omit<ResultImpl<T, E>, 'error'> {
+export interface Ok<T, E> extends Omit<ResultImpl<T, E>, 'error' | 'cast'> {
   /** `Ok` is always [`Variant.Ok`](../enums/_result_.variant#ok). */
   readonly variant: 'Ok';
   isOk: true;
   isErr: false;
   /** The wrapped value */
   value: T;
+  cast<F>(): Result<T, F>;
 }
 
 /**
@@ -246,13 +251,14 @@ export interface Ok<T, E> extends Omit<ResultImpl<T, E>, 'error'> {
   @typeparam T The type which would be wrapped in an `Ok` variant of `Result`.
   @typeparam E The type wrapped in this `Err` variant of `Result`.
   */
-export interface Err<T, E> extends Omit<ResultImpl<T, E>, 'value'> {
+export interface Err<T, E> extends Omit<ResultImpl<T, E>, 'value' | 'cast'> {
   /** `Err` is always [`Variant.Err`](../enums/_result_.variant#err). */
   readonly variant: 'Err';
   isOk: false;
   isErr: true;
   /** The wrapped error value. */
   error: E;
+  cast<U>(): Result<U, E>;
 }
 
 /**
@@ -343,7 +349,7 @@ export const ok = ResultImpl.ok;
 
 /**
   Is the {@linkcode Result} an {@linkcode Ok}?
- 
+
   @typeparam T The type of the item contained in the `Result`.
   @param result The `Result` to check.
   @returns A type guarded `Ok`.
@@ -354,7 +360,7 @@ export function isOk<T, E>(result: Result<T, E>): result is Ok<T, E> {
 
 /**
   Is the {@linkcode Result} an {@linkcode Err}?
-  
+
   @typeparam T The type of the item contained in the `Result`.
   @param result The `Result` to check.
   @returns A type guarded `Err`.
@@ -1138,7 +1144,7 @@ export function equals<T, E>(
   import { ok } from 'true-myth/result';
   import { is as immutableIs, Set } from 'immutable';
 
-  const is = (first: unknown) =>  (second: unknown) => 
+  const is = (first: unknown) =>  (second: unknown) =>
     immutableIs(first, second);
 
   const x = ok(Set.of(1, 2, 3));
