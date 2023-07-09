@@ -1,7 +1,7 @@
-import { expectTypeOf } from 'expect-type';
 import Result, { Ok, Variant, Err } from 'true-myth/result';
 import * as ResultNS from 'true-myth/result';
 import Unit from 'true-myth/unit';
+import { describe, expect, expectTypeOf, test } from 'vitest';
 
 const length = (x: { length: number }) => x.length;
 const double = (x: number) => x * 2;
@@ -229,7 +229,7 @@ describe('`Result` pure functions', () => {
       expect(() => anOk.value).not.toThrow();
       expect(anOk.value).toBe(theValue);
     } else {
-      fail('Not an Ok');
+      expect.fail('Not an Ok');
     }
 
     const theErrValue = 'oh no';
@@ -238,7 +238,7 @@ describe('`Result` pure functions', () => {
       // @ts-expect-error
       expect(() => anErr.value).toThrow();
     } else {
-      fail('Not an Err');
+      expect.fail('Not an Err');
     }
   });
 
@@ -250,7 +250,7 @@ describe('`Result` pure functions', () => {
       // @ts-expect-error
       expect(() => anOk.error).toThrow();
     } else {
-      fail('Not an Ok');
+      expect.fail('Not an Ok');
     }
 
     const theErrValue = 'oh no';
@@ -259,7 +259,7 @@ describe('`Result` pure functions', () => {
       expect(() => anErr.error).not.toThrow();
       expect(anErr.error).toBe(theErrValue);
     } else {
-      fail('Not an Err');
+      expect.fail('Not an Err');
     }
   });
 
@@ -419,7 +419,7 @@ describe('`Result` pure functions', () => {
     if (ResultNS.isOk(testOk)) {
       expect(testOk.value).toEqual(42);
     } else {
-      fail('Expected an Ok');
+      expect.fail('Expected an Ok');
     }
   });
 
@@ -447,7 +447,7 @@ describe('`Result` pure functions', () => {
     if (ResultNS.isOk(testOk)) {
       expect(testOk.value).toEqual(42);
     } else {
-      fail('Expected an Ok');
+      expect.fail('Expected an Ok');
     }
   });
 
@@ -520,7 +520,7 @@ describe('`Ok` instance', () => {
     if (theOk.isOk) {
       expect(theOk.value).toEqual(okValue);
     } else {
-      fail('Not an Ok');
+      expect.fail('Not an Ok');
     }
   });
 
@@ -528,7 +528,7 @@ describe('`Ok` instance', () => {
     let result = Result.ok('yeat');
 
     if (result.isErr) {
-      expectTypeOf<typeof result['error']>().toBeUnknown();
+      expectTypeOf<(typeof result)['error']>().toBeUnknown();
     }
     if (result.isOk) {
       // @ts-expect-error
@@ -634,7 +634,7 @@ describe('`Ok` instance', () => {
       expect(() => theOk.value).not.toThrow();
       expect(theOk.value).toEqual(theValue);
     } else {
-      fail('Not an Ok');
+      expect.fail('Not an Ok');
     }
   });
 
@@ -645,7 +645,7 @@ describe('`Ok` instance', () => {
       // @ts-expect-error
       expect(() => theOk.error).toThrow();
     } else {
-      fail('Not an Ok');
+      expect.fail('Not an Ok');
     }
   });
 
@@ -707,7 +707,7 @@ describe('`ResultNS.Err` class', () => {
     if (theErr.isErr) {
       expect(theErr.error).toBe(errValue);
     } else {
-      fail('Not an Err');
+      expect.fail('Not an Err');
     }
   });
 
@@ -813,7 +813,7 @@ describe('`ResultNS.Err` class', () => {
       // @ts-expect-error
       expect(() => theErr.value).toThrow();
     } else {
-      fail('Not an Err');
+      expect.fail('Not an Err');
     }
   });
 
@@ -824,7 +824,7 @@ describe('`ResultNS.Err` class', () => {
       expect(() => theErr.error).not.toThrow();
       expect(theErr.error).toBe(theReason);
     } else {
-      fail('Not an Err');
+      expect.fail('Not an Err');
     }
   });
 
