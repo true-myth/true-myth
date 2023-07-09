@@ -62,7 +62,7 @@
     "shelljs": "^0.8.5",
     "ts-jest": "^29.0.3",
     "typedoc": "^0.24.4",
-    "typescript": "~5.0"
+    "typescript": "~5.1"
   },
   "engines": {
     "node": "14.* || 16.* || >= 18.*"
