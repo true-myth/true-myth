@@ -61,7 +61,7 @@
     "shelljs": "^0.8.5",
     "typedoc": "^0.24.4",
     "typescript": "~5.1",
-    "vitest": "^0.29.8"
+    "vitest": "^0.33.0"
   },
   "engines": {
     "node": "18.* || >= 20.*"
