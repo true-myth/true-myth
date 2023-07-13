@@ -686,6 +686,43 @@ describe('`Ok` instance', () => {
 
     expect(result.toString()).toEqual(`Ok(5)`);
   });
+
+  test('`cast` method', () => {
+    const val = Result.ok<string, string>('hello');
+
+    // In the fully general `.cast()` case, we expect both sides to end up as
+    // `unknown`, though in a bit of a surprising way:
+    //
+    // - `Ok<string, string>.cast()` -> `Result<string, unknown>`
+    // - `Err<string, string>.cast()` -> `Result<unknown, string>`
+    //
+    // The net is that it is impossible to recover the original underlying type,
+    // and this is therefore not something you would use!
+    let throwAwayAllData = val.cast();
+    if (throwAwayAllData.isOk) {
+      expectTypeOf(throwAwayAllData.value).toBeUnknown();
+    } else {
+      expectTypeOf(throwAwayAllData.error).toBeUnknown();
+    }
+
+    // But if we narrow *first*, we can produce
+
+    function castOk(result: Result<string, string>): Result<string, number> {
+      return result.isErr ? Result.err(result.error.length) : result.cast();
+    }
+    function castErr(result: Result<string, string>): Result<number, string> {
+      return result.isOk ? Result.ok(result.value.length) : result.cast();
+    }
+
+    let anOk = Result.ok<string, string>('true');
+    let anErr = Result.err<string, string>('false');
+
+    expect(castOk(anOk)).toBe(anOk);
+    expect(castOk(anErr)).not.toBe(anErr);
+
+    expect(castErr(anOk)).not.toBe(anOk);
+    expect(castErr(anErr)).toBe(anErr);
+  });
 });
 
 describe('`ResultNS.Err` class', () => {
