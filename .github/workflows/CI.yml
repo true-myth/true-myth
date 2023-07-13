@@ -19,7 +19,7 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
-      - uses: volta-cli/action@v1
+      - uses: volta-cli/action@v4
         with:
           node-version: ${{ matrix.node-version }}
       - run: pnpm install
@@ -35,7 +35,7 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
-      - uses: volta-cli/action@v1
+      - uses: volta-cli/action@v4
       - run: pnpm install
       - run: pnpm test
 
@@ -49,7 +49,7 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
-      - uses: volta-cli/action@v1
+      - uses: volta-cli/action@v4
       - run: pnpm install
       - run: pnpm add --save-dev typescript@${{ matrix.ts-version }}
       - run: pnpm type-check
