@@ -55,8 +55,8 @@
   "devDependencies": {
     "@vitest/coverage-c8": "^0.29.8",
     "prettier": "^3.0.0",
-    "release-it": "^15.1.1",
-    "release-it-lerna-changelog": "^5.0.0",
+    "release-it": "^16.0.0",
+    "@release-it-plugins/lerna-changelog": "^6.0.0",
     "rimraf": "^5.0.1",
     "shelljs": "^0.8.5",
     "typedoc": "^0.24.4",
@@ -64,7 +64,7 @@
     "vitest": "^0.29.8"
   },
   "engines": {
-    "node": "14.* || 16.* || >= 18.*"
+    "node": "18.* || >= 20.*"
   },
   "prettier": {
     "printWidth": 100,
@@ -85,8 +85,7 @@
     }
   },
   "volta": {
-    "node": "14.19.1",
-    "yarn": "1.22.17",
-    "npm": "7.1.2"
+    "node": "18.16.1",
+    "pnpm": "8.6.7"
   }
 }
