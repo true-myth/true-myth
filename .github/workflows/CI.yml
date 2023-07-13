@@ -6,6 +6,9 @@ on:
       - main
   pull_request:
 
+env:
+  VOLTA_FEATURE_PNPM: 1
+
 jobs:
   tests_linux:
     name: 'Tests: ubuntu (node@${{ matrix.node-version }})'
@@ -19,8 +22,8 @@ jobs:
       - uses: volta-cli/action@v1
         with:
           node-version: ${{ matrix.node-version }}
-      - run: yarn install --frozen-lockfile --non-interactive
-      - run: yarn test
+      - run: pnpm install
+      - run: pnpm test
 
   tests_other:
     name: 'Tests: ${{ matrix.os }}'
@@ -33,8 +36,8 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - uses: volta-cli/action@v1
-      - run: yarn install --frozen-lockfile --non-interactive
-      - run: yarn test
+      - run: pnpm install
+      - run: pnpm test
 
   tests_ts:
     name: 'Tests: TS ${{ matrix.ts-version }}'
@@ -47,6 +50,6 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - uses: volta-cli/action@v1
-      - run: yarn install --frozen-lockfile --non-interactive
-      - run: yarn add -D typescript@${{ matrix.ts-version }}
-      - run: yarn type-check
+      - run: pnpm install
+      - run: pnpm add --save-dev typescript@${{ matrix.ts-version }}
+      - run: pnpm type-check
