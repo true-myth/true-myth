@@ -7,7 +7,12 @@
   @packageDocumentation
  */
 
-export { Maybe } from './maybe.js';
-export { Result } from './result.js';
-export { Unit } from './unit.js';
+export { default as Maybe } from './maybe.js';
+export * as MaybeNS from './maybe.js';
+
+export { default as Result } from './result.js';
+export * as ResultNS from './result.js';
+
+export { default as Unit } from './unit.js';
+
 export * as Toolbelt from './toolbelt.js';

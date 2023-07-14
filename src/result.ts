@@ -5,7 +5,7 @@
  */
 
 import Unit from './unit.js';
-import { curry1, isVoid, safeToString } from '../-private/utils.js';
+import { curry1, isVoid, safeToString } from './-private/utils.js';
 
 /**
   Discriminant for {@linkcode Ok} and {@linkcode Err} variants of the

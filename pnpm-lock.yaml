@@ -8,9 +8,15 @@ devDependencies:
   '@release-it-plugins/lerna-changelog':
     specifier: ^6.0.0
     version: 6.0.0(release-it@16.0.0)
+  '@types/node':
+    specifier: ^20.4.2
+    version: 20.4.2
   '@vitest/coverage-v8':
     specifier: ^0.33.0
     version: 0.33.0(vitest@0.33.0)
+  miniglob:
+    specifier: ^0.1.2
+    version: 0.1.2
   prettier:
     specifier: ^3.0.0
     version: 3.0.0
@@ -2931,6 +2937,11 @@ packages:
   /mimic-response@4.0.0:
     resolution: {integrity: sha512-e5ISH9xMYU0DzrT+jl8q2ze9D6eWBto+I8CNpe+VI+K2J/F/k3PdkdTdz4wvGVH4NTpo+NRYTVIuMQEMMcsLqg==}
     engines: {node: ^12.20.0 || ^14.13.1 || >=16.0.0}
+    dev: true
+
+  /miniglob@0.1.2:
+    resolution: {integrity: sha512-AJATXQn1SYAQyTxAOQwRDZrwre3W/wMiVMFehY0hxDE1vrMITU2NDUd8BNNb8taheIxb3f9n31kp/Ze8h91iUg==}
+    engines: {node: '>=10.0.0'}
     dev: true
 
   /minimatch@3.1.2:
