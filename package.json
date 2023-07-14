@@ -68,7 +68,9 @@
     "*.d.ts",
     "*.d.ts.map",
     "dist",
-    "src"
+    "src",
+    "README.md",
+    "CHANGELOG.md"
   ],
   "license": "MIT",
   "devDependencies": {
