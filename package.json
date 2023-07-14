@@ -65,8 +65,6 @@
     "type-check": "tsc --noEmit --skipLibCheck"
   },
   "files": [
-    "*.d.ts",
-    "*.d.ts.map",
     "dist",
     "src",
     "README.md",
