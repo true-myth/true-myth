@@ -9,7 +9,7 @@ import { curry1, isVoid, safeToString } from './-private/utils.js';
 /**
   Discriminant for the {@linkcode Just} and {@linkcode Nothing} type instances.
 
-  You can use the discriminant via the `variant` property of {@linkcode Maybe}¿
+  You can use the discriminant via the `variant` property of {@linkcode Maybe}
   instances if you need to match explicitly on it.
  */
 export const Variant = {
