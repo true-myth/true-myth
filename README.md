@@ -79,7 +79,7 @@ You could implement all of these yourself – it's not hard! – but it's much 
 
 ## Requirements
 
-- Node 14+
+- Node 18+
 - TS 4.7+
 - `tsconfig.json`:
   - `moduleResolution: "Node16"`
