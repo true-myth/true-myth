@@ -4,7 +4,7 @@ import path from 'path';
 export default defineConfig({
   test: {
     alias: {
-      'true-myth': path.resolve(__dirname, './src/public'),
+      'true-myth': path.resolve(__dirname, './src'),
     },
     include: ['test/*.test.ts'],
     coverage: {

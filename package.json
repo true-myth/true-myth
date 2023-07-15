@@ -21,14 +21,33 @@
   },
   "version": "6.2.0",
   "type": "module",
-  "main": "dist/public/index.js",
-  "module": "dist/public/index.js",
+  "main": "dist/es/index.js",
+  "module": "dist/es/index.js",
   "exports": {
-    ".": "./dist/public/index.js",
+    ".": {
+      "import": {
+        "types": "./dist/es/index.d.ts",
+        "default": "./dist/es/index.js"
+      },
+      "require": {
+        "types": "./dist/cjs/index.d.cts",
+        "default": "./dist/cjs/index.js"
+      }
+    },
     "./package.json": "./package.json",
-    "./*": "./dist/public/*.js"
+    "./*": {
+      "import": {
+        "types": "./dist/es/*.d.ts",
+        "default": "./dist/es/*.js"
+      },
+      "require": {
+        "types": "./dist/cjs/*.d.cts",
+        "default": "./dist/cjs/*.cjs"
+      }
+    },
+    "./-private/*": null
   },
-  "types": "dist/public/index.d.ts",
+  "types": "dist/es/index.d.ts",
   "keywords": [
     "typescript",
     "functional programming",
@@ -36,7 +55,7 @@
     "result"
   ],
   "scripts": {
-    "build": "yarn clean && yarn tsc --project ts/publish.tsconfig.json",
+    "build": "node ./ts/publish.js",
     "clean": "rimraf ./dist",
     "doc": "./scripts/build-docs",
     "prepublishOnly": "yarn test && yarn build",
@@ -46,17 +65,19 @@
     "type-check": "tsc --noEmit --skipLibCheck"
   },
   "files": [
-    "*.d.ts",
-    "*.d.ts.map",
     "dist",
-    "src"
+    "src",
+    "README.md",
+    "CHANGELOG.md"
   ],
   "license": "MIT",
   "devDependencies": {
+    "@release-it-plugins/lerna-changelog": "^6.0.0",
+    "@types/node": "^20.4.2",
     "@vitest/coverage-v8": "^0.33.0",
+    "miniglob": "^0.1.2",
     "prettier": "^3.0.0",
     "release-it": "^16.0.0",
-    "@release-it-plugins/lerna-changelog": "^6.0.0",
     "rimraf": "^5.0.1",
     "shelljs": "^0.8.5",
     "typedoc": "^0.24.4",

@@ -9,8 +9,8 @@
       // `package.json`. (This way the tests can run -- and, critically, they
       // are usable in the editor! -- without having to prebuild the `src`
       // directory.)
-      "true-myth": ["./src/public/index.ts"],
-      "true-myth/*": ["./src/public/*.ts"]
+      "true-myth": ["./src/index.ts"],
+      "true-myth/*": ["./src/*.ts"]
     }
   },
   "include": ["./src/**/*", "./test/**/*"]
