@@ -4,6 +4,9 @@ on:
   release:
   workflow_dispatch:
 
+env:
+  VOLTA_FEATURE_PNPM: 1
+
 jobs:
   publish:
     name: 'Build and publish docs'
@@ -11,12 +14,12 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
-      - uses: volta-cli/action@v1
+      - uses: volta-cli/action@v4
 
-      - run: yarn install --frozen-lockfile --non-interactive
+      - run: pnpm install
 
       - name: Build docs
-        run: yarn doc
+        run: pnpm doc
 
       - name: Publish docs
         uses: JamesIves/github-pages-deploy-action@v4.3.0
