@@ -6,6 +6,29 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 
 
+
+## 7.0.0 (2023-07-15)
+
+#### :boom: Breaking Change
+* [#562](https://github.com/true-myth/true-myth/pull/562) [Breaking] Require Node 18, adopt pnpm, use latest release-it ([@chriskrycho](https://github.com/chriskrycho))
+
+#### :rocket: Enhancement
+* [#567](https://github.com/true-myth/true-myth/pull/567) Publish True Myth as a dual-mode package (ESM + CJS) ([@chriskrycho](https://github.com/chriskrycho))
+* [#561](https://github.com/true-myth/true-myth/pull/561) Add type-safe `Ok.cast()` and `Err.cast()` methods ([@chriskrycho](https://github.com/chriskrycho))
+* [#552](https://github.com/true-myth/true-myth/pull/552) Add support for TypeScript 5.0 and 5.1 ([@dependabot[bot]](https://github.com/apps/dependabot))
+* [#469](https://github.com/true-myth/true-myth/pull/469) Add support for TypeScript 4.9 ([@dependabot[bot]](https://github.com/apps/dependabot))
+
+#### :memo: Documentation
+* [#568](https://github.com/true-myth/true-myth/pull/568) Upgrade to latest TypeDoc ([@chriskrycho](https://github.com/chriskrycho))
+
+#### :house: Internal
+* [#566](https://github.com/true-myth/true-myth/pull/566) Use pnpm in CI ([@chriskrycho](https://github.com/chriskrycho))
+
+#### Committers: 3
+- Chris Krycho ([@chriskrycho](https://github.com/chriskrycho))
+- Josh Martinez ([@jm4rtinez](https://github.com/jm4rtinez))
+- [@DaviDevMod](https://github.com/DaviDevMod)
+
 ## 6.2.0 (2022-09-08)
 
 #### :rocket: Enhancement
