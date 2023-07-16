@@ -1221,13 +1221,13 @@ export function last<T>(array: Array<T | null | undefined>): Maybe<T> {
   and `Nothing` respectively.
 
   ```ts
-  import Maybe from 'true-myth/maybe';
+  import Maybe, { transposeArray } from 'true-myth/maybe';
 
   let valid = [Maybe.just(2), Maybe.just('three')];
-  let allJust = Maybe.arrayTranspose(valid); // => Just([2, 'three']);
+  let allJust = transposeArray(valid); // => Just([2, 'three']);
 
   let invalid = [Maybe.just(2), Maybe.nothing<string>()];
-  let mixed = Maybe.arrayTranspose(invalid); // => Nothing
+  let mixed = transposeArray(invalid); // => Nothing
   ```
 
   When working with a tuple type, the structure of the tuple is preserved. Here,
@@ -1235,12 +1235,12 @@ export function last<T>(array: Array<T | null | undefined>): Maybe<T> {
   `Nothing`:
 
   ```ts
-  import Maybe from 'true-myth/maybe';
+  import Maybe, { transposeArray } from 'true-myth/maybe';
 
   type Tuple = [Maybe<string>, Maybe<number>];
 
   let invalid: Tuple = [Maybe.just('wat'), Maybe.nothing()];
-  let result = Maybe.arrayTranspose(invalid);  // => Nothing
+  let result = transposeArray(invalid);  // => Nothing
   ```
 
   If all of the items in the tuple are `Just`, the result is `Just` wrapping the
@@ -1248,12 +1248,12 @@ export function last<T>(array: Array<T | null | undefined>): Maybe<T> {
   type `Maybe<[string, number]>` and will be `Just(['hey', 12]`:
 
   ```ts
-  import Maybe from 'true-myth/maybe';
+  import Maybe, { transposeArray } from 'true-myth/maybe';
 
   type Tuple = [Maybe<string>, Maybe<number>];
 
   let valid: Tuple = [Maybe.just('hey'), Maybe.just(12)];
-  let result = Maybe.arrayTranspose(valid);  // => Just(['hey', 12])
+  let result = transposeArray(valid);  // => Just(['hey', 12])
   ```
 
   __Note:__ this does not work with `ReadonlyArray`. If you have a
