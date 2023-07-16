@@ -7,6 +7,18 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 
 
+
+## 7.0.1 (2023-07-16)
+
+#### :bug: Bug Fix
+* [#570](https://github.com/true-myth/true-myth/pull/570) Fix CJS import location in package `exports` map ([@chriskrycho](https://github.com/chriskrycho))
+
+#### :house: Internal
+* [#569](https://github.com/true-myth/true-myth/pull/569) Fix docs publishing GH Action ([@chriskrycho](https://github.com/chriskrycho))
+
+#### Committers: 1
+- Chris Krycho ([@chriskrycho](https://github.com/chriskrycho))
+
 ## 7.0.0 (2023-07-15)
 
 #### :boom: Breaking Change
