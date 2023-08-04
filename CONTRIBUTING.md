@@ -33,7 +33,7 @@ Once you have followed the steps above and are working on a new contribution, yo
 -   Install its dependencies:
 
     ```sh
-    $ yarn
+    $ pnpm install
     ```
 
     Note that we use [Volta](https://volta.sh) to manage our JavaScript toolchain. If you are having problems getting the project, you should start by installing Volta, which will give you the same versions of Node and Yarn we use for development and testing.

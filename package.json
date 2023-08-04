@@ -58,8 +58,8 @@
     "build": "node ./ts/publish.js",
     "clean": "rimraf ./dist",
     "doc": "./scripts/build-docs",
-    "prepublishOnly": "yarn test && yarn build",
-    "postpublish": "yarn clean",
+    "prepublishOnly": "pnpm test && pnpm build",
+    "postpublish": "pnpm clean",
     "test": "vitest run --coverage",
     "tdd": "vitest",
     "type-check": "tsc --noEmit --skipLibCheck"
