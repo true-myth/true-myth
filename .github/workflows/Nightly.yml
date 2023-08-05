@@ -1,5 +1,8 @@
 name: Nightly TypeScript Run
 
+env:
+  VOLTA_FEATURE_PNPM: 1
+
 # run the typescript@next Ember Try job...
 jobs:
   ts-next:
@@ -7,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - uses: volta-cli/action@v1
+      - uses: volta-cli/action@v4
       - run: pnpm install
       - run: pnpm add --save-dev typescript@next
       - run: pnpm type-check
