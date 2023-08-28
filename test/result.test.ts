@@ -440,34 +440,6 @@ describe('`Result` pure functions', () => {
 
     expect(ResultNS.isErr(testErr)).toEqual(true);
   });
-
-  test('`isOk` with an Ok', () => {
-    const testOk: Result<number, string> = ResultNS.ok(42);
-
-    if (ResultNS.isOk(testOk)) {
-      expect(testOk.value).toEqual(42);
-    } else {
-      expect.fail('Expected an Ok');
-    }
-  });
-
-  test('`isOk` with an Err', () => {
-    const testErr: Result<number, string> = ResultNS.err('');
-
-    expect(ResultNS.isOk(testErr)).toEqual(false);
-  });
-
-  test('`isErr` with an Ok', () => {
-    const testOk: Result<number, string> = ResultNS.ok(42);
-
-    expect(ResultNS.isErr(testOk)).toEqual(false);
-  });
-
-  test('`isErr` with an Err', () => {
-    const testErr: Result<number, string> = ResultNS.err('');
-
-    expect(ResultNS.isErr(testErr)).toEqual(true);
-  });
 });
 
 // We aren't even really concerned with the "runtime" behavior here, which we
