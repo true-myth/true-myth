@@ -26,8 +26,12 @@ describe('`Result` pure functions', () => {
     expect(withUnit).toEqual(ResultNS.ok(Unit));
 
     const withUnitFromImport = Result.ok();
-    expectTypeOf(withUnit).toEqualTypeOf<Result<Unit, unknown>>();
+    expectTypeOf(withUnitFromImport).toEqualTypeOf<Result<Unit, unknown>>();
     expect(withUnitFromImport).toEqual(Result.ok(Unit));
+
+    const withUndefined = Result.ok(undefined);
+    expectTypeOf(withUndefined).toEqualTypeOf<Result<undefined, unknown>>();
+    expect((withUndefined as Ok<undefined, unknown>).value).toBeUndefined();
   });
 
   test('`err`', () => {

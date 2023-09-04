@@ -63,12 +63,17 @@ class ResultImpl<T, E> {
 
     @param value The value to wrap in an `Ok`.
    */
-  static ok<T, E>(): Result<Unit, E>;
+  static ok<T extends {}, E>(): Result<Unit, E>;
   static ok<T, E>(value: T): Result<T, E>;
   static ok<T, E>(value?: T): Result<Unit, E> | Result<T, E> {
-    return isVoid(value)
+    // We produce `Unit` *only* in the case where no arguments are passed, so
+    // that we can allow `undefined` in the cases where someone explicitly opts
+    // into something like `Result<undefined, Blah>`.
+    return arguments.length === 0
       ? (new ResultImpl<Unit, E>(['Ok', Unit]) as Result<Unit, E>)
-      : (new ResultImpl<T, E>(['Ok', value]) as Result<T, E>);
+      : // SAFETY: TS does not understand that the arity check above accounts for
+        // the case where the value is not passed.
+        (new ResultImpl<T, E>(['Ok', value as T]) as Result<T, E>);
   }
 
   /**

@@ -62,7 +62,7 @@
     "postpublish": "pnpm clean",
     "test": "vitest run --coverage",
     "tdd": "vitest",
-    "type-check": "tsc --noEmit --skipLibCheck"
+    "type-check": "tsc --noEmit"
   },
   "files": [
     "dist",
