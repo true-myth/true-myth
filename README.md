@@ -117,17 +117,23 @@ import { Maybe, Result } from 'true-myth';
 
 ### Basic bundle size info
 
-Size without tree-shaking:
+Size of the ESM build without tree-shaking (yes, these are in *bytes*: this is a pretty small library!):
 
-|       file        | size (KB) | terser[^terser] (KB) | terser and brotli[^brotli] (KB) |
-| ----------------- | --------- | -------------------- | ------------------------------- |
-| index.js          | 0.137     | 0.088                | 0.069                           |
-| maybe.js          | 6.1       | 3.1                  | 0.820                           |
-| result.js         | 5.7       | 2.8                  | 0.715                           |
-| toolbelt.js       | 1.3       | 0.775                | 0.250                           |
-| unit.js           | 0.091     | 0.056                | 0.055                           |
-| utils.js          | 0.584     | 0.312                | 0.161                           |
-| **total[^total]** | 13.912    | 7.131                | 2.07                            |
+|       file        | size (B) | terser[^terser] (B) | terser and brotli[^brotli] (B) |
+| ----------------- | -------- | ------------------- | ------------------------------ |
+| index.js          | 561      | 216                 | 93                             |
+| maybe.js          | 19646    | 3464                | 871                            |
+| result.js         | 12744    | 3162                | 787                            |
+| toolbelt.js       | 3598     | 881                 | 270                            |
+| unit.js           | 653      | 58                  | 57                             |
+| utils.js          | 888      | 321                 | 166                            |
+| **total[^total]** | 38090    | 8102                | 2244                           |
+
+Notes:
+
+- The unmodified size *includes comments*.
+- Thus, running through Terser gets us a much more realistic size: about 7.9KB to parse.
+- The total size across the wire of the whole library will be ~2.2KB.
 
 [^terser]: Using [terser](https://github.com/terser/terser) 5.10.0 with `--compress --mangle --mangle-props`.
 
@@ -139,7 +145,7 @@ Size without tree-shaking:
 
 This project follows the current draft of [the Semantic Versioning for TypeScript Types][semver] specification.
 
-- **Currently supported TypeScript versions:** 4.7
+- **Currently supported TypeScript versions:** 4.7, 4.8, 4.9, 5.0, 5.1, and 5.2
 - **Compiler support policy:** [simple majors][sm]
 - **Public API:** all published types not in a `-private` module are public
 
