@@ -13,7 +13,7 @@
     <img src='https://img.shields.io/npm/v/true-myth.svg' alt='npm'>
   </a>
   <a href='https://github.com/true-myth/true-myth/blob/main/.github/workflows/CI.yml#L25'>
-    <img src='https://img.shields.io/badge/Node-12%20LTS%20%7C%2014%20LTS%20%7C%2016%20LTS-darkgreen' alt='supported Node versions'>
+    <img src='https://img.shields.io/badge/Node-16%20LTS%20%7C%2018%20LTS%20%7C%2020%20LTS-darkgreen' alt='supported Node versions'>
   </a>
   <a href='https://github.com/true-myth/true-myth/blob/main/.github/workflows/CI.yml#L59'>
     <img src='https://img.shields.io/badge/TypeScript-4.7%20%7C%204.8%20%7C%204.9%20%7C%205.0%20%7C%205.1%20%7C%205.2%20%7C%20next-3178c6' alt='supported TypeScript versions'>
