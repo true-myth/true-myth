@@ -8,6 +8,25 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 
 
+
+## 7.1.0 (2023-09-05)
+
+#### :rocket: Enhancement
+* [#609](https://github.com/true-myth/true-myth/pull/609) Add support for TypeScript 5.2 ([@chriskrycho](https://github.com/chriskrycho))
+
+#### :memo: Documentation
+* [#572](https://github.com/true-myth/true-myth/pull/572) Fix docs for `transposeArray` ([@chriskrycho](https://github.com/chriskrycho))
+
+#### :house: Internal
+* [#601](https://github.com/true-myth/true-myth/pull/601) refactor: Remove duplicate tests in '/test/result.test.ts' ([@royiro10](https://github.com/royiro10))
+* [#585](https://github.com/true-myth/true-myth/pull/585) Further work to fix pnpm usage in TS nightly ([@chriskrycho](https://github.com/chriskrycho))
+* [#584](https://github.com/true-myth/true-myth/pull/584) More cleanup: pnpm references and prettierignore ([@chriskrycho](https://github.com/chriskrycho))
+* [#583](https://github.com/true-myth/true-myth/pull/583) Fix CI for nightly TS run ([@chriskrycho](https://github.com/chriskrycho))
+
+#### Committers: 2
+- Chris Krycho ([@chriskrycho](https://github.com/chriskrycho))
+- [@royiro10](https://github.com/royiro10)
+
 ## 7.0.1 (2023-07-16)
 
 #### :bug: Bug Fix
