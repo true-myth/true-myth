@@ -25,7 +25,7 @@ devDependencies:
     version: 16.2.1(typescript@5.2.2)
   rimraf:
     specifier: ^5.0.1
-    version: 5.0.4
+    version: 5.0.5
   shelljs:
     specifier: ^0.8.5
     version: 0.8.5
@@ -3716,8 +3716,8 @@ packages:
       glob: 7.2.3
     dev: true
 
-  /rimraf@5.0.4:
-    resolution: {integrity: sha512-rizQI/o/YAMM1us0Zyax0uRfIK39XR52EAjjOi0fzMolpGp0onj6CWzBAXuOx6+6Xi9Rgi0d9tUZojhJerLUmQ==}
+  /rimraf@5.0.5:
+    resolution: {integrity: sha512-CqDakW+hMe/Bz202FPEymy68P+G50RfMQK+Qo5YUqc9SPipvbGjCGKd0RSKEelbsfQuw3g5NZDSrlZZAJurH1A==}
     engines: {node: '>=14'}
     hasBin: true
     dependencies:
