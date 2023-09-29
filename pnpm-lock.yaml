@@ -13,7 +13,7 @@ devDependencies:
     version: 20.7.1
   '@vitest/coverage-v8':
     specifier: ^0.34.1
-    version: 0.34.5(vitest@0.34.6)
+    version: 0.34.6(vitest@0.34.6)
   miniglob:
     specifier: ^0.1.2
     version: 0.1.2
@@ -644,8 +644,8 @@ packages:
     resolution: {integrity: sha512-cputDpIbFgLUaGQn6Vqg3/YsJwxUwHLO13v3i5ouxT4lat0khip9AEWxtERujXV9wxIB1EyF97BSJFt6vpdI8g==}
     dev: true
 
-  /@vitest/coverage-v8@0.34.5(vitest@0.34.6):
-    resolution: {integrity: sha512-97xjhRTSdmeeHCm2nNHhT3hLsMYkAhHXm/rwj6SZ3voka8xiCJrwgtfIjoZIFEL4OO0KezGmVuHWQXcMunULIA==}
+  /@vitest/coverage-v8@0.34.6(vitest@0.34.6):
+    resolution: {integrity: sha512-fivy/OK2d/EsJFoEoxHFEnNGTg+MmdZBAVK9Ka4qhXR2K3J0DS08vcGVwzDtXSuUMabLv4KtPcpSKkcMXFDViw==}
     peerDependencies:
       vitest: '>=0.32.0 <1'
     dependencies:
