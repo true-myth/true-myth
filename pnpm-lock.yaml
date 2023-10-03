@@ -3435,8 +3435,8 @@ packages:
       pathe: 1.1.1
     dev: true
 
-  /postcss@8.4.25:
-    resolution: {integrity: sha512-7taJ/8t2av0Z+sQEvNzCkpDynl0tX3uJMCODi6nT3PfASC7dYCWV9aQ+uiCf+KBD4SEFcu+GvJdGdwzQ6OSjCw==}
+  /postcss@8.4.31:
+    resolution: {integrity: sha512-PS08Iboia9mts/2ygV3eLpY5ghnUcfLV/EXTOW1E2qYxJKGGBUtNjN76FYHnMs36RmARn41bC0AZmn+rR0OVpQ==}
     engines: {node: ^10 || ^12 || >=14}
     dependencies:
       nanoid: 3.3.6
@@ -4383,7 +4383,7 @@ packages:
     dependencies:
       '@types/node': 20.8.2
       esbuild: 0.18.12
-      postcss: 8.4.25
+      postcss: 8.4.31
       rollup: 3.26.2
     optionalDependencies:
       fsevents: 2.3.2
