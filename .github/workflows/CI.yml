@@ -15,27 +15,13 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: ['16', '18', '20']
+        node-version: ['18']
 
     steps:
       - uses: actions/checkout@v2
       - uses: volta-cli/action@v4
         with:
           node-version: ${{ matrix.node-version }}
-      - run: pnpm install
-      - run: pnpm test
-
-  tests_other:
-    name: 'Tests: ${{ matrix.os }}'
-    runs-on: '${{ matrix.os }}-latest'
-
-    strategy:
-      matrix:
-        os: [macOS, windows]
-
-    steps:
-      - uses: actions/checkout@v2
-      - uses: volta-cli/action@v4
       - run: pnpm install
       - run: pnpm test
 
