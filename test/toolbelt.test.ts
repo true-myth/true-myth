@@ -1,13 +1,13 @@
 import Maybe from 'true-myth/maybe';
 import Result from 'true-myth/result';
 import {
-  transposeResult,
-  transposeMaybe,
+  fromMaybe,
+  fromResult,
+  toMaybe,
   toOkOrElseErr,
   toOkOrErr,
-  fromResult,
-  fromMaybe,
-  toMaybe,
+  transposeMaybe,
+  transposeResult,
 } from 'true-myth/toolbelt';
 import { describe, expect, expectTypeOf, test } from 'vitest';
 
@@ -88,7 +88,7 @@ test('`toOkOrErr`', () => {
   expect(toOkOrErr(errValue, Maybe.nothing())).toEqual(Result.err(errValue));
 
   expect(toOkOrErr<string, typeof errValue>(errValue)(theJust)).toEqual(
-    toOkOrErr(errValue, theJust)
+    toOkOrErr(errValue, theJust),
   );
 });
 
@@ -101,7 +101,7 @@ test('`toOkOrElseErr`', () => {
   expect(toOkOrElseErr(getErrValue, Maybe.nothing())).toEqual(Result.err(errValue));
 
   expect(toOkOrElseErr<number, number>(getErrValue)(theJust)).toEqual(
-    toOkOrElseErr(getErrValue, theJust)
+    toOkOrElseErr(getErrValue, theJust),
   );
 });
 

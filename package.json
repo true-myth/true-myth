@@ -58,6 +58,7 @@
     "build": "node ./ts/publish.js",
     "clean": "rimraf ./dist",
     "doc": "./scripts/build-docs",
+    "format": "dprint fmt",
     "prepublishOnly": "pnpm test && pnpm build",
     "postpublish": "pnpm clean",
     "test": "vitest run --coverage",
@@ -75,8 +76,8 @@
     "@release-it-plugins/lerna-changelog": "^6.0.0",
     "@types/node": "^20.4.2",
     "@vitest/coverage-v8": "^1.0.1",
+    "dprint": "^0.41.0",
     "miniglob": "^0.1.2",
-    "prettier": "^3.0.0",
     "release-it": "^17.0.1",
     "rimraf": "^5.0.1",
     "shelljs": "^0.8.5",
@@ -86,13 +87,6 @@
   },
   "engines": {
     "node": "18.* || >= 20.*"
-  },
-  "prettier": {
-    "printWidth": 100,
-    "semi": true,
-    "singleQuote": true,
-    "trailingComma": "es5",
-    "tabWidth": 2
   },
   "release-it": {
     "github": {

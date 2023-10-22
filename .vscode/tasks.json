@@ -12,24 +12,24 @@
         "echo": false,
         "reveal": "never",
         "focus": false,
-        "panel": "shared"
+        "panel": "shared",
       },
       "group": {
         "kind": "build",
-        "isDefault": true
-      }
+        "isDefault": true,
+      },
     },
     {
       "label": "Full Build",
       "type": "npm",
       "script": "build",
-      "group": "build"
+      "group": "build",
     },
     {
       "label": "Build Tests",
       "type": "npm",
       "script": "build-tests",
-      "group": "build"
+      "group": "build",
     },
     {
       "label": "TDD",
@@ -38,14 +38,14 @@
       "isBackground": true,
       "group": {
         "kind": "test",
-        "isDefault": true
-      }
+        "isDefault": true,
+      },
     },
     {
       "label": "Run Tests",
       "type": "npm",
       "script": "test",
-      "group": "test"
-    }
-  ]
+      "group": "test",
+    },
+  ],
 }

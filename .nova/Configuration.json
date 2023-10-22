@@ -1,0 +1,5 @@
+{
+  "dprint.general.path" : "\/Users\/chris\/dev\/true-myth\/true-myth\/node_modules\/.bin\/dprint",
+  "prettier.format-on-save" : "Disable",
+  "prettier.format-on-save.ignore-remote" : "Global Default"
+}
