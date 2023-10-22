@@ -58,6 +58,7 @@
     "build": "node ./ts/publish.js",
     "clean": "rimraf ./dist",
     "doc": "./scripts/build-docs",
+    "format": "dprint fmt",
     "prepublishOnly": "pnpm test && pnpm build",
     "postpublish": "pnpm clean",
     "test": "vitest run --coverage",
@@ -73,26 +74,19 @@
   "license": "MIT",
   "devDependencies": {
     "@release-it-plugins/lerna-changelog": "^6.0.0",
-    "@types/node": "^20.8.7",
-    "@vitest/coverage-v8": "^0.34.6",
+    "@types/node": "^20.4.2",
+    "@vitest/coverage-v8": "^0.34.1",
+    "dprint": "^0.41.0",
     "miniglob": "^0.1.2",
-    "prettier": "^3.0.3",
-    "release-it": "^16.2.1",
-    "rimraf": "^5.0.5",
+    "release-it": "^16.0.0",
+    "rimraf": "^5.0.1",
     "shelljs": "^0.8.5",
-    "typedoc": "^0.25.2",
-    "typescript": "~5.2.2",
-    "vitest": "^0.34.6"
+    "typedoc": "^0.25.0",
+    "typescript": "~5.2",
+    "vitest": "^0.34.1"
   },
   "engines": {
     "node": "18.* || >= 20.*"
-  },
-  "prettier": {
-    "printWidth": 100,
-    "semi": true,
-    "singleQuote": true,
-    "trailingComma": "es5",
-    "tabWidth": 2
   },
   "release-it": {
     "github": {
@@ -107,6 +101,6 @@
   },
   "volta": {
     "node": "18.16.1",
-    "pnpm": "8.9.2"
+    "pnpm": "8.6.7"
   }
 }

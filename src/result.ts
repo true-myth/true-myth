@@ -4,8 +4,8 @@
   @module
  */
 
+import { curry1, isVoid, safeToString, } from './-private/utils.js';
 import Unit from './unit.js';
-import { curry1, isVoid, safeToString } from './-private/utils.js';
 
 /**
   Discriminant for {@linkcode Ok} and {@linkcode Err} variants of the
@@ -21,23 +21,23 @@ export const Variant = {
 
 export type Variant = keyof typeof Variant;
 
-export interface OkJSON<T> {
+export interface OkJSON<T,> {
   variant: 'Ok';
   value: T;
 }
 
-export interface ErrJSON<E> {
+export interface ErrJSON<E,> {
   variant: 'Err';
   error: E;
 }
 
-export type ResultJSON<T, E> = OkJSON<T> | ErrJSON<E>;
+export type ResultJSON<T, E,> = OkJSON<T> | ErrJSON<E>;
 
-type Repr<T, E> = [tag: 'Ok', value: T] | [tag: 'Err', error: E];
+type Repr<T, E,> = [tag: 'Ok', value: T,] | [tag: 'Err', error: E,];
 
 // Defines the *implementation*, but not the *types*. See the exports below.
-class ResultImpl<T, E> {
-  private constructor(private repr: Repr<T, E>) {}
+class ResultImpl<T, E,> {
+  private constructor(private repr: Repr<T, E>,) {}
 
   /**
     Create an instance of {@linkcode Ok}.
@@ -63,17 +63,17 @@ class ResultImpl<T, E> {
 
     @param value The value to wrap in an `Ok`.
    */
-  static ok<T extends {}, E>(): Result<Unit, E>;
-  static ok<T, E>(value: T): Result<T, E>;
-  static ok<T, E>(value?: T): Result<Unit, E> | Result<T, E> {
+  static ok<T extends {}, E,>(): Result<Unit, E>;
+  static ok<T, E,>(value: T,): Result<T, E>;
+  static ok<T, E,>(value?: T,): Result<Unit, E> | Result<T, E> {
     // We produce `Unit` *only* in the case where no arguments are passed, so
     // that we can allow `undefined` in the cases where someone explicitly opts
     // into something like `Result<undefined, Blah>`.
     return arguments.length === 0
-      ? (new ResultImpl<Unit, E>(['Ok', Unit]) as Result<Unit, E>)
-      : // SAFETY: TS does not understand that the arity check above accounts for
-        // the case where the value is not passed.
-        (new ResultImpl<T, E>(['Ok', value as T]) as Result<T, E>);
+      ? (new ResultImpl<Unit, E>(['Ok', Unit,],) as Result<Unit, E>)
+      // SAFETY: TS does not understand that the arity check above accounts for
+      // the case where the value is not passed.
+      : (new ResultImpl<T, E>(['Ok', value as T,],) as Result<T, E>);
   }
 
   /**
@@ -93,12 +93,12 @@ class ResultImpl<T, E> {
 
     @param error The value to wrap in an `Err`.
    */
-  static err<T, E>(): Result<T, Unit>;
-  static err<T, E>(error: E): Result<T, E>;
-  static err<T, E>(error?: E): Result<T, Unit> | Result<T, E> {
-    return isVoid(error)
-      ? (new ResultImpl<T, Unit>(['Err', Unit]) as Result<T, Unit>)
-      : (new ResultImpl<T, E>(['Err', error]) as Result<T, E>);
+  static err<T, E,>(): Result<T, Unit>;
+  static err<T, E,>(error: E,): Result<T, E>;
+  static err<T, E,>(error?: E,): Result<T, Unit> | Result<T, E> {
+    return isVoid(error,)
+      ? (new ResultImpl<T, Unit>(['Err', Unit,],) as Result<T, Unit>)
+      : (new ResultImpl<T, E>(['Err', error,],) as Result<T, E>);
   }
 
   /** Distinguish between the {@linkcode Variant.Ok} and {@linkcode Variant.Err} {@linkcode Variant variants}. */
@@ -113,7 +113,7 @@ class ResultImpl<T, E> {
    */
   get value(): T | never {
     if (this.repr[0] === Variant.Err) {
-      throw new Error('Cannot get the value of Err');
+      throw new Error('Cannot get the value of Err',);
     }
 
     return this.repr[1];
@@ -126,7 +126,7 @@ class ResultImpl<T, E> {
    */
   get error(): E | never {
     if (this.repr[0] === Variant.Ok) {
-      throw new Error('Cannot get the error of Ok');
+      throw new Error('Cannot get the error of Ok',);
     }
 
     return this.repr[1];
@@ -143,86 +143,86 @@ class ResultImpl<T, E> {
   }
 
   /** Method variant for {@linkcode map} */
-  map<U>(mapFn: (t: T) => U): Result<U, E> {
-    return (this.repr[0] === 'Ok' ? Result.ok(mapFn(this.repr[1])) : this) as Result<U, E>;
+  map<U,>(mapFn: (t: T,) => U,): Result<U, E> {
+    return (this.repr[0] === 'Ok' ? Result.ok(mapFn(this.repr[1],),) : this) as Result<U, E>;
   }
 
   /** Method variant for {@linkcode mapOr} */
-  mapOr<U>(orU: U, mapFn: (t: T) => U): U {
-    return this.repr[0] === 'Ok' ? mapFn(this.repr[1]) : orU;
+  mapOr<U,>(orU: U, mapFn: (t: T,) => U,): U {
+    return this.repr[0] === 'Ok' ? mapFn(this.repr[1],) : orU;
   }
 
   /** Method variant for {@linkcode mapOrElse} */
-  mapOrElse<U>(orElseFn: (err: E) => U, mapFn: (t: T) => U): U {
-    return this.repr[0] === 'Ok' ? mapFn(this.repr[1]) : orElseFn(this.repr[1]);
+  mapOrElse<U,>(orElseFn: (err: E,) => U, mapFn: (t: T,) => U,): U {
+    return this.repr[0] === 'Ok' ? mapFn(this.repr[1],) : orElseFn(this.repr[1],);
   }
 
   /** Method variant for {@linkcode match} */
-  match<U>(matcher: Matcher<T, E, U>): U {
-    return this.repr[0] === 'Ok' ? matcher.Ok(this.repr[1]) : matcher.Err(this.repr[1]);
+  match<U,>(matcher: Matcher<T, E, U>,): U {
+    return this.repr[0] === 'Ok' ? matcher.Ok(this.repr[1],) : matcher.Err(this.repr[1],);
   }
 
   /** Method variant for {@linkcode mapErr} */
-  mapErr<F>(mapErrFn: (e: E) => F): Result<T, F> {
-    return (this.repr[0] === 'Ok' ? this : Result.err(mapErrFn(this.repr[1]))) as Result<T, F>;
+  mapErr<F,>(mapErrFn: (e: E,) => F,): Result<T, F> {
+    return (this.repr[0] === 'Ok' ? this : Result.err(mapErrFn(this.repr[1],),)) as Result<T, F>;
   }
 
   /** Method variant for {@linkcode or} */
-  or<F>(orResult: Result<T, F>): Result<T, F> {
+  or<F,>(orResult: Result<T, F>,): Result<T, F> {
     return (this.repr[0] === 'Ok' ? this : orResult) as Result<T, F>;
   }
 
   /** Method variant for {@linkcode orElse} */
-  orElse<F>(orElseFn: (err: E) => Result<T, F>): Result<T, F> {
-    return (this.repr[0] === 'Ok' ? this : orElseFn(this.repr[1])) as Result<T, F>;
+  orElse<F,>(orElseFn: (err: E,) => Result<T, F>,): Result<T, F> {
+    return (this.repr[0] === 'Ok' ? this : orElseFn(this.repr[1],)) as Result<T, F>;
   }
 
   /** Method variant for {@linkcode and} */
-  and<U>(mAnd: Result<U, E>): Result<U, E> {
+  and<U,>(mAnd: Result<U, E>,): Result<U, E> {
     // (r.isOk ? andResult : err<U, E>(r.error))
     return (this.repr[0] === 'Ok' ? mAnd : this) as Result<U, E>;
   }
 
   /** Method variant for {@linkcode andThen} */
-  andThen<U>(andThenFn: (t: T) => Result<U, E>): Result<U, E> {
-    return (this.repr[0] === 'Ok' ? andThenFn(this.repr[1]) : this) as Result<U, E>;
+  andThen<U,>(andThenFn: (t: T,) => Result<U, E>,): Result<U, E> {
+    return (this.repr[0] === 'Ok' ? andThenFn(this.repr[1],) : this) as Result<U, E>;
   }
 
   /** Method variant for {@linkcode unwrapOr} */
-  unwrapOr<U = T>(defaultValue: U): T | U {
+  unwrapOr<U = T,>(defaultValue: U,): T | U {
     return this.repr[0] === 'Ok' ? this.repr[1] : defaultValue;
   }
 
   /** Method variant for {@linkcode unwrapOrElse} */
-  unwrapOrElse<U>(elseFn: (error: E) => U): T | U {
-    return this.repr[0] === 'Ok' ? this.repr[1] : elseFn(this.repr[1]);
+  unwrapOrElse<U,>(elseFn: (error: E,) => U,): T | U {
+    return this.repr[0] === 'Ok' ? this.repr[1] : elseFn(this.repr[1],);
   }
 
   /** Method variant for {@linkcode toString} */
   toString(): string {
-    return `${this.repr[0]}(${safeToString(this.repr[1])})`;
+    return `${this.repr[0]}(${safeToString(this.repr[1],)})`;
   }
 
   /** Method variant for {@linkcode toJSON} */
   toJSON(): ResultJSON<T, E> {
     const variant = this.repr[0];
-    return variant === 'Ok' ? { variant, value: this.repr[1] } : { variant, error: this.repr[1] };
+    return variant === 'Ok' ? { variant, value: this.repr[1], } : { variant, error: this.repr[1], };
   }
 
   /** Method variant for {@linkcode equals} */
-  equals(comparison: Result<T, E>): boolean {
+  equals(comparison: Result<T, E>,): boolean {
     // SAFETY: these casts are stripping away the `Ok`/`Err` distinction and
     // simply testing what `comparison` *actually* is, which is always an
     // instance of `ResultImpl` (the same as this method itself).
     return (
-      this.repr[0] === (comparison as ResultImpl<T, E>).repr[0] &&
-      this.repr[1] === (comparison as ResultImpl<T, E>).repr[1]
+      this.repr[0] === (comparison as ResultImpl<T, E>).repr[0]
+      && this.repr[1] === (comparison as ResultImpl<T, E>).repr[1]
     );
   }
 
   /** Method variant for {@linkcode ap} */
-  ap<A, B>(this: Result<(a: A) => B, E>, r: Result<A, E>): Result<B, E> {
-    return r.andThen((val) => this.map((fn) => fn(val)));
+  ap<A, B,>(this: Result<(a: A,) => B, E>, r: Result<A, E>,): Result<B, E> {
+    return r.andThen((val,) => this.map((fn,) => fn(val,)));
   }
 
   cast() {
@@ -238,14 +238,14 @@ class ResultImpl<T, E> {
   @typeparam T The type wrapped in this `Ok` variant of `Result`.
   @typeparam E The type which would be wrapped in an `Err` variant of `Result`.
  */
-export interface Ok<T, E> extends Omit<ResultImpl<T, E>, 'error' | 'cast'> {
+export interface Ok<T, E,> extends Omit<ResultImpl<T, E>, 'error' | 'cast'> {
   /** `Ok` is always [`Variant.Ok`](../enums/_result_.variant#ok). */
   readonly variant: 'Ok';
   isOk: true;
   isErr: false;
   /** The wrapped value */
   value: T;
-  cast<F>(): Result<T, F>;
+  cast<F,>(): Result<T, F>;
 }
 
 /**
@@ -256,14 +256,14 @@ export interface Ok<T, E> extends Omit<ResultImpl<T, E>, 'error' | 'cast'> {
   @typeparam T The type which would be wrapped in an `Ok` variant of `Result`.
   @typeparam E The type wrapped in this `Err` variant of `Result`.
   */
-export interface Err<T, E> extends Omit<ResultImpl<T, E>, 'value' | 'cast'> {
+export interface Err<T, E,> extends Omit<ResultImpl<T, E>, 'value' | 'cast'> {
   /** `Err` is always [`Variant.Err`](../enums/_result_.variant#err). */
   readonly variant: 'Err';
   isOk: false;
   isErr: true;
   /** The wrapped error value. */
   error: E;
-  cast<U>(): Result<U, E>;
+  cast<U,>(): Result<U, E>;
 }
 
 /**
@@ -287,21 +287,21 @@ export interface Err<T, E> extends Omit<ResultImpl<T, E>, 'value' | 'cast'> {
   @param error The error value in case of an exception
   @param callback The callback to try executing
  */
-export function tryOr<T, E>(error: E, callback: () => T): Result<T, E>;
-export function tryOr<T, E>(error: E): (callback: () => T) => Result<T, E>;
-export function tryOr<T, E>(
+export function tryOr<T, E,>(error: E, callback: () => T,): Result<T, E>;
+export function tryOr<T, E,>(error: E,): (callback: () => T,) => Result<T, E>;
+export function tryOr<T, E,>(
   error: E,
-  callback?: () => T
-): Result<T, E> | ((callback: () => T) => Result<T, E>) {
-  const op = (cb: () => T) => {
+  callback?: () => T,
+): Result<T, E> | ((callback: () => T,) => Result<T, E>) {
+  const op = (cb: () => T,) => {
     try {
-      return ok<T, E>(cb());
+      return ok<T, E>(cb(),);
     } catch {
-      return err<T, E>(error);
+      return err<T, E>(error,);
     }
   };
 
-  return curry1(op, callback);
+  return curry1(op, callback,);
 }
 
 /**
@@ -359,7 +359,7 @@ export const ok = ResultImpl.ok;
   @param result The `Result` to check.
   @returns A type guarded `Ok`.
  */
-export function isOk<T, E>(result: Result<T, E>): result is Ok<T, E> {
+export function isOk<T, E,>(result: Result<T, E>,): result is Ok<T, E> {
   return result.isOk;
 }
 
@@ -370,7 +370,7 @@ export function isOk<T, E>(result: Result<T, E>): result is Ok<T, E> {
   @param result The `Result` to check.
   @returns A type guarded `Err`.
 */
-export function isErr<T, E>(result: Result<T, E>): result is Err<T, E> {
+export function isErr<T, E,>(result: Result<T, E>,): result is Err<T, E> {
   return result.isErr;
 }
 
@@ -446,21 +446,23 @@ export const err = ResultImpl.err;
     be wrapped in a `Result.Err`
   @param callback The callback to try executing
  */
-export function tryOrElse<T, E>(onError: (e: unknown) => E, callback: () => T): Result<T, E>;
-export function tryOrElse<T, E>(onError: (e: unknown) => E): (callback: () => T) => Result<T, E>;
-export function tryOrElse<T, E>(
-  onError: (e: unknown) => E,
-  callback?: () => T
-): Result<T, E> | ((callback: () => T) => Result<T, E>) {
-  const op = (cb: () => T) => {
+export function tryOrElse<T, E,>(onError: (e: unknown,) => E, callback: () => T,): Result<T, E>;
+export function tryOrElse<T, E,>(
+  onError: (e: unknown,) => E,
+): (callback: () => T,) => Result<T, E>;
+export function tryOrElse<T, E,>(
+  onError: (e: unknown,) => E,
+  callback?: () => T,
+): Result<T, E> | ((callback: () => T,) => Result<T, E>) {
+  const op = (cb: () => T,) => {
     try {
-      return ok<T, E>(cb());
+      return ok<T, E>(cb(),);
     } catch (e) {
-      return err<T, E>(onError(e));
+      return err<T, E>(onError(e,),);
     }
   };
 
-  return curry1(op, callback);
+  return curry1(op, callback,);
 }
 
 /**
@@ -516,14 +518,14 @@ export function tryOrElse<T, E>(
                 in an `Ok`, or else the original `Err` value wrapped in the new
                 instance.
  */
-export function map<T, U, E>(mapFn: (t: T) => U, result: Result<T, E>): Result<U, E>;
-export function map<T, U, E>(mapFn: (t: T) => U): (result: Result<T, E>) => Result<U, E>;
-export function map<T, U, E>(
-  mapFn: (t: T) => U,
-  result?: Result<T, E>
-): Result<U, E> | ((result: Result<T, E>) => Result<U, E>) {
-  const op = (r: Result<T, E>) => r.map(mapFn);
-  return curry1(op, result);
+export function map<T, U, E,>(mapFn: (t: T,) => U, result: Result<T, E>,): Result<U, E>;
+export function map<T, U, E,>(mapFn: (t: T,) => U,): (result: Result<T, E>,) => Result<U, E>;
+export function map<T, U, E,>(
+  mapFn: (t: T,) => U,
+  result?: Result<T, E>,
+): Result<U, E> | ((result: Result<T, E>,) => Result<U, E>) {
+  const op = (r: Result<T, E>,) => r.map(mapFn,);
+  return curry1(op, result,);
 }
 
 /**
@@ -551,34 +553,34 @@ export function map<T, U, E>(
   @param mapFn The function to apply the value to if `result` is an `Ok`.
   @param result The `Result` instance to map over.
  */
-export function mapOr<T, U, E>(orU: U, mapFn: (t: T) => U, result: Result<T, E>): U;
-export function mapOr<T, U, E>(orU: U, mapFn: (t: T) => U): (result: Result<T, E>) => U;
-export function mapOr<T, U, E>(orU: U): (mapFn: (t: T) => U) => (result: Result<T, E>) => U;
-export function mapOr<T, U, E>(
+export function mapOr<T, U, E,>(orU: U, mapFn: (t: T,) => U, result: Result<T, E>,): U;
+export function mapOr<T, U, E,>(orU: U, mapFn: (t: T,) => U,): (result: Result<T, E>,) => U;
+export function mapOr<T, U, E,>(orU: U,): (mapFn: (t: T,) => U,) => (result: Result<T, E>,) => U;
+export function mapOr<T, U, E,>(
   orU: U,
-  mapFn?: (t: T) => U,
-  result?: Result<T, E>
-): U | ((result: Result<T, E>) => U) | ((mapFn: (t: T) => U) => (result: Result<T, E>) => U) {
-  function fullOp(fn: (t: T) => U, r: Result<T, E>): U {
-    return r.mapOr(orU, fn);
+  mapFn?: (t: T,) => U,
+  result?: Result<T, E>,
+): U | ((result: Result<T, E>,) => U) | ((mapFn: (t: T,) => U,) => (result: Result<T, E>,) => U) {
+  function fullOp(fn: (t: T,) => U, r: Result<T, E>,): U {
+    return r.mapOr(orU, fn,);
   }
 
-  function partialOp(fn: (t: T) => U): (maybe: Result<T, E>) => U;
-  function partialOp(fn: (t: T) => U, curriedResult: Result<T, E>): U;
+  function partialOp(fn: (t: T,) => U,): (maybe: Result<T, E>,) => U;
+  function partialOp(fn: (t: T,) => U, curriedResult: Result<T, E>,): U;
   function partialOp(
-    fn: (t: T) => U,
-    curriedResult?: Result<T, E>
-  ): U | ((maybe: Result<T, E>) => U) {
+    fn: (t: T,) => U,
+    curriedResult?: Result<T, E>,
+  ): U | ((maybe: Result<T, E>,) => U) {
     return curriedResult !== undefined
-      ? fullOp(fn, curriedResult)
-      : (extraCurriedResult: Result<T, E>) => fullOp(fn, extraCurriedResult);
+      ? fullOp(fn, curriedResult,)
+      : (extraCurriedResult: Result<T, E>,) => fullOp(fn, extraCurriedResult,);
   }
 
   return mapFn === undefined
     ? partialOp
     : result === undefined
-    ? partialOp(mapFn)
-    : partialOp(mapFn, result);
+    ? partialOp(mapFn,)
+    : partialOp(mapFn, result,);
 }
 
 /**
@@ -616,43 +618,43 @@ export function mapOr<T, U, E>(
                   an `Ok`.
   @param result   The `Result` instance to map over.
  */
-export function mapOrElse<T, U, E>(
-  orElseFn: (err: E) => U,
-  mapFn: (t: T) => U,
-  result: Result<T, E>
+export function mapOrElse<T, U, E,>(
+  orElseFn: (err: E,) => U,
+  mapFn: (t: T,) => U,
+  result: Result<T, E>,
 ): U;
-export function mapOrElse<T, U, E>(
-  orElseFn: (err: E) => U,
-  mapFn: (t: T) => U
-): (result: Result<T, E>) => U;
-export function mapOrElse<T, U, E>(
-  orElseFn: (err: E) => U
-): (mapFn: (t: T) => U) => (result: Result<T, E>) => U;
-export function mapOrElse<T, U, E>(
-  orElseFn: (err: E) => U,
-  mapFn?: (t: T) => U,
-  result?: Result<T, E>
-): U | ((result: Result<T, E>) => U) | ((mapFn: (t: T) => U) => (result: Result<T, E>) => U) {
-  function fullOp(fn: (t: T) => U, r: Result<T, E>) {
-    return r.mapOrElse(orElseFn, fn);
+export function mapOrElse<T, U, E,>(
+  orElseFn: (err: E,) => U,
+  mapFn: (t: T,) => U,
+): (result: Result<T, E>,) => U;
+export function mapOrElse<T, U, E,>(
+  orElseFn: (err: E,) => U,
+): (mapFn: (t: T,) => U,) => (result: Result<T, E>,) => U;
+export function mapOrElse<T, U, E,>(
+  orElseFn: (err: E,) => U,
+  mapFn?: (t: T,) => U,
+  result?: Result<T, E>,
+): U | ((result: Result<T, E>,) => U) | ((mapFn: (t: T,) => U,) => (result: Result<T, E>,) => U) {
+  function fullOp(fn: (t: T,) => U, r: Result<T, E>,) {
+    return r.mapOrElse(orElseFn, fn,);
   }
 
-  function partialOp(fn: (t: T) => U): (result: Result<T, E>) => U;
-  function partialOp(fn: (t: T) => U, curriedResult: Result<T, E>): U;
+  function partialOp(fn: (t: T,) => U,): (result: Result<T, E>,) => U;
+  function partialOp(fn: (t: T,) => U, curriedResult: Result<T, E>,): U;
   function partialOp(
-    fn: (t: T) => U,
-    curriedResult?: Result<T, E>
-  ): U | ((maybe: Result<T, E>) => U) {
+    fn: (t: T,) => U,
+    curriedResult?: Result<T, E>,
+  ): U | ((maybe: Result<T, E>,) => U) {
     return curriedResult !== undefined
-      ? fullOp(fn, curriedResult)
-      : (extraCurriedResult: Result<T, E>) => fullOp(fn, extraCurriedResult);
+      ? fullOp(fn, curriedResult,)
+      : (extraCurriedResult: Result<T, E>,) => fullOp(fn, extraCurriedResult,);
   }
 
   return mapFn === undefined
     ? partialOp
     : result === undefined
-    ? partialOp(mapFn)
-    : partialOp(mapFn, result);
+    ? partialOp(mapFn,)
+    : partialOp(mapFn, result,);
 }
 
 /**
@@ -686,14 +688,14 @@ export function mapOrElse<T, U, E>(
   `result` is an `Err`.
   @param result   The `Result` instance to map over an error case for.
  */
-export function mapErr<T, E, F>(mapErrFn: (e: E) => F, result: Result<T, E>): Result<T, F>;
-export function mapErr<T, E, F>(mapErrFn: (e: E) => F): (result: Result<T, E>) => Result<T, F>;
-export function mapErr<T, E, F>(
-  mapErrFn: (e: E) => F,
-  result?: Result<T, E>
-): Result<T, F> | ((result: Result<T, E>) => Result<T, F>) {
-  const op = (r: Result<T, E>) => r.mapErr(mapErrFn);
-  return curry1(op, result);
+export function mapErr<T, E, F,>(mapErrFn: (e: E,) => F, result: Result<T, E>,): Result<T, F>;
+export function mapErr<T, E, F,>(mapErrFn: (e: E,) => F,): (result: Result<T, E>,) => Result<T, F>;
+export function mapErr<T, E, F,>(
+  mapErrFn: (e: E,) => F,
+  result?: Result<T, E>,
+): Result<T, F> | ((result: Result<T, E>,) => Result<T, F>) {
+  const op = (r: Result<T, E>,) => r.mapErr(mapErrFn,);
+  return curry1(op, result,);
 }
 
 /**
@@ -731,14 +733,14 @@ export function mapErr<T, E, F>(
   @param andResult The `Result` instance to return if `result` is `Err`.
   @param result    The `Result` instance to check.
  */
-export function and<T, U, E>(andResult: Result<U, E>, result: Result<T, E>): Result<U, E>;
-export function and<T, U, E>(andResult: Result<U, E>): (result: Result<T, E>) => Result<U, E>;
-export function and<T, U, E>(
+export function and<T, U, E,>(andResult: Result<U, E>, result: Result<T, E>,): Result<U, E>;
+export function and<T, U, E,>(andResult: Result<U, E>,): (result: Result<T, E>,) => Result<U, E>;
+export function and<T, U, E,>(
   andResult: Result<U, E>,
-  result?: Result<T, E>
-): Result<U, E> | ((result: Result<T, E>) => Result<U, E>) {
-  const op = (r: Result<T, E>) => r.and(andResult);
-  return curry1(op, result);
+  result?: Result<T, E>,
+): Result<U, E> | ((result: Result<T, E>,) => Result<U, E>) {
+  const op = (r: Result<T, E>,) => r.and(andResult,);
+  return curry1(op, result,);
 }
 
 /**
@@ -785,19 +787,19 @@ export function and<T, U, E>(
   @param thenFn  The function to apply to the wrapped `T` if `maybe` is `Just`.
   @param result  The `Maybe` to evaluate and possibly apply a function to.
  */
-export function andThen<T, U, E>(
-  thenFn: (t: T) => Result<U, E>,
-  result: Result<T, E>
+export function andThen<T, U, E,>(
+  thenFn: (t: T,) => Result<U, E>,
+  result: Result<T, E>,
 ): Result<U, E>;
-export function andThen<T, U, E>(
-  thenFn: (t: T) => Result<U, E>
-): (result: Result<T, E>) => Result<U, E>;
-export function andThen<T, U, E>(
-  thenFn: (t: T) => Result<U, E>,
-  result?: Result<T, E>
-): Result<U, E> | ((result: Result<T, E>) => Result<U, E>) {
-  const op = (r: Result<T, E>) => r.andThen(thenFn);
-  return curry1(op, result);
+export function andThen<T, U, E,>(
+  thenFn: (t: T,) => Result<U, E>,
+): (result: Result<T, E>,) => Result<U, E>;
+export function andThen<T, U, E,>(
+  thenFn: (t: T,) => Result<U, E>,
+  result?: Result<T, E>,
+): Result<U, E> | ((result: Result<T, E>,) => Result<U, E>) {
+  const op = (r: Result<T, E>,) => r.andThen(thenFn,);
+  return curry1(op, result,);
 }
 
 /**
@@ -830,14 +832,14 @@ export function andThen<T, U, E>(
   @param result         The `Result` instance to check.
   @returns              `result` if it is an `Ok`, otherwise `defaultResult`.
  */
-export function or<T, E, F>(defaultResult: Result<T, F>, result: Result<T, E>): Result<T, F>;
-export function or<T, E, F>(defaultResult: Result<T, F>): (result: Result<T, E>) => Result<T, F>;
-export function or<T, E, F>(
+export function or<T, E, F,>(defaultResult: Result<T, F>, result: Result<T, E>,): Result<T, F>;
+export function or<T, E, F,>(defaultResult: Result<T, F>,): (result: Result<T, E>,) => Result<T, F>;
+export function or<T, E, F,>(
   defaultResult: Result<T, F>,
-  result?: Result<T, E>
-): Result<T, F> | ((result: Result<T, E>) => Result<T, F>) {
-  const op = (r: Result<T, E>) => r.or(defaultResult);
-  return curry1(op, result);
+  result?: Result<T, E>,
+): Result<T, F> | ((result: Result<T, E>,) => Result<T, F>) {
+  const op = (r: Result<T, E>,) => r.or(defaultResult,);
+  return curry1(op, result,);
 }
 
 /**
@@ -858,19 +860,19 @@ export function or<T, E, F>(
   @returns      The `result` if it is `Ok`, or the `Result` returned by `elseFn`
                 if `result` is an `Err.
  */
-export function orElse<T, E, F>(
-  elseFn: (err: E) => Result<T, F>,
-  result: Result<T, E>
+export function orElse<T, E, F,>(
+  elseFn: (err: E,) => Result<T, F>,
+  result: Result<T, E>,
 ): Result<T, F>;
-export function orElse<T, E, F>(
-  elseFn: (err: E) => Result<T, F>
-): (result: Result<T, E>) => Result<T, F>;
-export function orElse<T, E, F>(
-  elseFn: (err: E) => Result<T, F>,
-  result?: Result<T, E>
-): Result<T, F> | ((result: Result<T, E>) => Result<T, F>) {
-  const op = (r: Result<T, E>) => r.orElse(elseFn);
-  return curry1(op, result);
+export function orElse<T, E, F,>(
+  elseFn: (err: E,) => Result<T, F>,
+): (result: Result<T, E>,) => Result<T, F>;
+export function orElse<T, E, F,>(
+  elseFn: (err: E,) => Result<T, F>,
+  result?: Result<T, E>,
+): Result<T, F> | ((result: Result<T, E>,) => Result<T, F>) {
+  const op = (r: Result<T, E>,) => r.orElse(elseFn,);
+  return curry1(op, result,);
 }
 
 /**
@@ -895,14 +897,14 @@ export function orElse<T, E, F>(
   @returns            The content of `result` if it is an `Ok`, otherwise
                       `defaultValue`.
  */
-export function unwrapOr<T, U, E>(defaultValue: U, result: Result<T, E>): U | T;
-export function unwrapOr<T, U, E>(defaultValue: U): (result: Result<T, E>) => U | T;
-export function unwrapOr<T, U, E>(
+export function unwrapOr<T, U, E,>(defaultValue: U, result: Result<T, E>,): U | T;
+export function unwrapOr<T, U, E,>(defaultValue: U,): (result: Result<T, E>,) => U | T;
+export function unwrapOr<T, U, E,>(
   defaultValue: U,
-  result?: Result<T, E>
-): (T | U) | ((result: Result<T, E>) => T | U) {
-  const op = (r: Result<T, E>) => r.unwrapOr(defaultValue);
-  return curry1(op, result);
+  result?: Result<T, E>,
+): (T | U) | ((result: Result<T, E>,) => T | U) {
+  const op = (r: Result<T, E>,) => r.unwrapOr(defaultValue,);
+  return curry1(op, result,);
 }
 
 /**
@@ -936,14 +938,16 @@ export function unwrapOr<T, U, E>(
   @returns        The value wrapped in `result` if it is `Ok` or the value
                   returned by `orElseFn` applied to the value in `Err`.
  */
-export function unwrapOrElse<T, U, E>(orElseFn: (error: E) => U, result: Result<T, E>): T | U;
-export function unwrapOrElse<T, U, E>(orElseFn: (error: E) => U): (result: Result<T, E>) => T | U;
-export function unwrapOrElse<T, U, E>(
-  orElseFn: (error: E) => U,
-  result?: Result<T, E>
-): (T | U) | ((result: Result<T, E>) => T | U) {
-  const op = (r: Result<T, E>) => r.unwrapOrElse(orElseFn);
-  return curry1(op, result);
+export function unwrapOrElse<T, U, E,>(orElseFn: (error: E,) => U, result: Result<T, E>,): T | U;
+export function unwrapOrElse<T, U, E,>(
+  orElseFn: (error: E,) => U,
+): (result: Result<T, E>,) => T | U;
+export function unwrapOrElse<T, U, E,>(
+  orElseFn: (error: E,) => U,
+  result?: Result<T, E>,
+): (T | U) | ((result: Result<T, E>,) => T | U) {
+  const op = (r: Result<T, E>,) => r.unwrapOrElse(orElseFn,);
+  return curry1(op, result,);
 }
 
 /**
@@ -968,7 +972,7 @@ export function unwrapOrElse<T, U, E>(
   @param result The value to convert to a string.
   @returns      The string representation of the `Maybe`.
  */
-export const toString = <T, E>(result: Result<T, E>): string => {
+export const toString = <T, E,>(result: Result<T, E>,): string => {
   return result.toString();
 };
 
@@ -980,7 +984,7 @@ export const toString = <T, E>(result: Result<T, E>): string => {
  * @param result  The value to convert to JSON
  * @returns       The JSON representation of the `Result`
  */
-export const toJSON = <T, E>(result: Result<T, E>): ResultJSON<T, E> => {
+export const toJSON = <T, E,>(result: Result<T, E>,): ResultJSON<T, E> => {
   return result.toJSON();
 };
 
@@ -988,9 +992,9 @@ export const toJSON = <T, E>(result: Result<T, E>): ResultJSON<T, E> => {
   A lightweight object defining how to handle each variant of a
   {@linkcode Result}.
  */
-export type Matcher<T, E, A> = {
-  Ok: (value: T) => A;
-  Err: (error: E) => A;
+export type Matcher<T, E, A,> = {
+  Ok: (value: T,) => A;
+  Err: (error: E,) => A;
 };
 
 /**
@@ -1043,14 +1047,14 @@ export type Matcher<T, E, A> = {
                  variant.
   @param maybe   The `maybe` instance to check.
  */
-export function match<T, E, A>(matcher: Matcher<T, E, A>, result: Result<T, E>): A;
-export function match<T, E, A>(matcher: Matcher<T, E, A>): (result: Result<T, E>) => A;
-export function match<T, E, A>(
+export function match<T, E, A,>(matcher: Matcher<T, E, A>, result: Result<T, E>,): A;
+export function match<T, E, A,>(matcher: Matcher<T, E, A>,): (result: Result<T, E>,) => A;
+export function match<T, E, A,>(
   matcher: Matcher<T, E, A>,
-  result?: Result<T, E>
-): A | ((result: Result<T, E>) => A) {
-  const op = (r: Result<T, E>) => r.mapOrElse(matcher.Err, matcher.Ok);
-  return curry1(op, result);
+  result?: Result<T, E>,
+): A | ((result: Result<T, E>,) => A) {
+  const op = (r: Result<T, E>,) => r.mapOrElse(matcher.Err, matcher.Ok,);
+  return curry1(op, result,);
 }
 
 /**
@@ -1071,14 +1075,14 @@ export function match<T, E, A>(
   @param resultB A `maybe` to compare to.
   @param resultA A `maybe` instance to check.
  */
-export function equals<T, E>(resultB: Result<T, E>, resultA: Result<T, E>): boolean;
-export function equals<T, E>(resultB: Result<T, E>): (resultA: Result<T, E>) => boolean;
-export function equals<T, E>(
+export function equals<T, E,>(resultB: Result<T, E>, resultA: Result<T, E>,): boolean;
+export function equals<T, E,>(resultB: Result<T, E>,): (resultA: Result<T, E>,) => boolean;
+export function equals<T, E,>(
   resultB: Result<T, E>,
-  resultA?: Result<T, E>
-): boolean | ((a: Result<T, E>) => boolean) {
-  const op = (rA: Result<T, E>) => rA.equals(resultB);
-  return curry1(op, resultA);
+  resultA?: Result<T, E>,
+): boolean | ((a: Result<T, E>,) => boolean) {
+  const op = (rA: Result<T, E>,) => rA.equals(resultB,);
+  return curry1(op, resultA,);
 }
 
 /**
@@ -1251,16 +1255,19 @@ export function equals<T, E>(
   @param resultFn result of a function from T to U
   @param result result of a T to apply to `fn`
  */
-export function ap<A, B, E>(resultFn: Result<(a: A) => B, E>, result: Result<A, E>): Result<B, E>;
-export function ap<A, B, E>(
-  resultFn: Result<(a: A) => B, E>
-): (result: Result<A, E>) => Result<B, E>;
-export function ap<A, B, E>(
-  resultFn: Result<(a: A) => B, E>,
-  result?: Result<A, E>
-): Result<B, E> | ((val: Result<A, E>) => Result<B, E>) {
-  const op = (r: Result<A, E>) => resultFn.ap(r);
-  return curry1(op, result);
+export function ap<A, B, E,>(
+  resultFn: Result<(a: A,) => B, E>,
+  result: Result<A, E>,
+): Result<B, E>;
+export function ap<A, B, E,>(
+  resultFn: Result<(a: A,) => B, E>,
+): (result: Result<A, E>,) => Result<B, E>;
+export function ap<A, B, E,>(
+  resultFn: Result<(a: A,) => B, E>,
+  result?: Result<A, E>,
+): Result<B, E> | ((val: Result<A, E>,) => Result<B, E>) {
+  const op = (r: Result<A, E>,) => resultFn.ap(r,);
+  return curry1(op, result,);
 }
 
 /**
@@ -1268,7 +1275,7 @@ export function ap<A, B, E>(
 
   @param item The item to check.
  */
-export function isInstance<T, E>(item: unknown): item is Result<T, E> {
+export function isInstance<T, E,>(item: unknown,): item is Result<T, E> {
   return item instanceof ResultImpl;
 }
 
@@ -1285,6 +1292,6 @@ export interface ResultConstructor {
   The behavior of this type is checked by TypeScript at compile time, and bears
   no runtime overhead other than the very small cost of the container object.
  */
-export type Result<T, E> = Ok<T, E> | Err<T, E>;
+export type Result<T, E,> = Ok<T, E> | Err<T, E>;
 export const Result = ResultImpl as ResultConstructor;
 export default Result;

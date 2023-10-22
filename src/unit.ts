@@ -25,7 +25,7 @@ declare class _Unit {
   Equivalent to `()` or "unit" in many functional or functional-influenced
   languages.
  */
-export const Unit = Object.create(null) as Unit;
+export const Unit = Object.create(null,) as Unit;
 export interface Unit extends _Unit {}
 
 export default Unit;

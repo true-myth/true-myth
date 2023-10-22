@@ -4,7 +4,7 @@
   @module
  */
 
-import { curry1, isVoid, safeToString } from './-private/utils.js';
+import { curry1, isVoid, safeToString, } from './-private/utils.js';
 
 /**
   Discriminant for the {@linkcode Just} and {@linkcode Nothing} type instances.
@@ -19,7 +19,7 @@ export const Variant = {
 
 export type Variant = keyof typeof Variant;
 
-export interface JustJSON<T> {
+export interface JustJSON<T,> {
   variant: 'Just';
   value: T;
 }
@@ -28,9 +28,9 @@ export interface NothingJSON {
   variant: 'Nothing';
 }
 
-export type MaybeJSON<T> = JustJSON<T> | NothingJSON;
+export type MaybeJSON<T,> = JustJSON<T> | NothingJSON;
 
-type Repr<T> = [tag: 'Just', value: T] | [tag: 'Nothing'];
+type Repr<T,> = [tag: 'Just', value: T,] | [tag: 'Nothing',];
 
 /**
   A single instance of the `Nothing` object, to minimize memory usage. No matter
@@ -42,25 +42,25 @@ type Repr<T> = [tag: 'Just', value: T] | [tag: 'Nothing'];
 let NOTHING: Nothing<unknown>;
 
 // Defines the *implementation*, but not the *types*. See the exports below.
-class MaybeImpl<T> {
+class MaybeImpl<T,> {
   // SAFETY: this is definitely assigned in the constructor for every *actual*
   // instance, but TS cannot see that: it is only set for `Nothing` instances
   // when `NOTHING` does not already exist.
   private repr!: Repr<T>;
 
-  constructor(value?: T | null | undefined) {
-    if (isVoid(value)) {
+  constructor(value?: T | null | undefined,) {
+    if (isVoid(value,)) {
       // SAFETY: there is only a single `Nothing` in the system, because the
       // only difference between `Nothing<string>` and `Nothing<number>` is at
       // the type-checking level.
       if (!NOTHING) {
-        this.repr = [Variant.Nothing];
+        this.repr = [Variant.Nothing,];
         NOTHING = this as Nothing<unknown>;
       }
 
       return NOTHING as MaybeImpl<T>;
     } else {
-      this.repr = [Variant.Just, value];
+      this.repr = [Variant.Just, value,];
     }
   }
 
@@ -86,8 +86,8 @@ class MaybeImpl<T> {
                 the result will be `Nothing`; otherwise it will be the type of
                 the value passed.
   */
-  static of<T>(value: T | null | undefined): Maybe<T> {
-    return new Maybe(value);
+  static of<T,>(value: T | null | undefined,): Maybe<T> {
+    return new Maybe(value,);
   }
 
   /**
@@ -102,12 +102,12 @@ class MaybeImpl<T> {
     @returns     An instance of `Maybe.Just<T>`.
     @throws      If you pass `null` or `undefined`.
    */
-  static just<T>(value?: T | null): Maybe<T> {
-    if (isVoid(value)) {
-      throw new Error(`attempted to call "just" with ${value}`);
+  static just<T,>(value?: T | null,): Maybe<T> {
+    if (isVoid(value,)) {
+      throw new Error(`attempted to call "just" with ${value}`,);
     }
 
-    return new Maybe(value);
+    return new Maybe(value,);
   }
 
   /**
@@ -124,7 +124,7 @@ class MaybeImpl<T> {
     @typeparam T The type of the item contained in the `Maybe`.
     @returns     An instance of `Maybe.Nothing<T>`.
    */
-  static nothing<T>(_?: null): Nothing<T> {
+  static nothing<T,>(_?: null,): Nothing<T> {
     return new MaybeImpl() as Nothing<T>;
   }
 
@@ -140,7 +140,7 @@ class MaybeImpl<T> {
    */
   get value(): T {
     if (this.repr[0] === Variant.Nothing) {
-      throw new Error('Cannot get the value of `Nothing`');
+      throw new Error('Cannot get the value of `Nothing`',);
     }
 
     return this.repr[1];
@@ -157,58 +157,58 @@ class MaybeImpl<T> {
   }
 
   /** Method variant for {@linkcode map} */
-  map<U>(mapFn: (t: T) => U): Maybe<U> {
-    return (this.repr[0] === 'Just' ? Maybe.just(mapFn(this.repr[1])) : this) as Maybe<U>;
+  map<U,>(mapFn: (t: T,) => U,): Maybe<U> {
+    return (this.repr[0] === 'Just' ? Maybe.just(mapFn(this.repr[1],),) : this) as Maybe<U>;
   }
 
   /** Method variant for {@link mapOr|`mapOr`} */
-  mapOr<U>(orU: U, mapFn: (t: T) => U): U {
-    return this.repr[0] === 'Just' ? mapFn(this.repr[1]) : orU;
+  mapOr<U,>(orU: U, mapFn: (t: T,) => U,): U {
+    return this.repr[0] === 'Just' ? mapFn(this.repr[1],) : orU;
   }
 
   /** Method variant for {@linkcode mapOrElse} */
-  mapOrElse<U>(orElseFn: () => U, mapFn: (t: T) => U): U {
-    return this.repr[0] === 'Just' ? mapFn(this.repr[1]) : orElseFn();
+  mapOrElse<U,>(orElseFn: () => U, mapFn: (t: T,) => U,): U {
+    return this.repr[0] === 'Just' ? mapFn(this.repr[1],) : orElseFn();
   }
 
   /** Method variant for {@linkcode match} */
-  match<U>(matcher: Matcher<T, U>): U {
-    return this.repr[0] === 'Just' ? matcher.Just(this.repr[1]) : matcher.Nothing();
+  match<U,>(matcher: Matcher<T, U>,): U {
+    return this.repr[0] === 'Just' ? matcher.Just(this.repr[1],) : matcher.Nothing();
   }
 
   /** Method variant for {@linkcode or} */
-  or(mOr: Maybe<T>): Maybe<T> {
+  or(mOr: Maybe<T>,): Maybe<T> {
     return this.repr[0] === 'Just' ? (this as Maybe<T>) : mOr;
   }
 
   /** Method variant for {@linkcode orElse} */
-  orElse(orElseFn: () => Maybe<T>): Maybe<T> {
+  orElse(orElseFn: () => Maybe<T>,): Maybe<T> {
     return this.repr[0] === 'Just' ? (this as Maybe<T>) : orElseFn();
   }
 
   /** Method variant for {@linkcode and} */
-  and<U>(mAnd: Maybe<U>): Maybe<U> {
+  and<U,>(mAnd: Maybe<U>,): Maybe<U> {
     return (this.repr[0] === 'Just' ? mAnd : this) as Maybe<U>;
   }
 
   /** Method variant for {@linkcode andThen} */
-  andThen<U>(andThenFn: (t: T) => Maybe<U>): Maybe<U> {
-    return (this.repr[0] === 'Just' ? andThenFn(this.repr[1]) : this) as Maybe<U>;
+  andThen<U,>(andThenFn: (t: T,) => Maybe<U>,): Maybe<U> {
+    return (this.repr[0] === 'Just' ? andThenFn(this.repr[1],) : this) as Maybe<U>;
   }
 
   /** Method variant for {@linkcode unwrapOr} */
-  unwrapOr<U>(defaultValue: U): T | U {
+  unwrapOr<U,>(defaultValue: U,): T | U {
     return this.repr[0] === 'Just' ? this.repr[1] : defaultValue;
   }
 
   /** Method variant for {@linkcode unwrapOrElse} */
-  unwrapOrElse<U>(elseFn: () => U): T | U {
+  unwrapOrElse<U,>(elseFn: () => U,): T | U {
     return this.repr[0] === 'Just' ? this.repr[1] : elseFn();
   }
 
   /** Method variant for {@linkcode toString} */
   toString(): string {
-    return this.repr[0] === 'Just' ? `Just(${safeToString(this.repr[1])})` : 'Nothing';
+    return this.repr[0] === 'Just' ? `Just(${safeToString(this.repr[1],)})` : 'Nothing';
   }
 
   /** Method variant for {@linkcode toJSON} */
@@ -217,24 +217,24 @@ class MaybeImpl<T> {
 
     if (variant === 'Just') {
       // Handle nested Maybes
-      let value = isInstance(this.repr[1]) ? this.repr[1].toJSON() : this.repr[1];
-      return { variant, value };
+      let value = isInstance(this.repr[1],) ? this.repr[1].toJSON() : this.repr[1];
+      return { variant, value, };
     } else {
-      return { variant };
+      return { variant, };
     }
   }
 
   /** Method variant for {@linkcode equals} */
-  equals(comparison: Maybe<T>): boolean {
+  equals(comparison: Maybe<T>,): boolean {
     return (
-      this.repr[0] === (comparison as MaybeImpl<T>).repr[0] &&
-      this.repr[1] === (comparison as MaybeImpl<T>).repr[1]
+      this.repr[0] === (comparison as MaybeImpl<T>).repr[0]
+      && this.repr[1] === (comparison as MaybeImpl<T>).repr[1]
     );
   }
 
   /** Method variant for {@linkcode ap} */
-  ap<A, B>(this: Maybe<(val: A) => B>, val: Maybe<A>): Maybe<B> {
-    return val.andThen((val) => this.map((fn) => fn(val)));
+  ap<A, B,>(this: Maybe<(val: A,) => B>, val: Maybe<A>,): Maybe<B> {
+    return val.andThen((val,) => this.map((fn,) => fn(val,)));
   }
 
   /**
@@ -277,8 +277,8 @@ class MaybeImpl<T> {
     console.log(deepEmpty); // Nothing
     ```
    */
-  get<K extends keyof T>(key: K): Maybe<NonNullable<T[K]>> {
-    return this.andThen(property(key));
+  get<K extends keyof T,>(key: K,): Maybe<NonNullable<T[K]>> {
+    return this.andThen(property(key,),);
   }
 }
 
@@ -289,7 +289,7 @@ class MaybeImpl<T> {
 
   @typeparam T The type wrapped in this `Just` variant of `Maybe`.
  */
-export interface Just<T> extends MaybeImpl<T> {
+export interface Just<T,> extends MaybeImpl<T> {
   /** `Just` is always {@linkcode Variant.Just}. */
   readonly variant: 'Just';
   /** The wrapped value. */
@@ -306,7 +306,7 @@ export interface Just<T> extends MaybeImpl<T> {
   @typeparam T The type which would be wrapped in a {@linkcode Just} variant of
     the {@linkcode Maybe}.
  */
-export interface Nothing<T> extends Omit<MaybeImpl<T>, 'value'> {
+export interface Nothing<T,> extends Omit<MaybeImpl<T>, 'value'> {
   /** `Nothing` is always {@linkcode Variant.Nothing}. */
   readonly variant: 'Nothing';
 
@@ -335,7 +335,7 @@ export const just = MaybeImpl.just;
   @param maybe The `Maybe` to check.
   @returns A type guarded `Just`.
  */
-export function isJust<T>(maybe: Maybe<T>): maybe is Just<T> {
+export function isJust<T,>(maybe: Maybe<T>,): maybe is Just<T> {
   return maybe.isJust;
 }
 
@@ -346,7 +346,7 @@ export function isJust<T>(maybe: Maybe<T>): maybe is Just<T> {
   @param maybe The `Maybe` to check.
   @returns A type guarded `Nothing`.
 */
-export function isNothing<T>(maybe: Maybe<T>): maybe is Nothing<T> {
+export function isNothing<T,>(maybe: Maybe<T>,): maybe is Nothing<T> {
   return maybe.isNothing;
 }
 
@@ -434,14 +434,14 @@ export const of = MaybeImpl.of;
   @returns     A new `Maybe` with the result of applying `mapFn` to the value in
                a `Just`, or `Nothing` if `maybe` is `Nothing`.
  */
-export function map<T, U>(mapFn: (t: T) => U): (maybe: Maybe<T>) => Maybe<U>;
-export function map<T, U>(mapFn: (t: T) => U, maybe: Maybe<T>): Maybe<U>;
-export function map<T, U>(
-  mapFn: (t: T) => U,
-  maybe?: Maybe<T>
-): Maybe<U> | ((maybe: Maybe<T>) => Maybe<U>) {
-  const op = (m: Maybe<T>) => m.map(mapFn);
-  return curry1(op, maybe);
+export function map<T, U,>(mapFn: (t: T,) => U,): (maybe: Maybe<T>,) => Maybe<U>;
+export function map<T, U,>(mapFn: (t: T,) => U, maybe: Maybe<T>,): Maybe<U>;
+export function map<T, U,>(
+  mapFn: (t: T,) => U,
+  maybe?: Maybe<T>,
+): Maybe<U> | ((maybe: Maybe<T>,) => Maybe<U>) {
+  const op = (m: Maybe<T>,) => m.map(mapFn,);
+  return curry1(op, maybe,);
 }
 
 /**
@@ -469,31 +469,31 @@ export function map<T, U>(
   @param mapFn The function to apply the value to if `Maybe` is `Just`
   @param maybe The `Maybe` instance to map over.
  */
-export function mapOr<T, U>(orU: U, mapFn: (t: T) => U, maybe: Maybe<T>): U;
-export function mapOr<T, U>(orU: U, mapFn: (t: T) => U): (maybe: Maybe<T>) => U;
-export function mapOr<T, U>(orU: U): (mapFn: (t: T) => U) => (maybe: Maybe<T>) => U;
-export function mapOr<T, U>(
+export function mapOr<T, U,>(orU: U, mapFn: (t: T,) => U, maybe: Maybe<T>,): U;
+export function mapOr<T, U,>(orU: U, mapFn: (t: T,) => U,): (maybe: Maybe<T>,) => U;
+export function mapOr<T, U,>(orU: U,): (mapFn: (t: T,) => U,) => (maybe: Maybe<T>,) => U;
+export function mapOr<T, U,>(
   orU: U,
-  mapFn?: (t: T) => U,
-  maybe?: Maybe<T>
-): U | ((maybe: Maybe<T>) => U) | ((mapFn: (t: T) => U) => (maybe: Maybe<T>) => U) {
-  function fullOp(fn: (t: T) => U, m: Maybe<T>) {
-    return m.mapOr(orU, fn);
+  mapFn?: (t: T,) => U,
+  maybe?: Maybe<T>,
+): U | ((maybe: Maybe<T>,) => U) | ((mapFn: (t: T,) => U,) => (maybe: Maybe<T>,) => U) {
+  function fullOp(fn: (t: T,) => U, m: Maybe<T>,) {
+    return m.mapOr(orU, fn,);
   }
 
-  function partialOp(fn: (t: T) => U): (maybe: Maybe<T>) => U;
-  function partialOp(fn: (t: T) => U, curriedMaybe: Maybe<T>): U;
-  function partialOp(fn: (t: T) => U, curriedMaybe?: Maybe<T>): U | ((maybe: Maybe<T>) => U) {
+  function partialOp(fn: (t: T,) => U,): (maybe: Maybe<T>,) => U;
+  function partialOp(fn: (t: T,) => U, curriedMaybe: Maybe<T>,): U;
+  function partialOp(fn: (t: T,) => U, curriedMaybe?: Maybe<T>,): U | ((maybe: Maybe<T>,) => U) {
     return curriedMaybe !== undefined
-      ? fullOp(fn, curriedMaybe)
-      : (extraCurriedMaybe: Maybe<T>) => fullOp(fn, extraCurriedMaybe);
+      ? fullOp(fn, curriedMaybe,)
+      : (extraCurriedMaybe: Maybe<T>,) => fullOp(fn, extraCurriedMaybe,);
   }
 
   return mapFn === undefined
     ? partialOp
     : maybe === undefined
-    ? partialOp(mapFn)
-    : partialOp(mapFn, maybe);
+    ? partialOp(mapFn,)
+    : partialOp(mapFn, maybe,);
 }
 
 /**
@@ -523,32 +523,34 @@ export function mapOr<T, U>(
   `Just`
   @param maybe    The `Maybe` instance to map over.
  */
-export function mapOrElse<T, U>(orElseFn: () => U, mapFn: (t: T) => U, maybe: Maybe<T>): U;
-export function mapOrElse<T, U>(orElseFn: () => U, mapFn: (t: T) => U): (maybe: Maybe<T>) => U;
-export function mapOrElse<T, U>(orElseFn: () => U): (mapFn: (t: T) => U) => (maybe: Maybe<T>) => U;
-export function mapOrElse<T, U>(
+export function mapOrElse<T, U,>(orElseFn: () => U, mapFn: (t: T,) => U, maybe: Maybe<T>,): U;
+export function mapOrElse<T, U,>(orElseFn: () => U, mapFn: (t: T,) => U,): (maybe: Maybe<T>,) => U;
+export function mapOrElse<T, U,>(
   orElseFn: () => U,
-  mapFn?: (t: T) => U,
-  maybe?: Maybe<T>
-): U | ((maybe: Maybe<T>) => U) | ((mapFn: (t: T) => U) => (maybe: Maybe<T>) => U) {
-  function fullOp(fn: (t: T) => U, m: Maybe<T>) {
-    return m.mapOrElse(orElseFn, fn);
+): (mapFn: (t: T,) => U,) => (maybe: Maybe<T>,) => U;
+export function mapOrElse<T, U,>(
+  orElseFn: () => U,
+  mapFn?: (t: T,) => U,
+  maybe?: Maybe<T>,
+): U | ((maybe: Maybe<T>,) => U) | ((mapFn: (t: T,) => U,) => (maybe: Maybe<T>,) => U) {
+  function fullOp(fn: (t: T,) => U, m: Maybe<T>,) {
+    return m.mapOrElse(orElseFn, fn,);
   }
 
-  function partialOp(fn: (t: T) => U): (maybe: Maybe<T>) => U;
-  function partialOp(fn: (t: T) => U, curriedMaybe: Maybe<T>): U;
-  function partialOp(fn: (t: T) => U, curriedMaybe?: Maybe<T>): U | ((maybe: Maybe<T>) => U) {
+  function partialOp(fn: (t: T,) => U,): (maybe: Maybe<T>,) => U;
+  function partialOp(fn: (t: T,) => U, curriedMaybe: Maybe<T>,): U;
+  function partialOp(fn: (t: T,) => U, curriedMaybe?: Maybe<T>,): U | ((maybe: Maybe<T>,) => U) {
     return curriedMaybe !== undefined
-      ? fullOp(fn, curriedMaybe)
-      : (extraCurriedMaybe: Maybe<T>) => fullOp(fn, extraCurriedMaybe);
+      ? fullOp(fn, curriedMaybe,)
+      : (extraCurriedMaybe: Maybe<T>,) => fullOp(fn, extraCurriedMaybe,);
   }
 
   if (mapFn === undefined) {
     return partialOp;
   } else if (maybe === undefined) {
-    return partialOp(mapFn);
+    return partialOp(mapFn,);
   } else {
-    return partialOp(mapFn, maybe);
+    return partialOp(mapFn, maybe,);
   }
 }
 
@@ -586,14 +588,14 @@ export function mapOrElse<T, U>(
   @return         `Nothing` if the original `maybe` is `Nothing`, or `andMaybe`
                   if the original `maybe` is `Just`.
  */
-export function and<T, U>(andMaybe: Maybe<U>, maybe: Maybe<T>): Maybe<U>;
-export function and<T, U>(andMaybe: Maybe<U>): (maybe: Maybe<T>) => Maybe<U>;
-export function and<T, U>(
+export function and<T, U,>(andMaybe: Maybe<U>, maybe: Maybe<T>,): Maybe<U>;
+export function and<T, U,>(andMaybe: Maybe<U>,): (maybe: Maybe<T>,) => Maybe<U>;
+export function and<T, U,>(
   andMaybe: Maybe<U>,
-  maybe?: Maybe<T>
-): Maybe<U> | ((maybe: Maybe<T>) => Maybe<U>) {
-  const op = (m: Maybe<T>) => m.and(andMaybe);
-  return curry1(op, maybe);
+  maybe?: Maybe<T>,
+): Maybe<U> | ((maybe: Maybe<T>,) => Maybe<U>) {
+  const op = (m: Maybe<T>,) => m.and(andMaybe,);
+  return curry1(op, maybe,);
 }
 
 /**
@@ -647,14 +649,14 @@ export function and<T, U>(
   @returns      The result of the `thenFn` (a new `Maybe`) if `maybe` is a
                 `Just`, otherwise `Nothing` if `maybe` is a `Nothing`.
  */
-export function andThen<T, U>(thenFn: (t: T) => Maybe<U>, maybe: Maybe<T>): Maybe<U>;
-export function andThen<T, U>(thenFn: (t: T) => Maybe<U>): (maybe: Maybe<T>) => Maybe<U>;
-export function andThen<T, U>(
-  thenFn: (t: T) => Maybe<U>,
-  maybe?: Maybe<T>
-): Maybe<U> | ((maybe: Maybe<T>) => Maybe<U>) {
-  const op = (m: Maybe<T>) => m.andThen(thenFn);
-  return maybe !== undefined ? op(maybe) : op;
+export function andThen<T, U,>(thenFn: (t: T,) => Maybe<U>, maybe: Maybe<T>,): Maybe<U>;
+export function andThen<T, U,>(thenFn: (t: T,) => Maybe<U>,): (maybe: Maybe<T>,) => Maybe<U>;
+export function andThen<T, U,>(
+  thenFn: (t: T,) => Maybe<U>,
+  maybe?: Maybe<T>,
+): Maybe<U> | ((maybe: Maybe<T>,) => Maybe<U>) {
+  const op = (m: Maybe<T>,) => m.andThen(thenFn,);
+  return maybe !== undefined ? op(maybe,) : op;
 }
 
 /**
@@ -684,14 +686,14 @@ export function andThen<T, U>(
   @param maybe        The `Maybe` instance to evaluate.
   @returns            `maybe` if it is a `Just`, otherwise `defaultMaybe`.
  */
-export function or<T>(defaultMaybe: Maybe<T>, maybe: Maybe<T>): Maybe<T>;
-export function or<T>(defaultMaybe: Maybe<T>): (maybe: Maybe<T>) => Maybe<T>;
-export function or<T>(
+export function or<T,>(defaultMaybe: Maybe<T>, maybe: Maybe<T>,): Maybe<T>;
+export function or<T,>(defaultMaybe: Maybe<T>,): (maybe: Maybe<T>,) => Maybe<T>;
+export function or<T,>(
   defaultMaybe: Maybe<T>,
-  maybe?: Maybe<T>
-): Maybe<T> | ((maybe: Maybe<T>) => Maybe<T>) {
-  const op = (m: Maybe<T>) => m.or(defaultMaybe);
-  return maybe !== undefined ? op(maybe) : op;
+  maybe?: Maybe<T>,
+): Maybe<T> | ((maybe: Maybe<T>,) => Maybe<T>) {
+  const op = (m: Maybe<T>,) => m.or(defaultMaybe,);
+  return maybe !== undefined ? op(maybe,) : op;
 }
 
 /**
@@ -710,14 +712,14 @@ export function or<T>(
   @returns      The `maybe` if it is `Just`, or the `Maybe` returned by `elseFn`
                 if the `maybe` is `Nothing`.
  */
-export function orElse<T>(elseFn: () => Maybe<T>, maybe: Maybe<T>): Maybe<T>;
-export function orElse<T>(elseFn: () => Maybe<T>): (maybe: Maybe<T>) => Maybe<T>;
-export function orElse<T>(
+export function orElse<T,>(elseFn: () => Maybe<T>, maybe: Maybe<T>,): Maybe<T>;
+export function orElse<T,>(elseFn: () => Maybe<T>,): (maybe: Maybe<T>,) => Maybe<T>;
+export function orElse<T,>(
   elseFn: () => Maybe<T>,
-  maybe?: Maybe<T>
-): Maybe<T> | ((maybe: Maybe<T>) => Maybe<T>) {
-  const op = (m: Maybe<T>) => m.orElse(elseFn);
-  return curry1(op, maybe);
+  maybe?: Maybe<T>,
+): Maybe<T> | ((maybe: Maybe<T>,) => Maybe<T>) {
+  const op = (m: Maybe<T>,) => m.orElse(elseFn,);
+  return curry1(op, maybe,);
 }
 
 /**
@@ -743,11 +745,11 @@ export function orElse<T>(
   @returns            The content of `maybe` if it is a `Just`, otherwise
                       `defaultValue`.
  */
-export function unwrapOr<T, U>(defaultValue: U, maybe: Maybe<T>): T | U;
-export function unwrapOr<T, U>(defaultValue: U): (maybe: Maybe<T>) => T | U;
-export function unwrapOr<T, U>(defaultValue: U, maybe?: Maybe<T>) {
-  const op = (m: Maybe<T>) => m.unwrapOr(defaultValue);
-  return curry1(op, maybe);
+export function unwrapOr<T, U,>(defaultValue: U, maybe: Maybe<T>,): T | U;
+export function unwrapOr<T, U,>(defaultValue: U,): (maybe: Maybe<T>,) => T | U;
+export function unwrapOr<T, U,>(defaultValue: U, maybe?: Maybe<T>,) {
+  const op = (m: Maybe<T>,) => m.unwrapOr(defaultValue,);
+  return curry1(op, maybe,);
 }
 
 /**
@@ -780,14 +782,14 @@ export function unwrapOr<T, U>(defaultValue: U, maybe?: Maybe<T>) {
   @returns        Either the content of `maybe` or the value returned from
                   `orElseFn`.
  */
-export function unwrapOrElse<T, U>(orElseFn: () => U, maybe: Maybe<T>): T | U;
-export function unwrapOrElse<T, U>(orElseFn: () => U): (maybe: Maybe<T>) => T | U;
-export function unwrapOrElse<T, U>(
+export function unwrapOrElse<T, U,>(orElseFn: () => U, maybe: Maybe<T>,): T | U;
+export function unwrapOrElse<T, U,>(orElseFn: () => U,): (maybe: Maybe<T>,) => T | U;
+export function unwrapOrElse<T, U,>(
   orElseFn: () => U,
-  maybe?: Maybe<T>
-): (T | U) | ((maybe: Maybe<T>) => T | U) {
-  const op = (m: Maybe<T>) => m.unwrapOrElse(orElseFn);
-  return curry1(op, maybe);
+  maybe?: Maybe<T>,
+): (T | U) | ((maybe: Maybe<T>,) => T | U) {
+  const op = (m: Maybe<T>,) => m.unwrapOrElse(orElseFn,);
+  return curry1(op, maybe,);
 }
 
 /**
@@ -809,7 +811,7 @@ export function unwrapOrElse<T, U>(
   @param maybe The value to convert to a string.
   @returns     The string representation of the `Maybe`.
  */
-export function toString<T>(maybe: Maybe<T>): string {
+export function toString<T,>(maybe: Maybe<T>,): string {
   return maybe.toString();
 }
 
@@ -821,15 +823,15 @@ export function toString<T>(maybe: Maybe<T>): string {
  * @param maybe The value to convert to JSON
  * @returns     The JSON representation of the `Maybe`
  */
-export function toJSON<T>(maybe: Maybe<T>): MaybeJSON<unknown> {
+export function toJSON<T,>(maybe: Maybe<T>,): MaybeJSON<unknown> {
   return maybe.toJSON();
 }
 
 /**
   A lightweight object defining how to handle each variant of a {@linkcode Maybe}.
  */
-export type Matcher<T, A> = {
-  Just: (value: T) => A;
+export type Matcher<T, A,> = {
+  Just: (value: T,) => A;
   Nothing: () => A;
 };
 
@@ -884,11 +886,11 @@ export type Matcher<T, A> = {
                  variant.
   @param maybe   The `maybe` instance to check.
  */
-export function match<T, A>(matcher: Matcher<T, A>, maybe: Maybe<T>): A;
-export function match<T, A>(matcher: Matcher<T, A>): (m: Maybe<T>) => A;
-export function match<T, A>(matcher: Matcher<T, A>, maybe?: Maybe<T>): A | ((m: Maybe<T>) => A) {
-  const op = (curriedMaybe: Maybe<T>) => curriedMaybe.match(matcher);
-  return curry1(op, maybe);
+export function match<T, A,>(matcher: Matcher<T, A>, maybe: Maybe<T>,): A;
+export function match<T, A,>(matcher: Matcher<T, A>,): (m: Maybe<T>,) => A;
+export function match<T, A,>(matcher: Matcher<T, A>, maybe?: Maybe<T>,): A | ((m: Maybe<T>,) => A) {
+  const op = (curriedMaybe: Maybe<T>,) => curriedMaybe.match(matcher,);
+  return curry1(op, maybe,);
 }
 
 /**
@@ -909,11 +911,11 @@ export function match<T, A>(matcher: Matcher<T, A>, maybe?: Maybe<T>): A | ((m: 
   @param mb A `maybe` to compare to.
   @param ma A `maybe` instance to check.
  */
-export function equals<T>(mb: Maybe<T>, ma: Maybe<T>): boolean;
-export function equals<T>(mb: Maybe<T>): (ma: Maybe<T>) => boolean;
-export function equals<T>(mb: Maybe<T>, ma?: Maybe<T>): boolean | ((a: Maybe<T>) => boolean) {
-  const op = (maybeA: Maybe<T>) => maybeA.equals(mb);
-  return curry1(op, ma);
+export function equals<T,>(mb: Maybe<T>, ma: Maybe<T>,): boolean;
+export function equals<T,>(mb: Maybe<T>,): (ma: Maybe<T>,) => boolean;
+export function equals<T,>(mb: Maybe<T>, ma?: Maybe<T>,): boolean | ((a: Maybe<T>,) => boolean) {
+  const op = (maybeA: Maybe<T>,) => maybeA.equals(mb,);
+  return curry1(op, ma,);
 }
 
 /**
@@ -1064,14 +1066,14 @@ export function equals<T>(mb: Maybe<T>, ma?: Maybe<T>): boolean | ((a: Maybe<T>)
   @param maybeFn maybe a function from T to U
   @param maybe maybe a T to apply to `fn`
  */
-export function ap<T, U>(maybeFn: Maybe<(t: T) => U>, maybe: Maybe<T>): Maybe<U>;
-export function ap<T, U>(maybeFn: Maybe<(t: T) => U>): (maybe: Maybe<T>) => Maybe<U>;
-export function ap<T, U>(
-  maybeFn: Maybe<(t: T) => U>,
-  maybe?: Maybe<T>
-): Maybe<U> | ((val: Maybe<T>) => Maybe<U>) {
-  const op = (m: Maybe<T>) => maybeFn.ap(m);
-  return curry1(op, maybe);
+export function ap<T, U,>(maybeFn: Maybe<(t: T,) => U>, maybe: Maybe<T>,): Maybe<U>;
+export function ap<T, U,>(maybeFn: Maybe<(t: T,) => U>,): (maybe: Maybe<T>,) => Maybe<U>;
+export function ap<T, U,>(
+  maybeFn: Maybe<(t: T,) => U>,
+  maybe?: Maybe<T>,
+): Maybe<U> | ((val: Maybe<T>,) => Maybe<U>) {
+  const op = (m: Maybe<T>,) => maybeFn.ap(m,);
+  return curry1(op, maybe,);
 }
 
 /**
@@ -1079,16 +1081,16 @@ export function ap<T, U>(
 
   @param item The item to check.
  */
-export function isInstance<T>(item: unknown): item is Maybe<T> {
+export function isInstance<T,>(item: unknown,): item is Maybe<T> {
   return item instanceof Maybe;
 }
 
-export type Predicate<T> = (element: T, index: number, array: T[]) => boolean;
+export type Predicate<T,> = (element: T, index: number, array: T[],) => boolean;
 
-export type NarrowingPredicate<T, U extends T> = (
+export type NarrowingPredicate<T, U extends T,> = (
   element: T,
   index: number,
-  array: T[]
+  array: T[],
 ) => element is U;
 
 // NOTE: documentation is lightly adapted from the MDN and TypeScript docs for
@@ -1147,16 +1149,18 @@ export type NarrowingPredicate<T, U extends T> = (
                     returns `Nothing`.
  * @param array     The array to search using the predicate.
  */
-export function find<T, U extends T>(predicate: NarrowingPredicate<T, U>, array: T[]): Maybe<U>;
-export function find<T, U extends T>(predicate: NarrowingPredicate<T, U>): (array: T[]) => Maybe<U>;
-export function find<T>(predicate: Predicate<T>, array: T[]): Maybe<T>;
-export function find<T>(predicate: Predicate<T>): (array: T[]) => Maybe<T>;
-export function find<T, U extends T>(
+export function find<T, U extends T,>(predicate: NarrowingPredicate<T, U>, array: T[],): Maybe<U>;
+export function find<T, U extends T,>(
+  predicate: NarrowingPredicate<T, U>,
+): (array: T[],) => Maybe<U>;
+export function find<T,>(predicate: Predicate<T>, array: T[],): Maybe<T>;
+export function find<T,>(predicate: Predicate<T>,): (array: T[],) => Maybe<T>;
+export function find<T, U extends T,>(
   predicate: NarrowingPredicate<T, U> | Predicate<T>,
-  array?: T[]
-): Maybe<T> | ((array: T[]) => Maybe<T>) {
-  const op = (a: T[]) => Maybe.of(a.find(predicate));
-  return curry1(op, array);
+  array?: T[],
+): Maybe<T> | ((array: T[],) => Maybe<T>) {
+  const op = (a: T[],) => Maybe.of(a.find(predicate,),);
+  return curry1(op, array,);
 }
 
 /**
@@ -1176,8 +1180,8 @@ export function find<T, U extends T>(
 
   @param array The array to get the first item from.
  */
-export function first<T>(array: Array<T | null | undefined>): Maybe<T> {
-  return Maybe.of(array[0]);
+export function first<T,>(array: Array<T | null | undefined>,): Maybe<T> {
+  return Maybe.of(array[0],);
 }
 
 /**
@@ -1197,8 +1201,8 @@ export function first<T>(array: Array<T | null | undefined>): Maybe<T> {
 
   @param array The array to get the first item from.
  */
-export function last<T>(array: Array<T | null | undefined>): Maybe<T> {
-  return Maybe.of(array[array.length - 1]);
+export function last<T,>(array: Array<T | null | undefined>,): Maybe<T> {
+  return Maybe.of(array[array.length - 1],);
 }
 
 /**
@@ -1263,23 +1267,25 @@ export function last<T>(array: Array<T | null | undefined>): Maybe<T> {
 
   @param maybes The `Maybe`s to resolve to a single `Maybe`.
  */
-export function transposeArray<T extends Array<Maybe<unknown>>>(maybes: T): TransposedArray<T> {
+export function transposeArray<T extends Array<Maybe<unknown>>,>(maybes: T,): TransposedArray<T> {
   // The slightly odd-seeming use of `[...ms, m]` here instead of `concat` is
   // necessary to preserve the structure of the value passed in. The goal is for
   // `[Maybe<string>, [Maybe<number>, Maybe<boolean>]]` not to be flattened into
   // `Maybe<[string, number, boolean]>` (as `concat` would do) but instead to
   // produce `Maybe<[string, [number, boolean]]>`.
   return maybes.reduce(
-    (acc: Maybe<unknown[]>, m) => acc.andThen((ms) => m.map((m) => [...ms, m])),
-    just([] as unknown[]) as TransposedArray<T>
+    (acc: Maybe<unknown[]>, m,) => acc.andThen((ms,) => m.map((m,) => [...ms, m,])),
+    just([] as unknown[],) as TransposedArray<T>,
   ) as TransposedArray<T>;
 }
 
-export type Unwrapped<T> = T extends Maybe<infer U> ? U : T;
+export type Unwrapped<T,> = T extends Maybe<infer U> ? U : T;
 
-export type TransposedArray<T extends Array<Maybe<unknown>>> = Maybe<{
-  [K in keyof T]: Unwrapped<T[K]>;
-}>;
+export type TransposedArray<T extends Array<Maybe<unknown>>,> = Maybe<
+  {
+    [K in keyof T]: Unwrapped<T[K]>;
+  }
+>;
 
 /**
   Safely extract a key from an object, returning {@linkcode Just} if the key has
@@ -1330,14 +1336,14 @@ export type TransposedArray<T extends Array<Maybe<unknown>>> = Maybe<{
   @param key The key to pull out of the object.
   @param obj The object to look up the key from.
  */
-export function property<T, K extends keyof T>(key: K, obj: T): Maybe<NonNullable<T[K]>>;
-export function property<T, K extends keyof T>(key: K): (obj: T) => Maybe<NonNullable<T[K]>>;
-export function property<T, K extends keyof T>(
+export function property<T, K extends keyof T,>(key: K, obj: T,): Maybe<NonNullable<T[K]>>;
+export function property<T, K extends keyof T,>(key: K,): (obj: T,) => Maybe<NonNullable<T[K]>>;
+export function property<T, K extends keyof T,>(
   key: K,
-  obj?: T
-): Maybe<NonNullable<T[K]>> | ((obj: T) => Maybe<NonNullable<T[K]>>) {
-  const op = (t: T) => Maybe.of(t[key]) as Maybe<NonNullable<T[K]>>;
-  return curry1(op, obj);
+  obj?: T,
+): Maybe<NonNullable<T[K]>> | ((obj: T,) => Maybe<NonNullable<T[K]>>) {
+  const op = (t: T,) => Maybe.of(t[key],) as Maybe<NonNullable<T[K]>>;
+  return curry1(op, obj,);
 }
 
 /**
@@ -1397,13 +1403,15 @@ export function property<T, K extends keyof T>(
   @param key The key to pull out of the object.
   @param maybeObj The object to look up the key from.
  */
-export function get<T, K extends keyof T>(key: K, maybeObj: Maybe<T>): Maybe<NonNullable<T[K]>>;
-export function get<T, K extends keyof T>(key: K): (maybeObj: Maybe<T>) => Maybe<NonNullable<T[K]>>;
-export function get<T, K extends keyof T>(
+export function get<T, K extends keyof T,>(key: K, maybeObj: Maybe<T>,): Maybe<NonNullable<T[K]>>;
+export function get<T, K extends keyof T,>(
   key: K,
-  maybeObj?: Maybe<T>
-): Maybe<NonNullable<T[K]>> | ((maybeObj: Maybe<T>) => Maybe<NonNullable<T[K]>>) {
-  return curry1(andThen(property<T, K>(key)), maybeObj);
+): (maybeObj: Maybe<T>,) => Maybe<NonNullable<T[K]>>;
+export function get<T, K extends keyof T,>(
+  key: K,
+  maybeObj?: Maybe<T>,
+): Maybe<NonNullable<T[K]>> | ((maybeObj: Maybe<T>,) => Maybe<NonNullable<T[K]>>) {
+  return curry1(andThen(property<T, K>(key,),), maybeObj,);
 }
 
 /**
@@ -1481,8 +1489,8 @@ export function wrapReturn<
   F extends AnyFunction,
   P extends Parameters<F>,
   R extends NonNullable<ReturnType<F>>,
->(fn: F): (...args: P) => Maybe<R> {
-  return (...args) => Maybe.of(fn(...args)) as Maybe<R>;
+>(fn: F,): (...args: P) => Maybe<R> {
+  return (...args) => Maybe.of(fn(...args,),) as Maybe<R>;
 }
 
 /**
@@ -1499,7 +1507,7 @@ export type AnyFunction = (...args: never[]) => unknown;
   constructor and the associated static properties.
  */
 export interface MaybeConstructor {
-  new <T>(value?: T | null | undefined): Maybe<T>;
+  new<T,>(value?: T | null | undefined,): Maybe<T>;
   of: typeof MaybeImpl.of;
   just: typeof MaybeImpl.just;
   nothing: typeof MaybeImpl.nothing;
@@ -1507,6 +1515,6 @@ export interface MaybeConstructor {
 
 /** A value which may ({@linkcode Just `Just<T>`}) or may not
  * ({@linkcode Nothing}) be present. */
-export type Maybe<T> = Just<T> | Nothing<T>;
+export type Maybe<T,> = Just<T> | Nothing<T>;
 export const Maybe = MaybeImpl as MaybeConstructor;
 export default Maybe;
