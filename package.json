@@ -81,7 +81,7 @@
     "rimraf": "^5.0.1",
     "shelljs": "^0.8.5",
     "typedoc": "^0.25.0",
-    "typescript": "~5.2",
+    "typescript": "~5.3",
     "vitest": "^0.34.1"
   },
   "engines": {
