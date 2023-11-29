@@ -145,12 +145,12 @@ Notes:
 
 This project follows the current draft of [the Semantic Versioning for TypeScript Types][semver] specification.
 
-- **Currently supported TypeScript versions:** 4.7, 4.8, 4.9, 5.0, 5.1, and 5.2
+- **Currently supported TypeScript versions:** 4.7, 4.8, 4.9, 5.0, 5.1, 5.2, and 5.3
 - **Compiler support policy:** [simple majors][sm]
 - **Public API:** all published types not in a `-private` module are public
 
 [semver]: https://www.semver-ts.org
-[sm]: https://www.semver-ts.org/#simple-majors
+[sm]: https://www.semver-ts.org/formal-spec/5-compiler-considerations.html#simple-majors
 
 ## Just the API, please
 
