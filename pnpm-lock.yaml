@@ -31,7 +31,7 @@ devDependencies:
     version: 0.8.5
   typedoc:
     specifier: ^0.25.0
-    version: 0.25.11(typescript@5.3.3)
+    version: 0.25.12(typescript@5.3.3)
   typescript:
     specifier: ~5.3
     version: 5.3.3
@@ -4315,12 +4315,12 @@ packages:
       is-typedarray: 1.0.0
     dev: true
 
-  /typedoc@0.25.11(typescript@5.3.3):
-    resolution: {integrity: sha512-5MbI1W/FOG6oXsd8bdssQidSTeKh8Kt3xA5uKVzI+K99uzP8EGN45uPnPvQesyaWdD+89s4wCQdtWEd8QUbiRg==}
+  /typedoc@0.25.12(typescript@5.3.3):
+    resolution: {integrity: sha512-F+qhkK2VoTweDXd1c42GS/By2DvI2uDF4/EpG424dTexSHdtCH52C6IcAvMA6jR3DzAWZjHpUOW+E02kyPNUNw==}
     engines: {node: '>= 16'}
     hasBin: true
     peerDependencies:
-      typescript: 4.6.x || 4.7.x || 4.8.x || 4.9.x || 5.0.x || 5.1.x || 5.2.x || 5.3.x
+      typescript: 4.6.x || 4.7.x || 4.8.x || 4.9.x || 5.0.x || 5.1.x || 5.2.x || 5.3.x || 5.4.x
     dependencies:
       lunr: 2.3.9
       marked: 4.3.0
