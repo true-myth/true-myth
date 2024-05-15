@@ -392,6 +392,10 @@ describe('`Maybe` pure functions', () => {
       expect(waffles.variant).toBe(MaybeNS.Variant.Just);
       expect((waffles as Just<Item>).value).toEqual(array[1]);
       expectTypeOf(waffles).toMatchTypeOf<Maybe<{ name: 'waffles' }>>();
+
+      const readonlyEmpty: readonly number[] = [];
+      const foundReadonly = MaybeNS.find(pred, readonlyEmpty);
+      expectTypeOf(foundReadonly).toMatchTypeOf<Maybe<number>>();
     });
 
     test('`first`', () => {
