@@ -492,8 +492,8 @@ export function mapOr<T, U>(
   return mapFn === undefined
     ? partialOp
     : maybe === undefined
-    ? partialOp(mapFn)
-    : partialOp(mapFn, maybe);
+      ? partialOp(mapFn)
+      : partialOp(mapFn, maybe);
 }
 
 /**
@@ -1083,12 +1083,12 @@ export function isInstance<T>(item: unknown): item is Maybe<T> {
   return item instanceof Maybe;
 }
 
-export type Predicate<T> = (element: T, index: number, array: T[]) => boolean;
+export type Predicate<T> = (element: T, index: number, array: T[] | readonly T[]) => boolean;
 
 export type NarrowingPredicate<T, U extends T> = (
   element: T,
   index: number,
-  array: T[]
+  array: T[] | readonly T[]
 ) => element is U;
 
 // NOTE: documentation is lightly adapted from the MDN and TypeScript docs for
@@ -1147,15 +1147,20 @@ export type NarrowingPredicate<T, U extends T> = (
                     returns `Nothing`.
  * @param array     The array to search using the predicate.
  */
-export function find<T, U extends T>(predicate: NarrowingPredicate<T, U>, array: T[]): Maybe<U>;
-export function find<T, U extends T>(predicate: NarrowingPredicate<T, U>): (array: T[]) => Maybe<U>;
-export function find<T>(predicate: Predicate<T>, array: T[]): Maybe<T>;
-export function find<T>(predicate: Predicate<T>): (array: T[]) => Maybe<T>;
+export function find<T, U extends T>(
+  predicate: NarrowingPredicate<T, U>,
+  array: T[] | readonly T[]
+): Maybe<U>;
+export function find<T, U extends T>(
+  predicate: NarrowingPredicate<T, U>
+): (array: T[] | readonly T[]) => Maybe<U>;
+export function find<T>(predicate: Predicate<T>, array: T[] | readonly T[]): Maybe<T>;
+export function find<T>(predicate: Predicate<T>): (array: T[] | readonly T[]) => Maybe<T>;
 export function find<T, U extends T>(
   predicate: NarrowingPredicate<T, U> | Predicate<T>,
-  array?: T[]
-): Maybe<T> | ((array: T[]) => Maybe<T>) {
-  const op = (a: T[]) => Maybe.of(a.find(predicate));
+  array?: T[] | readonly T[]
+): Maybe<T> | ((array: T[] | readonly T[]) => Maybe<T>) {
+  const op = (a: T[] | readonly T[]) => Maybe.of(a.find(predicate));
   return curry1(op, array);
 }
 
