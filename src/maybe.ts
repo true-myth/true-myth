@@ -1083,13 +1083,15 @@ export function isInstance<T>(item: unknown): item is Maybe<T> {
   return item instanceof Maybe;
 }
 
-export type Predicate<T> = (element: T, index: number, array: T[] | readonly T[]) => boolean;
+export type Predicate<T> = (element: T, index: number, array: AnyArray<T>) => boolean;
 
 export type NarrowingPredicate<T, U extends T> = (
   element: T,
   index: number,
-  array: T[] | readonly T[]
+  array: AnyArray<T>
 ) => element is U;
+
+type AnyArray<T> = Array<T> | ReadonlyArray<T>;
 
 // NOTE: documentation is lightly adapted from the MDN and TypeScript docs for
 // `Array.prototype.find`.
@@ -1149,18 +1151,18 @@ export type NarrowingPredicate<T, U extends T> = (
  */
 export function find<T, U extends T>(
   predicate: NarrowingPredicate<T, U>,
-  array: T[] | readonly T[]
+  array: AnyArray<T>
 ): Maybe<U>;
 export function find<T, U extends T>(
   predicate: NarrowingPredicate<T, U>
-): (array: T[] | readonly T[]) => Maybe<U>;
-export function find<T>(predicate: Predicate<T>, array: T[] | readonly T[]): Maybe<T>;
-export function find<T>(predicate: Predicate<T>): (array: T[] | readonly T[]) => Maybe<T>;
+): (array: AnyArray<T>) => Maybe<U>;
+export function find<T>(predicate: Predicate<T>, array: AnyArray<T>): Maybe<T>;
+export function find<T>(predicate: Predicate<T>): (array: AnyArray<T>) => Maybe<T>;
 export function find<T, U extends T>(
   predicate: NarrowingPredicate<T, U> | Predicate<T>,
-  array?: T[] | readonly T[]
-): Maybe<T> | ((array: T[] | readonly T[]) => Maybe<T>) {
-  const op = (a: T[] | readonly T[]) => Maybe.of(a.find(predicate));
+  array?: AnyArray<T>
+): Maybe<T> | ((array: AnyArray<T>) => Maybe<T>) {
+  const op = (a: AnyArray<T>) => Maybe.of(a.find(predicate));
   return curry1(op, array);
 }
 
