@@ -4,15 +4,10 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
-
-
-
-
-
-
 ## 7.2.0 (2024-05-16)
 
 #### :rocket: Enhancement
+* [#749](https://github.com/true-myth/true-myth/pull/749) Allow readonly Arrays in `find()` ([@screendriver](https://github.com/screendriver))
 * [#720](https://github.com/true-myth/true-myth/pull/720) Add (tested) support for Node 20 ([@chriskrycho](https://github.com/chriskrycho))
 * [#719](https://github.com/true-myth/true-myth/pull/719) Add support for TypeScript 5.4 ([@chriskrycho](https://github.com/chriskrycho))
 * [#650](https://github.com/true-myth/true-myth/pull/650) Add support for TypeScript 5.3 ([@dependabot[bot]](https://github.com/apps/dependabot))
@@ -360,7 +355,7 @@ This is the final release for v5.x, and only exists to make sure there are fully
 
     let allJustArray = [just("hello"), just(12)];
     let allJustArrayResult: ArrayResult = arrayTranspose(allJustArray);
-    
+
     // Tuples now work with `arrayTranspose` as well.
     type Tuple = [Maybe<number>, Maybe<string>];
     type TupleResult = Maybe<[number, string]>;
