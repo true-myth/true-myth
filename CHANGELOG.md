@@ -9,6 +9,23 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 
 
+
+## 7.2.0 (2024-05-16)
+
+#### :rocket: Enhancement
+* [#720](https://github.com/true-myth/true-myth/pull/720) Add (tested) support for Node 20 ([@chriskrycho](https://github.com/chriskrycho))
+* [#719](https://github.com/true-myth/true-myth/pull/719) Add support for TypeScript 5.4 ([@chriskrycho](https://github.com/chriskrycho))
+* [#650](https://github.com/true-myth/true-myth/pull/650) Add support for TypeScript 5.3 ([@dependabot[bot]](https://github.com/apps/dependabot))
+
+#### :house: Internal
+* [#751](https://github.com/true-myth/true-myth/pull/751) Supply an `AnyArray` type in maybe.ts ([@chriskrycho](https://github.com/chriskrycho))
+* [#750](https://github.com/true-myth/true-myth/pull/750) infra: update to latest pnpm ([@chriskrycho](https://github.com/chriskrycho))
+* [#631](https://github.com/true-myth/true-myth/pull/631) Simplify CI test matrix ([@chriskrycho](https://github.com/chriskrycho))
+
+#### Committers: 2
+- Chris Krycho ([@chriskrycho](https://github.com/chriskrycho))
+- Christian Rackerseder ([@screendriver](https://github.com/screendriver))
+
 ## 7.1.0 (2023-09-05)
 
 #### :rocket: Enhancement
