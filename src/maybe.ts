@@ -86,6 +86,19 @@ class MaybeImpl<T> {
                 the result will be `Nothing`; otherwise it will be the type of
                 the value passed.
   */
+  // When dealing with function types, only allow functions which return a
+  // non-null, non-undefined value, so that we do not produce nonsensical types
+  // later when using `.ap()` or similar.
+  static of<F extends (...args: any) => {}>(value: F): Maybe<F>;
+  static of<T extends {}, F extends (...args: any) => T | null | undefined>(value: F): never;
+  static of<F extends (...args: any) => null | undefined>(value: F): never;
+  // For all other types, allow `null | undefined`, since in those cases we will
+  // produce `Nothing`.
+  static of<T>(value: T | null | undefined): Maybe<T>;
+  // Then the implementation signature is simply the same as the final overload,
+  // because we do not *and cannot* prevent the undesired function types from
+  // appearing here at runtime: doing so would require having a value on which
+  // to (maybe) apply the function!
   static of<T>(value: T | null | undefined): Maybe<T> {
     return new Maybe(value);
   }
@@ -102,6 +115,14 @@ class MaybeImpl<T> {
     @returns     An instance of `Maybe.Just<T>`.
     @throws      If you pass `null` or `undefined`.
    */
+  // The rules for accepting function types are identical with those for the
+  // `Maybe.of` constructor.
+  static just<F extends (...args: any) => {}>(value: F): Maybe<F>;
+  static just<T extends {}, F extends (...args: any) => T | null | undefined>(value: F): never;
+  static just<F extends (...args: any) => null | undefined>(value: F): never;
+  // Otherwise, `just` handles `null` and `undefined` values by throwing, per
+  // the docstring.
+  static just<T>(value?: T | null): Maybe<T>;
   static just<T>(value?: T | null): Maybe<T> {
     if (isVoid(value)) {
       throw new Error(`attempted to call "just" with ${value}`);
@@ -157,7 +178,7 @@ class MaybeImpl<T> {
   }
 
   /** Method variant for {@linkcode map} */
-  map<U>(mapFn: (t: T) => U): Maybe<U> {
+  map<U extends {}>(mapFn: (t: T) => U): Maybe<U> {
     return (this.repr[0] === 'Just' ? Maybe.just(mapFn(this.repr[1])) : this) as Maybe<U>;
   }
 
@@ -233,7 +254,7 @@ class MaybeImpl<T> {
   }
 
   /** Method variant for {@linkcode ap} */
-  ap<A, B>(this: Maybe<(val: A) => B>, val: Maybe<A>): Maybe<B> {
+  ap<A, B extends {}>(this: Maybe<(val: A) => B>, val: Maybe<A>): Maybe<B> {
     return val.andThen((val) => this.map((fn) => fn(val)));
   }
 
@@ -434,9 +455,9 @@ export const of = MaybeImpl.of;
   @returns     A new `Maybe` with the result of applying `mapFn` to the value in
                a `Just`, or `Nothing` if `maybe` is `Nothing`.
  */
-export function map<T, U>(mapFn: (t: T) => U): (maybe: Maybe<T>) => Maybe<U>;
-export function map<T, U>(mapFn: (t: T) => U, maybe: Maybe<T>): Maybe<U>;
-export function map<T, U>(
+export function map<T, U extends {}>(mapFn: (t: T) => U): (maybe: Maybe<T>) => Maybe<U>;
+export function map<T, U extends {}>(mapFn: (t: T) => U, maybe: Maybe<T>): Maybe<U>;
+export function map<T, U extends {}>(
   mapFn: (t: T) => U,
   maybe?: Maybe<T>
 ): Maybe<U> | ((maybe: Maybe<T>) => Maybe<U>) {
@@ -1064,9 +1085,9 @@ export function equals<T>(mb: Maybe<T>, ma?: Maybe<T>): boolean | ((a: Maybe<T>)
   @param maybeFn maybe a function from T to U
   @param maybe maybe a T to apply to `fn`
  */
-export function ap<T, U>(maybeFn: Maybe<(t: T) => U>, maybe: Maybe<T>): Maybe<U>;
-export function ap<T, U>(maybeFn: Maybe<(t: T) => U>): (maybe: Maybe<T>) => Maybe<U>;
-export function ap<T, U>(
+export function ap<T, U extends {}>(maybeFn: Maybe<(t: T) => U>, maybe: Maybe<T>): Maybe<U>;
+export function ap<T, U extends {}>(maybeFn: Maybe<(t: T) => U>): (maybe: Maybe<T>) => Maybe<U>;
+export function ap<T, U extends {}>(
   maybeFn: Maybe<(t: T) => U>,
   maybe?: Maybe<T>
 ): Maybe<U> | ((val: Maybe<T>) => Maybe<U>) {
