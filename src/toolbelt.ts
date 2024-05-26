@@ -49,7 +49,7 @@ export function transposeResult<T, E>(result: Result<Maybe<T>, E>): Maybe<Result
   @param result The `Result` to convert to a `Maybe`
   @returns      `Just` the value in `result` if it is `Ok`; otherwise `Nothing`
  */
-export function toMaybe<T>(result: Result<T, unknown>): Maybe<T> {
+export function toMaybe<T extends {}>(result: Result<T, unknown>): Maybe<T> {
   return result.isOk ? Maybe.just(result.value) : Maybe.nothing();
 }
 
@@ -85,7 +85,7 @@ export function fromMaybe<T, E>(
 
   @param maybe a `Maybe<Result<T, E>>` to transform to a `Result<Maybe<T>, E>>`.
  */
-export function transposeMaybe<T, E>(maybe: Maybe<Result<T, E>>): Result<Maybe<T>, E> {
+export function transposeMaybe<T extends {}, E>(maybe: Maybe<Result<T, E>>): Result<Maybe<T>, E> {
   return maybe.match({
     Just: (result) =>
       result.match({
@@ -151,6 +151,6 @@ export function toOkOrElseErr<T, E>(
   @param result The `Result` to construct a `Maybe` from.
   @returns      `Just` if `result` was `Ok` or `Nothing` if it was `Err`.
  */
-export function fromResult<T>(result: Result<T, unknown>): Maybe<T> {
+export function fromResult<T extends {}>(result: Result<T, unknown>): Maybe<T> {
   return result.isOk ? Maybe.just(result.value) : Maybe.nothing<T>();
 }
