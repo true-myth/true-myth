@@ -106,10 +106,6 @@ class MaybeImpl<T> {
   /**
     Create an instance of `Maybe.Just`.
 
-    `null` and `undefined` are allowed by the type signature so that the
-    function may `throw` on those rather than constructing a type like
-    `Maybe<undefined>`.
-
     @typeparam T The type of the item contained in the `Maybe`.
     @param value The value to wrap in a `Maybe.Just`.
     @returns     An instance of `Maybe.Just<T>`.
@@ -120,10 +116,12 @@ class MaybeImpl<T> {
   static just<F extends (...args: any) => {}>(value: F): Maybe<F>;
   static just<T extends {}, F extends (...args: any) => T | null | undefined>(value: F): never;
   static just<F extends (...args: any) => null | undefined>(value: F): never;
-  // Otherwise, `just` handles `null` and `undefined` values by throwing, per
-  // the docstring.
-  static just<T>(value?: T | null): Maybe<T>;
-  static just<T>(value?: T | null): Maybe<T> {
+  // The public signature otherwise only allows non-null values.
+  static just<T extends {}>(value: T): Maybe<T>;
+  // The runtime signature *does* allow null and undefined values so that the
+  // body can correctly throw at runtime in the case where a caller passes data
+  // whose type lies about the contained value.
+  static just<T>(value: T | null | undefined): Maybe<T> {
     if (isVoid(value)) {
       throw new Error(`attempted to call "just" with ${value}`);
     }

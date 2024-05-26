@@ -22,8 +22,18 @@ describe('`Maybe` pure functions', () => {
         expect(false).toBe(true); // because those are the only cases
     }
 
-    expect(() => MaybeNS.just(null)).toThrow();
-    expect(() => MaybeNS.just(undefined)).toThrow();
+    expect(() =>
+      MaybeNS.just(
+        // @ts-expect-error: null is forbidden here
+        null
+      )
+    ).toThrow();
+    expect(() =>
+      MaybeNS.just(
+        // @ts-expect-error: undefined is forbidden here
+        undefined
+      )
+    ).toThrow();
 
     expectTypeOf(Maybe.just(() => null)).toBeNever();
     expectTypeOf(Maybe.just(() => undefined)).toBeNever();
@@ -462,7 +472,7 @@ describe('`Maybe` pure functions', () => {
   test('`property`', () => {
     type Person = { name?: string };
     let chris: Person = { name: 'chris' };
-    expect(MaybeNS.property('name', chris)).toEqual(MaybeNS.just(chris.name));
+    expect(MaybeNS.property('name', chris)).toEqual(MaybeNS.just('chris'));
 
     let nobody: Person = {};
     expect(MaybeNS.property('name', nobody)).toEqual(MaybeNS.nothing());
@@ -477,7 +487,7 @@ describe('`Maybe` pure functions', () => {
     type Person = { name?: string };
     let chris: Person = { name: 'chris' };
     let justChris: Maybe<Person> = MaybeNS.just(chris);
-    expect(MaybeNS.get('name', justChris)).toEqual(MaybeNS.just(chris.name));
+    expect(MaybeNS.get('name', justChris)).toEqual(MaybeNS.just('chris'));
 
     let nobody: Maybe<Person> = MaybeNS.nothing();
     expect(MaybeNS.get('name', nobody)).toEqual(MaybeNS.nothing());
@@ -597,8 +607,36 @@ describe('`Maybe` class', () => {
       expect(theJust.variant).toEqual(Variant.Just);
       expect((theJust as Just<number>).value).toEqual(123);
 
-      expect(() => Maybe.just(null)).toThrow();
-      expect(() => Maybe.just(undefined)).toThrow();
+      expect(() =>
+        Maybe.just(
+          // @ts-expect-error
+          null
+        )
+      ).toThrow();
+
+      expect(() =>
+        Maybe.just(
+          // @ts-expect-error
+          undefined
+        )
+      ).toThrow();
+
+      // By definition cannot throw on this since it actually does exist and the
+      // semantics we are checking are type-only at this point.
+      expect(() =>
+        Maybe.just(
+          // @ts-expect-error
+          'Hello' as string | null | undefined
+        )
+      ).not.toThrow();
+
+      // Whereas here it should fail both type-checking *and* at runtime.
+      expect(() =>
+        Maybe.just(
+          // @ts-expect-error
+          null as string | null | undefined
+        )
+      ).toThrow();
     });
 
     test('`value` property', () => {

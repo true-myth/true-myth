@@ -39,7 +39,7 @@ test('`toMaybe`', () => {
   const anOk = Result.ok(theValue);
   expect(toMaybe(anOk)).toEqual(Maybe.just(theValue));
 
-  const anErr = Result.err('uh uh');
+  const anErr = Result.err<number, string>('uh uh');
   expect(toMaybe(anErr)).toEqual(Maybe.nothing());
 });
 
@@ -111,6 +111,6 @@ test('`fromResult`', () => {
   expect(fromResult(anOk)).toEqual(Maybe.just(value));
 
   const reason = 'oh teh noes';
-  const anErr = Result.err(reason);
+  const anErr = Result.err<number, string>(reason);
   expect(fromResult(anErr)).toEqual(Maybe.nothing());
 });
