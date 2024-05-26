@@ -4,6 +4,18 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
+
+## 7.2.1 (2024-05-26)
+
+#### :bug: Bug Fix
+* [#755](https://github.com/true-myth/true-myth/pull/755) Correctly handle `null` and `undefined` in function return types ([@chriskrycho](https://github.com/chriskrycho))
+
+#### :house: Internal
+* [#754](https://github.com/true-myth/true-myth/pull/754) infra: update to actions/checkout@v4 for GHA ([@chriskrycho](https://github.com/chriskrycho))
+
+#### Committers: 1
+- Chris Krycho ([@chriskrycho](https://github.com/chriskrycho))
+
 ## 7.2.0 (2024-05-16)
 
 #### :rocket: Enhancement
