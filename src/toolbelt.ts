@@ -32,7 +32,7 @@ export function transposeResult<T, E>(result: Result<Maybe<T>, E>): Maybe<Result
   return result.match({
     Ok: (maybe) =>
       maybe.match({
-        Just: (v) => Maybe.just(Result.ok(v)),
+        Just: (v) => Maybe.just(Result.ok<T, E>(v)),
         Nothing: () => Maybe.nothing(),
       }),
     Err: (e) => Maybe.just(Result.err<T, E>(e)),

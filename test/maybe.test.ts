@@ -24,6 +24,13 @@ describe('`Maybe` pure functions', () => {
 
     expect(() => MaybeNS.just(null)).toThrow();
     expect(() => MaybeNS.just(undefined)).toThrow();
+
+    expectTypeOf(Maybe.just(() => null)).toBeNever();
+    expectTypeOf(Maybe.just(() => undefined)).toBeNever();
+
+    let example = (): string | undefined => undefined;
+    expectTypeOf(Maybe.just(example)).toBeNever();
+    expectTypeOf(Maybe.just(() => 'hello')).toEqualTypeOf<Maybe<() => string>>();
   });
 
   test('`nothing`', () => {
@@ -47,6 +54,13 @@ describe('`Maybe` pure functions', () => {
   });
 
   describe('`of`', () => {
+    expectTypeOf(Maybe.of(() => null)).toBeNever();
+    expectTypeOf(Maybe.of(() => undefined)).toBeNever();
+
+    let example = (): string | undefined => undefined;
+    expectTypeOf(Maybe.of(example)).toBeNever();
+    expectTypeOf(Maybe.of(() => 'hello')).toEqualTypeOf<Maybe<() => string>>();
+
     test('with `null', () => {
       const nothingFromNull = MaybeNS.of<string>(null);
       expectTypeOf(nothingFromNull).toEqualTypeOf<Maybe<string>>();
@@ -89,6 +103,14 @@ describe('`Maybe` pure functions', () => {
     const noLength = MaybeNS.map(length, none);
     expectTypeOf(none).toMatchTypeOf<Maybe<string>>();
     expect(noLength).toEqual(MaybeNS.nothing());
+
+    expect(() => {
+      MaybeNS.map(
+        // @ts-expect-error
+        (_val) => null,
+        Maybe.of('Hello')
+      );
+    }).toThrow();
   });
 
   test('`mapOr`', () => {
@@ -615,6 +637,14 @@ describe('`Maybe` class', () => {
       const theResult = new Maybe(plus2(theValue));
 
       expect(theJust.map(plus2)).toEqual(theResult);
+
+      // Forbid returning `null` at the type level, but not at the runtime level.
+      expect(() => {
+        theJust.map(
+          // @ts-expect-error
+          (_val) => null
+        );
+      }).toThrow();
     });
 
     test('`mapOr` method', () => {
@@ -733,7 +763,7 @@ describe('`Maybe` class', () => {
 
     test('`ap` method', () => {
       const toString = (a: number) => a.toString();
-      const fn: Maybe<typeof toString> = new Maybe(toString);
+      const fn = new Maybe(toString);
       const val = new Maybe(3);
 
       const result = fn.ap(val);
@@ -804,6 +834,11 @@ describe('`Maybe` class', () => {
     test('`map` method', () => {
       const theNothing = new Maybe<string>();
       expect(theNothing.map(length)).toEqual(theNothing);
+
+      theNothing.map(
+        // @ts-expect-error
+        (_val) => null
+      );
     });
 
     test('`mapOr` method', () => {
