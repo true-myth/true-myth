@@ -72,7 +72,7 @@
   ],
   "license": "MIT",
   "devDependencies": {
-    "@release-it-plugins/lerna-changelog": "^6.0.0",
+    "@release-it-plugins/lerna-changelog": "^7.0.0",
     "@types/node": "^20.4.2",
     "@vitest/coverage-v8": "^1.0.1",
     "miniglob": "^0.1.2",
