@@ -167,7 +167,7 @@ These examples don't cover every corner of the API; it's just here to show you w
 import Result, { err, map, ok, toString } from 'true-myth/result';
 
 function fallibleCheck(isValid: boolean): Result<string, { reason: string }> {
-  return isValid ? ok('all fine here') : err({ reason: 'was not valid' });
+  return isValid ? ok('all fine here') : err('was not valid');
 }
 
 const describe = (s) => 'The outcome was: ' + s;
@@ -178,7 +178,7 @@ console.log(toString(mappedFine)); // "Ok(The outcome was: all fine here)"
 
 const notGreat = fallibleCheck(false);
 const mappedBad = map(describe, notGreat);
-console.log(toString(mappedBad)); // "Err({ reason: 'was not valid' })"
+console.log(toString(mappedBad)); // "Err("was not valid")"
 ```
 
 ### `Maybe` with the method style
