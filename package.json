@@ -80,7 +80,7 @@
     "release-it": "^17.0.1",
     "rimraf": "^5.0.1",
     "shelljs": "^0.8.5",
-    "typedoc": "^0.25.0",
+    "typedoc": "^0.26.2",
     "typescript": "~5.4",
     "vitest": "^1.0.1"
   },
