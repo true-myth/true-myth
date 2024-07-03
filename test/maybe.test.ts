@@ -445,6 +445,11 @@ describe('`Maybe` pure functions', () => {
       expect(MaybeNS.last([])).toEqual(MaybeNS.nothing());
       expect(MaybeNS.last([1])).toEqual(MaybeNS.just(1));
       expect(MaybeNS.last([1, 2, 3])).toEqual(MaybeNS.just(3));
+
+      const readonlyEmpty: readonly number[] = [];
+      expect(MaybeNS.last(readonlyEmpty)).toEqual(MaybeNS.nothing());
+      const readonlyFilled: readonly number[] = [1, 2, 3];
+      expect(MaybeNS.last(readonlyFilled)).toEqual(MaybeNS.just(3));
     });
 
     describe('`transposeArray`', () => {
