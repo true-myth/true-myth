@@ -434,6 +434,11 @@ describe('`Maybe` pure functions', () => {
       expect(MaybeNS.first([])).toEqual(MaybeNS.nothing());
       expect(MaybeNS.first([1])).toEqual(MaybeNS.just(1));
       expect(MaybeNS.first([1, 2, 3])).toEqual(MaybeNS.just(1));
+
+      const readonlyEmpty: readonly number[] = [];
+      expect(MaybeNS.first(readonlyEmpty)).toEqual(MaybeNS.nothing());
+      const readonlyFilled: readonly number[] = [1, 2, 3];
+      expect(MaybeNS.first(readonlyFilled)).toEqual(MaybeNS.just(1));
     });
 
     test('`last`', () => {

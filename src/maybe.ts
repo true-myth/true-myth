@@ -1202,7 +1202,7 @@ export function find<T, U extends T>(
 
   @param array The array to get the first item from.
  */
-export function first<T>(array: Array<T | null | undefined>): Maybe<T> {
+export function first<T>(array: AnyArray<T | null | undefined>): Maybe<T> {
   return Maybe.of(array[0]);
 }
 
