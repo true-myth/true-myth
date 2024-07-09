@@ -1,10 +1,10 @@
 /**
-  Tools for working easily with {@linkcode Maybe} and {@linkcode Result}
-  *together*... but which do not *require* you to use both. If they were in the
-  `true-myth/maybe` or `true-myth/result` modules, then importing either would
-  always include the other. While that is not usually a concern with bundlers,
-  it *is* an issue when using dynamic imports or otherwise doing runtime
-  resolution in a browser or similar environment.
+  Tools for working easily with `Maybe` and `Result` *together*... but which do
+  not *require* you to use both. If they were in the `true-myth/maybe` or
+  `true-myth/result` modules, then importing either would always include the
+  other. While that is not usually a concern with bundlers, it *is* an issue
+  when using dynamic imports or otherwise doing runtime resolution in a browser
+  or similar environment.
 
   The flip side of that is: importing from *this* module *does* require access
   to both `Maybe` and `Result` modules.
@@ -40,11 +40,11 @@ export function transposeResult<T, E>(result: Result<Maybe<T>, E>): Maybe<Result
 }
 
 /**
-  Convert a {@linkcode Result} to a {@linkcode Maybe.Maybe Maybe}.
+  Convert a {@linkcode Result} to a {@linkcode Maybe}.
 
-  The converted type will be {@linkcode Maybe.Just Just} if the `Result` is
-  {@linkcode Ok} or {@linkcode Maybe.Nothing Nothing} if the `Result` is
-  {@linkcode Err}; the wrapped error value will be discarded.
+  The converted type will be {@linkcode Maybe~Just Just} if the `Result` is
+  {@linkcode Result~Ok Ok} or {@linkcode Maybe~Nothing Nothing} if the `Result`
+  is {@linkcode Result~Err Err}; the wrapped error value will be discarded.
 
   @param result The `Result` to convert to a `Maybe`
   @returns      `Just` the value in `result` if it is `Ok`; otherwise `Nothing`
@@ -54,11 +54,12 @@ export function toMaybe<T extends {}>(result: Result<T, unknown>): Maybe<T> {
 }
 
 /**
-  Transform a {@linkcode true-myth.maybe!Maybe Maybe} into a {@linkcode Result}.
+  Transform a {@linkcode Maybe~Maybe Maybe} into a {@linkcode Result~Result Result}.
 
-  If the `Maybe` is a {@linkcode true-myth.maybe!Just Just}, its value will be wrapped in
-  the {@linkcode Ok} variant; if it is a {@linkcode Maybe.Nothing Nothing} the
-  `errValue` will be wrapped in the {@linkcode Err} variant.
+  If the `Maybe` is a {@linkcode Maybe~Just Just}, its value will be wrapped in
+  the {@linkcode Result~Ok Ok} variant; if it is a
+  {@linkcode Maybe~Nothing Nothing} the `errValue` will be wrapped in the
+  {@linkcode Result~Err Err} variant.
 
   @param errValue A value to wrap in an `Err` if `maybe` is a `Nothing`.
   @param maybe    The `Maybe` to convert to a `Result`.
@@ -97,12 +98,12 @@ export function transposeMaybe<T extends {}, E>(maybe: Maybe<Result<T, E>>): Res
 }
 
 /**
-  Transform the {@linkcode Maybe} into a {@linkcode Result.Result Result}, using
-  the wrapped value as the `Ok` value if `Just`; otherwise using the supplied
-  `error` value for `Err`.
+  Transform the {@linkcode Maybe} into a {@linkcode Result}, using the wrapped
+  value as the `Ok` value if `Just`; otherwise using the supplied `error` value
+  for `Err`.
 
-  @typeparam T  The wrapped value.
-  @typeparam E  The error type to in the `Result`.
+  @template T  The wrapped value.
+  @template E  The error type to in the `Result`.
   @param error The error value to use if the `Maybe` is `Nothing`.
   @param maybe The `Maybe` instance to convert.
   @returns     A `Result` containing the value wrapped in `maybe` in an `Ok`, or
@@ -122,8 +123,8 @@ export function toOkOrErr<T, E>(
   Transform the {@linkcode Maybe} into a {@linkcode Result}, using the wrapped
   value as the `Ok` value if `Just`; otherwise using `elseFn` to generate `Err`.
 
-  @typeparam T  The wrapped value.
-  @typeparam E  The error type to in the `Result`.
+  @template T  The wrapped value.
+  @template E  The error type to in the `Result`.
   @param elseFn The function which generates an error of type `E`.
   @param maybe  The `Maybe` instance to convert.
   @returns     A `Result` containing the value wrapped in `maybe` in an `Ok`, or
@@ -140,13 +141,14 @@ export function toOkOrElseErr<T, E>(
 }
 
 /**
-  Construct a {@linkcode Maybe Maybe<T>} from a
-  {@linkcode Result.Result Result<T, E>}.
+  Construct a {@linkcode Maybe~Maybe Maybe<T>} from a
+  {@linkcode Result~Result Result<T, E>}.
 
   If the `Result` is an `Ok`, wrap its value in `Just`. If the `Result` is an
-  `Err`, throw away the wrapped `E` and transform to a {@linkcode Nothing}.
+  `Err`, throw away the wrapped `E` and transform to a
+  {@linkcode Maybe~Nothing Nothing}.
 
-  @typeparam T  The type of the value wrapped in a `Result.Ok` and in the `Just`
+  @template T  The type of the value wrapped in a `Result.Ok` and in the `Just`
                 of the resulting `Maybe`.
   @param result The `Result` to construct a `Maybe` from.
   @returns      `Just` if `result` was `Ok` or `Nothing` if it was `Err`.

@@ -1,7 +1,9 @@
 {
   "$schema": "https://json.schemastore.org/tsconfig",
   "extends": "./base.tsconfig.json",
-  "include": ["../src"],
+  "include": [
+    "../src"
+  ],
   "compilerOptions": {
     "sourceMap": false,
     "sourceRoot": ""
@@ -10,12 +12,12 @@
     "out": "../docs-dist",
     "excludePrivate": true,
     "excludeInternal": true,
-    "includes": "../src",
     "theme": "default",
     "name": "True Myth",
     "entryPointStrategy": "expand",
     "readme": "../README.md",
     "includeVersion": true,
-    "githubPages": true
+    "githubPages": true,
+    "useTsLinkResolution": true
   }
 }
