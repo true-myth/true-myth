@@ -7,7 +7,7 @@
     <img src='https://github.com/true-myth/true-myth/workflows/CI/badge.svg?branch=main' title='CI'>
   </a>
   <a href='https://github.com/true-myth/true-myth/blob/master/package.json#L78-L85'>
-    <img src='https://img.shields.io/badge/Jest-100%25-0a7c00.svg' alt='Test coverage: 100%'>
+    <img src='https://img.shields.io/badge/Vitest-100%25-0a7c00.svg' alt='Test coverage: 100%'>
   </a>
   <a href='https://www.npmjs.com/package/true-myth'>
     <img src='https://img.shields.io/npm/v/true-myth.svg' alt='npm'>
