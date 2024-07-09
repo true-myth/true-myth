@@ -54,16 +54,36 @@ class ResultImpl<T, E> {
     const aString = Result.ok('characters);
     ```
 
-    Note that you may explicitly pass {@linkcode Unit.Unit Unit} to the
-    {@linkcode Ok} constructor to create a `Result<Unit, E>`. However, you may
-    *not* call the `Ok` constructor with `null` or `undefined` to get that
-    result (the type system won't allow you to construct it that way). Instead,
-    for convenience, you can simply call {@linkcode ok}, which will construct
-    the type correctly.
+    Note that you may explicitly pass {@linkcode Unit} to the {@linkcode Ok}
+    constructor to create a `Result<Unit, E>`. However, you may *not* call the
+    `Ok` constructor with `null` or `undefined` to get that result (the type
+    system won't allow you to construct it that way). Instead, for convenience,
+    you can simply call {@linkcode ok}, which will construct the type correctly.
+   */
+  static ok<T extends {}, E>(): Result<Unit, E>;
+  /**
+    Create an instance of {@linkcode Ok}.
+
+    Note: While you *may* create the {@linkcode Result} type via normal
+    JavaScript class construction, it is not recommended for the functional
+    style for which the library is intended. Instead, use {@linkcode ok}.
+
+    ```ts
+    // Avoid:
+    const aString = new Result.Ok('characters');
+
+    // Prefer:
+    const aString = Result.ok('characters);
+    ```
+
+    Note that you may explicitly pass {@linkcode Unit} to the {@linkcode Ok}
+    constructor to create a `Result<Unit, E>`. However, you may *not* call the
+    `Ok` constructor with `null` or `undefined` to get that result (the type
+    system won't allow you to construct it that way). Instead, for convenience,
+    you can simply call {@linkcode ok}, which will construct the type correctly.
 
     @param value The value to wrap in an `Ok`.
    */
-  static ok<T extends {}, E>(): Result<Unit, E>;
   static ok<T, E>(value: T): Result<T, E>;
   static ok<T, E>(value?: T): Result<Unit, E> | Result<T, E> {
     // We produce `Unit` *only* in the case where no arguments are passed, so
@@ -90,10 +110,25 @@ class ResultImpl<T, E> {
     // Prefer:
     const anErr = Result.err('alas, failure');
     ```
+   */
+  static err<T, E>(): Result<T, Unit>;
+  /**
+    Create an instance of {@linkcode Err}.
+
+    Note: While you *may* create the {@linkcode Result} type via normal
+    JavaScript class construction, it is not recommended for the functional
+    style for which the library is intended. Instead, use {@linkcode err}.
+
+    ```ts
+    // Avoid:
+    const anErr = new Result.Err('alas, failure');
+
+    // Prefer:
+    const anErr = Result.err('alas, failure');
+    ```
 
     @param error The value to wrap in an `Err`.
    */
-  static err<T, E>(): Result<T, Unit>;
   static err<T, E>(error: E): Result<T, E>;
   static err<T, E>(error?: E): Result<T, Unit> | Result<T, E> {
     return isVoid(error)
@@ -235,11 +270,11 @@ class ResultImpl<T, E> {
   {@linkcode Result} type, representing a successful outcome from an operation
   which may fail. For a full discussion, see the module docs.
 
-  @typeparam T The type wrapped in this `Ok` variant of `Result`.
-  @typeparam E The type which would be wrapped in an `Err` variant of `Result`.
+  @template T The type wrapped in this `Ok` variant of `Result`.
+  @template E The type which would be wrapped in an `Err` variant of `Result`.
  */
 export interface Ok<T, E> extends Omit<ResultImpl<T, E>, 'error' | 'cast'> {
-  /** `Ok` is always [`Variant.Ok`](../enums/_result_.variant#ok). */
+  /** `Ok` is always `Variant.Ok`. */
   readonly variant: 'Ok';
   isOk: true;
   isErr: false;
@@ -253,11 +288,11 @@ export interface Ok<T, E> extends Omit<ResultImpl<T, E>, 'error' | 'cast'> {
   type, representing a failure outcome from an operation which may fail. For a
   full discussion, see the module docs.
 
-  @typeparam T The type which would be wrapped in an `Ok` variant of `Result`.
-  @typeparam E The type wrapped in this `Err` variant of `Result`.
+  @template T The type which would be wrapped in an `Ok` variant of `Result`.
+  @template E The type wrapped in this `Err` variant of `Result`.
   */
 export interface Err<T, E> extends Omit<ResultImpl<T, E>, 'value' | 'cast'> {
-  /** `Err` is always [`Variant.Err`](../enums/_result_.variant#err). */
+  /** `Err` is always `Variant.Err`. */
   readonly variant: 'Err';
   isOk: false;
   isErr: true;
@@ -347,7 +382,7 @@ export function tryOr<T, E>(
   }
   ```
 
-  @typeparam T The type of the item contained in the `Result`.
+  @template T The type of the item contained in the `Result`.
   @param value The value to wrap in a `Result.Ok`.
  */
 export const ok = ResultImpl.ok;
@@ -355,7 +390,7 @@ export const ok = ResultImpl.ok;
 /**
   Is the {@linkcode Result} an {@linkcode Ok}?
 
-  @typeparam T The type of the item contained in the `Result`.
+  @template T The type of the item contained in the `Result`.
   @param result The `Result` to check.
   @returns A type guarded `Ok`.
  */
@@ -366,7 +401,7 @@ export function isOk<T, E>(result: Result<T, E>): result is Ok<T, E> {
 /**
   Is the {@linkcode Result} an {@linkcode Err}?
 
-  @typeparam T The type of the item contained in the `Result`.
+  @template T The type of the item contained in the `Result`.
   @param result The `Result` to check.
   @returns A type guarded `Err`.
 */
@@ -417,7 +452,7 @@ export function isErr<T, E>(result: Result<T, E>): result is Err<T, E> {
   }
   ```
 
-  @typeparam T The type of the item contained in the `Result`.
+  @template T The type of the item contained in the `Result`.
   @param E The error value to wrap in a `Result.Err`.
  */
 export const err = ResultImpl.err;
@@ -505,11 +540,11 @@ export function tryOrElse<T, E>(
   console.log(toString(mappedOk)); // Err(nothing here!)
   ```
 
-  @typeparam T  The type of the value wrapped in an `Ok` instance, and taken as
+  @template T  The type of the value wrapped in an `Ok` instance, and taken as
                 the argument to the `mapFn`.
-  @typeparam U  The type of the value wrapped in the new `Ok` instance after
+  @template U  The type of the value wrapped in the new `Ok` instance after
                 applying `mapFn`, that is, the type returned by `mapFn`.
-  @typeparam E  The type of the value wrapped in an `Err` instance.
+  @template E  The type of the value wrapped in an `Err` instance.
   @param mapFn  The function to apply the value to if `result` is `Ok`.
   @param result The `Result` instance to map over.
   @returns      A new `Result` with the result of applying `mapFn` to the value
@@ -577,8 +612,8 @@ export function mapOr<T, U, E>(
   return mapFn === undefined
     ? partialOp
     : result === undefined
-    ? partialOp(mapFn)
-    : partialOp(mapFn, result);
+      ? partialOp(mapFn)
+      : partialOp(mapFn, result);
 }
 
 /**
@@ -606,10 +641,10 @@ export function mapOr<T, U, E>(
   console.log(mappedErrAndUnwrapped);  // Nothing at this endpoint!
   ```
 
-  @typeparam T    The type of the wrapped `Ok` value.
-  @typeparam U    The type of the resulting value from applying `mapFn` to the
+  @template T    The type of the wrapped `Ok` value.
+  @template U    The type of the resulting value from applying `mapFn` to the
                   `Ok` value or `orElseFn` to the `Err` value.
-  @typeparam E    The type of the wrapped `Err` value.
+  @template E    The type of the wrapped `Err` value.
   @param orElseFn The function to apply to the wrapped `Err` value to get a
                   usable value if `result` is an `Err`.
   @param mapFn    The function to apply to the wrapped `Ok` value if `result` is
@@ -651,8 +686,8 @@ export function mapOrElse<T, U, E>(
   return mapFn === undefined
     ? partialOp
     : result === undefined
-    ? partialOp(mapFn)
-    : partialOp(mapFn, result);
+      ? partialOp(mapFn)
+      : partialOp(mapFn, result);
 }
 
 /**
@@ -678,9 +713,9 @@ export function mapOrElse<T, U, E>(
   console.log(toString(mappedErr));  // Err(bad file)
   ```
 
-  @typeparam T    The type of the value wrapped in the `Ok` of the `Result`.
-  @typeparam E    The type of the value wrapped in the `Err` of the `Result`.
-  @typeparam F    The type of the value wrapped in the `Err` of a new `Result`,
+  @template T    The type of the value wrapped in the `Ok` of the `Result`.
+  @template E    The type of the value wrapped in the `Err` of the `Result`.
+  @template F    The type of the value wrapped in the `Err` of a new `Result`,
                   returned by the `mapErrFn`.
   @param mapErrFn The function to apply to the value wrapped in `Err` if
   `result` is an `Err`.
@@ -723,11 +758,11 @@ export function mapErr<T, E, F>(
   console.log(toString(and(anErr, anErr)));  // Err([object Object])
   ```
 
-  @typeparam T     The type of the value wrapped in the `Ok` of the `Result`.
-  @typeparam U     The type of the value wrapped in the `Ok` of the `andResult`,
+  @template T     The type of the value wrapped in the `Ok` of the `Result`.
+  @template U     The type of the value wrapped in the `Ok` of the `andResult`,
                    i.e. the success type of the `Result` present if the checked
                    `Result` is `Ok`.
-  @typeparam E     The type of the value wrapped in the `Err` of the `Result`.
+  @template E     The type of the value wrapped in the `Err` of the `Result`.
   @param andResult The `Result` instance to return if `result` is `Err`.
   @param result    The `Result` instance to check.
  */
@@ -778,10 +813,10 @@ export function and<T, U, E>(
   console.log(toString(notLengthAsResult));  // Err(srsly,whatever)
   ```
 
-  @typeparam T   The type of the value wrapped in the `Ok` of the `Result`.
-  @typeparam U   The type of the value wrapped in the `Ok` of the `Result`
+  @template T   The type of the value wrapped in the `Ok` of the `Result`.
+  @template U   The type of the value wrapped in the `Ok` of the `Result`
                  returned by the `thenFn`.
-  @typeparam E   The type of the value wrapped in the `Err` of the `Result`.
+  @template E   The type of the value wrapped in the `Err` of the `Result`.
   @param thenFn  The function to apply to the wrapped `T` if `maybe` is `Just`.
   @param result  The `Maybe` to evaluate and possibly apply a function to.
  */
@@ -823,9 +858,9 @@ export function andThen<T, U, E>(
   console.log(or(anotherErr, anErr).toString());  // Err(:headdesk:)
   ```
 
-  @typeparam T          The type wrapped in the `Ok` case of `result`.
-  @typeparam E          The type wrapped in the `Err` case of `result`.
-  @typeparam F          The type wrapped in the `Err` case of `defaultResult`.
+  @template T          The type wrapped in the `Ok` case of `result`.
+  @template E          The type wrapped in the `Err` case of `result`.
+  @template F          The type wrapped in the `Err` case of `defaultResult`.
   @param defaultResult  The `Result` to use if `result` is an `Err`.
   @param result         The `Result` instance to check.
   @returns              `result` if it is an `Ok`, otherwise `defaultResult`.
@@ -888,8 +923,8 @@ export function orElse<T, E, F>(
   console.log(unwrapOr(0, anErr));  // 0
   ```
 
-  @typeparam T        The value wrapped in the `Ok`.
-  @typeparam E        The value wrapped in the `Err`.
+  @template T        The value wrapped in the `Ok`.
+  @template E        The value wrapped in the `Err`.
   @param defaultValue The value to use if `result` is an `Err`.
   @param result       The `Result` instance to unwrap if it is an `Ok`.
   @returns            The content of `result` if it is an `Ok`, otherwise
@@ -928,8 +963,8 @@ export function unwrapOr<T, U, E>(
   console.log(unwrapOrElse(handleErr, anErr));  // 13
   ```
 
-  @typeparam T    The value wrapped in the `Ok`.
-  @typeparam E    The value wrapped in the `Err`.
+  @template T    The value wrapped in the `Ok`.
+  @template E    The value wrapped in the `Err`.
   @param orElseFn A function applied to the value wrapped in `result` if it is
                   an `Err`, to generate the final value.
   @param result   The `result` to unwrap if it is an `Ok`.
@@ -963,7 +998,7 @@ export function unwrapOrElse<T, U, E>(
   `toString(err([1, 2, 3]))`        | `Err(1,2,3)`
   `toString(err({ an: 'object' }))` | `Err([object Object])`
 
-  @typeparam T  The type of the wrapped value; its own `.toString` will be used
+  @template T   The type of the wrapped value; its own `.toString` will be used
                 to print the interior contents of the `Just` variant.
   @param result The value to convert to a string.
   @returns      The string representation of the `Maybe`.
@@ -1041,9 +1076,58 @@ export type Matcher<T, E, A> = {
 
   @param matcher A lightweight object defining what to do in the case of each
                  variant.
-  @param maybe   The `maybe` instance to check.
+  @param result  The `result` instance to check.
  */
 export function match<T, E, A>(matcher: Matcher<T, E, A>, result: Result<T, E>): A;
+/**
+  Performs the same basic functionality as {@linkcode unwrapOrElse}, but instead
+  of simply unwrapping the value if it is {@linkcode Ok} and applying a value to
+  generate the same default type if it is {@linkcode Err}, lets you supply
+  functions which may transform the wrapped type if it is `Ok` or get a default
+  value for `Err`.
+
+  This is kind of like a poor man's version of pattern matching, which
+  JavaScript currently lacks.
+
+  Instead of code like this:
+
+  ```ts
+  import Result, { isOk, match } from 'true-myth/result';
+
+  const logValue = (mightBeANumber: Result<number, string>) => {
+    console.log(
+      mightBeANumber.isOk
+        ? mightBeANumber.value.toString()
+        : `There was an error: ${unsafelyGetErr(mightBeANumber)}`
+    );
+  };
+  ```
+
+  ...we can write code like this:
+
+  ```ts
+  import Result, { match } from 'true-myth/result';
+
+  const logValue = (mightBeANumber: Result<number, string>) => {
+    const value = match(
+      {
+        Ok: n => n.toString(),
+        Err: e => `There was an error: ${e}`,
+      },
+      mightBeANumber
+    );
+    console.log(value);
+  };
+  ```
+
+  This is slightly longer to write, but clearer: the more complex the resulting
+  expression, the hairer it is to understand the ternary. Thus, this is
+  especially convenient for times when there is a complex result, e.g. when
+  rendering part of a React component inline in JSX/TSX.
+
+  @param matcher A lightweight object defining what to do in the case of each
+                 variant.
+ */
 export function match<T, E, A>(matcher: Matcher<T, E, A>): (result: Result<T, E>) => A;
 export function match<T, E, A>(
   matcher: Matcher<T, E, A>,

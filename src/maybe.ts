@@ -81,7 +81,7 @@ class MaybeImpl<T> {
     2.  If you are specifying that the type is more general than the value passed
         (since TypeScript can define types as literals).
 
-    @typeparam T The type of the item contained in the `Maybe`.
+    @template T The type of the item contained in the `Maybe`.
     @param value The value to wrap in a `Maybe`. If it is `undefined` or `null`,
                 the result will be `Nothing`; otherwise it will be the type of
                 the value passed.
@@ -106,7 +106,7 @@ class MaybeImpl<T> {
   /**
     Create an instance of `Maybe.Just`.
 
-    @typeparam T The type of the item contained in the `Maybe`.
+    @template T The type of the item contained in the `Maybe`.
     @param value The value to wrap in a `Maybe.Just`.
     @returns     An instance of `Maybe.Just<T>`.
     @throws      If you pass `null` or `undefined`.
@@ -140,7 +140,7 @@ class MaybeImpl<T> {
     const notString = Maybe.nothing<string>();
     ```
 
-    @typeparam T The type of the item contained in the `Maybe`.
+    @template T The type of the item contained in the `Maybe`.
     @returns     An instance of `Maybe.Nothing<T>`.
    */
   static nothing<T>(_?: null): Nothing<T> {
@@ -306,7 +306,7 @@ class MaybeImpl<T> {
   {@linkcode Maybe} type, representing the presence of a
   value which may be absent. For a full discussion, see the module docs.
 
-  @typeparam T The type wrapped in this `Just` variant of `Maybe`.
+  @template T The type wrapped in this `Just` variant of `Maybe`.
  */
 export interface Just<T> extends MaybeImpl<T> {
   /** `Just` is always {@linkcode Variant.Just}. */
@@ -322,7 +322,7 @@ export interface Just<T> extends MaybeImpl<T> {
   type, representing the presence of a value which may be absent. For a full
   discussion, see the module docs.
 
-  @typeparam T The type which would be wrapped in a {@linkcode Just} variant of
+  @template T The type which would be wrapped in a {@linkcode Just} variant of
     the {@linkcode Maybe}.
  */
 export interface Nothing<T> extends Omit<MaybeImpl<T>, 'value'> {
@@ -340,7 +340,7 @@ export interface Nothing<T> extends Omit<MaybeImpl<T>, 'value'> {
   function may `throw` on those rather than constructing a type like
   `Maybe<undefined>`.
 
-  @typeparam T The type of the item contained in the `Maybe`.
+  @template T The type of the item contained in the `Maybe`.
   @param value The value to wrap in a `Maybe.Just`.
   @returns     An instance of `Maybe.Just<T>`.
   @throws      If you pass `null` or `undefined`.
@@ -350,7 +350,7 @@ export const just = MaybeImpl.just;
 /**
   Is the {@linkcode Maybe} a {@linkcode Just}?
 
-  @typeparam T The type of the item contained in the `Maybe`.
+  @template T The type of the item contained in the `Maybe`.
   @param maybe The `Maybe` to check.
   @returns A type guarded `Just`.
  */
@@ -361,7 +361,7 @@ export function isJust<T>(maybe: Maybe<T>): maybe is Just<T> {
 /**
   Is the {@linkcode Maybe} a {@linkcode Nothing}?
 
-  @typeparam T The type of the item contained in the `Maybe`.
+  @template T The type of the item contained in the `Maybe`.
   @param maybe The `Maybe` to check.
   @returns A type guarded `Nothing`.
 */
@@ -380,7 +380,7 @@ export function isNothing<T>(maybe: Maybe<T>): maybe is Nothing<T> {
   const notString = Maybe.nothing<string>();
   ```
 
-  @typeparam T The type of the item contained in the `Maybe`.
+  @template T The type of the item contained in the `Maybe`.
   @returns     An instance of `Maybe.Nothing<T>`.
  */
 export const nothing = MaybeImpl.nothing;
@@ -403,7 +403,7 @@ export const nothing = MaybeImpl.nothing;
   2.  If you are specifying that the type is more general than the value passed
       (since TypeScript can define types as literals).
 
-  @typeparam T The type of the item contained in the `Maybe`.
+  @template T The type of the item contained in the `Maybe`.
   @param value The value to wrap in a `Maybe`. If it is `undefined` or `null`,
                the result will be `Nothing`; otherwise it will be the type of
                the value passed.
@@ -446,14 +446,56 @@ export const of = MaybeImpl.of;
   console.log(notAStringLength.toString()); // "Nothing"
   ```
 
-  @typeparam T The type of the wrapped value.
-  @typeparam U The type of the wrapped value of the returned `Maybe`.
+  @template T The type of the wrapped value.
+  @template U The type of the wrapped value of the returned `Maybe`.
+  @param mapFn The function to apply the value to if `Maybe` is `Just`.
+  @returns     A function accepting a `Maybe<T>`, which will produce `Maybe<U>`
+               after applying `mapFn`.
+ */
+export function map<T, U extends {}>(mapFn: (t: T) => U): (maybe: Maybe<T>) => Maybe<U>;
+/**
+  Map over a {@linkcode Maybe} instance: apply the function to the wrapped value
+  if the instance is {@linkcode Just}, and return {@linkcode Nothing} if the
+  instance is `Nothing`.
+
+  `map` works a lot like `Array.prototype.map`: `Maybe` and `Array` are both
+  *containers* for other things. If you have no items in an array of numbers
+  named `foo` and call `foo.map(x => x + 1)`, you'll still just have an array
+  with nothing in it. But if you have any items in the array (`[2, 3]`), and you
+  call `foo.map(x => x + 1)` on it, you'll get a new array with each of those
+  items inside the array "container" transformed (`[3, 4]`).
+
+  That's exactly what's happening with `map`. If the container is *empty* – the
+  `Nothing` variant – you just get back an empty container. If the container has
+  something in it – the `Just` variant – you get back a container with the item
+  inside transformed.
+
+  (So... why not just use an array? The biggest reason is that an array can be
+  any length. With a `Maybe`, we're capturing the idea of "something or nothing"
+  rather than "0 to n" items. And this lets us implement a whole set of *other*
+  interfaces, like those in this module.)
+
+  #### Examples
+
+  ```ts
+  const length = (s: string) => s.length;
+
+  const justAString = Maybe.just('string');
+  const justTheStringLength = map(length, justAString);
+  console.log(justTheStringLength.toString()); // Just(6)
+
+  const notAString = Maybe.nothing<string>();
+  const notAStringLength = map(length, notAString);
+  console.log(notAStringLength.toString()); // "Nothing"
+  ```
+
+  @template T The type of the wrapped value.
+  @template U The type of the wrapped value of the returned `Maybe`.
   @param mapFn The function to apply the value to if `Maybe` is `Just`.
   @param maybe The `Maybe` instance to map over.
   @returns     A new `Maybe` with the result of applying `mapFn` to the value in
                a `Just`, or `Nothing` if `maybe` is `Nothing`.
  */
-export function map<T, U extends {}>(mapFn: (t: T) => U): (maybe: Maybe<T>) => Maybe<U>;
 export function map<T, U extends {}>(mapFn: (t: T) => U, maybe: Maybe<T>): Maybe<U>;
 export function map<T, U extends {}>(
   mapFn: (t: T) => U,
@@ -482,8 +524,8 @@ export function map<T, U extends {}>(
   console.log(notAStringLength); // 0
   ```
 
-  @typeparam T The type of the wrapped value.
-  @typeparam U The type of the wrapped value of the returned `Maybe`.
+  @template T The type of the wrapped value.
+  @template U The type of the wrapped value of the returned `Maybe`.
   @param orU   The default value to use if `maybe` is `Nothing`
   @param mapFn The function to apply the value to if `Maybe` is `Just`
   @param maybe The `Maybe` instance to map over.
@@ -511,8 +553,8 @@ export function mapOr<T, U>(
   return mapFn === undefined
     ? partialOp
     : maybe === undefined
-    ? partialOp(mapFn)
-    : partialOp(mapFn, maybe);
+      ? partialOp(mapFn)
+      : partialOp(mapFn, maybe);
 }
 
 /**
@@ -535,8 +577,8 @@ export function mapOr<T, U>(
   console.log(notAStringLength); // 0
   ```
 
-  @typeparam T    The type of the wrapped value.
-  @typeparam U    The type of the wrapped value of the returned `Maybe`.
+  @template T    The type of the wrapped value.
+  @template U    The type of the wrapped value of the returned `Maybe`.
   @param orElseFn The function to apply if `maybe` is `Nothing`.
   @param mapFn    The function to apply to the wrapped value if `maybe` is
   `Just`
@@ -598,8 +640,8 @@ export function mapOrElse<T, U>(
   console.log(Maybe.and(nothing, nothing).toString());  // Nothing
   ```
 
-  @typeparam T    The type of the initial wrapped value.
-  @typeparam U    The type of the wrapped value of the returned `Maybe`.
+  @template T    The type of the initial wrapped value.
+  @template U    The type of the wrapped value of the returned `Maybe`.
   @param andMaybe The `Maybe` instance to return if `maybe` is `Just`
   @param maybe    The `Maybe` instance to check.
   @return         `Nothing` if the original `maybe` is `Nothing`, or `andMaybe`
@@ -658,8 +700,8 @@ export function and<T, U>(
 
   Note that the result is not `Just(Just(13))`, but `Just(13)`!
 
-  @typeparam T  The type of the wrapped value.
-  @typeparam U  The type of the wrapped value in the resulting `Maybe`.
+  @template T  The type of the wrapped value.
+  @template U  The type of the wrapped value in the resulting `Maybe`.
   @param thenFn The function to apply to the wrapped `T` if `maybe` is `Just`.
   @param maybe  The `Maybe` to evaluate and possibly apply a function to the
                 contents of.
@@ -698,7 +740,7 @@ export function andThen<T, U>(
   console.log(Maybe.or(aNothing, aNothing).toString());  // Nothing
   ```
 
-  @typeparam T        The type of the wrapped value.
+  @template T        The type of the wrapped value.
   @param defaultMaybe The `Maybe` to use if `maybe` is a `Nothing`.
   @param maybe        The `Maybe` instance to evaluate.
   @returns            `maybe` if it is a `Just`, otherwise `defaultMaybe`.
@@ -723,7 +765,7 @@ export function or<T>(
 
   Useful for transforming empty scenarios based on values in context.
 
-  @typeparam T  The type of the wrapped value.
+  @template T  The type of the wrapped value.
   @param elseFn The function to apply if `maybe` is `Nothing`
   @param maybe  The `maybe` to use if it is `Just`.
   @returns      The `maybe` if it is `Just`, or the `Maybe` returned by `elseFn`
@@ -756,7 +798,7 @@ export function orElse<T>(
   console.log(Maybe.unwrapOr('<empty>', isAString));  // "look ma! some characters!"
   ```
 
-  @typeparam T        The type of the wrapped value.
+  @template T        The type of the wrapped value.
   @param defaultValue The value to return if `maybe` is a `Nothing`.
   @param maybe        The `Maybe` instance to unwrap if it is a `Just`.
   @returns            The content of `maybe` if it is a `Just`, otherwise
@@ -792,7 +834,7 @@ export function unwrapOr<T, U>(defaultValue: U, maybe?: Maybe<T>) {
   console.log(Maybe.unwrapOrElse(handleNothing, aNothing)); // 99
   ```
 
-  @typeparam T  The wrapped value.
+  @template T  The wrapped value.
   @param orElseFn A function used to generate a valid value if `maybe` is a
                   `Nothing`.
   @param maybe    The `Maybe` instance to unwrap if it is a `Just`
@@ -823,7 +865,7 @@ export function unwrapOrElse<T, U>(
   | `toString(Maybe.of({ an: 'object' }))` | `Just([object Object])` |
   | `toString(Maybe.nothing())`            | `Nothing`               |
 
-  @typeparam T The type of the wrapped value; its own `.toString` will be used
+  @template T The type of the wrapped value; its own `.toString` will be used
                to print the interior contents of the `Just` variant.
   @param maybe The value to convert to a string.
   @returns     The string representation of the `Maybe`.
@@ -1110,7 +1152,8 @@ export type NarrowingPredicate<T, U extends T> = (
   array: AnyArray<T>
 ) => element is U;
 
-type AnyArray<T> = Array<T> | ReadonlyArray<T>;
+/** An array or a readonly array. */
+export type AnyArray<T> = Array<T> | ReadonlyArray<T>;
 
 // NOTE: documentation is lightly adapted from the MDN and TypeScript docs for
 // `Array.prototype.find`.
@@ -1506,7 +1549,7 @@ export function get<T, K extends keyof T>(
 export function wrapReturn<
   F extends AnyFunction,
   P extends Parameters<F>,
-  R extends NonNullable<ReturnType<F>>
+  R extends NonNullable<ReturnType<F>>,
 >(fn: F): (...args: P) => Maybe<R> {
   return (...args) => Maybe.of(fn(...args)) as Maybe<R>;
 }
