@@ -7,16 +7,16 @@
     <img src='https://github.com/true-myth/true-myth/workflows/CI/badge.svg?branch=main' title='CI'>
   </a>
   <a href='https://github.com/true-myth/true-myth/blob/master/package.json#L78-L85'>
-    <img src='https://img.shields.io/badge/Jest-100%25-0a7c00.svg' alt='Test coverage: 100%'>
+    <img src='https://img.shields.io/badge/Vitest-100%25-0a7c00.svg' alt='Test coverage: 100%'>
   </a>
   <a href='https://www.npmjs.com/package/true-myth'>
     <img src='https://img.shields.io/npm/v/true-myth.svg' alt='npm'>
   </a>
   <a href='https://github.com/true-myth/true-myth/blob/main/.github/workflows/CI.yml#L25'>
-    <img src='https://img.shields.io/badge/Node-18%20LTS%20%7C%2020%20LTS-darkgreen' alt='supported Node versions'>
+    <img src='https://img.shields.io/badge/Node-18%20LTS%20%7C%2020%20LTS%20%7C%2022-darkgreen' alt='supported Node versions'>
   </a>
   <a href='https://github.com/true-myth/true-myth/blob/main/.github/workflows/CI.yml#L59'>
-    <img src='https://img.shields.io/badge/TypeScript-4.7%20%7C%204.8%20%7C%204.9%20%7C%205.0%20%7C%205.1%20%7C%205.2%20%7C%205.3%20%7C%205.4%20%7C%20next-3178c6' alt='supported TypeScript versions'>
+    <img src='https://img.shields.io/badge/TypeScript-4.7%20%7C%204.8%20%7C%204.9%20%7C%205.0%20%7C%205.1%20%7C%205.2%20%7C%205.3%20%7C%205.4%20%7C%205.5%20%7C%20next-3178c6' alt='supported TypeScript versions'>
   </a>
   <a href='https://github.com/true-myth/true-myth/blob/main/.github/workflows/Nightly.yml'>
     <img src='https://github.com/true-myth/true-myth/workflows/Nightly%20TypeScript%20Run/badge.svg' alt='Nightly TypeScript Run'>
