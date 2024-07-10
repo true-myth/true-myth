@@ -41,7 +41,7 @@
 
 *NOTE: this documentation is for version 6.x and 7.x, which [require](#requirements) using TypeScript's more recent `moduleResolution` modes: `"node16"`, `"nodenext"`, or `"bundler"`. (See [TypeScript's docs on `moduleResolution`](https://www.typescriptlang.org/tsconfig#moduleResolution) for more details!) If you cannot use that yet, please use version 5.x.*
 
-True Myth provides standard, type-safe wrappers and helper functions to help help you with two _extremely_ common cases in programming:
+True Myth provides standard, type-safe wrappers and helper functions to help you with two _extremely_ common cases in programming:
 
 - not having a value
 - having a _result_ where you need to deal with either success or failure
