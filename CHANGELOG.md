@@ -6,6 +6,20 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 
 
+
+## 7.4.0 (2024-07-10)
+
+#### :rocket: Enhancement
+* [#782](https://github.com/true-myth/true-myth/pull/782) Add explicit support for Node 22 and TypeScript 5.5 ([@chriskrycho](https://github.com/chriskrycho))
+* [#776](https://github.com/true-myth/true-myth/pull/776) Allow readonly Arrays in first() and last() ([@screendriver](https://github.com/screendriver))
+
+#### :memo: Documentation
+* [#765](https://github.com/true-myth/true-myth/pull/765) Docs: we do not special-case `toString()` ([@chriskrycho](https://github.com/chriskrycho))
+
+#### Committers: 2
+- Chris Krycho ([@chriskrycho](https://github.com/chriskrycho))
+- Christian Rackerseder ([@screendriver](https://github.com/screendriver))
+
 ## 7.3.0 (2024-05-26)
 
 #### :rocket: Enhancement
