@@ -60,7 +60,7 @@ class ResultImpl<T, E> {
     system won't allow you to construct it that way). Instead, for convenience,
     you can simply call {@linkcode ok}, which will construct the type correctly.
    */
-  static ok<T extends {}, E>(): Result<Unit, E>;
+  static ok<T extends {}, E = never>(): Result<Unit, E>;
   /**
     Create an instance of {@linkcode Ok}.
 
@@ -84,8 +84,8 @@ class ResultImpl<T, E> {
 
     @param value The value to wrap in an `Ok`.
    */
-  static ok<T, E>(value: T): Result<T, E>;
-  static ok<T, E>(value?: T): Result<Unit, E> | Result<T, E> {
+  static ok<T, E = never>(value: T): Result<T, E>;
+  static ok<T, E = never>(value?: T): Result<Unit, E> | Result<T, E> {
     // We produce `Unit` *only* in the case where no arguments are passed, so
     // that we can allow `undefined` in the cases where someone explicitly opts
     // into something like `Result<undefined, Blah>`.
@@ -111,7 +111,7 @@ class ResultImpl<T, E> {
     const anErr = Result.err('alas, failure');
     ```
    */
-  static err<T, E>(): Result<T, Unit>;
+  static err<T = never, E = never>(): Result<T, Unit>;
   /**
     Create an instance of {@linkcode Err}.
 
@@ -129,8 +129,8 @@ class ResultImpl<T, E> {
 
     @param error The value to wrap in an `Err`.
    */
-  static err<T, E>(error: E): Result<T, E>;
-  static err<T, E>(error?: E): Result<T, Unit> | Result<T, E> {
+  static err<T = never, E = never>(error: E): Result<T, E>;
+  static err<T = never, E = never>(error?: E): Result<T, Unit> | Result<T, E> {
     return isVoid(error)
       ? (new ResultImpl<T, Unit>(['Err', Unit]) as Result<T, Unit>)
       : (new ResultImpl<T, E>(['Err', error]) as Result<T, E>);
