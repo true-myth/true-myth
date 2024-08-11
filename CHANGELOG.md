@@ -7,6 +7,30 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 
 
+## 8.0.0 (2024-08-11)
+
+This is a pretty small “breaking” release: it makes a change so True Myth is *more* type safe than it was before, specifically when constructing known-`Ok` or known-`Err` types with `Result.ok` and `Result.err`. In earlier versions, if you wrote `Result.ok(123)`, the type would be `Result<number, unknown>`. New contributor [@auvred](https://github.com/auvred) pointed out that in that case, we know there is *never* an error type, though, so we can use [the `never` type][never]. This is breaking in that you may have to explicitly annotate some types where you did not before, because of [the assignability rules][assignability] for `unknown` and `never` (cf. [this playground][play]).
+
+Net, very little of your code should have to change, but where it does, it will be safer than it was before! Thanks to [@auvred](https://github.com/auvred) for the improvement!
+
+[never]: https://www.typescriptlang.org/docs/handbook/2/functions.html#never
+[assignability]: https://www.typescriptlang.org/docs/handbook/type-compatibility.html#any-unknown-object-void-undefined-null-and-never-assignability
+[play]: https://www.typescriptlang.org/play/?#code/CYUwxgNghgTiAEEQBd5QHIgG4hgLngDttcBuAKFElgSVSkIFVCBrQgewHdCCBXVjtwrk6aAoV4BbAEa54AXjSYcMCqOnipsmArRMBXQsNEAPcSR2KAjACYAzGpTwAnnwPddth+SA
+
+#### :boom: Breaking Change
+* [#789](https://github.com/true-myth/true-myth/pull/789) fix: set error type in `Result.ok` and ok type in `Result.err` to `never` by default ([@auvred](https://github.com/auvred))
+
+#### :rocket: Enhancement
+* [#789](https://github.com/true-myth/true-myth/pull/789) fix: set error type in `Result.ok` and ok type in `Result.err` to `never` by default ([@auvred](https://github.com/auvred))
+
+#### :memo: Documentation
+* [#785](https://github.com/true-myth/true-myth/pull/785) fix(docs): fix typo in README ([@nullndr](https://github.com/nullndr))
+
+#### Committers: 2
+- Andrea ([@nullndr](https://github.com/nullndr))
+- [@auvred](https://github.com/auvred)
+
+
 ## 7.4.0 (2024-07-10)
 
 #### :rocket: Enhancement
