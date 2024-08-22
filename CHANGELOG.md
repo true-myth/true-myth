@@ -7,6 +7,15 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 
 
+
+## 8.0.1 (2024-08-22)
+
+#### :bug: Bug Fix
+* [#811](https://github.com/true-myth/true-myth/pull/811) fix: do not set sourceRoot in tsconfigs ([@chriskrycho](https://github.com/chriskrycho)) – this should make source maps resolve correctly!
+
+#### Committers: 1
+- Chris Krycho ([@chriskrycho](https://github.com/chriskrycho))
+
 ## 8.0.0 (2024-08-11)
 
 This is a pretty small “breaking” release: it makes a change so True Myth is *more* type safe than it was before, specifically when constructing known-`Ok` or known-`Err` types with `Result.ok` and `Result.err`. In earlier versions, if you wrote `Result.ok(123)`, the type would be `Result<number, unknown>`. New contributor [@auvred](https://github.com/auvred) pointed out that in that case, we know there is *never* an error type, though, so we can use [the `never` type][never]. This is breaking in that you may have to explicitly annotate some types where you did not before, because of [the assignability rules][assignability] for `unknown` and `never` (cf. [this playground][play]).
