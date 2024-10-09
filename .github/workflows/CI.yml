@@ -11,7 +11,7 @@ env:
 
 jobs:
   tests_linux:
-    name: 'Tests: ubuntu (node@${{ matrix.node-version }})'
+    name: 'Tests: Node ${{ matrix.node-version }}'
     runs-on: ubuntu-latest
     strategy:
       matrix:
