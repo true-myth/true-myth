@@ -36,10 +36,10 @@ Once you have followed the steps above and are working on a new contribution, yo
     $ pnpm install
     ```
 
-    Note that we use [Volta](https://volta.sh) to manage our JavaScript toolchain. If you are having problems getting the project, you should start by installing Volta, which will give you the same versions of Node and Yarn we use for development and testing.
+    Note that we use [Volta](https://volta.sh) to manage our JavaScript toolchain. If you are having problems getting the project, you should start by installing Volta, which will give you the same versions of Node and pnpm we use for development and testing.
 
--   Run the tests as you work, using `yarn test` or `yarn test --watch`.
+-   Run the tests as you work, using `pnpm test` or `pnpm test --watch`.
 
--   Run `yarn type-check` or `yarn type-check --watch` to proactively check for type errors.
+-   Run `pnpm type-check` or `pnpm type-check --watch` to proactively check for type errors.
 
 -   Once you have made the changes, commit the changes with a [good commit message](https://blog.stephcrown.com/writing-better-commit-messages). Then [open a pull request][pr], linking it to the issue or discussion it relates to.
