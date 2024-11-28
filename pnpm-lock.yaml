@@ -34,7 +34,7 @@ importers:
         version: 0.8.5
       typedoc:
         specifier: ^0.27.0
-        version: 0.27.0(typescript@5.6.3)
+        version: 0.27.1(typescript@5.6.3)
       typescript:
         specifier: ~5.6
         version: 5.6.3
@@ -1962,8 +1962,8 @@ packages:
     resolution: {integrity: sha512-yOGpmOAL7CkKe/91I5O3gPICmJNLJ1G4zFYVAsRHg7M64biSnPtRj0WNQt++bRkjYOqjWXrhnUw1utzmVErAdg==}
     engines: {node: '>=16'}
 
-  typedoc@0.27.0:
-    resolution: {integrity: sha512-7AkTJhFdhsihthaBFHNpj5iFdLyR7FpQqXM+IABJmE1/qTjWypirCLrheToUP3fjpWHN1Drn3K7PWH1t37KvNQ==}
+  typedoc@0.27.1:
+    resolution: {integrity: sha512-cbFtNFpkCtHAHRvMnCDdtM2+xhO2uiJAcw4ooLmVMuaY9yLJswKvi6wOwPZgTnKKnm/HKpO/Ub6DVk4KRf/vRg==}
     engines: {node: '>= 18'}
     hasBin: true
     peerDependencies:
@@ -4181,7 +4181,7 @@ snapshots:
 
   type-fest@4.26.1: {}
 
-  typedoc@0.27.0(typescript@5.6.3):
+  typedoc@0.27.1(typescript@5.6.3):
     dependencies:
       '@gerrit0/mini-shiki': 1.23.2
       lunr: 2.3.9
