@@ -16,7 +16,7 @@
     <img src='https://img.shields.io/badge/Node-18%20LTS%20%7C%2020%20LTS%20%7C%2022-darkgreen' alt='supported Node versions'>
   </a>
   <a href='https://github.com/true-myth/true-myth/blob/main/.github/workflows/CI.yml#L59'>
-    <img src='https://img.shields.io/badge/TypeScript-4.7%20%7C%204.8%20%7C%204.9%20%7C%205.0%20%7C%205.1%20%7C%205.2%20%7C%205.3%20%7C%205.4%20%7C%205.5%20%7C%20next-3178c6' alt='supported TypeScript versions'>
+    <img src='https://img.shields.io/badge/TypeScript-4.7%20%7C%204.8%20%7C%204.9%20%7C%205.0%20%7C%205.1%20%7C%205.2%20%7C%205.3%20%7C%205.4%20%7C%205.5%20%7C%205.6%20%7C%205.7%20%7C%20next-3178c6' alt='supported TypeScript versions'>
   </a>
   <a href='https://github.com/true-myth/true-myth/blob/main/.github/workflows/Nightly.yml'>
     <img src='https://github.com/true-myth/true-myth/workflows/Nightly%20TypeScript%20Run/badge.svg' alt='Nightly TypeScript Run'>
