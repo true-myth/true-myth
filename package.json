@@ -73,16 +73,16 @@
   "license": "MIT",
   "devDependencies": {
     "@release-it-plugins/lerna-changelog": "^7.0.0",
-    "@types/node": "^22.0.0",
-    "@vitest/coverage-v8": "^2.0.1",
+    "@types/node": "^22.10.1",
+    "@vitest/coverage-v8": "^2.1.8",
     "miniglob": "^0.1.2",
-    "prettier": "^3.0.0",
-    "release-it": "^17.0.1",
-    "rimraf": "^6.0.0",
+    "prettier": "^3.4.1",
+    "release-it": "^17.10.0",
+    "rimraf": "^6.0.1",
     "shelljs": "^0.8.5",
-    "typedoc": "^0.27.0",
-    "typescript": "~5.7",
-    "vitest": "^2.0.1"
+    "typedoc": "^0.27.2",
+    "typescript": "~5.7.2",
+    "vitest": "^2.1.8"
   },
   "engines": {
     "node": "18.* || >= 20.*"
