@@ -1,5 +1,5 @@
 /**
-  [[include:doc/result.md]]
+  {@include doc/result.md}
 
   @module
  */
@@ -1356,19 +1356,23 @@ export function isInstance<T, E>(item: unknown): item is Result<T, E> {
   return item instanceof ResultImpl;
 }
 
-// The public interface for the {@linkcode Result} class *as a value*: a constructor and the
-// single associated static property.
+/**
+  The public interface for the {@linkcode Result} class *as a value*: the static
+  constructors `ok` and `err` produce a `Result` with that variant.
+ */
 export interface ResultConstructor {
   ok: typeof ResultImpl.ok;
   err: typeof ResultImpl.err;
 }
 
 /**
-  A value which may ({@linkcode Ok}) or may not ({@linkcode Err}) be present.
+  The constructor for a `Result`, which represents success ({@linkcode Ok}) or
+  failure ({@linkcode Err}).
 
   The behavior of this type is checked by TypeScript at compile time, and bears
   no runtime overhead other than the very small cost of the container object.
  */
+export const Result: ResultConstructor = ResultImpl as ResultConstructor;
 export type Result<T, E> = Ok<T, E> | Err<T, E>;
-export const Result = ResultImpl as ResultConstructor;
+
 export default Result;
