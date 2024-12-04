@@ -1,5 +1,5 @@
 /**
-  [[include:doc/maybe.md]]
+  {@include doc/maybe.md}
 
   @module
  */
