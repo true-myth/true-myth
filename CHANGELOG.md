@@ -8,6 +8,46 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 
 
+
+## 8.1.0 (2024-12-04)
+
+The big feature: a new module just for test support, with two functions in it: `unwrap` and `unwrapErr`. You can now write this:
+
+```ts
+import { expect, test } from 'vitest'; // or your testing library of choice
+
+import Maybe from 'true-myth/maybe';
+import Result from 'true-myth/result';
+import { unwrap, unwrapErr } from 'true-myth/test-helpers';
+
+import { producesMaybe, producesResult } from 'my-library';
+
+test('using this new helper', () => {
+  expect(unwrap(producesMaybe())).toBe(true);
+  expect(unwrap(producesResult('valid'))).toBe('cool');
+  expect(unwrapErr(producesResult('invalid')).toBe('oh teh noes');
+});
+```
+
+See [the docs][docs] for more!
+
+[docs]: https://true-myth.js.org/modules/test-support.html
+
+#### :rocket: Enhancement
+* [#870](https://github.com/true-myth/true-myth/pull/870) feature: add `unwrap` and `unwrapErr` test helpers ([@chriskrycho](https://github.com/chriskrycho))
+* [#868](https://github.com/true-myth/true-myth/pull/868) Explicitly support TS 5.6 and 5.7 in CI and docs ([@chriskrycho](https://github.com/chriskrycho))
+
+#### :memo: Documentation
+* [#872](https://github.com/true-myth/true-myth/pull/872) docs: fix rendering issues ([@chriskrycho](https://github.com/chriskrycho))
+
+#### :house: Internal
+* [#837](https://github.com/true-myth/true-myth/pull/837) infra: improve name of CI job for tests ([@chriskrycho](https://github.com/chriskrycho))
+* [#835](https://github.com/true-myth/true-myth/pull/835) Fix vitest config for coverage ([@chriskrycho](https://github.com/chriskrycho))
+
+#### Committers: 2
+- Chris Krycho ([@chriskrycho](https://github.com/chriskrycho))
+- Tom Mrazauskas ([@mrazauskas](https://github.com/mrazauskas))
+
 ## 8.0.1 (2024-08-22)
 
 #### :bug: Bug Fix
