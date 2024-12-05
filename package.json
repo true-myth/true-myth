@@ -75,8 +75,8 @@
     "@release-it-plugins/lerna-changelog": "^7.0.0",
     "@types/node": "^22.0.0",
     "@vitest/coverage-v8": "^2.0.1",
+    "dprint": "^0.47.6",
     "miniglob": "^0.1.2",
-    "prettier": "^3.0.0",
     "release-it": "^17.0.1",
     "rimraf": "^6.0.0",
     "shelljs": "^0.8.5",
@@ -86,13 +86,6 @@
   },
   "engines": {
     "node": "18.* || >= 20.*"
-  },
-  "prettier": {
-    "printWidth": 100,
-    "semi": true,
-    "singleQuote": true,
-    "trailingComma": "es5",
-    "tabWidth": 2
   },
   "release-it": {
     "github": {

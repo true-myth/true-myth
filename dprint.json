@@ -1,0 +1,17 @@
+{
+  "typescript": {
+    "lineWidth": 100,
+    "semiColons": "always",
+    "quoteStyle": "alwaysSingle"
+  },
+  "json": {},
+  "toml": {},
+  "yaml": {},
+  "excludes": ["**/node_modules", "**/*-lock.json"],
+  "plugins": [
+    "https://plugins.dprint.dev/typescript-0.93.3.wasm",
+    "https://plugins.dprint.dev/json-0.19.4.wasm",
+    "https://plugins.dprint.dev/toml-0.6.3.wasm",
+    "https://plugins.dprint.dev/g-plane/pretty_yaml-v0.5.0.wasm"
+  ]
+}
