@@ -4,7 +4,7 @@
   @module
  */
 
-import Maybe, { type Just, isInstance as isMaybe } from './maybe.js';
+import Maybe, { isInstance as isMaybe, type Just } from './maybe.js';
 import Result, { type Err, type Ok } from './result.js';
 
 /** Unwrap the contained `Just` value. Throws if `maybe` is `Nothing`. */

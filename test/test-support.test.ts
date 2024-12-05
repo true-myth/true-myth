@@ -1,6 +1,6 @@
 import { describe, expect, expectTypeOf, test } from 'vitest';
 
-import { Result, Maybe } from 'true-myth';
+import { Maybe, Result } from 'true-myth';
 import { unwrap, unwrapErr } from 'true-myth/test-support';
 
 describe('`unwrap`', () => {

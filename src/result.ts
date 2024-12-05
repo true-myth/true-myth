@@ -4,8 +4,8 @@
   @module
  */
 
-import Unit from './unit.js';
 import { curry1, isVoid, safeToString } from './-private/utils.js';
+import Unit from './unit.js';
 
 /**
   Discriminant for {@linkcode Ok} and {@linkcode Err} variants of the
@@ -91,9 +91,9 @@ class ResultImpl<T, E> {
     // into something like `Result<undefined, Blah>`.
     return arguments.length === 0
       ? (new ResultImpl<Unit, E>(['Ok', Unit]) as Result<Unit, E>)
-      : // SAFETY: TS does not understand that the arity check above accounts for
-        // the case where the value is not passed.
-        (new ResultImpl<T, E>(['Ok', value as T]) as Result<T, E>);
+      // SAFETY: TS does not understand that the arity check above accounts for
+      // the case where the value is not passed.
+      : (new ResultImpl<T, E>(['Ok', value as T]) as Result<T, E>);
   }
 
   /**
@@ -250,8 +250,8 @@ class ResultImpl<T, E> {
     // simply testing what `comparison` *actually* is, which is always an
     // instance of `ResultImpl` (the same as this method itself).
     return (
-      this.repr[0] === (comparison as ResultImpl<T, E>).repr[0] &&
-      this.repr[1] === (comparison as ResultImpl<T, E>).repr[1]
+      this.repr[0] === (comparison as ResultImpl<T, E>).repr[0]
+      && this.repr[1] === (comparison as ResultImpl<T, E>).repr[1]
     );
   }
 
@@ -326,7 +326,7 @@ export function tryOr<T, E>(error: E, callback: () => T): Result<T, E>;
 export function tryOr<T, E>(error: E): (callback: () => T) => Result<T, E>;
 export function tryOr<T, E>(
   error: E,
-  callback?: () => T
+  callback?: () => T,
 ): Result<T, E> | ((callback: () => T) => Result<T, E>) {
   const op = (cb: () => T) => {
     try {
@@ -485,7 +485,7 @@ export function tryOrElse<T, E>(onError: (e: unknown) => E, callback: () => T): 
 export function tryOrElse<T, E>(onError: (e: unknown) => E): (callback: () => T) => Result<T, E>;
 export function tryOrElse<T, E>(
   onError: (e: unknown) => E,
-  callback?: () => T
+  callback?: () => T,
 ): Result<T, E> | ((callback: () => T) => Result<T, E>) {
   const op = (cb: () => T) => {
     try {
@@ -555,7 +555,7 @@ export function map<T, U, E>(mapFn: (t: T) => U, result: Result<T, E>): Result<U
 export function map<T, U, E>(mapFn: (t: T) => U): (result: Result<T, E>) => Result<U, E>;
 export function map<T, U, E>(
   mapFn: (t: T) => U,
-  result?: Result<T, E>
+  result?: Result<T, E>,
 ): Result<U, E> | ((result: Result<T, E>) => Result<U, E>) {
   const op = (r: Result<T, E>) => r.map(mapFn);
   return curry1(op, result);
@@ -592,7 +592,7 @@ export function mapOr<T, U, E>(orU: U): (mapFn: (t: T) => U) => (result: Result<
 export function mapOr<T, U, E>(
   orU: U,
   mapFn?: (t: T) => U,
-  result?: Result<T, E>
+  result?: Result<T, E>,
 ): U | ((result: Result<T, E>) => U) | ((mapFn: (t: T) => U) => (result: Result<T, E>) => U) {
   function fullOp(fn: (t: T) => U, r: Result<T, E>): U {
     return r.mapOr(orU, fn);
@@ -602,7 +602,7 @@ export function mapOr<T, U, E>(
   function partialOp(fn: (t: T) => U, curriedResult: Result<T, E>): U;
   function partialOp(
     fn: (t: T) => U,
-    curriedResult?: Result<T, E>
+    curriedResult?: Result<T, E>,
   ): U | ((maybe: Result<T, E>) => U) {
     return curriedResult !== undefined
       ? fullOp(fn, curriedResult)
@@ -612,8 +612,8 @@ export function mapOr<T, U, E>(
   return mapFn === undefined
     ? partialOp
     : result === undefined
-      ? partialOp(mapFn)
-      : partialOp(mapFn, result);
+    ? partialOp(mapFn)
+    : partialOp(mapFn, result);
 }
 
 /**
@@ -654,19 +654,19 @@ export function mapOr<T, U, E>(
 export function mapOrElse<T, U, E>(
   orElseFn: (err: E) => U,
   mapFn: (t: T) => U,
-  result: Result<T, E>
+  result: Result<T, E>,
 ): U;
 export function mapOrElse<T, U, E>(
   orElseFn: (err: E) => U,
-  mapFn: (t: T) => U
+  mapFn: (t: T) => U,
 ): (result: Result<T, E>) => U;
 export function mapOrElse<T, U, E>(
-  orElseFn: (err: E) => U
+  orElseFn: (err: E) => U,
 ): (mapFn: (t: T) => U) => (result: Result<T, E>) => U;
 export function mapOrElse<T, U, E>(
   orElseFn: (err: E) => U,
   mapFn?: (t: T) => U,
-  result?: Result<T, E>
+  result?: Result<T, E>,
 ): U | ((result: Result<T, E>) => U) | ((mapFn: (t: T) => U) => (result: Result<T, E>) => U) {
   function fullOp(fn: (t: T) => U, r: Result<T, E>) {
     return r.mapOrElse(orElseFn, fn);
@@ -676,7 +676,7 @@ export function mapOrElse<T, U, E>(
   function partialOp(fn: (t: T) => U, curriedResult: Result<T, E>): U;
   function partialOp(
     fn: (t: T) => U,
-    curriedResult?: Result<T, E>
+    curriedResult?: Result<T, E>,
   ): U | ((maybe: Result<T, E>) => U) {
     return curriedResult !== undefined
       ? fullOp(fn, curriedResult)
@@ -686,8 +686,8 @@ export function mapOrElse<T, U, E>(
   return mapFn === undefined
     ? partialOp
     : result === undefined
-      ? partialOp(mapFn)
-      : partialOp(mapFn, result);
+    ? partialOp(mapFn)
+    : partialOp(mapFn, result);
 }
 
 /**
@@ -725,7 +725,7 @@ export function mapErr<T, E, F>(mapErrFn: (e: E) => F, result: Result<T, E>): Re
 export function mapErr<T, E, F>(mapErrFn: (e: E) => F): (result: Result<T, E>) => Result<T, F>;
 export function mapErr<T, E, F>(
   mapErrFn: (e: E) => F,
-  result?: Result<T, E>
+  result?: Result<T, E>,
 ): Result<T, F> | ((result: Result<T, E>) => Result<T, F>) {
   const op = (r: Result<T, E>) => r.mapErr(mapErrFn);
   return curry1(op, result);
@@ -770,7 +770,7 @@ export function and<T, U, E>(andResult: Result<U, E>, result: Result<T, E>): Res
 export function and<T, U, E>(andResult: Result<U, E>): (result: Result<T, E>) => Result<U, E>;
 export function and<T, U, E>(
   andResult: Result<U, E>,
-  result?: Result<T, E>
+  result?: Result<T, E>,
 ): Result<U, E> | ((result: Result<T, E>) => Result<U, E>) {
   const op = (r: Result<T, E>) => r.and(andResult);
   return curry1(op, result);
@@ -822,14 +822,14 @@ export function and<T, U, E>(
  */
 export function andThen<T, U, E>(
   thenFn: (t: T) => Result<U, E>,
-  result: Result<T, E>
+  result: Result<T, E>,
 ): Result<U, E>;
 export function andThen<T, U, E>(
-  thenFn: (t: T) => Result<U, E>
+  thenFn: (t: T) => Result<U, E>,
 ): (result: Result<T, E>) => Result<U, E>;
 export function andThen<T, U, E>(
   thenFn: (t: T) => Result<U, E>,
-  result?: Result<T, E>
+  result?: Result<T, E>,
 ): Result<U, E> | ((result: Result<T, E>) => Result<U, E>) {
   const op = (r: Result<T, E>) => r.andThen(thenFn);
   return curry1(op, result);
@@ -869,7 +869,7 @@ export function or<T, E, F>(defaultResult: Result<T, F>, result: Result<T, E>): 
 export function or<T, E, F>(defaultResult: Result<T, F>): (result: Result<T, E>) => Result<T, F>;
 export function or<T, E, F>(
   defaultResult: Result<T, F>,
-  result?: Result<T, E>
+  result?: Result<T, E>,
 ): Result<T, F> | ((result: Result<T, E>) => Result<T, F>) {
   const op = (r: Result<T, E>) => r.or(defaultResult);
   return curry1(op, result);
@@ -895,14 +895,14 @@ export function or<T, E, F>(
  */
 export function orElse<T, E, F>(
   elseFn: (err: E) => Result<T, F>,
-  result: Result<T, E>
+  result: Result<T, E>,
 ): Result<T, F>;
 export function orElse<T, E, F>(
-  elseFn: (err: E) => Result<T, F>
+  elseFn: (err: E) => Result<T, F>,
 ): (result: Result<T, E>) => Result<T, F>;
 export function orElse<T, E, F>(
   elseFn: (err: E) => Result<T, F>,
-  result?: Result<T, E>
+  result?: Result<T, E>,
 ): Result<T, F> | ((result: Result<T, E>) => Result<T, F>) {
   const op = (r: Result<T, E>) => r.orElse(elseFn);
   return curry1(op, result);
@@ -934,7 +934,7 @@ export function unwrapOr<T, U, E>(defaultValue: U, result: Result<T, E>): U | T;
 export function unwrapOr<T, U, E>(defaultValue: U): (result: Result<T, E>) => U | T;
 export function unwrapOr<T, U, E>(
   defaultValue: U,
-  result?: Result<T, E>
+  result?: Result<T, E>,
 ): (T | U) | ((result: Result<T, E>) => T | U) {
   const op = (r: Result<T, E>) => r.unwrapOr(defaultValue);
   return curry1(op, result);
@@ -975,7 +975,7 @@ export function unwrapOrElse<T, U, E>(orElseFn: (error: E) => U, result: Result<
 export function unwrapOrElse<T, U, E>(orElseFn: (error: E) => U): (result: Result<T, E>) => T | U;
 export function unwrapOrElse<T, U, E>(
   orElseFn: (error: E) => U,
-  result?: Result<T, E>
+  result?: Result<T, E>,
 ): (T | U) | ((result: Result<T, E>) => T | U) {
   const op = (r: Result<T, E>) => r.unwrapOrElse(orElseFn);
   return curry1(op, result);
@@ -1131,7 +1131,7 @@ export function match<T, E, A>(matcher: Matcher<T, E, A>, result: Result<T, E>):
 export function match<T, E, A>(matcher: Matcher<T, E, A>): (result: Result<T, E>) => A;
 export function match<T, E, A>(
   matcher: Matcher<T, E, A>,
-  result?: Result<T, E>
+  result?: Result<T, E>,
 ): A | ((result: Result<T, E>) => A) {
   const op = (r: Result<T, E>) => r.mapOrElse(matcher.Err, matcher.Ok);
   return curry1(op, result);
@@ -1159,7 +1159,7 @@ export function equals<T, E>(resultB: Result<T, E>, resultA: Result<T, E>): bool
 export function equals<T, E>(resultB: Result<T, E>): (resultA: Result<T, E>) => boolean;
 export function equals<T, E>(
   resultB: Result<T, E>,
-  resultA?: Result<T, E>
+  resultA?: Result<T, E>,
 ): boolean | ((a: Result<T, E>) => boolean) {
   const op = (rA: Result<T, E>) => rA.equals(resultB);
   return curry1(op, resultA);
@@ -1337,11 +1337,11 @@ export function equals<T, E>(
  */
 export function ap<A, B, E>(resultFn: Result<(a: A) => B, E>, result: Result<A, E>): Result<B, E>;
 export function ap<A, B, E>(
-  resultFn: Result<(a: A) => B, E>
+  resultFn: Result<(a: A) => B, E>,
 ): (result: Result<A, E>) => Result<B, E>;
 export function ap<A, B, E>(
   resultFn: Result<(a: A) => B, E>,
-  result?: Result<A, E>
+  result?: Result<A, E>,
 ): Result<B, E> | ((val: Result<A, E>) => Result<B, E>) {
   const op = (r: Result<A, E>) => resultFn.ap(r);
   return curry1(op, result);

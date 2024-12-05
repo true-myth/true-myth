@@ -21,7 +21,7 @@ export function curry1<T, U>(op: (t: T) => U, item?: T) {
  * Check whether a given key is in an object
  * @internal
  */
-function has<T, K extends PropertyKey>(value: T, key: K): value is T & { [Key in K]: unknown } {
+function has<T, K extends PropertyKey>(value: T, key: K): value is T & { [Key in K]: unknown; } {
   return typeof value === 'object' && value !== null && key in value;
 }
 

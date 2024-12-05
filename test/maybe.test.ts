@@ -1,9 +1,9 @@
-import Maybe, { Variant, Nothing, Just, Matcher } from 'true-myth/maybe';
+import Maybe, { Just, Matcher, Nothing, Variant } from 'true-myth/maybe';
 import * as MaybeNS from 'true-myth/maybe';
 import { Unit } from 'true-myth/unit';
 import { describe, expect, expectTypeOf, test } from 'vitest';
 
-type Neat = { neat: string };
+type Neat = { neat: string; };
 
 const length = (s: string) => s.length;
 
@@ -25,13 +25,13 @@ describe('`Maybe` pure functions', () => {
     expect(() =>
       MaybeNS.just(
         // @ts-expect-error: null is forbidden here
-        null
+        null,
       )
     ).toThrow();
     expect(() =>
       MaybeNS.just(
         // @ts-expect-error: undefined is forbidden here
-        undefined
+        undefined,
       )
     ).toThrow();
 
@@ -118,7 +118,7 @@ describe('`Maybe` pure functions', () => {
       MaybeNS.map(
         // @ts-expect-error
         (_val) => null,
-        Maybe.of('Hello')
+        Maybe.of('Hello'),
       );
     }).toThrow();
   });
@@ -130,7 +130,7 @@ describe('`Maybe` pure functions', () => {
     expect(MaybeNS.mapOr(0, length, MaybeNS.of<string>(null))).toEqual(0);
 
     expect(MaybeNS.mapOr<string, number>(0)(length)(justAString)).toEqual(
-      MaybeNS.mapOr(0, length, justAString)
+      MaybeNS.mapOr(0, length, justAString),
     );
     expect(MaybeNS.mapOr(0, length)(justAString)).toEqual(MaybeNS.mapOr(0, length, justAString));
   });
@@ -146,10 +146,10 @@ describe('`Maybe` pure functions', () => {
     expect(MaybeNS.mapOrElse(toDefault, length, aNothing)).toBe(theDefault);
 
     expect(MaybeNS.mapOrElse<string, number>(toDefault)(length)(aJust)).toEqual(
-      MaybeNS.mapOrElse(toDefault, length, aJust)
+      MaybeNS.mapOrElse(toDefault, length, aJust),
     );
     expect(MaybeNS.mapOrElse(toDefault, length)(aJust)).toEqual(
-      MaybeNS.mapOrElse(toDefault, length, aJust)
+      MaybeNS.mapOrElse(toDefault, length, aJust),
     );
   });
 
@@ -198,7 +198,7 @@ describe('`Maybe` pure functions', () => {
     expect(MaybeNS.andThen(toNothing, noString)).toEqual(noNumber);
 
     expect(MaybeNS.andThen(toMaybeNumber)(theJust)).toEqual(
-      MaybeNS.andThen(toMaybeNumber, theJust)
+      MaybeNS.andThen(toMaybeNumber, theJust),
     );
   });
 
@@ -220,13 +220,13 @@ describe('`Maybe` pure functions', () => {
     const just42 = MaybeNS.of('42');
     expect(MaybeNS.orElse(getWaffles, just42)).toEqual(MaybeNS.just('42'));
     expect(MaybeNS.orElse(getWaffles, MaybeNS.of(null as string | null))).toEqual(
-      MaybeNS.just('waffles')
+      MaybeNS.just('waffles'),
     );
     expect(MaybeNS.orElse(() => MaybeNS.of(null as string | null), just42)).toEqual(
-      MaybeNS.just('42')
+      MaybeNS.just('42'),
     );
     expect(
-      MaybeNS.orElse(() => MaybeNS.of(null as string | null), MaybeNS.of(null as string | null))
+      MaybeNS.orElse(() => MaybeNS.of(null as string | null), MaybeNS.of(null as string | null)),
     ).toEqual(MaybeNS.nothing());
 
     expect(MaybeNS.orElse(getWaffles)(just42)).toEqual(MaybeNS.orElse(getWaffles, just42));
@@ -249,7 +249,7 @@ describe('`Maybe` pure functions', () => {
     expect(MaybeNS.unwrapOr(theDefaultValue, theNothing)).toEqual(theDefaultValue);
 
     expect(MaybeNS.unwrapOr(theDefaultValue)(theJust)).toEqual(
-      MaybeNS.unwrapOr(theDefaultValue, theJust)
+      MaybeNS.unwrapOr(theDefaultValue, theJust),
     );
 
     // Make sure you can unwrap to a different type, like undefined
@@ -309,7 +309,7 @@ describe('`Maybe` pure functions', () => {
       };
 
       expect(MaybeNS.toString(Maybe.of(withNotAFunction))).toEqual(
-        `Just(${JSON.stringify(withNotAFunction)})`
+        `Just(${JSON.stringify(withNotAFunction)})`,
       );
 
       const withBadFunction = {
@@ -320,7 +320,7 @@ describe('`Maybe` pure functions', () => {
       };
 
       expect(MaybeNS.toString(Maybe.of(withBadFunction))).toEqual(
-        `Just(${JSON.stringify(withBadFunction)})`
+        `Just(${JSON.stringify(withBadFunction)})`,
       );
     });
   });
@@ -402,7 +402,7 @@ describe('`Maybe` pure functions', () => {
       expect(result.variant).toBe(MaybeNS.Variant.Just);
       expect((result as Just<number>).value).toBe(theValue);
 
-      type Item = { count: number; name: string };
+      type Item = { count: number; name: string; };
       type Response = Array<Item>;
 
       // This is more about testing the types with the currying; it's functionally
@@ -419,11 +419,11 @@ describe('`Maybe` pure functions', () => {
       // Type narrowing via predicates.
       // https://www.typescriptlang.org/docs/handbook/2/narrowing.html#using-type-predicates
       const findByName = <T extends string>(name: T) =>
-        MaybeNS.find((item: Item): item is Item & { name: T } => item.name === name);
+        MaybeNS.find((item: Item): item is Item & { name: T; } => item.name === name);
       const waffles = findByName('waffles')(array);
       expect(waffles.variant).toBe(MaybeNS.Variant.Just);
       expect((waffles as Just<Item>).value).toEqual(array[1]);
-      expectTypeOf(waffles).toMatchTypeOf<Maybe<{ name: 'waffles' }>>();
+      expectTypeOf(waffles).toMatchTypeOf<Maybe<{ name: 'waffles'; }>>();
 
       const readonlyEmpty: readonly number[] = [];
       const foundReadonly = MaybeNS.find(pred, readonlyEmpty);
@@ -480,21 +480,21 @@ describe('`Maybe` pure functions', () => {
   });
 
   test('`property`', () => {
-    type Person = { name?: string };
+    type Person = { name?: string; };
     let chris: Person = { name: 'chris' };
     expect(MaybeNS.property('name', chris)).toEqual(MaybeNS.just('chris'));
 
     let nobody: Person = {};
     expect(MaybeNS.property('name', nobody)).toEqual(MaybeNS.nothing());
 
-    type Dict<T> = { [key: string]: T };
+    type Dict<T> = { [key: string]: T; };
     let dict: Dict<string> = { quux: 'warble' };
     expect(MaybeNS.property('quux', dict)).toEqual(MaybeNS.just('warble'));
     expect(MaybeNS.property('wat', dict)).toEqual(MaybeNS.nothing());
   });
 
   test('`get`', () => {
-    type Person = { name?: string };
+    type Person = { name?: string; };
     let chris: Person = { name: 'chris' };
     let justChris: Maybe<Person> = MaybeNS.just(chris);
     expect(MaybeNS.get('name', justChris)).toEqual(MaybeNS.just('chris'));
@@ -502,7 +502,7 @@ describe('`Maybe` pure functions', () => {
     let nobody: Maybe<Person> = MaybeNS.nothing();
     expect(MaybeNS.get('name', nobody)).toEqual(MaybeNS.nothing());
 
-    type Dict<T> = { [key: string]: T };
+    type Dict<T> = { [key: string]: T; };
     let dict = MaybeNS.just({ quux: 'warble' } as Dict<string>);
     expect(MaybeNS.get('quux', dict)).toEqual(MaybeNS.just('warble'));
     expect(MaybeNS.get('wat', dict)).toEqual(MaybeNS.nothing());
@@ -620,14 +620,14 @@ describe('`Maybe` class', () => {
       expect(() =>
         Maybe.just(
           // @ts-expect-error
-          null
+          null,
         )
       ).toThrow();
 
       expect(() =>
         Maybe.just(
           // @ts-expect-error
-          undefined
+          undefined,
         )
       ).toThrow();
 
@@ -636,7 +636,7 @@ describe('`Maybe` class', () => {
       expect(() =>
         Maybe.just(
           // @ts-expect-error
-          'Hello' as string | null | undefined
+          'Hello' as string | null | undefined,
         )
       ).not.toThrow();
 
@@ -644,7 +644,7 @@ describe('`Maybe` class', () => {
       expect(() =>
         Maybe.just(
           // @ts-expect-error
-          null as string | null | undefined
+          null as string | null | undefined,
         )
       ).toThrow();
     });
@@ -690,7 +690,7 @@ describe('`Maybe` class', () => {
       expect(() => {
         theJust.map(
           // @ts-expect-error
-          (_val) => null
+          (_val) => null,
         );
       }).toThrow();
     });
@@ -720,7 +720,7 @@ describe('`Maybe` class', () => {
         theJust.match({
           Just: (val) => val + ', yo',
           Nothing: () => 'rats, nothing',
-        })
+        }),
       ).toEqual('this is a string, yo');
     });
 
@@ -752,11 +752,11 @@ describe('`Maybe` class', () => {
     test('`andThen` method', () => {
       const theValue = { Jedi: 'Luke Skywalker' };
       const theJust = new Maybe(theValue);
-      const toDescription = (dict: { [key: string]: string }) =>
+      const toDescription = (dict: { [key: string]: string; }) =>
         new Maybe(
           Object.keys(dict)
             .map((key) => `${dict[key]} is a ${key}`)
-            .join('\n')
+            .join('\n'),
         );
 
       const theExpectedResult = toDescription(theValue);
@@ -820,7 +820,7 @@ describe('`Maybe` class', () => {
     });
 
     test('`property` method', () => {
-      type DeepType = { something?: { with?: { deeper?: { 'key names'?: string } } } };
+      type DeepType = { something?: { with?: { deeper?: { 'key names'?: string; }; }; }; };
 
       const allSet: DeepType = { something: { with: { deeper: { 'key names': 'like this' } } } };
       const deepResult = new Maybe(allSet)
@@ -885,7 +885,7 @@ describe('`Maybe` class', () => {
 
       theNothing.map(
         // @ts-expect-error
-        (_val) => null
+        (_val) => null,
       );
     });
 
@@ -914,7 +914,7 @@ describe('`Maybe` class', () => {
         nietzsche.match({
           Just: (s) => s + ', yo',
           Nothing: () => soDeepMan,
-        })
+        }),
       ).toBe(soDeepMan);
     });
 
@@ -926,7 +926,7 @@ describe('`Maybe` class', () => {
     });
 
     test('`orElse` method', () => {
-      const theNothing = new Maybe<{ here: string[] }>();
+      const theNothing = new Maybe<{ here: string[]; }>();
       const justTheFallback = MaybeNS.just({ here: ['to', 'see'] });
       const getTheFallback = () => justTheFallback;
 
@@ -997,7 +997,7 @@ describe('`Maybe` class', () => {
     });
 
     test('`property` method', () => {
-      type DeepType = { something?: { with?: { deeper?: { 'key names'?: string } } } };
+      type DeepType = { something?: { with?: { deeper?: { 'key names'?: string; }; }; }; };
 
       const result = new Maybe<DeepType>()
         .get('something')

@@ -9,7 +9,7 @@ env:
 
 jobs:
   publish:
-    name: 'Build and publish docs'
+    name: "Build and publish docs"
     runs-on: ubuntu-latest
 
     steps:

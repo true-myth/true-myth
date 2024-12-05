@@ -246,8 +246,8 @@ class MaybeImpl<T> {
   /** Method variant for {@linkcode equals} */
   equals(comparison: Maybe<T>): boolean {
     return (
-      this.repr[0] === (comparison as MaybeImpl<T>).repr[0] &&
-      this.repr[1] === (comparison as MaybeImpl<T>).repr[1]
+      this.repr[0] === (comparison as MaybeImpl<T>).repr[0]
+      && this.repr[1] === (comparison as MaybeImpl<T>).repr[1]
     );
   }
 
@@ -499,7 +499,7 @@ export function map<T, U extends {}>(mapFn: (t: T) => U): (maybe: Maybe<T>) => M
 export function map<T, U extends {}>(mapFn: (t: T) => U, maybe: Maybe<T>): Maybe<U>;
 export function map<T, U extends {}>(
   mapFn: (t: T) => U,
-  maybe?: Maybe<T>
+  maybe?: Maybe<T>,
 ): Maybe<U> | ((maybe: Maybe<T>) => Maybe<U>) {
   const op = (m: Maybe<T>) => m.map(mapFn);
   return curry1(op, maybe);
@@ -536,7 +536,7 @@ export function mapOr<T, U>(orU: U): (mapFn: (t: T) => U) => (maybe: Maybe<T>) =
 export function mapOr<T, U>(
   orU: U,
   mapFn?: (t: T) => U,
-  maybe?: Maybe<T>
+  maybe?: Maybe<T>,
 ): U | ((maybe: Maybe<T>) => U) | ((mapFn: (t: T) => U) => (maybe: Maybe<T>) => U) {
   function fullOp(fn: (t: T) => U, m: Maybe<T>) {
     return m.mapOr(orU, fn);
@@ -553,8 +553,8 @@ export function mapOr<T, U>(
   return mapFn === undefined
     ? partialOp
     : maybe === undefined
-      ? partialOp(mapFn)
-      : partialOp(mapFn, maybe);
+    ? partialOp(mapFn)
+    : partialOp(mapFn, maybe);
 }
 
 /**
@@ -590,7 +590,7 @@ export function mapOrElse<T, U>(orElseFn: () => U): (mapFn: (t: T) => U) => (may
 export function mapOrElse<T, U>(
   orElseFn: () => U,
   mapFn?: (t: T) => U,
-  maybe?: Maybe<T>
+  maybe?: Maybe<T>,
 ): U | ((maybe: Maybe<T>) => U) | ((mapFn: (t: T) => U) => (maybe: Maybe<T>) => U) {
   function fullOp(fn: (t: T) => U, m: Maybe<T>) {
     return m.mapOrElse(orElseFn, fn);
@@ -651,7 +651,7 @@ export function and<T, U>(andMaybe: Maybe<U>, maybe: Maybe<T>): Maybe<U>;
 export function and<T, U>(andMaybe: Maybe<U>): (maybe: Maybe<T>) => Maybe<U>;
 export function and<T, U>(
   andMaybe: Maybe<U>,
-  maybe?: Maybe<T>
+  maybe?: Maybe<T>,
 ): Maybe<U> | ((maybe: Maybe<T>) => Maybe<U>) {
   const op = (m: Maybe<T>) => m.and(andMaybe);
   return curry1(op, maybe);
@@ -712,7 +712,7 @@ export function andThen<T, U>(thenFn: (t: T) => Maybe<U>, maybe: Maybe<T>): Mayb
 export function andThen<T, U>(thenFn: (t: T) => Maybe<U>): (maybe: Maybe<T>) => Maybe<U>;
 export function andThen<T, U>(
   thenFn: (t: T) => Maybe<U>,
-  maybe?: Maybe<T>
+  maybe?: Maybe<T>,
 ): Maybe<U> | ((maybe: Maybe<T>) => Maybe<U>) {
   const op = (m: Maybe<T>) => m.andThen(thenFn);
   return maybe !== undefined ? op(maybe) : op;
@@ -749,7 +749,7 @@ export function or<T>(defaultMaybe: Maybe<T>, maybe: Maybe<T>): Maybe<T>;
 export function or<T>(defaultMaybe: Maybe<T>): (maybe: Maybe<T>) => Maybe<T>;
 export function or<T>(
   defaultMaybe: Maybe<T>,
-  maybe?: Maybe<T>
+  maybe?: Maybe<T>,
 ): Maybe<T> | ((maybe: Maybe<T>) => Maybe<T>) {
   const op = (m: Maybe<T>) => m.or(defaultMaybe);
   return maybe !== undefined ? op(maybe) : op;
@@ -775,7 +775,7 @@ export function orElse<T>(elseFn: () => Maybe<T>, maybe: Maybe<T>): Maybe<T>;
 export function orElse<T>(elseFn: () => Maybe<T>): (maybe: Maybe<T>) => Maybe<T>;
 export function orElse<T>(
   elseFn: () => Maybe<T>,
-  maybe?: Maybe<T>
+  maybe?: Maybe<T>,
 ): Maybe<T> | ((maybe: Maybe<T>) => Maybe<T>) {
   const op = (m: Maybe<T>) => m.orElse(elseFn);
   return curry1(op, maybe);
@@ -845,7 +845,7 @@ export function unwrapOrElse<T, U>(orElseFn: () => U, maybe: Maybe<T>): T | U;
 export function unwrapOrElse<T, U>(orElseFn: () => U): (maybe: Maybe<T>) => T | U;
 export function unwrapOrElse<T, U>(
   orElseFn: () => U,
-  maybe?: Maybe<T>
+  maybe?: Maybe<T>,
 ): (T | U) | ((maybe: Maybe<T>) => T | U) {
   const op = (m: Maybe<T>) => m.unwrapOrElse(orElseFn);
   return curry1(op, maybe);
@@ -1129,7 +1129,7 @@ export function ap<T, U extends {}>(maybeFn: Maybe<(t: T) => U>, maybe: Maybe<T>
 export function ap<T, U extends {}>(maybeFn: Maybe<(t: T) => U>): (maybe: Maybe<T>) => Maybe<U>;
 export function ap<T, U extends {}>(
   maybeFn: Maybe<(t: T) => U>,
-  maybe?: Maybe<T>
+  maybe?: Maybe<T>,
 ): Maybe<U> | ((val: Maybe<T>) => Maybe<U>) {
   const op = (m: Maybe<T>) => maybeFn.ap(m);
   return curry1(op, maybe);
@@ -1149,7 +1149,7 @@ export type Predicate<T> = (element: T, index: number, array: AnyArray<T>) => bo
 export type NarrowingPredicate<T, U extends T> = (
   element: T,
   index: number,
-  array: AnyArray<T>
+  array: AnyArray<T>,
 ) => element is U;
 
 /** An array or a readonly array. */
@@ -1213,16 +1213,16 @@ export type AnyArray<T> = Array<T> | ReadonlyArray<T>;
  */
 export function find<T, U extends T>(
   predicate: NarrowingPredicate<T, U>,
-  array: AnyArray<T>
+  array: AnyArray<T>,
 ): Maybe<U>;
 export function find<T, U extends T>(
-  predicate: NarrowingPredicate<T, U>
+  predicate: NarrowingPredicate<T, U>,
 ): (array: AnyArray<T>) => Maybe<U>;
 export function find<T>(predicate: Predicate<T>, array: AnyArray<T>): Maybe<T>;
 export function find<T>(predicate: Predicate<T>): (array: AnyArray<T>) => Maybe<T>;
 export function find<T, U extends T>(
   predicate: NarrowingPredicate<T, U> | Predicate<T>,
-  array?: AnyArray<T>
+  array?: AnyArray<T>,
 ): Maybe<T> | ((array: AnyArray<T>) => Maybe<T>) {
   const op = (a: AnyArray<T>) => Maybe.of(a.find(predicate));
   return curry1(op, array);
@@ -1340,15 +1340,17 @@ export function transposeArray<T extends Array<Maybe<unknown>>>(maybes: T): Tran
   // produce `Maybe<[string, [number, boolean]]>`.
   return maybes.reduce(
     (acc: Maybe<unknown[]>, m) => acc.andThen((ms) => m.map((m) => [...ms, m])),
-    just([] as unknown[]) as TransposedArray<T>
+    just([] as unknown[]) as TransposedArray<T>,
   ) as TransposedArray<T>;
 }
 
 export type Unwrapped<T> = T extends Maybe<infer U> ? U : T;
 
-export type TransposedArray<T extends Array<Maybe<unknown>>> = Maybe<{
-  [K in keyof T]: Unwrapped<T[K]>;
-}>;
+export type TransposedArray<T extends Array<Maybe<unknown>>> = Maybe<
+  {
+    [K in keyof T]: Unwrapped<T[K]>;
+  }
+>;
 
 /**
   Safely extract a key from an object, returning {@linkcode Just} if the key has
@@ -1403,7 +1405,7 @@ export function property<T, K extends keyof T>(key: K, obj: T): Maybe<NonNullabl
 export function property<T, K extends keyof T>(key: K): (obj: T) => Maybe<NonNullable<T[K]>>;
 export function property<T, K extends keyof T>(
   key: K,
-  obj?: T
+  obj?: T,
 ): Maybe<NonNullable<T[K]>> | ((obj: T) => Maybe<NonNullable<T[K]>>) {
   const op = (t: T) => Maybe.of(t[key]) as Maybe<NonNullable<T[K]>>;
   return curry1(op, obj);
@@ -1470,7 +1472,7 @@ export function get<T, K extends keyof T>(key: K, maybeObj: Maybe<T>): Maybe<Non
 export function get<T, K extends keyof T>(key: K): (maybeObj: Maybe<T>) => Maybe<NonNullable<T[K]>>;
 export function get<T, K extends keyof T>(
   key: K,
-  maybeObj?: Maybe<T>
+  maybeObj?: Maybe<T>,
 ): Maybe<NonNullable<T[K]>> | ((maybeObj: Maybe<T>) => Maybe<NonNullable<T[K]>>) {
   return curry1(andThen(property<T, K>(key)), maybeObj);
 }
@@ -1568,7 +1570,7 @@ export type AnyFunction = (...args: never[]) => unknown;
   constructor and the associated static properties.
  */
 export interface MaybeConstructor {
-  new <T>(value?: T | null | undefined): Maybe<T>;
+  new<T>(value?: T | null | undefined): Maybe<T>;
   of: typeof MaybeImpl.of;
   just: typeof MaybeImpl.just;
   nothing: typeof MaybeImpl.nothing;

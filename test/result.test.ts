@@ -1,9 +1,9 @@
-import Result, { Ok, Variant, Err } from 'true-myth/result';
+import Result, { Err, Ok, Variant } from 'true-myth/result';
 import * as ResultNS from 'true-myth/result';
 import Unit from 'true-myth/unit';
 import { describe, expect, expectTypeOf, test } from 'vitest';
 
-const length = (x: { length: number }) => x.length;
+const length = (x: { length: number; }) => x.length;
 const double = (x: number) => x * 2;
 
 describe('`Result` pure functions', () => {
@@ -109,10 +109,10 @@ describe('`Result` pure functions', () => {
     expect(ResultNS.mapOr(theDefault, double, anErr)).toEqual(theDefault);
 
     expect(ResultNS.mapOr<number, number, string>(theDefault)(double)(anOk)).toEqual(
-      ResultNS.mapOr(theDefault, double, anOk)
+      ResultNS.mapOr(theDefault, double, anOk),
     );
     expect(ResultNS.mapOr(theDefault, double)(anOk)).toEqual(
-      ResultNS.mapOr(theDefault, double, anOk)
+      ResultNS.mapOr(theDefault, double, anOk),
     );
   });
 
@@ -128,10 +128,10 @@ describe('`Result` pure functions', () => {
     expect(ResultNS.mapOrElse(getDefault, String, anErr)).toEqual(`${description}: ${errValue}`);
 
     expect(ResultNS.mapOrElse(getDefault)(String)(anErr)).toEqual(
-      ResultNS.mapOrElse(getDefault, String, anErr)
+      ResultNS.mapOrElse(getDefault, String, anErr),
     );
     expect(ResultNS.mapOrElse(getDefault, String)(anErr)).toEqual(
-      ResultNS.mapOrElse(getDefault, String, anErr)
+      ResultNS.mapOrElse(getDefault, String, anErr),
     );
   });
 
@@ -145,8 +145,8 @@ describe('`Result` pure functions', () => {
           Ok: (val) => val,
           Err: (err) => err,
         },
-        nobody
-      )
+        nobody,
+      ),
     ).toBe('ok');
     expect(
       ResultNS.match(
@@ -154,8 +154,8 @@ describe('`Result` pure functions', () => {
           Ok: (val) => val,
           Err: (err) => err,
         },
-        toErrIs
-      )
+        toErrIs,
+      ),
     ).toBe('human');
   });
 
@@ -198,7 +198,7 @@ describe('`Result` pure functions', () => {
     const orOk: Result<number, string> = ResultNS.ok(0);
     const orErr: Result<number, string> = ResultNS.err('something boring');
 
-    type Err = { [key: string]: string };
+    type Err = { [key: string]: string; };
 
     const anOk: Result<number, Err> = ResultNS.ok(42);
     expect(ResultNS.or(orOk, anOk)).toEqual(anOk);
@@ -289,7 +289,7 @@ describe('`Result` pure functions', () => {
   });
 
   test('`unwrapOrElse`', () => {
-    type LocalError = { reason: string };
+    type LocalError = { reason: string; };
 
     const errToOk = (e: LocalError) => `What went wrong? ${e.reason}`;
 
@@ -332,7 +332,7 @@ describe('`Result` pure functions', () => {
       };
 
       expect(ResultNS.toString(Result.ok(withNotAFunction))).toEqual(
-        `Ok(${JSON.stringify(withNotAFunction)})`
+        `Ok(${JSON.stringify(withNotAFunction)})`,
       );
 
       const withBadFunction = {
@@ -343,7 +343,7 @@ describe('`Result` pure functions', () => {
       };
 
       expect(ResultNS.toString(Result.err(withBadFunction))).toEqual(
-        `Err(${JSON.stringify(withBadFunction)})`
+        `Err(${JSON.stringify(withBadFunction)})`,
       );
     });
   });
@@ -553,7 +553,7 @@ describe('`Ok` instance', () => {
       nobody.match({
         Ok: (val) => val,
         Err: (err) => err,
-      })
+      }),
     ).toBe('ok');
   });
 
@@ -766,7 +766,7 @@ describe('`ResultNS.Err` class', () => {
       toErrIs.match({
         Ok: (val) => val,
         Err: (err) => err,
-      })
+      }),
     ).toBe(human);
   });
 
@@ -877,7 +877,7 @@ describe('`ResultNS.Err` class', () => {
 
   test('`ap` method', () => {
     const fn: Result<(val: string) => number, string> = Result.err<(val: string) => number, string>(
-      'ERR_THESYSTEMISDOWN'
+      'ERR_THESYSTEMISDOWN',
     );
     const val: Result<string, string> = Result.err('ERR_ALLURBASE');
 
