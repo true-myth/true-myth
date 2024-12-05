@@ -12,9 +12,9 @@
   @module
  */
 
-import Result from './result.js';
-import Maybe from './maybe.js';
 import { curry1 } from './-private/utils.js';
+import Maybe from './maybe.js';
+import Result from './result.js';
 
 /**
   Transposes a {@linkcode Result} of a {@linkcode Maybe} into a `Maybe` of a
@@ -68,7 +68,7 @@ export function fromMaybe<T, E>(errValue: E, maybe: Maybe<T>): Result<T, E>;
 export function fromMaybe<T, E>(errValue: E): (maybe: Maybe<T>) => Result<T, E>;
 export function fromMaybe<T, E>(
   errValue: E,
-  maybe?: Maybe<T>
+  maybe?: Maybe<T>,
 ): Result<T, E> | ((maybe: Maybe<T>) => Result<T, E>) {
   const op = (m: Maybe<T>) => (m.isJust ? Result.ok<T, E>(m.value) : Result.err<T, E>(errValue));
   return curry1(op, maybe);
@@ -113,7 +113,7 @@ export function toOkOrErr<T, E>(error: E, maybe: Maybe<T>): Result<T, E>;
 export function toOkOrErr<T, E>(error: E): (maybe: Maybe<T>) => Result<T, E>;
 export function toOkOrErr<T, E>(
   error: E,
-  maybe?: Maybe<T>
+  maybe?: Maybe<T>,
 ): Result<T, E> | ((maybe: Maybe<T>) => Result<T, E>) {
   const op = (m: Maybe<T>) => (m.isJust ? Result.ok<T, E>(m.value) : Result.err<T, E>(error));
   return maybe !== undefined ? op(maybe) : op;
@@ -134,7 +134,7 @@ export function toOkOrElseErr<T, E>(elseFn: () => E, maybe: Maybe<T>): Result<T,
 export function toOkOrElseErr<T, E>(elseFn: () => E): (maybe: Maybe<T>) => Result<T, E>;
 export function toOkOrElseErr<T, E>(
   elseFn: () => E,
-  maybe?: Maybe<T>
+  maybe?: Maybe<T>,
 ): Result<T, E> | ((maybe: Maybe<T>) => Result<T, E>) {
   const op = (m: Maybe<T>) => (m.isJust ? Result.ok<T, E>(m.value) : Result.err<T, E>(elseFn()));
   return curry1(op, maybe);
