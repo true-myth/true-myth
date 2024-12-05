@@ -42,30 +42,15 @@ class ResultImpl<T, E> {
   /**
     Create an instance of {@linkcode Ok}.
 
-    ```ts
-    const aString = Result.ok('characters);
-    ```
-
-    Note that you may explicitly pass {@linkcode Unit} to the {@linkcode Ok}
+    Note that you may explicitly pass {@linkcode Unit} to the {@linkcode ok}
     constructor to create a `Result<Unit, E>`. However, you may *not* call the
-    `Ok` constructor with `null` or `undefined` to get that result (the type
+    `ok` constructor with `null` or `undefined` to get that result (the type
     system won't allow you to construct it that way). Instead, for convenience,
-    you can simply call {@linkcode ok}, which will construct the type correctly.
+    you can simply call {@linkcode ok `Result.ok()`}, which will construct the
+    type correctly.
    */
-  static ok<T extends {}, E = never>(): Result<Unit, E>;
+  static ok(): Result<Unit, never>;
   /**
-    Create an instance of {@linkcode Ok}.
-
-    ```ts
-    const aString = Result.ok('characters);
-    ```
-
-    Note that you may explicitly pass {@linkcode Unit} to the {@linkcode Ok}
-    constructor to create a `Result<Unit, E>`. However, you may *not* call the
-    `Ok` constructor with `null` or `undefined` to get that result (the type
-    system won't allow you to construct it that way). Instead, for convenience,
-    you can simply call {@linkcode ok}, which will construct the type correctly.
-
     @param value The value to wrap in an `Ok`.
    */
   static ok<T, E = never>(value: T): Result<T, E>;
