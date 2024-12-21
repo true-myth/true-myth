@@ -1,3 +1,5 @@
+import { describe, expect, expectTypeOf, test } from 'vitest';
+
 import Maybe from 'true-myth/maybe';
 import Result from 'true-myth/result';
 import {
@@ -9,7 +11,6 @@ import {
   fromMaybe,
   toMaybe,
 } from 'true-myth/toolbelt';
-import { describe, expect, expectTypeOf, test } from 'vitest';
 
 describe('transposeResult', () => {
   test('Ok(Just(T))', () => {

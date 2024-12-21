@@ -1,7 +1,8 @@
+import { describe, expect, expectTypeOf, test } from 'vitest';
+
 import Maybe, { Variant, Nothing, Just, Matcher } from 'true-myth/maybe';
 import * as MaybeNS from 'true-myth/maybe';
 import { Unit } from 'true-myth/unit';
-import { describe, expect, expectTypeOf, test } from 'vitest';
 
 type Neat = { neat: string };
 

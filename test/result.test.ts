@@ -1,7 +1,8 @@
+import { describe, expect, expectTypeOf, test } from 'vitest';
+
 import Result, { Ok, Variant, Err } from 'true-myth/result';
 import * as ResultNS from 'true-myth/result';
 import Unit from 'true-myth/unit';
-import { describe, expect, expectTypeOf, test } from 'vitest';
 
 const length = (x: { length: number }) => x.length;
 const double = (x: number) => x * 2;
