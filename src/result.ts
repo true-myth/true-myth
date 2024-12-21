@@ -580,8 +580,8 @@ export function mapOr<T, U, E>(
   return mapFn === undefined
     ? partialOp
     : result === undefined
-      ? partialOp(mapFn)
-      : partialOp(mapFn, result);
+    ? partialOp(mapFn)
+    : partialOp(mapFn, result);
 }
 
 /**
@@ -654,8 +654,8 @@ export function mapOrElse<T, U, E>(
   return mapFn === undefined
     ? partialOp
     : result === undefined
-      ? partialOp(mapFn)
-      : partialOp(mapFn, result);
+    ? partialOp(mapFn)
+    : partialOp(mapFn, result);
 }
 
 /**
@@ -1342,5 +1342,4 @@ export interface ResultConstructor {
  */
 export const Result: ResultConstructor = ResultImpl as ResultConstructor;
 export type Result<T, E> = Ok<T, E> | Err<T, E>;
-
 export default Result;

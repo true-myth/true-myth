@@ -553,8 +553,8 @@ export function mapOr<T, U>(
   return mapFn === undefined
     ? partialOp
     : maybe === undefined
-      ? partialOp(mapFn)
-      : partialOp(mapFn, maybe);
+    ? partialOp(mapFn)
+    : partialOp(mapFn, maybe);
 }
 
 /**
@@ -1549,7 +1549,7 @@ export function get<T, K extends keyof T>(
 export function wrapReturn<
   F extends AnyFunction,
   P extends Parameters<F>,
-  R extends NonNullable<ReturnType<F>>,
+  R extends NonNullable<ReturnType<F>>
 >(fn: F): (...args: P) => Maybe<R> {
   return (...args) => Maybe.of(fn(...args)) as Maybe<R>;
 }
