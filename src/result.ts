@@ -42,15 +42,7 @@ class ResultImpl<T, E> {
   /**
     Create an instance of {@linkcode Ok}.
 
-    Note: While you *may* create the {@linkcode Result} type via normal
-    JavaScript class construction, it is not recommended for the functional
-    style for which the library is intended. Instead, use {@linkcode ok}.
-
     ```ts
-    // Avoid:
-    const aString = new Result.Ok('characters');
-
-    // Prefer:
     const aString = Result.ok('characters);
     ```
 
@@ -64,15 +56,7 @@ class ResultImpl<T, E> {
   /**
     Create an instance of {@linkcode Ok}.
 
-    Note: While you *may* create the {@linkcode Result} type via normal
-    JavaScript class construction, it is not recommended for the functional
-    style for which the library is intended. Instead, use {@linkcode ok}.
-
     ```ts
-    // Avoid:
-    const aString = new Result.Ok('characters');
-
-    // Prefer:
     const aString = Result.ok('characters);
     ```
 
@@ -99,15 +83,7 @@ class ResultImpl<T, E> {
   /**
     Create an instance of {@linkcode Err}.
 
-    Note: While you *may* create the {@linkcode Result} type via normal
-    JavaScript class construction, it is not recommended for the functional
-    style for which the library is intended. Instead, use {@linkcode err}.
-
     ```ts
-    // Avoid:
-    const anErr = new Result.Err('alas, failure');
-
-    // Prefer:
     const anErr = Result.err('alas, failure');
     ```
    */
@@ -115,15 +91,7 @@ class ResultImpl<T, E> {
   /**
     Create an instance of {@linkcode Err}.
 
-    Note: While you *may* create the {@linkcode Result} type via normal
-    JavaScript class construction, it is not recommended for the functional
-    style for which the library is intended. Instead, use {@linkcode err}.
-
     ```ts
-    // Avoid:
-    const anErr = new Result.Err('alas, failure');
-
-    // Prefer:
     const anErr = Result.err('alas, failure');
     ```
 
