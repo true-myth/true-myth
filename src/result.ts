@@ -161,7 +161,7 @@ class ResultImpl<T, E> {
   }
 
   /** Method variant for {@linkcode match} */
-  match<U>(matcher: Matcher<T, E, U>): U {
+  match<A>(matcher: Matcher<T, E, A>): A {
     return this.repr[0] === 'Ok' ? matcher.Ok(this.repr[1]) : matcher.Err(this.repr[1]);
   }
 
