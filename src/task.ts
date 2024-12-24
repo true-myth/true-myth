@@ -26,7 +26,7 @@ import Unit from './unit.js';
   `await` it; when a `Task<T, E>` is awaited, it produces a {@linkcode result
   Result<T, E>}.
  */
-export class Task<T, E> implements PromiseLike<Result<T, E>> {
+export class Task<T, E> implements Promise<Result<T, E>> {
   readonly #promise: Promise<Result<T, E>>;
   #state: Repr<T, E> = [State.Pending];
 
@@ -75,16 +75,25 @@ export class Task<T, E> implements PromiseLike<Result<T, E>> {
     );
   }
 
-  // Implement `PromiseLike`; this allows `await someTask` to “just work” and to
-  // produce the resulting `Result<A, B>`. It also powers the mechanics of things
-  // like `andThen` below, since it makes it possible to use JS’ implicit
-  // unwrapping of “thenables” to produce new `Task`s even when there is an
-  // intermediate `Promise`.
-  then<A, B>(
-    onSuccess?: (result: Result<T, E>) => A | PromiseLike<A>,
-    onRejected?: (reason: unknown) => B | PromiseLike<B>
-  ): PromiseLike<A | B> {
-    return this.#promise.then(onSuccess, onRejected);
+  then<TResult1 = Result<T, E>, TResult2 = never>(
+    onfulfilled?: ((value: Result<T, E>) => TResult1 | PromiseLike<TResult1>) | null | undefined,
+    onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | null | undefined
+  ): Promise<TResult1 | TResult2> {
+    return this.#promise.then(onfulfilled, onrejected);
+  }
+
+  // For the semantics of this to be appropriate to `Task`, it should return
+  // something a bit different: `Promise<Result<T, F>>`. As far as I can see, it
+  // cannot do that while being properly substitutable (in the Liskov sense)
+  // with `Promise.prototype.catch`.
+  catch<TResult = never>(
+    onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | null | undefined
+  ): Promise<Result<T, E> | TResult> {
+    return this.#promise.catch(onrejected);
+  }
+
+  finally(onfinally?: (() => void) | null | undefined): Task<T, E> {
+    return Task.from(this.#promise.finally(onfinally));
   }
 
   toString() {
