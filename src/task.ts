@@ -476,7 +476,7 @@ class TaskImpl<T, E> implements PromiseLike<Result<T, E>> {
     `andThen` to combine two functions which *both* create a `Task` from an
     unwrapped type.
 
-    The [`Promise.prototype.then`][then] method a helpful comparison: if you
+    The [`Promise.prototype.then`][then] method is a helpful comparison: if you
     have a `Promise`, you can pass its `then` method a callback which returns
     another `Promise`, and the result will not be a *nested* promise, but a
     single `Promise`. The difference is that `Promise.prototype.then` unwraps
@@ -699,6 +699,26 @@ class TaskImpl<T, E> implements PromiseLike<Result<T, E>> {
   }
 
   /**
+    Attempt to run this {@linkcode Task} to completion, but stop if the passed
+    {@linkcode Timer}, or one constructed from a passed time in milliseconds,
+    elapses first.
+
+    If this `Task` and the duration happen to have the same duration, `timeout`
+    will favor this `Task` over the timeout.
+
+    @param timer A {@linkcode Timer}
+    @returns A `Task` which has the resolution value of `this` or a `Timeout`
+      if the timer elapsed.
+   */
+  timeout(timer: Timer): Task<T, E | Timeout>;
+  timeout(ms: number): Task<T, E | Timeout>;
+  timeout(timerOrMs: Timer | number): Task<unknown, unknown> {
+    let timerTask = typeof timerOrMs === 'number' ? timer(timerOrMs) : timerOrMs;
+    let timeout = timerTask.andThen((ms) => Task.reject(new Timeout(ms)));
+    return race([this as Task<T, E>, timeout]);
+  }
+
+  /**
     Get the underlying `Promise`. Useful when you need to work with an
     API which *requires* a `Promise`, rather than a `PromiseLike`.
 
@@ -715,6 +735,363 @@ class TaskImpl<T, E> implements PromiseLike<Result<T, E>> {
    */
   toPromise(): Promise<Result<T, E>> {
     return this.#promise;
+  }
+}
+
+/**
+  An unknown {@linkcode Task}. This is a private type utility; it is only
+  exported for the sake of internal tests.
+
+  @internal
+ */
+export type AnyTask = Task<unknown, unknown>;
+
+export type TaskTypesFor<A extends readonly AnyTask[]> = [
+  { -readonly [P in keyof A]: ResolvesTo<A[P]> },
+  { -readonly [P in keyof A]: RejectsWith<A[P]> },
+];
+
+/**
+  The resolution type for a given {@linkcode Task}.
+  @internal
+ */
+export type ResolvesTo<T extends AnyTask> = T extends Task<infer T, infer _> ? T : never;
+
+/**
+  The rejection type for a given {@linkcode Task}
+  @internal
+ */
+export type RejectsWith<T extends AnyTask> = T extends Task<infer _, infer E> ? E : never;
+
+/**
+  Create a {@linkcode Task} which will resolve to {@linkcode Unit} after a set
+  interval. (Safely wraps [`setTimeout`][setTimeout].)
+
+  [setTimeout]: https://developer.mozilla.org/en-US/docs/Web/API/Window/setTimeout
+
+  This can be combined with the {@linkcode Task.timeout} instance method.
+
+  @param ms The number of milliseconds to wait before resolving the `Task`.
+  @returns a Task which resolves to the passed-in number of milliseconds.
+ */
+export function timer(ms: number): Timer {
+  return new Task((resolve) => setTimeout(() => resolve(ms), ms)) as Timer;
+}
+
+/**
+  A type utility for mapping an input array of tasks into the appropriate output
+  for `all`.
+
+  @internal
+ */
+export type All<A extends readonly AnyTask[]> = Task<
+  Array<TaskTypesFor<A>[0][number]>,
+  TaskTypesFor<A>[1][number]
+>;
+
+/**
+  Given an array of tasks, return a new `Task` which resolves once all tasks
+  successfully resolve or any task rejects.
+
+  ## Examples
+
+  Once all tasks resolve:
+
+  ```ts
+  import { all, timer } from 'true-myth/task';
+
+  let allTasks = all([
+    timer(10),
+    timer(100),
+    timer(1_000),
+  ]);
+
+  let result = await allTasks;
+  console.log(result.toString()); // [Ok(10,100,1000)]
+  ```
+
+  If any tasks do *not* resolve:
+
+  ```ts
+  let { task: willReject, reject } = Task.withResolvers<never, string>();
+
+  let allTasks = all([
+    timer(10),
+    timer(20),
+    willReject,
+  ]);
+
+  reject("something went wrong");
+  let result = await allTasks;
+  console.log(result.toString()); // Err("something went wrong")
+  ```
+
+  @param tasks The list of tasks to wait on.
+*/
+export function all(tasks: []): Task<[], never>;
+export function all<A extends readonly AnyTask[]>(tasks: A): All<A>;
+export function all<A extends readonly AnyTask[]>(tasks: A): Task<unknown, unknown> {
+  if (tasks.length === 0) {
+    return Task.resolve([]);
+  }
+
+  let total = tasks.length;
+  let oks = new Array<unknown>();
+  let hasRejected = false;
+
+  return new Task((resolve, reject) => {
+    // Because all tasks will *always* resolve, we need to manage this manually,
+    // rather than using `Promise.all`, so that we produce a rejected `Task` as
+    // soon as *any* `Task` rejects.
+    for (let task of tasks) {
+      // Instead, each `Task` wires up handlers for resolution and rejection.
+      task.match({
+        // If it rejected, then check whether one of the other tasks has already
+        // rejected. If so, there is nothing to do. Otherwise, *this* task is
+        // the first to reject, so we reject the overall `Task` with the reason
+        // for this one, and flag that the `Task` is rejected.
+        Rejected: (reason) => {
+          if (hasRejected) {
+            return;
+          }
+
+          hasRejected = true;
+          reject(reason);
+        },
+
+        // If it resolved, the same rule applies if one of the other tasks has
+        // rejected, because the`Task` for this `any` will already be rejected
+        // with that task’s rejection reason. Otherwise, we will add this value
+        // to the bucket of resolutions, and track whether *all* the tasks have
+        // resolved. If or when we get to that point, we resolve with the full
+        // set of values.
+        Resolved: (value) => {
+          if (hasRejected) {
+            return;
+          }
+
+          oks.push(value);
+          if (oks.length === total) {
+            resolve(oks);
+          }
+        },
+      });
+    }
+  });
+}
+
+/**
+  @internal
+*/
+export type Settled<A extends readonly AnyTask[]> = {
+  -readonly [P in keyof A]: Result<ResolvesTo<A[P]>, RejectsWith<A[P]>>;
+};
+
+/**
+  Given an array of tasks, return a new {@linkcode Task} which resolves once all
+  of the tasks have either resolved or rejected. The resulting `Task` is a tuple
+  or array corresponding exactly to the tasks passed in, either resolved or
+  rejected.
+
+  ## Example
+
+  Given a mix of resolving and rejecting tasks:
+
+  ```ts
+  let settledTask = allSettled([
+    Task.resolve<string, number>("hello"),
+    Task.reject<number, boolean>(true),
+    Task.resolve<{ fancy: boolean }>, Error>({ fancy: true }),
+  ]);
+
+  let output = await settledTask;
+  if (output.isOk) { // always true, not currently statically knowable
+    for (let result of output.value) {
+      console.log(result.toString());
+    }
+  }
+  ```
+
+  The resulting output will be:
+
+  ```
+  Ok("hello"),
+  Err(true),
+  Ok({ fancy: true }),
+  ```
+
+  @param tasks The tasks to wait on settling.
+ */
+export function allSettled<A extends readonly AnyTask[]>(tasks: A): Task<Settled<A>, never>;
+export function allSettled(tasks: AnyTask[]): Task<unknown, never> {
+  // All task promises should resolve; none should ever reject, by definition.
+  // The “settled” state here is represented by the `Task` itself, *not* by the
+  // `Promise` rejection. This means the logic of `allSettled` is actually just
+  // `Promise.all`!
+  return new Task((resolve) => {
+    Promise.all(tasks).then(resolve);
+  });
+}
+
+/**
+  Given an array of tasks, return a new {@linkcode Task} which resolves once
+  _any_ of the tasks resolves successfully, or which rejects once _all_ the
+  tasks have rejected.
+
+  ## Examples
+
+  When any item resolves:
+
+  ```ts
+  import { any, timer } from 'true-myth/task';
+
+  let anyTask = any([
+    timer(20),
+    timer(10),
+    timer(30),
+  ]);
+
+  let result = await anyTask;
+  console.log(result.toString()); // Ok(10);
+  ```
+
+  When all items reject:
+
+  ```ts
+  import Task, { timer } from 'true-myth/task';
+
+  let anyTask = any([
+    timer(20).andThen((time) => Task.reject(`${time}ms`)),
+    timer(10).andThen((time) => Task.reject(`${time}ms`)),
+    timer(30).andThen((time) => Task.reject(`${time}ms`)),
+  ]);
+
+  let result = await anyTask;
+  console.log(result.toString()); // Err(AggregateRejection: `Task.race`: 10ms,20ms,30ms)
+  ```
+
+  (Note that the order in the resulting `AggregateRejection` is not guaranteed
+  to be stable!)
+
+  @param tasks The set of tasks to check for any resolution.
+  @returns A Task which is either {@linkcode Resolved} with the value of the
+    first task to resolve, or {@linkcode Rejected} with the rejection reasons
+    for all the tasks passed in in an {@linkcode AggregateRejection}. Note that
+    the order of the rejection reasons is not guaranteed.
+*/
+export function any(tasks: []): Task<never, AggregateRejection<[]>>;
+export function any<A extends readonly AnyTask[]>(
+  tasks: A
+): Task<TaskTypesFor<A>[0][number], AggregateRejection<Array<TaskTypesFor<A>[1][number]>>>;
+export function any(tasks: [] | AnyTask[]): AnyTask {
+  if (tasks.length === 0) {
+    return Task.reject(new AggregateRejection([]));
+  }
+
+  let total = tasks.length;
+  let hasResolved = false;
+  let rejections = new Array<unknown>();
+
+  return new Task((resolve, reject) => {
+    // We cannot use `Promise.any`, because it will only return the first `Task`
+    // that resolves, and the `Promise` for a `Task` *always* either resolves if
+    // it settles.
+    for (let task of tasks) {
+      // Instead, each `Task` wires up handlers for resolution and rejection.
+      task.match({
+        // If it resolved, then check whether one of the other tasks has already
+        // resolved. If so, there is nothing to do. Otherwise, *this* task is
+        // the first to resolve, so we resolve the overall `Task` with the value
+        // for this one, and flag that the `Task` is resolved.
+        Resolved: (value) => {
+          if (hasResolved) {
+            return;
+          }
+
+          hasResolved = true;
+          resolve(value);
+        },
+
+        // If it rejected, the same rule applies if one of the other tasks has
+        // successfully resolved, because the`Task` for this `any` will already
+        // have resolved to that task. Otherwise, we will add this rejection to
+        // the bucket of rejections, and track whether *all* the tasks have
+        // rejected. If or when we get to that point, we reject with the full
+        // set of rejections.
+        Rejected: (reason) => {
+          if (hasResolved) {
+            return;
+          }
+
+          rejections.push(reason);
+
+          if (rejections.length === total) {
+            reject(new AggregateRejection(rejections));
+          }
+        },
+      });
+    }
+  });
+}
+
+/**
+  Given an array of tasks, produce a new {@linkcode Task} which will resolve or
+  reject with the resolution or rejection of the *first* task which settles.
+
+  ## Example
+
+  ```ts
+  import Task, { race } from 'true-myth/task';
+
+  let { task: task1, resolve } = Task.withResolvers();
+  let task2 = new Task((_resolve) => {});
+  let task3 = new Task((_resolve) => {});
+
+  resolve("Cool!");
+  let theResult = await race([task1, task2, task3]);
+  console.log(theResult.toString()); // Ok("Cool!")
+  ```
+
+  @param tasks The tasks to race against each other.
+ */
+export function race(tasks: []): Task<never, never>;
+export function race<A extends readonly AnyTask[]>(
+  tasks: A
+): Task<TaskTypesFor<A>[0][number], TaskTypesFor<A>[1][number]>;
+export function race(tasks: [] | AnyTask[]): AnyTask {
+  if (tasks.length === 0) {
+    return new Task(() => {
+      /* pending forever, just like `Promise.race` */
+    });
+  }
+
+  return new Task((resolve, reject) => {
+    Promise.race(tasks).then((result) =>
+      result.match({
+        Ok: resolve,
+        Err: reject,
+      })
+    );
+  });
+}
+
+/**
+  An error type produced when {@linkcode any} produces any rejections. All
+  rejections are aggregated into this type.
+
+  > [!NOTE]
+  > This error type is not allowed to be subclassed.
+*/
+export class AggregateRejection<E extends unknown[]> extends Error {
+  readonly name = 'AggregateRejection';
+
+  constructor(readonly errors: E) {
+    super('`Task.race`');
+  }
+
+  toString() {
+    let internalMessage = this.errors.length > 0 ? `[${safeToString(this.errors)}]` : 'No tasks';
+    return super.toString() + `: ${internalMessage}`;
   }
 }
 
@@ -820,10 +1197,10 @@ export class InvalidAccess extends Error {
   }
 }
 
-/** {@inheritdoc Task.tryOr} */
+/** @inheritdoc Task.tryOr */
 export const tryOr = TaskImpl.tryOr;
 
-/** {@inheritdoc Task.tryOrElse} */
+/** @inheritdoc Task.tryOrElse */
 export const tryOrElse = TaskImpl.tryOrElse;
 
 /* v8 ignore next 3 */
@@ -915,3 +1292,41 @@ export const Task = TaskImpl as TaskConstructor;
  */
 export type Task<T, E> = Pending<T, E> | Resolved<T, E> | Rejected<T, E>;
 export default Task;
+
+// Branded timer type.
+declare const PhantomData: unique symbol;
+
+/** @internal */
+export declare class Phantom<T extends PropertyKey> {
+  private readonly [PhantomData]: T;
+}
+
+/**
+  A {@linkcode Task} specialized for use with {@linkcode timeout} or other
+  methods or functions which want to know they are using.
+
+  > [!NOTE]
+  > This type has zero runtime overhead, including for construction: it is just
+  > a `Task` with additional *type information*.
+ */
+export type Timer = Task<number, never> & Phantom<'Timer'>;
+
+/**
+  An `Error` type representing a timeout, as when a {@linkcode Timer} elapses.
+ */
+class Timeout extends Error {
+  readonly #duration: number;
+
+  get duration(): number {
+    return this.#duration;
+  }
+
+  constructor(readonly ms: number) {
+    super(`Timed out after ${ms} milliseconds`);
+    this.#duration = ms;
+  }
+}
+
+// Export *only* the type side (at least until we hear of a reason to do
+// otherwise): people ought not be subclassing or instantiating `Timeout`!
+export type { Timeout };
