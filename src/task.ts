@@ -15,10 +15,6 @@ class TaskImpl<T, E> implements PromiseLike<Result<T, E>> {
   readonly #promise: Promise<Result<T, E>>;
   #state: Repr<T, E> = [State.Pending];
 
-  // TODO: handle a case where the executor *throws an error itself*. That is
-  // not trivial to see what should happen: in the case of `Promise`, it gets
-  // folded into the resulting rejection, but it also does not have to try to
-  // account for the type of the rejection!
   constructor(executor: (resolve: (value: T) => void, reject: (reason: E) => void) => void) {
     this.#promise = new Promise<Result<T, E>>((resolve) => {
       executor(
