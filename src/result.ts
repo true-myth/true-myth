@@ -166,7 +166,7 @@ class ResultImpl<T, E> {
   }
 
   /** Method variant for {@linkcode match} */
-  match<U>(matcher: Matcher<T, E, U>): U {
+  match<A>(matcher: Matcher<T, E, A>): A {
     return this.repr[0] === 'Ok' ? matcher.Ok(this.repr[1]) : matcher.Err(this.repr[1]);
   }
 
@@ -510,7 +510,7 @@ export function tryOrElse<T, E>(
 
   const anErr = err("nothing here!");
   const mappedErr = map(double, anErr);
-  console.log(toString(mappedOk)); // Err(nothing here!)
+  console.log(toString(mappedErr)); // Err(nothing here!)
   ```
 
   @template T  The type of the value wrapped in an `Ok` instance, and taken as
@@ -547,11 +547,11 @@ export function map<T, U, E>(
   const length = (s: string) => s.length;
 
   const anOkString = ok('a string');
-  const theStringLength = mapOr(0, anOkString);
+  const theStringLength = mapOr(0, length, anOkString);
   console.log(theStringLength);  // 8
 
   const anErr = err('uh oh');
-  const anErrMapped = mapOr(0, anErr);
+  const anErrMapped = mapOr(0, length, anErr);
   console.log(anErrMapped);  // 0
   ```
 
@@ -585,8 +585,8 @@ export function mapOr<T, U, E>(
   return mapFn === undefined
     ? partialOp
     : result === undefined
-      ? partialOp(mapFn)
-      : partialOp(mapFn, result);
+    ? partialOp(mapFn)
+    : partialOp(mapFn, result);
 }
 
 /**
@@ -659,8 +659,8 @@ export function mapOrElse<T, U, E>(
   return mapFn === undefined
     ? partialOp
     : result === undefined
-      ? partialOp(mapFn)
-      : partialOp(mapFn, result);
+    ? partialOp(mapFn)
+    : partialOp(mapFn, result);
 }
 
 /**
@@ -765,8 +765,8 @@ export function and<T, U, E>(
   ever return a single `Promise` value, whereas `Result.andThen` will not unwrap
   nested `Result`s.
 
-  This is is sometimes also known as `bind`, but *not* aliased as such because
-  [`bind` already means something in JavaScript][bind].
+  > [!NOTE] This is is sometimes also known as `bind`, but *not* aliased as such
+  > because [`bind` already means something in JavaScript][bind].
 
   [bind]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function/bind
 
@@ -852,11 +852,12 @@ export function or<T, E, F>(
   Like {@linkcode or}, but using a function to construct the alternative
   {@linkcode Result}.
 
-  Sometimes you need to perform an operation using other data in the environment
-  to construct the fallback value. In these situations, you can pass a function
-  (which may be a closure) as the `elseFn` to generate the fallback `Result<T>`.
-  It can then transform the data in the `Err` to something usable as an
-  {@linkcode Ok}, or generate a new {@linkcode Err} instance as appropriate.
+  Sometimes you need to perform an operation using the `error` value (and
+  possibly other data in the environment) to construct the fallback value. In
+  these situations, you can pass a function (which may be a closure) as the
+  `elseFn` to generate the fallback `Result<T>`. It can then transform the data
+  in the `Err` to something usable as an {@linkcode Ok}, or generate a new
+  {@linkcode Err} instance as appropriate.
 
   Useful for transforming failures to usable data.
 
@@ -1339,13 +1340,11 @@ export interface ResultConstructor {
 }
 
 /**
-  The constructor for a `Result`, which represents success ({@linkcode Ok}) or
-  failure ({@linkcode Err}).
+  A `Result` represents success ({@linkcode Ok}) or failure ({@linkcode Err}).
 
   The behavior of this type is checked by TypeScript at compile time, and bears
   no runtime overhead other than the very small cost of the container object.
  */
 export const Result: ResultConstructor = ResultImpl as ResultConstructor;
 export type Result<T, E> = Ok<T, E> | Err<T, E>;
-
 export default Result;

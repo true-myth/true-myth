@@ -553,8 +553,8 @@ export function mapOr<T, U>(
   return mapFn === undefined
     ? partialOp
     : maybe === undefined
-      ? partialOp(mapFn)
-      : partialOp(mapFn, maybe);
+    ? partialOp(mapFn)
+    : partialOp(mapFn, maybe);
 }
 
 /**
@@ -673,8 +673,8 @@ export function and<T, U>(
   ever return a single `Promise` value, whereas `Maybe.andThen` will not unwrap
   nested `Maybe`s.
 
-  This is sometimes also known as `bind`, but *not* aliased as such because
-  [`bind` already means something in JavaScript][bind].
+  > [!NOTE] This is sometimes also known as `bind`, but *not* aliased as such
+  > because [`bind` already means something in JavaScript][bind].
 
   [bind]:
   https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function/bind
@@ -1549,7 +1549,7 @@ export function get<T, K extends keyof T>(
 export function wrapReturn<
   F extends AnyFunction,
   P extends Parameters<F>,
-  R extends NonNullable<ReturnType<F>>,
+  R extends NonNullable<ReturnType<F>>
 >(fn: F): (...args: P) => Maybe<R> {
   return (...args) => Maybe.of(fn(...args)) as Maybe<R>;
 }
@@ -1574,8 +1574,11 @@ export interface MaybeConstructor {
   nothing: typeof MaybeImpl.nothing;
 }
 
-/** A value which may ({@linkcode Just `Just<T>`}) or may not
- * ({@linkcode Nothing}) be present. */
+/** {@inheritDoc Maybe} */
 export type Maybe<T> = Just<T> | Nothing<T>;
-export const Maybe = MaybeImpl as MaybeConstructor;
+/**
+ * `Maybe` represents a value which may ({@linkcode Just `Just<T>`}) or may not
+ * ({@linkcode Nothing}) be present.
+ */
+export const Maybe: MaybeConstructor = MaybeImpl as MaybeConstructor;
 export default Maybe;
