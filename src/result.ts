@@ -5,7 +5,7 @@
  */
 
 import Unit from './unit.js';
-import { curry1, isVoid, safeToString } from './-private/utils.js';
+import { curry1, safeToString } from './-private/utils.js';
 
 /**
   Discriminant for {@linkcode Ok} and {@linkcode Err} variants of the
@@ -87,7 +87,7 @@ class ResultImpl<T, E> {
     const anErr = Result.err('alas, failure');
     ```
    */
-  static err<T = never, E = never>(): Result<T, Unit>;
+  static err<T = never, E = unknown>(): Result<T, Unit>;
   /**
     Create an instance of {@linkcode Err}.
 
@@ -97,11 +97,16 @@ class ResultImpl<T, E> {
 
     @param error The value to wrap in an `Err`.
    */
-  static err<T = never, E = never>(error: E): Result<T, E>;
-  static err<T = never, E = never>(error?: E): Result<T, Unit> | Result<T, E> {
-    return isVoid(error)
+  static err<T = never, E = unknown>(error: E): Result<T, E>;
+  static err<T = never, E = unknown>(error?: E): Result<T, Unit> | Result<T, E> {
+    // We produce `Unit` *only* in the case where no arguments are passed, so
+    // that we can allow `undefined` in the cases where someone explicitly opts
+    // into something like `Result<undefined, Blah>`.
+    return arguments.length === 0
       ? (new ResultImpl<T, Unit>(['Err', Unit]) as Result<T, Unit>)
-      : (new ResultImpl<T, E>(['Err', error]) as Result<T, E>);
+      : // SAFETY: TS does not understand that the arity check above accounts for
+        // the case where the value is not passed.
+        (new ResultImpl<T, E>(['Err', error as E]) as Result<T, E>);
   }
 
   /** Distinguish between the {@linkcode Variant.Ok} and {@linkcode Variant.Err} {@linkcode Variant variants}. */
