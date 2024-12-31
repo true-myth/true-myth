@@ -207,19 +207,19 @@ export class Task<T, E> implements PromiseLike<Result<T, E>> {
 
     @group Constructors
    */
-  static resolved<T extends Unit, E = never>(): Task<Unit, E>;
+  static resolve<T extends Unit, E = never>(): Task<Unit, E>;
   /**
     Construct a `Task` which is already resolved. Useful when you have a value
     already, but need it to be available in an API which expects a `Task`.
 
     @group Constructors
    */
-  static resolved<T, E = never>(value: T): Task<T, E>;
+  static resolve<T, E = never>(value: T): Task<T, E>;
   // The implementation is intentionally vague about the types: we do not know
   // and do not care what the actual types in play are at runtime; we just need
   // to uphold the contract. Because the overload matches the types above, the
   // *call site* will guarantee the safety of the resulting types.
-  static resolved(value?: {}): Task<unknown, unknown> {
+  static resolve(value?: {}): Task<unknown, unknown> {
     // We produce `Unit` *only* in the case where no arguments are passed, so
     // that we can allow `undefined` in the cases where someone explicitly opts
     // into something like `Result<undefined, Blah>`.
@@ -233,19 +233,19 @@ export class Task<T, E> implements PromiseLike<Result<T, E>> {
 
     @group Constructors
    */
-  static rejected<T = never, E extends {} = {}>(): Task<T, Unit>;
+  static reject<T = never, E extends {} = {}>(): Task<T, Unit>;
   /**
     Construct a `Task` which is already rejected. Useful when you have an error
     already, but need it to be available in an API which expects a `Task`.
 
     @group Constructors
    */
-  static rejected<T = never, E = unknown>(reason: E): Task<T, E>;
+  static reject<T = never, E = unknown>(reason: E): Task<T, E>;
   // The implementation is intentionally vague about the types: we do not know
   // and do not care what the actual types in play are at runtime; we just need
   // to uphold the contract. Because the overload matches the types above, the
   // *call site* will guarantee the safety of the resulting types.
-  static rejected(reason?: {}): Task<unknown, unknown> {
+  static reject(reason?: {}): Task<unknown, unknown> {
     // We produce `Unit` *only* in the case where no arguments are passed, so
     // that we can allow `undefined` in the cases where someone explicitly opts
     // into something like `Result<Blah, undefined>`.
