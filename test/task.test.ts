@@ -24,6 +24,25 @@ describe('`Task`', () => {
       expect(result.isErr).toBe(true);
       expect(unwrapErr(result)).toEqual(theReason);
     });
+
+    test('when an error is thrown', async () => {
+      // Wire up a promise to wait on this so we can make the test wait till
+      // this is done before exiting. Otherwise, the promise may leak across
+      // tests.
+      let processPromise = new Promise((resolve) => {
+        process.on('unhandledRejection', (error) => {
+          resolve(error);
+        });
+      });
+
+      new Task<number, string>((_resolve, _reject) => {
+        throw new Error('oh teh noes');
+      });
+
+      let output = await processPromise;
+      expect(output).toBeInstanceOf(TaskExecutorException);
+      expect.assertions(1);
+    });
   });
 
   test('implements the `PromiseLike` API', async () => {

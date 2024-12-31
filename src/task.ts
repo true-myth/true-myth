@@ -61,7 +61,7 @@ export class Task<T, E> implements PromiseLike<Result<T, E>> {
       parameters: one to call on resolution, the other on rejection.
    */
   constructor(executor: (resolve: (value: T) => void, reject: (reason: E) => void) => void) {
-    this.#promise = new Promise<Result<T, E>>((resolve) =>
+    this.#promise = new Promise<Result<T, E>>((resolve) => {
       executor(
         (value) => {
           this.#state = [State.Resolved, value];
@@ -71,8 +71,10 @@ export class Task<T, E> implements PromiseLike<Result<T, E>> {
           this.#state = [State.Rejected, reason];
           resolve(Result.err(reason));
         }
-      )
-    );
+      );
+    }).catch((e) => {
+      throw new TaskExecutorException(e);
+    });
   }
 
   // Implement `PromiseLike`; this allows `await someTask` to “just work” and to
@@ -809,6 +811,25 @@ export type Matcher<T, E, A> = {
   Resolved: (value: T) => A;
   Rejected: (reason: E) => A;
 };
+
+/**
+  The error thrown when an error is thrown in the executor passed to {@linkcode
+  Task.constructor}. This error class exists so it is clear exactly what went
+  wrong in that case.
+ */
+export class TaskExecutorException extends Error {
+  name = 'TrueMyth.Task.ThrowingExecutor';
+
+  constructor(originalError: unknown) {
+    super(
+      'The executor for `Task` threw an error. This cannot be handled safely.',
+      // TODO (v9.0): remove this.
+      // @ts-ignore -- the types for `cause` required `Error | undefined` for a
+      // while before being loosened to allow `unknown`.
+      { cause: originalError }
+    );
+  }
+}
 
 /**
   An error thrown when the `Promise` passed to {@linkcode Task.unsafeTrusted}
