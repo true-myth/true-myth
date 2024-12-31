@@ -52,25 +52,47 @@ describe('`Task`', () => {
   });
 
   describe('static constructors', () => {
+    describe('withResolvers', () => {
+      test('supports resolving', async () => {
+        let { task, resolve } = Task.withResolvers<string, never>();
+        expectTypeOf(task).toEqualTypeOf<Task<string, never>>();
+
+        let theValue = 'hello';
+        resolve(theValue);
+        let result = await task;
+        expect(unwrap(result)).toEqual(theValue);
+      });
+
+      test('supports rejecting', async () => {
+        let { task, reject } = Task.withResolvers<never, string>();
+        expectTypeOf(task).toEqualTypeOf<Task<never, string>>();
+
+        let theReason = 'le sigh';
+        reject(theReason);
+        let result = await task;
+        expect(unwrapErr(result)).toEqual(theReason);
+      });
+    });
+
     describe('`try`', () => {
       test('when the promise resolves', async () => {
-        let { promise, resolveWith } = deferred<number, never>();
+        let { promise, resolve } = deferred<number, never>();
         let theTask = Task.try(promise);
         expectTypeOf(theTask).toEqualTypeOf<Task<number, unknown>>();
 
-        resolveWith(123);
+        resolve(123);
         let theResult = await theTask;
         expectTypeOf(theResult).toEqualTypeOf<Result<number, unknown>>();
         expect(unwrap(theResult)).toBe(123);
       });
 
       test('when the promise rejects', async () => {
-        let { promise, rejectWith } = deferred<never, string>();
+        let { promise, reject } = deferred<never, string>();
         let theTask = Task.try(promise);
         expectTypeOf(theTask).toEqualTypeOf<Task<never, unknown>>();
 
         let theError = 'la';
-        rejectWith(theError);
+        reject(theError);
         let theResult = await theTask;
         expectTypeOf(theResult).toEqualTypeOf<Result<never, unknown>>();
         expect(unwrapErr(theResult)).toEqual(theError);
@@ -79,12 +101,12 @@ describe('`Task`', () => {
 
     describe('`unsafeTrusted`', () => {
       test('when the task resolves', async () => {
-        let { promise, resolveWith } = deferred<Result<number, string>, never>();
+        let { promise, resolve } = deferred<Result<number, string>, never>();
         let theTask = Task.unsafeTrusted(promise);
         expectTypeOf(theTask).toEqualTypeOf<Task<number, string>>();
 
         let theInputResult = Result.ok<number, string>(123);
-        resolveWith(theInputResult);
+        resolve(theInputResult);
         let theResultingResult = await theTask;
         expect(theResultingResult).toEqual(Result.ok(123));
         expectTypeOf(theResultingResult).toEqualTypeOf(theInputResult);
@@ -107,7 +129,7 @@ describe('`Task`', () => {
           });
         });
 
-        let { promise, rejectWith } = deferred<Result<number, string>, unknown>();
+        let { promise, reject } = deferred<Result<number, string>, unknown>();
         let theTask = Task.unsafeTrusted(promise);
         expectTypeOf(theTask).toEqualTypeOf<Task<number, string>>();
 
@@ -115,7 +137,7 @@ describe('`Task`', () => {
         try {
           // Yes, we must explicitly await both the task and the original
           // promise, or else the error will not show up deterministically.
-          rejectWith(theReason);
+          reject(theReason);
           await promise;
           await theTask;
         } catch (e) {
@@ -130,22 +152,22 @@ describe('`Task`', () => {
 
     describe('`tryOr`', () => {
       test('when the task resolves', async () => {
-        let { promise, resolveWith } = deferred<number, string>();
+        let { promise, resolve } = deferred<number, string>();
         let theTask = Task.tryOr(promise, 'lolnope');
         expectTypeOf(theTask).toEqualTypeOf<Task<number, string>>();
 
-        resolveWith(123);
+        resolve(123);
         let result = await theTask;
         expectTypeOf(result).toEqualTypeOf<Result<number, string>>();
         expect(unwrap(result)).toBe(123);
       });
 
       test('when the task rejects', async () => {
-        let { promise, rejectWith } = deferred<number, string>();
+        let { promise, reject } = deferred<number, string>();
         let theTask = Task.tryOr(promise, 'lolnope');
         expectTypeOf(theTask).toEqualTypeOf<Task<number, string>>();
 
-        rejectWith('<this value does not matter>');
+        reject('<this value does not matter>');
         let result = await theTask;
         expectTypeOf(result).toEqualTypeOf<Result<number, string>>();
         expect(unwrapErr(result)).toBe('lolnope');
@@ -154,23 +176,23 @@ describe('`Task`', () => {
 
     describe('`tryOrElse', () => {
       test('when the task resolves', async () => {
-        let { promise, resolveWith } = deferred<number, never>();
+        let { promise, resolve } = deferred<number, never>();
         let theTask = Task.tryOrElse(promise, stringify);
         expectTypeOf(theTask).toEqualTypeOf<Task<number, string>>();
 
-        resolveWith(123);
+        resolve(123);
         let result = await theTask;
         expectTypeOf(result).toEqualTypeOf<Result<number, string>>();
         expect(unwrap(result)).toBe(123);
       });
 
       test('when the task rejects', async () => {
-        let { promise, rejectWith } = deferred<number, string>();
+        let { promise, reject } = deferred<number, string>();
         let theTask = Task.tryOrElse(promise, stringify);
         expectTypeOf(theTask).toEqualTypeOf<Task<number, string>>();
 
         let theError = 'oh teh noes';
-        rejectWith(theError);
+        reject(theError);
         let result = await theTask;
         expectTypeOf(result).toEqualTypeOf<Result<number, string>>();
         expect(unwrapErr(result)).toBe(stringify(theError));
@@ -239,29 +261,29 @@ describe('`Task`', () => {
 
   describe('state', () => {
     test('is initially Pending', async () => {
-      let { promise, resolveWith } = deferred<number, string>();
+      let { promise, resolve } = deferred<number, string>();
       let theTask = Task.try(promise);
       expect(theTask.state).toBe(State.Pending);
       // don't leak it!
-      resolveWith(123);
+      resolve(123);
       await promise;
     });
 
     test('is Resolved once the promise resolves', async () => {
-      let { promise, resolveWith } = deferred<number, string>();
+      let { promise, resolve } = deferred<number, string>();
       let successfulTask = Task.try(promise);
-      resolveWith(123);
+      resolve(123);
       let result = await successfulTask;
       expect(successfulTask.state).toBe(State.Resolved);
       expect(unwrap(result)).toBe(123);
     });
 
     test('is Rejected if the promise rejects', async () => {
-      let { promise, rejectWith } = deferred<number, string>();
+      let { promise, reject } = deferred<number, string>();
 
       let theTask = Task.try(promise);
       let anError = 'oh teh noes';
-      rejectWith(anError);
+      reject(anError);
 
       let result = await theTask;
       expect(theTask.state).toBe(State.Rejected);
@@ -271,12 +293,12 @@ describe('`Task`', () => {
 
   describe('static `from` method', () => {
     test('with a pending promise', async () => {
-      let { promise, resolveWith } = deferred<number, never>();
+      let { promise, resolve } = deferred<number, never>();
       let theTask = Task.tryOrElse(promise, stringify);
       expectTypeOf(theTask).toEqualTypeOf<Task<number, string>>();
       expect(theTask.state).toBe(State.Pending);
 
-      resolveWith(123);
+      resolve(123);
       await promise;
     });
 
@@ -297,11 +319,11 @@ describe('`Task`', () => {
     });
 
     test('with a `Promise<Result<T, E>>`', async () => {
-      let { promise, resolveWith } = deferred<Result<number, string>, never>();
+      let { promise, resolve } = deferred<Result<number, string>, never>();
       let theTask = Task.unsafeTrusted(promise);
       expectTypeOf(theTask).toEqualTypeOf<Task<number, string>>();
 
-      resolveWith(Result.ok(123));
+      resolve(Result.ok(123));
       let result = await theTask;
       expect(unwrap(result)).toEqual(123);
     });
@@ -309,31 +331,31 @@ describe('`Task`', () => {
 
   describe('`map` method', () => {
     test('for a pending promise', async () => {
-      let { promise, resolveWith } = deferred<number, string>();
+      let { promise, resolve } = deferred<number, string>();
       let theTask = Task.tryOrElse(promise, stringify).map((n) => n % 2 == 0);
       expectTypeOf(theTask).toEqualTypeOf<Task<boolean, string>>();
 
-      resolveWith(123);
+      resolve(123);
       await theTask;
     });
 
     test('when the promise resolves', async () => {
-      let { promise, resolveWith } = deferred<number, string>();
+      let { promise, resolve } = deferred<number, string>();
       let theTask = Task.tryOrElse(promise, stringify).map((n) => n % 2 == 0);
       expectTypeOf(theTask).toEqualTypeOf<Task<boolean, string>>();
 
-      resolveWith(123);
+      resolve(123);
       let result = await theTask;
       expect(unwrap(result)).toBe(false);
     });
 
     test('when the promise rejects', async () => {
-      let { promise, rejectWith } = deferred<number, string>();
+      let { promise, reject } = deferred<number, string>();
       let theTask = Task.tryOrElse(promise, stringify).map((n) => n % 2 == 0);
       expectTypeOf(theTask).toEqualTypeOf<Task<boolean, string>>();
 
       let theReason = 'nope';
-      rejectWith(theReason);
+      reject(theReason);
       let result = await theTask;
       expect(unwrapErr(result)).toEqual(stringify(theReason));
     });
@@ -347,22 +369,22 @@ describe('`Task`', () => {
     });
 
     test('when the promise resolves', async () => {
-      let { promise, resolveWith } = deferred<number, string>();
+      let { promise, resolve } = deferred<number, string>();
       let theTask = Task.try(promise).mapRejected(stringify);
       expectTypeOf(theTask).toEqualTypeOf<Task<number, string>>();
 
-      resolveWith(123);
+      resolve(123);
       let result = await theTask;
       expect(unwrap(result)).toBe(123);
     });
 
     test('when the promise rejects', async () => {
-      let { promise, rejectWith } = deferred<number, string>();
+      let { promise, reject } = deferred<number, string>();
       let theTask = Task.try(promise).mapRejected(stringify);
       expectTypeOf(theTask).toEqualTypeOf<Task<number, string>>();
 
       let theReason = 'nope';
-      rejectWith(theReason);
+      reject(theReason);
       let result = await theTask;
       expect(unwrapErr(result)).toEqual(stringify(theReason));
     });
@@ -433,11 +455,11 @@ describe('`Task`', () => {
 
   describe('`andThen` method', () => {
     test('for a pending promise', async () => {
-      let { promise, resolveWith } = deferred<number, string>();
+      let { promise, resolve } = deferred<number, string>();
       let theTask = Task.tryOrElse(promise, stringify).andThen((n) => Task.resolve(n % 2 == 0));
       expectTypeOf(theTask).toEqualTypeOf<Task<boolean, string>>();
 
-      resolveWith(123);
+      resolve(123);
       await theTask;
     });
 
@@ -456,21 +478,21 @@ describe('`Task`', () => {
       });
 
       test('when the second `Task` resolves', async () => {
-        let { promise, resolveWith } = deferred<number, string>();
+        let { promise, resolve } = deferred<number, string>();
         let theTask = Task.tryOrElse(promise, stringify).andThen((n) => Task.resolve(n % 2 == 0));
         expectTypeOf(theTask).toEqualTypeOf<Task<boolean, string>>();
 
-        resolveWith(123);
+        resolve(123);
         let result = await theTask;
         expect(unwrap(result)).toBe(false);
       });
 
       test('when the second `Task` rejects', async () => {
-        let { promise, resolveWith } = deferred<number, string>();
+        let { promise, resolve } = deferred<number, string>();
         let theTask = Task.tryOrElse(promise, stringify).andThen(() => Task.reject('oh no'));
         expectTypeOf(theTask).toEqualTypeOf<Task<never, string>>();
 
-        resolveWith(123);
+        resolve(123);
         let result = await theTask;
         expect(unwrapErr(result)).toBe('oh no');
       });
@@ -492,12 +514,12 @@ describe('`Task`', () => {
       });
 
       test('when the second `Task` resolves', async () => {
-        let { promise, rejectWith } = deferred<number, string>();
+        let { promise, reject } = deferred<number, string>();
         let theTask = Task.try(promise).andThen((n) => Task.resolve(n % 2 == 0));
         expectTypeOf(theTask).toEqualTypeOf<Task<boolean, unknown>>();
 
         let theReason = 'nope';
-        rejectWith(theReason);
+        reject(theReason);
         let result = await theTask;
         expect(unwrapErr(result)).toEqual(theReason);
       });
@@ -759,10 +781,10 @@ describe('`Task`', () => {
     expectTypeOf(Task['toString']).toEqualTypeOf<() => string>();
 
     test('pending', async () => {
-      let { task, resolveWith } = Task.withResolvers();
+      let { task, resolve } = Task.withResolvers();
       expect(task.toString()).toEqual('Task.Pending');
 
-      resolveWith('');
+      resolve('');
       await task;
     });
 
@@ -781,21 +803,21 @@ describe('`Task`', () => {
 
   describe('`toPromise` method', () => {
     test('with a directly-constructed task', async () => {
-      let { task, resolveWith } = Task.withResolvers();
+      let { task, resolve } = Task.withResolvers();
       let promise = task.toPromise();
 
       let theValue = 'hello';
-      resolveWith(theValue);
+      resolve(theValue);
       let output = await promise;
       expect(unwrap(output)).toEqual(theValue);
     });
 
     test('with a passed-in-promise', async () => {
-      let { promise: theInputPromise, resolveWith } = deferred();
+      let { promise: theInputPromise, resolve } = deferred();
       let theTask = Task.try(theInputPromise);
 
       let theValue = 123;
-      resolveWith(theValue);
+      resolve(theValue);
       let theResult = await theTask.toPromise();
       expect(unwrap(theResult)).toEqual(theValue);
     });
@@ -804,7 +826,7 @@ describe('`Task`', () => {
 
 describe('narrowing', () => {
   test('pending', async () => {
-    let { promise, resolveWith } = deferred<number, string>();
+    let { promise, resolve } = deferred<number, string>();
     let theTask = Task.try(promise);
 
     if (theTask.state === State.Pending) {
@@ -813,15 +835,15 @@ describe('narrowing', () => {
       expect(theTask.isRejected()).toBe(false);
     }
 
-    resolveWith(123);
+    resolve(123);
     await theTask;
   });
 
   test('resolved', async () => {
-    let { promise, resolveWith } = deferred<number, string>();
+    let { promise, resolve } = deferred<number, string>();
     let theTask = Task.try(promise);
 
-    resolveWith(123);
+    resolve(123);
     await theTask;
 
     if (theTask.state === State.Resolved) {
@@ -833,11 +855,11 @@ describe('narrowing', () => {
   });
 
   test('rejected', async () => {
-    let { promise, rejectWith } = deferred<number, string>();
+    let { promise, reject } = deferred<number, string>();
     let theTask = Task.tryOrElse(promise, (e) => `${e}`);
 
     let theError = 'oh teh noes';
-    rejectWith(theError);
+    reject(theError);
     await theTask;
 
     if (theTask.state === State.Rejected) {
@@ -849,19 +871,20 @@ describe('narrowing', () => {
   });
 });
 
+// Supports our current targets (which do not include `Promise.withResolvers`).
 function deferred<T, E>(): {
   promise: Promise<T>;
-  resolveWith: (value: T) => void;
-  rejectWith: (reason: E) => void;
+  resolve: (value: T) => void;
+  reject: (reason: E) => void;
 } {
   // SAFETY: immediately resolved via promise constructor
-  let resolveWith!: (value: T) => void;
-  let rejectWith!: (reason: unknown) => void;
-  let promise = new Promise<T>((resolve, reject) => {
-    resolveWith = resolve;
-    rejectWith = reject;
+  let resolve!: (value: T) => void;
+  let reject!: (reason: unknown) => void;
+  let promise = new Promise<T>((resolvePromise, rejectPromise) => {
+    resolve = resolvePromise;
+    reject = rejectPromise;
   });
-  return { promise, resolveWith: resolveWith, rejectWith: rejectWith };
+  return { promise, resolve, reject };
 }
 
 function stringify(reason: unknown): string {

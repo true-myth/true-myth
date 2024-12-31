@@ -296,13 +296,14 @@ export class Task<T, E> implements PromiseLike<Result<T, E>> {
     @group Constructors
    */
   static withResolvers<T, E>(): WithResolvers<T, E> {
-    let resolveWith!: WithResolvers<T, E>['resolveWith'];
-    let rejectWith!: WithResolvers<T, E>['rejectWith'];
-    let task = new Task<T, E>((resolve, reject) => {
-      resolveWith = resolve;
-      rejectWith = reject;
+    // SAFETY: immediately initialized via the `Task` constructor’s executor.
+    let resolve!: WithResolvers<T, E>['resolve'];
+    let reject!: WithResolvers<T, E>['reject'];
+    let task = new Task<T, E>((resolveTask, rejectTask) => {
+      resolve = resolveTask;
+      reject = rejectTask;
     });
-    return { task, resolveWith, rejectWith };
+    return { task, resolve, reject };
   }
 
   get state(): State {
@@ -799,8 +800,8 @@ type Repr<T, E> =
 
 type WithResolvers<T, E> = {
   task: Task<T, E>;
-  resolveWith: (value: T) => void;
-  rejectWith: (reason: E) => void;
+  resolve: (value: T) => void;
+  reject: (reason: E) => void;
 };
 
 /**
