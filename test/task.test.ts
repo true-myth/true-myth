@@ -1,6 +1,13 @@
 import { describe, expect, expectTypeOf, test } from 'vitest';
 
-import Task, { InvalidAccess, State, UnsafePromise } from 'true-myth/task';
+import Task, {
+  InvalidAccess,
+  Rejected,
+  Resolved,
+  State,
+  TaskExecutorException,
+  UnsafePromise,
+} from 'true-myth/task';
 import Result from 'true-myth/result';
 import Unit from 'true-myth/unit';
 import { unwrap, unwrapErr } from 'true-myth/test-support';
@@ -711,16 +718,16 @@ describe('`Task`', () => {
     });
 
     describe('`match` method', () => {
-      test('with a resolved task', () => {
-        Task.tryOrElse(Promise.resolve(123), stringify).match({
+      test('with a resolved task', async () => {
+        await Task.tryOrElse(Promise.resolve(123), stringify).match({
           Resolved: (value) => expect(value).toBe(123),
           Rejected: (_reason) => expect.unreachable(),
         });
         expect.assertions(1);
       });
 
-      test('with a rejected task', () => {
-        Task.tryOrElse(Promise.reject(123), stringify).match({
+      test('with a rejected task', async () => {
+        await Task.tryOrElse(Promise.reject(123), stringify).match({
           Resolved: (_value) => expect.unreachable(),
           Rejected: (reason) => expect(reason).toEqual(stringify(123)),
         });
@@ -743,36 +750,62 @@ describe('`Task`', () => {
     describe('`value` accessor', () => {
       test('when the task is pending', () => {
         let theTask = new Task(noOp);
-        expect(() => theTask.value).toThrowError(InvalidAccess);
+
+        expectTypeOf(theTask).not.toHaveProperty('value');
+        expectTypeOf(theTask).not.toHaveProperty('reason');
+
+        expect(() => (theTask as unknown as Resolved<unknown, unknown>).value).toThrowError(
+          InvalidAccess
+        );
       });
 
       test('when the task is resolved', () => {
         let theValue = 123;
-        expect(theTask.value).toBe(theValue);
         let theTask = Task.resolve(theValue);
+        if (theTask.isResolved) {
+          expectTypeOf(theTask).toHaveProperty('value');
+          expectTypeOf(theTask).not.toHaveProperty('reason');
+          expect(theTask.value).toBe(theValue);
+        } else {
+          expect.unreachable();
+        }
       });
 
       test('when the task is rejected', () => {
-        expect(() => theTask.value).toThrowError(InvalidAccess);
         let theTask = Task.reject('oh teh noes');
+        expect(() => (theTask as unknown as Resolved<unknown, unknown>).value).toThrowError(
+          InvalidAccess
+        );
       });
     });
 
     describe('`reason` accessor', () => {
       test('when the task is pending', () => {
         let theTask = new Task(noOp);
-        expect(() => theTask.reason).toThrowError(InvalidAccess);
+        expectTypeOf(theTask).not.toHaveProperty('value');
+        expectTypeOf(theTask).not.toHaveProperty('reason');
+        expect(() => (theTask as unknown as Rejected<unknown, unknown>).reason).toThrowError(
+          InvalidAccess
+        );
       });
 
       test('when the task is resolved', () => {
-        expect(() => theTask.reason).toThrowError(InvalidAccess);
         let theTask = Task.resolve(123);
+        expect(() => (theTask as unknown as Rejected<unknown, unknown>).reason).toThrowError(
+          InvalidAccess
+        );
       });
 
       test('when the task is rejected', () => {
         let theReason = 'oh teh noes';
-        expect(theTask.reason).toBe(theReason);
         let theTask = Task.reject(theReason);
+        if (theTask.isRejected) {
+          expectTypeOf(theTask).not.toHaveProperty('value');
+          expectTypeOf(theTask).toHaveProperty('reason');
+          expect(theTask.reason).toBe(theReason);
+        } else {
+          expect.unreachable();
+        }
       });
     });
   });
@@ -830,9 +863,9 @@ describe('narrowing', () => {
     let theTask = Task.try(promise);
 
     if (theTask.state === State.Pending) {
-      expect(theTask.isPending()).toBe(true);
-      expect(theTask.isResolved()).toBe(false);
-      expect(theTask.isRejected()).toBe(false);
+      expect(theTask.isPending).toBe(true);
+      expect(theTask.isResolved).toBe(false);
+      expect(theTask.isRejected).toBe(false);
     }
 
     resolve(123);
@@ -848,9 +881,9 @@ describe('narrowing', () => {
 
     if (theTask.state === State.Resolved) {
       expect(theTask.value).toBe(123);
-      expect(theTask.isPending()).toBe(false);
-      expect(theTask.isResolved()).toBe(true);
-      expect(theTask.isRejected()).toBe(false);
+      expect(theTask.isPending).toBe(false);
+      expect(theTask.isResolved).toBe(true);
+      expect(theTask.isRejected).toBe(false);
     }
   });
 
@@ -864,9 +897,9 @@ describe('narrowing', () => {
 
     if (theTask.state === State.Rejected) {
       expect(theTask.reason).toBe(theError);
-      expect(theTask.isPending()).toBe(false);
-      expect(theTask.isResolved()).toBe(false);
-      expect(theTask.isRejected()).toBe(true);
+      expect(theTask.isPending).toBe(false);
+      expect(theTask.isResolved).toBe(false);
+      expect(theTask.isRejected).toBe(true);
     }
   });
 });

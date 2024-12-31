@@ -9,24 +9,9 @@ import Result, { map as mapResult, mapErr, match as matchResult } from './result
 import Unit from './unit.js';
 
 /**
-  A `Task` is a type safe asynchronous computation.
-
-  You can think of a `Task<T, E>` as being basically a `Promise<Result<T, E>>`,
-  because it *is* a `Promise<Result<T, E>>` under the hood, but with two main
-  differences from a “normal” `Promise`:
-
-  1. A `Task` *cannot* “reject”. All errors must be handled. This means that,
-     like a {@linkcode Result}, it will *never* throw an error if used in
-     strict TypeScript.
-
-  2. Unlike `Promise`, `Task` robustly distinguishes between `map` and `andThen`
-     operations.
-
-  `Task` also implements JavaScript’s `PromiseLike` interface, so you can
-  `await` it; when a `Task<T, E>` is awaited, it produces a {@linkcode result
-  Result<T, E>}.
+  Internal implementation details for {@linkcode Task}.
  */
-export class Task<T, E> implements PromiseLike<Result<T, E>> {
+class TaskImpl<T, E> implements PromiseLike<Result<T, E>> {
   readonly #promise: Promise<Result<T, E>>;
   #state: Repr<T, E> = [State.Pending];
 
@@ -34,32 +19,6 @@ export class Task<T, E> implements PromiseLike<Result<T, E>> {
   // not trivial to see what should happen: in the case of `Promise`, it gets
   // folded into the resulting rejection, but it also does not have to try to
   // account for the type of the rejection!
-  /**
-    Construct a new `Task`, using callbacks to wrap APIs which do not natively
-    provide a `Promise`.
-
-    This is identical to the [Promise][promise] constructor, with one very
-    important difference: rather than producing a value upon resolution and
-    throwing an exception when a rejection occurs like `Promise`, a `Task`
-    always “succeeds” in producing a usable value, just like {@linkcode Result}
-    for synchronous code.
-
-    [promise]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/Promise
-
-    For constructing a `Task` from an existing `Promise`, see:
-
-    - {@linkcode Task.try}
-    - {@linkcode Task.tryOr}
-    - {@linkcode Task.tryOrElse}
-
-    For constructing a `Task` immediately resolved or rejected with given
-    values, see {@linkcode Task.resolved} and {@linkcode Task.rejected}
-    respectively.
-
-    @param executor A function which the constructor will execute to manage
-      the lifecycle of the `Task`. The executor in turn has two functions as
-      parameters: one to call on resolution, the other on rejection.
-   */
   constructor(executor: (resolve: (value: T) => void, reject: (reason: E) => void) => void) {
     this.#promise = new Promise<Result<T, E>>((resolve) => {
       executor(
@@ -310,15 +269,15 @@ export class Task<T, E> implements PromiseLike<Result<T, E>> {
     return this.#state[0];
   }
 
-  isPending(): this is Pending<T, E> {
+  get isPending(): boolean {
     return this.#state[0] === State.Pending;
   }
 
-  isResolved(): this is Resolved<T, E> {
+  get isResolved(): boolean {
     return this.#state[0] === State.Resolved;
   }
 
-  isRejected(): this is Rejected<T, E> {
+  get isRejected(): boolean {
     return this.#state[0] === State.Rejected;
   }
 
@@ -440,10 +399,9 @@ export class Task<T, E> implements PromiseLike<Result<T, E>> {
       `mapFn`.
     @param mapFn The function to apply to the rejection reason if the `Task` is
       rejected.
-    @param result   The `Result` instance to map over an error case for.
    */
   mapRejected<F>(mapFn: (e: E) => F): Task<T, F> {
-    return Task.unsafeTrusted(this.#promise.then(mapErr(mapFn)));
+    return TaskImpl.unsafeTrusted(this.#promise.then(mapErr(mapFn)));
   }
 
   /**
@@ -497,7 +455,7 @@ export class Task<T, E> implements PromiseLike<Result<T, E>> {
       this.#promise.then(
         matchResult({
           Ok: (_) => {
-            other.#promise.then(
+            (other as TaskImpl<U, E>).#promise.then(
               matchResult({
                 Ok: resolve,
                 Err: reject,
@@ -551,12 +509,9 @@ export class Task<T, E> implements PromiseLike<Result<T, E>> {
     console.log(notLengthAsResult.toString());  // Err(srsly,whatever)
     ```
 
-    @template T The type of the value produced if the `Task` resolves.
     @template U The type of the value produced by the new `Task` of the `Result`
       returned by the `thenFn`.
-    @template E  The type of the value wrapped in the `Err` of the `Result`.
     @param thenFn  The function to apply to the wrapped `T` if `maybe` is `Just`.
-    @param result  The `Maybe` to evaluate and possibly apply a function to.
    */
   andThen<U>(thenFn: (t: T) => Task<U, E>): Task<U, E> {
     return new Task((resolve, reject) => {
@@ -571,7 +526,7 @@ export class Task<T, E> implements PromiseLike<Result<T, E>> {
             // but to do that, we have to wait for the intermediate `Promise` to
             // resolve so that the inner `Result` is available so it can in turn
             // be used with the top-most `Task`’s resolution/rejection helpers!
-            thenFn(value).#promise.then(
+            (thenFn(value) as TaskImpl<U, E>).#promise.then(
               matchResult({
                 Ok: resolve,
                 Err: reject,
@@ -593,25 +548,22 @@ export class Task<T, E> implements PromiseLike<Result<T, E>> {
     for the case that you currently have an {@linkcode Err}.
 
     ```ts
-    import { ok, err, Result, or } from 'true-utils/result';
+    import Task from 'true-utils/task';
 
-    const okA = ok<string, string>('a');
-    const okB = ok<string, string>('b');
-    const anErr = err<string, string>(':wat:');
-    const anotherErr = err<string, string>(':headdesk:');
+    const resolvedA = Task.resolved<string, string>('a');
+    const resolvedB = Task.resolved<string, string>('b');
+    const rejectedWat = Task.rejected<string, string>(':wat:');
+    const rejectedHeaddesk = Task.rejected<string, string>(':headdesk:');
 
-    console.log(or(okB, okA).toString());  // Ok(A)
-    console.log(or(anErr, okA).toString());  // Ok(A)
-    console.log(or(okB, anErr).toString());  // Ok(B)
-    console.log(or(anotherErr, anErr).toString());  // Err(:headdesk:)
+    console.log(resolvedA.or(resolvedB).toString());  // Resolved("a")
+    console.log(resolvedA.or(rejectedWat).toString());  // Resolved("a")
+    console.log(rejectedWat.or(resolvedB).toString());  // Resolved("b")
+    console.log(rejectedWat.or(rejectedHeaddesk).toString());  // Rejected(":headdesk:")
     ```
 
-    @template T          The type wrapped in the `Ok` case of `result`.
-    @template E          The type wrapped in the `Err` case of `result`.
-    @template F          The type wrapped in the `Err` case of `defaultResult`.
-    @param defaultResult  The `Result` to use if `result` is an `Err`.
-    @param result         The `Result` instance to check.
-    @returns              `result` if it is an `Ok`, otherwise `defaultResult`.
+    @template F   The type wrapped in the `Rejected` case of `other`.
+    @param other  The `Result` to use if `this` is `Rejected`.
+    @returns      `this` if it is `Resolved`, otherwise `other`.
    */
   or<F>(other: Task<T, F>): Task<T, F> {
     return new Task((resolve, reject) => {
@@ -619,7 +571,7 @@ export class Task<T, E> implements PromiseLike<Result<T, E>> {
         matchResult({
           Ok: resolve,
           Err: (_) => {
-            other.#promise.then(
+            (other as TaskImpl<T, F>).#promise.then(
               matchResult({
                 Ok: resolve,
                 Err: reject,
@@ -656,7 +608,7 @@ export class Task<T, E> implements PromiseLike<Result<T, E>> {
           Err: (reason) => {
             // See the discussion in `andThen` above; this is exactly the same
             // issue, and with inverted implementation logic.
-            elseFn(reason).#promise.then(
+            (elseFn(reason) as TaskImpl<T, F>).#promise.then(
               matchResult({
                 Ok: resolve,
                 Err: reject,
@@ -769,18 +721,27 @@ export class Task<T, E> implements PromiseLike<Result<T, E>> {
 }
 
 /** @group Task Variants */
-export interface Pending<T, E> extends Omit<Task<T, E>, 'value' | 'reason'> {
+export interface Pending<T, E> extends Omit<TaskImpl<T, E>, 'value' | 'reason'> {
+  get isPending(): true;
+  get isResolved(): false;
+  get isRejected(): false;
   get state(): typeof State.Pending;
 }
 
 /** @group Task Variants */
-export interface Resolved<T, E> extends Omit<Task<T, E>, 'value' | 'reason'> {
+export interface Resolved<T, E> extends Omit<TaskImpl<T, E>, 'reason'> {
+  get isPending(): false;
+  get isResolved(): true;
+  get isRejected(): false;
   get state(): typeof State.Resolved;
   get value(): T;
 }
 
 /** @group Task Variants */
-export interface Rejected<T, E> extends Omit<Task<T, E>, 'value' | 'reason'> {
+export interface Rejected<T, E> extends Omit<TaskImpl<T, E>, 'value'> {
+  get isPending(): false;
+  get isResolved(): false;
+  get isRejected(): true;
   get state(): typeof State.Rejected;
   get reason(): E;
 }
@@ -861,13 +822,67 @@ export class InvalidAccess extends Error {
 }
 
 /** @inheritdoc Task.tryOr */
-export const tryOr = Task.tryOr;
+export const tryOr = TaskImpl.tryOr;
 
-export const tryOrElse = Task.tryOrElse;
+export const tryOrElse = TaskImpl.tryOrElse;
 
 /* v8 ignore next 3 */
 function unreachable(value: never): never {
   throw new Error(`Unexpected value: ${value}`);
 }
 
+type TaskConstructor = Omit<typeof TaskImpl, 'constructor'> & {
+  /**
+    Construct a new `Task`, using callbacks to wrap APIs which do not natively
+    provide a `Promise`.
+
+    This is identical to the [Promise][promise] constructor, with one very
+    important difference: rather than producing a value upon resolution and
+    throwing an exception when a rejection occurs like `Promise`, a `Task`
+    always “succeeds” in producing a usable value, just like {@linkcode Result}
+    for synchronous code.
+
+    [promise]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/Promise
+
+    For constructing a `Task` from an existing `Promise`, see:
+
+    - {@linkcode Task.try}
+    - {@linkcode Task.tryOr}
+    - {@linkcode Task.tryOrElse}
+
+    For constructing a `Task` immediately resolved or rejected with given
+    values, see {@linkcode Task.resolve} and {@linkcode Task.reject}
+    respectively.
+
+    @param executor A function which the constructor will execute to manage
+      the lifecycle of the `Task`. The executor in turn has two functions as
+      parameters: one to call on resolution, the other on rejection.
+   */
+  new <T, E>(
+    executor: (resolve: (value: T) => void, reject: (reason: E) => void) => void
+  ): Task<T, E>;
+};
+
+/**
+  A `Task` is a type safe asynchronous computation.
+
+  You can think of a `Task<T, E>` as being basically a `Promise<Result<T, E>>`,
+  because it *is* a `Promise<Result<T, E>>` under the hood, but with two main
+  differences from a “normal” `Promise`:
+
+  1. A `Task` *cannot* “reject”. All errors must be handled. This means that,
+     like a {@linkcode Result}, it will *never* throw an error if used in
+     strict TypeScript.
+
+  2. Unlike `Promise`, `Task` robustly distinguishes between `map` and `andThen`
+     operations.
+
+  `Task` also implements JavaScript’s `PromiseLike` interface, so you can
+  `await` it; when a `Task<T, E>` is awaited, it produces a {@linkcode result
+  Result<T, E>}.
+ */
+export const Task = TaskImpl as TaskConstructor;
+
+/** @inheritdoc Task */
+export type Task<T, E> = Pending<T, E> | Resolved<T, E> | Rejected<T, E>;
 export default Task;
