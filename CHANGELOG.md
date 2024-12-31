@@ -9,6 +9,24 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 
 
+
+## 8.2.0-beta.1 (2024-12-31)
+
+Beta release with `Task`, so folks can easily test it out!
+
+#### :bug: Bug Fix
+* [#887](https://github.com/true-myth/true-myth/pull/887) Result: correct the implementation of `static err` constructor ([@chriskrycho](https://github.com/chriskrycho))
+
+#### :memo: Documentation
+* [#886](https://github.com/true-myth/true-myth/pull/886) docs/internals: `Task`-inspired improvements ([@chriskrycho](https://github.com/chriskrycho))
+* [#881](https://github.com/true-myth/true-myth/pull/881) docs: remove long-defunct reference to `new` from `Result.(ok|err)` ([@chriskrycho](https://github.com/chriskrycho))
+
+#### :house: Internal
+* [#886](https://github.com/true-myth/true-myth/pull/886) docs/internals: `Task`-inspired improvements ([@chriskrycho](https://github.com/chriskrycho))
+
+#### Committers: 1
+- Chris Krycho ([@chriskrycho](https://github.com/chriskrycho))
+
 ## 8.1.0 (2024-12-04)
 
 The big feature: a new module just for test support, with two functions in it: `unwrap` and `unwrapErr`. You can now write this:
