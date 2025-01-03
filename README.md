@@ -59,7 +59,7 @@ You could implement all of these yourself – it's not hard! – but it's much 
 - [Just the API, please](#just-the-api-please)
   - [`Result` with a functional style](#result-with-a-functional-style)
   - [`Maybe` with the method style](#maybe-with-the-method-style)
-  - [`Task` basics][#task-basics]
+  - [`Task` basics](#task-basics)
   - [Constructing `Maybe`](#constructing-maybe)
   - [Safely getting at values](#safely-getting-at-values)
   - [Curried variants](#curried-variants)
