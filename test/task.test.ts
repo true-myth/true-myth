@@ -106,7 +106,7 @@ describe('`Task`', () => {
       });
     });
 
-    describe('`unsafeTrusted`', () => {
+    describe('`fromUnsafePromise`', () => {
       test('when the task resolves', async () => {
         let { promise, resolve } = deferred<Result<number, string>, never>();
         let theTask = Task.fromUnsafePromise(promise);
