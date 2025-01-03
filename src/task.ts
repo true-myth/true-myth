@@ -863,6 +863,10 @@ type TaskConstructor = Omit<typeof TaskImpl, 'constructor'> & {
   ): Task<T, E>;
 };
 
+// Duplicate documentation because it will show up more nicely when rendered in
+// TypeDoc than if it applies to only one or the other; using `@inheritdoc` will
+// also work but works less well in terms of how editors render it (they do not
+// process that “directive” in general).
 /**
   A `Task` is a type safe asynchronous computation.
 
@@ -880,9 +884,30 @@ type TaskConstructor = Omit<typeof TaskImpl, 'constructor'> & {
   `Task` also implements JavaScript’s `PromiseLike` interface, so you can
   `await` it; when a `Task<T, E>` is awaited, it produces a {@linkcode result
   Result<T, E>}.
+
+  @group Task
  */
 export const Task = TaskImpl as TaskConstructor;
 
-/** @inheritdoc Task */
+/**
+  A `Task` is a type safe asynchronous computation.
+
+  You can think of a `Task<T, E>` as being basically a `Promise<Result<T, E>>`,
+  because it *is* a `Promise<Result<T, E>>` under the hood, but with two main
+  differences from a “normal” `Promise`:
+
+  1. A `Task` *cannot* “reject”. All errors must be handled. This means that,
+     like a {@linkcode Result}, it will *never* throw an error if used in
+     strict TypeScript.
+
+  2. Unlike `Promise`, `Task` robustly distinguishes between `map` and `andThen`
+     operations.
+
+  `Task` also implements JavaScript’s `PromiseLike` interface, so you can
+  `await` it; when a `Task<T, E>` is awaited, it produces a {@linkcode result
+  Result<T, E>}.
+
+  @group Task
+ */
 export type Task<T, E> = Pending<T, E> | Resolved<T, E> | Rejected<T, E>;
 export default Task;

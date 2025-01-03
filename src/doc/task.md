@@ -100,8 +100,7 @@ There are many helpers (“combinators”) for working with a `Task`. The most c
 - `andThen` uses the value produced by one resolved `Task` to create another `Task`, but without nesting them. `orElse` is like `andThen`, but for the `Rejection`. You can often combine them to good effect. For example, a safe `fetch` usage might look like this:
 
     ```ts
-    const USERS = "..."; // some endpoint
-    let fetchUsersTask = Task.try(fetch(USERS))
+    let fetchUsersTask = Task.try(fetch(/* some endpoint */))
       .orElse(handleError('http'))
       .andThen((res) => Task.try(res.json().orElse(handleError('parse')))
       .match({
@@ -118,21 +117,27 @@ There are many helpers (“combinators”) for working with a `Task`. The most c
           }
         },
       });
-      
+
     let usersResult = await fetchUsersTask;
     usersResult.match({
-      Ok: (users) => 
+      Ok: (users) => {
+        for (let user of users) {
+          console.log(user);
+        }
+      },
+      Err: (error) => {
+        let currentError = error;
+        console.error(currentError.message)
+        while (currentError = currentError.cause) {
+          console.error(currentError.message);
+        }
+      }
     });
-    for (let user of users) {
-      // ...
-    }
-    
+
     function handleError(name: string): (error: unknown) => Error {
       return new Error(`my-lib.${name}`, { cause: error });
     }
     ```
-
-- 
 
 There are many others; see the API docs!
 
