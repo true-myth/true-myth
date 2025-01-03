@@ -109,7 +109,7 @@ describe('`Task`', () => {
     describe('`unsafeTrusted`', () => {
       test('when the task resolves', async () => {
         let { promise, resolve } = deferred<Result<number, string>, never>();
-        let theTask = Task.unsafeTrusted(promise);
+        let theTask = Task.fromUnsafePromise(promise);
         expectTypeOf(theTask).toEqualTypeOf<Task<number, string>>();
 
         let theInputResult = Result.ok<number, string>(123);
@@ -137,7 +137,7 @@ describe('`Task`', () => {
         });
 
         let { promise, reject } = deferred<Result<number, string>, unknown>();
-        let theTask = Task.unsafeTrusted(promise);
+        let theTask = Task.fromUnsafePromise(promise);
         expectTypeOf(theTask).toEqualTypeOf<Task<number, string>>();
 
         let theReason = 'not good';
@@ -327,7 +327,7 @@ describe('`Task`', () => {
 
     test('with a `Promise<Result<T, E>>`', async () => {
       let { promise, resolve } = deferred<Result<number, string>, never>();
-      let theTask = Task.unsafeTrusted(promise);
+      let theTask = Task.fromUnsafePromise(promise);
       expectTypeOf(theTask).toEqualTypeOf<Task<number, string>>();
 
       resolve(Result.ok(123));

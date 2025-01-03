@@ -88,7 +88,7 @@ class TaskImpl<T, E> implements PromiseLike<Result<T, E>> {
 
     @group Constructors
    */
-  static unsafeTrusted<T, E>(promise: Promise<Result<T, E>>): Task<T, E> {
+  static fromUnsafePromise<T, E>(promise: Promise<Result<T, E>>): Task<T, E> {
     return new Task((resolve, reject) => {
       promise.then(
         matchResult({
@@ -365,7 +365,7 @@ class TaskImpl<T, E> implements PromiseLike<Result<T, E>> {
       it is `Resolved`.
    */
   map<U>(mapFn: (t: T) => U): Task<U, E> {
-    return Task.unsafeTrusted(this.#promise.then(mapResult(mapFn)));
+    return Task.fromUnsafePromise(this.#promise.then(mapResult(mapFn)));
   }
 
   /**
@@ -401,7 +401,7 @@ class TaskImpl<T, E> implements PromiseLike<Result<T, E>> {
       rejected.
    */
   mapRejected<F>(mapFn: (e: E) => F): Task<T, F> {
-    return TaskImpl.unsafeTrusted(this.#promise.then(mapErr(mapFn)));
+    return TaskImpl.fromUnsafePromise(this.#promise.then(mapErr(mapFn)));
   }
 
   /**
@@ -794,7 +794,7 @@ export class TaskExecutorException extends Error {
 }
 
 /**
-  An error thrown when the `Promise` passed to {@linkcode Task.unsafeTrusted}
+  An error thrown when the `Promise` passed to {@linkcode Task.fromUnsafePromise}
   rejects.
  */
 export class UnsafePromise extends Error {
@@ -802,10 +802,10 @@ export class UnsafePromise extends Error {
 
   constructor(unhandledError: unknown) {
     let explanation =
-      'If you see this message, it means someone constructed a True Myth `Task` with a `Promise<Result<T, E>` but where the `Promise` could still reject. To fix it, make sure all calls to `Task.unsafeTrusted` have a `catch` handler. Never use `Task.unsafeTrusted` with a `Promise` on which you cannot verify by inspection that it was created with a catch handler.';
+      'If you see this message, it means someone constructed a True Myth `Task` with a `Promise<Result<T, E>` but where the `Promise` could still reject. To fix it, make sure all calls to `Task.fromUnsafePromise` have a `catch` handler. Never use `Task.fromUnsafePromise` with a `Promise` on which you cannot verify by inspection that it was created with a catch handler.';
 
     super(
-      `Called 'Task.unsafeTrusted' with an unsafe promise.\n${explanation}`,
+      `Called 'Task.fromUnsafePromise' with an unsafe promise.\n${explanation}`,
       // TODO (v9.0): remove this.
       // @ts-ignore -- the types for `cause` required `Error | undefined` for a
       // while before being loosened to allow `unknown`.
