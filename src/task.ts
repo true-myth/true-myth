@@ -119,8 +119,8 @@ class TaskImpl<T, E> implements PromiseLike<Result<T, E>> {
   }
 
   /**
-    Produce a `Task<T, E>` from a `Promise<T>` and use a fallback value if the
-    task rejects, ignoring the rejection reason.
+    Produce a {@linkcode Task Task<T, E>} from a `Promise<T>` and use a fallback
+    value if the task rejects, ignoring the rejection reason.
 
     Notes:
 
@@ -130,8 +130,8 @@ class TaskImpl<T, E> implements PromiseLike<Result<T, E>> {
       which accepts a function.
 
     @param promise The promise from which to create the `Task`.
-    @param onRejection A function to transform an unknown rejection reason into
-      a known `E`.
+    @param rejectionValue A function to transform an unknown rejection reason
+      into a known `E`.
 
     @group Constructors
    */
@@ -413,10 +413,10 @@ class TaskImpl<T, E> implements PromiseLike<Result<T, E>> {
     This is useful when you have another `Task` value you want to provide if and
     *only if* the first task resolves successfully – that is, when you need to
     make sure that if you reject, whatever else you're handing a `Task` to
-    *also* gets that {@linkcode Rejection}.
+    *also* gets that {@linkcode Rejected}.
 
-    Notice that, unlike in {@linkcode Task.map}, the original `task`
-    resolution value is not involved in constructing the new `Task`.
+    Notice that, unlike in {@linkcode map Task.prototype.map}, the original
+    `task` resolution value is not involved in constructing the new `Task`.
 
     ## Examples
 
@@ -448,7 +448,7 @@ class TaskImpl<T, E> implements PromiseLike<Result<T, E>> {
       `Task`, i.e., the success type of the final `Task` present if the first
       `Task` is `Ok`.
 
-    @param other The `Result` instance to return if `result` is `Err`.
+    @param other The `Task` instance to return if `this` is `Rejected`.
    */
   and<U>(other: Task<U, E>): Task<U, E> {
     return new Task((resolve, reject) => {
@@ -484,8 +484,8 @@ class TaskImpl<T, E> implements PromiseLike<Result<T, E>> {
     *all* layers to only ever return a single `Promise` value, whereas this
     method will not unwrap nested `Task`s.
 
-    `Promise.prototype.then` also acts the same way {@linkcode Task.map map}
-    does, while `Task` distinguishes `map` from `andThen`.
+    `Promise.prototype.then` also acts the same way {@linkcode map
+    Task.prototype.map} does, while `Task` distinguishes `map` from `andThen`.
 
     > [!NOTE] `andThen` is sometimes also known as `bind`, but *not* aliased as
     > such because [`bind` already means something in JavaScript][bind].
@@ -544,8 +544,8 @@ class TaskImpl<T, E> implements PromiseLike<Result<T, E>> {
     unchanged, otherwise, returns the `other` `Task`.
 
     This is useful when you want to make sure that something which takes a
-    `Result` always ends up getting an `Ok` variant, by supplying a default value
-    for the case that you currently have an {@linkcode Err}.
+    `Task` always ends up getting a {@linkcode Resolved} variant, by supplying a
+    default value for the case that you currently have an {@linkcode Rejected}.
 
     ```ts
     import Task from 'true-utils/task';
@@ -591,9 +591,9 @@ class TaskImpl<T, E> implements PromiseLike<Result<T, E>> {
     possibly also other data in the environment) to construct a new `Task`,
     which may itself resolve or reject. In these situations, you can pass a
     function (which may be a closure) as the `elseFn` to generate the fallback
-    `Result<T>`. It can then transform the data in the `Err` to something usable
-    as an {@linkcode Ok}, or generate a new {@linkcode Err} instance as
-    appropriate.
+    `Task<T, E>`. It can then transform the data in the {@linkcode Rejected} to
+    something usable as an {@linkcode Resolved}, or generate a new `Rejected`
+    instance as appropriate.
 
     Useful for transforming failures to usable data, for trigger retries, etc.
 
@@ -689,7 +689,6 @@ class TaskImpl<T, E> implements PromiseLike<Result<T, E>> {
 
     @param matcher A lightweight object defining what to do in the case of each
                    variant.
-    @param result  The `result` instance to check.
    */
   match<A>(matcher: Matcher<T, E, A>): Promise<A> {
     return this.#promise.then(
@@ -759,7 +758,8 @@ type Repr<T, E> =
   | [tag: typeof State.Resolved, value: T]
   | [tag: typeof State.Rejected, reason: E];
 
-type WithResolvers<T, E> = {
+/** Type returned by calling {@linkcode Task.withResolvers} */
+export type WithResolvers<T, E> = {
   task: Task<T, E>;
   resolve: (value: T) => void;
   reject: (reason: E) => void;
@@ -794,9 +794,9 @@ export class TaskExecutorException extends Error {
 }
 
 /**
-  An error thrown when the `Promise` passed to {@linkcode Task.fromUnsafePromise}
-  rejects.
- */
+  An error thrown when the `Promise<Result<T, E>>` passed to
+  {@link Task.fromUnsafePromise} rejects.
+*/
 export class UnsafePromise extends Error {
   readonly name = 'TrueMyth.Task.UnsafePromise';
 
@@ -821,9 +821,10 @@ export class InvalidAccess extends Error {
   }
 }
 
-/** @inheritdoc Task.tryOr */
+/** {@inheritdoc Task.tryOr} */
 export const tryOr = TaskImpl.tryOr;
 
+/** {@inheritdoc Task.tryOrElse} */
 export const tryOrElse = TaskImpl.tryOrElse;
 
 /* v8 ignore next 3 */
@@ -831,7 +832,11 @@ function unreachable(value: never): never {
   throw new Error(`Unexpected value: ${value}`);
 }
 
-type TaskConstructor = Omit<typeof TaskImpl, 'constructor'> & {
+/**
+  The public interface for the {@linkcode Task} class *as a value*: a
+  constructor and the associated static properties.
+ */
+export interface TaskConstructor extends Omit<typeof TaskImpl, 'constructor'> {
   /**
     Construct a new `Task`, using callbacks to wrap APIs which do not natively
     provide a `Promise`.
@@ -861,7 +866,7 @@ type TaskConstructor = Omit<typeof TaskImpl, 'constructor'> & {
   new <T, E>(
     executor: (resolve: (value: T) => void, reject: (reason: E) => void) => void
   ): Task<T, E>;
-};
+}
 
 // Duplicate documentation because it will show up more nicely when rendered in
 // TypeDoc than if it applies to only one or the other; using `@inheritdoc` will
@@ -885,7 +890,7 @@ type TaskConstructor = Omit<typeof TaskImpl, 'constructor'> & {
   `await` it; when a `Task<T, E>` is awaited, it produces a {@linkcode result
   Result<T, E>}.
 
-  @group Task
+  @class
  */
 export const Task = TaskImpl as TaskConstructor;
 
@@ -907,7 +912,7 @@ export const Task = TaskImpl as TaskConstructor;
   `await` it; when a `Task<T, E>` is awaited, it produces a {@linkcode result
   Result<T, E>}.
 
-  @group Task
+  @class
  */
 export type Task<T, E> = Pending<T, E> | Resolved<T, E> | Rejected<T, E>;
 export default Task;
