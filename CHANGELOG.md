@@ -10,6 +10,23 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 
 
+
+## 8.2.0 (2025-01-03)
+
+Finally—*finally!*—True Myth get a `Task` type! A `Task<T, E>` is like a `Promise<Result<T, E>>`. In fact, under the hood, it is *exactly* a `Promise<Result<T, E>>`, but in general you do not need to think about that layering. Instead, you get a nice type-safe API for fallible async operations. (It’s what `Promise` should have been!)
+
+#### :rocket: Enhancement
+* [#885](https://github.com/true-myth/true-myth/pull/885) feature: implement a new `Task` type ([@chriskrycho](https://github.com/chriskrycho))
+
+#### :memo: Documentation
+* [#890](https://github.com/true-myth/true-myth/pull/890) docs: improve rendering of the fancy variant shenanigans with `@class` ([@chriskrycho](https://github.com/chriskrycho))
+
+#### :house: Internal
+* [#891](https://github.com/true-myth/true-myth/pull/891) Task: fix name of one of the tests ([@chriskrycho](https://github.com/chriskrycho))
+
+#### Committers: 1
+- Chris Krycho ([@chriskrycho](https://github.com/chriskrycho))
+
 ## 8.2.0-beta.1 (2024-12-31)
 
 Beta release with `Task`, so folks can easily test it out!
