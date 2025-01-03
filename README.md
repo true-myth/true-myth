@@ -1,6 +1,6 @@
 <h1 align="center"><a href='https://github.com/true-myth/true-myth'>True Myth</a></h1>
 
-<p align="center">A library for safe, idiomatic null, error, and async code handling TypeScript, with <code>Maybe</code> and <code>Result</code> types, supporting both a functional style and a more traditional method-call style.</p>
+<p align="center">A library for safe, idiomatic null, error, and async code handling TypeScript, with <code>Maybe</code>, <code>Result</code>, and <code>Task</code> types, supporting both a functional style and a more traditional method-call style.</p>
 
 <p align="center">
   <a href='https://github.com/true-myth/true-myth/blob/main/.github/workflows/CI.yml'>
