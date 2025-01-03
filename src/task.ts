@@ -208,6 +208,9 @@ class TaskImpl<T, E> implements PromiseLike<Result<T, E>> {
     return new Task((_, reject) => reject(result));
   }
 
+  /**
+    Build a {@linkcode Task Task<T, E>} from a {@linkcode Result Result<T, E>}.
+   */
   static fromResult<T, E>(result: Result<T, E>): Task<T, E> {
     return new Task((resolve, reject) =>
       result.match({
