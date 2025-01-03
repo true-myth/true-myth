@@ -39,10 +39,11 @@
 
 ## Overview
 
-True Myth provides standard, type-safe wrappers and helper functions to help you with two _extremely_ common cases in programming:
+True Myth provides standard, type-safe wrappers and helper functions to help you with three _extremely_ common cases in programming:
 
 - not having a value
 - having a _result_ where you need to deal with either success or failure
+- having an asynchronous operation which may fail
 
 You could implement all of these yourself – it's not hard! – but it's much easier to just have one extremely well-tested library you can use everywhere to solve this problem once and for all.
 
@@ -58,6 +59,7 @@ You could implement all of these yourself – it's not hard! – but it's much 
 - [Just the API, please](#just-the-api-please)
   - [`Result` with a functional style](#result-with-a-functional-style)
   - [`Maybe` with the method style](#maybe-with-the-method-style)
+  - [`Task` basics][#task-basics]
   - [Constructing `Maybe`](#constructing-maybe)
   - [Safely getting at values](#safely-getting-at-values)
   - [Curried variants](#curried-variants)
@@ -74,6 +76,7 @@ You could implement all of these yourself – it's not hard! – but it's much 
     - [`Result`](#result)
   - [Inspiration](#inspiration)
 - [Why not...](#why-not)
+  - [neverthrow?](#neverthrow)
   - [Folktale?](#folktale)
   - [Sanctuary?](#sanctuary)
 - [What's with the name?](#whats-with-the-name)
@@ -122,19 +125,22 @@ Size of the ESM build without tree-shaking (yes, these are in *bytes*: this is a
 
 |       file        | size (B) | terser[^terser] (B) | terser and brotli[^brotli] (B) |
 | ----------------- | -------- | ------------------- | ------------------------------ |
-| index.js          | 561      | 216                 | 93                             |
-| maybe.js          | 19646    | 3464                | 871                            |
-| result.js         | 12744    | 3162                | 787                            |
-| toolbelt.js       | 3598     | 881                 | 270                            |
-| unit.js           | 653      | 58                  | 57                             |
+| index.js          | 582      | 234                 | 96                             |
+| maybe.js          | 18811    | 3467                | 872                            |
+| result.js         | 13015    | 3168                | 787                            |
+| task.js           | 29008    | 3433                | 999                            |
+| test-support.js   | 448      | 142                 | 89                             |
+| toolbelt.js       | 3620     | 890                 | 277                            |
+| unit.js           | 656      | 58                  | 57                             |
 | utils.js          | 888      | 321                 | 166                            |
-| **total[^total]** | 38090    | 8102                | 2244                           |
+| **total[^total]** | 38020    | 8102                | 2244                           |
 
 Notes:
 
 - The unmodified size *includes comments*.
 - Thus, running through Terser gets us a much more realistic size: about 7.9KB to parse.
 - The total size across the wire of the whole library will be ~2.2KB.
+- This is all tree-shakeable to a significant degree. If your production bundle does not import or use anything from `true-myth/test-support`, you will not pay for it. However, some parts of the library do depend directly on other parts: for example, `toolbelt` uses exports from `result` and `maybe`, and `Task` makes extensive use of `Result` under the hood.
 
 [^terser]: Using [terser](https://github.com/terser/terser) 5.10.0 with `--compress --mangle --mangle-props`.
 
@@ -340,6 +346,111 @@ console.log(result); // 18
 This "point-free" style isn't always better, but it's available for the times when it _is_ better. ([Use it judiciously!][pfod])
 
 [pfod]: https://www.youtube.com/watch?v=seVSlKazsNk
+
+## `Task` basics
+
+A `Task` is effectively the composition of a `Promise` and a `Result`.[^task-impl] What is more, it implements the `PromiseLike` API for a `Result<T, E>`, and provides an easy way to get a `Promise<Result<T, E>>` if needed. This makes it a safe *and* flexible way to work with asynchronous computations.
+
+You can wrap existing, non-`Promise`-based async operations using the `Task` constructor, much like you could with a `Promise`. For example, if you have some reason to use the old `XMLHttpRequest` instead of the more modern `fetch` API, you can wrap it with a `Task` like this:
+
+```ts
+import Task from 'true-myth/task';
+
+interface RequestError {
+  cause: string;
+  status: number;
+  statusText: string;
+}
+
+interface HttpError {
+  text: string;
+  status: number;
+  statusText: string;
+}
+
+let xhrTask = new Task<string, RequestError | HttpError>((resolve, reject) => {
+  let req = new XMLHttpRequest();
+  req.addEventListener('load', () => {
+    if (req.status >= 200 && req.status < 300) {
+      resolve(req.responseText);
+    } else {
+      reject({
+        text: req.responseText,
+        status: req.status,
+        statusText: req.statusText,
+      });
+    }
+  });
+
+  req.addEventListener('error', () =>
+    reject({
+      cause: 'Network Error',
+      status: req.status,
+      statusText: req.statusText,
+    })
+  );
+
+  // etc. for the other error-emitting events
+
+  req.open('GET', 'https://true-myth.js.org', true);
+  req.send();
+});
+```
+
+With `Task` in place, you could write a single adapter for `XMLHttpRequest` in one place in your app or library, which *always* produces a `Task` safely.
+
+With `Task`’s ability to robustly handled all the error cases, you can use this just like you would a `Promise`, with `async` and `await`, or you can use `Task`’s own robust library of combinators. For example, to preserve type safety while working with a response, you might combine `Task` with [the excellent `zod` library][zod] to handle API responses robustly, like so:
+
+```ts
+import Task from 'true-myth/task';
+import { z } from 'zod';
+
+const User = z.object({
+  id: z.string().uuid(),
+  name: z.optional(z.string()),
+  birthday: z.date(),
+});
+
+const Users = z.array(User);
+
+let usersTask = Task.tryOrElse(
+  fetch('https://api.example.com/users),
+  (httpError) => new Error('Fetch error', { cause: httpError })
+).andThen((res) => Task.tryOrElse(
+  res.json(),
+  (parseError) => new Error('Parse error', { cause: parseError })
+)).andThen((json) => {
+  let result = Users.safeParse(json);
+  return result.success
+    ? Task.resolve(result.data)
+    : Task.reject(new Error('Schema error', { cause: result.error }));
+});
+```
+
+The resulting type here will be `Task<Array<User>>, Error>`. You can then perform further operations on it using more tools like `map` or `match`:
+
+```ts
+usersTask.match({
+  Resolved: (users) => {
+    for (let user of users) {
+      console.log(user.name ?? "someone", "is", user.age, "years old");
+    }
+  },
+  Rejected: (error) => {
+    console.error(error.message, error.cause);
+  },
+});
+```
+
+Alternatively, you can `await` it and operate on its underlying `Result`:
+
+```ts
+let users = (await usersTask).unwrapOr([]);
+```
+
+[zod]: https://zod.dev/
+
+[^task-impl]: Implementation-wise, a `Task<T, E>` directly uses a `Promise<Result<T, E>>` under the hood. It is, however, not *identical* with one
 
 ## Why do I need this?
 
@@ -667,6 +778,14 @@ The design of True Myth draws heavily on prior art; essentially nothing of this 
 There are other great functional programming libraries out there... so why not just use one of them?
 
 Note that much of the content between these sections is the same; it's presented as is so you can simply read the section appropriate to the library you're comparing it with.
+
+### neverthrow?
+
+[neverthrow][neverthrow] is a modern, type-safe TypeScript library which has a lot in common with True Myth. We like it—seriously! If for some reason True Myth goes away someday, neverthrow would be our recommendation for what to switch to. Like True Myth, neverthrow is a TypeScript-first library, and it provides safe `Result` and `ResultAsync` types. Notably, `neverthrow` does *not* include a `Maybe` type. There are a number of small but meaningful API differences, for which see the True Myth and neverthrow documentation respectively.
+
+[neverthrow]: https://github.com/supermacro/neverthrow
+
+There may also be some performance differences, due to design differences between the libraries, but we suspect these are small enough in practice that you are unlikely to notice except in particularly hot paths; measure if it matters!
 
 ### Folktale?
 

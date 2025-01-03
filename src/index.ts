@@ -15,4 +15,6 @@ export * as ResultNS from './result.js';
 
 export { default as Unit } from './unit.js';
 
+export { default as Task } from './task.js';
+
 export * as Toolbelt from './toolbelt.js';
