@@ -585,8 +585,8 @@ export function mapOr<T, U, E>(
   return mapFn === undefined
     ? partialOp
     : result === undefined
-    ? partialOp(mapFn)
-    : partialOp(mapFn, result);
+      ? partialOp(mapFn)
+      : partialOp(mapFn, result);
 }
 
 /**
@@ -659,8 +659,8 @@ export function mapOrElse<T, U, E>(
   return mapFn === undefined
     ? partialOp
     : result === undefined
-    ? partialOp(mapFn)
-    : partialOp(mapFn, result);
+      ? partialOp(mapFn)
+      : partialOp(mapFn, result);
 }
 
 /**
@@ -1344,6 +1344,8 @@ export interface ResultConstructor {
 
   The behavior of this type is checked by TypeScript at compile time, and bears
   no runtime overhead other than the very small cost of the container object.
+
+  @class
  */
 export const Result: ResultConstructor = ResultImpl as ResultConstructor;
 export type Result<T, E> = Ok<T, E> | Err<T, E>;
