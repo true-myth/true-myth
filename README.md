@@ -1,6 +1,6 @@
 <h1 align="center"><a href='https://github.com/true-myth/true-myth'>True Myth</a></h1>
 
-<p align="center">A library for safe, idiomatic null and error handling in TypeScript, with <code>Maybe</code> and <code>Result</code> types, supporting both a functional style and a more traditional method-call style.</p>
+<p align="center">A library for safe, idiomatic null, error, and async code handling TypeScript, with <code>Maybe</code> and <code>Result</code> types, supporting both a functional style and a more traditional method-call style.</p>
 
 <p align="center">
   <a href='https://github.com/true-myth/true-myth/blob/main/.github/workflows/CI.yml'>
@@ -16,7 +16,7 @@
     <img src='https://img.shields.io/badge/Node-18%20LTS%20%7C%2020%20LTS%20%7C%2022-darkgreen' alt='supported Node versions'>
   </a>
   <a href='https://github.com/true-myth/true-myth/blob/main/.github/workflows/CI.yml#L59'>
-    <img src='https://img.shields.io/badge/TypeScript-4.7%20%7C%204.8%20%7C%204.9%20%7C%205.0%20%7C%205.1%20%7C%205.2%20%7C%205.3%20%7C%205.4%20%7C%205.5%20%7C%205.6%20%7C%205.7%20%7C%20next-3178c6' alt='supported TypeScript versions'>
+    <img src='https://img.shields.io/badge/TypeScript-4.7%20%3C=%205.7%20%7C%20next-3178c6' alt='supported TypeScript versions'>
   </a>
   <a href='https://github.com/true-myth/true-myth/blob/main/.github/workflows/Nightly.yml'>
     <img src='https://github.com/true-myth/true-myth/workflows/Nightly%20TypeScript%20Run/badge.svg' alt='Nightly TypeScript Run'>
@@ -74,6 +74,7 @@ You could implement all of these yourself – it's not hard! – but it's much 
   - [The type names](#the-type-names)
     - [`Maybe`](#maybe)
     - [`Result`](#result)
+    - [`Task`](#task)
   - [Inspiration](#inspiration)
 - [Why not...](#why-not)
   - [neverthrow?](#neverthrow)
@@ -756,6 +757,25 @@ However, in practice, the idea of a result is far and away the most common case 
 Given a "result" type, we need to be able to express the idea of "success" and "failure." The most obvious names here would be `Success` and `Failure`. Those are actually really good names with a single problem: they're _long_. Needing to write `success(12)` or `failure({ oh: 'no' })` is a _lot_ to write over and over again. Especially when there some options which _also_ work well: `Ok` and `Err`.
 
 Both `Ok` and `Err` could be written out long-form: `Okay` and `Error`. But in this case, the longer names don't add any particular clarity; they require more typing; and the `Error` case also overloads the existing name of the base exception type in JavaScript. So: `Ok` and `Err` it is.
+
+#### `Task`
+
+There are a handful of names for async operations used by various languages and frameworks:[^other-task-names]
+
+- `Promise` (JavaScript and TypeScript, Scala)
+- `Task` (Swift, C#, F#, Elm, Roc)
+- `Future` (Rust, Scala)
+- `Async` (Haskell)
+
+
+The first one is a non-starter for True Myth for what we think is a pretty obvious reason: that’s the name JavaScript and TypeScript already use for this! Likewise, although `Async` could probably work here, it is very close to the existing JavaScript and TypeScript keyword, and it would be extremely unsurprising to see it appear as a dedicated type (_a la_ `Awaited`) in a future version of TypeScript.
+
+That leaves `Future` and `Task`. `Future` is slightly less common between the two, and “a future” is a slightly stranger thing to say than “a task”. Since the type is a data structure representing an ongoing asynchronous operation, “task” is a natural way to describe it (which is why so many languages do!).
+
+Beyond that we chose to match the nomenclature from `Promise` and our own `Result` to make it easy to remember: if you have used either of those APIs, the `Task` API is exactly the same.
+
+[^other-task-names]: There may be others as well; these are just the ones we know of off the top of our heads!
+
 
 ### Inspiration
 
