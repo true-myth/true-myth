@@ -1325,30 +1325,29 @@ export function last<T>(array: AnyArray<T | null | undefined>): Maybe<T> {
   let result = transposeArray(valid);  // => Just(['hey', 12])
   ```
 
-  __Note:__ this does not work with `ReadonlyArray`. If you have a
-  `ReadonlyArray` you wish to operate on, you must cast it to `Array` insetad.
-  This cast is always safe here, because `Array` is a *wider* type than
-  `ReadonlyArray`.
-
   @param maybes The `Maybe`s to resolve to a single `Maybe`.
  */
-export function transposeArray<T extends Array<Maybe<unknown>>>(maybes: T): TransposedArray<T> {
+export function transposeArray<T extends ReadonlyArray<Maybe<unknown>>>(
+  maybes: T
+): TransposedArray<T> {
   // The slightly odd-seeming use of `[...ms, m]` here instead of `concat` is
   // necessary to preserve the structure of the value passed in. The goal is for
   // `[Maybe<string>, [Maybe<number>, Maybe<boolean>]]` not to be flattened into
   // `Maybe<[string, number, boolean]>` (as `concat` would do) but instead to
   // produce `Maybe<[string, [number, boolean]]>`.
   return maybes.reduce(
-    (acc: Maybe<unknown[]>, m) => acc.andThen((ms) => m.map((m) => [...ms, m])),
-    just([] as unknown[]) as TransposedArray<T>
+    (acc: Maybe<readonly unknown[]>, m) => acc.andThen((ms) => m.map((m) => [...ms, m])),
+    just([])
   ) as TransposedArray<T>;
 }
 
 export type Unwrapped<T> = T extends Maybe<infer U> ? U : T;
 
-export type TransposedArray<T extends Array<Maybe<unknown>>> = Maybe<{
-  [K in keyof T]: Unwrapped<T[K]>;
-}>;
+export type TransposedArray<T extends ReadonlyArray<Maybe<unknown>>> =
+  // Array only extends T when the item is *not* `readonly`.
+  Array<unknown> extends T
+    ? Maybe<{ -readonly [K in keyof T]: Unwrapped<T[K]> }>
+    : Maybe<{ [K in keyof T]: Unwrapped<T[K]> }>;
 
 /**
   Safely extract a key from an object, returning {@linkcode Just} if the key has
