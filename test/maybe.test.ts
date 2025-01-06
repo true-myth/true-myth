@@ -386,7 +386,7 @@ describe('`Maybe` pure functions', () => {
     expect(MaybeNS.isInstance(obj)).toBe(false);
   });
 
-  describe('deprecated toolbox/array re-exports', () => {
+  describe('array helpers', () => {
     test('`find`', () => {
       const theValue = 4;
       const pred = (v: number) => v === theValue;
@@ -476,6 +476,23 @@ describe('`Maybe` pure functions', () => {
 
         expectTypeOf(nestedArraysAll).toEqualTypeOf<ExpectedOutputType>();
         expect(nestedArraysAll).toEqual(MaybeNS.just([1, ['two', 'three']]));
+      });
+
+      test('with tuples', () => {
+        type ExpectedOutputType = Maybe<readonly [number, string]>;
+
+        let theInput = [MaybeNS.just(123), MaybeNS.just('hello')] as const;
+        let theOutput = MaybeNS.transposeArray(theInput);
+
+        expectTypeOf(theOutput).toEqualTypeOf<ExpectedOutputType>();
+        expect(theOutput).toEqual(MaybeNS.just([123, 'hello']));
+      });
+
+      test('with readonly arrays', () => {
+        let theInput: readonly Maybe<number>[] = [Maybe.just(1), Maybe.just(2)];
+        let theOutput = MaybeNS.transposeArray(theInput);
+        expectTypeOf(theOutput).toEqualTypeOf<Maybe<readonly number[]>>();
+        expect(theOutput).toEqual(Maybe.just([1, 2]));
       });
     });
   });
