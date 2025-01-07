@@ -449,12 +449,12 @@ class TaskImpl<T, E> implements PromiseLike<Result<T, E>> {
 
     @param other The `Task` instance to return if `this` is `Rejected`.
    */
-  and<U>(other: Task<U, E>): Task<U, E> {
+  and<U, F = E>(other: Task<U, F>): Task<U, E | F> {
     return new Task((resolve, reject) => {
       this.#promise.then(
         matchResult({
           Ok: (_) => {
-            (other as TaskImpl<U, E>).#promise.then(
+            (other as TaskImpl<U, F>).#promise.then(
               matchResult({
                 Ok: resolve,
                 Err: reject,
@@ -512,7 +512,7 @@ class TaskImpl<T, E> implements PromiseLike<Result<T, E>> {
       returned by the `thenFn`.
     @param thenFn  The function to apply to the wrapped `T` if `maybe` is `Just`.
    */
-  andThen<U>(thenFn: (t: T) => Task<U, E>): Task<U, E> {
+  andThen<U, F = E>(thenFn: (t: T) => Task<U, F>): Task<U, E | F> {
     return new Task((resolve, reject) => {
       this.#promise.then(
         matchResult({
@@ -525,7 +525,7 @@ class TaskImpl<T, E> implements PromiseLike<Result<T, E>> {
             // but to do that, we have to wait for the intermediate `Promise` to
             // resolve so that the inner `Result` is available so it can in turn
             // be used with the top-most `Task`’s resolution/rejection helpers!
-            (thenFn(value) as TaskImpl<U, E>).#promise.then(
+            (thenFn(value) as TaskImpl<U, F>).#promise.then(
               matchResult({
                 Ok: resolve,
                 Err: reject,
@@ -564,13 +564,13 @@ class TaskImpl<T, E> implements PromiseLike<Result<T, E>> {
     @param other  The `Result` to use if `this` is `Rejected`.
     @returns      `this` if it is `Resolved`, otherwise `other`.
    */
-  or<F>(other: Task<T, F>): Task<T, F> {
+  or<F, U = T>(other: Task<U, F>): Task<T | U, F> {
     return new Task((resolve, reject) => {
       this.#promise.then(
         matchResult({
           Ok: resolve,
           Err: (_) => {
-            (other as TaskImpl<T, F>).#promise.then(
+            (other as TaskImpl<U, F>).#promise.then(
               matchResult({
                 Ok: resolve,
                 Err: reject,
@@ -599,7 +599,7 @@ class TaskImpl<T, E> implements PromiseLike<Result<T, E>> {
     @param elseFn The function to apply to the `Rejection` reason if the `Task`
       rejects, to create a new `Task`.
    */
-  orElse<F>(elseFn: (reason: E) => Task<T, F>): Task<T, F> {
+  orElse<F, U = T>(elseFn: (reason: E) => Task<U, F>): Task<T | U, F> {
     return new Task((resolve, reject) => {
       this.#promise.then(
         matchResult({
@@ -607,7 +607,7 @@ class TaskImpl<T, E> implements PromiseLike<Result<T, E>> {
           Err: (reason) => {
             // See the discussion in `andThen` above; this is exactly the same
             // issue, and with inverted implementation logic.
-            (elseFn(reason) as TaskImpl<T, F>).#promise.then(
+            (elseFn(reason) as TaskImpl<U, F>).#promise.then(
               matchResult({
                 Ok: resolve,
                 Err: reject,
