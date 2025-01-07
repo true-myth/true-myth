@@ -15,6 +15,10 @@ import Task, {
   Settled,
   AggregateRejection,
   Timer,
+  safelyTry,
+  safelyTryOr,
+  safelyTryOrElse,
+  safe,
 } from 'true-myth/task';
 import Result from 'true-myth/result';
 import Unit from 'true-myth/unit';
@@ -1750,6 +1754,244 @@ describe('module-scope functions', () => {
     expectTypeOf(aTimer).toEqualTypeOf<Timer>();
     let result = await aTimer;
     expect(unwrap(result)).toEqual(ms);
+  });
+
+  describe('safelyTry', () => {
+    describe('with a non-throwing function', () => {
+      test('with a promise that resolves', async () => {
+        let theTask = safelyTry(() => Promise.resolve(123));
+        expectTypeOf(theTask).toEqualTypeOf<Task<number, unknown>>();
+        let theResult = await theTask;
+        expect(unwrap(theResult)).toBe(123);
+      });
+
+      test('with a promise that rejects', async () => {
+        let theTask = safelyTry(() => Promise.reject(123));
+        expectTypeOf(theTask).toEqualTypeOf<Task<never, unknown>>();
+        let theResult = await theTask;
+        expect(unwrapErr(theResult)).toBe(123);
+      });
+    });
+
+    describe('with a throwing function', () => {
+      test('with a promise that resolves', async () => {
+        let theTask = safelyTry((): Promise<number> => {
+          throw new Error('NOPE');
+          return Promise.resolve(123);
+        });
+        expectTypeOf(theTask).toEqualTypeOf<Task<number, unknown>>();
+        let theResult = await theTask;
+        let theError = unwrapErr(theResult);
+        expect(theError).toBeInstanceOf(Error);
+        expect((theError as Error).message).toBe('NOPE');
+      });
+
+      test('with a promise that rejects', async () => {
+        let theTask = safelyTry((): Promise<number> => {
+          throw new Error('NOPE');
+          return Promise.reject(123);
+        });
+        expectTypeOf(theTask).toEqualTypeOf<Task<number, unknown>>();
+        let theResult = await theTask;
+        let theError = unwrapErr(theResult);
+        expect(theError).toBeInstanceOf(Error);
+        expect((theError as Error).message).toBe('NOPE');
+      });
+    });
+  });
+
+  describe('safelyTryOr', () => {
+    describe('with a non-throwing function', () => {
+      test('with a promise that resolves', async () => {
+        let theTask = safelyTryOr('error', () => Promise.resolve(123));
+        expectTypeOf(theTask).toEqualTypeOf<Task<number, string>>();
+        let theResult = await theTask;
+        expect(unwrap(theResult)).toBe(123);
+      });
+
+      test('with a promise that rejects', async () => {
+        let theTask = safelyTryOr('error', () => Promise.reject(123));
+        expectTypeOf(theTask).toEqualTypeOf<Task<never, string>>();
+        let theResult = await theTask;
+        expect(unwrapErr(theResult)).toBe('error');
+      });
+    });
+
+    describe('with a throwing function', () => {
+      test('with a promise that resolves', async () => {
+        let theTask = safelyTryOr('error', (): Promise<number> => {
+          throw new Error('NOPE');
+          return Promise.resolve(123);
+        });
+        expectTypeOf(theTask).toEqualTypeOf<Task<number, string>>();
+        let theResult = await theTask;
+        expect(unwrapErr(theResult)).toBe('error');
+      });
+
+      test('with a promise that rejects', async () => {
+        let theTask = safelyTryOr('error', (): Promise<number> => {
+          throw new Error('NOPE');
+          return Promise.reject(123);
+        });
+        expectTypeOf(theTask).toEqualTypeOf<Task<number, string>>();
+        let theResult = await theTask;
+        expect(unwrapErr(theResult)).toBe('error');
+      });
+    });
+  });
+
+  describe('safelyTryOrElse', () => {
+    describe('with a non-throwing function', () => {
+      test('with a promise that resolves', async () => {
+        let theTask = safelyTryOrElse(stringify, () => Promise.resolve(123));
+        expectTypeOf(theTask).toEqualTypeOf<Task<number, string>>();
+        let theResult = await theTask;
+        expect(unwrap(theResult)).toBe(123);
+      });
+
+      test('with a promise that rejects', async () => {
+        let theTask = safelyTryOrElse(stringify, () => Promise.reject(123));
+        expectTypeOf(theTask).toEqualTypeOf<Task<never, string>>();
+        let theResult = await theTask;
+        expect(unwrapErr(theResult)).toBe(stringify(123));
+      });
+    });
+
+    describe('with a throwing function', () => {
+      test('with a promise that resolves', async () => {
+        let theTask = safelyTryOrElse(stringify, (): Promise<number> => {
+          throw new Error('NOPE');
+          return Promise.resolve(123);
+        });
+        expectTypeOf(theTask).toEqualTypeOf<Task<number, string>>();
+        let theResult = await theTask;
+        let theError = unwrapErr(theResult);
+        expect(theError).toBe(stringify(new Error('NOPE')));
+      });
+
+      test('with a promise that rejects', async () => {
+        let theTask = safelyTryOrElse(stringify, (): Promise<number> => {
+          throw new Error('NOPE');
+          return Promise.reject(123);
+        });
+        expectTypeOf(theTask).toEqualTypeOf<Task<number, string>>();
+        let theResult = await theTask;
+        let theError = unwrapErr(theResult);
+        expect(theError).toBe(stringify(new Error('NOPE')));
+      });
+    });
+  });
+
+  describe('safe', () => {
+    const ERROR_MESSAGE = 'the message';
+    const REJECTION_REASON = 'ugh';
+
+    function example(
+      value: number,
+      {
+        throwErr = false,
+        rejectPromise = false,
+      }: { throwErr?: boolean; rejectPromise?: boolean } = {
+        throwErr: false,
+        rejectPromise: false,
+      }
+    ): Promise<number> {
+      if (throwErr) {
+        throw new Error(ERROR_MESSAGE);
+      }
+
+      return rejectPromise ? Promise.reject(REJECTION_REASON) : Promise.resolve(value);
+    }
+
+    describe('without an error handler', () => {
+      let safeExample = safe(example);
+      expectTypeOf(safeExample).toEqualTypeOf<
+        (
+          value: number,
+          should?: { throwErr?: boolean; rejectPromise?: boolean }
+        ) => Task<number, unknown>
+      >();
+
+      test('when it throws', async () => {
+        let theTask = safeExample(123, { throwErr: true });
+        expectTypeOf(theTask).toEqualTypeOf<Task<number, unknown>>();
+        await theTask;
+        if (theTask.isRejected) {
+          expect((theTask.reason as Error).message).toMatch(ERROR_MESSAGE);
+        }
+      });
+
+      describe('when it does not throw', () => {
+        test('and it resolves', async () => {
+          let theTask = safeExample(123);
+          expectTypeOf(theTask).toEqualTypeOf<Task<number, unknown>>();
+          await theTask;
+          console.log(theTask.toString());
+          if (theTask.isResolved) {
+            expect(theTask.value).toBe(123);
+          } else {
+            expect.unreachable();
+          }
+        });
+
+        test('and it rejects', async () => {
+          let theTask = safeExample(123, { rejectPromise: true });
+          expectTypeOf(theTask).toEqualTypeOf<Task<number, unknown>>();
+          await theTask;
+          console.log(theTask.toString());
+          if (theTask.isRejected) {
+            expect(theTask.reason).toBe(REJECTION_REASON);
+          } else {
+            expect.unreachable();
+          }
+        });
+      });
+    });
+
+    describe('with an error handler', () => {
+      let safeExample = safe(example, stringify);
+      expectTypeOf(safeExample).toEqualTypeOf<
+        (
+          value: number,
+          should?: { throwErr?: boolean; rejectPromise?: boolean }
+        ) => Task<number, string>
+      >();
+
+      test('when it throws', async () => {
+        let theTask = safeExample(123, { throwErr: true });
+        expectTypeOf(theTask).toEqualTypeOf<Task<number, string>>();
+        await theTask;
+        if (theTask.isRejected) {
+          expect(theTask.reason).toBe('{}'); // Errors stringify weirdly
+        }
+      });
+
+      describe('when it does not throw', () => {
+        test('and it resolves', async () => {
+          let theTask = safeExample(123);
+          expectTypeOf(theTask).toEqualTypeOf<Task<number, string>>();
+          await theTask;
+          console.log(theTask.toString());
+          if (theTask.isResolved) {
+            expect(theTask.value).toBe(123);
+          } else {
+            expect.unreachable();
+          }
+        });
+
+        test('and it rejects', async () => {
+          let theTask = safeExample(123, { rejectPromise: true });
+          expectTypeOf(theTask).toEqualTypeOf<Task<number, string>>();
+          await theTask;
+          console.log(theTask.toString());
+          if (theTask.isRejected) {
+            expect(theTask.reason).toBe(`"${REJECTION_REASON}"`);
+          } else {
+            expect.unreachable();
+          }
+        });
+      });
+    });
   });
 });
 

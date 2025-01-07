@@ -4,7 +4,7 @@
   @module
  */
 
-import { safeToString } from './-private/utils.js';
+import { curry1, safeToString } from './-private/utils.js';
 import Result, { map as mapResult, mapErr, match as matchResult } from './result.js';
 import Unit from './unit.js';
 
@@ -1330,3 +1330,171 @@ class Timeout extends Error {
 // Export *only* the type side (at least until we hear of a reason to do
 // otherwise): people ought not be subclassing or instantiating `Timeout`!
 export type { Timeout };
+
+/**
+  Given a function which takes no arguments and returns a `Promise`, return a
+  {@linkcode Task Task<T, unknown>} for the result of invoking that function.
+  This safely handles functions which fail synchronously or asynchronously, so
+  unlike {@linkcode Task.try} is safe to use with values which may throw errors
+  _before_ producing a `Promise`.
+
+  ## Examples
+
+  ```ts
+  import { safelyTry } from 'true-myth/task';
+
+  function throws(): Promise<T> {
+    throw new Error("Uh oh!");
+  }
+
+  // Note: passing the function by name, *not* calling it.
+  let theTask = safelyTry(throws);
+  let theResult = await theTask;
+  if (theResult.isErr) {
+    console.error((theResult.error as Error).message);
+  }
+  console.log(theResult.toString()); // Err(Error: Uh oh!)
+  ```
+
+  @param fn A function which returns a `Promise` when called.
+  @returns A `Task` which resolves to the resolution value of the promise or
+    rejects with the rejection value of the promise *or* any error thrown while
+    invoking `fn`.
+*/
+export function safelyTry<T>(fn: () => Promise<T>): Task<T, unknown> {
+  return new Task((resolve, reject) => {
+    try {
+      fn().then(resolve, reject);
+    } catch (e) {
+      reject(e);
+    }
+  });
+}
+
+export function safelyTryOr<T, E>(rejection: E): (fn: () => Promise<T>) => Task<T, E>;
+export function safelyTryOr<T, E>(rejection: E, fn: () => Promise<T>): Task<T, E>;
+export function safelyTryOr<T, E>(
+  rejection: E,
+  fn?: () => Promise<T>
+): Task<T, E> | ((fn: () => Promise<T>) => Task<T, E>) {
+  const op = (curriedFn: () => Promise<T>): Task<T, E> =>
+    new Task((resolve, reject) => {
+      try {
+        curriedFn().then(resolve, (_reason) => reject(rejection));
+      } catch (_e) {
+        reject(rejection);
+      }
+    });
+
+  return curry1(op, fn);
+}
+
+export function safelyTryOrElse<T, E>(
+  onError: (reason: unknown) => E
+): (fn: () => Promise<T>) => Task<T, E>;
+export function safelyTryOrElse<T, E>(
+  onError: (reason: unknown) => E,
+  fn: () => Promise<T>
+): Task<T, E>;
+export function safelyTryOrElse<T, E>(
+  onError: (reason: unknown) => E,
+  fn?: () => Promise<T>
+): Task<T, E> | ((fn: () => Promise<T>) => Task<T, E>) {
+  const op = (fn: () => Promise<T>): Task<T, E> =>
+    new Task((resolve, reject) => {
+      try {
+        fn().then(resolve, (reason) => reject(onError(reason)));
+      } catch (error) {
+        reject(onError(error));
+      }
+    });
+
+  return curry1(op, fn);
+}
+
+/**
+  Given a function which returns a `Promise`, return a new function with the
+  same parameters but which returns a {@linkcode Task} instead.
+
+  If you wish to transform the error directly, rather than with a combinator,
+  see the other overload, which accepts an error handler.
+
+  ## Examples
+
+  You can use this to create a safe version of the `fetch` function, which will
+  produce a `Task` instead of a `Promise` and which does not throw an error for
+  rejections, but instead produces a {@Rejected} variant of the `Task`.
+
+  ```ts
+  import { safe } from 'true-myth/task';
+
+  const fetch = safe(window.fetch);
+  const toJson = safe((response: Response) => response.json() as unknown);
+  let json = fetch('https://www.example.com/api/users').andThen(toJson);
+  ```
+
+  @param fn A function to wrap so it never throws an error or produces a
+    `Promise` rejection.
+*/
+export function safe<
+  F extends (...params: never[]) => unknown,
+  P extends Parameters<F>,
+  R extends Awaited<ReturnType<F>>,
+  E,
+>(fn: F): (...params: P) => Task<R, unknown>;
+/**
+  Given a function which returns a `Promise` and a function to transform thrown
+  errors or `Promise` rejections resulting from calling that function, return a
+  new function with the same parameters but which returns a {@linkcode Task}.
+
+  To catch all errors but leave them unhandled and `unknown`, see the other
+  overload.
+
+  ## Examples
+
+  You can use this to create a safe version of the `fetch` function, which will
+  produce a `Task` instead of a `Promise` and which does not throw an error for
+  rejections, but instead produces a {@Rejected} variant of the `Task`.
+
+  ```ts
+  import { safe } from 'true-myth/task';
+
+  class CustomError extends Error {
+    constructor(name: string, cause: unknown) {
+      super(`my-lib.error.${name}`, { cause });
+      this.name = name;
+    }
+  }
+
+  function handleErr(name: string): (cause: unknown) => CustomError {
+    return (cause) => new CustomError(name);
+  }
+
+  const fetch = safe(window.fetch, handleErr('fetch'));
+  const toJson = safe(
+    (response: Response) => response.toJson(),
+    handleErr('json-parsing')
+  );
+
+  let json = fetch('https://www.example.com/api/users').andThen(toJson);
+  ```
+
+  @param fn A function to wrap so it never throws an error or produces a
+    `Promise` rejection.
+  @param onError A function to use to transform the
+*/
+export function safe<
+  F extends (...params: never[]) => unknown,
+  P extends Parameters<F>,
+  R extends Awaited<ReturnType<F>>,
+  E,
+>(fn: F, onError: (reason: unknown) => E): (...params: P) => Task<R, E>;
+export function safe<
+  F extends (...params: never[]) => unknown,
+  P extends Parameters<F>,
+  R extends Awaited<ReturnType<F>>,
+  E,
+>(fn: F, onError?: (reason: unknown) => E): (...params: P) => Task<R, unknown> {
+  let handleError = onError ?? ((e: unknown) => e);
+  return (...params) => safelyTryOrElse(handleError, () => fn(...params) as R);
+}
