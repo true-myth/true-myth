@@ -18,6 +18,9 @@ jobs:
 
       - run: pnpm install
 
+      - name: Update to latest supported TS version to match TypeDoc requirements
+        run: pnpm add --save-dev typescript@latest
+
       - name: Build docs
         run: pnpm doc
 
