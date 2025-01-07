@@ -5,7 +5,7 @@
 {
   "languages": {
     "TypeScript": {
-      "wrap_guides": [100]
+      "wrap_guides": [80, 100]
     }
   }
 }
