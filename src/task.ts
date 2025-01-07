@@ -107,6 +107,9 @@ class TaskImpl<T, E> implements PromiseLike<Result<T, E>> {
     @param promise The promise from which to create the `Task`.
 
     @group Constructors
+
+    @deprecated This will be removed at 9.0. Switch to the module-level function
+      {@linkcode safelyTry}, which accepts a callback instead.
    */
   static try<T>(promise: Promise<T>): Task<T, unknown> {
     return new Task((resolve, reject) => {
@@ -130,6 +133,9 @@ class TaskImpl<T, E> implements PromiseLike<Result<T, E>> {
       into a known `E`.
 
     @group Constructors
+
+    @deprecated This will be removed at 9.0. Switch to the module-level function
+      {@linkcode safelyTryOr}, which accepts a callback instead.
    */
   static tryOr<T, E>(promise: Promise<T>, rejectionValue: E): Task<T, E> {
     return new Task((resolve, reject) => {
@@ -149,6 +155,9 @@ class TaskImpl<T, E> implements PromiseLike<Result<T, E>> {
       a known `E`.
 
     @group Constructors
+
+    @deprecated This will be removed at 9.0. Switch to the module-level function
+      {@linkcode safelyTryOrElse}, which accepts a callback instead.
    */
   static tryOrElse<T, E>(promise: Promise<T>, onRejection: (reason: unknown) => E): Task<T, E> {
     return new Task((resolve, reject) => {
