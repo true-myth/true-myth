@@ -444,6 +444,72 @@ describe('`Result` pure functions', () => {
 
     expect(ResultNS.isErr(testErr)).toEqual(true);
   });
+
+  describe('`safe` function', () => {
+    const THE_MESSAGE = 'the error message';
+
+    function example(
+      value: number,
+      { throwErr: shouldThrow = false }: { throwErr?: boolean } = { throwErr: false }
+    ): string {
+      if (shouldThrow) {
+        throw new Error(THE_MESSAGE);
+      }
+
+      return `value was ${value}`;
+    }
+
+    describe('without an error handler', () => {
+      let safeExample = ResultNS.safe(example);
+      expectTypeOf(safeExample).toEqualTypeOf<
+        (value: number, should?: { throwErr?: boolean }) => Result<string, unknown>
+      >();
+
+      test('when it throws', () => {
+        let theResult = safeExample(123, { throwErr: true });
+        if (theResult.isErr) {
+          expect(theResult.error).toBeInstanceOf(Error);
+          expect((theResult.error as Error).message).toBe(THE_MESSAGE);
+        } else {
+          expect.unreachable();
+        }
+      });
+
+      test('when it does not throw', () => {
+        let theResult = safeExample(123);
+        if (theResult.isOk) {
+          expect(theResult.value).toBe('value was 123');
+        } else {
+          expect.unreachable();
+        }
+      });
+    });
+
+    describe('with an error handler', () => {
+      let safeExample = ResultNS.safe(example, (reason) => JSON.stringify(reason, null, 2));
+      expectTypeOf(safeExample).toEqualTypeOf<
+        (value: number, should?: { throwErr?: boolean }) => Result<string, string>
+      >();
+
+      test('when it throws', () => {
+        let theResult = safeExample(123, { throwErr: true });
+        if (theResult.isErr) {
+          expect(theResult.error).toBe('{}'); // stringify is weird
+        } else {
+          expect.unreachable();
+        }
+      });
+
+      test('when it does not throw', () => {
+        let theResult = safeExample(123);
+        if (theResult.isOk) {
+          expect(theResult.value).toBe('value was 123');
+        } else {
+          expect.unreachable();
+        }
+      });
+    });
+  });
 });
 
 // We aren't even really concerned with the "runtime" behavior here, which we

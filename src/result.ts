@@ -6,6 +6,7 @@
 
 import Unit from './unit.js';
 import { curry1, safeToString } from './-private/utils.js';
+import { AnyFunction } from './-private/utils.js';
 
 /**
   Discriminant for {@linkcode Ok} and {@linkcode Err} variants of the
@@ -1304,6 +1305,97 @@ export function ap<A, B, E>(
 ): Result<B, E> | ((val: Result<A, E>) => Result<B, E>) {
   const op = (r: Result<A, E>) => resultFn.ap(r);
   return curry1(op, result);
+}
+
+/**
+  Transform a function which may throw an error into one with an identical call
+  signature except that it will return a {@linkcode} instead of throwing an
+  error.
+
+  This allows you to handle the error locally with all the normal `Result` tools
+  rather than having to catch an exception. Where the {@linkcode tryOr} and
+  {@linkcode tryOrElse} functions are useful for a single call, this is useful
+  to make a new version of a function to be used repeatedly.
+
+  This overload absorbs all exceptions into an {@linkcode Err} with the type
+  `unknown`. If you want to transform the error immediately rather than using a
+  combinator, see the other overload.
+
+  ## Examples
+
+  The `JSON.parse` method will throw if the string passed to it is invalid. You
+  can use this `safe` method to transform it into a form which will *not* throw:
+
+  ```ts
+  import { safe } from 'true-myth/task';
+  const parse = safe(JSON.parse);
+
+  let result = parse(`"ill-formed gobbledygook'`);
+  console.log(result.toString()); // Err(SyntaxError: Unterminated string in JSON at position 25)
+  ```
+
+  You could do this once in a utility module and then require that *all* JSON
+  parsing operations in your code use this version instead.
+
+  @param fn The function which may throw, which will be wrapped.
+*/
+export function safe<F extends AnyFunction, P extends Parameters<F>, R extends ReturnType<F>>(
+  fn: F
+): (...params: P) => Result<R, unknown>;
+/**
+  Transform a function which may throw an error into one with an identical call
+  signature except that it will return a {@linkcode} instead of throwing an
+  error.
+
+  This allows you to handle the error locally with all the normal `Result` tools
+  rather than having to catch an exception. Where the {@linkcode tryOr} and
+  {@linkcode tryOrElse} functions are useful for a single call, this is useful
+  to make a new version of a function to be used repeatedly.
+
+  This overload allows you to transform the error immediately, using the second
+  argument.
+
+  ## Examples
+
+  The `JSON.parse` method will throw if the string passed to it is invalid. You
+  can use this `safe` method to transform it into a form which will *not* throw,
+  wrapping it in a custom error :
+
+  ```ts
+  import { safe } from 'true-myth/task';
+
+  class ParsingError extends Error {
+    name = 'ParsingError';
+    constructor(error: unknown) {
+      super('Parsing error.', { cause: error });
+    }
+  }
+
+  const parse = safe(JSON.parse, (error) => {
+    return new ParsingError(error);
+  });
+
+  let result = parse(`"ill-formed gobbledygook'`);
+  console.log(result.toString()); // Err(SyntaxError: Unterminated string in JSON at position 25)
+  ```
+
+  You could do this once in a utility module and then require that *all* JSON
+  parsing operations in your code use this version instead.
+
+  @param fn The function which may throw, which will be wrapped.
+  @param handleErr A function to use to transform an unknown error into a known
+    error type.
+*/
+export function safe<F extends AnyFunction, P extends Parameters<F>, R extends ReturnType<F>, E>(
+  fn: F,
+  handleErr: (error: unknown) => E
+): (...params: P) => Result<R, E>;
+export function safe<F extends AnyFunction, P extends Parameters<F>, R extends ReturnType<F>, E>(
+  fn: F,
+  handleErr?: (error: unknown) => E
+): (...params: P) => Result<R, unknown> {
+  let errorHandler = handleErr ?? ((e) => e);
+  return (...params) => tryOrElse(errorHandler, () => fn(...params) as R);
 }
 
 /**
