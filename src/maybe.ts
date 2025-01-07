@@ -4,7 +4,7 @@
   @module
  */
 
-import { curry1, isVoid, safeToString } from './-private/utils.js';
+import { AnyFunction, curry1, isVoid, safeToString } from './-private/utils.js';
 
 /**
   Discriminant for the {@linkcode Just} and {@linkcode Nothing} type instances.
@@ -1549,18 +1549,9 @@ export function wrapReturn<
   F extends AnyFunction,
   P extends Parameters<F>,
   R extends NonNullable<ReturnType<F>>,
->(fn: F): (...args: P) => Maybe<R> {
-  return (...args) => Maybe.of(fn(...args)) as Maybe<R>;
+>(fn: F): (...params: P) => Maybe<R> {
+  return (...params) => Maybe.of(fn(...params) as R);
 }
-
-/**
-  This is the standard *correct* definition for a function which is a proper
-  subtype of all other functions: parameters of a function subtype must be
-  *wider* than those of the base type, and return types must be *narrower*.
-  Everything is wider than `never[]` and narrower than `unknown`, so any
-  function is assignable to places this is used.
- */
-export type AnyFunction = (...args: never[]) => unknown;
 
 /**
   The public interface for the {@linkcode Maybe} class *as a value*: a

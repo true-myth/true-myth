@@ -33,3 +33,12 @@ export function safeToString(value: unknown): string {
     return JSON.stringify(value);
   }
 }
+
+/**
+  This is the standard *correct* definition for a function which is a proper
+  subtype of all other functions: parameters of a function subtype must be
+  *wider* than those of the base type, and return types must be *narrower*.
+  Everything is wider than `never[]` and narrower than `unknown`, so any
+  function is assignable to places this is used.
+ */
+export type AnyFunction = (...params: never[]) => unknown;
