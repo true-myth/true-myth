@@ -1484,13 +1484,13 @@ export function safe<
   @param onError A function to use to transform the
 */
 export function safe<
-  F extends (...params: never[]) => unknown,
+  F extends (...params: never[]) => PromiseLike<unknown>,
   P extends Parameters<F>,
   R extends Awaited<ReturnType<F>>,
   E,
 >(fn: F, onError: (reason: unknown) => E): (...params: P) => Task<R, E>;
 export function safe<
-  F extends (...params: never[]) => unknown,
+  F extends (...params: never[]) => PromiseLike<unknown>,
   P extends Parameters<F>,
   R extends Awaited<ReturnType<F>>,
   E,
