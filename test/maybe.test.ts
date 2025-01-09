@@ -526,6 +526,31 @@ describe('`Maybe` pure functions', () => {
     expect(MaybeNS.get('wat', dict)).toEqual(MaybeNS.nothing());
   });
 
+  test('`safe`', () => {
+    const empty = '';
+    const emptyResult = MaybeNS.nothing();
+
+    const full = 'hello';
+    const fullResult = MaybeNS.just(full.length);
+
+    const mayBeNull = (s: string): number | null => (s.length > 0 ? s.length : null);
+    const mayNotBeNull = MaybeNS.safe(mayBeNull);
+
+    expect(mayNotBeNull(empty)).toEqual(emptyResult);
+    expect(mayNotBeNull(full)).toEqual(fullResult);
+
+    const mayBeUndefined = (s: string): number | undefined => (s.length > 0 ? s.length : undefined);
+    const mayNotBeUndefined = MaybeNS.safe(mayBeUndefined);
+
+    expect(mayNotBeUndefined(empty)).toEqual(emptyResult);
+    expect(mayNotBeUndefined(full)).toEqual(fullResult);
+
+    const returnsNullable = (): string | null => null;
+
+    const querySelector = MaybeNS.safe(returnsNullable);
+    expectTypeOf(querySelector).toEqualTypeOf<() => Maybe<string>>();
+  });
+
   test('`wrapReturn`', () => {
     const empty = '';
     const emptyResult = MaybeNS.nothing();

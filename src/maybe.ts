@@ -1545,13 +1545,20 @@ export function get<T, K extends keyof T>(
   @param fn The function to transform; the resulting function will have the
             exact same signature except for its return type.
  */
-export function wrapReturn<
+export function safe<
   F extends AnyFunction,
   P extends Parameters<F>,
   R extends NonNullable<ReturnType<F>>,
 >(fn: F): (...params: P) => Maybe<R> {
   return (...params) => Maybe.of(fn(...params) as R);
 }
+
+/**
+  @alias for {@linkcode safe}.
+  @deprecated Switch to using {@linkcode safe} instead. This will be removed at
+    9.0.
+ */
+export const wrapReturn = safe;
 
 /**
   The public interface for the {@linkcode Maybe} class *as a value*: a
