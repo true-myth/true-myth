@@ -20,6 +20,9 @@ import Task, {
   safelyTryOrElse,
   safe,
   safeNullable,
+  fromPromise,
+  fromUnsafePromise,
+  fromResult,
 } from 'true-myth/task';
 import Maybe from 'true-myth/maybe';
 import Result from 'true-myth/result';
@@ -2135,6 +2138,127 @@ describe('module-scope functions', () => {
           }
         });
       });
+    });
+  });
+
+  describe('fromPromise', () => {
+    describe('`without a rejection handler`', () => {
+      test('when the promise resolves', async () => {
+        let { promise, resolve } = deferred<number, never>();
+        let theTask = fromPromise(promise);
+        expectTypeOf(theTask).toEqualTypeOf<Task<number, unknown>>();
+
+        resolve(123);
+        let theResult = await theTask;
+        expectTypeOf(theResult).toEqualTypeOf<Result<number, unknown>>();
+        expect(unwrap(theResult)).toBe(123);
+      });
+
+      test('when the promise rejects', async () => {
+        let { promise, reject } = deferred<never, string>();
+        let theTask = fromPromise(promise);
+        expectTypeOf(theTask).toEqualTypeOf<Task<never, unknown>>();
+
+        let theError = 'la';
+        reject(theError);
+        let theResult = await theTask;
+        expectTypeOf(theResult).toEqualTypeOf<Result<never, unknown>>();
+        expect(unwrapErr(theResult)).toEqual(theError);
+      });
+    });
+
+    describe('with a rejection handler', () => {
+      test('when the promise resolves', async () => {
+        let { promise, resolve } = deferred<number, never>();
+        let theTask = fromPromise(promise, stringify);
+        expectTypeOf(theTask).toEqualTypeOf<Task<number, string>>();
+
+        resolve(123);
+        let theResult = await theTask;
+        expectTypeOf(theResult).toEqualTypeOf<Result<number, string>>();
+        expect(unwrap(theResult)).toBe(123);
+      });
+
+      test('when the promise rejects', async () => {
+        let { promise, reject } = deferred<never, string>();
+        let theTask = fromPromise(promise, stringify);
+        expectTypeOf(theTask).toEqualTypeOf<Task<never, string>>();
+
+        let theError = 'la';
+        reject(theError);
+        let theResult = await theTask;
+        expectTypeOf(theResult).toEqualTypeOf<Result<never, string>>();
+        expect(unwrapErr(theResult)).toEqual(stringify(theError));
+      });
+    });
+  });
+
+  describe('fromUnsafePromise', () => {
+    test('when the promise resolves', async () => {
+      let { promise, resolve } = deferred<Result<number, string>, never>();
+      let theTask = fromUnsafePromise(promise);
+      expectTypeOf(theTask).toEqualTypeOf<Task<number, string>>();
+
+      let theInputResult = Result.ok<number, string>(123);
+      resolve(theInputResult);
+      let theResultingResult = await theTask;
+      expect(theResultingResult).toEqual(Result.ok(123));
+      expectTypeOf(theResultingResult).toEqualTypeOf(theInputResult);
+    });
+
+    test('with a `Promise<Result<T, E>>`', async () => {
+      let { promise, resolve } = deferred<Result<number, string>, never>();
+      let theTask = fromUnsafePromise(promise);
+      expectTypeOf(theTask).toEqualTypeOf<Task<number, string>>();
+
+      resolve(Result.ok(123));
+      let result = await theTask;
+      expect(unwrap(result)).toEqual(123);
+    });
+
+    test('when the promise rejects', async () => {
+      let processPromise = new Promise((resolve) => {
+        process.on('unhandledRejection', (error) => {
+          resolve(error);
+        });
+      });
+
+      let { promise, reject } = deferred<Result<number, string>, unknown>();
+      let theTask = fromUnsafePromise(promise);
+      expectTypeOf(theTask).toEqualTypeOf<Task<number, string>>();
+
+      let theReason = 'not good';
+      try {
+        reject(theReason);
+        await promise;
+        await theTask;
+      } catch (e) {
+        expect(e).toEqual(theReason);
+      }
+
+      let output = await processPromise;
+      expect(output).toBeInstanceOf(UnsafePromise);
+      expect.assertions(2);
+    });
+  });
+
+  describe('fromResult', () => {
+    test('from Ok', async () => {
+      let theResult = Result.ok<number, string>(123);
+      let theTask = fromResult(theResult);
+      expectTypeOf(theTask).toEqualTypeOf<Task<number, string>>();
+      let result = await theTask;
+      expect(result.isOk).toBe(true);
+      expect(theTask.state).toEqual(State.Resolved);
+    });
+
+    test('from Err', async () => {
+      let theResult = Result.err<number, string>('error');
+      let theTask = fromResult(theResult);
+      expectTypeOf(theTask).toEqualTypeOf<Task<number, string>>();
+      let result = await theTask;
+      expect(result.isErr).toBe(true);
+      expect(theTask.state).toEqual(State.Rejected);
     });
   });
 });

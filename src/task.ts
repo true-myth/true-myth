@@ -1237,9 +1237,10 @@ export interface TaskConstructor extends Omit<typeof TaskImpl, 'constructor'> {
 
     For constructing a `Task` from an existing `Promise`, see:
 
-    - {@linkcode Task.try}
-    - {@linkcode Task.tryOr}
-    - {@linkcode Task.tryOrElse}
+    - {@linkcode fromPromise}
+    - {@linkcode safelyTry}
+    - {@linkcode safelyTryOr}
+    - {@linkcode safelyTryOrElse}
 
     For constructing a `Task` immediately resolved or rejected with given
     values, see {@linkcode Task.resolve} and {@linkcode Task.reject}
@@ -1340,6 +1341,163 @@ class Timeout extends Error {
 // Export *only* the type side (at least until we hear of a reason to do
 // otherwise): people ought not be subclassing or instantiating `Timeout`!
 export type { Timeout };
+
+/**
+  Produce a {@linkcode Task Task<T, unknown>} from a [`Promise`][mdn-promise].
+
+  [mdn-promise]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise
+
+  To handle the error case and produce a `Task<T, E>` instead, use the overload
+  the overload which accepts an `onRejection` handler instead.
+
+  > [!IMPORTANT]
+  > This does not (and by definition cannot) handle errors that happen during
+  > construction of the `Promise`, because those happen before this is called.
+  > See {@linkcode safelyTry}, {@linkcode safelyTryOr}, or
+  > {@linkcode safelyTryOrElse} for alternatives which accept a callback for
+  > constructing a promise and can therefore handle errors thrown in the call.
+
+  @param promise The promise from which to create the `Task`.
+
+  @template T The type the `Promise` would resolve to, and thus that the `Task`
+    will also resolve to if the `Promise` resolves.
+
+  @group Constructors
+ */
+export function fromPromise<T>(promise: Promise<T>): Task<T, unknown>;
+/**
+  Produce a {@linkcode Task Task<T, E>} from a [`Promise`][mdn-promise], using a
+  .
+
+  [mdn-promise]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise
+
+  To absorb all errors/rejections as `unknown`, use the overload without an
+  `onRejection` handler instead.
+
+  > [!IMPORTANT]
+  > This does not (and by definition cannot) handle errors that happen during
+  > construction of the `Promise`, because those happen before this is called.
+  > See {@linkcode safelyTry}, {@linkcode safelyTryOr}, or
+  > {@linkcode safelyTryOrElse} for alternatives which accept a callback for
+  > constructing a promise and can therefore handle errors thrown in the call.
+
+  @param promise The promise from which to create the `Task`.
+  @param onRejection Transform errors from `unknown` to a known error type.
+
+  @template T The type the `Promise` would resolve to, and thus that the `Task`
+    will also resolve to if the `Promise` resolves.
+  @template E The type of a rejected `Task` if the promise rejects.
+
+  @group Constructors
+ */
+export function fromPromise<T, E>(
+  promise: Promise<T>,
+  onRejection: (reason: unknown) => E
+): Task<T, E>;
+export function fromPromise<T>(
+  promise: Promise<T>,
+  onRejection?: (reason: unknown) => unknown
+): Task<T, unknown> {
+  let handleError = onRejection ?? identity;
+  return new Task((resolve, reject) => {
+    promise.then(resolve, (reason) => reject(handleError(reason)));
+  });
+}
+
+/**
+  Build a {@linkcode Task Task<T, E>} from a {@linkcode Result Result<T, E>}.
+
+  > [!IMPORTANT]
+  > This does not (and by definition cannot) handle errors that happen during
+  > construction of the `Result`, because those happen before this is called.
+  > See {@linkcode tryOr} and {@linkcode tryOrElse} as well as the corresponding
+  > `Result.tryOr` and `Result.tryOrElse` methods for synchronous functions.
+
+  ## Examples
+
+  Given an `Ok`, `fromResult` will produces a {@linkcode Resolved} task.
+
+  ```ts
+  import { fromResult } from 'true-myth/task';
+  import { ok } from 'true-myth/result';
+
+  let successful = fromResult(ok("hello")); // -> Resolved("hello")
+  ```
+
+  Likewise, given an `Err`, `fromResult` will produces a {@linkcode Rejected}
+  task.
+
+  ```ts
+  import { fromResult } from 'true-myth/task';
+  import { err } from 'true-myth/result';
+
+  let successful = fromResult(err("uh oh!")); // -> Rejected("uh oh!")
+  ```
+
+  It is often clearest to access the function via a namespace-style import:
+
+  ```ts
+
+  import * as Task from 'true-myth/task';
+  import { ok } from 'true-myth/result';
+
+  let theTask = Task.fromResult(ok(123));
+  ```
+
+  As an alternative, it can be useful to rename the import:
+
+  ```ts
+  import { fromResult: taskFromResult } from 'true-myth/task';
+  import { err } from 'true-myth/result';
+
+  let theTask = taskFromResult(err("oh no!"));
+  ```
+ */
+export function fromResult<T, E>(result: Result<T, E>): Task<T, E> {
+  return new Task((resolve, reject) =>
+    result.match({
+      Ok: resolve,
+      Err: reject,
+    })
+  );
+}
+
+/**
+  Produce a `Task<T, E>` from a promise of a {@linkcode Result Result<T, E>}.
+
+  > [!WARNING]
+  > This constructor assumes you have already correctly handled the promise
+  > rejection state, presumably by mapping it into the wrapped `Result`. It is
+  > *unsafe* for this promise ever to reject! You should only ever use this
+  > with `Promise<Result<T, E>>` you have created yourself (including via a
+  > `Task`, of course).
+  >
+  > For any other `Promise<Result<T, E>>`, you should first attach a `catch`
+  > handler which will also produce a `Result<T, E>`.
+  >
+  > If you call this with an unmanaged `Promise<Result<T, E>>`, that is, one
+  > that has *not* correctly set up a `catch` handler, the rejection will
+  > throw an {@linkcode UnsafePromise} error that will ***not*** be catchable
+  > by awaiting the `Task` or its original `Promise`. This can cause test
+  > instability and unpredictable behavior in your application.
+
+  @param promise The promise from which to create the `Task`.
+
+  @group Constructors
+ */
+export function fromUnsafePromise<T, E>(promise: Promise<Result<T, E>>): Task<T, E> {
+  return new Task((resolve, reject) => {
+    promise.then(
+      matchResult({
+        Ok: resolve,
+        Err: reject,
+      }),
+      (rejectionReason: unknown) => {
+        throw new UnsafePromise(rejectionReason);
+      }
+    );
+  });
+}
 
 /**
   Given a function which takes no arguments and returns a `Promise`, return a
@@ -1504,7 +1662,7 @@ export function safe<
   R extends Awaited<ReturnType<F>>,
   E,
 >(fn: F, onError?: (reason: unknown) => E): (...params: P) => Task<R, unknown> {
-  let handleError = onError ?? ((e: unknown) => e);
+  let handleError = onError ?? identity;
   return (...params) => safelyTryOrElse(handleError, () => fn(...params) as R);
 }
 
@@ -1596,10 +1754,14 @@ export function safeNullable<
   R extends Awaited<ReturnType<F>>,
   E,
 >(fn: F, onError?: (reason: unknown) => E): (...params: P) => Task<Maybe<NonNullable<R>>, unknown> {
-  let handleError = onError ?? ((e: unknown) => e);
+  let handleError = onError ?? identity;
   return (...params) =>
     safelyTryOrElse(handleError, async () => {
       let theValue = (await fn(...params)) as R;
       return Maybe.of(theValue) as Maybe<NonNullable<R>>;
     });
+}
+
+function identity<T>(value: T): T {
+  return value;
 }
