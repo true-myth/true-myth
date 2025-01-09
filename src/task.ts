@@ -1522,9 +1522,6 @@ export function fromUnsafePromise<T, E>(promise: Promise<Result<T, E>>): Task<T,
   // Note: passing the function by name, *not* calling it.
   let theTask = safelyTry(throws);
   let theResult = await theTask;
-  if (theResult.isErr) {
-    console.error((theResult.error as Error).message);
-  }
   console.log(theResult.toString()); // Err(Error: Uh oh!)
   ```
 
@@ -1532,7 +1529,7 @@ export function fromUnsafePromise<T, E>(promise: Promise<Result<T, E>>): Task<T,
   @returns A `Task` which resolves to the resolution value of the promise or
     rejects with the rejection value of the promise *or* any error thrown while
     invoking `fn`.
-*/
+ */
 export function safelyTry<T>(fn: () => Promise<T>): Task<T, unknown> {
   return new Task((resolve, reject) => {
     try {
@@ -1543,8 +1540,60 @@ export function safelyTry<T>(fn: () => Promise<T>): Task<T, unknown> {
   });
 }
 
-export function safelyTryOr<T, E>(rejection: E): (fn: () => Promise<T>) => Task<T, E>;
+/**
+  Given a function which takes no arguments and returns a `Promise` and a value
+  of type `E` to use as the rejection if the `Promise` rejects, return a
+  {@linkcode Task Task<T, E>} for the result of invoking that function. This
+  safely handles functions which fail synchronously or asynchronously, so unlike
+  {@linkcode fromPromise} is safe to use with values which may throw errors
+  _before_ producing a `Promise`.
+
+  ## Examples
+
+  ```ts
+  import { safelyTryOr } from 'true-myth/task';
+
+  function throws(): Promise<number> {
+    throw new Error("Uh oh!");
+  }
+
+  // Note: passing the function by name, *not* calling it.
+  let theTask = safelyTryOr("fallback", throws);
+  let theResult = await theTask;
+  if (theResult.isErr) {
+    console.error(theResult.error); // "fallback"
+  }
+  ```
+
+  You can also write this in “curried” form, passing just the fallback value and
+  getting back a function which accepts the:
+
+  ```ts
+  import { safelyTryOr } from 'true-myth/task';
+
+  function throws(): Promise<number> {
+    throw new Error("Uh oh!");
+  }
+
+  // Note: passing the function by name, *not* calling it.
+  let withFallback = safelyTryOr<number, string>("fallback");
+  let theResult = await withFallback(throws);
+  if (theResult.isErr) {
+    console.error(theResult.error); // "fallback"
+  }
+  ```
+
+  Note that in the curried form, you must specify the expected `T` type of the
+  resulting `Task`, or else it will always be `unknown`.
+
+  @param rejection The value to use if the `Promise` rejects.
+  @param fn A function which returns a `Promise` when called.
+  @returns A `Task` which resolves to the resolution value of the promise or
+    rejects with the rejection value of the promise *or* any error thrown while
+    invoking `fn`.
+*/
 export function safelyTryOr<T, E>(rejection: E, fn: () => Promise<T>): Task<T, E>;
+export function safelyTryOr<T, E>(rejection: E): (fn: () => Promise<T>) => Task<T, E>;
 export function safelyTryOr<T, E>(
   rejection: E,
   fn?: () => Promise<T>
@@ -1561,13 +1610,67 @@ export function safelyTryOr<T, E>(
   return curry1(op, fn);
 }
 
-export function safelyTryOrElse<T, E>(
-  onError: (reason: unknown) => E
-): (fn: () => Promise<T>) => Task<T, E>;
+/**
+  Given a function which takes no arguments and returns a `Promise` and a
+  function which accepts an `unknown` rejection reason and transforms it into a
+  known rejection type `E`, return a {@linkcode Task Task<T, E>} for the result
+  of invoking that function. This safely handles functions which fail
+  synchronously or asynchronously, so unlike {@linkcode fromPromise} is safe to
+  use with values which may throw errors _before_ producing a `Promise`.
+
+  ## Examples
+
+  ```ts
+  import { safelyTryOrElse } from 'true-myth/task';
+
+  function throws(): Promise<number> {
+    throw new Error("Uh oh!");
+  }
+
+  // Note: passing the function by name, *not* calling it.
+  let theTask = safelyTryOr(
+    (reason) => `Something went wrong: ${reason}`,
+    throws
+  );
+  let theResult = await theTask;
+  console.log(theResult.toString); // Err("Something went wrong: Error: Uh oh!")
+  ```
+
+  You can also write this in “curried” form, passing just the fallback value and
+  getting back a function which accepts the:
+
+  ```ts
+  import { safelyTryOr } from 'true-myth/task';
+
+  function throws(): Promise<number> {
+    throw new Error("Uh oh!");
+  }
+
+  // Note: passing the function by name, *not* calling it.
+  let withFallback = safelyTryOrElse<number, string>(
+    (reason) => `Something went wrong: ${reason}`
+  );
+  let theResult = await withFallback(throws);
+  console.log(theResult.toString); // Err("Something went wrong: Error: Uh oh!")
+  ```
+
+  Note that in the curried form, you must specify the expected `T` type of the
+  resulting `Task`, or else it will always be `unknown`.
+
+  @param onError The function to use to transform the rejectionr easons if the
+    `Promise` produced by `fn` rejects.
+  @param fn A function which returns a `Promise` when called.
+  @returns A `Task` which resolves to the resolution value of the promise or
+    rejects with the rejection value of the promise *or* any error thrown while
+    invoking `fn`.
+*/
 export function safelyTryOrElse<T, E>(
   onError: (reason: unknown) => E,
   fn: () => Promise<T>
 ): Task<T, E>;
+export function safelyTryOrElse<T, E>(
+  onError: (reason: unknown) => E
+): (fn: () => Promise<T>) => Task<T, E>;
 export function safelyTryOrElse<T, E>(
   onError: (reason: unknown) => E,
   fn?: () => Promise<T>
