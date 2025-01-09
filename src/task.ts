@@ -84,6 +84,8 @@ class TaskImpl<T, E> implements PromiseLike<Result<T, E>> {
     @param promise The promise from which to create the `Task`.
 
     @group Constructors
+
+    @deprecated Use the module-scoped {@linkcode fromUnsafePromise} instead.
    */
   static fromUnsafePromise<T, E>(promise: Promise<Result<T, E>>): Task<T, E> {
     return new Task((resolve, reject) => {
@@ -109,8 +111,8 @@ class TaskImpl<T, E> implements PromiseLike<Result<T, E>> {
 
     @group Constructors
 
-    @deprecated This will be removed at 9.0. Switch to the module-level function
-      {@linkcode safelyTry}, which accepts a callback instead.
+    @deprecated This will be removed at 9.0. Switch to the module-scoped
+      function {@linkcode fromPromise}.
    */
   static try<T>(promise: Promise<T>): Task<T, unknown> {
     return new Task((resolve, reject) => {
@@ -220,6 +222,8 @@ class TaskImpl<T, E> implements PromiseLike<Result<T, E>> {
 
   /**
     Build a {@linkcode Task Task<T, E>} from a {@linkcode Result Result<T, E>}.
+
+    @deprecated Use the module-scoped {@linkcode fromResult} instead.
    */
   static fromResult<T, E>(result: Result<T, E>): Task<T, E> {
     return new Task((resolve, reject) =>
