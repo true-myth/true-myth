@@ -559,13 +559,15 @@ try {
 
 This is like the Node example _but even worse_ for repetition!
 
-Nor can TypeScript help you here! It doesn't have type signatures to say "This throws an exception!" (TypeScript's `never` might come to mind, but it might mean lots of things, not just exception-throwing.)
+The same basic dynamic is in play for asynchronous operations, where a `Promise` can reject or an `async function` can `throw` an error.
 
-Neither callbacks nor exceptions are good solutions here.
+Nor can TypeScript help you here! It doesn't have type signatures to say "This throws an exception!" (TypeScript's `never` might come to mind, but it might mean lots of things, not just exception-throwing.) What is more, exceptions and `Promise` rejection values are untyped—with the strictest settings, `unknown`, but otherwise just `any`.
 
-## Solutions: `Maybe` and `Result`
+Neither callbacks nor exceptions are robustly good solutions here.
 
-`Maybe` and `Result` are our escape hatch from all this madness.
+## Solutions: `Maybe`, `Result`, and `Task`
+
+`Maybe`, `Result`, and `Task` are our escape hatch from all this madness.
 
 We reach for libraries precisely so we can solve real business problems while letting lower-level concerns live in the "solved problems" category. True Myth, borrowing ideas from many other languages and libraries, aims to put _code written to defend against `null`/`undefined` problems_ in that "solved problems" category.
 
@@ -612,7 +614,7 @@ Best of all, when you use these with libraries like TypeScript, you can lean on 
 
 ### How it works: `Result`
 
-`Result` is similar to `Maybe`, except it packages up the result of an operation (like a network request) whether it's a success (an `Ok`) or a failure (an `Err`) and lets us unwrap the package at our leisure. Whether you get back a 200 or a 401 for your HTTP request, you can pass the box around the same either way; the methods and properties the container has are not dependent upon whether there is shiny new data or a big red error inside.
+`Result` is similar to `Maybe`, except it packages up the result of a synchronous, fallible operation whether it's a success (an `Ok`) or a failure (an `Err`) and lets us unwrap the package at our leisure. For example, if you are using the Node `fs.readFileSync` to read a file synchronously (perhaps in a script where asynchrony is not necessary), you could capture its error cases with a `Result`, instead of with exceptions.
 
 ```typescript
 import { ok, err } from 'true-myth/result';
@@ -626,9 +628,29 @@ console.log(myNumberErr.map((n) => n * 2)); // Err(oh no)
 
 Thus, you can replace functions which take polymorphic arguments or have polymorphic return values to try to handle scenarios where something may be a success or an error with functions using `Result`.
 
-Any place you try to treat either a `Maybe` or a `Result` as just the underlying value rather than the container, the type systems will complain, of course. And you'll also get help from smart editors with suggestions about what kinds of values (including functions) you need to interact with any given helper or method, since the type definitions are supplied.
+### How it works: `Task`
 
-By leaning on TypeScript to handle the checking, we also get all these benefits with _no_ runtime overhead other than the cost of constructing the actual container objects (which is to say: _very_ low!).
+The final member of our trio, `Task`, is just like a `Result`, except for asynchronous operations. For example, you might represent the result of a network request with a `Task`, because network operations are always asynchronous. Whether you get back a 200 or a 401 for your HTTP request, you can pass the box around the same either way; the methods and properties the container has are not dependent upon whether there is shiny new data or a big red error inside.
+
+Like a `Promise`, a `Task` can either be `Resolved` or `Rejected`. Unlike a `Promise`, though, when a `Task` is rejected, it does not throw an error or enter a totally different control flow path. Instead, it always produces a value you can work with, just like `Result` does for synchronous operations.
+
+```typescript
+import Task from 'true-myth/task';
+
+let doubled = (n: number) => n * 2;
+
+let resolved = Task.resolve<number, string>(123).map(doubled);
+let rejected = Task.reject<number, string>("sad").map(doubled);
+
+console.log(resolved.toString()); // Resolved(456)
+console.log(rejected.toString()); // Rejected("sad")
+```
+
+### How it works: the big picture
+
+Any place you try to treat a `Maybe`, a `Result`, or a `Task` as just the underlying value rather than the container, the type systems will complain, of course. And you'll also get help from smart editors with suggestions about what kinds of values (including functions) you need to interact with any given helper or method, since the type definitions are supplied.
+
+By leaning on TypeScript to handle the checking, we also get all these benefits with _no_ runtime overhead other than the cost of constructing the actual container objects (which is to say: _very_ low!) and, in the case of `Task`, one additional microtask queue tick.
 
 ## Design philosophy
 
