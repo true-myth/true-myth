@@ -1346,6 +1346,15 @@ class Timeout extends Error {
 // otherwise): people ought not be subclassing or instantiating `Timeout`!
 export type { Timeout };
 
+/** Standalone function version of {@linkcode Task.resolve} */
+export const resolve = Task.resolve;
+
+/** Standalone function version of {@linkcode Task.reject} */
+export const reject = Task.reject;
+
+/** Standalone function version of {@linkcode Task.withResolvers} */
+export const withResolvers = Task.withResolvers;
+
 /**
   Produce a {@linkcode Task Task<T, unknown>} from a [`Promise`][mdn-promise].
 
