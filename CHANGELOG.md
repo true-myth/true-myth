@@ -11,6 +11,49 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 
 
+
+## 8.3.0 (2025-01-10)
+
+Highlights:
+
+- All the missing `Task` combinators that weren’t part of v8.3.0: `all`, `allSettled`, `any`, `race`, as well as fancy new `timer` and `timeout` functions.
+- New `safe` functions in the `Result` and `Task` modules, for transforming a throwing function into one you can call safely and get a `Result` or `Task` instead.
+- Module-scope versions of all the major `Task` constructors.
+- A new name for the `wrapReturn` function in the `Maybe` module, `safe`, to match the same function in the `Result` and `Task` modules
+
+This release also introduces some deprecations to tackle some mistakes we (read: @chriskrycho) made in the initial release of `Task` in [v8.2.0](https://github.com/true-myth/true-myth/releases/tag/v8.2.0).
+
+> [!NOTE]
+> We will be releasing v9.0.0 very soon, removing those deprecations and updating our TypeScript support matrix. However, we expect 8.3 to be stable enough that you could stay on it without issues—potentially for *years*. If there are any showstopper bugs, we will of course backport a fix for them, but there shouldn’t be any!
+
+#### (:rocket: Enhancement)
+* [#916](https://github.com/true-myth/true-myth/pull/916) Task: add module-scoped `resolve`, `reject`, and `withResolvers` ([@chriskrycho](https://github.com/chriskrycho))
+* [#909](https://github.com/true-myth/true-myth/pull/909) Maybe: rename `wrapReturn` to `safe` ([@chriskrycho](https://github.com/chriskrycho))
+* [#902](https://github.com/true-myth/true-myth/pull/902) Task: add `all`, `allSettled`, `any`, `race`, `timer`, and `timeout` ([@chriskrycho](https://github.com/chriskrycho))
+* [#901](https://github.com/true-myth/true-myth/pull/901) Task: better inference for chaining combinators ([@chriskrycho](https://github.com/chriskrycho))
+* [#898](https://github.com/true-myth/true-myth/pull/898) Maybe: support readonly arrays in `transposeArray` ([@chriskrycho](https://github.com/chriskrycho))
+
+#### (:memo: Documentation)
+* [#915](https://github.com/true-myth/true-myth/pull/915) docs: expand on `Task` in README ([@chriskrycho](https://github.com/chriskrycho))
+* [#914](https://github.com/true-myth/true-myth/pull/914) Task: document `safelyTryOr` and `safelyTryOrElse` ([@chriskrycho](https://github.com/chriskrycho))
+* [#894](https://github.com/true-myth/true-myth/pull/894) doc: fix task-basics link ([@priegger](https://github.com/priegger))
+
+#### (:house: Internal)
+* [#910](https://github.com/true-myth/true-myth/pull/910) internal: add deprecation type to lerna-changelog ([@chriskrycho](https://github.com/chriskrycho))
+* [#903](https://github.com/true-myth/true-myth/pull/903) internal: Pin to the oldest TS version we support for dev ([@chriskrycho](https://github.com/chriskrycho))
+* [#900](https://github.com/true-myth/true-myth/pull/900) Task(tests): group and name tests more clearly ([@chriskrycho](https://github.com/chriskrycho))
+* [#899](https://github.com/true-myth/true-myth/pull/899) internal: tweak Zed settings ([@chriskrycho](https://github.com/chriskrycho))
+
+#### (:wastebasket: Deprecation)
+* [#909](https://github.com/true-myth/true-myth/pull/909) Maybe: rename `wrapReturn` to `safe` ([@chriskrycho](https://github.com/chriskrycho))
+* [#908](https://github.com/true-myth/true-myth/pull/908) Task: deprecate `Task.try`, `Task.tryOr`, and `Task.tryOrElse` ([@chriskrycho](https://github.com/chriskrycho))
+* [#913](https://github.com/true-myth/true-myth/pull/913) Task: deprecate static `fromResult`, `fromPromise`, and `fromUnsafePromise`
+
+#### Committers: 2
+- Chris Krycho ([@chriskrycho](https://github.com/chriskrycho))
+- Philipp Riegger ([@priegger](https://github.com/priegger))
+
+
 ## 8.2.0 (2025-01-03)
 
 Finally—*finally!*—True Myth get a `Task` type! A `Task<T, E>` is like a `Promise<Result<T, E>>`. In fact, under the hood, it is *exactly* a `Promise<Result<T, E>>`, but in general you do not need to think about that layering. Instead, you get a nice type-safe API for fallible async operations. (It’s what `Promise` should have been!)
