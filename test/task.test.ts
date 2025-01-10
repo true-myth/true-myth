@@ -23,6 +23,9 @@ import Task, {
   fromPromise,
   fromUnsafePromise,
   fromResult,
+  resolve,
+  reject,
+  withResolvers,
 } from 'true-myth/task';
 import Maybe from 'true-myth/maybe';
 import Result from 'true-myth/result';
@@ -1759,6 +1762,70 @@ describe('module-scope functions', () => {
     expectTypeOf(aTimer).toEqualTypeOf<Timer>();
     let result = await aTimer;
     expect(unwrap(result)).toEqual(ms);
+  });
+
+  describe('resolve', () => {
+    test('produces `Task<Unit, never>` when passed no arguments', () => {
+      let theTask = resolve();
+      expectTypeOf(theTask).toEqualTypeOf<Task<Unit, never>>();
+    });
+
+    test('produces `Task<T, never>` when passed a basic argument', () => {
+      let theValue = 'hello';
+      let theTask = resolve(theValue);
+      expectTypeOf(theTask).toEqualTypeOf<Task<string, never>>();
+    });
+
+    test('allows explicitly setting a type for `E`', () => {
+      let resolvedWithUnit = resolve<Unit, string>();
+      expectTypeOf(resolvedWithUnit).toEqualTypeOf<Task<Unit, string>>();
+
+      let resolvedWithValue = resolve<string, number>('hello');
+      expectTypeOf(resolvedWithValue).toEqualTypeOf<Task<string, number>>();
+    });
+  });
+
+  describe('reject', () => {
+    test('produces `Task<never, Unit>` when passed no arguments', () => {
+      let theTask = reject();
+      expectTypeOf(theTask).toEqualTypeOf<Task<never, Unit>>();
+    });
+
+    test('produces `Task<never, E>` when passed an argument', () => {
+      let theReason = 'uh oh';
+      let theTask = reject(theReason);
+      expectTypeOf(theTask).toEqualTypeOf<Task<never, string>>();
+    });
+
+    test('allows explicitly setting a type for `T`', () => {
+      let rejectedWithUnit = reject<string>();
+      expectTypeOf(rejectedWithUnit).toEqualTypeOf<Task<string, Unit>>();
+
+      let rejectedWithValue = reject<string, number>(123);
+      expectTypeOf(rejectedWithValue).toEqualTypeOf<Task<string, number>>();
+    });
+  });
+
+  describe('withResolvers', () => {
+    test('supports resolving', async () => {
+      let { task, resolve } = withResolvers<string, never>();
+      expectTypeOf(task).toEqualTypeOf<Task<string, never>>();
+
+      let theValue = 'hello';
+      resolve(theValue);
+      let result = await task;
+      expect(unwrap(result)).toEqual(theValue);
+    });
+
+    test('supports rejecting', async () => {
+      let { task, reject } = withResolvers<never, string>();
+      expectTypeOf(task).toEqualTypeOf<Task<never, string>>();
+
+      let theReason = 'le sigh';
+      reject(theReason);
+      let result = await task;
+      expect(unwrapErr(result)).toEqual(theReason);
+    });
   });
 
   describe('safelyTry', () => {
