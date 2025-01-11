@@ -1917,12 +1917,14 @@ export function safeNullable<
   {@linkcode Task.map Task.prototype.map}.
 
   > [!TIP]
-  > This is provided for parity with the similar functions that the `Maybe`
-  > and `Result` modules provide. However, like `Result`, you will likely find
-  > that this form is somewhat difficult to use, because TypeScript’s type
-  > inference does not support it well: you will tend to end up with an awful
-  > lot of `unknown` unless you write the type parameters explicitly at the call
-  > site.
+  > The auto-curried version is provided for parity with the similar functions
+  > that the `Maybe` and `Result` modules provide. However, like `Result`, you
+  > will likely find that this form is somewhat difficult to use, because
+  > TypeScript’s type inference does not support it well: you will tend to end
+  > up with an awful lot of `unknown` unless you write the type parameters
+  > explicitly at the call site.
+  >
+  > The non-curried form will not have that problem, so you should prefer it.
 
   @template T The type of the value when the `Task` resolves successfully.
   @template E The type of the rejection reason when the `Task` rejects.
@@ -1941,12 +1943,14 @@ export function map<T, U, E>(
   {@linkcode Task.mapRejected Task.prototype.mapRejected}.
 
   > [!TIP]
-  > This is provided for parity with the similar functions that the `Maybe`
-  > and `Result` modules provide. However, like `Result`, you will likely find
-  > that this form is somewhat difficult to use, because TypeScript’s type
-  > inference does not support it well: you will tend to end up with an awful
-  > lot of `unknown` unless you write the type parameters explicitly at the call
-  > site.
+  > The auto-curried version is provided for parity with the similar functions
+  > that the `Maybe` and `Result` modules provide. However, like `Result`, you
+  > will likely find that this form is somewhat difficult to use, because
+  > TypeScript’s type inference does not support it well: you will tend to end
+  > up with an awful lot of `unknown` unless you write the type parameters
+  > explicitly at the call site.
+  >
+  > The non-curried form will not have that problem, so you should prefer it.
 
   @template T The type of the value when the `Task` resolves successfully.
   @template E The type of the rejection reason when the `Task` rejects.
@@ -1965,12 +1969,14 @@ export function mapRejected<T, E, F>(
   {@linkcode Task.and Task.prototype.and}.
 
   > [!TIP]
-  > This is provided for parity with the similar functions that the `Maybe`
-  > and `Result` modules provide. However, like `Result`, you will likely find
-  > that this form is somewhat difficult to use, because TypeScript’s type
-  > inference does not support it well: you will tend to end up with an awful
-  > lot of `unknown` unless you write the type parameters explicitly at the call
-  > site.
+  > The auto-curried version is provided for parity with the similar functions
+  > that the `Maybe` and `Result` modules provide. However, like `Result`, you
+  > will likely find that this form is somewhat difficult to use, because
+  > TypeScript’s type inference does not support it well: you will tend to end
+  > up with an awful lot of `unknown` unless you write the type parameters
+  > explicitly at the call site.
+  >
+  > The non-curried form will not have that problem, so you should prefer it.
 
   @template T The type of the value when the `Task` resolves successfully.
   @template E The type of the rejection reason when the `Task` rejects.
@@ -1989,12 +1995,14 @@ export function and<T, U, E>(
   {@linkcode Task.andThen Task.prototype.andThen}.
 
   > [!TIP]
-  > This is provided for parity with the similar functions that the `Maybe`
-  > and `Result` modules provide. However, like `Result`, you will likely find
-  > that this form is somewhat difficult to use, because TypeScript’s type
-  > inference does not support it well: you will tend to end up with an awful
-  > lot of `unknown` unless you write the type parameters explicitly at the call
-  > site.
+  > The auto-curried version is provided for parity with the similar functions
+  > that the `Maybe` and `Result` modules provide. However, like `Result`, you
+  > will likely find that this form is somewhat difficult to use, because
+  > TypeScript’s type inference does not support it well: you will tend to end
+  > up with an awful lot of `unknown` unless you write the type parameters
+  > explicitly at the call site.
+  >
+  > The non-curried form will not have that problem, so you should prefer it.
 
   @template T The type of the value when the `Task` resolves successfully.
   @template E The type of the rejection reason when the `Task` rejects.
@@ -2018,12 +2026,14 @@ export function andThen<T, U, E, F = E>(
   {@linkcode Task.or Task.prototype.or}.
 
   > [!TIP]
-  > This is provided for parity with the similar functions that the `Maybe`
-  > and `Result` modules provide. However, like `Result`, you will likely find
-  > that this form is somewhat difficult to use, because TypeScript’s type
-  > inference does not support it well: you will tend to end up with an awful
-  > lot of `unknown` unless you write the type parameters explicitly at the call
-  > site.
+  > The auto-curried version is provided for parity with the similar functions
+  > that the `Maybe` and `Result` modules provide. However, like `Result`, you
+  > will likely find that this form is somewhat difficult to use, because
+  > TypeScript’s type inference does not support it well: you will tend to end
+  > up with an awful lot of `unknown` unless you write the type parameters
+  > explicitly at the call site.
+  >
+  > The non-curried form will not have that problem, so you should prefer it.
 
   @template T The type of the value when the `Task` resolves successfully.
   @template E The type of the rejection reason when the `Task` rejects.
@@ -2042,12 +2052,14 @@ export function or<U, F, T, E>(
   {@linkcode Task.orElse Task.prototype.orElse}.
 
   > [!TIP]
-  > This is provided for parity with the similar functions that the `Maybe`
-  > and `Result` modules provide. However, like `Result`, you will likely find
-  > that this form is somewhat difficult to use, because TypeScript’s type
-  > inference does not support it well: you will tend to end up with an awful
-  > lot of `unknown` unless you write the type parameters explicitly at the call
-  > site.
+  > The auto-curried version is provided for parity with the similar functions
+  > that the `Maybe` and `Result` modules provide. However, like `Result`, you
+  > will likely find that this form is somewhat difficult to use, because
+  > TypeScript’s type inference does not support it well: you will tend to end
+  > up with an awful lot of `unknown` unless you write the type parameters
+  > explicitly at the call site.
+  >
+  > The non-curried form will not have that problem, so you should prefer it.
 
   @template T The type of the value when the `Task` resolves successfully.
   @template E The type of the rejection reason when the `Task` rejects.
@@ -2071,12 +2083,14 @@ export function orElse<T, E, F, U = T>(
   {@linkcode Task.match Task.prototype.match}.
 
   > [!TIP]
-  > This is provided for parity with the similar functions that the `Maybe`
-  > and `Result` modules provide. However, like `Result`, you will likely find
-  > that this form is somewhat difficult to use, because TypeScript’s type
-  > inference does not support it well: you will tend to end up with an awful
-  > lot of `unknown` unless you write the type parameters explicitly at the call
-  > site.
+  > The auto-curried version is provided for parity with the similar functions
+  > that the `Maybe` and `Result` modules provide. However, like `Result`, you
+  > will likely find that this form is somewhat difficult to use, because
+  > TypeScript’s type inference does not support it well: you will tend to end
+  > up with an awful lot of `unknown` unless you write the type parameters
+  > explicitly at the call site.
+  >
+  > The non-curried form will not have that problem, so you should prefer it.
 
   @template T The type of the value when the `Task` resolves successfully.
   @template E The type of the rejection reason when the `Task` rejects.
@@ -2095,12 +2109,14 @@ export function match<T, E, A>(
   {@linkcode Task.timeout Task.prototype.timeout}.
 
   > [!TIP]
-  > This is provided for parity with the similar functions that the `Maybe`
-  > and `Result` modules provide. However, like `Result`, you will likely find
-  > that this form is somewhat difficult to use, because TypeScript’s type
-  > inference does not support it well: you will tend to end up with an awful
-  > lot of `unknown` unless you write the type parameters explicitly at the call
-  > site.
+  > The auto-curried version is provided for parity with the similar functions
+  > that the `Maybe` and `Result` modules provide. However, like `Result`, you
+  > will likely find that this form is somewhat difficult to use, because
+  > TypeScript’s type inference does not support it well: you will tend to end
+  > up with an awful lot of `unknown` unless you write the type parameters
+  > explicitly at the call site.
+  >
+  > The non-curried form will not have that problem, so you should prefer it.
 
   @template T The type of the value when the `Task` resolves successfully.
   @template E The type of the rejection reason when the `Task` rejects.
@@ -2117,8 +2133,7 @@ export function timeout<T, E>(
 }
 
 /**
-  Auto-curried, standalone function form of
-  {@linkcode Task.toPromise Task.prototype.toPromise}.
+  Standalone version of {@linkcode Task.toPromise Task.prototype.toPromise}.  
 
   @template T The type of the value when the `Task` resolves successfully.
   @template E The type of the rejection reason when the `Task` rejects.
