@@ -1554,13 +1554,6 @@ export function safe<
 }
 
 /**
-  @alias for {@linkcode safe}.
-  @deprecated Switch to using {@linkcode safe} instead. This will be removed at
-    9.0.
- */
-export const wrapReturn = safe;
-
-/**
   The public interface for the {@linkcode Maybe} class *as a value*: a
   constructor and the associated static properties.
  */
