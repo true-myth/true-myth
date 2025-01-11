@@ -2055,7 +2055,6 @@ describe('module-scope functions', () => {
           let theTask = safeExample(123, { rejectPromise: true });
           expectTypeOf(theTask).toEqualTypeOf<Task<number, string>>();
           await theTask;
-          console.log(theTask.toString());
           if (theTask.isRejected) {
             expect(theTask.reason).toBe(`"${REJECTION_REASON}"`);
           } else {
