@@ -768,13 +768,14 @@ export type TaskTypesFor<A extends readonly AnyTask[]> = [
   The resolution type for a given {@linkcode Task}.
   @internal
  */
-export type ResolvesTo<T extends AnyTask> = T extends Task<infer T, infer _> ? T : never;
+export type ResolvesTo<T extends AnyTask> = T extends Task<infer Value, infer _> ? Value : never;
 
 /**
   The rejection type for a given {@linkcode Task}
   @internal
  */
-export type RejectsWith<T extends AnyTask> = T extends Task<infer _, infer E> ? E : never;
+export type RejectsWith<T extends AnyTask> =
+  T extends Task<infer _, infer Rejection> ? Rejection : never;
 
 /**
   Create a {@linkcode Task} which will resolve to {@linkcode Unit} after a set
@@ -840,6 +841,8 @@ export type All<A extends readonly AnyTask[]> = Task<
   ```
 
   @param tasks The list of tasks to wait on.
+
+  @template A The type of the array or tuple of tasks.
 */
 export function all(tasks: []): Task<[], never>;
 export function all<A extends readonly AnyTask[]>(tasks: A): All<A>;
@@ -934,6 +937,8 @@ export type Settled<A extends readonly AnyTask[]> = {
   ```
 
   @param tasks The tasks to wait on settling.
+
+  @template A The type of the array or tuple of tasks.
  */
 export function allSettled<A extends readonly AnyTask[]>(tasks: A): Task<Settled<A>, never>;
 export function allSettled(tasks: AnyTask[]): Task<unknown, never> {
@@ -991,6 +996,8 @@ export function allSettled(tasks: AnyTask[]): Task<unknown, never> {
     first task to resolve, or {@linkcode Rejected} with the rejection reasons
     for all the tasks passed in in an {@linkcode AggregateRejection}. Note that
     the order of the rejection reasons is not guaranteed.
+
+  @template A The type of the array or tuple of tasks.
 */
 export function any(tasks: []): Task<never, AggregateRejection<[]>>;
 export function any<A extends readonly AnyTask[]>(
@@ -1066,6 +1073,8 @@ export function any(tasks: [] | AnyTask[]): AnyTask {
   ```
 
   @param tasks The tasks to race against each other.
+
+  @template A The type of the array or tuple of tasks.
  */
 export function race(tasks: []): Task<never, never>;
 export function race<A extends readonly AnyTask[]>(
@@ -1094,6 +1103,8 @@ export function race(tasks: [] | AnyTask[]): AnyTask {
 
   > [!NOTE]
   > This error type is not allowed to be subclassed.
+
+  @template E The type of the rejection reasons.
 */
 export class AggregateRejection<E extends unknown[]> extends Error {
   readonly name = 'AggregateRejection';
@@ -1108,7 +1119,14 @@ export class AggregateRejection<E extends unknown[]> extends Error {
   }
 }
 
-/** @group Task Variants */
+/**
+  A {@linkcode Task Task<T, E>} that has not yet resolved.
+
+  @template T The type of the value when the `Task` resolves successfully.
+  @template E The type of the rejection reason when the `Task` rejects.
+
+  @group Task Variants
+ */
 export interface Pending<T, E> extends Omit<TaskImpl<T, E>, 'value' | 'reason'> {
   get isPending(): true;
   get isResolved(): false;
@@ -1116,7 +1134,14 @@ export interface Pending<T, E> extends Omit<TaskImpl<T, E>, 'value' | 'reason'> 
   get state(): typeof State.Pending;
 }
 
-/** @group Task Variants */
+/**
+  A {@linkcode Task Task<T, E>} that has resolved. Its `value` is of type `T`.
+
+  @template T The type of the value when the `Task` resolves successfully.
+  @template E The type of the rejection reason when the `Task` rejects.
+
+  @group Task Variants
+ */
 export interface Resolved<T, E> extends Omit<TaskImpl<T, E>, 'reason'> {
   get isPending(): false;
   get isResolved(): true;
@@ -1125,7 +1150,14 @@ export interface Resolved<T, E> extends Omit<TaskImpl<T, E>, 'reason'> {
   get value(): T;
 }
 
-/** @group Task Variants */
+/**
+  A {@linkcode Task Task<T, E>} that has rejected. Its `reason` is of type `E`.
+
+  @template T The type of the value when the `Task` resolves successfully.
+  @template E The type of the rejection reason when the `Task` rejects.
+
+  @group Task Variants
+ */
 export interface Rejected<T, E> extends Omit<TaskImpl<T, E>, 'value'> {
   get isPending(): false;
   get isResolved(): false;
@@ -1303,6 +1335,9 @@ export const Task = TaskImpl as TaskConstructor;
   Result<T, E>}.
 
   @class
+
+  @template T The type of the value when the `Task` resolves successfully.
+  @template E The type of the rejection reason when the `Task` rejects.
  */
 export type Task<T, E> = Pending<T, E> | Resolved<T, E> | Rejected<T, E>;
 export default Task;
