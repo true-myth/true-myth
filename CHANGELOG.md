@@ -12,6 +12,25 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 
 
+
+## 8.4.0 (2025-01-11)
+
+Highlight: adds auto-curried, module-scope versions of all the `Task` instance methods like `map` and `andThen` and more. Hot on the heels of 8.3.0, with what we *think* is probably the last set of features for this release!
+
+#### (:rocket: Enhancement)
+* [#918](https://github.com/true-myth/true-myth/pull/918) Task: module-scoped versions of instance methods ([@chriskrycho](https://github.com/chriskrycho))
+
+#### (:memo: Documentation)
+* [#920](https://github.com/true-myth/true-myth/pull/920) docs: clarify tips aboout auto-curried forms ([@chriskrycho](https://github.com/chriskrycho))
+* [#919](https://github.com/true-myth/true-myth/pull/919) docs: add many type parameter docs ([@chriskrycho](https://github.com/chriskrycho))
+
+#### (:house: Internal)
+* [#917](https://github.com/true-myth/true-myth/pull/917) internal: clean up a `console.log` ([@chriskrycho](https://github.com/chriskrycho))
+
+#### Committers: 1
+- Chris Krycho ([@chriskrycho](https://github.com/chriskrycho))
+
+
 ## 8.3.0 (2025-01-10)
 
 Highlights:
