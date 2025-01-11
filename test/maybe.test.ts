@@ -551,31 +551,6 @@ describe('`Maybe` pure functions', () => {
     expectTypeOf(querySelector).toEqualTypeOf<() => Maybe<string>>();
   });
 
-  test('`wrapReturn`', () => {
-    const empty = '';
-    const emptyResult = MaybeNS.nothing();
-
-    const full = 'hello';
-    const fullResult = MaybeNS.just(full.length);
-
-    const mayBeNull = (s: string): number | null => (s.length > 0 ? s.length : null);
-    const mayNotBeNull = MaybeNS.wrapReturn(mayBeNull);
-
-    expect(mayNotBeNull(empty)).toEqual(emptyResult);
-    expect(mayNotBeNull(full)).toEqual(fullResult);
-
-    const mayBeUndefined = (s: string): number | undefined => (s.length > 0 ? s.length : undefined);
-    const mayNotBeUndefined = MaybeNS.wrapReturn(mayBeUndefined);
-
-    expect(mayNotBeUndefined(empty)).toEqual(emptyResult);
-    expect(mayNotBeUndefined(full)).toEqual(fullResult);
-
-    const returnsNullable = (): string | null => null;
-
-    const querySelector = MaybeNS.wrapReturn(returnsNullable);
-    expectTypeOf(querySelector).toEqualTypeOf<() => Maybe<string>>();
-  });
-
   test('`isJust` with a Just', () => {
     const testJust: Maybe<string> = MaybeNS.just('test');
 

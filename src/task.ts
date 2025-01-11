@@ -63,112 +63,6 @@ class TaskImpl<T, E> implements PromiseLike<Result<T, E>> {
   }
 
   /**
-    Produce a `Task<T, E>` from a promise of a {@linkcode Result Result<T, E>}.
-
-    > [!WARNING]
-    > This constructor assumes you have already correctly handled the promise
-    > rejection state, presumably by mapping it into the wrapped `Result`. It is
-    > *unsafe* for this promise ever to reject! You should only ever use this
-    > with `Promise<Result<T, E>>` you have created yourself (including via a
-    > `Task`, of course).
-    >
-    > For any other `Promise<Result<T, E>>`, you should first attach a `catch`
-    > handler which will also produce a `Result<T, E>`.
-    >
-    > If you call this with an unmanaged `Promise<Result<T, E>>`, that is, one
-    > that has *not* correctly set up a `catch` handler, the rejection will
-    > throw an {@linkcode UnsafePromise} error that will ***not*** be catchable
-    > by awaiting the `Task` or its original `Promise`. This can cause test
-    > instability and unpredictable behavior in your application.
-
-    @param promise The promise from which to create the `Task`.
-
-    @group Constructors
-
-    @deprecated Use the module-scoped {@linkcode fromUnsafePromise} instead.
-   */
-  static fromUnsafePromise<T, E>(promise: Promise<Result<T, E>>): Task<T, E> {
-    return new Task((resolve, reject) => {
-      promise.then(
-        matchResult({
-          Ok: resolve,
-          Err: reject,
-        }),
-        (rejectionReason: unknown) => {
-          throw new UnsafePromise(rejectionReason);
-        }
-      );
-    });
-  }
-
-  /**
-    Produce a `Task<T, unknown>` from a promise.
-
-    To handle the error case and produce a concrete `Task<T, E>` instead, use
-    the overload which accepts an `onRejection` handler instead.
-
-    @param promise The promise from which to create the `Task`.
-
-    @group Constructors
-
-    @deprecated This will be removed at 9.0. Switch to the module-scoped
-      function {@linkcode fromPromise}.
-   */
-  static try<T>(promise: Promise<T>): Task<T, unknown> {
-    return new Task((resolve, reject) => {
-      promise.then(resolve, reject);
-    });
-  }
-
-  /**
-    Produce a {@linkcode Task Task<T, E>} from a `Promise<T>` and use a fallback
-    value if the task rejects, ignoring the rejection reason.
-
-    Notes:
-
-    - To leave any error as `unknown`, use the overload which accepts only the
-      promise.
-    - To handle the rejection reason rather than ignoring it, use the overload
-      which accepts a function.
-
-    @param promise The promise from which to create the `Task`.
-    @param rejectionValue A function to transform an unknown rejection reason
-      into a known `E`.
-
-    @group Constructors
-
-    @deprecated This will be removed at 9.0. Switch to the module-level function
-      {@linkcode safelyTryOr}, which accepts a callback instead.
-   */
-  static tryOr<T, E>(promise: Promise<T>, rejectionValue: E): Task<T, E> {
-    return new Task((resolve, reject) => {
-      promise.then(resolve, (_reason) => reject(rejectionValue));
-    });
-  }
-
-  /**
-    Produce a `Task<T, E>` from a `Promise<T>` and a function to transform an
-    unknown error to `E`.
-
-    To leave any error as `unknown`, use the overload which accepts only the
-    promise.
-
-    @param promise The promise from which to create the `Task`.
-    @param onRejection A function to transform an unknown rejection reason into
-      a known `E`.
-
-    @group Constructors
-
-    @deprecated This will be removed at 9.0. Switch to the module-level function
-      {@linkcode safelyTryOrElse}, which accepts a callback instead.
-   */
-  static tryOrElse<T, E>(promise: Promise<T>, onRejection: (reason: unknown) => E): Task<T, E> {
-    return new Task((resolve, reject) => {
-      promise.then(resolve, (reason) => reject(onRejection(reason)));
-    });
-  }
-
-  /**
     Construct a `Task` which is already resolved. Useful when you have a value
     already, but need it to be available in an API which expects a `Task`.
 
@@ -218,20 +112,6 @@ class TaskImpl<T, E> implements PromiseLike<Result<T, E>> {
     // into something like `Result<Blah, undefined>`.
     let result = arguments.length === 0 ? Unit : reason;
     return new Task((_, reject) => reject(result));
-  }
-
-  /**
-    Build a {@linkcode Task Task<T, E>} from a {@linkcode Result Result<T, E>}.
-
-    @deprecated Use the module-scoped {@linkcode fromResult} instead.
-   */
-  static fromResult<T, E>(result: Result<T, E>): Task<T, E> {
-    return new Task((resolve, reject) =>
-      result.match({
-        Ok: resolve,
-        Err: reject,
-      })
-    );
   }
 
   /**
@@ -378,7 +258,7 @@ class TaskImpl<T, E> implements PromiseLike<Result<T, E>> {
       it is `Resolved`.
    */
   map<U>(mapFn: (t: T) => U): Task<U, E> {
-    return Task.fromUnsafePromise(this.#promise.then(mapResult(mapFn)));
+    return fromUnsafePromise(this.#promise.then(mapResult(mapFn)));
   }
 
   /**
@@ -414,7 +294,7 @@ class TaskImpl<T, E> implements PromiseLike<Result<T, E>> {
       rejected.
    */
   mapRejected<F>(mapFn: (e: E) => F): Task<T, F> {
-    return TaskImpl.fromUnsafePromise(this.#promise.then(mapErr(mapFn)));
+    return fromUnsafePromise(this.#promise.then(mapErr(mapFn)));
   }
 
   /**
@@ -1242,12 +1122,6 @@ export class InvalidAccess extends Error {
   }
 }
 
-/** @inheritdoc Task.tryOr */
-export const tryOr = TaskImpl.tryOr;
-
-/** @inheritdoc Task.tryOrElse */
-export const tryOrElse = TaskImpl.tryOrElse;
-
 /* v8 ignore next 3 */
 function unreachable(value: never): never {
   throw new Error(`Unexpected value: ${value}`);
@@ -1274,8 +1148,8 @@ export interface TaskConstructor extends Omit<typeof TaskImpl, 'constructor'> {
 
     - {@linkcode fromPromise}
     - {@linkcode safelyTry}
-    - {@linkcode safelyTryOr}
-    - {@linkcode safelyTryOrElse}
+    - {@linkcode tryOr}
+    - {@linkcode tryOrElse}
 
     For constructing a `Task` immediately resolved or rejected with given
     values, see {@linkcode Task.resolve} and {@linkcode Task.reject}
@@ -1400,8 +1274,8 @@ export const withResolvers = Task.withResolvers;
   > [!IMPORTANT]
   > This does not (and by definition cannot) handle errors that happen during
   > construction of the `Promise`, because those happen before this is called.
-  > See {@linkcode safelyTry}, {@linkcode safelyTryOr}, or
-  > {@linkcode safelyTryOrElse} for alternatives which accept a callback for
+  > See {@linkcode safelyTry}, {@linkcode tryOr}, or
+  > {@linkcode tryOrElse} for alternatives which accept a callback for
   > constructing a promise and can therefore handle errors thrown in the call.
 
   @param promise The promise from which to create the `Task`.
@@ -1424,8 +1298,8 @@ export function fromPromise<T>(promise: Promise<T>): Task<T, unknown>;
   > [!IMPORTANT]
   > This does not (and by definition cannot) handle errors that happen during
   > construction of the `Promise`, because those happen before this is called.
-  > See {@linkcode safelyTry}, {@linkcode safelyTryOr}, or
-  > {@linkcode safelyTryOrElse} for alternatives which accept a callback for
+  > See {@linkcode safelyTry}, {@linkcode tryOr}, or
+  > {@linkcode tryOrElse} for alternatives which accept a callback for
   > constructing a promise and can therefore handle errors thrown in the call.
 
   @param promise The promise from which to create the `Task`.
@@ -1635,9 +1509,9 @@ export function safelyTry<T>(fn: () => Promise<T>): Task<T, unknown> {
     rejects with the rejection value of the promise *or* any error thrown while
     invoking `fn`.
 */
-export function safelyTryOr<T, E>(rejection: E, fn: () => Promise<T>): Task<T, E>;
-export function safelyTryOr<T, E>(rejection: E): (fn: () => Promise<T>) => Task<T, E>;
-export function safelyTryOr<T, E>(
+export function tryOr<T, E>(rejection: E, fn: () => Promise<T>): Task<T, E>;
+export function tryOr<T, E>(rejection: E): (fn: () => Promise<T>) => Task<T, E>;
+export function tryOr<T, E>(
   rejection: E,
   fn?: () => Promise<T>
 ): Task<T, E> | ((fn: () => Promise<T>) => Task<T, E>) {
@@ -1652,6 +1526,24 @@ export function safelyTryOr<T, E>(
 
   return curry1(op, fn);
 }
+
+/**
+  An alias for {@linkcode tryOr} for ease of migrating from v8.x to v9.x.
+
+  > [!TIP]
+  > You should switch to {@linkcode tryOr}. We expect to deprecate and remove
+  > this alias at some point!
+*/
+export const safelyTryOr = tryOr;
+
+/**
+  An alias for {@linkcode tryOrElse} for ease of migrating from v8.x to v9.x.
+
+  > [!TIP]
+  > You should switch to {@linkcode tryOrElse}. We expect to deprecate and
+  > remove this alias at some point!
+*/
+export const safelyTryOrElse = tryOrElse;
 
 /**
   Given a function which takes no arguments and returns a `Promise` and a
@@ -1707,14 +1599,11 @@ export function safelyTryOr<T, E>(
     rejects with the rejection value of the promise *or* any error thrown while
     invoking `fn`.
 */
-export function safelyTryOrElse<T, E>(
-  onError: (reason: unknown) => E,
-  fn: () => Promise<T>
-): Task<T, E>;
-export function safelyTryOrElse<T, E>(
+export function tryOrElse<T, E>(onError: (reason: unknown) => E, fn: () => Promise<T>): Task<T, E>;
+export function tryOrElse<T, E>(
   onError: (reason: unknown) => E
 ): (fn: () => Promise<T>) => Task<T, E>;
-export function safelyTryOrElse<T, E>(
+export function tryOrElse<T, E>(
   onError: (reason: unknown) => E,
   fn?: () => Promise<T>
 ): Task<T, E> | ((fn: () => Promise<T>) => Task<T, E>) {
@@ -1813,7 +1702,7 @@ export function safe<
   E,
 >(fn: F, onError?: (reason: unknown) => E): (...params: P) => Task<R, unknown> {
   let handleError = onError ?? identity;
-  return (...params) => safelyTryOrElse(handleError, () => fn(...params) as R);
+  return (...params) => tryOrElse(handleError, () => fn(...params) as R);
 }
 
 /**
@@ -1906,7 +1795,7 @@ export function safeNullable<
 >(fn: F, onError?: (reason: unknown) => E): (...params: P) => Task<Maybe<NonNullable<R>>, unknown> {
   let handleError = onError ?? identity;
   return (...params) =>
-    safelyTryOrElse(handleError, async () => {
+    tryOrElse(handleError, async () => {
       let theValue = (await fn(...params)) as R;
       return Maybe.of(theValue) as Maybe<NonNullable<R>>;
     });
@@ -2133,7 +2022,7 @@ export function timeout<T, E>(
 }
 
 /**
-  Standalone version of {@linkcode Task.toPromise Task.prototype.toPromise}.  
+  Standalone version of {@linkcode Task.toPromise Task.prototype.toPromise}.
 
   @template T The type of the value when the `Task` resolves successfully.
   @template E The type of the rejection reason when the `Task` rejects.
