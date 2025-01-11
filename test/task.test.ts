@@ -26,6 +26,16 @@ import Task, {
   resolve,
   reject,
   withResolvers,
+  orElse,
+  match,
+  or,
+  andThen,
+  and,
+  mapRejected,
+  map,
+  timeout,
+  Timeout,
+  toPromise,
 } from 'true-myth/task';
 import Maybe from 'true-myth/maybe';
 import Result from 'true-myth/result';
@@ -2325,6 +2335,610 @@ describe('module-scope functions', () => {
       let result = await theTask;
       expect(result.isErr).toBe(true);
       expect(theTask.state).toEqual(State.Rejected);
+    });
+  });
+
+  describe('map', () => {
+    describe('with both arguments', () => {
+      test('for a pending promise', async () => {
+        let { task, resolve } = Task.withResolvers<number, string>();
+        let theTask = map((n: number) => n % 2 == 0, task);
+        expectTypeOf(theTask).toEqualTypeOf<Task<boolean, string>>();
+
+        resolve(123);
+        await theTask;
+      });
+
+      test('when the promise resolves', async () => {
+        let { task, resolve } = Task.withResolvers<number, string>();
+        let theTask = map((n: number) => n % 2 == 0, task);
+        expectTypeOf(theTask).toEqualTypeOf<Task<boolean, string>>();
+
+        resolve(123);
+        let result = await theTask;
+        expect(unwrap(result)).toBe(false);
+      });
+
+      test('when the promise rejects', async () => {
+        let { task, reject } = Task.withResolvers<number, string>();
+        let theTask = map((n: number) => n % 2 == 0, task);
+        expectTypeOf(theTask).toEqualTypeOf<Task<boolean, string>>();
+
+        let theReason = 'nope';
+        reject(theReason);
+        let result = await theTask;
+        expect(unwrapErr(result)).toEqual(theReason);
+      });
+    });
+
+    describe('with curried form', () => {
+      test('for a pending promise', async () => {
+        let { task, resolve } = Task.withResolvers<number, string>();
+        let theTask = map((n: number) => n % 2 == 0)(task);
+        expectTypeOf(theTask).toEqualTypeOf<Task<boolean, unknown>>();
+
+        resolve(123);
+        await theTask;
+      });
+
+      test('when the promise resolves', async () => {
+        let { task, resolve } = Task.withResolvers<number, string>();
+        let theTask = map((n: number) => n % 2 == 0)(task);
+        expectTypeOf(theTask).toEqualTypeOf<Task<boolean, unknown>>();
+
+        resolve(123);
+        let result = await theTask;
+        expect(unwrap(result)).toBe(false);
+      });
+
+      test('when the promise rejects', async () => {
+        let { task, reject } = Task.withResolvers<number, string>();
+        let theTask = map((n: number) => n % 2 == 0)(task);
+        expectTypeOf(theTask).toEqualTypeOf<Task<boolean, unknown>>();
+
+        let theReason = 'nope';
+        reject(theReason);
+        let result = await theTask;
+        expect(unwrapErr(result)).toEqual(theReason);
+      });
+    });
+  });
+
+  describe('mapRejected', () => {
+    describe('with both arguments', () => {
+      test('for a pending promise', async () => {
+        let { task } = Task.withResolvers<number, string>();
+        let theTask = mapRejected(stringify, task);
+        expectTypeOf(theTask).toEqualTypeOf<Task<number, string>>();
+      });
+
+      test('when the promise resolves', async () => {
+        let { task, resolve } = Task.withResolvers<number, string>();
+        let theTask = mapRejected(stringify, task);
+        expectTypeOf(theTask).toEqualTypeOf<Task<number, string>>();
+
+        resolve(123);
+        let result = await theTask;
+        expect(unwrap(result)).toBe(123);
+      });
+
+      test('when the promise rejects', async () => {
+        let { task, reject } = Task.withResolvers<number, string>();
+        let theTask = mapRejected(stringify, task);
+        expectTypeOf(theTask).toEqualTypeOf<Task<number, string>>();
+
+        let theReason = 'nope';
+        reject(theReason);
+        let result = await theTask;
+        expect(unwrapErr(result)).toEqual(stringify(theReason));
+      });
+    });
+
+    describe('with curried form', () => {
+      test('for a pending promise', async () => {
+        let { task } = Task.withResolvers<number, string>();
+        let theTask = mapRejected(stringify)(task);
+        expectTypeOf(theTask).toEqualTypeOf<Task<unknown, string>>();
+      });
+
+      test('when the promise resolves', async () => {
+        let { task, resolve } = Task.withResolvers<number, string>();
+        let theTask = mapRejected(stringify)(task);
+        expectTypeOf(theTask).toEqualTypeOf<Task<unknown, string>>();
+
+        resolve(123);
+        let result = await theTask;
+        expect(unwrap(result)).toBe(123);
+      });
+
+      test('when the promise rejects', async () => {
+        let { task, reject } = Task.withResolvers<number, string>();
+        let theTask = mapRejected(stringify)(task);
+        expectTypeOf(theTask).toEqualTypeOf<Task<unknown, string>>();
+
+        let theReason = 'nope';
+        reject(theReason);
+        let result = await theTask;
+        expect(unwrapErr(result)).toEqual(stringify(theReason));
+      });
+    });
+  });
+
+  describe('and', () => {
+    describe('with both arguments', () => {
+      describe('when the first Task resolves', () => {
+        test('when the second Task resolves', async () => {
+          let theValue = 'hello';
+          let theTask = and(Task.resolve(theValue), Task.resolve(123));
+          expectTypeOf(theTask).toEqualTypeOf<Task<string, never>>();
+          let theResult = await theTask;
+          expect(unwrap(theResult)).toEqual(theValue);
+        });
+
+        test('when the second Task rejects', async () => {
+          let theReason = 'hello';
+          let theTask = and(
+            Task.reject<number, string>(theReason),
+            Task.resolve<number, string>(123)
+          );
+          expectTypeOf(theTask).toEqualTypeOf<Task<number, string>>();
+          let theResult = await theTask;
+          expect(unwrapErr(theResult)).toEqual(theReason);
+        });
+      });
+
+      describe('when the first Task rejects', () => {
+        test('when the second Task resolves', async () => {
+          let theReason = 123;
+          let theTask = and(
+            Task.resolve<number, number>(456),
+            Task.reject<string, number>(theReason)
+          );
+          expectTypeOf(theTask).toEqualTypeOf<Task<number, number>>();
+          let theResult = await theTask;
+          expect(unwrapErr(theResult)).toEqual(theReason);
+        });
+
+        test('when the second Task rejects', async () => {
+          let theReason = 123;
+          let theTask = and(
+            Task.reject<string, number>(456),
+            Task.reject<string, number>(theReason)
+          );
+          expectTypeOf(theTask).toEqualTypeOf<Task<string, number>>();
+          let theResult = await theTask;
+          expect(unwrapErr(theResult)).toEqual(theReason);
+        });
+      });
+    });
+
+    describe('with curried form', () => {
+      describe('when the first Task resolves', () => {
+        test('when the second Task resolves', async () => {
+          let theValue = 'hello';
+          let theTask = and(Task.resolve(theValue))(Task.resolve(123));
+          expectTypeOf(theTask).toEqualTypeOf<Task<string, never>>();
+          let theResult = await theTask;
+          expect(unwrap(theResult)).toEqual(theValue);
+        });
+
+        test('when the second Task rejects', async () => {
+          let theReason = 'hello';
+          let theTask = and(Task.reject<number, string>(theReason))(
+            Task.resolve<number, string>(123)
+          );
+          expectTypeOf(theTask).toEqualTypeOf<Task<number, string>>();
+          let theResult = await theTask;
+          expect(unwrapErr(theResult)).toEqual(theReason);
+        });
+      });
+
+      describe('when the first Task rejects', () => {
+        test('when the second Task resolves', async () => {
+          let theReason = 123;
+          let theTask = and(Task.resolve<number, number>(456))(
+            Task.reject<string, number>(theReason)
+          );
+          expectTypeOf(theTask).toEqualTypeOf<Task<number, number>>();
+          let theResult = await theTask;
+          expect(unwrapErr(theResult)).toEqual(theReason);
+        });
+
+        test('when the second Task rejects', async () => {
+          let theReason = 123;
+          let theTask = and(Task.reject<string, number>(456))(
+            Task.reject<string, number>(theReason)
+          );
+          expectTypeOf(theTask).toEqualTypeOf<Task<string, number>>();
+          let theResult = await theTask;
+          expect(unwrapErr(theResult)).toEqual(theReason);
+        });
+      });
+    });
+  });
+
+  describe('andThen', () => {
+    describe('with both arguments', () => {
+      test('for a pending task', async () => {
+        let { task, resolve } = Task.withResolvers<number, string>();
+        let theTask = andThen((n) => Task.resolve(n % 2 == 0), task);
+        expectTypeOf(theTask).toEqualTypeOf<Task<boolean, string>>();
+
+        resolve(123);
+        await theTask;
+      });
+
+      test('when the task resolves', async () => {
+        let { task, resolve } = Task.withResolvers<number, string>();
+        let theTask = andThen((n) => Task.resolve(n % 2 == 0), task);
+        expectTypeOf(theTask).toEqualTypeOf<Task<boolean, string>>();
+
+        resolve(123);
+        let result = await theTask;
+        expect(unwrap(result)).toBe(false);
+      });
+
+      test('when the task rejects', async () => {
+        let { task, reject } = Task.withResolvers<number, string>();
+        let theTask = andThen(() => Task.reject('oh no'), task);
+        expectTypeOf(theTask).toEqualTypeOf<Task<never, string>>();
+
+        let theReason = 'nope';
+        reject(theReason);
+        let result = await theTask;
+        expect(unwrapErr(result)).toEqual(theReason);
+      });
+    });
+
+    describe('with curried form', () => {
+      test('for a pending task', async () => {
+        let { task, resolve } = Task.withResolvers<number, string>();
+        let theTask = andThen((n: number) => Task.resolve(n % 2 == 0))(task);
+        expectTypeOf(theTask).toEqualTypeOf<Task<boolean, unknown>>();
+
+        resolve(123);
+        await theTask;
+      });
+
+      test('when the task resolves', async () => {
+        let { task, resolve } = Task.withResolvers<number, string>();
+        let theTask = andThen((n: number) => Task.resolve(n % 2 == 0))(task);
+        expectTypeOf(theTask).toEqualTypeOf<Task<boolean, unknown>>();
+
+        resolve(123);
+        let result = await theTask;
+        expect(unwrap(result)).toBe(false);
+      });
+
+      test('when the task rejects', async () => {
+        let { task, reject } = Task.withResolvers<number, string>();
+        let theTask = andThen(() => Task.reject('oh no'))(task);
+        expectTypeOf(theTask).toEqualTypeOf<Task<never, unknown>>();
+
+        let theReason = 'nope';
+        reject(theReason);
+        let result = await theTask;
+        expect(unwrapErr(result)).toEqual(theReason);
+      });
+    });
+  });
+
+  describe('or', () => {
+    describe('with both arguments', () => {
+      describe('when the first Task resolves', () => {
+        test('when the second Task resolves', async () => {
+          let theTask = or(Task.resolve('B'), Task.resolve('A'));
+          expectTypeOf(theTask).toEqualTypeOf<Task<string, never>>();
+          let theResult = await theTask;
+          expect(unwrap(theResult)).toEqual('A');
+        });
+
+        test('when the second Task rejects', async () => {
+          let theReason = 'hello';
+          let theTask = or(
+            Task.reject<number, string>(theReason),
+            Task.resolve<number, string>(123)
+          );
+          expectTypeOf(theTask).toEqualTypeOf<Task<number, string>>();
+          let theResult = await theTask;
+          expect(unwrap(theResult)).toBe(123);
+        });
+      });
+
+      describe('when the first Task rejects', () => {
+        test('when the second Task resolves', async () => {
+          let theTask = or(Task.resolve('B'), Task.reject<string, number>(123));
+          expectTypeOf(theTask).toEqualTypeOf<Task<string, never>>();
+          let theResult = await theTask;
+          expect(unwrap(theResult)).toBe('B');
+        });
+
+        test('when the second Task rejects', async () => {
+          let theTask = or(Task.reject<string, number>(456), Task.reject<string, number>(123));
+          expectTypeOf(theTask).toEqualTypeOf<Task<string, number>>();
+          let theResult = await theTask;
+          expect(unwrapErr(theResult)).toBe(456);
+        });
+      });
+    });
+
+    describe('with curried form', () => {
+      describe('when the first Task resolves', () => {
+        test('when the second Task resolves', async () => {
+          let theTask = or(Task.resolve('B'))(Task.resolve('A'));
+          expectTypeOf(theTask).toEqualTypeOf<Task<unknown, never>>();
+          let theResult = await theTask;
+          expect(unwrap(theResult)).toEqual('A');
+        });
+
+        test('when the second Task rejects', async () => {
+          let theReason = 'hello';
+          let theTask = or(Task.reject<number, string>(theReason))(
+            Task.resolve<number, string>(123)
+          );
+          expectTypeOf(theTask).toEqualTypeOf<Task<unknown, string>>();
+          let theResult = await theTask;
+          expect(unwrap(theResult)).toBe(123);
+        });
+      });
+
+      describe('when the first Task rejects', () => {
+        test('when the second Task resolves', async () => {
+          let theTask = or(Task.resolve('B'))(Task.reject<string, number>(123));
+          expectTypeOf(theTask).toEqualTypeOf<Task<unknown, never>>();
+          let theResult = await theTask;
+          expect(unwrap(theResult)).toBe('B');
+        });
+
+        test('when the second Task rejects', async () => {
+          let theTask = or(Task.reject<string, number>(456))(Task.reject<string, number>(123));
+          expectTypeOf(theTask).toEqualTypeOf<Task<unknown, number>>();
+          let theResult = await theTask;
+          expect(unwrapErr(theResult)).toBe(456);
+        });
+      });
+    });
+  });
+
+  describe('orElse', () => {
+    test('for a pending promise', async () => {
+      let theTask = orElse((reason) => Task.resolve(reason.length), new Task<number, string>(noOp));
+      expectTypeOf(theTask).toEqualTypeOf<Task<number, never>>();
+
+      expect(theTask.state).toBe(State.Pending);
+    });
+
+    test('when the promise resolves', async () => {
+      let theTask = orElse(
+        (reason) => Task.resolve(reason.length),
+        Task.resolve<number, string>(123)
+      );
+      expectTypeOf(theTask).toEqualTypeOf<Task<number, never>>();
+
+      let result = await theTask;
+      expect(unwrap(result)).toBe(123);
+    });
+
+    test('when the promise rejects', async () => {
+      let theTask = orElse(
+        (reason) => Task.reject(reason.length),
+        Task.reject<number, string>('first error')
+      );
+      expectTypeOf(theTask).toEqualTypeOf<Task<number, number>>();
+
+      let result = await theTask;
+      expect(unwrapErr(result)).toBe(11);
+    });
+  });
+
+  describe('match', () => {
+    describe('with both arguments', () => {
+      test('with a resolved task', async () => {
+        let result = await match(
+          {
+            Resolved: (n) => n * 2,
+            Rejected: () => -1,
+          },
+          Task.resolve(2)
+        );
+        expect(result).toBe(4);
+      });
+
+      test('with a rejected task', async () => {
+        let result = await match(
+          {
+            Resolved: (n) => n * 2,
+            Rejected: () => -1,
+          },
+          Task.reject('oops')
+        );
+        expect(result).toBe(-1);
+      });
+
+      test('with a pending task', async () => {
+        let result = match(
+          {
+            Resolved: (n: number) => n * 2,
+            Rejected: () => -1,
+          },
+          new Task(noOp)
+        );
+        expectTypeOf(result).toEqualTypeOf<Promise<number>>();
+      });
+    });
+
+    describe('with curried form', () => {
+      test('with a resolved task', async () => {
+        let result = await match({
+          Resolved: (n: number) => n * 2,
+          Rejected: () => -1,
+        })(Task.resolve(2));
+        expect(result).toBe(4);
+      });
+
+      test('with a rejected task', async () => {
+        let result = await match({
+          Resolved: (n: number) => n * 2,
+          Rejected: () => -1,
+        })(Task.reject('oops'));
+        expect(result).toBe(-1);
+      });
+
+      test('with a pending task', async () => {
+        let result = match({
+          Resolved: (n: number) => n * 2,
+          Rejected: () => -1,
+        })(new Task(noOp));
+        expectTypeOf(result).toEqualTypeOf<Promise<number>>();
+      });
+    });
+  });
+
+  describe('timeout', () => {
+    describe('with both arguments', () => {
+      describe('with a number', () => {
+        test('that is shorter', async () => {
+          // shorter by dint of "literally any timeout is shorter than never".
+          let { task } = Task.withResolvers<string, never>();
+          let result = await timeout(1, task);
+          expect(result.isErr).toBe(true);
+          if (result.isErr) {
+            expect(result.error.duration).toBe(1);
+          } else {
+            expect.unreachable();
+          }
+        });
+
+        test('that is equal', async () => {
+          let duration = 1;
+          let task = new Task((resolve) => setTimeout(() => resolve(duration), duration));
+          let result = await timeout(duration, task);
+          expect(result.isOk).toBe(true);
+          expect(unwrap(result)).toBe(duration);
+        });
+
+        test('that is longer', async () => {
+          let duration = 1;
+          let task = new Task((resolve) => setTimeout(() => resolve(duration), duration));
+          let result = await timeout(duration * 2, task);
+          expect(result.isOk).toBe(true);
+          expect(unwrap(result)).toBe(duration);
+        });
+      });
+
+      describe('with another timer', () => {
+        test('that is shorter', async () => {
+          // shorter by dint of "literally any timeout is shorter than never".
+          let { task } = Task.withResolvers<string, never>();
+          let result = await timeout(timer(1), task);
+          expect(result.isErr).toBe(true);
+          if (result.isErr) {
+            expect(result.error.duration).toBe(1);
+          } else {
+            expect.unreachable();
+          }
+        });
+
+        test('that is equal', async () => {
+          let duration = 1;
+          let task = new Task((resolve) => setTimeout(() => resolve(duration), duration));
+          let result = await timeout(timer(duration), task);
+          expect(result.isOk).toBe(true);
+          expect(unwrap(result)).toBe(duration);
+        });
+
+        test('that is longer', async () => {
+          let duration = 1;
+          let task = new Task((resolve) => setTimeout(() => resolve(duration), duration));
+          let result = await timeout(timer(duration * 2), task);
+          expect(result.isOk).toBe(true);
+          expect(unwrap(result)).toBe(duration);
+        });
+      });
+    });
+
+    describe('with curried form', () => {
+      describe('with a number', () => {
+        test('that is shorter', async () => {
+          // shorter by dint of "literally any timeout is shorter than never".
+          let { task } = Task.withResolvers<string, never>();
+          let result = await timeout(1)(task);
+          expect(result.isErr).toBe(true);
+          if (result.isErr) {
+            expect((result.error as Timeout).duration).toBe(1);
+          } else {
+            expect.unreachable();
+          }
+        });
+
+        test('that is equal', async () => {
+          let duration = 1;
+          let task = new Task((resolve) => setTimeout(() => resolve(duration), duration));
+          let result = await timeout(duration)(task);
+          expect(result.isOk).toBe(true);
+          expect(unwrap(result)).toBe(duration);
+        });
+
+        test('that is longer', async () => {
+          let duration = 1;
+          let task = new Task((resolve) => setTimeout(() => resolve(duration), duration));
+          let result = await timeout(duration * 2)(task);
+          expect(result.isOk).toBe(true);
+          expect(unwrap(result)).toBe(duration);
+        });
+      });
+
+      describe('with another timer', () => {
+        test('that is shorter', async () => {
+          // shorter by dint of "literally any timeout is shorter than never".
+          let { task } = Task.withResolvers<string, never>();
+          let result = await timeout(timer(1))(task);
+          expect(result.isErr).toBe(true);
+          if (result.isErr) {
+            expect((result.error as Timeout).duration).toBe(1);
+          } else {
+            expect.unreachable();
+          }
+        });
+
+        test('that is equal', async () => {
+          let duration = 1;
+          let task = new Task((resolve) => setTimeout(() => resolve(duration), duration));
+          let result = await timeout(timer(duration))(task);
+          expect(result.isOk).toBe(true);
+          expect(unwrap(result)).toBe(duration);
+        });
+
+        test('that is longer', async () => {
+          let duration = 1;
+          let task = new Task((resolve) => setTimeout(() => resolve(duration), duration));
+          let result = await timeout(timer(duration * 2))(task);
+          expect(result.isOk).toBe(true);
+          expect(unwrap(result)).toBe(duration);
+        });
+      });
+    });
+  });
+
+  describe('toPromise', () => {
+    test('with a directly-constructed task', async () => {
+      let { task, resolve } = Task.withResolvers();
+      let promise = toPromise(task);
+
+      let theValue = 'hello';
+      resolve(theValue);
+      let output = await promise;
+      expect(unwrap(output)).toEqual(theValue);
+    });
+
+    test('with a passed-in-promise', async () => {
+      let { promise: theInputPromise, resolve } = deferred();
+      let theTask = fromPromise(theInputPromise);
+
+      let theValue = 123;
+      resolve(theValue);
+      let theResult = await toPromise(theTask);
+      expect(unwrap(theResult)).toEqual(theValue);
     });
   });
 });
