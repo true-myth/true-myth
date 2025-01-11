@@ -1,0 +1,44 @@
+name: v8.x CI
+
+on:
+  push:
+    branches:
+      - v8.x
+  pull_request:
+    branches:
+      - v8.x
+
+env:
+  VOLTA_FEATURE_PNPM: 1
+
+jobs:
+  tests_linux:
+    name: 'Tests: Node ${{ matrix.node-version }}'
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: ['18', '20', '22']
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: volta-cli/action@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+      - run: pnpm install
+      - run: pnpm test
+
+  tests_ts:
+    name: 'Tests: TS ${{ matrix.ts-version }}'
+    runs-on: ubuntu-latest
+    continue-on-error: false
+    strategy:
+      matrix:
+        ts-version:
+          ['4.7', '4.8', '4.9', '5.0', '5.1', '5.2', '5.3', '5.4', '5.5', '5.6', '5.7', 'next']
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: volta-cli/action@v4
+      - run: pnpm install
+      - run: pnpm add --save-dev typescript@${{ matrix.ts-version }}
+      - run: pnpm type-check
