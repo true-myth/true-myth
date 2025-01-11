@@ -720,13 +720,12 @@ class TaskImpl<T, E> implements PromiseLike<Result<T, E>> {
     If this `Task` and the duration happen to have the same duration, `timeout`
     will favor this `Task` over the timeout.
 
-    @param timer A {@linkcode Timer}
+    @param timerOrMs A {@linkcode Timer} or a number of milliseconds to wait for
+      this task before timing out.
     @returns A `Task` which has the resolution value of `this` or a `Timeout`
       if the timer elapsed.
    */
-  timeout(timer: Timer): Task<T, E | Timeout>;
-  timeout(ms: number): Task<T, E | Timeout>;
-  timeout(timerOrMs: Timer | number): Task<unknown, unknown> {
+  timeout(timerOrMs: Timer | number): Task<T, E | Timeout> {
     let timerTask = typeof timerOrMs === 'number' ? timer(timerOrMs) : timerOrMs;
     let timeout = timerTask.andThen((ms) => Task.reject(new Timeout(ms)));
     return race([this as Task<T, E>, timeout]);
@@ -1876,6 +1875,221 @@ export function safeNullable<
       let theValue = (await fn(...params)) as R;
       return Maybe.of(theValue) as Maybe<NonNullable<R>>;
     });
+}
+
+/**
+  Auto-curried, standalone function form of
+  {@linkcode Task.map Task.prototype.map}.
+
+  > [!TIP]
+  > This is provided for parity with the similar functions that the `Maybe`
+  > and `Result` modules provide. However, like `Result`, you will likely find
+  > that this form is somewhat difficult to use, because TypeScript’s type
+  > inference does not support it well: you will tend to end up with an awful
+  > lot of `unknown` unless you write the type parameters explicitly at the call
+  > site.
+
+  @template T The type of the value when the `Task` resolves successfully.
+  @template E The type of the rejection reason when the `Task` rejects.
+ */
+export function map<T, U, E>(mapFn: (t: T) => U): (task: Task<T, E>) => Task<U, E>;
+export function map<T, U, E>(mapFn: (t: T) => U, task: Task<T, E>): Task<U, E>;
+export function map<T, U, E>(
+  mapFn: (t: T) => U,
+  task?: Task<T, E>
+): Task<U, E> | ((task: Task<T, E>) => Task<U, E>) {
+  return curry1((task) => task.map(mapFn), task);
+}
+
+/**
+  Auto-curried, standalone function form of
+  {@linkcode Task.mapRejected Task.prototype.mapRejected}.
+
+  > [!TIP]
+  > This is provided for parity with the similar functions that the `Maybe`
+  > and `Result` modules provide. However, like `Result`, you will likely find
+  > that this form is somewhat difficult to use, because TypeScript’s type
+  > inference does not support it well: you will tend to end up with an awful
+  > lot of `unknown` unless you write the type parameters explicitly at the call
+  > site.
+
+  @template T The type of the value when the `Task` resolves successfully.
+  @template E The type of the rejection reason when the `Task` rejects.
+ */
+export function mapRejected<T, E, F>(mapFn: (e: E) => F): (task: Task<T, E>) => Task<T, F>;
+export function mapRejected<T, E, F>(mapFn: (e: E) => F, task: Task<T, E>): Task<T, F>;
+export function mapRejected<T, E, F>(
+  mapFn: (e: E) => F,
+  task?: Task<T, E>
+): Task<T, F> | ((task: Task<T, E>) => Task<T, F>) {
+  return curry1((task) => task.mapRejected(mapFn), task);
+}
+
+/**
+  Auto-curried, standalone function form of
+  {@linkcode Task.and Task.prototype.and}.
+
+  > [!TIP]
+  > This is provided for parity with the similar functions that the `Maybe`
+  > and `Result` modules provide. However, like `Result`, you will likely find
+  > that this form is somewhat difficult to use, because TypeScript’s type
+  > inference does not support it well: you will tend to end up with an awful
+  > lot of `unknown` unless you write the type parameters explicitly at the call
+  > site.
+
+  @template T The type of the value when the `Task` resolves successfully.
+  @template E The type of the rejection reason when the `Task` rejects.
+ */
+export function and<T, U, E>(andTask: Task<U, E>): (task: Task<T, E>) => Task<U, E>;
+export function and<T, U, E>(andTask: Task<U, E>, task: Task<T, E>): Task<U, E>;
+export function and<T, U, E>(
+  andTask: Task<U, E>,
+  task?: Task<T, E>
+): Task<U, E> | ((task: Task<T, E>) => Task<U, E>) {
+  return curry1((task) => task.and(andTask), task);
+}
+
+/**
+  Auto-curried, standalone function form of
+  {@linkcode Task.andThen Task.prototype.andThen}.
+
+  > [!TIP]
+  > This is provided for parity with the similar functions that the `Maybe`
+  > and `Result` modules provide. However, like `Result`, you will likely find
+  > that this form is somewhat difficult to use, because TypeScript’s type
+  > inference does not support it well: you will tend to end up with an awful
+  > lot of `unknown` unless you write the type parameters explicitly at the call
+  > site.
+
+  @template T The type of the value when the `Task` resolves successfully.
+  @template E The type of the rejection reason when the `Task` rejects.
+ */
+export function andThen<T, U, E, F = E>(
+  thenFn: (t: T) => Task<U, F>
+): (task: Task<T, E>) => Task<U, E | F>;
+export function andThen<T, U, E, F = E>(
+  thenFn: (t: T) => Task<U, F>,
+  task: Task<T, E>
+): Task<U, E | F>;
+export function andThen<T, U, E, F = E>(
+  thenFn: (t: T) => Task<U, F>,
+  task?: Task<T, E>
+): Task<U, E | F> | ((task: Task<T, E>) => Task<U, E | F>) {
+  return curry1((task) => task.andThen(thenFn), task);
+}
+
+/**
+  Auto-curried, standalone function form of
+  {@linkcode Task.or Task.prototype.or}.
+
+  > [!TIP]
+  > This is provided for parity with the similar functions that the `Maybe`
+  > and `Result` modules provide. However, like `Result`, you will likely find
+  > that this form is somewhat difficult to use, because TypeScript’s type
+  > inference does not support it well: you will tend to end up with an awful
+  > lot of `unknown` unless you write the type parameters explicitly at the call
+  > site.
+
+  @template T The type of the value when the `Task` resolves successfully.
+  @template E The type of the rejection reason when the `Task` rejects.
+ */
+export function or<U, F, T, E>(other: Task<U, F>): (task: Task<T, E>) => Task<T | U, F>;
+export function or<U, F, T, E>(other: Task<U, F>, task: Task<T, E>): Task<T | U, F>;
+export function or<U, F, T, E>(
+  other: Task<U, F>,
+  task?: Task<T, E>
+): Task<T | U, F> | ((task: Task<T, E>) => Task<T | U, F>) {
+  return curry1((task) => task.or(other), task);
+}
+
+/**
+  Auto-curried, standalone function form of
+  {@linkcode Task.orElse Task.prototype.orElse}.
+
+  > [!TIP]
+  > This is provided for parity with the similar functions that the `Maybe`
+  > and `Result` modules provide. However, like `Result`, you will likely find
+  > that this form is somewhat difficult to use, because TypeScript’s type
+  > inference does not support it well: you will tend to end up with an awful
+  > lot of `unknown` unless you write the type parameters explicitly at the call
+  > site.
+
+  @template T The type of the value when the `Task` resolves successfully.
+  @template E The type of the rejection reason when the `Task` rejects.
+ */
+export function orElse<T, E, F, U = T>(
+  elseFn: (reason: E) => Task<U, F>
+): (task: Task<T, E>) => Task<T | U, F>;
+export function orElse<T, E, F, U = T>(
+  elseFn: (reason: E) => Task<U, F>,
+  task: Task<T, E>
+): Task<T | U, F>;
+export function orElse<T, E, F, U = T>(
+  elseFn: (reason: E) => Task<U, F>,
+  task?: Task<T, E>
+): Task<T | U, F> | ((task: Task<T, E>) => Task<T | U, F>) {
+  return curry1((task) => task.orElse(elseFn), task);
+}
+
+/**
+  Auto-curried, standalone function form of
+  {@linkcode Task.match Task.prototype.match}.
+
+  > [!TIP]
+  > This is provided for parity with the similar functions that the `Maybe`
+  > and `Result` modules provide. However, like `Result`, you will likely find
+  > that this form is somewhat difficult to use, because TypeScript’s type
+  > inference does not support it well: you will tend to end up with an awful
+  > lot of `unknown` unless you write the type parameters explicitly at the call
+  > site.
+
+  @template T The type of the value when the `Task` resolves successfully.
+  @template E The type of the rejection reason when the `Task` rejects.
+ */
+export function match<T, E, A>(matcher: Matcher<T, E, A>): (task: Task<T, E>) => Promise<A>;
+export function match<T, E, A>(matcher: Matcher<T, E, A>, task: Task<T, E>): Promise<A>;
+export function match<T, E, A>(
+  matcher: Matcher<T, E, A>,
+  task?: Task<T, E>
+): Promise<A> | ((task: Task<T, E>) => Promise<A>) {
+  return curry1((task) => task.match(matcher), task);
+}
+
+/**
+  Auto-curried, standalone function form of
+  {@linkcode Task.timeout Task.prototype.timeout}.
+
+  > [!TIP]
+  > This is provided for parity with the similar functions that the `Maybe`
+  > and `Result` modules provide. However, like `Result`, you will likely find
+  > that this form is somewhat difficult to use, because TypeScript’s type
+  > inference does not support it well: you will tend to end up with an awful
+  > lot of `unknown` unless you write the type parameters explicitly at the call
+  > site.
+
+  @template T The type of the value when the `Task` resolves successfully.
+  @template E The type of the rejection reason when the `Task` rejects.
+ */
+export function timeout<T, E>(
+  timerOrMs: Timer | number
+): (task: Task<T, E>) => Task<T, E | Timeout>;
+export function timeout<T, E>(timerOrMs: Timer | number, task: Task<T, E>): Task<T, E | Timeout>;
+export function timeout<T, E>(
+  timerOrMs: Timer | number,
+  task?: Task<T, E>
+): Task<T, E | Timeout> | ((task: Task<T, E>) => Task<T, E | Timeout>) {
+  return curry1((task) => task.timeout(timerOrMs), task);
+}
+
+/**
+  Auto-curried, standalone function form of
+  {@linkcode Task.toPromise Task.prototype.toPromise}.
+
+  @template T The type of the value when the `Task` resolves successfully.
+  @template E The type of the rejection reason when the `Task` rejects.
+ */
+export function toPromise<T, E>(task: Task<T, E>) {
+  return task.toPromise();
 }
 
 function identity<T>(value: T): T {
