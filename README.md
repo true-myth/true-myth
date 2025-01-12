@@ -69,6 +69,8 @@ You could implement all of these yourself – it's not hard! – but it's much 
 - [Solutions: `Maybe` and `Result`](#solutions-maybe-and-result)
   - [How it works: `Maybe`](#how-it-works-maybe)
   - [How it works: `Result`](#how-it-works-result)
+  - [How it works: `Task`](#how-it-works-task)
+  - [How it works: the big picture](how-it-works-the-big-picture)
 - [Design philosophy](#design-philosophy)
   - [A note on reference types: no deep copies here!](#a-note-on-reference-types-no-deep-copies-here)
   - [The type names](#the-type-names)
@@ -97,17 +99,12 @@ For details on using a pure ES modules package in TypeScript, see [the TypeScrip
 
 Add True Myth to your dependencies:
 
-- with Yarn:
-
-  ```sh
-  yarn add true-myth
-  ```
-
-- with npm:
-
-  ```sh
-  npm install true-myth
-  ```
+| Package manager | Command              |
+| --------------- | -------------------- |
+| npm             | `npm add true-myth`  |
+| yarn            | `yarn add true-myth` |
+| pnpm            | `pnpm add true-myth` |
+| bun             | `bun add true-myth`  |
 
 This package ships ES6-modules so you can import the modules directly, or import the re-exports from the root module:
 
