@@ -8,6 +8,11 @@ import { curry1, safeToString } from './-private/utils.js';
 import Maybe from './maybe.js';
 import Result, { map as mapResult, mapErr, match as matchResult } from './result.js';
 import Unit from './unit.js';
+import * as Delay from './task/delay.js';
+
+// Make the Delay namespace available as `Task.Delay` for convenience. This lets
+// people do `Task.withRetries(aTask, Task.Delay.exponential(1_000).take(10))`.
+export { Delay };
 
 /**
   Internal implementation details for {@linkcode Task}.
@@ -1199,6 +1204,8 @@ export type Matcher<T, E, A> = {
   The error thrown when an error is thrown in the executor passed to {@linkcode
   Task.constructor}. This error class exists so it is clear exactly what went
   wrong in that case.
+
+  @group Errors
  */
 export class TaskExecutorException extends Error {
   name = 'TrueMyth.Task.ThrowingExecutor';
@@ -1216,7 +1223,9 @@ export class TaskExecutorException extends Error {
 
 /**
   An error thrown when the `Promise<Result<T, E>>` passed to
-  {@link Task.fromUnsafePromise} rejects.
+  {@link fromUnsafePromise} rejects.
+
+  @group Errors
 */
 export class UnsafePromise extends Error {
   readonly name = 'TrueMyth.Task.UnsafePromise';
@@ -2145,3 +2154,365 @@ export function toPromise<T, E>(task: Task<T, E>) {
 function identity<T>(value: T): T {
   return value;
 }
+
+/**
+  Execute a callback that produces either a {@linkcode Task} or the “sentinel”
+  [`Error`][error-mdn] subclass {@linkcode StopRetrying}. `withRetries` retries
+  the `retryable` callback until the retry strategy is exhausted *or* until the
+  callback returns either `StopRetrying` or a `Task` that rejects with
+  `StopRetrying`. If no strategy is supplied, a default strategy of retrying
+  immediately up to three times is used.
+
+  [error-mdn]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error
+
+  The `strategy` is any iterable iterator that produces an integral number,
+  which is used as the number of milliseconds to delay before retrying the
+  `retryable`. When the `strategy` stops yielding values, this will produce a
+  {@linkcode Rejected} `Task` whose rejection value is an instance of
+  {@linkcode RetryFailed}.
+
+  Returning `stopRetrying()` from the top-level of the function or as the
+  rejection reason will also produce a rejected `Task` whose rejection value is
+  an instance of `RetryFailed`, but will also immediately stop all further
+  retries and will include the `StopRetrying` instance as the `cause` of the
+  `RetryFailed` instance.
+
+  You can determine whether retries stopped because the strategy was exhausted
+  or because `stopRetrying` was called by checking the `cause` on the
+  `RetryFailed` instance. It will be `undefined` if the the `RetryFailed` was
+  the result of the strategy being exhausted. It will be a `StopRetrying` if it
+  stopped because the caller returned `stopRetrying()`.
+
+  ## Examples
+
+  ### Retrying with backoff
+
+  When attempting to fetch data from a server, you might want to retry if and
+  only if the response was an HTTP 408 response, indicating that there was a
+  timeout but that the client is allowed to try again. For other error codes, it
+  will simply reject immediately.
+
+  ```ts
+  import * as Task from 'true-myth/task';
+  import * as Delay from 'true-myth/task/delay';
+
+  let theTask = withRetries(
+    () => Task.fromPromise(fetch('https://example.com')).andThen((res) => {
+        if (res.status === 200) {
+          return Task.fromPromise(res.json());
+        } else if (res.status === 408) {
+          return Task.reject(res.statusText);
+        } else {
+          return Task.stopRetrying(res.statusText);
+        }
+      }),
+    Delay.fibonacci().map(Delay.jitter).take(10)
+  );
+  ```
+
+  Here, this uses a Fibonacci backoff strategy, which can be preferable in some
+  cases to a classic exponential backoff strategy (see [A Performance Comparison
+  of Different Backoff Algorithms under Different Rebroadcast Probabilities for
+  MANET's][pdf] for more details).
+
+  [pdf]: https://www.researchgate.net/publication/255672213_A_Performance_Comparison_of_Different_Backoff_Algorithms_under_Different_Rebroadcast_Probabilities_for_MANET's
+
+  ### Manually canceling retries
+
+  Sometimes, you may determine that the result of an operation is fatal, so
+  there is no point in retrying even if the retry strategy still allows it. In
+  that case, you can return the special `StopRetrying` error produced by calling
+  `stopRetrying` to immediately stop all further retries.
+
+  For example, imagine you have a library function that returns a custom `Error`
+  subclass that includes an `isFatal` value on it, something like this::
+
+  ```ts
+  class AppError extends Error {
+    isFatal: boolean;
+    constructor(message: string, options?: { isFatal?: boolean, cause?: unknown }) {
+      super(message, { cause: options?.cause });
+      this.isFatal = options?.isFatal ?? false;
+    }
+  }
+  ```
+
+  You could check that flag in a `Task` rejection and return `stopRetrying()` if
+  it is set:
+
+  ```ts
+  import * as Task from 'true-myth/task';
+  import { fibonacci, jitter } from 'true-myth/task/delay';
+  import { doSomethingThatMayFailWithAppError } from 'someplace/in/my-app';
+
+  let theTask = Task.withRetries(
+    () => {
+      doSomethingThatMayFailWithAppError().orElse((rejection) => {
+        if (rejection.isFatal) {
+          return Task.stopRetrying("It was fatal!", { cause: rejection });
+        }
+
+        return Task.reject(rejection);
+      });
+    },
+    fibonacci().map(jitter).take(20)
+  );
+  ```
+
+  ### Using the retry `status` parameter
+
+  Every time `withRetries` tries the `retryable`, it provides the current count
+  of attempts and the total elapsed duration as properties on the `status`
+  object, so you can do different things for a given way of trying the async
+  operation represented by the `Task` depending on the count. Here, for example,
+  the task is retried if the HTTP request rejects, with an exponential backoff
+  starting at 100 milliseconds, and captures the number of retries in an `Error`
+  wrapping the rejection reason when the response rejects or when converting the
+  response to JSON fails. It also stops if it has tried the call more than 10
+  times or if the total elapsed time exceeds 10 seconds.
+
+  ```ts
+  import * as Task from 'true-myth/task';
+  import { exponential, jitter } from 'true-myth/task/delay';
+
+  let theResult = await Task.withRetries(
+    ({ count, elapsed }) => {
+      if (count > 10) {
+        return Task.stopRetrying(`Tried too many times: ${count}`);
+      }
+
+      if (elapsed > 10_000) {
+        return Task.stopRetrying(`Took too long: ${elapsed}ms`);
+      }
+
+      return Task.fromPromise(fetch('https://www.example.com/'))
+        .andThen((res) => Task.fromPromise(res.json()))
+        .orElse((cause) => {
+          let message = `Attempt #${count} failed`;
+          return Task.reject(new Error(message, { cause }));
+        });
+    },
+    exponential().map(jitter),
+  );
+  ```
+
+  ### Custom strategies
+
+  While the {@link task/delay} module supplies a number of useful strategies,
+  you can also supply your own. The easiest way is to write [a generator
+  function][gen], but you can also implement a custom iterable iterator,
+  including by providing a subclass of the ES2025 `Iterator` class.
+
+  Here is an example of using a generator function to produce a random but
+  [monotonically increasing][monotonic] value proportional to the current
+  value:
+
+  ```ts
+  import * as Task from 'true-myth/task';
+
+  function* randomIncrease(options?: { from: number }) {
+    // always use integral values, and default to one second.
+    let value = options ? Math.round(options.from) : 1_000;
+    while (true) {
+      yield value;
+      value += Math.ceil(Math.random() * value); // always increase!
+    }
+  }
+
+  await Task.withRetries(({ count }) => {
+    let delay = Math.round(Math.random() * 100);
+    return Task.timer(delay).andThen((time) =>
+      Task.reject(`Rejection #${count} after ${time}ms`),
+    );
+  }, randomIncrease(10).take(10));
+  ```
+
+  [monotonic]: https://en.wikipedia.org/wiki/Monotonic_function
+
+  @param retryable A callback that produces a {@linkcode Task Task<T, E>}.
+  @param strategy An iterable iterator that produces an integral number of
+    milliseconds to wait before trying `retryable` again. If not supplied, the
+    `retryable` will be retried immediately up to three times.
+
+  @template T The type of a {@linkcode Resolved} {@linkcode Task}.
+  @template E The type of a {@linkcode Rejected} {@linkcode Task}.
+ */
+export function withRetries<T, E>(
+  retryable: (status: RetryStatus) => Task<T, E | StopRetrying> | StopRetrying,
+  strategy: IterableIterator<number> = (function* () {
+    for (let i = 0; i < 3; i++) {
+      yield 0;
+    }
+  })()
+): Task<T, RetryFailed<E>> {
+  const startTime = Date.now();
+
+  let count = 0;
+  let totalDuration = 0;
+  let rejections = new Array<E>();
+
+  /**
+    Internal helper so the operation can recurse. Note: if you have too large a
+    retry count, this *can* blow the stack; there is no trampolining here.
+    However, that would be extremely unlikely in most backoff scenarios, where
+    you usually take a set number of retries and/or take so long *between*
+    retries.
+   */
+  function helper(): Task<T, RetryFailed<E>> {
+    // Try it!
+    let taskOrErr = retryable({ count, elapsed: totalDuration });
+
+    if (taskOrErr instanceof Error) {
+      return Task.reject(
+        new RetryFailed({ tries: count, totalDuration, rejections, cause: taskOrErr })
+      );
+    }
+
+    // On `Task` rejection, capture the rejection, then check whether the task
+    // can be retried:
+    //
+    // - If the `Task` rejected specifically with `StopRetrying`… stop retrying.
+    // - If there are no more retries available, reject with `RetryFailed`.
+    // - If there are still retries available, execute the retryable on the next
+    //   delay, keeping track of how many retries have been attempted and the
+    //   cumulative delay of those retries.
+    return taskOrErr.orElse((reason) => {
+      if (reason instanceof StopRetrying) {
+        return Task.reject(
+          new RetryFailed({ tries: count, totalDuration, rejections, cause: reason })
+        );
+      }
+
+      rejections.push(reason);
+
+      let next = strategy.next();
+      if (next.done) {
+        return Task.reject(new RetryFailed({ tries: count, totalDuration, rejections }));
+      }
+
+      let delay = next.value;
+      totalDuration += Date.now() - startTime;
+      count += 1;
+
+      return timer(delay).andThen(helper);
+    });
+  }
+
+  return helper();
+}
+
+/** Information about the current retryable call status. */
+export interface RetryStatus {
+  /** The 0-indexed number of times the retryable has been called. */
+  count: number;
+  /** The total duration that has elapsed across calls. Initially 0. */
+  elapsed: number;
+}
+
+/**
+  A custom [`Error`][mdn-error] subclass which acts as a “sentinel”: when you
+  return it either as the top-level return value from the callback for
+  {@linkcode withRetries} or the rejection reason for a {@linkcode Task}
+  produces by `withRetries`, the function will stop retrying immediately.
+
+  [mdn-error]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error
+
+  You can neither construct this class directly nor subclass it. Instead, use
+  the {@linkcode stopRetrying} helper function to construct it.
+
+  @group Errors
+ */
+class StopRetrying extends Error {
+  get name(): string {
+    return 'TrueMyth.Task.StopRetrying';
+  }
+}
+
+export type { StopRetrying };
+
+/**
+  Produces the “sentinel” `Error` subclass {@linkcode StopRetrying}, for use as
+  a return value from {@linkcode withRetries}.
+
+  @param message The message to attach to the {@linkcode StopRetrying} instance.
+  @param cause The previous cause (often another `Error`) that resulted in
+    stopping retries.
+ */
+export function stopRetrying(message: string, cause?: unknown): StopRetrying {
+  return new StopRetrying(message, { cause });
+}
+
+export const RETRY_FAILED_NAME = 'TrueMyth.Task.RetryFailed';
+
+/**
+  An [`Error`][mdn-error] subclass for when a `Task` rejected after a specified
+  number of retries. It includes all rejection reasons, including the final one,
+  as well as the number of retries and the total duration spent on the retries.
+  It distinguishes between the list of rejections and the optional `cause`
+  property inherited from `Error` so that it can indicate if the retries failed
+  because the retry strategy was exhausted (in which case `cause` will be
+  `undefined`) or because the caller returned a {@linkcode StopRetrying}
+  instance (in which case `cause` will be that instance.)
+
+  You can neither construct nor subclass this error, only use its properties. If
+  you need to check whether an `Error` class is an instance of this class, you
+  can check whether its `name` is {@linkcode RETRY_FAILED_NAME} or you can use
+  the {@linkcode isRetryFailed} helper function:
+
+  ```ts
+  import * as Task from 'true-myth/task';
+
+  // snip
+  let result = await someFnThatReturnsATask();
+  if (result.isErr) {
+    if (isRetryFailed(result.error)) {
+      if (result.error.cause) {
+        console.error('You quit on purpose: ', cause);
+      }
+
+      for (let rejection of result.error.rejections) {
+        console.error(rejection);
+       }
+    } else {
+      // handle other error types
+    }
+  }
+  ```
+
+  [mdn-error]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error
+
+  @group Errors
+*/
+class RetryFailed<E> extends Error {
+  get name(): typeof RETRY_FAILED_NAME {
+    return RETRY_FAILED_NAME;
+  }
+
+  readonly tries: number;
+  readonly totalDuration: number;
+  readonly rejections: E[];
+
+  /** @internal */
+  constructor({
+    tries,
+    totalDuration,
+    rejections,
+    cause,
+  }: {
+    tries: number;
+    totalDuration: number;
+    rejections: E[];
+    cause?: Error;
+  }) {
+    super(`Stopped retrying after ${tries} tries (${totalDuration}ms)`, { cause });
+    this.rejections = rejections;
+    this.tries = tries;
+    this.totalDuration = totalDuration;
+  }
+}
+
+export function isRetryFailed(error: unknown): error is RetryFailed<unknown> {
+  return error instanceof Error && error.name === RETRY_FAILED_NAME;
+}
+
+export type { RetryFailed };
