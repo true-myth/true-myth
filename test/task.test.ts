@@ -1695,7 +1695,6 @@ describe('module-scope functions', () => {
       test('with a promise that resolves', async () => {
         let theTask = safelyTry((): Promise<number> => {
           throw new Error('NOPE');
-          return Promise.resolve(123);
         });
         expectTypeOf(theTask).toEqualTypeOf<Task<number, unknown>>();
         let theResult = await theTask;
@@ -1707,7 +1706,6 @@ describe('module-scope functions', () => {
       test('with a promise that rejects', async () => {
         let theTask = safelyTry((): Promise<number> => {
           throw new Error('NOPE');
-          return Promise.reject(123);
         });
         expectTypeOf(theTask).toEqualTypeOf<Task<number, unknown>>();
         let theResult = await theTask;
@@ -1739,7 +1737,6 @@ describe('module-scope functions', () => {
       test('with a promise that resolves', async () => {
         let theTask = tryOr('error', (): Promise<number> => {
           throw new Error('NOPE');
-          return Promise.resolve(123);
         });
         expectTypeOf(theTask).toEqualTypeOf<Task<number, string>>();
         let theResult = await theTask;
@@ -1749,7 +1746,6 @@ describe('module-scope functions', () => {
       test('with a promise that rejects', async () => {
         let theTask = tryOr('error', (): Promise<number> => {
           throw new Error('NOPE');
-          return Promise.reject(123);
         });
         expectTypeOf(theTask).toEqualTypeOf<Task<number, string>>();
         let theResult = await theTask;
@@ -1779,7 +1775,6 @@ describe('module-scope functions', () => {
       test('with a promise that resolves', async () => {
         let theTask = tryOrElse(stringify, (): Promise<number> => {
           throw new Error('NOPE');
-          return Promise.resolve(123);
         });
         expectTypeOf(theTask).toEqualTypeOf<Task<number, string>>();
         let theResult = await theTask;
@@ -1790,7 +1785,6 @@ describe('module-scope functions', () => {
       test('with a promise that rejects', async () => {
         let theTask = tryOrElse(stringify, (): Promise<number> => {
           throw new Error('NOPE');
-          return Promise.reject(123);
         });
         expectTypeOf(theTask).toEqualTypeOf<Task<number, string>>();
         let theResult = await theTask;
