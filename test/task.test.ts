@@ -1,4 +1,4 @@
-import { describe, expect, expectTypeOf, test } from 'vitest';
+import { afterEach, assert, beforeEach, describe, expect, expectTypeOf, test } from 'vitest';
 
 import Task, {
   InvalidAccess,
@@ -36,7 +36,19 @@ import Task, {
   timeout,
   Timeout,
   toPromise,
+  withRetries,
+  stopRetrying,
+  isRetryFailed,
 } from 'true-myth/task';
+import {
+  exponential,
+  fibonacci,
+  fixed,
+  immediate,
+  jitter,
+  linear,
+  none,
+} from 'true-myth/task/delay';
 import Maybe from 'true-myth/maybe';
 import Result from 'true-myth/result';
 import Unit from 'true-myth/unit';
@@ -2941,6 +2953,217 @@ describe('module-scope functions', () => {
       expect(unwrap(theResult)).toEqual(theValue);
     });
   });
+
+  describe('withRetries', () => {
+    test('when the task initially rejects but later resolves', async () => {
+      let theTask = withRetries(({ count }) => {
+        return count === 0
+          ? Task.reject('not the first time')
+          : Task.resolve('but the second will do!');
+      });
+
+      let theResult = await theTask;
+      expect(unwrap(theResult)).toEqual('but the second will do!');
+    });
+
+    describe('when the task never resolves', () => {
+      test('not using the `status` parameter', async () => {
+        let theTask = withRetries(() => {
+          return Task.reject('this test *always* rejects until the count runs out');
+        });
+
+        let theError = unwrapErr(await theTask);
+        assert(theError instanceof Error);
+        expect(isRetryFailed(theError));
+        expect(printError(theError)).toMatch(
+          /TrueMyth.Task.RetryFailed: Stopped retrying after 3 tries \(\d+ms\)/
+        );
+      });
+
+      test('using the `status` parameter', async () => {
+        let theCount = 2;
+        let theMessage = `maximum count is ${theCount}`;
+        let theTask = withRetries(({ count }) => {
+          if (count >= theCount) {
+            return stopRetrying(theMessage);
+          }
+
+          return Task.reject('this test *always* rejects until the count runs out');
+        });
+
+        let theError = unwrapErr(await theTask);
+        assert(theError instanceof Error);
+        let errorDesc = printError(theError);
+        expect(errorDesc).toMatch(
+          /TrueMyth\.Task\.RetryFailed: Stopped retrying after 2 tries \(\d+ms\)/
+        );
+        expect(errorDesc).toMatch(`\tcaused by: TrueMyth.Task.StopRetrying: ${theMessage}`);
+      });
+
+      test('when it rejects with `stopRetrying`', async () => {
+        let theMessage = 'any reason at all will do';
+        let theTask = withRetries(() => {
+          return Task.reject(stopRetrying(theMessage));
+        });
+
+        let theError = unwrapErr(await theTask);
+        assert(theError instanceof Error);
+        let errorDesc = printError(theError);
+        expect(errorDesc).toMatch(
+          /TrueMyth\.Task\.RetryFailed: Stopped retrying after 0 tries \(\d+ms\)/
+        );
+        expect(errorDesc).toMatch(`\tcaused by: TrueMyth.Task.StopRetrying: ${theMessage}`);
+      });
+
+      test('when it rejects with a non-zero duration', async () => {
+        let theResult = await withRetries(() => Task.reject('never succeeds'), take(fixed(), 5));
+        let theError = unwrapErr(theResult);
+        assert(theError instanceof Error);
+        expect(printError(theError)).toMatch(
+          /TrueMyth\.Task\.RetryFailed: Stopped retrying after 5 tries \(\d+ms\)/
+        );
+      });
+    });
+  });
+
+  describe('delays', () => {
+    describe('exponential', () => {
+      test('with default factor (2)', () => {
+        let values = Array.from(take(exponential(), 5));
+        expect(values).toEqual([1, 2, 4, 8, 16]);
+      });
+
+      test('with custom factor', () => {
+        let values = Array.from(take(exponential({ withFactor: 4 }), 5));
+        expect(values).toEqual([1, 4, 16, 64, 256]);
+      });
+
+      describe('with non-integral base', () => {
+        test('that should round down', () => {
+          let values = Array.from(take(exponential({ from: 1.1 }), 5));
+          expect(values).toEqual([1, 2, 4, 8, 16]);
+        });
+
+        test('that should round up', () => {
+          let values = Array.from(take(exponential({ from: 0.9 }), 5));
+          expect(values).toEqual([1, 2, 4, 8, 16]);
+        });
+      });
+    });
+
+    describe('fibonacci', () => {
+      test('with default values', () => {
+        let values = Array.from(take(fibonacci(), 5));
+        expect(values).toEqual([1, 1, 2, 3, 5]);
+      });
+
+      test('with initial value `1`', () => {
+        let values = Array.from(take(fibonacci({ from: 1 }), 5));
+        expect(values).toEqual([1, 1, 2, 3, 5]);
+      });
+
+      test('with initial value `2`', () => {
+        let values = Array.from(take(fibonacci({ from: 2 }), 5));
+        expect(values).toEqual([2, 2, 4, 6, 10]);
+      });
+
+      describe('with non-integral initial value', () => {
+        test('that should be rounded down', () => {
+          let values = Array.from(take(fibonacci({ from: 1.1 }), 5));
+          expect(values).toEqual([1, 1, 2, 3, 5]);
+        });
+
+        test('that should be rounded up', () => {
+          let values = Array.from(take(fibonacci({ from: 0.9 }), 5));
+          expect(values).toEqual([1, 1, 2, 3, 5]);
+        });
+      });
+    });
+
+    describe('fixed', () => {
+      test('with default initial value', () => {
+        let values = Array.from(take(fixed(), 5));
+        expect(values).toEqual([1, 1, 1, 1, 1]);
+      });
+
+      test('with integral value', () => {
+        let values = Array.from(take(fixed({ at: 5 }), 5));
+        expect(values).toEqual([5, 5, 5, 5, 5]);
+      });
+
+      test('with non-integral value', () => {
+        let values = Array.from(take(fixed({ at: 1.2 }), 5));
+        expect(values).toEqual([1, 1, 1, 1, 1]);
+      });
+    });
+
+    test('immediate', () => {
+      let values = Array.from(take(immediate(), 5));
+      expect(values).toEqual([0, 0, 0, 0, 0]);
+    });
+
+    describe('linear', () => {
+      test('with default initial value and step size', () => {
+        let values = Array.from(take(linear(), 10));
+        expect(values).toEqual([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]);
+      });
+
+      test('with custom initial value', () => {
+        let values = Array.from(take(linear({ from: 1 }), 5));
+        expect(values).toEqual([1, 2, 3, 4, 5]);
+      });
+
+      test('with custom step size', () => {
+        let values = Array.from(take(linear({ withStepSize: 2 }), 5));
+        expect(values).toEqual([0, 2, 4, 6, 8]);
+      });
+
+      test('with non-integral value', () => {
+        let values = Array.from(take(linear({ from: 1.1, withStepSize: 2 }), 5));
+        expect(values).toEqual([1, 3, 5, 7, 9]);
+      });
+    });
+
+    test('none', () => {
+      let values = Array.from(none());
+      expect(values.length).toBe(0);
+    });
+
+    describe('jitter', () => {
+      let originalMathRandom: typeof Math.random;
+      beforeEach(() => {
+        originalMathRandom = Math.random;
+      });
+
+      afterEach(() => {
+        Math.random = originalMathRandom;
+      });
+
+      test('with random value below 0.5', () => {
+        Math.random = () => 0.25;
+
+        let input = [1, 2, 3];
+        let output = input.map(jitter);
+
+        for (let index in input) {
+          expect(output[index]).toBeLessThanOrEqual(input[index]! * 2);
+          expect(output[index]).toBeGreaterThanOrEqual(0);
+        }
+      });
+
+      test('with random value above 0.5', () => {
+        Math.random = () => 0.75;
+
+        let input = [1, 2, 3];
+        let output = input.map(jitter);
+
+        for (let index in input) {
+          expect(output[index]).toBeLessThanOrEqual(input[index]! * 2);
+          expect(output[index]).toBeGreaterThanOrEqual(0);
+        }
+      });
+    });
+  });
 });
 
 describe('type utilities', () => {
@@ -2994,3 +3217,31 @@ function stringify(reason: unknown): string {
 }
 
 function noOp() {}
+
+function* take<T>(iterable: Iterable<T>, count: number): IterableIterator<T> {
+  let taken = 0;
+  for (let item of iterable) {
+    if (taken >= count) {
+      return;
+    }
+
+    taken += 1;
+    yield item;
+  }
+}
+
+function printError(e: Error): string {
+  // prettier-ignore
+  let maybeCause =
+    e.cause instanceof Error ? Maybe.just(printError(e.cause)) :
+
+    Maybe.of(
+      // @ts-ignore: work around a bug in older TypeScript versions where the
+      // lib definitions incorrectly required `cause` to be an `Error`. That is
+      // the best practice, but it is not required.
+      e.cause?.toString()
+    );
+
+  let cause = maybeCause.mapOr('', (cause) => `\n\tcaused by: ${cause}`);
+  return `${e.name}: ${e.message}${cause}`;
+}
