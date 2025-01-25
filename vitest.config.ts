@@ -7,6 +7,10 @@ export default defineConfig({
       'true-myth': path.resolve(__dirname, './src'),
     },
     include: ['test/*.test.ts'],
+    typecheck: {
+      enabled: true,
+      include: ['test/*.test.ts'],
+    },
     coverage: {
       reporter: ['text'],
       include: ['src/**/*.ts'],
