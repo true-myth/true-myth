@@ -13,6 +13,22 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 
 
+## 8.5.0 (2025-01-25)
+
+Adds a powerful `Task.withRetries` utility for retrying tasks, along with a new module, `true-myth/task/delay`, which provides a bunch of useful strategies for retries. See the docs for more details, and thanks to @alfierivera for [suggesting it][discussion]!
+
+[discussion]: https://github.com/true-myth/true-myth/discussions/931
+
+#### (:rocket: Enhancement)
+* [#939](https://github.com/true-myth/true-myth/pull/939) [backport] Task: add a new `withRetries` function ([@chriskrycho](https://github.com/chriskrycho))
+
+#### (:house: Internal)
+* [#926](https://github.com/true-myth/true-myth/pull/926) internal: Introduce a separate CI job for any 8.x work ([@chriskrycho](https://github.com/chriskrycho))
+
+#### Committers: 1
+- Chris Krycho ([@chriskrycho](https://github.com/chriskrycho))
+
+
 ## 8.4.0 (2025-01-11)
 
 Highlight: adds auto-curried, module-scope versions of all the `Task` instance methods like `map` and `andThen` and more. Hot on the heels of 8.3.0, with what we *think* is probably the last set of features for this release!
