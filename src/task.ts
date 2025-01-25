@@ -2142,7 +2142,7 @@ export function timeout<T, E>(
 }
 
 /**
-  Standalone version of {@linkcode Task.toPromise Task.prototype.toPromise}.  
+  Standalone version of {@linkcode Task.toPromise Task.prototype.toPromise}.
 
   @template T The type of the value when the `Task` resolves successfully.
   @template E The type of the rejection reason when the `Task` rejects.
@@ -2439,7 +2439,12 @@ export type { StopRetrying };
     stopping retries.
  */
 export function stopRetrying(message: string, cause?: unknown): StopRetrying {
-  return new StopRetrying(message, { cause });
+  return new StopRetrying(message, {
+    // @ts-ignore: work around a bug in older TypeScript versions where the lib
+    // definitions incorrectly required `cause` to be an `Error`. That is the
+    // best practice, but it is not required.
+    cause,
+  });
 }
 
 export const RETRY_FAILED_NAME = 'TrueMyth.Task.RetryFailed';
@@ -2504,7 +2509,13 @@ class RetryFailed<E> extends Error {
     rejections: E[];
     cause?: Error;
   }) {
-    super(`Stopped retrying after ${tries} tries (${totalDuration}ms)`, { cause });
+    super(
+      `Stopped retrying after ${tries} tries (${totalDuration}ms)`,
+      // @ts-ignore: work around a bug in older TypeScript versions where the
+      // lib definitions incorrectly required `cause` to be an `Error`. That is
+      // the best practice, but it is not required.
+      { cause }
+    );
     this.rejections = rejections;
     this.tries = tries;
     this.totalDuration = totalDuration;

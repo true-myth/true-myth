@@ -3234,7 +3234,13 @@ function printError(e: Error): string {
   // prettier-ignore
   let maybeCause =
     e.cause instanceof Error ? Maybe.just(printError(e.cause)) :
-    Maybe.of(e.cause?.toString());
+
+    Maybe.of(
+      // @ts-ignore: work around a bug in older TypeScript versions where the
+      // lib definitions incorrectly required `cause` to be an `Error`. That is
+      // the best practice, but it is not required.
+      e.cause?.toString()
+    );
 
   let cause = maybeCause.mapOr('', (cause) => `\n\tcaused by: ${cause}`);
   return `${e.name}: ${e.message}${cause}`;
