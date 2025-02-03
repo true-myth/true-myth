@@ -13,10 +13,10 @@ importers:
         version: 7.0.0(release-it@17.11.0(typescript@5.3.3))
       '@types/node':
         specifier: ^22.0.0
-        version: 22.12.0
+        version: 22.13.0
       '@vitest/coverage-v8':
         specifier: ^2.0.1
-        version: 2.0.5(vitest@2.0.5(@types/node@22.12.0))
+        version: 2.0.5(vitest@2.0.5(@types/node@22.13.0))
       miniglob:
         specifier: ^0.1.2
         version: 0.1.2
@@ -40,7 +40,7 @@ importers:
         version: 5.3.3
       vitest:
         specifier: ^2.0.1
-        version: 2.0.5(@types/node@22.12.0)
+        version: 2.0.5(@types/node@22.13.0)
 
 packages:
 
@@ -462,8 +462,8 @@ packages:
   '@types/ms@0.7.34':
     resolution: {integrity: sha512-nG96G3Wp6acyAgJqGasjODb+acrI7KltPiRxzHPXnP3NgI28bpQDRv53olbqGXbfcgF5aiiHmO3xpwEpS5Ld9g==}
 
-  '@types/node@22.12.0':
-    resolution: {integrity: sha512-Fll2FZ1riMjNmlmJOdAyY5pUbkftXslB5DgEzlIuNaiWhXd00FhWxVC/r4yV/4wBb9JfImTu+jiSvXTkJ7F/gA==}
+  '@types/node@22.13.0':
+    resolution: {integrity: sha512-ClIbNe36lawluuvq3+YYhnIN2CELi+6q8NpnM7PYp4hBn/TatfboPgVSm2rwKRfnV2M+Ty9GWDFI64KEe+kysA==}
 
   '@types/unist@2.0.10':
     resolution: {integrity: sha512-IfYcSBWE3hLpBg8+X2SEa8LVkJdJEkT2Ese2aaLs3ptGdVtABxndrMaxuFlQ1qdFf9Q5rDvDpxI3WwgvKFAsQA==}
@@ -2503,13 +2503,13 @@ snapshots:
 
   '@types/ms@0.7.34': {}
 
-  '@types/node@22.12.0':
+  '@types/node@22.13.0':
     dependencies:
       undici-types: 6.20.0
 
   '@types/unist@2.0.10': {}
 
-  '@vitest/coverage-v8@2.0.5(vitest@2.0.5(@types/node@22.12.0))':
+  '@vitest/coverage-v8@2.0.5(vitest@2.0.5(@types/node@22.13.0))':
     dependencies:
       '@ampproject/remapping': 2.3.0
       '@bcoe/v8-coverage': 0.2.3
@@ -2523,7 +2523,7 @@ snapshots:
       std-env: 3.7.0
       test-exclude: 7.0.1
       tinyrainbow: 1.2.0
-      vitest: 2.0.5(@types/node@22.12.0)
+      vitest: 2.0.5(@types/node@22.13.0)
     transitivePeerDependencies:
       - supports-color
 
@@ -4239,13 +4239,13 @@ snapshots:
       resolve-package-path: 4.0.3
       semver: 7.6.3
 
-  vite-node@2.0.5(@types/node@22.12.0):
+  vite-node@2.0.5(@types/node@22.13.0):
     dependencies:
       cac: 6.7.14
       debug: 4.3.5
       pathe: 1.1.2
       tinyrainbow: 1.2.0
-      vite: 5.4.8(@types/node@22.12.0)
+      vite: 5.4.8(@types/node@22.13.0)
     transitivePeerDependencies:
       - '@types/node'
       - less
@@ -4257,16 +4257,16 @@ snapshots:
       - supports-color
       - terser
 
-  vite@5.4.8(@types/node@22.12.0):
+  vite@5.4.8(@types/node@22.13.0):
     dependencies:
       esbuild: 0.21.5
       postcss: 8.4.47
       rollup: 4.24.0
     optionalDependencies:
-      '@types/node': 22.12.0
+      '@types/node': 22.13.0
       fsevents: 2.3.3
 
-  vitest@2.0.5(@types/node@22.12.0):
+  vitest@2.0.5(@types/node@22.13.0):
     dependencies:
       '@ampproject/remapping': 2.3.0
       '@vitest/expect': 2.0.5
@@ -4284,11 +4284,11 @@ snapshots:
       tinybench: 2.8.0
       tinypool: 1.0.0
       tinyrainbow: 1.2.0
-      vite: 5.4.8(@types/node@22.12.0)
-      vite-node: 2.0.5(@types/node@22.12.0)
+      vite: 5.4.8(@types/node@22.13.0)
+      vite-node: 2.0.5(@types/node@22.13.0)
       why-is-node-running: 2.3.0
     optionalDependencies:
-      '@types/node': 22.12.0
+      '@types/node': 22.13.0
     transitivePeerDependencies:
       - less
       - lightningcss
