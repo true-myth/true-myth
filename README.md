@@ -206,7 +206,7 @@ console.log(safeLength(nothingHere).toString()); // Nothing
 You can use `Maybe.of` to construct a `Maybe` from any value. It will return a `Nothing` if the passed type is `null` or `undefined`, or a `Just` otherwise.
 
 ```typescript
-import Maybe from 'true-myth/maybe';
+import Maybe, { mapOr } from 'true-myth/maybe';
 
 function acceptsANullOhNo(value: number | null): Maybe<string> {
   const maybeNumber = Maybe.of(value);
@@ -256,11 +256,12 @@ This can also be convenient in functional style pipelines:
 ```typescript
 import { filter, map, pipe, prop } from 'ramda';
 import Result from 'true-myth/result';
+import { unwrapErr } from 'true-myth/test-support';
 
 function getErrorMessages(results: Array<Result<string, Error>>) {
   return results
     .filter(Result.isErr)
-    .map(Err.unwrapErr) // would not type-checkout with previous line
+    .map(unwrapErr) // would not type-checkout with previous line
     .map((error) => error.message);
 }
 ```
@@ -308,7 +309,7 @@ This makes for a much nicer API than needing to include the parameters for every
 
 ```ts
 import * as _ from 'lodash';
-import { map } from 'true-myth/maybe';
+import Maybe, { map } from 'true-myth/maybe';
 
 const length = (s: string) => s.length;
 const even = (n: number) => n % 2 === 0;
@@ -400,7 +401,7 @@ With `Task` in place, you could write a single adapter for `XMLHttpRequest` in o
 With `Task`’s ability to robustly handled all the error cases, you can use this just like you would a `Promise`, with `async` and `await`, or you can use `Task`’s own robust library of combinators. For example, to preserve type safety while working with a response, you might combine `Task` with [the excellent `zod` library][zod] to handle API responses robustly, like so:
 
 ```ts
-import Task from 'true-myth/task';
+import Task, { tryOrElse } from 'true-myth/task';
 import { z } from 'zod';
 
 const User = z.object({
@@ -411,10 +412,10 @@ const User = z.object({
 
 const Users = z.array(User);
 
-let usersTask = Task.tryOrElse(
+let usersTask = tryOrElse(
   fetch('https://api.example.com/users),
   (httpError) => new Error('Fetch error', { cause: httpError })
-).andThen((res) => Task.tryOrElse(
+).andThen((res) => tryOrElse(
   res.json(),
   (parseError) => new Error('Parse error', { cause: parseError })
 )).andThen((json) => {
@@ -703,7 +704,7 @@ The hope is that a team just picking up these ideas for the first time can use t
 One important note: True Myth does _not_ attempt to deeply-clone the wrapped values when performing operations on them. Instead, the library assumes that you will _not_ mutate those objects in place. (Doing more than this would require taking on a dependency on e.g. [lodash]). If you violate that constraint, you can and will see surprising outcomes. Accordingly, you should take care not to mutate reference types, or to use deep cloning yourself when e.g. mapping over reference types.
 
 ```typescript
-import { just, map } from 'true-myth/maybe';
+import { just, map, type Just } from 'true-myth/maybe';
 
 const anObjectToWrap = {
   desc: ['this', ' ', 'is a string'],
