@@ -865,15 +865,15 @@ describe('module-scope functions', () => {
     describe('with a single task', () => {
       test('that is still pending', () => {
         let { task } = Task.withResolvers<string, number>();
-        let result = all([task] as const);
-        expectTypeOf(result).toEqualTypeOf<Task<Array<string>, number>>();
+        let result = all([task]);
+        expectTypeOf(result).toEqualTypeOf<Task<[string], number>>();
         expect(result.state).toBe(State.Pending);
       });
 
       test('that has resolved', async () => {
         let theTask = Task.resolve('hello');
         let result = all([theTask]);
-        expectTypeOf(result).toEqualTypeOf<Task<string[], never>>();
+        expectTypeOf(result).toEqualTypeOf<Task<[string], never>>();
         await result;
         expect(result.state).toBe(State.Resolved);
         if (result.isResolved) {
@@ -886,7 +886,7 @@ describe('module-scope functions', () => {
         let theTask = Task.reject<string, string>(theReason);
         let result = all([theTask]);
         await result;
-        expectTypeOf(result).toEqualTypeOf<Task<string[], string>>();
+        expectTypeOf(result).toEqualTypeOf<Task<[string], string>>();
         expect(result.state).toBe(State.Rejected);
         if (result.isRejected) {
           expect(result.reason).toBe(theReason);
@@ -898,7 +898,7 @@ describe('module-scope functions', () => {
       test('types', () => {
         let { task: task1 } = Task.withResolvers<string, number>();
         let { task: task2 } = Task.withResolvers<boolean, Error>();
-        let fromTuple = all([task1, task2] as const);
+        let fromTuple = all([task1, task2]);
         let fromArray = all([task1, task2]);
         expectTypeOf(fromTuple).toEqualTypeOf(fromArray);
       });
@@ -906,8 +906,8 @@ describe('module-scope functions', () => {
       test('that are all still pending', () => {
         let { task: task1 } = Task.withResolvers<string, number>();
         let { task: task2 } = Task.withResolvers<boolean, Error>();
-        let result = all([task1, task2] as const);
-        expectTypeOf(result).toEqualTypeOf<Task<Array<string | boolean>, number | Error>>();
+        let result = all([task1, task2]);
+        expectTypeOf(result).toEqualTypeOf<Task<[string, boolean], number | Error>>();
         expect(result.state).toBe(State.Pending);
       });
 
@@ -915,8 +915,8 @@ describe('module-scope functions', () => {
         test('while the second is pending', async () => {
           let { task: task1, resolve: resolve1 } = Task.withResolvers<string, number>();
           let { task: task2 } = Task.withResolvers<number, boolean>();
-          let result = all([task1, task2] as const);
-          expectTypeOf(result).toEqualTypeOf<Task<Array<string | number>, number | boolean>>();
+          let result = all([task1, task2]);
+          expectTypeOf(result).toEqualTypeOf<Task<[string, number], number | boolean>>();
 
           resolve1('first');
           expect(result.state).toBe(State.Pending);
@@ -926,14 +926,15 @@ describe('module-scope functions', () => {
           let { task: task1, resolve: resolve1 } = Task.withResolvers<number, string>();
           let { task: task2, resolve: resolve2 } = Task.withResolvers<string, boolean>();
           let result = all([task1, task2]);
-          expectTypeOf(result).toEqualTypeOf<Task<Array<number | string>, string | boolean>>();
+          expectTypeOf(result).toEqualTypeOf<Task<[number, string], string | boolean>>();
 
           resolve2('second');
           resolve1(1);
           await result;
           expect(result.state).toBe(State.Resolved);
           if (result.isResolved) {
-            expect(result.value).toEqual(['second', 1]);
+            expectTypeOf(result.value).toEqualTypeOf<[number, string]>();
+            expect(result.value).toEqual([1, 'second']);
           }
         });
 
@@ -941,7 +942,7 @@ describe('module-scope functions', () => {
           let { task: task1, resolve: resolve1 } = Task.withResolvers<string, number>();
           let { task: task2, reject: reject2 } = Task.withResolvers<boolean, string>();
           let result = all([task1, task2] as const);
-          expectTypeOf(result).toEqualTypeOf<Task<Array<string | boolean>, number | string>>();
+          expectTypeOf(result).toEqualTypeOf<Task<[string, boolean], number | string>>();
 
           reject2('error');
           resolve1('first');
@@ -958,7 +959,7 @@ describe('module-scope functions', () => {
           let { task: task1 } = Task.withResolvers<number, boolean>();
           let { task: task2, resolve: resolve2 } = Task.withResolvers<string, Error>();
           let result = all([task1, task2] as const);
-          expectTypeOf(result).toEqualTypeOf<Task<Array<number | string>, boolean | Error>>();
+          expectTypeOf(result).toEqualTypeOf<Task<[number, string], boolean | Error>>();
 
           resolve2('second');
           expect(result.state).toBe(State.Pending);
@@ -968,7 +969,7 @@ describe('module-scope functions', () => {
           let { task: task1, resolve: resolve1 } = Task.withResolvers<string, number>();
           let { task: task2, resolve: resolve2 } = Task.withResolvers<number, boolean>();
           let result = all([task1, task2] as const);
-          expectTypeOf(result).toEqualTypeOf<Task<Array<string | number>, number | boolean>>();
+          expectTypeOf(result).toEqualTypeOf<Task<[string, number], number | boolean>>();
 
           resolve1('first');
           resolve2(2);
@@ -983,7 +984,7 @@ describe('module-scope functions', () => {
           let { task: task1, reject: reject1 } = Task.withResolvers<number, string>();
           let { task: task2, resolve: resolve2 } = Task.withResolvers<string, boolean>();
           let result = all([task1, task2] as const);
-          expectTypeOf(result).toEqualTypeOf<Task<Array<number | string>, string | boolean>>();
+          expectTypeOf(result).toEqualTypeOf<Task<[number, string], string | boolean>>();
 
           reject1('error');
           resolve2('second');
@@ -1000,7 +1001,7 @@ describe('module-scope functions', () => {
       let { task: task1, reject: reject1 } = Task.withResolvers<number, string>();
       let { task: task2 } = Task.withResolvers<string, boolean>();
       let result = all([task1, task2] as const);
-      expectTypeOf(result).toEqualTypeOf<Task<Array<number | string>, string | boolean>>();
+      expectTypeOf(result).toEqualTypeOf<Task<[number, string], string | boolean>>();
 
       reject1('error');
       await result;
@@ -1266,7 +1267,7 @@ describe('module-scope functions', () => {
           let { task: task2 } = Task.withResolvers<number, boolean>();
           let result = any([task1, task2]);
           expectTypeOf(result).toEqualTypeOf<
-            Task<string | number, AggregateRejection<Array<number | boolean>>>
+            Task<string | number, AggregateRejection<[number, boolean]>>
           >();
 
           resolve1('first');
@@ -1282,7 +1283,7 @@ describe('module-scope functions', () => {
           let { task: task2, resolve: resolve2 } = Task.withResolvers<string, boolean>();
           let result = any([task1, task2]);
           expectTypeOf(result).toEqualTypeOf<
-            Task<number | string, AggregateRejection<Array<string | boolean>>>
+            Task<number | string, AggregateRejection<[string, boolean]>>
           >();
 
           resolve2('second');
@@ -1299,7 +1300,7 @@ describe('module-scope functions', () => {
           let { task: task2, reject: reject2 } = Task.withResolvers<boolean, string>();
           let result = any([task1, task2]);
           expectTypeOf(result).toEqualTypeOf<
-            Task<string | boolean, AggregateRejection<Array<number | string>>>
+            Task<string | boolean, AggregateRejection<[number, string]>>
           >();
 
           reject2('error');
@@ -1318,7 +1319,7 @@ describe('module-scope functions', () => {
           let { task: task2 } = Task.withResolvers<number, boolean>();
           let result = any([task1, task2]);
           expectTypeOf(result).toEqualTypeOf<
-            Task<string | number, AggregateRejection<Array<number | boolean>>>
+            Task<string | number, AggregateRejection<[number, boolean]>>
           >();
 
           reject1(1);
@@ -1330,7 +1331,7 @@ describe('module-scope functions', () => {
           let { task: task2, resolve: resolve2 } = Task.withResolvers<string, boolean>();
           let result = any([task1, task2]);
           expectTypeOf(result).toEqualTypeOf<
-            Task<number | string, AggregateRejection<Array<string | boolean>>>
+            Task<number | string, AggregateRejection<[string, boolean]>>
           >();
 
           resolve2('second');
@@ -1347,7 +1348,7 @@ describe('module-scope functions', () => {
           let { task: task2, reject: reject2 } = Task.withResolvers<boolean, string>();
           let result = any([task1, task2]);
           expectTypeOf(result).toEqualTypeOf<
-            Task<string | boolean, AggregateRejection<Array<number | string>>>
+            Task<string | boolean, AggregateRejection<[number, string]>>
           >();
 
           reject2('error');
@@ -1356,8 +1357,8 @@ describe('module-scope functions', () => {
           expect(result.state).toBe(State.Rejected);
           if (result.isRejected) {
             expect(result.reason).toBeInstanceOf(AggregateRejection);
-            expect(result.reason.errors[0]!).toBe('error');
-            expect(result.reason.errors[1]!).toBe(1);
+            expect(result.reason.errors[0]!).toBe(1);
+            expect(result.reason.errors[1]!).toBe('error');
           }
         });
       });
@@ -1368,7 +1369,7 @@ describe('module-scope functions', () => {
           let { task: task2, resolve: resolve2 } = Task.withResolvers<string, Error>();
           let result = any([task1, task2]);
           expectTypeOf(result).toEqualTypeOf<
-            Task<number | string, AggregateRejection<Array<boolean | Error>>>
+            Task<number | string, AggregateRejection<[boolean, Error]>>
           >();
 
           resolve2('second');
@@ -1384,7 +1385,7 @@ describe('module-scope functions', () => {
           let { task: task2, resolve: resolve2 } = Task.withResolvers<number, boolean>();
           let result = any([task1, task2]);
           expectTypeOf(result).toEqualTypeOf<
-            Task<string | number, AggregateRejection<Array<number | boolean>>>
+            Task<string | number, AggregateRejection<[number, boolean]>>
           >();
 
           resolve1('first');
@@ -1401,7 +1402,7 @@ describe('module-scope functions', () => {
           let { task: task2, resolve: resolve2 } = Task.withResolvers<string, boolean>();
           let result = any([task1, task2]);
           expectTypeOf(result).toEqualTypeOf<
-            Task<number | string, AggregateRejection<Array<string | boolean>>>
+            Task<number | string, AggregateRejection<[string, boolean]>>
           >();
 
           reject1('error');
@@ -1421,7 +1422,7 @@ describe('module-scope functions', () => {
         let { task: task2, reject: reject2 } = Task.withResolvers<string, number>();
         let result = any([task1, task2]);
         expectTypeOf(result).toEqualTypeOf<
-          Task<number | string, AggregateRejection<Array<boolean | number>>>
+          Task<number | string, AggregateRejection<[boolean, number]>>
         >();
 
         reject2(2);
@@ -1433,7 +1434,7 @@ describe('module-scope functions', () => {
         let { task: task2, reject: reject2 } = Task.withResolvers<number, boolean>();
         let result = any([task1, task2]);
         expectTypeOf(result).toEqualTypeOf<
-          Task<string | number, AggregateRejection<Array<number | boolean>>>
+          Task<string | number, AggregateRejection<[number, boolean]>>
         >();
 
         resolve1('first');
@@ -1450,7 +1451,7 @@ describe('module-scope functions', () => {
         let { task: task2, reject: reject2 } = Task.withResolvers<string, boolean>();
         let result = any([task1, task2] as const);
         expectTypeOf(result).toEqualTypeOf<
-          Task<number | string, AggregateRejection<Array<string | boolean>>>
+          Task<number | string, AggregateRejection<[string, boolean]>>
         >();
 
         reject1('error');
