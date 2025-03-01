@@ -804,7 +804,7 @@ export function timer(ms: number): Timer {
   @internal
  */
 export type All<A extends readonly AnyTask[]> = Task<
-  Array<TaskTypesFor<A>[0][number]>,
+  [...TaskTypesFor<A>[0]],
   TaskTypesFor<A>[1][number]
 >;
 
@@ -850,21 +850,24 @@ export type All<A extends readonly AnyTask[]> = Task<
   @template A The type of the array or tuple of tasks.
 */
 export function all(tasks: []): Task<[], never>;
-export function all<A extends readonly AnyTask[]>(tasks: A): All<A>;
+// This overload uses a variadic generic `[...A]` in both parameter and return
+// position to correctly
+export function all<A extends readonly AnyTask[]>(tasks: readonly [...A]): All<[...A]>;
 export function all<A extends readonly AnyTask[]>(tasks: A): Task<unknown, unknown> {
   if (tasks.length === 0) {
     return Task.resolve([]);
   }
 
   let total = tasks.length;
-  let oks = new Array<unknown>();
+  let oks = Array.from({ length: tasks.length });
+  let resolved = 0;
   let hasRejected = false;
 
   return new Task((resolve, reject) => {
     // Because all tasks will *always* resolve, we need to manage this manually,
     // rather than using `Promise.all`, so that we produce a rejected `Task` as
     // soon as *any* `Task` rejects.
-    for (let task of tasks) {
+    for (let [idx, task] of tasks.entries()) {
       // Instead, each `Task` wires up handlers for resolution and rejection.
       task.match({
         // If it rejected, then check whether one of the other tasks has already
@@ -891,8 +894,9 @@ export function all<A extends readonly AnyTask[]>(tasks: A): Task<unknown, unkno
             return;
           }
 
-          oks.push(value);
-          if (oks.length === total) {
+          oks[idx] = value;
+          resolved += 1;
+          if (resolved === total) {
             resolve(oks);
           }
         },
@@ -993,8 +997,8 @@ export function allSettled(tasks: AnyTask[]): Task<unknown, never> {
   console.log(result.toString()); // Err(AggregateRejection: `Task.race`: 10ms,20ms,30ms)
   ```
 
-  (Note that the order in the resulting `AggregateRejection` is not guaranteed
-  to be stable!)
+  The order in the resulting `AggregateRejection` is guaranteed to be stable and
+  to match the order of the tasks passed in.
 
   @param tasks The set of tasks to check for any resolution.
   @returns A Task which is either {@linkcode Resolved} with the value of the
@@ -1006,22 +1010,24 @@ export function allSettled(tasks: AnyTask[]): Task<unknown, never> {
 */
 export function any(tasks: []): Task<never, AggregateRejection<[]>>;
 export function any<A extends readonly AnyTask[]>(
-  tasks: A
-): Task<TaskTypesFor<A>[0][number], AggregateRejection<Array<TaskTypesFor<A>[1][number]>>>;
-export function any(tasks: [] | AnyTask[]): AnyTask {
+  tasks: readonly [...A]
+): Task<TaskTypesFor<A>[0][number], AggregateRejection<[...TaskTypesFor<A>[1]]>>;
+// export function all<A extends readonly AnyTask[]>(tasks: readonly [...A]): All<[...A]>;
+export function any(tasks: readonly [] | readonly AnyTask[]): AnyTask {
   if (tasks.length === 0) {
     return Task.reject(new AggregateRejection([]));
   }
 
   let total = tasks.length;
   let hasResolved = false;
-  let rejections = new Array<unknown>();
+  let rejections = Array.from({ length: tasks.length });
+  let rejected = 0;
 
   return new Task((resolve, reject) => {
     // We cannot use `Promise.any`, because it will only return the first `Task`
     // that resolves, and the `Promise` for a `Task` *always* either resolves if
     // it settles.
-    for (let task of tasks) {
+    for (let [idx, task] of tasks.entries()) {
       // Instead, each `Task` wires up handlers for resolution and rejection.
       task.match({
         // If it resolved, then check whether one of the other tasks has already
@@ -1048,9 +1054,10 @@ export function any(tasks: [] | AnyTask[]): AnyTask {
             return;
           }
 
-          rejections.push(reason);
+          rejections[idx] = reason;
+          rejected += 1;
 
-          if (rejections.length === total) {
+          if (rejected === total) {
             reject(new AggregateRejection(rejections));
           }
         },
