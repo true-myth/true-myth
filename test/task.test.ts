@@ -1837,6 +1837,15 @@ describe('module-scope functions', () => {
         ) => Task<number, unknown>
       >();
 
+      // @ts-expect-error: `safe` only accepts functions which return promises.
+      safe(() => {});
+      // @ts-expect-error: `safe` only accepts functions which return promises.
+      safe(() => 123);
+      // @ts-expect-error: `safe` only accepts functions which return promises.
+      safe(() => true);
+      // @ts-expect-error: `safe` only accepts functions which return promises.
+      safe(() => 'hello');
+
       test('when it throws', async () => {
         let theTask = safeExample(123, { throwErr: true });
         expectTypeOf(theTask).toEqualTypeOf<Task<number, unknown>>();

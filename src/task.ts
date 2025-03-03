@@ -1562,7 +1562,7 @@ export const safelyTryOr = tryOr;
 export const safelyTryOrElse = tryOrElse;
 
 /**
-  Given a function which takes no arguments and returns a `Promise` and a
+  Given a function which takes no arguments and returns a `PromiseLike` and a
   function which accepts an `unknown` rejection reason and transforms it into a
   known rejection type `E`, return a {@linkcode Task Task<T, E>} for the result
   of invoking that function. This safely handles functions which fail
@@ -1608,22 +1608,22 @@ export const safelyTryOrElse = tryOrElse;
   Note that in the curried form, you must specify the expected `T` type of the
   resulting `Task`, or else it will always be `unknown`.
 
-  @param onError The function to use to transform the rejectionr easons if the
-    `Promise` produced by `fn` rejects.
-  @param fn A function which returns a `Promise` when called.
+  @param onError The function to use to transform the rejection reasons if the
+    `PromiseLike` produced by `fn` rejects.
+  @param fn A function which returns a `PromiseLike` when called.
   @returns A `Task` which resolves to the resolution value of the promise or
     rejects with the rejection value of the promise *or* any error thrown while
     invoking `fn`.
 */
-export function tryOrElse<T, E>(onError: (reason: unknown) => E, fn: () => Promise<T>): Task<T, E>;
+export function tryOrElse<T, E>(onError: (reason: unknown) => E, fn: () => PromiseLike<T>): Task<T, E>;
 export function tryOrElse<T, E>(
   onError: (reason: unknown) => E
-): (fn: () => Promise<T>) => Task<T, E>;
+): (fn: () => PromiseLike<T>) => Task<T, E>;
 export function tryOrElse<T, E>(
   onError: (reason: unknown) => E,
-  fn?: () => Promise<T>
-): Task<T, E> | ((fn: () => Promise<T>) => Task<T, E>) {
-  const op = (fn: () => Promise<T>): Task<T, E> =>
+  fn?: () => PromiseLike<T>
+): Task<T, E> | ((fn: () => PromiseLike<T>) => Task<T, E>) {
+  const op = (fn: () => PromiseLike<T>): Task<T, E> =>
     new Task((resolve, reject) => {
       try {
         fn().then(resolve, (reason) => reject(onError(reason)));
@@ -1660,7 +1660,7 @@ export function tryOrElse<T, E>(
     `Promise` rejection.
 */
 export function safe<
-  F extends (...params: never[]) => unknown,
+  F extends (...params: never[]) => PromiseLike<unknown>,
   P extends Parameters<F>,
   R extends Awaited<ReturnType<F>>,
 >(fn: F): (...params: P) => Task<R, unknown>;
@@ -1714,11 +1714,10 @@ export function safe<
 export function safe<
   F extends (...params: never[]) => PromiseLike<unknown>,
   P extends Parameters<F>,
-  R extends Awaited<ReturnType<F>>,
   E,
->(fn: F, onError?: (reason: unknown) => E): (...params: P) => Task<R, unknown> {
+>(fn: F, onError?: (reason: unknown) => E): (...params: P) => Task<unknown, unknown> {
   let handleError = onError ?? identity;
-  return (...params) => tryOrElse(handleError, () => fn(...params) as R);
+  return (...params) => tryOrElse(handleError, () => fn(...params));
 }
 
 /**
