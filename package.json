@@ -74,7 +74,7 @@
   "devDependencies": {
     "@release-it-plugins/lerna-changelog": "^7.0.0",
     "@types/node": "^22.0.0",
-    "@vitest/coverage-v8": "^2.0.1",
+    "@vitest/coverage-v8": "^2.1.9",
     "miniglob": "^0.1.2",
     "prettier": "^3.0.0",
     "release-it": "^17.0.1",
@@ -82,7 +82,7 @@
     "shelljs": "^0.9.1",
     "typedoc": "^0.28.0",
     "typescript": "5.3.3",
-    "vitest": "^2.0.1"
+    "vitest": "^2.1.9"
   },
   "engines": {
     "node": "18.* || >= 20.*"
