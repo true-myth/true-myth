@@ -15,7 +15,7 @@ importers:
         specifier: ^22.0.0
         version: 22.13.10
       '@vitest/coverage-v8':
-        specifier: ^2.0.1
+        specifier: ^2.1.9
         version: 2.1.9(vitest@2.1.9(@types/node@22.13.10))
       miniglob:
         specifier: ^0.1.2
@@ -39,7 +39,7 @@ importers:
         specifier: 5.3.3
         version: 5.3.3
       vitest:
-        specifier: ^2.0.1
+        specifier: ^2.1.9
         version: 2.1.9(@types/node@22.13.10)
 
 packages:
