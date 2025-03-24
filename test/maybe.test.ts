@@ -620,7 +620,7 @@ describe('`Maybe` class', () => {
     if (maybe.isJust) {
       expectTypeOf(maybe).toHaveProperty('value');
     }
-    expectTypeOf(Maybe).constructorParameters.toEqualTypeOf<[value?: unknown] | []>();
+    expectTypeOf(Maybe).constructorParameters.toEqualTypeOf<[value?: unknown]>();
   });
 
   describe('Just instance', () => {
