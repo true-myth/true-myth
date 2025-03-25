@@ -74,3 +74,6 @@ jsconfig.json
 
 # macOS ugh
 .DS_Store
+
+# Nova config
+.nova

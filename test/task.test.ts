@@ -3070,8 +3070,7 @@ function* take<T>(iterable: Iterable<T>, count: number): IterableIterator<T> {
 function printError(e: Error): string {
   // prettier-ignore
   let maybeCause =
-    e.cause instanceof Error ? Maybe.just(printError(e.cause)) :
-    Maybe.of(e.cause?.toString());
+    e.cause instanceof Error ? Maybe.just(printError(e.cause)) : Maybe.of(e.cause?.toString());
 
   let cause = maybeCause.mapOr('', (cause) => `\n\tcaused by: ${cause}`);
   return `${e.name}: ${e.message}${cause}`;

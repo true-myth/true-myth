@@ -659,8 +659,9 @@ export type ResolvesTo<T extends AnyTask> = T extends Task<infer Value, infer _>
   The rejection type for a given {@linkcode Task}
   @internal
  */
-export type RejectsWith<T extends AnyTask> =
-  T extends Task<infer _, infer Rejection> ? Rejection : never;
+export type RejectsWith<T extends AnyTask> = T extends Task<infer _, infer Rejection>
+  ? Rejection
+  : never;
 
 /**
   Create a {@linkcode Task} which will resolve to {@linkcode Unit} after a set
@@ -1615,7 +1616,10 @@ export const safelyTryOrElse = tryOrElse;
     rejects with the rejection value of the promise *or* any error thrown while
     invoking `fn`.
 */
-export function tryOrElse<T, E>(onError: (reason: unknown) => E, fn: () => PromiseLike<T>): Task<T, E>;
+export function tryOrElse<T, E>(
+  onError: (reason: unknown) => E,
+  fn: () => PromiseLike<T>
+): Task<T, E>;
 export function tryOrElse<T, E>(
   onError: (reason: unknown) => E
 ): (fn: () => PromiseLike<T>) => Task<T, E>;

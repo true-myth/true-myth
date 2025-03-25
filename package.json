@@ -48,12 +48,7 @@
     "./-private/*": null
   },
   "types": "dist/es/index.d.ts",
-  "keywords": [
-    "typescript",
-    "functional programming",
-    "maybe",
-    "result"
-  ],
+  "keywords": ["typescript", "functional programming", "maybe", "result"],
   "scripts": {
     "build": "node ./ts/publish.js",
     "clean": "rimraf ./dist",
@@ -64,14 +59,10 @@
     "tdd": "vitest",
     "type-check": "tsc --noEmit"
   },
-  "files": [
-    "dist",
-    "src",
-    "README.md",
-    "CHANGELOG.md"
-  ],
+  "files": ["dist", "src", "README.md", "CHANGELOG.md"],
   "license": "MIT",
   "devDependencies": {
+    "@biomejs/biome": "1.9.4",
     "@release-it-plugins/lerna-changelog": "^7.0.0",
     "@types/node": "^22.0.0",
     "@vitest/coverage-v8": "^2.1.9",
@@ -86,13 +77,6 @@
   },
   "engines": {
     "node": "18.* || >= 20.*"
-  },
-  "prettier": {
-    "printWidth": 100,
-    "semi": true,
-    "singleQuote": true,
-    "trailingComma": "es5",
-    "tabWidth": 2
   },
   "release-it": {
     "github": {
@@ -118,5 +102,8 @@
   "volta": {
     "node": "20.18.0",
     "pnpm": "10.6.1"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": ["@biomejs/biome"]
   }
 }
