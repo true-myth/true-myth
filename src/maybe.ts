@@ -199,7 +199,7 @@ class MaybeImpl<T> {
 
   /** Method variant for {@linkcode map} */
   map<U extends {}>(mapFn: (t: T) => U): Maybe<U> {
-    return (this.repr[0] === 'Just' ? Maybe.just(mapFn(this.repr[1])) : this) as Maybe<U>;
+    return this.repr[0] === 'Just' ? Maybe.just(mapFn(this.repr[1])) : nothing();
   }
 
   /** Method variant for {@link mapOr|`mapOr`} */
