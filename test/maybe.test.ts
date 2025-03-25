@@ -61,7 +61,7 @@ describe('`Maybe` pure functions', () => {
     }
 
     const nothingOnType = MaybeNS.nothing<string>();
-    expectTypeOf(nothingOnType).toMatchTypeOf<Maybe<string>>();
+    expectTypeOf(nothingOnType).toExtend<Maybe<string>>();
   });
 
   describe('`of`', () => {
@@ -71,6 +71,9 @@ describe('`Maybe` pure functions', () => {
     let example = (): string | undefined => undefined;
     expectTypeOf(Maybe.of(example)).toBeNever();
     expectTypeOf(Maybe.of(() => 'hello')).toEqualTypeOf<Maybe<() => string>>();
+
+    let unknownVal: unknown = 123;
+    expectTypeOf(Maybe.of(unknownVal)).toEqualTypeOf<Maybe<{}>>();
 
     test('with `null', () => {
       const nothingFromNull = MaybeNS.of<string>(null);
@@ -112,7 +115,7 @@ describe('`Maybe` pure functions', () => {
 
     const none = MaybeNS.nothing<string>();
     const noLength = MaybeNS.map(length, none);
-    expectTypeOf(none).toMatchTypeOf<Maybe<string>>();
+    expectTypeOf(none).toExtend<Maybe<string>>();
     expect(noLength).toEqual(MaybeNS.nothing());
 
     expect(() => {
@@ -424,11 +427,11 @@ describe('`Maybe` pure functions', () => {
       const waffles = findByName('waffles')(array);
       expect(waffles.variant).toBe(MaybeNS.Variant.Just);
       expect((waffles as Just<Item>).value).toEqual(array[1]);
-      expectTypeOf(waffles).toMatchTypeOf<Maybe<{ name: 'waffles' }>>();
+      expectTypeOf(waffles).toExtend<Maybe<{ name: 'waffles' }>>();
 
       const readonlyEmpty: readonly number[] = [];
       const foundReadonly = MaybeNS.find(pred, readonlyEmpty);
-      expectTypeOf(foundReadonly).toMatchTypeOf<Maybe<number>>();
+      expectTypeOf(foundReadonly).toExtend<Maybe<number>>();
     });
 
     test('`first`', () => {
