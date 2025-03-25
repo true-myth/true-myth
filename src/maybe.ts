@@ -110,9 +110,13 @@ class MaybeImpl<T> {
   static of<F extends (...args: any) => {}>(value: F): Maybe<F>;
   static of<T extends {}, F extends (...args: any) => T | null | undefined>(value: F): never;
   static of<F extends (...args: any) => null | undefined>(value: F): never;
-  // For all other types, allow `null | undefined`, since in those cases we will
-  // produce `Nothing`.
-  static of<T>(value: T | null | undefined): Maybe<T>;
+  // For all other non-null types, allow `null | undefined` implicitly via the
+  // `unknown` type, since in those cases we will produce `Nothing`.
+  static of<T extends {}>(value: T | null | undefined): Maybe<T>;
+  // Finally, with a type that falls back entirely to `unknown`, produce a non-
+  // null type, because that is the one thing we know to be true by construction
+  // in that case.
+  static of<T>(value: T): Maybe<NonNullable<T>>;
   // Then the implementation signature is simply the same as the final overload,
   // because we do not *and cannot* prevent the undesired function types from
   // appearing here at runtime: doing so would require having a value on which
@@ -1243,16 +1247,16 @@ export type AnyArray<T> = Array<T> | ReadonlyArray<T>;
 export function find<T, U extends T>(
   predicate: NarrowingPredicate<T, U>,
   array: AnyArray<T>
-): Maybe<U>;
+): Maybe<NonNullable<U>>;
 export function find<T, U extends T>(
   predicate: NarrowingPredicate<T, U>
-): (array: AnyArray<T>) => Maybe<U>;
-export function find<T>(predicate: Predicate<T>, array: AnyArray<T>): Maybe<T>;
-export function find<T>(predicate: Predicate<T>): (array: AnyArray<T>) => Maybe<T>;
+): (array: AnyArray<T>) => Maybe<NonNullable<U>>;
+export function find<T>(predicate: Predicate<T>, array: AnyArray<T>): Maybe<NonNullable<T>>;
+export function find<T>(predicate: Predicate<T>): (array: AnyArray<T>) => Maybe<NonNullable<T>>;
 export function find<T, U extends T>(
   predicate: NarrowingPredicate<T, U> | Predicate<T>,
   array?: AnyArray<T>
-): Maybe<T> | ((array: AnyArray<T>) => Maybe<T>) {
+): Maybe<NonNullable<T>> | ((array: AnyArray<T>) => Maybe<NonNullable<T>>) {
   const op = (a: AnyArray<T>) => Maybe.of(a.find(predicate));
   return curry1(op, array);
 }
@@ -1274,7 +1278,7 @@ export function find<T, U extends T>(
 
   @param array The array to get the first item from.
  */
-export function first<T>(array: AnyArray<T | null | undefined>): Maybe<T> {
+export function first<T>(array: AnyArray<T>): Maybe<NonNullable<T>> {
   return Maybe.of(array[0]);
 }
 
@@ -1295,7 +1299,7 @@ export function first<T>(array: AnyArray<T | null | undefined>): Maybe<T> {
 
   @param array The array to get the first item from.
  */
-export function last<T>(array: AnyArray<T | null | undefined>): Maybe<T> {
+export function last<T>(array: AnyArray<T | null | undefined>): Maybe<NonNullable<T>> {
   return Maybe.of(array[array.length - 1]);
 }
 

@@ -61,7 +61,7 @@ describe('`Maybe` pure functions', () => {
     }
 
     const nothingOnType = maybe.nothing<string>();
-    expectTypeOf(nothingOnType).toMatchTypeOf<Maybe<string>>();
+    expectTypeOf(nothingOnType).toExtend<Maybe<string>>();
   });
 
   describe('`of`', () => {
@@ -71,6 +71,9 @@ describe('`Maybe` pure functions', () => {
     let example = (): string | undefined => undefined;
     expectTypeOf(Maybe.of(example)).toBeNever();
     expectTypeOf(Maybe.of(() => 'hello')).toEqualTypeOf<Maybe<() => string>>();
+
+    let unknownVal: unknown = 123;
+    expectTypeOf(Maybe.of(unknownVal)).toEqualTypeOf<Maybe<{}>>();
 
     test('with `null', () => {
       const nothingFromNull = maybe.of<string>(null);
@@ -112,7 +115,7 @@ describe('`Maybe` pure functions', () => {
 
     const none = maybe.nothing<string>();
     const noLength = maybe.map(length, none);
-    expectTypeOf(none).toMatchTypeOf<Maybe<string>>();
+    expectTypeOf(none).toExtend<Maybe<string>>();
     expect(noLength).toEqual(maybe.nothing());
 
     expect(() => {
@@ -228,7 +231,7 @@ describe('`Maybe` pure functions', () => {
 
       expectTypeOf(theOutput).toEqualTypeOf<
         Maybe<Branded<'just-a'> | Branded<'just-b'> | Branded<'empty'>>
-      >;
+      >();
     });
   });
 
@@ -284,7 +287,7 @@ describe('`Maybe` pure functions', () => {
 
       expectTypeOf(theOutput).toEqualTypeOf<
         Maybe<Branded<'just-a'> | Branded<'just-b'> | Branded<'empty'>>
-      >;
+      >();
     });
   });
 
@@ -479,11 +482,11 @@ describe('`Maybe` pure functions', () => {
       const waffles = findByName('waffles')(array);
       expect(waffles.variant).toBe(maybe.Variant.Just);
       expect((waffles as Just<Item>).value).toEqual(array[1]);
-      expectTypeOf(waffles).toMatchTypeOf<Maybe<{ name: 'waffles' }>>();
+      expectTypeOf(waffles).toExtend<Maybe<{ name: 'waffles' }>>();
 
       const readonlyEmpty: readonly number[] = [];
       const foundReadonly = maybe.find(pred, readonlyEmpty);
-      expectTypeOf(foundReadonly).toMatchTypeOf<Maybe<number>>();
+      expectTypeOf(foundReadonly).toExtend<Maybe<number>>();
     });
 
     test('`first`', () => {
