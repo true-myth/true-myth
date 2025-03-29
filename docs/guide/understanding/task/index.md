@@ -1,5 +1,11 @@
 # Task
 
+:::warning 🚧 Under Construction 🚧
+
+There will be more, different, and *better*, content here Soon™. We didn’t want to block getting the new docs site live on having finished updating all the existing content!
+
+:::
+
 A `Task<T, E>` is a type representing the state of an asynchronous computation which may fail, with a successful value of type `T` or an error of type `E`. It has three states:
 
 - `Pending`
@@ -18,13 +24,13 @@ You can think of a `Task<T, E>` as being basically a `Promise<Result<T, E>>`, be
 
 ## Creating a `Task`
 
-The simplest way to create a `Task` is to call `Task.try(somePromise)`. Because any promise may reject/throw an error, this simplest form catches all rejections and maps them into the `Rejected` variant. Given a `Promise<T>`, the resulting `Task` thus has the type `Task<T, unknown>`. For example:
+The simplest way to create a `Task` is to call `Task.fromPromise(somePromise)`. Because any promise may reject/throw an error, this simplest form catches all rejections and maps them into the `Rejected` variant. Given a `Promise<T>`, the resulting `Task` thus has the type `Task<T, unknown>`. For example:
 
 ```ts
 let { promise, reject } = Promise.withResolvers<number>();
 
 // `theTask` has the type `Task<number, unknown>`
-let theTask = Task.try(promise);
+let theTask = Task.fromPromise(promise);
 
 // The rejection will always produce
 reject("Tasks always safely handle errors!");
