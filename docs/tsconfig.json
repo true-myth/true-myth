@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "extends": "../ts/base.tsconfig.json",
+  "include": ["../src", "./.vitepress/types"],
+  "compilerOptions": {
+    "sourceMap": false,
+    "sourceRoot": "",
+    "esModuleInterop": true,
+    "resolveJsonModule": true,
+    "paths": {
+      "*": ["./types/*"]
+    }
+  },
+  "typedocOptions": {
+    "name": "True Myth",
+    "out": "../docs/api",
+    "docsRoot": "../docs",
+    "plugin": ["typedoc-plugin-markdown", "typedoc-vitepress-theme"],
+    "theme": "default",
+    "router": "member",
+    "excludePrivate": true,
+    "excludeInternal": true,
+    "disableSources": true,
+    "entryPointStrategy": "expand",
+    "readme": "none",
+    "includeVersion": true,
+    "sidebar": {
+      "collapse": false,
+      "pretty": true
+    },
+    "useTsLinkResolution": true
+  }
+}

@@ -65,6 +65,8 @@ dist
 
 # Or docs!
 docs-dist
+docs/.vitepress/cache/
+docs/api/
 
 # Exclude auto-created jsconfig.json
 jsconfig.json

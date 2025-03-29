@@ -1,5 +1,6 @@
 /**
-  {@include ../doc/delay.md}
+  Types and helpers for managing retry delays with the `withRetries` helper from
+  `Task`.
 
   @module
  */
@@ -19,16 +20,15 @@
   using a polyfill), you can also provide subclasses of `Iterator`.
 
   ```ts
-  function* randomInRange(min: number, max: number): Strategy<number> {
+  function* randomInRange(min: number, max: number): Strategy {
     while (true) {
       let scaled = Math.random() * (max - min + 1);
       let scaledInt = Math.floor(scaled);
       let startingAtMin = scaledInt + min;
-      yield startingAtMin
+      yield startingAtMin;
     }
   }
 
-  //
   class RandomInteger implements Strategy {
     #nextValue: number;
 
@@ -37,8 +37,9 @@
     }
 
     next(): IteratorResult<number, void> {
+      let value = this.#nextValue;
       this.#nextValue = Math.floor(Math.random() * Number.MAX_SAFE_INTEGER);
-      return { done: false, value: this.#nextValue };
+      return { done: false, value };
     }
 
     return(value: number): IteratorResult<number, void> {
@@ -54,21 +55,33 @@
     }
   }
 
-  class Range extends Iterator {
+  class InRange extends Iterator<number> implements Strategy {
     readonly #start: number;
     readonly #end: number;
     readonly #step: number;
 
+    #curr: number;
+
     constructor(start: number, end: number, step = 1) {
+      super();
       this.#start = start;
       this.#end = end;
       this.#step = step;
+      this.#curr = this.#start;
     }
 
-    *[Symbol.iterator]() {
-      for (let value = this.#start; value <= this.#end; value += this.#step) {
-        yield value;
+    next() {
+      if (this.#curr < this.#end) {
+        let value = this.#curr;
+        this.#curr += this.#step;
+        return { value, done: false } as const;
+      } else {
+        return { value: undefined, done: true } as const;
       }
+    }
+
+    [Symbol.iterator]() {
+      return this;
     }
   }
   ```
@@ -89,12 +102,12 @@
 
   let usingRandomInteger = task.withRetries(
     someRetryableTask,
-    new RandomInteger().take(10)
+    Iterator.from(new RandomInteger()).take(10)
   );
 
   let usingRangeIterator = task.withRetries(
     someRetryableTask,
-    new Range(1, 100, 5).take(10)
+    new InRange(1, 100, 5).take(10)
   );
   ```
  */

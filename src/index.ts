@@ -1,8 +1,8 @@
 /**
-  This is just here to re-export {@link Maybe}, {@link Result}, {@link Unit},
-  and {@link Toolbelt}  – that is, to provide a root-level entry amenable to use
-  with Node with TypeScript versions before 4.7 and its ESM support, or for
-  convenience.
+  This is just here to re-export {@link Maybe}, {@link Result}, {@link Task},
+  {@link Unit}, and {@link Toolbelt}, to provide a root-level entry friendly to
+  using with Node with TypeScript versions before 4.7 and its ESM support, as
+  well as for general convenience.
 
   @packageDocumentation
  */

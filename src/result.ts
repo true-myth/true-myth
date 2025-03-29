@@ -1,5 +1,12 @@
 /**
-  {@include doc/result.md}
+  A {@linkcode Result Result<T, E>} is a type representing the value result of a
+  synchronous operation which may fail, with a successful value of type `T` or
+  an error of type `E`.
+
+  If the result is a success, it is {@linkcode Ok Ok(value)}. If the result is a
+  failure, it is {@linkcode Err Err(reason)}.
+
+  For a deep dive on the type, see [the guide](/guide/understanding/result.md).
 
   @module
  */
@@ -22,16 +29,19 @@ export const Variant = {
 
 export type Variant = keyof typeof Variant;
 
+/** Representation of an {@linkcode Ok} when serialized to JSON. */
 export interface OkJSON<T> {
   variant: 'Ok';
   value: T;
 }
 
+/** Representation of an {@linkcode Err} when serialized to JSON. */
 export interface ErrJSON<E> {
   variant: 'Err';
   error: E;
 }
 
+/** Representation of a {@linkcode Result} when serialized to JSON. */
 export type ResultJSON<T, E> = OkJSON<T> | ErrJSON<E>;
 
 type Repr<T, E> = [tag: 'Ok', value: T] | [tag: 'Err', error: E];
@@ -1000,9 +1010,16 @@ export const toJSON = <T, E>(result: Result<T, E>): ResultJSON<T, E> => {
 /**
   A lightweight object defining how to handle each variant of a
   {@linkcode Result}.
+
+  @template T The success type
+  @template E The error type
+  @template A The type resulting from calling {@linkcode match} on a
+    {@linkcode Result}
  */
 export type Matcher<T, E, A> = {
+  /** Transform a `T` into the resulting type `A`. */
   Ok: (value: T) => A;
+  /** Transform an `E` into the resulting type `A`. */
   Err: (error: E) => A;
 };
 
@@ -1327,8 +1344,8 @@ export function ap<A, B, E>(
 
 /**
   Transform a function which may throw an error into one with an identical call
-  signature except that it will return a {@linkcode} instead of throwing an
-  error.
+  signature except that it will return a {@linkcode Result} instead of throwing
+  an error.
 
   This allows you to handle the error locally with all the normal `Result` tools
   rather than having to catch an exception. Where the {@linkcode tryOr} and
@@ -1362,8 +1379,8 @@ export function safe<F extends AnyFunction, P extends Parameters<F>, R extends R
 ): (...params: P) => Result<R, unknown>;
 /**
   Transform a function which may throw an error into one with an identical call
-  signature except that it will return a {@linkcode} instead of throwing an
-  error.
+  signature except that it will return a {@linkcode Result} instead of throwing
+  an error.
 
   This allows you to handle the error locally with all the normal `Result` tools
   rather than having to catch an exception. Where the {@linkcode tryOr} and

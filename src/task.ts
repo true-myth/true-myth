@@ -1,5 +1,13 @@
 /**
-  {@include doc/task.md}
+  A {@linkcode Task Task<T, E>} is a type representing an asynchronous operation
+  that may fail, with a successful (“resolved”) value of type `T` and an error
+  (“rejected”) value of type `E`.
+
+  If the `Task` is pending, it is {@linkcode Pending}. If it has resolved, it is
+  {@linkcode Resolved Resolved(value)}. If it has rejected, it is {@linkcode
+  Rejected Rejected(reason)}.
+
+  For more, see [the guide](/guide/understanding/task/).
 
   @module
  */
@@ -712,12 +720,20 @@ export type ResolvesTo<T extends AnyTask> = TypesFor<T>['resolution'];
 export type RejectsWith<T extends AnyTask> = TypesFor<T>['rejection'];
 
 /**
-  Create a {@linkcode Task} which will resolve to {@linkcode Unit} after a set
-  interval. (Safely wraps [`setTimeout`][setTimeout].)
+  Create a {@linkcode Task} which will resolve to the number of milliseconds the
+  timer waited for that time elapses. (In other words, it safely wraps the
+  [`setTimeout`][setTimeout] function.)
 
   [setTimeout]: https://developer.mozilla.org/en-US/docs/Web/API/Window/setTimeout
 
-  This can be combined with the {@linkcode Task.timeout} instance method.
+  This can be used as a “timeout” by calling it in conjunction any of the
+  {@linkcode Task} helpers like {@linkcode all}, {@linkcode race}, and so on. As
+  a convenience to use it as a timeout for another task, you can also combine it
+  with the {@linkcode Task.timeout} instance method or the standalone
+  {@linkcode timeout} function.
+
+  Provides the requested duration of the timer in case it is useful for working
+  with multiple timers.
 
   @param ms The number of milliseconds to wait before resolving the `Task`.
   @returns a Task which resolves to the passed-in number of milliseconds.
@@ -1297,7 +1313,7 @@ export declare class Phantom<T extends PropertyKey> {
   > This type has zero runtime overhead, including for construction: it is just
   > a `Task` with additional *type information*.
  */
-export type Timer = Task<number, never> & Phantom<'Timer'>;
+export type Timer = Task<number, never>;
 
 /**
   An `Error` type representing a timeout, as when a {@linkcode Timer} elapses.
@@ -1489,8 +1505,8 @@ export function fromUnsafePromise<T, E>(promise: Promise<Result<T, E>>): Task<T,
   Given a function which takes no arguments and returns a `Promise`, return a
   {@linkcode Task Task<T, unknown>} for the result of invoking that function.
   This safely handles functions which fail synchronously or asynchronously, so
-  unlike {@linkcode Task.try} is safe to use with values which may throw errors
-  _before_ producing a `Promise`.
+  unlike {@linkcode fromPromise} is safe to use with values which may throw
+  errors _before_ producing a `Promise`.
 
   ## Examples
 
@@ -1698,7 +1714,7 @@ export function tryOrElse<T, E>(
 
   You can use this to create a safe version of the `fetch` function, which will
   produce a `Task` instead of a `Promise` and which does not throw an error for
-  rejections, but instead produces a {@Rejected} variant of the `Task`.
+  rejections, but instead produces a {@linkcode Rejected} variant of the `Task`.
 
   ```ts
   import { safe } from 'true-myth/task';
@@ -1728,7 +1744,7 @@ export function safe<
 
   You can use this to create a safe version of the `fetch` function, which will
   produce a `Task` instead of a `Promise` and which does not throw an error for
-  rejections, but instead produces a {@Rejected} variant of the `Task`.
+  rejections, but instead produces a {@linkcode Rejected} variant of the `Task`.
 
   ```ts
   import { safe } from 'true-myth/task';
@@ -2320,7 +2336,12 @@ export function withRetries<T, E>(
 
     if (taskOrErr instanceof Error) {
       return Task.reject(
-        new RetryFailed({ tries: count, totalDuration, rejections, cause: taskOrErr })
+        new RetryFailed({
+          tries: count,
+          totalDuration,
+          rejections,
+          cause: taskOrErr,
+        })
       );
     }
 
@@ -2335,7 +2356,12 @@ export function withRetries<T, E>(
     return taskOrErr.orElse((reason) => {
       if (reason instanceof StopRetrying) {
         return Task.reject(
-          new RetryFailed({ tries: count, totalDuration, rejections, cause: reason })
+          new RetryFailed({
+            tries: count,
+            totalDuration,
+            rejections,
+            cause: reason,
+          })
         );
       }
 
@@ -2460,7 +2486,9 @@ class RetryFailed<E> extends Error {
     rejections: E[];
     cause?: Error;
   }) {
-    super(`Stopped retrying after ${tries} tries (${totalDuration}ms)`, { cause });
+    super(`Stopped retrying after ${tries} tries (${totalDuration}ms)`, {
+      cause,
+    });
     this.rejections = rejections;
     this.tries = tries;
     this.totalDuration = totalDuration;
