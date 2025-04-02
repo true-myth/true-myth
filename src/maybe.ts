@@ -1,5 +1,9 @@
 /**
-  {@include doc/maybe.md}
+  A value of type `T` which may, or may not, be present. If the value is
+  present, it is {@linkcode Just Just(value)}. If it's absent, it is {@linkcode
+  Nothing} instead.
+
+For a deep dive on the type, see [the guide](/guide/understanding/maybe.md).
 
   @module
  */

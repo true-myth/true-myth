@@ -1,8 +1,88 @@
 # Result
 
-A `Result<T, E>` is a type representing the value result of a synchronous operation which may fail, with a successful value of type `T` or an error of type `E`.
+:::warning 🚧 Under Construction 🚧
 
-If the value is present, it is `Ok(value)`. If it's absent, it's `Err(reason)`. This provides a type-safe container for dealing with the possibility that an error occurred, without needing to scatter `try`/`catch` blocks throughout your codebase. This has two major advantages:
+There will be different, and *better*, content here Soon™. We didn’t want to block getting the new docs site live on having finished updating all the existing content!
+
+:::
+
+Many functions have to deal with the result of operations which might fail. `Result` is True Myth’s type for dealing with *synchronous* fallible operations.
+
+## Failure handling
+
+Many patterns exist to work around the fact that you can't very easily return two things together in JavaScript. Node has a callback pattern with an error as the first argument to every callback, set to `null` if there was no error. Client-side JavaScript usually just doesn't have a single pattern for handling this.
+
+In both cases, you might use exceptions – but often an exception feels like the wrong thing because the possibility of failure is built into the kind of thing you're doing – querying an API, or checking the validity of some date, and so on.
+
+In Node.js, the callback pattern encourages a style where literally every function starts with the exact same code:
+
+```js
+const doSomething = (err, data) => {
+  if (err) {
+    return handleErr(err);
+  }
+
+  // do whatever the *actual* point of the function is
+};
+```
+
+There are two major problems with this:
+
+1.  It's incredibly repetitive – the very opposite of "Don't Repeat Yourself". We wouldn't do this with _anything_ else in our codebase!
+
+2.  It puts the error-handling right up front and _not in a good way._ While we want to have a failure case in mind when designing the behavior of our functions, it's not usually the _point_ of most functions – things like `handleErr` in the above example being the exception and not the rule. The actual meat of the function is always after the error handling.
+
+Meanwhile, in client-side code, if we're not using some similar kind of callback pattern, we usually resort to exceptions. But exceptions are unpredictable: you can't know whether a given function invocation is going to throw an exception until runtime as someone calling the function. No big deal if it's a small application and one person wrote all the code, but with even a few thousand lines of code or two developers, it's very easy to miss that. And then this happens:
+
+```js
+// in one part of the codebase
+function getMeAValue(url) {
+  if (isMalformed(url)) {
+    throw new Error(`The url `${url}` is malformed!`);
+  }
+
+  // do something else to load data from the URL
+}
+
+// somewhere else in the codebase
+const value = getMeAValue('http:/www.google.com');  // missing slash
+```
+
+Notice: there's no way for the caller to know that the function will throw. Perhaps you're very disciplined and write good docstrings for every function – _and_ moreover, perhaps everyone's editor shows it to them _and_ they pay attention to that briefly-available popover. More likely, though, this exception throws at runtime and probably as a result of user-entered data – and then you're chasing down the problem through error logs.
+
+More, if you _do_ want to account for the reality that any function anywhere in JavaScript might actually throw, you're going to write something like this:
+
+```js
+try {
+  getMeAValue('http:/www.google.com'); // missing slash
+} catch (e) {
+  handleErr(e);
+}
+```
+
+This is like the Node example _but even worse_ for repetition!
+
+Nor can TypeScript help you here! It doesn't have type signatures to say "This throws an exception!" (TypeScript's `never` might come to mind, but it might mean lots of things, not just exception-throwing.) What is more, exceptions and `Promise` rejection values are untyped—with the strictest settings, `unknown`, but otherwise just `any`.
+
+Neither callbacks nor exceptions are robustly good solutions here.
+
+## Switching to `Result`
+
+A `Result` packages up the result of a synchronous, fallible operation whether it's a success (an `Ok`) or a failure (an `Err`) and lets us unwrap the package at our leisure. For example, if you are using the Node `fs.readFileSync` to read a file synchronously (perhaps in a script where asynchrony is not necessary), you could capture its error cases with a `Result`, instead of with exceptions.
+
+```typescript
+import { ok, err } from 'true-myth/result';
+
+const myNumber = ok<number, string>(12);
+const myNumberErr = err<number, string>('oh no');
+
+console.log(myNumber.map((n) => n * 2)); // Ok(24)
+console.log(myNumberErr.map((n) => n * 2)); // Err(oh no)
+```
+
+Thus, you can replace functions which take polymorphic arguments or have polymorphic return values to try to handle scenarios where something may be a success or an error with functions using `Result`.
+
+This provides a type-safe container for dealing with the possibility that an error occurred, without needing to scatter `try`/`catch` blocks throughout your codebase. This has two major advantages:
 
 1.  You _know_ when an item may have a failure case, unlike exceptions (which may be thrown from any function with no warning and no help from the type system).
 2.  The error scenario is a first-class citizen, and the provided helper functions and methods allow you to deal with the type in much the same way as you might an array – transforming values if present, or dealing with errors instead if necessary.

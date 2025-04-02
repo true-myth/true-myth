@@ -1,16 +1,12 @@
 # Maybe
 
-A [`Maybe<T>`](#Maybe) represents a value of type `T` which may, or may not, be present.
+## How `Maybe` works
 
-If the value is present, it is `Just(value)`. If it's absent, it's `Nothing`. This provides a type-safe container for dealing with the possibility that there's nothing here – a container you can do many of the same things you might with an array – so that you can avoid nasty `null` and `undefined` checks throughout your codebase.
+:::warning 🚧 Under Construction 🚧
 
-The behavior of this type is checked by TypeScript at compile time, and bears no runtime overhead other than the very small cost of the container object and some lightweight wrap/unwrap functionality.
+There will be different, and *better*, content here Soon™. We didn’t want to block getting the new docs site live on having finished updating all the existing content!
 
-The `Nothing` variant has a type parameter `<T>` so that type inference works correctly in TypeScript when operating on `Nothing` instances with functions which require a `T` to behave properly, e.g. [`map`][map], which cannot check that the map function satisfies the type constraints for `Maybe<T>` unless `Nothing` has a parameter `T` to constrain it on invocation.
-
-[map]: https://true-myth.js.org/modules/maybe.html#map
-
-Put simply: without the type parameter, if you had a `Nothing` variant of a `Maybe<string>`, and you tried to use it with a function which expected a `Maybe<number>` it would still type check – because TypeScript doesn't have enough information to check that it _doesn't_ meet the requirements.
+:::
 
 ## Using `Maybe`
 
