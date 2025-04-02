@@ -875,7 +875,7 @@ export function allSettled(tasks: AnyTask[]): Task<unknown, never> {
   ]);
 
   let result = await anyTask;
-  console.log(result.toString()); // Err(AggregateRejection: `Task.race`: 10ms,20ms,30ms)
+  console.log(result.toString()); // Err(AggregateRejection: `Task.any`: 10ms,20ms,30ms)
   ```
 
   The order in the resulting `AggregateRejection` is guaranteed to be stable and
@@ -1003,7 +1003,7 @@ export class AggregateRejection<E extends unknown[]> extends Error {
   readonly name = 'AggregateRejection';
 
   constructor(readonly errors: E) {
-    super('`Task.race`');
+    super('`Task.any`');
   }
 
   toString() {
