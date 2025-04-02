@@ -5,13 +5,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 
+## 8.5.1 (2025-04-02)
 
+The first of what will likely be several 8.5.x bug fix releases to address issues found in the past few months!
 
+### Changes
+#### :bug: Bug Fix
+* [#987](https://github.com/true-myth/true-myth/pull/987) [backport] Fix type definition of `Strategy` ([@chriskrycho](https://github.com/chriskrycho))
+* [#959](https://github.com/true-myth/true-myth/pull/959) Bug: `all` and `any` should preserve order of types ([@chriskrycho](https://github.com/chriskrycho))
 
-
-
-
-
+### Committers: 1
+- Chris Krycho ([@chriskrycho](https://github.com/chriskrycho))
 
 ## 8.5.0 (2025-01-25)
 
@@ -19,13 +23,14 @@ Adds a powerful `Task.withRetries` utility for retrying tasks, along with a new 
 
 [discussion]: https://github.com/true-myth/true-myth/discussions/931
 
-#### (:rocket: Enhancement)
+### Changes
+#### :rocket: Enhancement
 * [#939](https://github.com/true-myth/true-myth/pull/939) [backport] Task: add a new `withRetries` function ([@chriskrycho](https://github.com/chriskrycho))
 
-#### (:house: Internal)
+#### :house: Internal
 * [#926](https://github.com/true-myth/true-myth/pull/926) internal: Introduce a separate CI job for any 8.x work ([@chriskrycho](https://github.com/chriskrycho))
 
-#### Committers: 1
+### Committers: 1
 - Chris Krycho ([@chriskrycho](https://github.com/chriskrycho))
 
 
@@ -33,17 +38,19 @@ Adds a powerful `Task.withRetries` utility for retrying tasks, along with a new 
 
 Highlight: adds auto-curried, module-scope versions of all the `Task` instance methods like `map` and `andThen` and more. Hot on the heels of 8.3.0, with what we *think* is probably the last set of features for this release!
 
-#### (:rocket: Enhancement)
+### Changes
+
+#### :rocket: Enhancement
 * [#918](https://github.com/true-myth/true-myth/pull/918) Task: module-scoped versions of instance methods ([@chriskrycho](https://github.com/chriskrycho))
 
-#### (:memo: Documentation)
+#### :memo: Documentation
 * [#920](https://github.com/true-myth/true-myth/pull/920) docs: clarify tips aboout auto-curried forms ([@chriskrycho](https://github.com/chriskrycho))
 * [#919](https://github.com/true-myth/true-myth/pull/919) docs: add many type parameter docs ([@chriskrycho](https://github.com/chriskrycho))
 
-#### (:house: Internal)
+#### :house: Internal
 * [#917](https://github.com/true-myth/true-myth/pull/917) internal: clean up a `console.log` ([@chriskrycho](https://github.com/chriskrycho))
 
-#### Committers: 1
+### Committers: 1
 - Chris Krycho ([@chriskrycho](https://github.com/chriskrycho))
 
 
@@ -61,30 +68,31 @@ This release also introduces some deprecations to tackle some mistakes we (read:
 > [!NOTE]
 > We will be releasing v9.0.0 very soon, removing those deprecations and updating our TypeScript support matrix. However, we expect 8.3 to be stable enough that you could stay on it without issues—potentially for *years*. If there are any showstopper bugs, we will of course backport a fix for them, but there shouldn’t be any!
 
-#### (:rocket: Enhancement)
+### Changes
+#### :rocket: Enhancement
 * [#916](https://github.com/true-myth/true-myth/pull/916) Task: add module-scoped `resolve`, `reject`, and `withResolvers` ([@chriskrycho](https://github.com/chriskrycho))
 * [#909](https://github.com/true-myth/true-myth/pull/909) Maybe: rename `wrapReturn` to `safe` ([@chriskrycho](https://github.com/chriskrycho))
 * [#902](https://github.com/true-myth/true-myth/pull/902) Task: add `all`, `allSettled`, `any`, `race`, `timer`, and `timeout` ([@chriskrycho](https://github.com/chriskrycho))
 * [#901](https://github.com/true-myth/true-myth/pull/901) Task: better inference for chaining combinators ([@chriskrycho](https://github.com/chriskrycho))
 * [#898](https://github.com/true-myth/true-myth/pull/898) Maybe: support readonly arrays in `transposeArray` ([@chriskrycho](https://github.com/chriskrycho))
 
-#### (:memo: Documentation)
+#### :memo: Documentation
 * [#915](https://github.com/true-myth/true-myth/pull/915) docs: expand on `Task` in README ([@chriskrycho](https://github.com/chriskrycho))
 * [#914](https://github.com/true-myth/true-myth/pull/914) Task: document `safelyTryOr` and `safelyTryOrElse` ([@chriskrycho](https://github.com/chriskrycho))
 * [#894](https://github.com/true-myth/true-myth/pull/894) doc: fix task-basics link ([@priegger](https://github.com/priegger))
 
-#### (:house: Internal)
+#### :house: Internal
 * [#910](https://github.com/true-myth/true-myth/pull/910) internal: add deprecation type to lerna-changelog ([@chriskrycho](https://github.com/chriskrycho))
 * [#903](https://github.com/true-myth/true-myth/pull/903) internal: Pin to the oldest TS version we support for dev ([@chriskrycho](https://github.com/chriskrycho))
 * [#900](https://github.com/true-myth/true-myth/pull/900) Task(tests): group and name tests more clearly ([@chriskrycho](https://github.com/chriskrycho))
 * [#899](https://github.com/true-myth/true-myth/pull/899) internal: tweak Zed settings ([@chriskrycho](https://github.com/chriskrycho))
 
-#### (:wastebasket: Deprecation)
+#### :wastebasket: Deprecation
 * [#909](https://github.com/true-myth/true-myth/pull/909) Maybe: rename `wrapReturn` to `safe` ([@chriskrycho](https://github.com/chriskrycho))
 * [#908](https://github.com/true-myth/true-myth/pull/908) Task: deprecate `Task.try`, `Task.tryOr`, and `Task.tryOrElse` ([@chriskrycho](https://github.com/chriskrycho))
 * [#913](https://github.com/true-myth/true-myth/pull/913) Task: deprecate static `fromResult`, `fromPromise`, and `fromUnsafePromise`
 
-#### Committers: 2
+### Committers: 2
 - Chris Krycho ([@chriskrycho](https://github.com/chriskrycho))
 - Philipp Riegger ([@priegger](https://github.com/priegger))
 
@@ -93,6 +101,7 @@ This release also introduces some deprecations to tackle some mistakes we (read:
 
 Finally—*finally!*—True Myth get a `Task` type! A `Task<T, E>` is like a `Promise<Result<T, E>>`. In fact, under the hood, it is *exactly* a `Promise<Result<T, E>>`, but in general you do not need to think about that layering. Instead, you get a nice type-safe API for fallible async operations. (It’s what `Promise` should have been!)
 
+### Changes
 #### :rocket: Enhancement
 * [#885](https://github.com/true-myth/true-myth/pull/885) feature: implement a new `Task` type ([@chriskrycho](https://github.com/chriskrycho))
 
@@ -102,13 +111,14 @@ Finally—*finally!*—True Myth get a `Task` type! A `Task<T, E>` is like a `Pr
 #### :house: Internal
 * [#891](https://github.com/true-myth/true-myth/pull/891) Task: fix name of one of the tests ([@chriskrycho](https://github.com/chriskrycho))
 
-#### Committers: 1
+### Committers: 1
 - Chris Krycho ([@chriskrycho](https://github.com/chriskrycho))
 
 ## 8.2.0-beta.1 (2024-12-31)
 
 Beta release with `Task`, so folks can easily test it out!
 
+### Changes
 #### :bug: Bug Fix
 * [#887](https://github.com/true-myth/true-myth/pull/887) Result: correct the implementation of `static err` constructor ([@chriskrycho](https://github.com/chriskrycho))
 
@@ -119,7 +129,7 @@ Beta release with `Task`, so folks can easily test it out!
 #### :house: Internal
 * [#886](https://github.com/true-myth/true-myth/pull/886) docs/internals: `Task`-inspired improvements ([@chriskrycho](https://github.com/chriskrycho))
 
-#### Committers: 1
+### Committers: 1
 - Chris Krycho ([@chriskrycho](https://github.com/chriskrycho))
 
 ## 8.1.0 (2024-12-04)
@@ -146,6 +156,7 @@ See [the docs][docs] for more!
 
 [docs]: https://true-myth.js.org/modules/test-support.html
 
+### Changes
 #### :rocket: Enhancement
 * [#870](https://github.com/true-myth/true-myth/pull/870) feature: add `unwrap` and `unwrapErr` test helpers ([@chriskrycho](https://github.com/chriskrycho))
 * [#868](https://github.com/true-myth/true-myth/pull/868) Explicitly support TS 5.6 and 5.7 in CI and docs ([@chriskrycho](https://github.com/chriskrycho))
@@ -157,16 +168,17 @@ See [the docs][docs] for more!
 * [#837](https://github.com/true-myth/true-myth/pull/837) infra: improve name of CI job for tests ([@chriskrycho](https://github.com/chriskrycho))
 * [#835](https://github.com/true-myth/true-myth/pull/835) Fix vitest config for coverage ([@chriskrycho](https://github.com/chriskrycho))
 
-#### Committers: 2
+### Committers: 2
 - Chris Krycho ([@chriskrycho](https://github.com/chriskrycho))
 - Tom Mrazauskas ([@mrazauskas](https://github.com/mrazauskas))
 
 ## 8.0.1 (2024-08-22)
 
+### Changes
 #### :bug: Bug Fix
 * [#811](https://github.com/true-myth/true-myth/pull/811) fix: do not set sourceRoot in tsconfigs ([@chriskrycho](https://github.com/chriskrycho)) – this should make source maps resolve correctly!
 
-#### Committers: 1
+### Committers: 1
 - Chris Krycho ([@chriskrycho](https://github.com/chriskrycho))
 
 ## 8.0.0 (2024-08-11)
@@ -179,6 +191,7 @@ Net, very little of your code should have to change, but where it does, it will 
 [assignability]: https://www.typescriptlang.org/docs/handbook/type-compatibility.html#any-unknown-object-void-undefined-null-and-never-assignability
 [play]: https://www.typescriptlang.org/play/?#code/CYUwxgNghgTiAEEQBd5QHIgG4hgLngDttcBuAKFElgSVSkIFVCBrQgewHdCCBXVjtwrk6aAoV4BbAEa54AXjSYcMCqOnipsmArRMBXQsNEAPcSR2KAjACYAzGpTwAnnwPddth+SA
 
+### Changes
 #### :boom: Breaking Change
 * [#789](https://github.com/true-myth/true-myth/pull/789) fix: set error type in `Result.ok` and ok type in `Result.err` to `never` by default ([@auvred](https://github.com/auvred))
 
@@ -188,13 +201,13 @@ Net, very little of your code should have to change, but where it does, it will 
 #### :memo: Documentation
 * [#785](https://github.com/true-myth/true-myth/pull/785) fix(docs): fix typo in README ([@nullndr](https://github.com/nullndr))
 
-#### Committers: 2
+### Committers: 2
 - Andrea ([@nullndr](https://github.com/nullndr))
 - [@auvred](https://github.com/auvred)
 
 
 ## 7.4.0 (2024-07-10)
-
+### Changes
 #### :rocket: Enhancement
 * [#782](https://github.com/true-myth/true-myth/pull/782) Add explicit support for Node 22 and TypeScript 5.5 ([@chriskrycho](https://github.com/chriskrycho))
 * [#776](https://github.com/true-myth/true-myth/pull/776) Allow readonly Arrays in first() and last() ([@screendriver](https://github.com/screendriver))
@@ -202,31 +215,31 @@ Net, very little of your code should have to change, but where it does, it will 
 #### :memo: Documentation
 * [#765](https://github.com/true-myth/true-myth/pull/765) Docs: we do not special-case `toString()` ([@chriskrycho](https://github.com/chriskrycho))
 
-#### Committers: 2
+### Committers: 2
 - Chris Krycho ([@chriskrycho](https://github.com/chriskrycho))
 - Christian Rackerseder ([@screendriver](https://github.com/screendriver))
 
 ## 7.3.0 (2024-05-26)
-
+### Changes
 #### :rocket: Enhancement
 * [#756](https://github.com/true-myth/true-myth/pull/756) Forbid `null` and `undefined` as arguments to `Maybe.just` ([@chriskrycho](https://github.com/chriskrycho))
 
-#### Committers: 1
+### Committers: 1
 - Chris Krycho ([@chriskrycho](https://github.com/chriskrycho))
 
 ## 7.2.1 (2024-05-26)
-
+### Changes
 #### :bug: Bug Fix
 * [#755](https://github.com/true-myth/true-myth/pull/755) Correctly handle `null` and `undefined` in function return types ([@chriskrycho](https://github.com/chriskrycho))
 
 #### :house: Internal
 * [#754](https://github.com/true-myth/true-myth/pull/754) infra: update to actions/checkout@v4 for GHA ([@chriskrycho](https://github.com/chriskrycho))
 
-#### Committers: 1
+### Committers: 1
 - Chris Krycho ([@chriskrycho](https://github.com/chriskrycho))
 
 ## 7.2.0 (2024-05-16)
-
+### Changes
 #### :rocket: Enhancement
 * [#749](https://github.com/true-myth/true-myth/pull/749) Allow readonly Arrays in `find()` ([@screendriver](https://github.com/screendriver))
 * [#720](https://github.com/true-myth/true-myth/pull/720) Add (tested) support for Node 20 ([@chriskrycho](https://github.com/chriskrycho))
@@ -238,12 +251,12 @@ Net, very little of your code should have to change, but where it does, it will 
 * [#750](https://github.com/true-myth/true-myth/pull/750) infra: update to latest pnpm ([@chriskrycho](https://github.com/chriskrycho))
 * [#631](https://github.com/true-myth/true-myth/pull/631) Simplify CI test matrix ([@chriskrycho](https://github.com/chriskrycho))
 
-#### Committers: 2
+### Committers: 2
 - Chris Krycho ([@chriskrycho](https://github.com/chriskrycho))
 - Christian Rackerseder ([@screendriver](https://github.com/screendriver))
 
 ## 7.1.0 (2023-09-05)
-
+### Changes
 #### :rocket: Enhancement
 * [#609](https://github.com/true-myth/true-myth/pull/609) Add support for TypeScript 5.2 ([@chriskrycho](https://github.com/chriskrycho))
 
@@ -256,23 +269,23 @@ Net, very little of your code should have to change, but where it does, it will 
 * [#584](https://github.com/true-myth/true-myth/pull/584) More cleanup: pnpm references and prettierignore ([@chriskrycho](https://github.com/chriskrycho))
 * [#583](https://github.com/true-myth/true-myth/pull/583) Fix CI for nightly TS run ([@chriskrycho](https://github.com/chriskrycho))
 
-#### Committers: 2
+### Committers: 2
 - Chris Krycho ([@chriskrycho](https://github.com/chriskrycho))
 - [@royiro10](https://github.com/royiro10)
 
 ## 7.0.1 (2023-07-16)
-
+### Changes
 #### :bug: Bug Fix
 * [#570](https://github.com/true-myth/true-myth/pull/570) Fix CJS import location in package `exports` map ([@chriskrycho](https://github.com/chriskrycho))
 
 #### :house: Internal
 * [#569](https://github.com/true-myth/true-myth/pull/569) Fix docs publishing GH Action ([@chriskrycho](https://github.com/chriskrycho))
 
-#### Committers: 1
+### Committers: 1
 - Chris Krycho ([@chriskrycho](https://github.com/chriskrycho))
 
 ## 7.0.0 (2023-07-15)
-
+### Changes
 #### :boom: Breaking Change
 * [#562](https://github.com/true-myth/true-myth/pull/562) [Breaking] Require Node 18, adopt pnpm, use latest release-it ([@chriskrycho](https://github.com/chriskrycho))
 
@@ -288,13 +301,13 @@ Net, very little of your code should have to change, but where it does, it will 
 #### :house: Internal
 * [#566](https://github.com/true-myth/true-myth/pull/566) Use pnpm in CI ([@chriskrycho](https://github.com/chriskrycho))
 
-#### Committers: 3
+### Committers: 3
 - Chris Krycho ([@chriskrycho](https://github.com/chriskrycho))
 - Josh Martinez ([@jm4rtinez](https://github.com/jm4rtinez))
 - [@DaviDevMod](https://github.com/DaviDevMod)
 
 ## 6.2.0 (2022-09-08)
-
+### Changes
 #### :rocket: Enhancement
 * [#438](https://github.com/true-myth/true-myth/pull/438) Add explicit support for TS 4.8 ([@chriskrycho](https://github.com/chriskrycho))
 
@@ -308,12 +321,12 @@ Net, very little of your code should have to change, but where it does, it will 
 #### :house: Internal
 * [#436](https://github.com/true-myth/true-myth/pull/436) chore: remove defunct parts of package ([@chriskrycho](https://github.com/chriskrycho))
 
-#### Committers: 2
+### Committers: 2
 - Ben Makuh ([@bmakuh](https://github.com/bmakuh))
 - Chris Krycho ([@chriskrycho](https://github.com/chriskrycho))
 
 ## 6.1.0 (2022-07-08)
-
+### Changes
 #### :rocket: Enhancement
 
 * Re-export `Toolbelt` from root for consumers not using TS 4.7’s `exports` support ([@chriskrycho](https://github.com/chriskrycho))
@@ -321,7 +334,7 @@ Net, very little of your code should have to change, but where it does, it will 
 #### :house: Internal
 * [#388](https://github.com/true-myth/true-myth/pull/388) Remove v5 CI configuration ([@chriskrycho](https://github.com/chriskrycho))
 
-#### Committers: 1
+### Committers: 1
 - Chris Krycho ([@chriskrycho](https://github.com/chriskrycho))
 
 ## 6.0.0 (2022-05-25)
@@ -341,6 +354,7 @@ To upgrade:
 
 4. Update to True Myth v6. :tada:
 
+### Changes
 #### :boom: Breaking Change
 * [#357](https://github.com/true-myth/true-myth/pull/357) Update publication mechanics with "exports" ([@chriskrycho](https://github.com/chriskrycho))
 * [#352](https://github.com/true-myth/true-myth/pull/352) Update minimum Node to v14, add v18 ([@chriskrycho](https://github.com/chriskrycho))
@@ -387,7 +401,7 @@ To upgrade:
 * [#264](https://github.com/true-myth/true-myth/pull/264) [Forward] no ESLint ([@chriskrycho](https://github.com/chriskrycho))
 * [#242](https://github.com/true-myth/true-myth/pull/242) Improve performance by switching to a 'methods-first' implementation ([@chriskrycho](https://github.com/chriskrycho))
 
-#### Committers: 2
+### Committers: 2
 - Akos Krivachy ([@krivachy](https://github.com/krivachy))
 - Chris Krycho ([@chriskrycho](https://github.com/chriskrycho))
 
@@ -395,6 +409,7 @@ To upgrade:
 
 This is the final release for v5.x, and only exists to make sure there are fully overlapping supported TypeScript versions for True Myth v5 and v6. See the release notes for the upcoming v6.0 release for upgrade notes.
 
+### Changes
 #### :rocket: Enhancement
 * [#382](https://github.com/true-myth/true-myth/pull/382) v5.x: Add Node 18 and TS 4.7 ([@chriskrycho](https://github.com/chriskrycho))
 
@@ -403,19 +418,19 @@ This is the final release for v5.x, and only exists to make sure there are fully
 * [#361](https://github.com/true-myth/true-myth/pull/361) Add conduct and contributing (v5.x) ([@chriskrycho](https://github.com/chriskrycho))
 * [#354](https://github.com/true-myth/true-myth/pull/354) Use `Omit` rather than `Exclude` + `keyof` in Maybe ([@chriskrycho](https://github.com/chriskrycho))
 
-#### Committers: 1
+### Committers: 1
 - Chris Krycho ([@chriskrycho](https://github.com/chriskrycho))
 
 ## 5.3.1 (2022-04-22)
-
+### Changes
 #### :bug: Bug Fix
 * [#336](https://github.com/true-myth/true-myth/pull/336) Require narrowing before exposing wrapped values ([@screendriver](https://github.com/screendriver))
 
-#### Committers: 1
+### Committers: 1
 - Christian Rackerseder ([@screendriver](https://github.com/screendriver))
 
 ## 5.3.0 (2022-04-22)
-
+### Changes
 #### :rocket: Enhancement
 * [#349](https://github.com/true-myth/true-myth/pull/349) Add support for TypeScript 4.7 ([@chriskrycho](https://github.com/chriskrycho))
 * [#334](https://github.com/true-myth/true-myth/pull/334) Export pure isErr() function ([@screendriver](https://github.com/screendriver))
@@ -426,7 +441,7 @@ This is the final release for v5.x, and only exists to make sure there are fully
 #### :bug: Bug Fix
 * [#335](https://github.com/true-myth/true-myth/pull/335) Add missing readonly variants modifiers ([@screendriver](https://github.com/screendriver))
 
-#### Committers: 2
+### Committers: 2
 - Chris Krycho ([@chriskrycho](https://github.com/chriskrycho))
 - Christian Rackerseder ([@screendriver](https://github.com/screendriver))
 
@@ -435,7 +450,7 @@ This is the final release for v5.x, and only exists to make sure there are fully
 #### :rocket: Enhancement
 * [#299](https://github.com/true-myth/true-myth/pull/299) feat(maybe/find): type narrowing via predicates ([@buschtoens](https://github.com/buschtoens))
 
-#### Committers: 1
+### Committers: 1
 - Jan Buschtöns ([@buschtoens](https://github.com/buschtoens))
 
 ## 5.1.3 (2022-03-06)
@@ -443,7 +458,7 @@ This is the final release for v5.x, and only exists to make sure there are fully
 #### :bug: Bug Fix
 * [#312](https://github.com/true-myth/true-myth/pull/312) Fix ember build ([@ombr](https://github.com/ombr))
 
-#### Committers: 1
+### Committers: 1
 - Luc Boissaye ([@ombr](https://github.com/ombr))
 
 ## 5.1.2 (2021-12-27)
@@ -455,11 +470,11 @@ This is the final release for v5.x, and only exists to make sure there are fully
 #### :memo: Documentation
 * [#266](https://github.com/true-myth/true-myth/pull/266) Fix out-of-date parts of README ([@chriskrycho](https://github.com/chriskrycho))
 
-#### Committers: 1
+### Committers: 1
 - Chris Krycho ([@chriskrycho](https://github.com/chriskrycho))
 
 ## 5.1.1 (2021-12-16)
-
+### Changes
 #### :rocket: Enhancement
 * [#263](https://github.com/true-myth/true-myth/pull/263) Fix regression of `Result.ok()` ([@chriskrycho](https://github.com/chriskrycho))
 
@@ -470,28 +485,28 @@ This is the final release for v5.x, and only exists to make sure there are fully
 * [#262](https://github.com/true-myth/true-myth/pull/262) Remove ESLint ([@chriskrycho](https://github.com/chriskrycho))
 * [#253](https://github.com/true-myth/true-myth/pull/253) Target both `main` and `next` with Dependabot ([@chriskrycho](https://github.com/chriskrycho))
 
-#### Committers: 1
+### Committers: 1
 - Chris Krycho ([@chriskrycho](https://github.com/chriskrycho))
 
 ## 5.1.0 (2021-12-12)
-
+### Changes
 #### :rocket: Enhancement
 * [#248](https://github.com/true-myth/true-myth/pull/248) Deprecate Maybe.head for 6.0, preferring Maybe.first ([@chriskrycho](https://github.com/chriskrycho))
 * [#247](https://github.com/true-myth/true-myth/pull/247) Deprecate non-Toolbelt versions of toolbelt utils ([@chriskrycho](https://github.com/chriskrycho))
 * [#246](https://github.com/true-myth/true-myth/pull/246) Introduce `true-myth/toolbelt` module for better tree shaking ([@chriskrycho](https://github.com/chriskrycho))
 
-#### Committers: 1
+### Committers: 1
 - Chris Krycho ([@chriskrycho](https://github.com/chriskrycho))
 
 ## 5.0.1 (2021-12-11)
-
+### Changes
 #### :bug: Bug Fix
 * [#243](https://github.com/true-myth/true-myth/pull/243) Add `package.json` to `exports` ([@chriskrycho](https://github.com/chriskrycho))
 
 #### :memo: Documentation
 * [#226](https://github.com/true-myth/true-myth/pull/226) Export useful internal types, improve docs ([@chriskrycho](https://github.com/chriskrycho))
 
-#### Committers: 1
+### Committers: 1
 - Chris Krycho ([@chriskrycho](https://github.com/chriskrycho))
 
 ## [5.0.0]
