@@ -1,7 +1,7 @@
 import { describe, expect, expectTypeOf, test } from 'vitest';
 
 import Result, { Ok, Variant, Err } from 'true-myth/result';
-import * as ResultNS from 'true-myth/result';
+import * as result from 'true-myth/result';
 import Unit from 'true-myth/unit';
 
 const length = (x: { length: number }) => x.length;
@@ -9,7 +9,7 @@ const double = (x: number) => x * 2;
 
 describe('`Result` pure functions', () => {
   test('`ok`', () => {
-    const theOk = ResultNS.ok(42);
+    const theOk = result.ok(42);
     expect(theOk).toBeInstanceOf(Result);
     switch (theOk.variant) {
       case Variant.Ok:
@@ -22,9 +22,9 @@ describe('`Result` pure functions', () => {
         expect(false).toBe(true); // because those are the only cases
     }
 
-    const withUnit = ResultNS.ok();
+    const withUnit = result.ok();
     expectTypeOf(withUnit).toEqualTypeOf<Result<Unit, never>>();
-    expect(withUnit).toEqual(ResultNS.ok(Unit));
+    expect(withUnit).toEqual(result.ok(Unit));
 
     const withUnitFromImport = Result.ok();
     expectTypeOf(withUnitFromImport).toEqualTypeOf<Result<Unit, never>>();
@@ -37,7 +37,7 @@ describe('`Result` pure functions', () => {
 
   test('`err`', () => {
     const reason = 'oh teh noes';
-    const theErr = ResultNS.err(reason);
+    const theErr = result.err(reason);
     expect(theErr).toBeInstanceOf(Result);
     switch (theErr.variant) {
       case Variant.Ok:
@@ -50,24 +50,24 @@ describe('`Result` pure functions', () => {
         expect(false).toBe(true); // because those are the only cases
     }
 
-    const withUnit = ResultNS.err();
+    const withUnit = result.err();
     expectTypeOf(withUnit).toEqualTypeOf<Result<never, Unit>>();
-    expect(withUnit).toEqual(ResultNS.err(Unit));
+    expect(withUnit).toEqual(result.err(Unit));
   });
 
   test('`tryOr`', () => {
     const message = 'dang';
     const goodOperation = () => 2 + 2;
 
-    expect(ResultNS.tryOr(message, goodOperation)).toEqual(ResultNS.ok(4));
-    expect(ResultNS.tryOr(message)(goodOperation)).toEqual(ResultNS.ok(4));
+    expect(result.tryOr(message, goodOperation)).toEqual(result.ok(4));
+    expect(result.tryOr(message)(goodOperation)).toEqual(result.ok(4));
 
     const badOperation = () => {
       throw new Error('Danger, danger, Will Robinson');
     };
 
-    expect(ResultNS.tryOr(message, badOperation)).toEqual(ResultNS.err(message));
-    expect(ResultNS.tryOr(message)(badOperation)).toEqual(ResultNS.err(message));
+    expect(result.tryOr(message, badOperation)).toEqual(result.err(message));
+    expect(result.tryOr(message)(badOperation)).toEqual(result.err(message));
   });
 
   test('`tryOrElse`', () => {
@@ -80,68 +80,66 @@ describe('`Result` pure functions', () => {
       throw 'kablooey';
     };
 
-    const res = ResultNS.tryOrElse(handleError, operation);
+    const res = result.tryOrElse(handleError, operation);
     expect(res).toBeInstanceOf(Result);
     expect(res.variant).toBe(Variant.Ok);
 
-    const res2 = ResultNS.tryOrElse(handleError, badOperation);
+    const res2 = result.tryOrElse(handleError, badOperation);
     expect(res2).toBeInstanceOf(Result);
     expect(res2.variant).toBe(Variant.Err);
   });
 
   test('`map`', () => {
     const theValue = 42;
-    const anOk = ResultNS.ok(theValue);
-    const doubledOk = ResultNS.ok(double(theValue));
-    expect(ResultNS.map(double, anOk)).toEqual(doubledOk);
+    const anOk = result.ok(theValue);
+    const doubledOk = result.ok(double(theValue));
+    expect(result.map(double, anOk)).toEqual(doubledOk);
 
-    const anErr: Result<number, string> = ResultNS.err('some nonsense');
-    expect(ResultNS.map(double, anErr)).toEqual(anErr);
+    const anErr: Result<number, string> = result.err('some nonsense');
+    expect(result.map(double, anErr)).toEqual(anErr);
   });
 
   test('`mapOr`', () => {
     const theDefault = 0;
 
     const theValue = 5;
-    const anOk: Result<number, string> = ResultNS.ok(theValue);
-    expect(ResultNS.mapOr(theDefault, double, anOk)).toEqual(double(theValue));
+    const anOk: Result<number, string> = result.ok(theValue);
+    expect(result.mapOr(theDefault, double, anOk)).toEqual(double(theValue));
 
-    const anErr: Result<number, string> = ResultNS.err('blah');
-    expect(ResultNS.mapOr(theDefault, double, anErr)).toEqual(theDefault);
+    const anErr: Result<number, string> = result.err('blah');
+    expect(result.mapOr(theDefault, double, anErr)).toEqual(theDefault);
 
-    expect(ResultNS.mapOr<number, number, string>(theDefault)(double)(anOk)).toEqual(
-      ResultNS.mapOr(theDefault, double, anOk)
+    expect(result.mapOr<number, number, string>(theDefault)(double)(anOk)).toEqual(
+      result.mapOr(theDefault, double, anOk)
     );
-    expect(ResultNS.mapOr(theDefault, double)(anOk)).toEqual(
-      ResultNS.mapOr(theDefault, double, anOk)
-    );
+    expect(result.mapOr(theDefault, double)(anOk)).toEqual(result.mapOr(theDefault, double, anOk));
   });
 
   test('`mapOrElse`', () => {
     const description = 'that was not good';
     const getDefault = (reason: number) => `${description}: ${reason}`;
 
-    const anOk: Result<number, number> = ResultNS.ok(5);
-    expect(ResultNS.mapOrElse(getDefault, String, anOk)).toEqual(String(5));
+    const anOk: Result<number, number> = result.ok(5);
+    expect(result.mapOrElse(getDefault, String, anOk)).toEqual(String(5));
 
     const errValue = 10;
-    const anErr = ResultNS.err(10);
-    expect(ResultNS.mapOrElse(getDefault, String, anErr)).toEqual(`${description}: ${errValue}`);
+    const anErr = result.err(10);
+    expect(result.mapOrElse(getDefault, String, anErr)).toEqual(`${description}: ${errValue}`);
 
-    expect(ResultNS.mapOrElse(getDefault)(String)(anErr)).toEqual(
-      ResultNS.mapOrElse(getDefault, String, anErr)
+    expect(result.mapOrElse(getDefault)(String)(anErr)).toEqual(
+      result.mapOrElse(getDefault, String, anErr)
     );
-    expect(ResultNS.mapOrElse(getDefault, String)(anErr)).toEqual(
-      ResultNS.mapOrElse(getDefault, String, anErr)
+    expect(result.mapOrElse(getDefault, String)(anErr)).toEqual(
+      result.mapOrElse(getDefault, String, anErr)
     );
   });
 
   test('`match`', () => {
-    const nobody = ResultNS.ok('ok');
-    const toErrIs = ResultNS.err('human');
+    const nobody = result.ok('ok');
+    const toErrIs = result.err('human');
 
     expect(
-      ResultNS.match(
+      result.match(
         {
           Ok: (val) => val,
           Err: (err) => err,
@@ -150,7 +148,7 @@ describe('`Result` pure functions', () => {
       )
     ).toBe('ok');
     expect(
-      ResultNS.match(
+      result.match(
         {
           Ok: (val) => val,
           Err: (err) => err,
@@ -161,74 +159,74 @@ describe('`Result` pure functions', () => {
   });
 
   test('`mapErr`', () => {
-    const anOk: Result<number, number> = ResultNS.ok(10);
-    expect(ResultNS.mapErr(double, anOk)).toEqual(anOk);
+    const anOk: Result<number, number> = result.ok(10);
+    expect(result.mapErr(double, anOk)).toEqual(anOk);
 
     const theErrValue = 20;
-    const anErr = ResultNS.err(theErrValue);
-    const doubledErr = ResultNS.err(double(theErrValue));
-    expect(ResultNS.mapErr(double, anErr)).toEqual(doubledErr);
+    const anErr = result.err(theErrValue);
+    const doubledErr = result.err(double(theErrValue));
+    expect(result.mapErr(double, anErr)).toEqual(doubledErr);
   });
 
   test('`and`', () => {
-    const nextOk = ResultNS.ok('not a number');
-    const nextErr = ResultNS.err('not bueno');
+    const nextOk = result.ok('not a number');
+    const nextErr = result.err('not bueno');
 
-    const anOk = ResultNS.ok(0);
-    expect(ResultNS.and(nextOk, anOk)).toEqual(nextOk);
-    expect(ResultNS.and(nextErr, anOk)).toEqual(nextErr);
+    const anOk = result.ok(0);
+    expect(result.and(nextOk, anOk)).toEqual(nextOk);
+    expect(result.and(nextErr, anOk)).toEqual(nextErr);
 
-    const anErr = ResultNS.err('potatoes');
-    expect(ResultNS.and(nextOk, anErr)).toEqual(anErr);
-    expect(ResultNS.and(nextErr, anErr)).toEqual(anErr);
+    const anErr = result.err('potatoes');
+    expect(result.and(nextOk, anErr)).toEqual(anErr);
+    expect(result.and(nextErr, anErr)).toEqual(anErr);
   });
 
   test('`andThen`', () => {
     const theValue = 'a string';
-    const toLengthResult = (s: string) => ResultNS.ok<number, string>(length(s));
+    const toLengthResult = (s: string) => result.ok<number, string>(length(s));
     const expected = toLengthResult(theValue);
 
-    const anOk = ResultNS.ok(theValue);
-    expect(ResultNS.andThen(toLengthResult, anOk)).toEqual(expected);
+    const anOk = result.ok(theValue);
+    expect(result.andThen(toLengthResult, anOk)).toEqual(expected);
 
-    const anErr: Result<string, string> = ResultNS.err('something wrong');
-    expect(ResultNS.andThen(toLengthResult, anErr)).toEqual(anErr);
+    const anErr: Result<string, string> = result.err('something wrong');
+    expect(result.andThen(toLengthResult, anErr)).toEqual(anErr);
   });
 
   test('`or`', () => {
-    const orOk: Result<number, string> = ResultNS.ok(0);
-    const orErr: Result<number, string> = ResultNS.err('something boring');
+    const orOk: Result<number, string> = result.ok(0);
+    const orErr: Result<number, string> = result.err('something boring');
 
     type Err = { [key: string]: string };
 
-    const anOk: Result<number, Err> = ResultNS.ok(42);
-    expect(ResultNS.or(orOk, anOk)).toEqual(anOk);
-    expect(ResultNS.or(orErr, anOk)).toEqual(anOk);
+    const anOk: Result<number, Err> = result.ok(42);
+    expect(result.or(orOk, anOk)).toEqual(anOk);
+    expect(result.or(orErr, anOk)).toEqual(anOk);
 
-    const anErr: Result<number, Err> = ResultNS.err({ oh: 'my' });
-    expect(ResultNS.or(orOk, anErr)).toEqual(orOk);
-    expect(ResultNS.or(orErr, anErr)).toEqual(orErr);
+    const anErr: Result<number, Err> = result.err({ oh: 'my' });
+    expect(result.or(orOk, anErr)).toEqual(orOk);
+    expect(result.or(orErr, anErr)).toEqual(orErr);
   });
 
   test('`orElse`', () => {
-    const orElseOk: Result<number, string> = ResultNS.ok(1);
+    const orElseOk: Result<number, string> = result.ok(1);
     const getAnOk = () => orElseOk;
 
-    const orElseErr: Result<number, string> = ResultNS.err('oh my');
+    const orElseErr: Result<number, string> = result.err('oh my');
     const getAnErr = () => orElseErr;
 
-    const anOk: Result<number, string> = ResultNS.ok(0);
-    expect(ResultNS.orElse(getAnOk, anOk)).toEqual(anOk);
-    expect(ResultNS.orElse(getAnErr, anOk)).toEqual(anOk);
+    const anOk: Result<number, string> = result.ok(0);
+    expect(result.orElse(getAnOk, anOk)).toEqual(anOk);
+    expect(result.orElse(getAnErr, anOk)).toEqual(anOk);
 
-    const anErr: Result<number, string> = ResultNS.err('boom');
-    expect(ResultNS.orElse(getAnOk, anErr)).toEqual(orElseOk);
-    expect(ResultNS.orElse(getAnErr, anErr)).toEqual(orElseErr);
+    const anErr: Result<number, string> = result.err('boom');
+    expect(result.orElse(getAnOk, anErr)).toEqual(orElseOk);
+    expect(result.orElse(getAnErr, anErr)).toEqual(orElseErr);
   });
 
   test('`value` property', () => {
     const theValue = 'hooray';
-    const anOk = ResultNS.ok(theValue);
+    const anOk = result.ok(theValue);
 
     if (anOk.isOk) {
       expect(() => anOk.value).not.toThrow();
@@ -238,7 +236,7 @@ describe('`Result` pure functions', () => {
     }
 
     const theErrValue = 'oh no';
-    const anErr = ResultNS.err(theErrValue);
+    const anErr = result.err(theErrValue);
     if (anErr.isErr) {
       // @ts-expect-error
       expect(() => anErr.value).toThrow();
@@ -249,7 +247,7 @@ describe('`Result` pure functions', () => {
 
   test('`error` property', () => {
     const theValue = 'hooray';
-    const anOk = ResultNS.ok(theValue);
+    const anOk = result.ok(theValue);
 
     if (anOk.isOk) {
       // @ts-expect-error
@@ -259,7 +257,7 @@ describe('`Result` pure functions', () => {
     }
 
     const theErrValue = 'oh no';
-    const anErr = ResultNS.err(theErrValue);
+    const anErr = result.err(theErrValue);
     if (anErr.isErr) {
       expect(() => anErr.error).not.toThrow();
       expect(anErr.error).toBe(theErrValue);
@@ -272,19 +270,19 @@ describe('`Result` pure functions', () => {
     const defaultValue = 'pancakes are awesome';
 
     const theValue = 'waffles are tasty';
-    const anOk = ResultNS.ok(theValue);
-    expect(ResultNS.unwrapOr(defaultValue, anOk)).toBe(theValue);
+    const anOk = result.ok(theValue);
+    expect(result.unwrapOr(defaultValue, anOk)).toBe(theValue);
 
-    const anErr = ResultNS.err('pumpkins are not');
-    expect(ResultNS.unwrapOr(defaultValue, anErr)).toBe(defaultValue);
+    const anErr = result.err('pumpkins are not');
+    expect(result.unwrapOr(defaultValue, anErr)).toBe(defaultValue);
     // make sure you can unwrap to a different type, like undefined
     expectTypeOf(anOk).toEqualTypeOf<Result<string, never>>();
-    const anOkOrUndefined = ResultNS.unwrapOr(undefined, anOk);
+    const anOkOrUndefined = result.unwrapOr(undefined, anOk);
     expectTypeOf(anOkOrUndefined).toEqualTypeOf<string | undefined>();
     expect(anOkOrUndefined).toEqual(theValue);
 
     expectTypeOf(anErr).toEqualTypeOf<Result<never, string>>();
-    const anErrOrUndefined = ResultNS.unwrapOr(undefined, anErr);
+    const anErrOrUndefined = result.unwrapOr(undefined, anErr);
     expectTypeOf(anErrOrUndefined).toEqualTypeOf<undefined>(); // undefined ≡ never | undefined
     expect(anErrOrUndefined).toEqual(undefined);
   });
@@ -295,21 +293,21 @@ describe('`Result` pure functions', () => {
     const errToOk = (e: LocalError) => `What went wrong? ${e.reason}`;
 
     const theValue = 'Red 5';
-    const anOk = ResultNS.ok<string, LocalError>(theValue);
-    expect(ResultNS.unwrapOrElse(errToOk, anOk)).toBe(theValue);
+    const anOk = result.ok<string, LocalError>(theValue);
+    expect(result.unwrapOrElse(errToOk, anOk)).toBe(theValue);
 
     const theErrValue = { reason: 'bad thing' };
-    const anErr = ResultNS.err<string, LocalError>(theErrValue);
-    expect(ResultNS.unwrapOrElse(errToOk, anErr)).toBe(errToOk(theErrValue));
+    const anErr = result.err<string, LocalError>(theErrValue);
+    expect(result.unwrapOrElse(errToOk, anErr)).toBe(errToOk(theErrValue));
 
     // test unwrapping to undefined
     const noop = (): undefined => undefined;
 
-    const anOkOrUndefined = ResultNS.unwrapOrElse(noop, anOk);
+    const anOkOrUndefined = result.unwrapOrElse(noop, anOk);
     expectTypeOf(anOkOrUndefined).toEqualTypeOf<string | undefined>();
     expect(anOkOrUndefined).toEqual(theValue);
 
-    const anErrOrUndefined = ResultNS.unwrapOrElse(noop, anErr);
+    const anErrOrUndefined = result.unwrapOrElse(noop, anErr);
     expectTypeOf(anErrOrUndefined).toEqualTypeOf<string | undefined>();
     expect(anErrOrUndefined).toEqual(undefined);
   });
@@ -319,11 +317,11 @@ describe('`Result` pure functions', () => {
       const theValue = { thisIsReally: 'something' };
       const errValue = ['oh', 'no'];
 
-      const anOk = ResultNS.ok<typeof theValue, typeof errValue>(theValue);
-      expect(ResultNS.toString(anOk)).toEqual(`Ok(${theValue.toString()})`);
+      const anOk = result.ok<typeof theValue, typeof errValue>(theValue);
+      expect(result.toString(anOk)).toEqual(`Ok(${theValue.toString()})`);
 
-      const anErr = ResultNS.err<typeof theValue, typeof errValue>(errValue);
-      expect(ResultNS.toString(anErr)).toEqual(`Err(${errValue.toString()})`);
+      const anErr = result.err<typeof theValue, typeof errValue>(errValue);
+      expect(result.toString(anErr)).toEqual(`Err(${errValue.toString()})`);
     });
 
     test('custom `toString`s', () => {
@@ -332,7 +330,7 @@ describe('`Result` pure functions', () => {
         toString: '🤨',
       };
 
-      expect(ResultNS.toString(Result.ok(withNotAFunction))).toEqual(
+      expect(result.toString(Result.ok(withNotAFunction))).toEqual(
         `Ok(${JSON.stringify(withNotAFunction)})`
       );
 
@@ -343,7 +341,7 @@ describe('`Result` pure functions', () => {
         },
       };
 
-      expect(ResultNS.toString(Result.err(withBadFunction))).toEqual(
+      expect(result.toString(Result.err(withBadFunction))).toEqual(
         `Err(${JSON.stringify(withBadFunction)})`
       );
     });
@@ -351,18 +349,18 @@ describe('`Result` pure functions', () => {
 
   test('`toJSON`', () => {
     const theValue = { thisIsReally: 'something', b: null };
-    const anOk = ResultNS.ok(theValue);
-    expect(ResultNS.toJSON(anOk)).toEqual({ variant: Variant.Ok, value: theValue });
+    const anOk = result.ok(theValue);
+    expect(result.toJSON(anOk)).toEqual({ variant: Variant.Ok, value: theValue });
 
     const errValue = ['oh', 'no', null];
-    const anErr = ResultNS.err(errValue);
-    expect(ResultNS.toJSON(anErr)).toEqual({ variant: Variant.Err, error: errValue });
+    const anErr = result.err(errValue);
+    expect(result.toJSON(anErr)).toEqual({ variant: Variant.Err, error: errValue });
   });
 
   test('`toJSON` through serialization', () => {
-    const actualSerializedOk = JSON.stringify(ResultNS.ok(42));
-    const actualSerializedErr = JSON.stringify(ResultNS.err({ someInfo: 'error' }));
-    const actualSerializedUnitErr = JSON.stringify(ResultNS.err());
+    const actualSerializedOk = JSON.stringify(result.ok(42));
+    const actualSerializedErr = JSON.stringify(result.err({ someInfo: 'error' }));
+    const actualSerializedUnitErr = JSON.stringify(result.err());
     const expectedSerializedOk = JSON.stringify({ variant: Variant.Ok, value: 42 });
     const expectedSerializedErr = JSON.stringify({
       variant: Variant.Err,
@@ -379,48 +377,48 @@ describe('`Result` pure functions', () => {
   });
 
   test('`equals`', () => {
-    const a = ResultNS.ok<string, string>('a');
-    const b = ResultNS.ok<string, string>('a');
-    const c = ResultNS.err<string, string>('error');
-    const d = ResultNS.err<string, string>('error');
-    expect(ResultNS.equals(b, a)).toBe(true);
-    expect(ResultNS.equals(b)(a)).toBe(true);
-    expect(ResultNS.equals(c, b)).toBe(false);
-    expect(ResultNS.equals(c)(b)).toBe(false);
-    expect(ResultNS.equals(d, c)).toBe(true);
-    expect(ResultNS.equals(d)(c)).toBe(true);
+    const a = result.ok<string, string>('a');
+    const b = result.ok<string, string>('a');
+    const c = result.err<string, string>('error');
+    const d = result.err<string, string>('error');
+    expect(result.equals(b, a)).toBe(true);
+    expect(result.equals(b)(a)).toBe(true);
+    expect(result.equals(c, b)).toBe(false);
+    expect(result.equals(c)(b)).toBe(false);
+    expect(result.equals(d, c)).toBe(true);
+    expect(result.equals(d)(c)).toBe(true);
   });
 
   test('`ap`', () => {
     const add = (a: number) => (b: number) => a + b;
-    const okAdd = ResultNS.ok<typeof add, string>(add);
+    const okAdd = result.ok<typeof add, string>(add);
 
-    expect(okAdd.ap(ResultNS.ok(2)).ap(ResultNS.ok(3))).toEqual(ResultNS.ok(5));
+    expect(okAdd.ap(result.ok(2)).ap(result.ok(3))).toEqual(result.ok(5));
 
     const add3 = add(3);
-    const okAdd3 = ResultNS.ok<typeof add3, string>(add(3));
+    const okAdd3 = result.ok<typeof add3, string>(add(3));
 
-    expect(ResultNS.ap(okAdd3, ResultNS.ok(2))).toEqual(ResultNS.ok(5));
+    expect(result.ap(okAdd3, result.ok(2))).toEqual(result.ok(5));
   });
 
   test('isInstance', () => {
-    const ok: unknown = ResultNS.ok('yay');
-    expect(ResultNS.isInstance(ok)).toBe(true);
+    const ok: unknown = result.ok('yay');
+    expect(result.isInstance(ok)).toBe(true);
 
-    const err: unknown = ResultNS.err('oh no');
-    expect(ResultNS.isInstance(err)).toBe(true);
+    const err: unknown = result.err('oh no');
+    expect(result.isInstance(err)).toBe(true);
 
     const nada: unknown = null;
-    expect(ResultNS.isInstance(nada)).toBe(false);
+    expect(result.isInstance(nada)).toBe(false);
 
     const obj: unknown = { random: 'nonsense' };
-    expect(ResultNS.isInstance(obj)).toBe(false);
+    expect(result.isInstance(obj)).toBe(false);
   });
 
   test('`isOk` with an Ok', () => {
-    const testOk: Result<number, string> = ResultNS.ok(42);
+    const testOk: Result<number, string> = result.ok(42);
 
-    if (ResultNS.isOk(testOk)) {
+    if (result.isOk(testOk)) {
       expect(testOk.value).toEqual(42);
     } else {
       expect.fail('Expected an Ok');
@@ -428,21 +426,21 @@ describe('`Result` pure functions', () => {
   });
 
   test('`isOk` with an Err', () => {
-    const testErr: Result<number, string> = ResultNS.err('');
+    const testErr: Result<number, string> = result.err('');
 
-    expect(ResultNS.isOk(testErr)).toEqual(false);
+    expect(result.isOk(testErr)).toEqual(false);
   });
 
   test('`isErr` with an Ok', () => {
-    const testOk: Result<number, string> = ResultNS.ok(42);
+    const testOk: Result<number, string> = result.ok(42);
 
-    expect(ResultNS.isErr(testOk)).toEqual(false);
+    expect(result.isErr(testOk)).toEqual(false);
   });
 
   test('`isErr` with an Err', () => {
-    const testErr: Result<number, string> = ResultNS.err('');
+    const testErr: Result<number, string> = result.err('');
 
-    expect(ResultNS.isErr(testErr)).toEqual(true);
+    expect(result.isErr(testErr)).toEqual(true);
   });
 
   describe('`safe` function', () => {
@@ -460,7 +458,7 @@ describe('`Result` pure functions', () => {
     }
 
     describe('without an error handler', () => {
-      let safeExample = ResultNS.safe(example);
+      let safeExample = result.safe(example);
       expectTypeOf(safeExample).toEqualTypeOf<
         (value: number, should?: { throwErr?: boolean }) => Result<string, unknown>
       >();
@@ -486,7 +484,7 @@ describe('`Result` pure functions', () => {
     });
 
     describe('with an error handler', () => {
-      let safeExample = ResultNS.safe(example, (reason) => JSON.stringify(reason, null, 2));
+      let safeExample = result.safe(example, (reason) => JSON.stringify(reason, null, 2));
       expectTypeOf(safeExample).toEqualTypeOf<
         (value: number, should?: { throwErr?: boolean }) => Result<string, string>
       >();
@@ -516,25 +514,25 @@ describe('`Result` pure functions', () => {
 // know to be correct from other tests. Instead, this test just checks whether
 // the types are narrowed as they should be.
 test('narrowing', () => {
-  const oneOk = ResultNS.ok();
+  const oneOk = result.ok();
   if (oneOk.isOk) {
     expectTypeOf(oneOk).toEqualTypeOf<Ok<Unit, never>>();
     expect(oneOk.value).toBeDefined();
   }
 
-  const anotherOk = ResultNS.ok();
+  const anotherOk = result.ok();
   if (anotherOk.variant === Variant.Ok) {
     expectTypeOf(anotherOk).toEqualTypeOf<Ok<Unit, never>>();
     expect(anotherOk.value).toBeDefined();
   }
 
-  const oneErr = ResultNS.err();
+  const oneErr = result.err();
   if (oneErr.isErr) {
     expectTypeOf(oneErr).toEqualTypeOf<Err<never, Unit>>();
     expect(oneErr.error).toBeDefined();
   }
 
-  const anotherErr = ResultNS.err();
+  const anotherErr = result.err();
   if (anotherErr.variant === Variant.Err) {
     expectTypeOf(anotherErr).toEqualTypeOf<Err<never, Unit>>();
     expect(anotherErr.error).toBeDefined();
@@ -849,39 +847,39 @@ describe('`ResultNS.Err` class', () => {
   test('`and` method', () => {
     const theErr = Result.err('blarg');
 
-    const anOk = ResultNS.ok<string, string>('neat');
+    const anOk = result.ok<string, string>('neat');
     expect(theErr.and(anOk)).toEqual(theErr);
 
-    const anotherErr = ResultNS.err('oh no');
+    const anotherErr = result.err('oh no');
     expect(theErr.and(anotherErr)).toEqual(theErr);
   });
 
   test('`andThen` method', () => {
     const theErr = Result.err<string[], number>(42);
 
-    const getAnOk = (strings: string[]) => ResultNS.ok<number, number>(length(strings));
+    const getAnOk = (strings: string[]) => result.ok<number, number>(length(strings));
     expect(theErr.andThen(getAnOk)).toEqual(theErr);
 
-    const getAnErr = (_: unknown) => ResultNS.err(0);
+    const getAnErr = (_: unknown) => result.err(0);
     expect(theErr.andThen(getAnErr)).toEqual(theErr);
   });
 
   test('`or` method', () => {
     const theErr: Result<number, string> = Result.err('a shame');
-    const anOk: Result<number, string> = ResultNS.ok(42);
+    const anOk: Result<number, string> = result.ok(42);
     expect(theErr.or(anOk)).toBe(anOk);
 
-    const anotherErr = ResultNS.err<number, number>(10);
+    const anotherErr = result.err<number, number>(10);
     expect(theErr.or(anotherErr)).toBe(anotherErr);
   });
 
   test('`orElse` method', () => {
     const theErr = Result.err<string, string>('what sorrow');
-    const theOk = ResultNS.ok<string, string>('neat!');
+    const theOk = result.ok<string, string>('neat!');
     const getOk = () => theOk;
     expect(theErr.orElse(getOk)).toBe(theOk);
 
-    const anotherErr = ResultNS.err<string, string>('even worse');
+    const anotherErr = result.err<string, string>('even worse');
     const getAnotherErr = () => anotherErr;
     expect(theErr.orElse(getAnotherErr)).toBe(anotherErr);
   });

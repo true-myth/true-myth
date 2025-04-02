@@ -16,11 +16,12 @@ import { curry1, safeToString } from './-private/utils.js';
 import Maybe from './maybe.js';
 import Result, { map as mapResult, mapErr, match as matchResult } from './result.js';
 import Unit from './unit.js';
-import * as Delay from './task/delay.js';
+import * as delay from './task/delay.js';
 
-// Make the Delay namespace available as `Task.Delay` for convenience. This lets
-// people do `Task.withRetries(aTask, Task.Delay.exponential(1_000).take(10))`.
-export { Delay };
+// Make the `delay` namespace available as `task.delay` for convenience, and as
+// `task.Delay` for backward compatibility. This lets people do something like
+// `task.withRetries(aTask, task.delay.exponential(1_000).take(10))`.
+export { delay, delay as Delay };
 
 /**
   Internal implementation details for {@linkcode Task}.
@@ -1392,10 +1393,10 @@ export function fromPromise<T>(
 
   ```ts
 
-  import * as Task from 'true-myth/task';
+  import * as task from 'true-myth/task';
   import { ok } from 'true-myth/result';
 
-  let theTask = Task.fromResult(ok(123));
+  let theTask = task.fromResult(ok(123));
   ```
 
   As an alternative, it can be useful to rename the import:
@@ -2108,20 +2109,20 @@ function identity<T>(value: T): T {
   will simply reject immediately.
 
   ```ts
-  import * as Task from 'true-myth/task';
-  import * as Delay from 'true-myth/task/delay';
+  import * as task from 'true-myth/task';
+  import * as delay from 'true-myth/task/delay';
 
   let theTask = withRetries(
-    () => Task.fromPromise(fetch('https://example.com')).andThen((res) => {
+    () => task.fromPromise(fetch('https://example.com')).andThen((res) => {
         if (res.status === 200) {
-          return Task.fromPromise(res.json());
+          return task.fromPromise(res.json());
         } else if (res.status === 408) {
-          return Task.reject(res.statusText);
+          return task.reject(res.statusText);
         } else {
-          return Task.stopRetrying(res.statusText);
+          return task.stopRetrying(res.statusText);
         }
       }),
-    Delay.fibonacci().map(Delay.jitter).take(10)
+    delay.fibonacci().map(delay.jitter).take(10)
   );
   ```
 
@@ -2156,18 +2157,18 @@ function identity<T>(value: T): T {
   it is set:
 
   ```ts
-  import * as Task from 'true-myth/task';
+  import * as task from 'true-myth/task';
   import { fibonacci, jitter } from 'true-myth/task/delay';
   import { doSomethingThatMayFailWithAppError } from 'someplace/in/my-app';
 
-  let theTask = Task.withRetries(
+  let theTask = task.withRetries(
     () => {
       doSomethingThatMayFailWithAppError().orElse((rejection) => {
         if (rejection.isFatal) {
-          return Task.stopRetrying("It was fatal!", { cause: rejection });
+          return task.stopRetrying("It was fatal!", { cause: rejection });
         }
 
-        return Task.reject(rejection);
+        return task.reject(rejection);
       });
     },
     fibonacci().map(jitter).take(20)
@@ -2187,24 +2188,24 @@ function identity<T>(value: T): T {
   times or if the total elapsed time exceeds 10 seconds.
 
   ```ts
-  import * as Task from 'true-myth/task';
+  import * as task from 'true-myth/task';
   import { exponential, jitter } from 'true-myth/task/delay';
 
-  let theResult = await Task.withRetries(
+  let theResult = await task.withRetries(
     ({ count, elapsed }) => {
       if (count > 10) {
-        return Task.stopRetrying(`Tried too many times: ${count}`);
+        return task.stopRetrying(`Tried too many times: ${count}`);
       }
 
       if (elapsed > 10_000) {
-        return Task.stopRetrying(`Took too long: ${elapsed}ms`);
+        return task.stopRetrying(`Took too long: ${elapsed}ms`);
       }
 
-      return Task.fromPromise(fetch('https://www.example.com/'))
-        .andThen((res) => Task.fromPromise(res.json()))
+      return task.fromPromise(fetch('https://www.example.com/'))
+        .andThen((res) => task.fromPromise(res.json()))
         .orElse((cause) => {
           let message = `Attempt #${count} failed`;
-          return Task.reject(new Error(message, { cause }));
+          return task.reject(new Error(message, { cause }));
         });
     },
     exponential().map(jitter),
@@ -2223,7 +2224,7 @@ function identity<T>(value: T): T {
   value:
 
   ```ts
-  import * as Task from 'true-myth/task';
+  import * as task from 'true-myth/task';
 
   function* randomIncrease(options?: { from: number }) {
     // always use integral values, and default to one second.
@@ -2234,10 +2235,10 @@ function identity<T>(value: T): T {
     }
   }
 
-  await Task.withRetries(({ count }) => {
+  await task.withRetries(({ count }) => {
     let delay = Math.round(Math.random() * 100);
-    return Task.timer(delay).andThen((time) =>
-      Task.reject(`Rejection #${count} after ${time}ms`),
+    return task.timer(delay).andThen((time) =>
+      task.reject(`Rejection #${count} after ${time}ms`),
     );
   }, randomIncrease(10).take(10));
   ```
@@ -2385,12 +2386,12 @@ export const RETRY_FAILED_NAME = 'TrueMyth.Task.RetryFailed';
   the {@linkcode isRetryFailed} helper function:
 
   ```ts
-  import * as Task from 'true-myth/task';
+  import * as task from 'true-myth/task';
 
   // snip
   let result = await someFnThatReturnsATask();
   if (result.isErr) {
-    if (isRetryFailed(result.error)) {
+    if (task.isRetryFailed(result.error)) {
       if (result.error.cause) {
         console.error('You quit on purpose: ', cause);
       }

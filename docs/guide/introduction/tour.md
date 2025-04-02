@@ -104,13 +104,13 @@ This can also be convenient in functional style pipelines:
 
 ```typescript
 import { filter, map, pipe, prop } from 'ramda';
-import Result from 'true-myth/result';
+import * as result from 'true-myth/result';
 import { unwrapErr } from 'true-myth/test-support';
 
 function getErrorMessages(results: Array<Result<string, Error>>) {
   return results
-    .filter(Result.isErr)
-    .map(unwrapErr) // would not type-checkout with previous line
+    .filter(result.isErr)
+    .map(result.unwrapErr) // would not type-checkout with previous line
     .map((error) => error.message);
 }
 ```
