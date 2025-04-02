@@ -16,10 +16,10 @@ importers:
         version: 7.0.0(release-it@17.11.0(typescript@5.3.3))
       '@types/node':
         specifier: ^22.0.0
-        version: 22.13.16
+        version: 22.13.17
       '@vitest/coverage-v8':
         specifier: ^2.1.9
-        version: 2.1.9(vitest@2.1.9(@types/node@22.13.16))
+        version: 2.1.9(vitest@2.1.9(@types/node@22.13.17))
       miniglob:
         specifier: ^0.1.2
         version: 0.1.2
@@ -43,7 +43,7 @@ importers:
         version: 5.3.3
       vitest:
         specifier: ^2.1.9
-        version: 2.1.9(@types/node@22.13.16)
+        version: 2.1.9(@types/node@22.13.17)
 
 packages:
 
@@ -537,8 +537,8 @@ packages:
   '@types/ms@0.7.34':
     resolution: {integrity: sha512-nG96G3Wp6acyAgJqGasjODb+acrI7KltPiRxzHPXnP3NgI28bpQDRv53olbqGXbfcgF5aiiHmO3xpwEpS5Ld9g==}
 
-  '@types/node@22.13.16':
-    resolution: {integrity: sha512-15tM+qA4Ypml/N7kyRdvfRjBQT2RL461uF1Bldn06K0Nzn1lY3nAPgHlsVrJxdZ9WhZiW0Fmc1lOYMtDsAuB3w==}
+  '@types/node@22.13.17':
+    resolution: {integrity: sha512-nAJuQXoyPj04uLgu+obZcSmsfOenUg6DxPKogeUy6yNCFwWaj5sBF8/G/pNo8EtBJjAfSVgfIlugR/BCOleO+g==}
 
   '@types/unist@2.0.10':
     resolution: {integrity: sha512-IfYcSBWE3hLpBg8+X2SEa8LVkJdJEkT2Ese2aaLs3ptGdVtABxndrMaxuFlQ1qdFf9Q5rDvDpxI3WwgvKFAsQA==}
@@ -2702,7 +2702,7 @@ snapshots:
 
   '@types/ms@0.7.34': {}
 
-  '@types/node@22.13.16':
+  '@types/node@22.13.17':
     dependencies:
       undici-types: 6.20.0
 
@@ -2710,7 +2710,7 @@ snapshots:
 
   '@types/unist@3.0.3': {}
 
-  '@vitest/coverage-v8@2.1.9(vitest@2.1.9(@types/node@22.13.16))':
+  '@vitest/coverage-v8@2.1.9(vitest@2.1.9(@types/node@22.13.17))':
     dependencies:
       '@ampproject/remapping': 2.3.0
       '@bcoe/v8-coverage': 0.2.3
@@ -2724,7 +2724,7 @@ snapshots:
       std-env: 3.8.1
       test-exclude: 7.0.1
       tinyrainbow: 1.2.0
-      vitest: 2.1.9(@types/node@22.13.16)
+      vitest: 2.1.9(@types/node@22.13.17)
     transitivePeerDependencies:
       - supports-color
 
@@ -2735,13 +2735,13 @@ snapshots:
       chai: 5.2.0
       tinyrainbow: 1.2.0
 
-  '@vitest/mocker@2.1.9(vite@5.4.14(@types/node@22.13.16))':
+  '@vitest/mocker@2.1.9(vite@5.4.14(@types/node@22.13.17))':
     dependencies:
       '@vitest/spy': 2.1.9
       estree-walker: 3.0.3
       magic-string: 0.30.17
     optionalDependencies:
-      vite: 5.4.14(@types/node@22.13.16)
+      vite: 5.4.14(@types/node@22.13.17)
 
   '@vitest/pretty-format@2.1.9':
     dependencies:
@@ -4496,13 +4496,13 @@ snapshots:
       resolve-package-path: 4.0.3
       semver: 7.6.3
 
-  vite-node@2.1.9(@types/node@22.13.16):
+  vite-node@2.1.9(@types/node@22.13.17):
     dependencies:
       cac: 6.7.14
       debug: 4.4.0
       es-module-lexer: 1.6.0
       pathe: 1.1.2
-      vite: 5.4.14(@types/node@22.13.16)
+      vite: 5.4.14(@types/node@22.13.17)
     transitivePeerDependencies:
       - '@types/node'
       - less
@@ -4514,19 +4514,19 @@ snapshots:
       - supports-color
       - terser
 
-  vite@5.4.14(@types/node@22.13.16):
+  vite@5.4.14(@types/node@22.13.17):
     dependencies:
       esbuild: 0.21.5
       postcss: 8.5.3
       rollup: 4.35.0
     optionalDependencies:
-      '@types/node': 22.13.16
+      '@types/node': 22.13.17
       fsevents: 2.3.3
 
-  vitest@2.1.9(@types/node@22.13.16):
+  vitest@2.1.9(@types/node@22.13.17):
     dependencies:
       '@vitest/expect': 2.1.9
-      '@vitest/mocker': 2.1.9(vite@5.4.14(@types/node@22.13.16))
+      '@vitest/mocker': 2.1.9(vite@5.4.14(@types/node@22.13.17))
       '@vitest/pretty-format': 2.1.9
       '@vitest/runner': 2.1.9
       '@vitest/snapshot': 2.1.9
@@ -4542,11 +4542,11 @@ snapshots:
       tinyexec: 0.3.2
       tinypool: 1.0.2
       tinyrainbow: 1.2.0
-      vite: 5.4.14(@types/node@22.13.16)
-      vite-node: 2.1.9(@types/node@22.13.16)
+      vite: 5.4.14(@types/node@22.13.17)
+      vite-node: 2.1.9(@types/node@22.13.17)
       why-is-node-running: 2.3.0
     optionalDependencies:
-      '@types/node': 22.13.16
+      '@types/node': 22.13.17
     transitivePeerDependencies:
       - less
       - lightningcss
