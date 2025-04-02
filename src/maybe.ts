@@ -392,8 +392,8 @@ export const nothing = MaybeImpl.nothing;
   invoke `Maybe.of` with an explicit type parameter:
 
   ```ts
-  import * as Maybe from 'true-myth/maybe';
-  const foo = Maybe.of<string>(null);
+  import * as maybe from 'true-myth/maybe';
+  const foo = maybe.of<string>(null);
   ```
 
   This is usually only important in two cases:

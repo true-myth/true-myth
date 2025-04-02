@@ -79,20 +79,20 @@
   [helpers]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Iterator#iterator_helper_methods
 
   ```ts
-  import * as Task from 'true-myth/task';
+  import * as task from 'true-myth/task';
   import { someRetryableTask } from 'somewhere/in/your-app';
 
-  let usingRandomInRange = Task.withRetries(
+  let usingRandomInRange = task.withRetries(
     someRetryableTask,
     randomInRange(1, 100).take(10)
   );
 
-  let usingRandomInteger = Task.withRetries(
+  let usingRandomInteger = task.withRetries(
     someRetryableTask,
     new RandomInteger().take(10)
   );
 
-  let usingRangeIterator = Task.withRetries(
+  let usingRangeIterator = task.withRetries(
     someRetryableTask,
     new Range(1, 100, 5).take(10)
   );
