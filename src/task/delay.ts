@@ -96,7 +96,7 @@
   );
   ```
  */
-export interface Strategy extends Generator<number> {}
+export interface Strategy extends Iterable<number> {}
 
 /**
   Generate an infinite iterable of integers beginning with `base` and increasing
