@@ -13,6 +13,18 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 
 
+
+## 8.5.1 (2025-04-02)
+
+The first of what will likely be several 8.5.x bug fix releases to address issues found in the past few months!
+
+#### (:bug: Bug Fix)
+* [#987](https://github.com/true-myth/true-myth/pull/987) [backport] Fix type definition of `Strategy` ([@chriskrycho](https://github.com/chriskrycho))
+* [#959](https://github.com/true-myth/true-myth/pull/959) Bug: `all` and `any` should preserve order of types ([@chriskrycho](https://github.com/chriskrycho))
+
+#### Committers: 1
+- Chris Krycho ([@chriskrycho](https://github.com/chriskrycho))
+
 ## 8.5.0 (2025-01-25)
 
 Adds a powerful `Task.withRetries` utility for retrying tasks, along with a new module, `true-myth/task/delay`, which provides a bunch of useful strategies for retries. See the docs for more details, and thanks to @alfierivera for [suggesting it][discussion]!
