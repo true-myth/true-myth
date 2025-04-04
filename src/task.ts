@@ -371,8 +371,8 @@ class TaskImpl<T, E> implements PromiseLike<Result<T, E>> {
     let resolvedResult = await aResolvedTask;
     console.log(resolvedResult.toString()); // Ok(24)
 
-    const mappedRejected = map(double, aRejectedTask);
     const aRejectedTask = Task.reject("nothing here!");
+    const mappedRejected = aRejectedTask.map(double);
     let rejectedResult = await aRejectedTask;
     console.log(rejectedResult.toString()); // Err("nothing here!")
     ```
@@ -402,12 +402,12 @@ class TaskImpl<T, E> implements PromiseLike<Result<T, E>> {
 
     const extractReason = (err: { code: number, reason: string }) => err.reason;
 
-    const mappedResolved = aResolvedTask.mapErr(extractReason);
     const aResolvedTask = Task.resolve(12);
+    const mappedResolved = aResolvedTask.mapRejected(extractReason);
     console.log(mappedOk));  // Ok(12)
 
-    const mappedRejection = await aRejectedTask.map(extractReason);
     const aRejectedTask = Task.reject({ code: 101, reason: 'bad file' });
+    const mappedRejection = await aRejectedTask.mapRejected(extractReason);
     console.log(toString(mappedRejection));  // Err("bad file")
     ```
 
