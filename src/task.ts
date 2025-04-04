@@ -1476,11 +1476,13 @@ export function fromPromise<T>(
   > This does not (and by definition cannot) handle errors that happen during
   > construction of the `Result`, because those happen before this is called.
   > See {@linkcode tryOr} and {@linkcode tryOrElse} as well as the corresponding
-  > `Result.tryOr` and `Result.tryOrElse` methods for synchronous functions.
+  > {@linkcode "result".tryOr result.tryOr} and {@linkcode "result".tryOrElse
+  > result.tryOrElse} methods for synchronous functions.
 
   ## Examples
 
-  Given an `Ok`, `fromResult` will produces a {@linkcode Resolved} task.
+  Given an {@linkcode "result".Ok Ok<T, E>}, `fromResult` will produces a
+  {@linkcode Resolved Resolved<T, E>} task.
 
   ```ts
   import { fromResult } from 'true-myth/task';

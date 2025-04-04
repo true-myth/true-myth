@@ -422,18 +422,23 @@ export const err = ResultImpl.err;
   function returns.
 
   ```ts
+  import { tryOrElse } from 'true-myth/result';
+
   const aSuccessfulOperation = () => 2 + 2;
 
-  const anOkResult = Result.tryOrElse(
+  const anOkResult = tryOrElse(
     (e) => e,
     aSuccessfulOperation
   ); // => Ok(4)
 
   const thisOperationThrows = () => throw 'Bummer'
 
-  const anErrResult = Result.tryOrElse((e) => e, () => {
-    thisOperationThrows();
-  }); // => Err('Bummer')
+  const anErrResult = tryOrElse(
+    (e) => e,
+    () => {
+      thisOperationThrows();
+    }
+  ); // => Err('Bummer')
  ```
 
   @param onError A function that takes `e` exception and returns what will
