@@ -366,13 +366,13 @@ class TaskImpl<T, E> implements PromiseLike<Result<T, E>> {
     import Task from 'true-myth/task';
     const double = n => n * 2;
 
-    const aResolvedTask = Task.resolved(12);
+    const aResolvedTask = Task.resolve(12);
     const mappedResolved = aResolvedTask.map(double);
     let resolvedResult = await aResolvedTask;
     console.log(resolvedResult.toString()); // Ok(24)
 
-    const aRejectedTask = Task.rejected("nothing here!");
     const mappedRejected = map(double, aRejectedTask);
+    const aRejectedTask = Task.reject("nothing here!");
     let rejectedResult = await aRejectedTask;
     console.log(rejectedResult.toString()); // Err("nothing here!")
     ```
@@ -402,12 +402,12 @@ class TaskImpl<T, E> implements PromiseLike<Result<T, E>> {
 
     const extractReason = (err: { code: number, reason: string }) => err.reason;
 
-    const aResolvedTask = Task.resolved(12);
     const mappedResolved = aResolvedTask.mapErr(extractReason);
+    const aResolvedTask = Task.resolve(12);
     console.log(mappedOk));  // Ok(12)
 
-    const aRejectedTask = Task.rejected({ code: 101, reason: 'bad file' });
     const mappedRejection = await aRejectedTask.map(extractReason);
+    const aRejectedTask = Task.reject({ code: 101, reason: 'bad file' });
     console.log(toString(mappedRejection));  // Err("bad file")
     ```
 
@@ -439,10 +439,12 @@ class TaskImpl<T, E> implements PromiseLike<Result<T, E>> {
     ## Examples
 
     ```ts
-    let resolvedA = Task.resolved<string, string>('A');
-    let resolvedB = Task.resolved<string, string>('B');
-    let rejectedA = Task.rejected<string, string>('bad');
-    let rejectedB = Task.rejected<string, string>('lame');
+    import Task from 'true-myth/task';
+
+    let resolvedA = Task.resolve<string, string>('A');
+    let resolvedB = Task.resolve<string, string>('B');
+    let rejectedA = Task.reject<string, string>('bad');
+    let rejectedB = Task.reject<string, string>('lame');
 
     let aAndB = resolvedA.and(resolvedB);
     await aAndB;
@@ -518,11 +520,11 @@ class TaskImpl<T, E> implements PromiseLike<Result<T, E>> {
 
     const toLengthAsResult = (s: string) => ok(s.length);
 
-    const aResolvedTask = Task.resolved('just a string');
+    const aResolvedTask = Task.resolve('just a string');
     const lengthAsResult = await aResolvedTask.andThen(toLengthAsResult);
     console.log(lengthAsResult.toString());  // Ok(13)
 
-    const aRejectedTask = Task.rejected(['srsly', 'whatever']);
+    const aRejectedTask = Task.reject(['srsly', 'whatever']);
     const notLengthAsResult = await aRejectedTask.andThen(toLengthAsResult);
     console.log(notLengthAsResult.toString());  // Err(srsly,whatever)
     ```
@@ -568,10 +570,10 @@ class TaskImpl<T, E> implements PromiseLike<Result<T, E>> {
     ```ts
     import Task from 'true-utils/task';
 
-    const resolvedA = Task.resolved<string, string>('a');
-    const resolvedB = Task.resolved<string, string>('b');
-    const rejectedWat = Task.rejected<string, string>(':wat:');
-    const rejectedHeaddesk = Task.rejected<string, string>(':headdesk:');
+    const resolvedA = Task.resolve<string, string>('a');
+    const resolvedB = Task.resolve<string, string>('b');
+    const rejectedWat = Task.reject<string, string>(':wat:');
+    const rejectedHeaddesk = Task.reject<string, string>(':headdesk:');
 
     console.log(resolvedA.or(resolvedB).toString());  // Resolved("a")
     console.log(resolvedA.or(rejectedWat).toString());  // Resolved("a")
