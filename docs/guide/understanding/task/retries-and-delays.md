@@ -53,15 +53,17 @@ The `elapsed` value will always be greater than or equal to the requested elapse
 Here’s one example of using the retry status in practice.
 
 ```ts
-import Task, { RetryStatus, fromPromise, withRetries } from 'true-myth/task';
+import Task, * as task from 'true-myth/task';
 
-let fetcher = ({ count, elapsed }: RetryStatus): Task<Response, Error> => {
+let fetcher = ({ count, elapsed }: task.RetryStatus): Task<Response, Error> => {
   if (count > 100 || elapsed > 1_000) {
     let message = `Overdid it! Count: ${count} | Time elapsed: ${elapsed}`;
-    return Task.reject(new Error(message));
+    return task.reject(new Error(message));
   }
 
-  return fromPromise(fetch('https://true-myth.js.org')).mapRejected(intoError);
+  return task
+    .fromPromise(fetch('https://true-myth.js.org'))
+    .mapRejected(intoError);
 };
 
 let taskWithRetries = withRetries(fetcher);
@@ -71,22 +73,21 @@ In this example, we reject with an error if the task has already been retried mo
 
 ### A retry strategy
 
-Second, you can supply a `Strategy` which is an [iterable iterator][itit] which produces a number of milliseconds to wait to try again. When the callback produces a rejected `Task`, `withRetries` retries the callback using the delay until the retry strategy is exhausted, at which point `withRetries` will produce a `Task` that rejects with a `RetryFailure`, which will have all rejection values.
+Second, you can supply a retry strategy, which tells `task.withRetries` how often to retry, including how much to back off between retries. (We talk more about how strategies work in [Retry strategies](#retry-strategies) below.) When the callback produces a rejected `Task`, `withRetries` retries the callback using the delay until the retry strategy is exhausted, at which point `withRetries` will produce a `Task` that rejects with a `RetryFailure`, which will have all rejection values.
 
 For example, to use an exponential backoff strategy with the original `fetcher`, starting at 10 milliseconds and increasing by a factor of 10 with each retry, you could write this:
 
 ```ts
-import * as Task from "true-myth/task";
+import * as task from "true-myth/task";
 import { exponential } from "true-myth/task/delay";
 
 let fetcher = () =>
-  Task.fromPromise(fetch("https://true-myth.js.org")).mapRejected(intoError);
+  task.fromPromise(fetch("https://true-myth.js.org")).mapRejected(intoError);
 
-let taskWithRetries = Task.withRetries(
+let taskWithRetries = task.withRetries(
   fetcher,
   exponential({ from: 10, withFactor: 10 }),
 );
-
 ```
 
 ### The `stopRetrying` helper
@@ -98,18 +99,18 @@ Third, you can stop retrying at any time, using the supplied `stopRetrying()` fu
 This next example show roughly the full <abbr title='application programming interface'>API</abbr> available, using the `exponential` delay strategy supplied by the library (there other supplied strategies are `fibonacci`, `fixed`, `immediate`, `linear`, and `none`):
 
 ```ts
-import * as TMT from 'true-myth/task';
+import * as task from 'true-myth/task';
 import { exponential, jitter } from 'true-myth/task/delay';
 
-let fetchTask = TMT.withRetries(
+let fetchTask = task.withRetries(
   ({ count, elapsed }) => {
     if (elapsed > 100_000) {
-      return TMT.stopRetrying(`Went too long: ${elapsed}ms`);
+      return task.stopRetrying(`Went too long: ${elapsed}ms`);
     }
 
-    return TMT.fromPromise(fetch('https://true-myth.js.org')).orElse((rejection) => {
+    return task.fromPromise(fetch('https://true-myth.js.org')).orElse((rejection) => {
       let wrapped = new Error(`fetch has rejected ${count} times`, { cause: rejection });
-      return TMT.reject(wrapped);
+      return task.reject(wrapped);
     });
   },
   exponential({ from: 10, factor: 3 }).map(jitter).take(10)
@@ -119,6 +120,24 @@ let fetchTask = TMT.withRetries(
 All of the built-in retry delay strategies (`exponential`, `fibonacci`, `fixed`, `immediate`, `linear`, and `none`) have good defaults such that you can simply call them like `fibonacci()`. The goal here is “progressive disclosure of complexity”: out of the box, it does something reasonable, and you can opt into customizing it with quite a few options, and if you need totally custom behavior, you can supply your own generator or iterable iterator.
 
 [crate]: https://docs.rs/retry/latest/retry/
+
+## Retry strategies
+
+In general, a retry strategy is a way of configuring a retry function for when it should retry: how long between the first retry and the second, the second and the third, and so on. In the wild, you will commonly see both linear and exponential backoff, for example.
+
+True Myth’s `task.withRetries` function doesn’t actually know *anything* about back-off strategies, though. Instead, `task.withRetries` accepts any iterator that produces numbers. Each number produced by the iterator is used as the duration of time to wait before retrying again.
+
+This way, we don’t have to bake in special handling for a handful of pre-configured backoff strategies. Instead, we can *implement* those common strategies and make them available to you, while also allowing you maximum flexibility to implement your own.
+
+When combined with iterator helpers (either manually authored via generator functions or via the new iterator built-ins in ES2025), this makes for a very straightforward way to build up custom retry behaviors, because an iterator—and in particular a generator function—is a very natural way to express a sequence of numbers produced on demand, potentially forever.
+
+::: info Credit where due!
+
+True Myth borrowed this idea, and modeled this <abbr title='application programming interface'>API</abbr>, fairly directly on the [the Rust `retry` crate][crate]: it’s a brilliant insight, but the insight was not ours!
+
+[itit]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Iteration_protocols
+
+:::
 
 ## Built-in retry strategies
 
@@ -139,27 +158,30 @@ You should make sure you understand the tradeoffs of each of these backoff strat
 
 ## Custom retry strategies
 
-While the built-in backoff strategies are likely sufficient for most use cases, you are not limited to them. A retry strategy is actually *any iterable iterator* that produces numbers, where the numbers are used as the number of milliseconds to delay before trying again.
+There are three basic patterns for creating custom retry strategies:
 
-Most retry libraries have a limited set of options they allow you to use, usually configured with some kind of options object. By using iterable iterators instead, True Myth provides maximum flexibility, while making it straightforward to implement entirely custom retry strategies. The retry strategy simply *is* the values produced by an iterator.
+- Using generator functions.
+- Subclassing the `Iterator` class (requires ES2025 or a polyfill).
+- Implementing the `Iterator` interface.
 
-When combined with iterator helpers (either manually authored via generator functions or via the new iterator built-ins in ES2025), this makes for a very straightforward way to build up custom retry behaviors, because an iterator—and in particular a generator function—is a very natural way to express a sequence of numbers produced on demand, potentially forever.
+For the following examples, we’ll use this function to get a `Result` that usually rejects.
 
-::: info Credit where due!
+```ts
+import Task from 'true-myth/task';
 
-True Myth borrowed this idea, and modeled this <abbr title='application programming interface'>API</abbr>, fairly directly on the [the Rust `retry` crate][crate]: it’s a brilliant insight, but the insight was not ours!
+const unpredictable = () => Math.random() > 0.9
+  ? Task.resolve("Success!")
+  : Task.reject(new Error("Nope, try again!"));
+```
 
-[itit]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Iteration_protocols
-
-:::
+### Using generator functions
 
 Here’s an example of implementing a custom retry strategy using a generator function to produce up to 10 random backoffs of up to 10 seconds (10,000 milliseconds) each:
 
 ```ts
-import * as Task from 'true-myth/task';
-import { type Strategy } from 'true-myth/task/delay';
+import * as task from 'true-myth/task';
 
-function* random10Times(): Strategy {
+function* random10Times(): task.delay.Strategy {
   const MAX = 10_000;
 
   let retries = 0;
@@ -169,15 +191,101 @@ function* random10Times(): Strategy {
   }
 }
 
-let fetcher = () =>
-  Task.fromPromise(fetch("https://true-myth.js.org")).mapRejected(intoError);
-
-let taskWithRetries = Task.withRetries(fetcher, random10Times());
+let taskWithRetries = task.withRetries(unpredictable, random10Times());
 ```
 
-We use a generator function that yields a random integer somewhere between `0` and the `max` passed in. We do not have to explicitly name the `Strategy` return type, but doing so makes sure that the generator function produces the expected type—a `number`, so it is a good idea. Then we can pass the result of calling the generator function directly as the strategy to `Task.withRetries`, just like the built-in strategies.
+We use a generator function that yields a random integer somewhere between `0` and the `max` passed in, up to 10 times. We do not have to explicitly name the `Strategy` return type, but doing so makes sure that the generator function produces the expected type (`number`), so it is a good idea. Then we can pass the result of calling the generator function directly as the strategy to `Task.withRetries`, just like the built-in strategies.
 
-You can also implement the `IterableIterator` interface using a custom class that `implements Strategy`, or a subclass of the built-in `Iterator` type. See [the API docs for `Strategy`](/api/task/delay/interfaces/Strategy) for examples.
+### Subclassing `Iterator`
+
+```ts
+class InRange extends Iterator<number> {
+  readonly #start: number;
+  readonly #end: number;
+  readonly #step: number;
+
+  #curr: number;
+
+  constructor(start: number, end: number, step = 1) {
+    super();
+    this.#start = start;
+    this.#end = end;
+    this.#step = step;
+    this.#curr = this.#start;
+  }
+
+  next() {
+    if (this.#curr < this.#end) {
+      let value = this.#curr;
+      this.#curr += this.#step;
+      return { value, done: false } as const;
+    } else {
+      return { value: undefined, done: true } as const;
+    }
+  }
+}
+```
+
+Then you can use any of these as a retry strategy (note that these examples assume you have access to [the ES2025 iterator helper methods][helpers]):
+
+[helpers]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Iterator#iterator_helper_methods
+
+```ts
+import * as task from 'true-myth/task';
+import { someRetryableTask } from 'somewhere/in/your-app';
+
+let usingRandomInRange = task.withRetries(
+  someRetryableTask,
+  randomInRange(1, 100).take(10)
+);
+
+let usingRandomInteger = task.withRetries(
+  someRetryableTask,
+  Iterator.from(new RandomInteger()).take(10)
+);
+
+let usingRangeIterator = task.withRetries(
+  someRetryableTask,
+  new InRange(1, 100, 5).take(10)
+);
+```
+
+### Implementing the `Iterator` interface
+
+:::warning 🚧 Under Construction 🚧
+
+There will be more content here Soon™. We didn’t want to block getting the new docs site live on having finished updating all the existing content!
+
+:::
+
+```ts
+class RandomInteger implements Iterator<number> {
+  #nextValue: number;
+
+  constructor(initial: number) {
+    this.#nextValue = initial;
+  }
+
+  next(): IteratorResult<number, void> {
+    let value = this.#nextValue;
+    this.#nextValue = Math.floor(Math.random() * Number.MAX_SAFE_INTEGER);
+    return { done: false, value };
+  }
+
+  return(value: number): IteratorResult<number, void> {
+    return { done: false, value };
+  }
+
+  throw(_error: unknown): IteratorResult<number, void> {
+    return { done: true, value: undefined };
+  }
+
+  [Symbol.iterator](): Generator<number, any, unknown> {
+    return this;
+  }
+}
+```
+
 
 ## Limiting retries
 
@@ -202,31 +310,41 @@ let theTask = Task.withRetries(
 If you are unable to use a polyfill or upgrade to TS 5.6 for now, you can still use these safely using generator functions, which are long-standing JavaScript features available in all modern browsers since ES6. The above example might be written like this (note that these are fully-general versions of the `take` and `map` functions—that is, much more general than is required for working with the “strategies” from True Myth).
 
 ```ts
-import * as Task from 'true-myth/task';
-import { exponential, jitter } from 'true-myth/task/delay';
+import * as task from 'true-myth/task';
+import * as delay from 'true-myth/task/delay';
 
-function* take<T>(iterable: Iterable<T>, count: number): Generator<T> {
+function* take<T>(iterator: Iterator<T>, count: number): Generator<T> {
   let taken = 0;
-  for (let item of iterable) {
+  let next = iterator.next();
+  while (!next.done) {
     if (taken >= count) {
-      break;
+      return;
     }
 
     taken += 1;
-    yield item;
+    yield next.value;
+    next = iterator.next();
   }
 }
 
-function* map<T, U>(iterable: Iterable<T>, fn: (t: T) => U): Generator<U> {
-  for (let value of iterable) {
-    yield fn(value);
+function* map<T, U>(iterator: Iterator<T>, fn: (t: T) => U): Generator<U> {
+  let next = iterator.next();
+  while (!next.done) {
+    yield fn(next.value);
+    next = iterator.next();
   }
 }
 
-let theTask = Task.withRetries(
-  () => Task.fromPromise(fetch('https://example.com/')),
-  take(map(Delay.exponential(), Delay.jitter), 5),
+let theTask = task.withRetries(
+  () => task.fromPromise(fetch('https://example.com/')),
+  take(map(delay.exponential(), delay.jitter), 5),
 );
 ```
 
 This is a bit harder to follow, but works the same way, and will let you migrate incrementally once you are able to use the ES2025 Iterator Helpers features.
+
+## Design note: `Strategy`
+
+You may notice that `Strategy` is simply an alias for `Iterator<number>`. This means that you can ignore it and use `Iterator<number>`, `Generator<number>`, or `IterableIterator<number>`—really, anything that `extends Iterator<number>`. Given that, you might wonder why we have `Strategy` at all.
+
+The answer is so that if we need to change the definition of a `Strategy` in the future in some way, any place that uses
