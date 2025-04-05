@@ -183,7 +183,7 @@ const User = z.object({
 const Users = z.array(User);
 
 let usersTask = task.tryOrElse(
-  fetch('https://api.example.com/users),
+  fetch('https://api.example.com/users'),
   (httpError) => new Error('Fetch error', { cause: httpError })
 ).andThen((res) => tryOrElse(
   res.json(),
