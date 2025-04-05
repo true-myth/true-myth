@@ -8,11 +8,36 @@ import { curry1, safeToString } from './-private/utils.js';
 import Maybe from './maybe.js';
 import Result, { map as mapResult, mapErr, match as matchResult } from './result.js';
 import Unit from './unit.js';
-import * as Delay from './task/delay.js';
+import * as delay from './task/delay.js';
 
-// Make the Delay namespace available as `Task.Delay` for convenience. This lets
-// people do `Task.withRetries(aTask, Task.Delay.exponential(1_000).take(10))`.
-export { Delay };
+// Make the `delay` namespace available as `task.delay` for convenience, and as
+// `task.Delay` for backward compatibility. This lets people do something like
+// `task.withRetries(aTask, task.delay.exponential(1_000).take(10))`.export {
+export {
+  /**
+    Re-exports `true-myth/task/delay` as a namespace object for convenience.
+
+    ```ts
+    import * as task from 'true-myth/task';
+    let strategy = task.delay.exponential({ from: 5, withFactor: 5 }).take(5);
+    ```
+   */
+  delay,
+  /**
+    Re-exports `true-myth/task/delay` as a namespace object.
+
+    @deprecated Use `delay` instead:
+
+      ```ts
+      import * as task from 'true-myth/task';
+      let strategy = task.delay.exponential({ from: 5, withFactor: 5 }).take(5);
+      ```
+
+      The `Delay` namespace re-export will be removed in favor of the `delay`
+      re-export in v10.
+  */
+  delay as Delay,
+};
 
 /**
   Internal implementation details for {@linkcode Task}.
