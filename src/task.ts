@@ -1691,7 +1691,7 @@ export function safelyTryOr<T, E>(
   }
 
   // Note: passing the function by name, *not* calling it.
-  let theTask = safelyTryOr(
+  let theTask = safelyTryOrElse(
     (reason) => `Something went wrong: ${reason}`,
     throws
   );
@@ -1703,7 +1703,7 @@ export function safelyTryOr<T, E>(
   getting back a function which accepts the:
 
   ```ts
-  import { safelyTryOr } from 'true-myth/task';
+  import { safelyTryOrElse } from 'true-myth/task';
 
   function throws(): Promise<number> {
     throw new Error("Uh oh!");
