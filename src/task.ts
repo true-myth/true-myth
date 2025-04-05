@@ -1641,14 +1641,14 @@ export const safelyTryOrElse = tryOrElse;
   ## Examples
 
   ```ts
-  import { safelyTryOrElse } from 'true-myth/task';
+  import { tryOrElse } from 'true-myth/task';
 
   function throws(): Promise<number> {
     throw new Error("Uh oh!");
   }
 
   // Note: passing the function by name, *not* calling it.
-  let theTask = safelyTryOr(
+  let theTask = tryOrElse(
     (reason) => `Something went wrong: ${reason}`,
     throws
   );
@@ -1660,14 +1660,14 @@ export const safelyTryOrElse = tryOrElse;
   getting back a function which accepts the:
 
   ```ts
-  import { safelyTryOr } from 'true-myth/task';
+  import { tryOrElse } from 'true-myth/task';
 
   function throws(): Promise<number> {
     throw new Error("Uh oh!");
   }
 
   // Note: passing the function by name, *not* calling it.
-  let withFallback = safelyTryOrElse<number, string>(
+  let withFallback = tryOrElse<number, string>(
     (reason) => `Something went wrong: ${reason}`
   );
   let theResult = await withFallback(throws);
