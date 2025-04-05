@@ -175,10 +175,10 @@ These examples don't cover every corner of the API; it's just here to show you w
 import Result, { err, map, ok, toString } from 'true-myth/result';
 
 function fallibleCheck(isValid: boolean): Result<string, { reason: string }> {
-  return isValid ? ok('all fine here') : err('was not valid');
+  return isValid ? ok('all fine here') : err({ reason: 'was not valid' });
 }
 
-const describe = (s) => 'The outcome was: ' + s;
+const describe = (s: string) => 'The outcome was: ' + s;
 
 const wentFine = fallibleCheck(true);
 const mappedFine = map(describe, wentFine);
