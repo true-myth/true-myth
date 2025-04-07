@@ -14,6 +14,27 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 
 
+
+## 8.5.2 (2025-04-07)
+
+### Changes
+
+This *mostly* comes down to fixing a bug introduced in v8.5.1 in the definition of `Strategy`, but it brings along some documentation benefits as well.
+
+#### (:bug: Bug Fix)
+* [#1001](https://github.com/true-myth/true-myth/pull/1001) Task: define `Strategy` as `Iterator<number>` [backport] ([@chriskrycho](https://github.com/chriskrycho))
+
+#### (:memo: Documentation)
+* [#1000](https://github.com/true-myth/true-myth/pull/1000) docs: fix incorrect references to safelyTryOr ([@chriskrycho](https://github.com/chriskrycho))
+* [#999](https://github.com/true-myth/true-myth/pull/999) docs: fix types in one Result example in the tour [backport] ([@chriskrycho](https://github.com/chriskrycho))
+* [#998](https://github.com/true-myth/true-myth/pull/998) docs: add in a missing closing quote [backport] ([@chriskrycho](https://github.com/chriskrycho))
+* [#997](https://github.com/true-myth/true-myth/pull/997) docs: fix outdated reference to `Result.tryOrElse` [backport] ([@chriskrycho](https://github.com/chriskrycho))
+* [#996](https://github.com/true-myth/true-myth/pull/996) docs: correct references to `map` and `mapRejected` in `task` [backport] ([@chriskrycho](https://github.com/chriskrycho))
+* [#995](https://github.com/true-myth/true-myth/pull/995) docs: fix API doc references to `resolved` and `rejected` [backport] ([@chriskrycho](https://github.com/chriskrycho))
+
+#### Committers: 1
+- Chris Krycho ([@chriskrycho](https://github.com/chriskrycho))
+
 ## 8.5.1 (2025-04-02)
 
 The first of what will likely be several 8.5.x bug fix releases to address issues found in the past few months!
