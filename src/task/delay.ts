@@ -5,9 +5,11 @@
  */
 
 /**
-  A `Strategy` is any iterable iterator which yields numbers. You can implement
-  it using the `IterableIterator` interface, i.e. `implements Strategy`, or you
-  can write a generator function which produces `Generator<number>`.
+  A `Strategy` is any iterator which yields numbers. You can implement it using
+  the `Iterator` interface, i.e. `implements Strategy`, or you can write a
+  generator function which produces `Generator<number>`, or you can subclass the
+  `Iterator` built-in class if target a version of JavaScript that supports it
+  or via a polyfill.
 
   ## Examples
 
@@ -96,7 +98,7 @@
   );
   ```
  */
-export interface Strategy extends Iterable<number> {}
+export interface Strategy extends Iterator<number> {}
 
 /**
   Generate an infinite iterable of integers beginning with `base` and increasing
@@ -120,7 +122,7 @@ export function* exponential(options?: {
     > *decay* rather than *increase*. This is rarely what you want!
    */
   withFactor?: number;
-}): Strategy {
+}): Generator<number> {
   const factor = options?.withFactor ?? 2;
   let curr = options?.from ? Math.round(options.from) : 1;
   while (true) {
@@ -142,7 +144,7 @@ export function* exponential(options?: {
 export function* fibonacci(options?: {
   /** Initial delay duration in milliseconds. Default is `1`. */
   from: number;
-}): Strategy {
+}): Generator<number> {
   let integralBase = options?.from ? Math.round(options.from) : 1;
   let curr = integralBase;
   let next = integralBase;
@@ -163,7 +165,7 @@ export function* fibonacci(options?: {
 export function* fixed(options?: {
   /** Delay duration in milliseconds. Default is `1` (immediate). */
   at: number;
-}): Strategy {
+}): Generator<number> {
   let integralValue = options?.at ? Math.round(options.at) : 1;
   while (true) {
     yield integralValue;
@@ -171,7 +173,7 @@ export function* fixed(options?: {
 }
 
 /** Generate an infinite iterable of the value `0`. */
-export function* immediate() {
+export function* immediate(): Generator<number> {
   while (true) {
     yield 0;
   }
@@ -200,7 +202,7 @@ export function* linear(options?: {
       > *decay* rather than *increase*. This is rarely what you want!
      */
   withStepSize?: number;
-}): Strategy {
+}): Generator<number> {
   const step = options?.withStepSize ?? 1;
   let curr = options?.from ? Math.round(options.from) : 0;
   while (true) {
@@ -217,7 +219,7 @@ export function* linear(options?: {
   you would, invoke the `Task` that would be retried directly (i.e. without
   using `withRetries` at all) instead.
  */
-export function* none(): Strategy {
+export function* none(): Generator<number> {
   return;
 }
 
