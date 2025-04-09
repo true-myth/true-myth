@@ -2263,7 +2263,7 @@ function identity<T>(value: T): T {
  */
 export function withRetries<T, E>(
   retryable: (status: RetryStatus) => Task<T, E | StopRetrying> | StopRetrying,
-  strategy: IterableIterator<number> = (function* () {
+  strategy: delay.Strategy = (function* () {
     for (let i = 0; i < 3; i++) {
       yield 0;
     }

@@ -48,6 +48,7 @@ import {
   jitter,
   linear,
   none,
+  type Strategy,
 } from 'true-myth/task/delay';
 import Maybe from 'true-myth/maybe';
 import Result from 'true-myth/result';
@@ -2860,6 +2861,12 @@ describe('module-scope functions', () => {
           /TrueMyth\.Task\.RetryFailed: Stopped retrying after 5 tries \(\d+ms\)/
         );
       });
+    });
+
+    test('type checks when explicitly passed a `Strategy`', () => {
+      let retryable = () => new Task(() => {});
+      let strategy = function* (): Strategy {};
+      expectTypeOf(withRetries).toBeCallableWith(retryable, strategy());
     });
   });
 
