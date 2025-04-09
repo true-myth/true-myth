@@ -15,6 +15,17 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 
 
+
+## 8.5.3 (2025-04-09)
+
+### Changes
+
+#### :bug: Bug Fix
+* [#1006](https://github.com/true-myth/true-myth/pull/1006) Task: `withRetries` is callable with any `Strategy` [backport] ([@chriskrycho](https://github.com/chriskrycho))
+
+#### Committers: 1
+- Chris Krycho ([@chriskrycho](https://github.com/chriskrycho))
+
 ## 8.5.2 (2025-04-07)
 
 ### Changes
