@@ -6,7 +6,7 @@
 
 import { curry1, safeToString } from './-private/utils.js';
 import Maybe from './maybe.js';
-import Result, { map as mapResult, mapErr, match as matchResult } from './result.js';
+import Result, * as result from './result.js';
 import Unit from './unit.js';
 import * as delay from './task/delay.js';
 
@@ -288,7 +288,7 @@ class TaskImpl<T, E> implements PromiseLike<Result<T, E>> {
       it is `Resolved`.
    */
   map<U>(mapFn: (t: T) => U): Task<U, E> {
-    return fromUnsafePromise(this.#promise.then(mapResult(mapFn)));
+    return fromUnsafePromise(this.#promise.then(result.map(mapFn)));
   }
 
   /**
@@ -324,7 +324,7 @@ class TaskImpl<T, E> implements PromiseLike<Result<T, E>> {
       rejected.
    */
   mapRejected<F>(mapFn: (e: E) => F): Task<T, F> {
-    return fromUnsafePromise(this.#promise.then(mapErr(mapFn)));
+    return fromUnsafePromise(this.#promise.then(result.mapErr(mapFn)));
   }
 
   /**
@@ -376,10 +376,10 @@ class TaskImpl<T, E> implements PromiseLike<Result<T, E>> {
   and<U, F = E>(other: Task<U, F>): Task<U, E | F> {
     return new Task((resolve, reject) => {
       this.#promise.then(
-        matchResult({
+        result.match({
           Ok: (_) => {
             (other as TaskImpl<U, F>).#promise.then(
-              matchResult({
+              result.match({
                 Ok: resolve,
                 Err: reject,
               })
@@ -439,7 +439,7 @@ class TaskImpl<T, E> implements PromiseLike<Result<T, E>> {
   andThen<U, F = E>(thenFn: (t: T) => Task<U, F>): Task<U, E | F> {
     return new Task((resolve, reject) => {
       this.#promise.then(
-        matchResult({
+        result.match({
           Ok: (value) =>
             // This is a little annoying: there is no direct way to return the
             // resulting `Task` value here because of the intermediate `Promise`
@@ -450,7 +450,7 @@ class TaskImpl<T, E> implements PromiseLike<Result<T, E>> {
             // resolve so that the inner `Result` is available so it can in turn
             // be used with the top-most `Task`’s resolution/rejection helpers!
             (thenFn(value) as TaskImpl<U, F>).#promise.then(
-              matchResult({
+              result.match({
                 Ok: resolve,
                 Err: reject,
               })
@@ -491,11 +491,11 @@ class TaskImpl<T, E> implements PromiseLike<Result<T, E>> {
   or<F, U = T>(other: Task<U, F>): Task<T | U, F> {
     return new Task((resolve, reject) => {
       this.#promise.then(
-        matchResult({
+        result.match({
           Ok: resolve,
           Err: (_) => {
             (other as TaskImpl<U, F>).#promise.then(
-              matchResult({
+              result.match({
                 Ok: resolve,
                 Err: reject,
               })
@@ -526,13 +526,13 @@ class TaskImpl<T, E> implements PromiseLike<Result<T, E>> {
   orElse<F, U = T>(elseFn: (reason: E) => Task<U, F>): Task<T | U, F> {
     return new Task((resolve, reject) => {
       this.#promise.then(
-        matchResult({
+        result.match({
           Ok: resolve,
           Err: (reason) => {
             // See the discussion in `andThen` above; this is exactly the same
             // issue, and with inverted implementation logic.
             (elseFn(reason) as TaskImpl<U, F>).#promise.then(
-              matchResult({
+              result.match({
                 Ok: resolve,
                 Err: reject,
               })
@@ -615,7 +615,7 @@ class TaskImpl<T, E> implements PromiseLike<Result<T, E>> {
    */
   match<A>(matcher: Matcher<T, E, A>): Promise<A> {
     return this.#promise.then(
-      matchResult({
+      result.match({
         Ok: matcher.Resolved,
         Err: matcher.Rejected,
       })
@@ -1451,7 +1451,7 @@ export function fromResult<T, E>(result: Result<T, E>): Task<T, E> {
 export function fromUnsafePromise<T, E>(promise: Promise<Result<T, E>>): Task<T, E> {
   return new Task((resolve, reject) => {
     promise.then(
-      matchResult({
+      result.match({
         Ok: resolve,
         Err: reject,
       }),
