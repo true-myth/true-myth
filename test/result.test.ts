@@ -183,16 +183,52 @@ describe('`Result` pure functions', () => {
     expect(ResultNS.and(nextErr, anErr)).toEqual(anErr);
   });
 
-  test('`andThen`', () => {
-    const theValue = 'a string';
-    const toLengthResult = (s: string) => ResultNS.ok<number, string>(length(s));
-    const expected = toLengthResult(theValue);
+  describe('`andThen`', () => {
+    test('basic functionality', () => {
+      const theValue = 'a string';
+      const toLengthResult = (s: string) => ResultNS.ok<number, string>(length(s));
+      const expected = toLengthResult(theValue);
 
-    const anOk = ResultNS.ok(theValue);
-    expect(ResultNS.andThen(toLengthResult, anOk)).toEqual(expected);
+      const anOk = ResultNS.ok(theValue);
+      expect(ResultNS.andThen(toLengthResult, anOk)).toEqual(expected);
 
-    const anErr: Result<string, string> = ResultNS.err('something wrong');
-    expect(ResultNS.andThen(toLengthResult, anErr)).toEqual(anErr);
+      const anErr: Result<string, string> = ResultNS.err('something wrong');
+      expect(ResultNS.andThen(toLengthResult, anErr)).toEqual(anErr);
+    });
+
+    test('with multiple types in the `Result` returned', () => {
+      class Branded<T extends string> {
+        constructor(public readonly name: T) {}
+      }
+
+      let initial = Result.ok<Branded<'ok'>, Branded<'err'>>(new Branded('ok'));
+
+      let theResult = ResultNS.andThen((_) => {
+        if (Math.random() < 0.1) {
+          return Result.ok(new Branded('ok-a'));
+        }
+
+        if (Math.random() < 0.2) {
+          return Result.err(new Branded('err-a'));
+        }
+
+        if (Math.random() < 0.3) {
+          return Result.ok(new Branded('ok-b'));
+        }
+
+        return Result.err(new Branded('err-b'));
+      }, initial);
+
+      if (theResult.isOk) {
+        // Does *not* absorb initial type.
+        expectTypeOf(theResult.value).toEqualTypeOf<Branded<'ok-a'> | Branded<'ok-b'>>();
+      } else if (theResult.isErr) {
+        // Absorbs initial type as well.
+        expectTypeOf(theResult.error).toEqualTypeOf<
+          Branded<'err'> | Branded<'err-a'> | Branded<'err-b'>
+        >();
+      }
+    });
   });
 
   test('`or`', () => {
@@ -210,20 +246,56 @@ describe('`Result` pure functions', () => {
     expect(ResultNS.or(orErr, anErr)).toEqual(orErr);
   });
 
-  test('`orElse`', () => {
-    const orElseOk: Result<number, string> = ResultNS.ok(1);
-    const getAnOk = () => orElseOk;
+  describe('`orElse`', () => {
+    test('basic functionality', () => {
+      const orElseOk: Result<number, string> = ResultNS.ok(1);
+      const getAnOk = () => orElseOk;
 
-    const orElseErr: Result<number, string> = ResultNS.err('oh my');
-    const getAnErr = () => orElseErr;
+      const orElseErr: Result<number, string> = ResultNS.err('oh my');
+      const getAnErr = () => orElseErr;
 
-    const anOk: Result<number, string> = ResultNS.ok(0);
-    expect(ResultNS.orElse(getAnOk, anOk)).toEqual(anOk);
-    expect(ResultNS.orElse(getAnErr, anOk)).toEqual(anOk);
+      const anOk: Result<number, string> = ResultNS.ok(0);
+      expect(ResultNS.orElse(getAnOk, anOk)).toEqual(anOk);
+      expect(ResultNS.orElse(getAnErr, anOk)).toEqual(anOk);
 
-    const anErr: Result<number, string> = ResultNS.err('boom');
-    expect(ResultNS.orElse(getAnOk, anErr)).toEqual(orElseOk);
-    expect(ResultNS.orElse(getAnErr, anErr)).toEqual(orElseErr);
+      const anErr: Result<number, string> = ResultNS.err('boom');
+      expect(ResultNS.orElse(getAnOk, anErr)).toEqual(orElseOk);
+      expect(ResultNS.orElse(getAnErr, anErr)).toEqual(orElseErr);
+    });
+
+    test('with multiple types in the `Result` returned', () => {
+      class Branded<T extends string> {
+        constructor(public readonly name: T) {}
+      }
+
+      let initial = Result.err<Branded<'ok'>, Branded<'err'>>(new Branded('err'));
+
+      let theResult = ResultNS.orElse((_) => {
+        if (Math.random() < 0.1) {
+          return Result.ok(new Branded('ok-a'));
+        }
+
+        if (Math.random() < 0.2) {
+          return Result.err(new Branded('err-a'));
+        }
+
+        if (Math.random() < 0.3) {
+          return Result.ok(new Branded('ok-b'));
+        }
+
+        return Result.err(new Branded('err-b'));
+      }, initial);
+
+      if (theResult.isOk) {
+        // Absorbs initial type as well.
+        expectTypeOf(theResult.value).toEqualTypeOf<
+          Branded<'ok'> | Branded<'ok-a'> | Branded<'ok-b'>
+        >();
+      } else if (theResult.isErr) {
+        // Does *not* absorb initial type.
+        expectTypeOf(theResult.error).toEqualTypeOf<Branded<'err-a'> | Branded<'err-b'>>();
+      }
+    });
   });
 
   test('`value` property', () => {
@@ -352,18 +424,27 @@ describe('`Result` pure functions', () => {
   test('`toJSON`', () => {
     const theValue = { thisIsReally: 'something', b: null };
     const anOk = ResultNS.ok(theValue);
-    expect(ResultNS.toJSON(anOk)).toEqual({ variant: Variant.Ok, value: theValue });
+    expect(ResultNS.toJSON(anOk)).toEqual({
+      variant: Variant.Ok,
+      value: theValue,
+    });
 
     const errValue = ['oh', 'no', null];
     const anErr = ResultNS.err(errValue);
-    expect(ResultNS.toJSON(anErr)).toEqual({ variant: Variant.Err, error: errValue });
+    expect(ResultNS.toJSON(anErr)).toEqual({
+      variant: Variant.Err,
+      error: errValue,
+    });
   });
 
   test('`toJSON` through serialization', () => {
     const actualSerializedOk = JSON.stringify(ResultNS.ok(42));
     const actualSerializedErr = JSON.stringify(ResultNS.err({ someInfo: 'error' }));
     const actualSerializedUnitErr = JSON.stringify(ResultNS.err());
-    const expectedSerializedOk = JSON.stringify({ variant: Variant.Ok, value: 42 });
+    const expectedSerializedOk = JSON.stringify({
+      variant: Variant.Ok,
+      value: 42,
+    });
     const expectedSerializedErr = JSON.stringify({
       variant: Variant.Err,
       error: { someInfo: 'error' },
@@ -450,7 +531,9 @@ describe('`Result` pure functions', () => {
 
     function example(
       value: number,
-      { throwErr: shouldThrow = false }: { throwErr?: boolean } = { throwErr: false }
+      { throwErr: shouldThrow = false }: { throwErr?: boolean } = {
+        throwErr: false,
+      }
     ): string {
       if (shouldThrow) {
         throw new Error(THE_MESSAGE);
@@ -640,14 +723,48 @@ describe('`Ok` instance', () => {
     expect(theOk.and(anErr)).toBe(anErr);
   });
 
-  test('`andThen` method', () => {
-    const theValue = 'anything will do';
-    const theOk = Result.ok<string, number>(theValue);
-    const lengthResult = (s: string) => Result.ok(s.length);
-    expect(theOk.andThen(lengthResult)).toEqual(lengthResult(theValue));
+  describe('`andThen` method', () => {
+    test('basic functionality', () => {
+      const theValue = 'anything will do';
+      const theOk = Result.ok<string, number>(theValue);
+      const lengthResult = (s: string) => Result.ok(s.length);
+      expect(theOk.andThen(lengthResult)).toEqual(lengthResult(theValue));
 
-    const convertToErr = (s: string) => Result.err(s.length);
-    expect(theOk.andThen(convertToErr)).toEqual(convertToErr(theValue));
+      const convertToErr = (s: string) => Result.err(s.length);
+      expect(theOk.andThen(convertToErr)).toEqual(convertToErr(theValue));
+    });
+
+    test('with multiple types in the `Result` returned', () => {
+      class Branded<T extends string> {
+        constructor(public readonly name: T) {}
+      }
+
+      let theResult = Result.ok<Branded<'ok'>, Branded<'err'>>(new Branded('ok')).andThen((_) => {
+        if (Math.random() < 0.1) {
+          return Result.ok(new Branded('ok-a'));
+        }
+
+        if (Math.random() < 0.2) {
+          return Result.err(new Branded('err-a'));
+        }
+
+        if (Math.random() < 0.3) {
+          return Result.ok(new Branded('ok-b'));
+        }
+
+        return Result.err(new Branded('err-b'));
+      });
+
+      if (theResult.isOk) {
+        // Does *not* absorb initial type.
+        expectTypeOf(theResult.value).toEqualTypeOf<Branded<'ok-a'> | Branded<'ok-b'>>();
+      } else if (theResult.isErr) {
+        // Absorbs initial type as well.
+        expectTypeOf(theResult.error).toEqualTypeOf<
+          Branded<'err'> | Branded<'err-a'> | Branded<'err-b'>
+        >();
+      }
+    });
   });
 
   test('`or` method', () => {
@@ -660,12 +777,46 @@ describe('`Ok` instance', () => {
     expect(theOk.or(anErr)).toEqual(theOk);
   });
 
-  test('`orElse` method', () => {
-    const theValue = 1;
-    const theOk = Result.ok(theValue);
-    const theDefault: string[] = [];
-    const getTheDefault = () => Result.err<number, string[]>(theDefault);
-    expect(theOk.orElse(getTheDefault)).toEqual(theOk);
+  describe('`orElse` method', () => {
+    test('basic functionality', () => {
+      const theValue = 1;
+      const theOk = Result.ok(theValue);
+      const theDefault: string[] = [];
+      const getTheDefault = () => Result.err<number, string[]>(theDefault);
+      expect(theOk.orElse(getTheDefault)).toEqual(theOk);
+    });
+
+    test('with multiple types in the `Result` returned', () => {
+      class Branded<T extends string> {
+        constructor(public readonly name: T) {}
+      }
+
+      let theResult = Result.err<Branded<'ok'>, Branded<'err'>>(new Branded('err')).orElse((_) => {
+        if (Math.random() < 0.1) {
+          return Result.ok(new Branded('ok-a'));
+        }
+
+        if (Math.random() < 0.2) {
+          return Result.err(new Branded('err-a'));
+        }
+
+        if (Math.random() < 0.3) {
+          return Result.ok(new Branded('ok-b'));
+        }
+
+        return Result.err(new Branded('err-b'));
+      });
+
+      if (theResult.isOk) {
+        // Absorbs initial type as well.
+        expectTypeOf(theResult.value).toEqualTypeOf<
+          Branded<'ok'> | Branded<'ok-a'> | Branded<'ok-b'>
+        >();
+      } else if (theResult.isErr) {
+        // Does *not* absorb initial type.
+        expectTypeOf(theResult.error).toEqualTypeOf<Branded<'err-a'> | Branded<'err-b'>>();
+      }
+    });
   });
 
   test('`value` property', () => {
@@ -856,14 +1007,46 @@ describe('`ResultNS.Err` class', () => {
     expect(theErr.and(anotherErr)).toEqual(theErr);
   });
 
-  test('`andThen` method', () => {
-    const theErr = Result.err<string[], number>(42);
+  describe('`andThen` method', () => {
+    test('basic functionality', () => {
+      const theValue = 'anything will do';
+      const theOk = Result.ok<string, number>(theValue);
+      const lengthResult = (s: string) => Result.ok(s.length);
+      expect(theOk.andThen(lengthResult)).toEqual(lengthResult(theValue));
 
-    const getAnOk = (strings: string[]) => ResultNS.ok<number, number>(length(strings));
-    expect(theErr.andThen(getAnOk)).toEqual(theErr);
+      const convertToErr = (s: string) => Result.err(s.length);
+      expect(theOk.andThen(convertToErr)).toEqual(convertToErr(theValue));
+    });
 
-    const getAnErr = (_: unknown) => ResultNS.err(0);
-    expect(theErr.andThen(getAnErr)).toEqual(theErr);
+    test('with multiple types in the `Result` returned', () => {
+      class Branded<T extends string> {
+        constructor(public readonly name: T) {}
+      }
+
+      let theResult = Result.ok<Branded<'ok'>, Branded<'err'>>(new Branded('ok')).andThen((_) => {
+        if (Math.random() < 0.1) {
+          return Result.ok(new Branded('ok-a'));
+        }
+
+        if (Math.random() < 0.2) {
+          return Result.err(new Branded('err-a'));
+        }
+
+        if (Math.random() < 0.3) {
+          return Result.ok(new Branded('ok-b'));
+        }
+
+        return Result.err(new Branded('err-b'));
+      });
+
+      if (theResult.isOk) {
+        expectTypeOf(theResult.value).toEqualTypeOf<Branded<'ok-a'> | Branded<'ok-b'>>();
+      } else if (theResult.isErr) {
+        expectTypeOf(theResult.error).toEqualTypeOf<
+          Branded<'err'> | Branded<'err-a'> | Branded<'err-b'>
+        >();
+      }
+    });
   });
 
   test('`or` method', () => {
@@ -875,15 +1058,49 @@ describe('`ResultNS.Err` class', () => {
     expect(theErr.or(anotherErr)).toBe(anotherErr);
   });
 
-  test('`orElse` method', () => {
-    const theErr = Result.err<string, string>('what sorrow');
-    const theOk = ResultNS.ok<string, string>('neat!');
-    const getOk = () => theOk;
-    expect(theErr.orElse(getOk)).toBe(theOk);
+  describe('`orElse` method', () => {
+    test('basic functionality', () => {
+      const theErr = Result.err<string, string>('what sorrow');
+      const theOk = ResultNS.ok<string, string>('neat!');
+      const getOk = () => theOk;
+      expect(theErr.orElse(getOk)).toBe(theOk);
 
-    const anotherErr = ResultNS.err<string, string>('even worse');
-    const getAnotherErr = () => anotherErr;
-    expect(theErr.orElse(getAnotherErr)).toBe(anotherErr);
+      const anotherErr = ResultNS.err<string, string>('even worse');
+      const getAnotherErr = () => anotherErr;
+      expect(theErr.orElse(getAnotherErr)).toBe(anotherErr);
+    });
+
+    test('with multiple types in the `Result` returned', () => {
+      class Branded<T extends string> {
+        constructor(public readonly name: T) {}
+      }
+
+      let theResult = Result.err<Branded<'ok'>, Branded<'err'>>(new Branded('err')).orElse((_) => {
+        if (Math.random() < 0.1) {
+          return Result.ok(new Branded('ok-a'));
+        }
+
+        if (Math.random() < 0.2) {
+          return Result.err(new Branded('err-a'));
+        }
+
+        if (Math.random() < 0.3) {
+          return Result.ok(new Branded('ok-b'));
+        }
+
+        return Result.err(new Branded('err-b'));
+      });
+
+      if (theResult.isOk) {
+        // Absorbs initial type as well.
+        expectTypeOf(theResult.value).toEqualTypeOf<
+          Branded<'ok'> | Branded<'ok-a'> | Branded<'ok-b'>
+        >();
+      } else if (theResult.isErr) {
+        // Does *not* absorb initial type.
+        expectTypeOf(theResult.error).toEqualTypeOf<Branded<'err-a'> | Branded<'err-b'>>();
+      }
+    });
   });
 
   test('`value` property', () => {
