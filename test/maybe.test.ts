@@ -183,22 +183,53 @@ describe('`Maybe` pure functions', () => {
     expect(maybe.and<number, {}>(aNothing)(aJust)).toEqual(maybe.and(aNothing, aJust));
   });
 
-  test('`andThen`', () => {
-    const toMaybeNumber = (x: string) => maybe.just(Number(x));
-    const toNothing = (_: string) => maybe.nothing<number>();
+  describe('`andThen`', () => {
+    test('basic functionality', () => {
+      const toMaybeNumber = (x: string) => maybe.just(Number(x));
+      const toNothing = (_: string) => maybe.nothing<number>();
 
-    const theValue = '42';
-    const theJust = maybe.just(theValue);
-    const theExpectedResult = toMaybeNumber(theValue);
-    const noString = maybe.nothing<string>();
-    const noNumber = maybe.nothing<number>();
+      const theValue = '42';
+      const theJust = maybe.just(theValue);
+      const theExpectedResult = toMaybeNumber(theValue);
+      const noString = maybe.nothing<string>();
+      const noNumber = maybe.nothing<number>();
 
-    expect(maybe.andThen(toMaybeNumber, theJust)).toEqual(theExpectedResult);
-    expect(maybe.andThen(toNothing, theJust)).toEqual(noNumber);
-    expect(maybe.andThen(toMaybeNumber, noString)).toEqual(noNumber);
-    expect(maybe.andThen(toNothing, noString)).toEqual(noNumber);
+      expect(maybe.andThen(toMaybeNumber, theJust)).toEqual(theExpectedResult);
+      expect(maybe.andThen(toNothing, theJust)).toEqual(noNumber);
+      expect(maybe.andThen(toMaybeNumber, noString)).toEqual(noNumber);
+      expect(maybe.andThen(toNothing, noString)).toEqual(noNumber);
 
-    expect(maybe.andThen(toMaybeNumber)(theJust)).toEqual(maybe.andThen(toMaybeNumber, theJust));
+      expect(maybe.andThen(toMaybeNumber)(theJust)).toEqual(maybe.andThen(toMaybeNumber, theJust));
+    });
+
+    test('with multiple types in the returned `Maybe` instances', () => {
+      class Branded<T extends string> {
+        constructor(public readonly name: T) {}
+      }
+
+      let theOutput = maybe.andThen(
+        (_) => {
+          if (Math.random() < 0.1) {
+            return maybe.just(new Branded('just-a'));
+          }
+
+          if (Math.random() < 0.2) {
+            return maybe.nothing<Branded<'empty'>>();
+          }
+
+          if (Math.random() < 0.3) {
+            return maybe.just(new Branded('just-b'));
+          }
+
+          return maybe.nothing<Branded<'empty'>>();
+        },
+        Maybe.of(new Branded('just'))
+      );
+
+      expectTypeOf(theOutput).toEqualTypeOf<
+        Maybe<Branded<'just-a'> | Branded<'just-b'> | Branded<'empty'>>
+      >;
+    });
   });
 
   test('`or`', () => {
@@ -214,19 +245,47 @@ describe('`Maybe` pure functions', () => {
     expect(maybe.or(justAnswer)(justWaffles)).toEqual(maybe.or(justAnswer, justWaffles));
   });
 
-  test('`orElse`', () => {
-    const getWaffles = () => maybe.of('waffles');
-    const just42 = maybe.of('42');
-    expect(maybe.orElse(getWaffles, just42)).toEqual(maybe.just('42'));
-    expect(maybe.orElse(getWaffles, maybe.of(null as string | null))).toEqual(
-      maybe.just('waffles')
-    );
-    expect(maybe.orElse(() => maybe.of(null as string | null), just42)).toEqual(maybe.just('42'));
-    expect(
-      maybe.orElse(() => maybe.of(null as string | null), maybe.of(null as string | null))
-    ).toEqual(maybe.nothing());
+  describe('`orElse`', () => {
+    test('basic functionality', () => {
+      const getWaffles = () => maybe.of('waffles');
+      const just42 = maybe.of('42');
+      expect(maybe.orElse(getWaffles, just42)).toEqual(maybe.just('42'));
+      expect(maybe.orElse(getWaffles, maybe.of(null as string | null))).toEqual(
+        maybe.just('waffles')
+      );
+      expect(maybe.orElse(() => maybe.of(null as string | null), just42)).toEqual(maybe.just('42'));
+      expect(
+        maybe.orElse(() => maybe.of(null as string | null), maybe.of(null as string | null))
+      ).toEqual(maybe.nothing());
 
-    expect(maybe.orElse(getWaffles)(just42)).toEqual(maybe.orElse(getWaffles, just42));
+      expect(maybe.orElse(getWaffles)(just42)).toEqual(maybe.orElse(getWaffles, just42));
+    });
+
+    test('with multiple types in the returned `Maybe` instances', () => {
+      class Branded<T extends string> {
+        constructor(public readonly name: T) {}
+      }
+
+      let theOutput = maybe.orElse(() => {
+        if (Math.random() < 0.1) {
+          return maybe.just(new Branded('just-a'));
+        }
+
+        if (Math.random() < 0.2) {
+          return maybe.nothing<Branded<'empty'>>();
+        }
+
+        if (Math.random() < 0.3) {
+          return maybe.just(new Branded('just-b'));
+        }
+
+        return maybe.nothing<Branded<'empty'>>();
+      }, Maybe.nothing<'empty-start'>());
+
+      expectTypeOf(theOutput).toEqualTypeOf<
+        Maybe<Branded<'just-a'> | Branded<'just-b'> | Branded<'empty'>>
+      >;
+    });
   });
 
   test('`unwrap`', () => {
@@ -771,11 +830,39 @@ describe('`Maybe` class', () => {
       expect(theJust.or(aNothing)).toEqual(theJust);
     });
 
-    test('`orElse` method', () => {
-      const theJust = new Maybe(12);
-      const getAnotherJust = () => maybe.just(42);
+    describe('`orElse` method', () => {
+      test('`orElse` method', () => {
+        const theJust = new Maybe(12);
+        const getAnotherJust = () => maybe.just(42);
 
-      expect(theJust.orElse(getAnotherJust)).toEqual(theJust);
+        expect(theJust.orElse(getAnotherJust)).toEqual(theJust);
+      });
+
+      test('with multiple types in the returned `Maybe` instances', () => {
+        class Branded<T extends string> {
+          constructor(public readonly name: T) {}
+        }
+
+        let theOutput = Maybe.just(new Branded('just')).orElse(() => {
+          if (Math.random() < 0.1) {
+            return maybe.just(new Branded('just-a'));
+          }
+
+          if (Math.random() < 0.2) {
+            return maybe.nothing<Branded<'empty'>>();
+          }
+
+          if (Math.random() < 0.3) {
+            return maybe.just(new Branded('just-b'));
+          }
+
+          return maybe.nothing<Branded<'empty'>>();
+        });
+
+        expectTypeOf(theOutput).toEqualTypeOf<
+          Maybe<Branded<'just-a'> | Branded<'just-b'> | Branded<'empty'>>
+        >;
+      });
     });
 
     test('`and` method', () => {
@@ -787,18 +874,46 @@ describe('`Maybe` class', () => {
       expect(theJust.and(aNothing)).toEqual(aNothing);
     });
 
-    test('`andThen` method', () => {
-      const theValue = { Jedi: 'Luke Skywalker' };
-      const theJust = new Maybe(theValue);
-      const toDescription = (dict: { [key: string]: string }) =>
-        new Maybe(
-          Object.keys(dict)
-            .map((key) => `${dict[key]} is a ${key}`)
-            .join('\n')
-        );
+    describe('`andThen` method', () => {
+      test('basics', () => {
+        const theValue = { Jedi: 'Luke Skywalker' };
+        const theJust = new Maybe(theValue);
+        const toDescription = (dict: { [key: string]: string }) =>
+          new Maybe(
+            Object.keys(dict)
+              .map((key) => `${dict[key]} is a ${key}`)
+              .join('\n')
+          );
 
-      const theExpectedResult = toDescription(theValue);
-      expect(theJust.andThen(toDescription)).toEqual(theExpectedResult);
+        const theExpectedResult = toDescription(theValue);
+        expect(theJust.andThen(toDescription)).toEqual(theExpectedResult);
+      });
+
+      test('with multiple types in the returned `Maybe` instances', () => {
+        class Branded<T extends string> {
+          constructor(public readonly name: T) {}
+        }
+
+        let theOutput = Maybe.of(new Branded('just')).andThen((_) => {
+          if (Math.random() < 0.1) {
+            return maybe.just(new Branded('just-a'));
+          }
+
+          if (Math.random() < 0.2) {
+            return maybe.nothing<Branded<'empty'>>();
+          }
+
+          if (Math.random() < 0.3) {
+            return maybe.just(new Branded('just-b'));
+          }
+
+          return maybe.nothing<Branded<'empty'>>();
+        });
+
+        expectTypeOf(theOutput).toEqualTypeOf<
+          Maybe<Branded<'just-a'> | Branded<'just-b'> | Branded<'empty'>>
+        >;
+      });
     });
 
     test('`unwrap` method', () => {
@@ -963,12 +1078,40 @@ describe('`Maybe` class', () => {
       expect(theNothing.or(theDefaultValue)).toBe(theDefaultValue);
     });
 
-    test('`orElse` method', () => {
-      const theNothing = new Maybe<{ here: string[] }>();
-      const justTheFallback = maybe.just({ here: ['to', 'see'] });
-      const getTheFallback = () => justTheFallback;
+    describe('`orElse` method', () => {
+      test('`orElse` method', () => {
+        const theNothing = new Maybe<{ here: string[] }>();
+        const justTheFallback = maybe.just({ here: ['to', 'see'] });
+        const getTheFallback = () => justTheFallback;
 
-      expect(theNothing.orElse(getTheFallback)).toEqual(justTheFallback);
+        expect(theNothing.orElse(getTheFallback)).toEqual(justTheFallback);
+      });
+
+      test('with multiple types in the returned `Maybe` instances', () => {
+        class Branded<T extends string> {
+          constructor(public readonly name: T) {}
+        }
+
+        let theOutput = Maybe.nothing<'empty-start'>().orElse(() => {
+          if (Math.random() < 0.1) {
+            return maybe.just(new Branded('just-a'));
+          }
+
+          if (Math.random() < 0.2) {
+            return maybe.nothing<Branded<'empty'>>();
+          }
+
+          if (Math.random() < 0.3) {
+            return maybe.just(new Branded('just-b'));
+          }
+
+          return maybe.nothing<Branded<'empty'>>();
+        });
+
+        expectTypeOf(theOutput).toEqualTypeOf<
+          Maybe<Branded<'just-a'> | Branded<'just-b'> | Branded<'empty'>>
+        >;
+      });
     });
 
     test('`and` method', () => {
@@ -979,12 +1122,40 @@ describe('`Maybe` class', () => {
       expect(theNothing.and(anotherNothing)).toEqual(theNothing);
     });
 
-    test('`andThen` method', () => {
-      const theNothing = new Maybe();
-      const theDefaultValue = 'string';
-      const getDefaultValue = () => maybe.just(theDefaultValue);
+    describe('`andThen` method', () => {
+      test('basic functionality', () => {
+        const theNothing = new Maybe();
+        const theDefaultValue = 'string';
+        const getDefaultValue = () => maybe.just(theDefaultValue);
 
-      expect(theNothing.andThen(getDefaultValue)).toEqual(theNothing);
+        expect(theNothing.andThen(getDefaultValue)).toEqual(theNothing);
+      });
+
+      test('with multiple types in the returned `Maybe` instances', () => {
+        class Branded<T extends string> {
+          constructor(public readonly name: T) {}
+        }
+
+        let theOutput = Maybe.nothing<'empty-start'>().andThen((_) => {
+          if (Math.random() < 0.1) {
+            return maybe.just(new Branded('just-a'));
+          }
+
+          if (Math.random() < 0.2) {
+            return maybe.nothing<Branded<'empty'>>();
+          }
+
+          if (Math.random() < 0.3) {
+            return maybe.just(new Branded('just-b'));
+          }
+
+          return maybe.nothing<Branded<'empty'>>();
+        });
+
+        expectTypeOf(theOutput).toEqualTypeOf<
+          Maybe<Branded<'just-a'> | Branded<'empty'> | Branded<'just-b'>>
+        >();
+      });
     });
 
     test('`value` access', () => {
