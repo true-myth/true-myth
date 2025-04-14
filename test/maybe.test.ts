@@ -507,19 +507,43 @@ describe('`Maybe` pure functions', () => {
     expect(maybe.property('wat', dict)).toEqual(maybe.nothing());
   });
 
-  test('`get`', () => {
-    type Person = { name?: string };
-    let chris: Person = { name: 'chris' };
-    let justChris: Maybe<Person> = maybe.just(chris);
-    expect(maybe.get('name', justChris)).toEqual(maybe.just('chris'));
+  describe('`get`', () => {
+    test('basic form', () => {
+      type Person = { name?: string };
+      let chris: Person = { name: 'chris' };
+      let justChris: Maybe<Person> = maybe.just(chris);
+      expect(maybe.get('name', justChris)).toEqual(maybe.just('chris'));
 
-    let nobody: Maybe<Person> = maybe.nothing();
-    expect(maybe.get('name', nobody)).toEqual(maybe.nothing());
+      let nobody: Maybe<Person> = maybe.nothing();
+      expect(maybe.get('name', nobody)).toEqual(maybe.nothing());
 
-    type Dict<T> = { [key: string]: T };
-    let dict = maybe.just({ quux: 'warble' } as Dict<string>);
-    expect(maybe.get('quux', dict)).toEqual(maybe.just('warble'));
-    expect(maybe.get('wat', dict)).toEqual(maybe.nothing());
+      type Dict<T> = { [key: string]: T };
+      let dict = maybe.just({ quux: 'warble' } as Dict<string>);
+      expect(maybe.get('quux', dict)).toEqual(maybe.just('warble'));
+      expect(maybe.get('wat', dict)).toEqual(maybe.nothing());
+    });
+
+    test('curried form', () => {
+      type DeepType = { something?: { with?: { deeper?: { 'key names'?: string } } } };
+
+      const allSet: DeepType = { something: { with: { deeper: { 'key names': 'like this' } } } };
+      let fromSet = maybe.get(
+        'key names',
+        maybe.get('deeper', maybe.get('with', maybe.get('something', Maybe.of(allSet))))
+      );
+
+      const allEmpty: DeepType = {};
+      let fromEmpty = maybe.get(
+        'key names',
+        maybe.get('deeper', maybe.get('with', maybe.get('something', Maybe.of(allEmpty))))
+      );
+
+      expect(fromEmpty).toEqual(maybe.nothing());
+
+      expectTypeOf(fromSet).toEqualTypeOf(fromEmpty);
+      expectTypeOf(fromSet).toEqualTypeOf<Maybe<string>>();
+      expectTypeOf(fromEmpty).toEqualTypeOf<Maybe<string>>();
+    });
   });
 
   test('`safe`', () => {
@@ -833,7 +857,7 @@ describe('`Maybe` class', () => {
       expect(result.equals(maybe.of('3'))).toBe(true);
     });
 
-    test('`property` method', () => {
+    test('`get` method', () => {
       type DeepType = { something?: { with?: { deeper?: { 'key names'?: string } } } };
 
       const allSet: DeepType = { something: { with: { deeper: { 'key names': 'like this' } } } };
