@@ -392,8 +392,8 @@ export const nothing = MaybeImpl.nothing;
   invoke `Maybe.of` with an explicit type parameter:
 
   ```ts
-  import * as Maybe from 'true-myth/maybe';
-  const foo = Maybe.of<string>(null);
+  import * as maybe from 'true-myth/maybe';
+  const foo = maybe.of<string>(null);
   ```
 
   This is usually only important in two cases:
@@ -1369,6 +1369,8 @@ export type TransposedArray<T extends ReadonlyArray<Maybe<unknown>>> =
   However, it also works correctly with dictionary types:
 
   ```ts
+  import * as maybe from 'true-myth/maybe';
+
   type Dict<T> = { [key: string]: T };
 
   const score: Dict<number> = {
@@ -1376,9 +1378,9 @@ export type TransposedArray<T extends ReadonlyArray<Maybe<unknown>>> =
     player2: 1
   };
 
-  console.log(Maybe.property('player1', score)); // Just(0)
-  console.log(Maybe.property('player2', score)); // Just(1)
-  console.log(Maybe.property('player3', score)); // Nothing
+  console.log(maybe.property('player1', score)); // Just(0)
+  console.log(maybe.property('player2', score)); // Just(1)
+  console.log(maybe.property('player3', score)); // Nothing
   ```
 
   The order of keys is so that it can be partially applied:
@@ -1386,7 +1388,7 @@ export type TransposedArray<T extends ReadonlyArray<Maybe<unknown>>> =
   ```ts
   type Person = { name?: string };
 
-  const lookupName = Maybe.property('name');
+  const lookupName = maybe.property('name');
 
   const me: Person = { name: 'Chris' };
   console.log(lookupName(me)); // Just('Chris')

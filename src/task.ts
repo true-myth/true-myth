@@ -6,13 +6,13 @@
 
 import { curry1, safeToString } from './-private/utils.js';
 import Maybe from './maybe.js';
-import Result, { map as mapResult, mapErr, match as matchResult } from './result.js';
+import Result, * as result from './result.js';
 import Unit from './unit.js';
 import * as delay from './task/delay.js';
 
 // Make the `delay` namespace available as `task.delay` for convenience, and as
 // `task.Delay` for backward compatibility. This lets people do something like
-// `task.withRetries(aTask, task.delay.exponential(1_000).take(10))`.export {
+// `task.withRetries(aTask, task.delay.exponential(1_000).take(10))`.
 export {
   /**
     Re-exports `true-myth/task/delay` as a namespace object for convenience.
@@ -288,7 +288,7 @@ class TaskImpl<T, E> implements PromiseLike<Result<T, E>> {
       it is `Resolved`.
    */
   map<U>(mapFn: (t: T) => U): Task<U, E> {
-    return fromUnsafePromise(this.#promise.then(mapResult(mapFn)));
+    return fromUnsafePromise(this.#promise.then(result.map(mapFn)));
   }
 
   /**
@@ -324,7 +324,7 @@ class TaskImpl<T, E> implements PromiseLike<Result<T, E>> {
       rejected.
    */
   mapRejected<F>(mapFn: (e: E) => F): Task<T, F> {
-    return fromUnsafePromise(this.#promise.then(mapErr(mapFn)));
+    return fromUnsafePromise(this.#promise.then(result.mapErr(mapFn)));
   }
 
   /**
@@ -376,10 +376,10 @@ class TaskImpl<T, E> implements PromiseLike<Result<T, E>> {
   and<U, F = E>(other: Task<U, F>): Task<U, E | F> {
     return new Task((resolve, reject) => {
       this.#promise.then(
-        matchResult({
+        result.match({
           Ok: (_) => {
             (other as TaskImpl<U, F>).#promise.then(
-              matchResult({
+              result.match({
                 Ok: resolve,
                 Err: reject,
               })
@@ -439,7 +439,7 @@ class TaskImpl<T, E> implements PromiseLike<Result<T, E>> {
   andThen<U, F = E>(thenFn: (t: T) => Task<U, F>): Task<U, E | F> {
     return new Task((resolve, reject) => {
       this.#promise.then(
-        matchResult({
+        result.match({
           Ok: (value) =>
             // This is a little annoying: there is no direct way to return the
             // resulting `Task` value here because of the intermediate `Promise`
@@ -450,7 +450,7 @@ class TaskImpl<T, E> implements PromiseLike<Result<T, E>> {
             // resolve so that the inner `Result` is available so it can in turn
             // be used with the top-most `Task`’s resolution/rejection helpers!
             (thenFn(value) as TaskImpl<U, F>).#promise.then(
-              matchResult({
+              result.match({
                 Ok: resolve,
                 Err: reject,
               })
@@ -491,11 +491,11 @@ class TaskImpl<T, E> implements PromiseLike<Result<T, E>> {
   or<F, U = T>(other: Task<U, F>): Task<T | U, F> {
     return new Task((resolve, reject) => {
       this.#promise.then(
-        matchResult({
+        result.match({
           Ok: resolve,
           Err: (_) => {
             (other as TaskImpl<U, F>).#promise.then(
-              matchResult({
+              result.match({
                 Ok: resolve,
                 Err: reject,
               })
@@ -526,13 +526,13 @@ class TaskImpl<T, E> implements PromiseLike<Result<T, E>> {
   orElse<F, U = T>(elseFn: (reason: E) => Task<U, F>): Task<T | U, F> {
     return new Task((resolve, reject) => {
       this.#promise.then(
-        matchResult({
+        result.match({
           Ok: resolve,
           Err: (reason) => {
             // See the discussion in `andThen` above; this is exactly the same
             // issue, and with inverted implementation logic.
             (elseFn(reason) as TaskImpl<U, F>).#promise.then(
-              matchResult({
+              result.match({
                 Ok: resolve,
                 Err: reject,
               })
@@ -615,7 +615,7 @@ class TaskImpl<T, E> implements PromiseLike<Result<T, E>> {
    */
   match<A>(matcher: Matcher<T, E, A>): Promise<A> {
     return this.#promise.then(
-      matchResult({
+      result.match({
         Ok: matcher.Resolved,
         Err: matcher.Rejected,
       })
@@ -1401,10 +1401,10 @@ export function fromPromise<T>(
 
   ```ts
 
-  import * as Task from 'true-myth/task';
+  import * as task from 'true-myth/task';
   import { ok } from 'true-myth/result';
 
-  let theTask = Task.fromResult(ok(123));
+  let theTask = task.fromResult(ok(123));
   ```
 
   As an alternative, it can be useful to rename the import:
@@ -1451,7 +1451,7 @@ export function fromResult<T, E>(result: Result<T, E>): Task<T, E> {
 export function fromUnsafePromise<T, E>(promise: Promise<Result<T, E>>): Task<T, E> {
   return new Task((resolve, reject) => {
     promise.then(
-      matchResult({
+      result.match({
         Ok: resolve,
         Err: reject,
       }),
@@ -2117,20 +2117,20 @@ function identity<T>(value: T): T {
   will simply reject immediately.
 
   ```ts
-  import * as Task from 'true-myth/task';
-  import * as Delay from 'true-myth/task/delay';
+  import * as task from 'true-myth/task';
+  import * as delay from 'true-myth/task/delay';
 
   let theTask = withRetries(
-    () => Task.fromPromise(fetch('https://example.com')).andThen((res) => {
+    () => task.fromPromise(fetch('https://example.com')).andThen((res) => {
         if (res.status === 200) {
-          return Task.fromPromise(res.json());
+          return task.fromPromise(res.json());
         } else if (res.status === 408) {
-          return Task.reject(res.statusText);
+          return task.reject(res.statusText);
         } else {
-          return Task.stopRetrying(res.statusText);
+          return task.stopRetrying(res.statusText);
         }
       }),
-    Delay.fibonacci().map(Delay.jitter).take(10)
+    delay.fibonacci().map(delay.jitter).take(10)
   );
   ```
 
@@ -2165,18 +2165,18 @@ function identity<T>(value: T): T {
   it is set:
 
   ```ts
-  import * as Task from 'true-myth/task';
+  import * as task from 'true-myth/task';
   import { fibonacci, jitter } from 'true-myth/task/delay';
   import { doSomethingThatMayFailWithAppError } from 'someplace/in/my-app';
 
-  let theTask = Task.withRetries(
+  let theTask = task.withRetries(
     () => {
       doSomethingThatMayFailWithAppError().orElse((rejection) => {
         if (rejection.isFatal) {
-          return Task.stopRetrying("It was fatal!", { cause: rejection });
+          return task.stopRetrying("It was fatal!", { cause: rejection });
         }
 
-        return Task.reject(rejection);
+        return task.reject(rejection);
       });
     },
     fibonacci().map(jitter).take(20)
@@ -2196,24 +2196,24 @@ function identity<T>(value: T): T {
   times or if the total elapsed time exceeds 10 seconds.
 
   ```ts
-  import * as Task from 'true-myth/task';
+  import * as task from 'true-myth/task';
   import { exponential, jitter } from 'true-myth/task/delay';
 
-  let theResult = await Task.withRetries(
+  let theResult = await task.withRetries(
     ({ count, elapsed }) => {
       if (count > 10) {
-        return Task.stopRetrying(`Tried too many times: ${count}`);
+        return task.stopRetrying(`Tried too many times: ${count}`);
       }
 
       if (elapsed > 10_000) {
-        return Task.stopRetrying(`Took too long: ${elapsed}ms`);
+        return task.stopRetrying(`Took too long: ${elapsed}ms`);
       }
 
-      return Task.fromPromise(fetch('https://www.example.com/'))
-        .andThen((res) => Task.fromPromise(res.json()))
+      return task.fromPromise(fetch('https://www.example.com/'))
+        .andThen((res) => task.fromPromise(res.json()))
         .orElse((cause) => {
           let message = `Attempt #${count} failed`;
-          return Task.reject(new Error(message, { cause }));
+          return task.reject(new Error(message, { cause }));
         });
     },
     exponential().map(jitter),
@@ -2232,7 +2232,7 @@ function identity<T>(value: T): T {
   value:
 
   ```ts
-  import * as Task from 'true-myth/task';
+  import * as task from 'true-myth/task';
 
   function* randomIncrease(options?: { from: number }) {
     // always use integral values, and default to one second.
@@ -2243,10 +2243,10 @@ function identity<T>(value: T): T {
     }
   }
 
-  await Task.withRetries(({ count }) => {
+  await task.withRetries(({ count }) => {
     let delay = Math.round(Math.random() * 100);
-    return Task.timer(delay).andThen((time) =>
-      Task.reject(`Rejection #${count} after ${time}ms`),
+    return task.timer(delay).andThen((time) =>
+      task.reject(`Rejection #${count} after ${time}ms`),
     );
   }, randomIncrease(10).take(10));
   ```
@@ -2384,12 +2384,12 @@ export const RETRY_FAILED_NAME = 'TrueMyth.Task.RetryFailed';
   the {@linkcode isRetryFailed} helper function:
 
   ```ts
-  import * as Task from 'true-myth/task';
+  import * as task from 'true-myth/task';
 
   // snip
   let result = await someFnThatReturnsATask();
   if (result.isErr) {
-    if (isRetryFailed(result.error)) {
+    if (task.isRetryFailed(result.error)) {
       if (result.error.cause) {
         console.error('You quit on purpose: ', cause);
       }
