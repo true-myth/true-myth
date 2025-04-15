@@ -36,7 +36,12 @@
     "./-private/*": null
   },
   "types": "dist/index.d.ts",
-  "keywords": ["typescript", "functional programming", "maybe", "result"],
+  "keywords": [
+    "typescript",
+    "functional programming",
+    "maybe",
+    "result"
+  ],
   "scripts": {
     "build": "tsc ts/publish.tsconfig.json",
     "clean": "rimraf ./dist",
@@ -51,7 +56,12 @@
     "docs:build": "vitepress build docs",
     "docs:preview": "vitepress preview docs"
   },
-  "files": ["dist", "src", "README.md", "CHANGELOG.md"],
+  "files": [
+    "dist",
+    "src",
+    "README.md",
+    "CHANGELOG.md"
+  ],
   "license": "MIT",
   "devDependencies": {
     "@biomejs/biome": "1.9.4",
@@ -90,12 +100,12 @@
   },
   "changelog": {
     "labels": {
-      "breaking": "(:boom: Breaking Change)",
-      "enhancement": "(:rocket: Enhancement)",
-      "bug": "(:bug: Bug Fix)",
-      "documentation": "(:memo: Documentation)",
-      "internal": "(:house: Internal)",
-      "deprecation": "(:wastebasket: Deprecation)"
+      "breaking": ":boom: Breaking Change",
+      "enhancement": ":rocket: Enhancement",
+      "bug": ":bug: Bug Fix",
+      "documentation": ":memo: Documentation",
+      "internal": ":house: Internal",
+      "deprecation": ":wastebasket: Deprecatio)"
     }
   },
   "volta": {
@@ -103,6 +113,8 @@
     "pnpm": "10.6.1"
   },
   "pnpm": {
-    "onlyBuiltDependencies": ["@biomejs/biome"]
+    "onlyBuiltDependencies": [
+      "@biomejs/biome"
+    ]
   }
 }
