@@ -732,10 +732,10 @@ class TaskImpl<T, E> implements PromiseLike<Result<T, E>> {
  */
 export type AnyTask = Task<unknown, unknown>;
 
-export type TaskTypesFor<A extends readonly AnyTask[]> = [
-  { -readonly [P in keyof A]: ResolvesTo<A[P]> },
-  { -readonly [P in keyof A]: RejectsWith<A[P]> },
-];
+export type TaskTypesFor<A extends readonly AnyTask[]> = {
+  resolution: { -readonly [P in keyof A]: ResolvesTo<A[P]> };
+  rejection: { -readonly [P in keyof A]: RejectsWith<A[P]> };
+};
 
 /**
   The resolution type for a given {@linkcode Task}.
@@ -779,8 +779,10 @@ export function timer(ms: number): Timer {
   @internal
  */
 export type All<A extends readonly AnyTask[]> = Task<
-  [...TaskTypesFor<A>[0]],
-  TaskTypesFor<A>[1][number]
+  // `[...]` to keep the ordering for a tuple type
+  [...TaskTypesFor<A>['resolution']],
+  // `[number]` to turn it into an unordered array
+  TaskTypesFor<A>['rejection'][number]
 >;
 
 /**
@@ -825,10 +827,8 @@ export type All<A extends readonly AnyTask[]> = Task<
   @template A The type of the array or tuple of tasks.
 */
 export function all(tasks: []): Task<[], never>;
-// This overload uses a variadic generic `[...A]` in both parameter and return
-// position to correctly
-export function all<A extends readonly AnyTask[]>(tasks: readonly [...A]): All<[...A]>;
-export function all<A extends readonly AnyTask[]>(tasks: A): Task<unknown, unknown> {
+export function all<const A extends readonly AnyTask[]>(tasks: A): All<A>;
+export function all(tasks: AnyTask[]): Task<unknown, unknown> {
   if (tasks.length === 0) {
     return Task.resolve([]);
   }
@@ -924,7 +924,7 @@ export type Settled<A extends readonly AnyTask[]> = {
 
   @template A The type of the array or tuple of tasks.
  */
-export function allSettled<A extends readonly AnyTask[]>(tasks: A): Task<Settled<A>, never>;
+export function allSettled<const A extends readonly AnyTask[]>(tasks: A): Task<Settled<A>, never>;
 export function allSettled(tasks: AnyTask[]): Task<unknown, never> {
   // All task promises should resolve; none should ever reject, by definition.
   // The “settled” state here is represented by the `Task` itself, *not* by the
@@ -984,10 +984,14 @@ export function allSettled(tasks: AnyTask[]): Task<unknown, never> {
   @template A The type of the array or tuple of tasks.
 */
 export function any(tasks: []): Task<never, AggregateRejection<[]>>;
-export function any<A extends readonly AnyTask[]>(
-  tasks: readonly [...A]
-): Task<TaskTypesFor<A>[0][number], AggregateRejection<[...TaskTypesFor<A>[1]]>>;
-// export function all<A extends readonly AnyTask[]>(tasks: readonly [...A]): All<[...A]>;
+export function any<const A extends readonly AnyTask[]>(
+  tasks: A
+): Task<
+  // `[number]` to turn it into an unordered array
+  TaskTypesFor<A>['resolution'][number],
+  // `[...]` to keep the ordering for a tuple type
+  AggregateRejection<[...TaskTypesFor<A>['rejection']]>
+>;
 export function any(tasks: readonly [] | readonly AnyTask[]): AnyTask {
   if (tasks.length === 0) {
     return Task.reject(new AggregateRejection([]));
@@ -1066,7 +1070,7 @@ export function any(tasks: readonly [] | readonly AnyTask[]): AnyTask {
 export function race(tasks: []): Task<never, never>;
 export function race<A extends readonly AnyTask[]>(
   tasks: A
-): Task<TaskTypesFor<A>[0][number], TaskTypesFor<A>[1][number]>;
+): Task<TaskTypesFor<A>['resolution'][number], TaskTypesFor<A>['rejection'][number]>;
 export function race(tasks: [] | AnyTask[]): AnyTask {
   if (tasks.length === 0) {
     return new Task(() => {
