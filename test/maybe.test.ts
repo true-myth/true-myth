@@ -206,7 +206,7 @@ describe('`Maybe` pure functions', () => {
 
     test('with multiple types in the returned `Maybe` instances', () => {
       class Branded<T extends string> {
-        constructor(public readonly name: T) { }
+        constructor(public readonly name: T) {}
       }
 
       let theOutput = MaybeNS.andThen(
@@ -267,7 +267,7 @@ describe('`Maybe` pure functions', () => {
 
     test('with multiple types in the returned `Maybe` instances', () => {
       class Branded<T extends string> {
-        constructor(public readonly name: T) { }
+        constructor(public readonly name: T) {}
       }
 
       let theOutput = MaybeNS.orElse(() => {
@@ -570,19 +570,43 @@ describe('`Maybe` pure functions', () => {
     expect(MaybeNS.property('wat', dict)).toEqual(MaybeNS.nothing());
   });
 
-  test('`get`', () => {
-    type Person = { name?: string };
-    let chris: Person = { name: 'chris' };
-    let justChris: Maybe<Person> = MaybeNS.just(chris);
-    expect(MaybeNS.get('name', justChris)).toEqual(MaybeNS.just('chris'));
+  describe('`get`', () => {
+    test('basic form', () => {
+      type Person = { name?: string };
+      let chris: Person = { name: 'chris' };
+      let justChris: Maybe<Person> = MaybeNS.just(chris);
+      expect(MaybeNS.get('name', justChris)).toEqual(MaybeNS.just('chris'));
 
-    let nobody: Maybe<Person> = MaybeNS.nothing();
-    expect(MaybeNS.get('name', nobody)).toEqual(MaybeNS.nothing());
+      let nobody: Maybe<Person> = MaybeNS.nothing();
+      expect(MaybeNS.get('name', nobody)).toEqual(MaybeNS.nothing());
 
-    type Dict<T> = { [key: string]: T };
-    let dict = MaybeNS.just({ quux: 'warble' } as Dict<string>);
-    expect(MaybeNS.get('quux', dict)).toEqual(MaybeNS.just('warble'));
-    expect(MaybeNS.get('wat', dict)).toEqual(MaybeNS.nothing());
+      type Dict<T> = { [key: string]: T };
+      let dict = MaybeNS.just({ quux: 'warble' } as Dict<string>);
+      expect(MaybeNS.get('quux', dict)).toEqual(MaybeNS.just('warble'));
+      expect(MaybeNS.get('wat', dict)).toEqual(MaybeNS.nothing());
+    });
+
+    test('curried form', () => {
+      type DeepType = { something?: { with?: { deeper?: { 'key names'?: string } } } };
+
+      const allSet: DeepType = { something: { with: { deeper: { 'key names': 'like this' } } } };
+      let fromSet = MaybeNS.get(
+        'key names',
+        MaybeNS.get('deeper', MaybeNS.get('with', MaybeNS.get('something', Maybe.of(allSet))))
+      );
+
+      const allEmpty: DeepType = {};
+      let fromEmpty = MaybeNS.get(
+        'key names',
+        MaybeNS.get('deeper', MaybeNS.get('with', MaybeNS.get('something', Maybe.of(allEmpty))))
+      );
+
+      expect(fromEmpty).toEqual(MaybeNS.nothing());
+
+      expectTypeOf(fromSet).toEqualTypeOf(fromEmpty);
+      expectTypeOf(fromSet).toEqualTypeOf<Maybe<string>>();
+      expectTypeOf(fromEmpty).toEqualTypeOf<Maybe<string>>();
+    });
   });
 
   test('`safe`', () => {
@@ -845,7 +869,7 @@ describe('`Maybe` class', () => {
 
       test('with multiple types in the returned `Maybe` instances', () => {
         class Branded<T extends string> {
-          constructor(public readonly name: T) { }
+          constructor(public readonly name: T) {}
         }
 
         let theOutput = Maybe.just(new Branded('just')).orElse(() => {
@@ -896,7 +920,7 @@ describe('`Maybe` class', () => {
 
       test('with multiple types in the returned `Maybe` instances', () => {
         class Branded<T extends string> {
-          constructor(public readonly name: T) { }
+          constructor(public readonly name: T) {}
         }
 
         let theOutput = Maybe.of(new Branded('just')).andThen((_) => {
@@ -977,7 +1001,7 @@ describe('`Maybe` class', () => {
       expect(result.equals(MaybeNS.of('3'))).toBe(true);
     });
 
-    test('`property` method', () => {
+    test('`get` method', () => {
       type DeepType = { something?: { with?: { deeper?: { 'key names'?: string } } } };
 
       const allSet: DeepType = { something: { with: { deeper: { 'key names': 'like this' } } } };
@@ -1094,7 +1118,7 @@ describe('`Maybe` class', () => {
 
       test('with multiple types in the returned `Maybe` instances', () => {
         class Branded<T extends string> {
-          constructor(public readonly name: T) { }
+          constructor(public readonly name: T) {}
         }
 
         let theOutput = Maybe.nothing<'empty-start'>().orElse(() => {
@@ -1129,17 +1153,16 @@ describe('`Maybe` class', () => {
 
     describe('`andThen` method', () => {
       test('basic functionality', () => {
-
         const theNothing = new Maybe();
         const theDefaultValue = 'string';
         const getDefaultValue = () => MaybeNS.just(theDefaultValue);
 
         expect(theNothing.andThen(getDefaultValue)).toEqual(theNothing);
-      })
+      });
 
       test('with multiple types in the returned `Maybe` instances', () => {
         class Branded<T extends string> {
-          constructor(public readonly name: T) { }
+          constructor(public readonly name: T) {}
         }
 
         let theOutput = Maybe.nothing<'empty-start'>().andThen((_) => {
@@ -1158,7 +1181,9 @@ describe('`Maybe` class', () => {
           return MaybeNS.nothing<Branded<'empty'>>();
         });
 
-        expectTypeOf(theOutput).toEqualTypeOf<Maybe<Branded<"just-a"> | Branded<"empty"> | Branded<"just-b">>>();
+        expectTypeOf(theOutput).toEqualTypeOf<
+          Maybe<Branded<'just-a'> | Branded<'empty'> | Branded<'just-b'>>
+        >();
       });
     });
 

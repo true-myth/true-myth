@@ -1489,9 +1489,14 @@ export function property<T, K extends keyof T>(
   @param key The key to pull out of the object.
   @param maybeObj The object to look up the key from.
  */
-export function get<T, K extends keyof T>(key: K, maybeObj: Maybe<T>): Maybe<NonNullable<T[K]>>;
-export function get<T, K extends keyof T>(key: K): (maybeObj: Maybe<T>) => Maybe<NonNullable<T[K]>>;
-export function get<T, K extends keyof T>(
+export function get<T extends { [key: string]: unknown }, K extends keyof T>(
+  key: K,
+  maybeObj: Maybe<T>
+): Maybe<NonNullable<T[K]>>;
+export function get<T extends { [key: string]: unknown }, K extends keyof T>(
+  key: K
+): (maybeObj: Maybe<T>) => Maybe<NonNullable<T[K]>>;
+export function get<T extends { [key: string]: unknown }, K extends keyof T>(
   key: K,
   maybeObj?: Maybe<T>
 ): Maybe<NonNullable<T[K]>> | ((maybeObj: Maybe<T>) => Maybe<NonNullable<T[K]>>) {
