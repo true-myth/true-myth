@@ -68,7 +68,8 @@ export default defineConfig({
         },
         {
           text: 'Background',
-          collapsed: false,
+          link: '/guide/background/',
+          collapsed: true,
           items: [
             { text: 'Design philosophy', link: '/guide/background/design-philosophy' },
             { text: 'Naming choices', link: '/guide/background/naming' },
