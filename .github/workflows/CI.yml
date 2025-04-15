@@ -39,3 +39,13 @@ jobs:
       - run: pnpm install
       - run: pnpm add --save-dev typescript@${{ matrix.ts-version }}
       - run: pnpm type-check
+
+  check_docs:
+    name: 'Build docs'
+    runs-on: ubuntu-latest
+    continue-on-error: false
+    steps:
+      - uses: actions/checkout@v4
+      - uses: volta-cli/action@v4
+      - run: pnpm install
+      - run: pnpm run docs
