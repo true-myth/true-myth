@@ -47,21 +47,27 @@ export type ResultJSON<T, E> = OkJSON<T> | ErrJSON<E>;
 type Repr<T, E> = [tag: 'Ok', value: T] | [tag: 'Err', error: E];
 
 declare const IsResult: unique symbol;
-type AnyResult = Result<unknown, unknown>;
+
+/** A convenient way to name `Result<unknown, unknown>`. */
+export type AnyResult = Result<unknown, unknown>;
 
 type SomeResult<T, E> = { [IsResult]: [T, E] };
 
-type TypesFor<R extends AnyResult> = R extends SomeResult<infer T, infer E>
+/** @internal */
+export type TypesFor<R extends AnyResult> = R extends SomeResult<infer T, infer E>
   ? { ok: T; err: E }
   : never;
 
-type OkFor<R extends AnyResult> = TypesFor<R>['ok'];
-type ErrFor<R extends AnyResult> = TypesFor<R>['err'];
+/** @internal */
+export type OkFor<R extends AnyResult> = TypesFor<R>['ok'];
+/** @internal */
+export type ErrFor<R extends AnyResult> = TypesFor<R>['err'];
 
 // Defines the *implementation*, but not the *types*. See the exports below.
 class ResultImpl<T, E> {
   private constructor(private repr: Repr<T, E>) {}
 
+  /** @internal */
   declare readonly [IsResult]: [T, E];
 
   /**
@@ -1456,6 +1462,10 @@ export interface ResultConstructor {
   err: typeof ResultImpl.err;
 }
 
+// Duplicate documentation because it will show up more nicely when rendered in
+// TypeDoc than if it applies to only one or the other; using `@inheritdoc` will
+// also work but works less well in terms of how editors render it (they do not
+// process that “directive” in general).
 /**
   A `Result` represents success ({@linkcode Ok}) or failure ({@linkcode Err}).
 
@@ -1465,5 +1475,13 @@ export interface ResultConstructor {
   @class
  */
 export const Result: ResultConstructor = ResultImpl as ResultConstructor;
+/**
+  A `Result` represents success ({@linkcode Ok}) or failure ({@linkcode Err}).
+
+  The behavior of this type is checked by TypeScript at compile time, and bears
+  no runtime overhead other than the very small cost of the container object.
+
+  @class
+ */
 export type Result<T, E> = Ok<T, E> | Err<T, E>;
 export default Result;

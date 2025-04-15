@@ -73,8 +73,36 @@ class TaskImpl<T, E> implements PromiseLike<Result<T, E>> {
   #state: Repr<T, E> = [State.Pending];
 
   // Attach the type-only symbol here so that it can be used for inference.
+  /** @internal */
   declare readonly [IsTask]: [T, E];
 
+  /**
+    Construct a new `Task`, using callbacks to wrap APIs which do not natively
+    provide a `Promise`.
+
+    This is identical to the [Promise][promise] constructor, with one very
+    important difference: rather than producing a value upon resolution and
+    throwing an exception when a rejection occurs like `Promise`, a `Task`
+    always “succeeds” in producing a usable value, just like {@linkcode Result}
+    for synchronous code.
+
+    [promise]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/Promise
+
+    For constructing a `Task` from an existing `Promise`, see:
+
+    - {@linkcode fromPromise}
+    - {@linkcode safelyTry}
+    - {@linkcode tryOr}
+    - {@linkcode tryOrElse}
+
+    For constructing a `Task` immediately resolved or rejected with given
+    values, see {@linkcode Task.resolve} and {@linkcode Task.reject}
+    respectively.
+
+    @param executor A function which the constructor will execute to manage
+      the lifecycle of the `Task`. The executor in turn has two functions as
+      parameters: one to call on resolution, the other on rejection.
+   */
   constructor(executor: (resolve: (value: T) => void, reject: (reason: E) => void) => void) {
     this.#promise = new Promise<Result<T, E>>((resolve) => {
       executor(
