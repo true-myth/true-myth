@@ -14,12 +14,32 @@ import * as Delay from './task/delay.js';
 // people do `Task.withRetries(aTask, Task.Delay.exponential(1_000).take(10))`.
 export { Delay };
 
+// This set of declarations is a hack to work around the fact that we cannot use
+// the current union-based definition of `Task` in conjunction with types that
+// directly infer the resolution or rejection types (i.e., `ResolvesTo` and
+// `RejectsWith` below) *and* use those types in the body of `TaskImpl`, or else
+// we end up with TS complaining about circular definitions. Instead, we provide
+// a type-only “brand” via this symbol, that we can then use to drive inference
+// against a type we know can *only* be our own `TaskImpl` and its derivative
+// `Task` type, because this neither exists at runtime nor is not exported, and
+// so cannot be attached to any type *other* than the ones we apply it to.
+declare const IsTask: unique symbol;
+
+type SomeTask<T, E> = { [IsTask]: [T, E] };
+
+/** @internal */
+type TypesFor<S extends AnyTask> =
+  S extends SomeTask<infer T, infer E> ? { resolution: T; rejection: E } : never;
+
 /**
   Internal implementation details for {@linkcode Task}.
  */
 class TaskImpl<T, E> implements PromiseLike<Result<T, E>> {
   readonly #promise: Promise<Result<T, E>>;
   #state: Repr<T, E> = [State.Pending];
+
+  // Attach the type-only symbol here so that it can be used for inference.
+  declare readonly [IsTask]: [T, E];
 
   constructor(executor: (resolve: (value: T) => void, reject: (reason: E) => void) => void) {
     this.#promise = new Promise<Result<T, E>>((resolve) => {
@@ -533,7 +553,9 @@ class TaskImpl<T, E> implements PromiseLike<Result<T, E>> {
       returned by the `thenFn`.
     @param thenFn  The function to apply to the wrapped `T` if `maybe` is `Just`.
    */
-  andThen<U, F = E>(thenFn: (t: T) => Task<U, F>): Task<U, E | F> {
+  andThen<U>(thenFn: (t: T) => Task<U, E>): Task<U, E>;
+  andThen<R extends AnyTask>(thenFn: (t: T) => R): Task<ResolvesTo<R>, E | RejectsWith<R>>;
+  andThen<U>(thenFn: (t: T) => Task<U, E>): Task<U, E> {
     return new Task((resolve, reject) => {
       this.#promise.then(
         matchResult({
@@ -546,7 +568,7 @@ class TaskImpl<T, E> implements PromiseLike<Result<T, E>> {
             // but to do that, we have to wait for the intermediate `Promise` to
             // resolve so that the inner `Result` is available so it can in turn
             // be used with the top-most `Task`’s resolution/rejection helpers!
-            (thenFn(value) as TaskImpl<U, F>).#promise.then(
+            (thenFn(value) as TaskImpl<U, E>).#promise.then(
               matchResult({
                 Ok: resolve,
                 Err: reject,
@@ -620,7 +642,9 @@ class TaskImpl<T, E> implements PromiseLike<Result<T, E>> {
     @param elseFn The function to apply to the `Rejection` reason if the `Task`
       rejects, to create a new `Task`.
    */
-  orElse<F, U = T>(elseFn: (reason: E) => Task<U, F>): Task<T | U, F> {
+  orElse<F>(elseFn: (reason: E) => Task<T, F>): Task<T, F>;
+  orElse<R extends AnyTask>(elseFn: (reason: E) => R): Task<T | ResolvesTo<R>, RejectsWith<R>>;
+  orElse<F>(elseFn: (reason: E) => Task<T, F>): Task<T, F> {
     return new Task((resolve, reject) => {
       this.#promise.then(
         matchResult({
@@ -628,7 +652,7 @@ class TaskImpl<T, E> implements PromiseLike<Result<T, E>> {
           Err: (reason) => {
             // See the discussion in `andThen` above; this is exactly the same
             // issue, and with inverted implementation logic.
-            (elseFn(reason) as TaskImpl<U, F>).#promise.then(
+            (elseFn(reason) as TaskImpl<T, F>).#promise.then(
               matchResult({
                 Ok: resolve,
                 Err: reject,
@@ -775,14 +799,13 @@ export type TaskTypesFor<A extends readonly AnyTask[]> = [
   The resolution type for a given {@linkcode Task}.
   @internal
  */
-export type ResolvesTo<T extends AnyTask> = T extends Task<infer Value, infer _> ? Value : never;
+export type ResolvesTo<T extends AnyTask> = TypesFor<T>['resolution'];
 
 /**
   The rejection type for a given {@linkcode Task}
   @internal
  */
-export type RejectsWith<T extends AnyTask> =
-  T extends Task<infer _, infer Rejection> ? Rejection : never;
+export type RejectsWith<T extends AnyTask> = TypesFor<T>['rejection'];
 
 /**
   Create a {@linkcode Task} which will resolve to {@linkcode Unit} after a set
@@ -1778,7 +1801,7 @@ export function safe<
   F extends (...params: never[]) => PromiseLike<unknown>,
   P extends Parameters<F>,
   R extends Awaited<ReturnType<F>>,
->(fn: F): (...params: P) => Task<R, unknown>;
+  >(fn: F): (...params: P) => Task<R, unknown>;
 /**
   Given a function which returns a `Promise` and a function to transform thrown
   errors or `Promise` rejections resulting from calling that function, return a
@@ -1825,12 +1848,12 @@ export function safe<
   P extends Parameters<F>,
   R extends Awaited<ReturnType<F>>,
   E,
->(fn: F, onError: (reason: unknown) => E): (...params: P) => Task<R, E>;
+  >(fn: F, onError: (reason: unknown) => E): (...params: P) => Task<R, E>;
 export function safe<
   F extends (...params: never[]) => PromiseLike<unknown>,
   P extends Parameters<F>,
   E,
->(fn: F, onError?: (reason: unknown) => E): (...params: P) => Task<unknown, unknown> {
+  >(fn: F, onError?: (reason: unknown) => E): (...params: P) => Task<unknown, unknown> {
   let handleError = onError ?? identity;
   return (...params) => safelyTryOrElse(handleError, () => fn(...params));
 }
@@ -1874,7 +1897,7 @@ export function safeNullable<
   F extends (...params: never[]) => PromiseLike<unknown>,
   P extends Parameters<F>,
   R extends Awaited<ReturnType<F>>,
->(fn: F): (...params: P) => Task<Maybe<NonNullable<R>>, unknown>;
+  >(fn: F): (...params: P) => Task<Maybe<NonNullable<R>>, unknown>;
 /**
   Given a function which returns a `Promise` and a function to transform thrown
   errors or `Promise` rejections resulting from calling that function, return a
@@ -1916,13 +1939,13 @@ export function safeNullable<
   P extends Parameters<F>,
   R extends Awaited<ReturnType<F>>,
   E,
->(fn: F, onError: (reason: unknown) => E): (...params: P) => Task<Maybe<NonNullable<R>>, E>;
+  >(fn: F, onError: (reason: unknown) => E): (...params: P) => Task<Maybe<NonNullable<R>>, E>;
 export function safeNullable<
   F extends (...params: never[]) => PromiseLike<unknown>,
   P extends Parameters<F>,
   R extends Awaited<ReturnType<F>>,
   E,
->(fn: F, onError?: (reason: unknown) => E): (...params: P) => Task<Maybe<NonNullable<R>>, unknown> {
+  >(fn: F, onError?: (reason: unknown) => E): (...params: P) => Task<Maybe<NonNullable<R>>, unknown> {
   let handleError = onError ?? identity;
   return (...params) =>
     safelyTryOrElse(handleError, async () => {
@@ -2026,17 +2049,19 @@ export function and<T, U, E>(
   @template T The type of the value when the `Task` resolves successfully.
   @template E The type of the rejection reason when the `Task` rejects.
  */
-export function andThen<T, U, E, F = E>(
-  thenFn: (t: T) => Task<U, F>
-): (task: Task<T, E>) => Task<U, E | F>;
-export function andThen<T, U, E, F = E>(
-  thenFn: (t: T) => Task<U, F>,
+export function andThen<T, E, R extends AnyTask>(
+  thenFn: (t: T) => R
+): (task: Task<T, E>) => Task<ResolvesTo<R>, E | RejectsWith<R>>;
+export function andThen<T, U, E>(thenFn: (t: T) => U): (task: Task<T, E>) => Task<U, E>;
+export function andThen<T, E, R extends AnyTask>(
+  thenFn: (t: T) => R,
   task: Task<T, E>
-): Task<U, E | F>;
-export function andThen<T, U, E, F = E>(
-  thenFn: (t: T) => Task<U, F>,
+): Task<ResolvesTo<R>, E | RejectsWith<R>>;
+export function andThen<T, U, E>(thenFn: (t: T) => Task<U, E>, task: Task<T, E>): Task<U, E>;
+export function andThen<T, U, E>(
+  thenFn: (t: T) => Task<U, E>,
   task?: Task<T, E>
-): Task<U, E | F> | ((task: Task<T, E>) => Task<U, E | F>) {
+): Task<U, E> | ((task: Task<T, E>) => Task<U, E>) {
   return curry1((task) => task.andThen(thenFn), task);
 }
 
@@ -2086,10 +2111,17 @@ export function or<U, F, T, E>(
 export function orElse<T, E, F, U = T>(
   elseFn: (reason: E) => Task<U, F>
 ): (task: Task<T, E>) => Task<T | U, F>;
+export function orElse<T, E, R extends AnyTask>(
+  elseFn: (reason: E) => R
+): (task: Task<T, E>) => Task<T | ResolvesTo<R>, RejectsWith<R>>;
 export function orElse<T, E, F, U = T>(
   elseFn: (reason: E) => Task<U, F>,
   task: Task<T, E>
 ): Task<T | U, F>;
+export function orElse<T, E, R extends AnyTask>(
+  elseFn: (reason: E) => R,
+  task: Task<T, E>
+): Task<T | ResolvesTo<R>, RejectsWith<R>>;
 export function orElse<T, E, F, U = T>(
   elseFn: (reason: E) => Task<U, F>,
   task?: Task<T, E>
@@ -2374,7 +2406,12 @@ export function withRetries<T, E>(
 
     if (taskOrErr instanceof Error) {
       return Task.reject(
-        new RetryFailed({ tries: count, totalDuration, rejections, cause: taskOrErr })
+        new RetryFailed({
+          tries: count,
+          totalDuration,
+          rejections,
+          cause: taskOrErr,
+        })
       );
     }
 
@@ -2389,7 +2426,12 @@ export function withRetries<T, E>(
     return taskOrErr.orElse((reason) => {
       if (reason instanceof StopRetrying) {
         return Task.reject(
-          new RetryFailed({ tries: count, totalDuration, rejections, cause: reason })
+          new RetryFailed({
+            tries: count,
+            totalDuration,
+            rejections,
+            cause: reason,
+          })
         );
       }
 
