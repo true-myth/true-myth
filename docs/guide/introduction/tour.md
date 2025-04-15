@@ -2,7 +2,7 @@
 
 :::tip
 
-This page gives a high-level tour of the library, for folks who already have an idea why they might like types like `Maybe`, `Result`, and `Task`. For an introduction to the library that, see the [Tutorial](./tutorial/) instead!
+This page gives a high-level tour of the library, for folks who already have an idea why they might like types like `Maybe`, `Result`, and `Task`. For an introduction to the library that assumes no prior knowledge of types like these, see the [Tutorial](./tutorial/) instead!
 
 :::
 
