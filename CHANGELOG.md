@@ -5,6 +5,24 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 
+## 8.6.0 (2025-04-15)
+
+The headlining feature here is making the `andThen` and `orElse` functions work more like people intuitively expect them to! See [#1003](https://github.com/true-myth/true-myth/pull/1003) for details. Additionally, this fixes a long-standing (but easy-to-miss) bug in the behavior of `maybe.get`.
+
+This final release in the v8.x series includes all the *features* which will be present on v9.0. To prepare for the v9.0 release, all you need to do is make sure you are on a sufficiently recent version of TypeScript and switch from any deprecated functions to their supported replacements.
+
+### Changes
+
+#### :rocket: Enhancement
+* [#1003](https://github.com/true-myth/true-myth/pull/1003) Feature: generalize inference for `andThen` and `orElse` [backport] ([@chriskrycho](https://github.com/chriskrycho))
+
+#### :bug: Bug Fix
+* [#1011](https://github.com/true-myth/true-myth/pull/1011) bug: fix `maybe.get` types [backport] ([@chriskrycho](https://github.com/chriskrycho))
+
+### Committers: 1
+- Chris Krycho ([@chriskrycho](https://github.com/chriskrycho))
+
+
 ## 8.5.3 (2025-04-09)
 
 ### Changes
@@ -21,10 +39,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 This *mostly* comes down to fixing a bug introduced in v8.5.1 in the definition of `Strategy`, but it brings along some documentation benefits as well.
 
-#### :bug: Bug Fix
+#### (:bug: Bug Fix)
 * [#1001](https://github.com/true-myth/true-myth/pull/1001) Task: define `Strategy` as `Iterator<number>` [backport] ([@chriskrycho](https://github.com/chriskrycho))
 
-#### :memo: Documentation
+#### (:memo: Documentation)
 * [#1000](https://github.com/true-myth/true-myth/pull/1000) docs: fix incorrect references to safelyTryOr ([@chriskrycho](https://github.com/chriskrycho))
 * [#999](https://github.com/true-myth/true-myth/pull/999) docs: fix types in one Result example in the tour [backport] ([@chriskrycho](https://github.com/chriskrycho))
 * [#998](https://github.com/true-myth/true-myth/pull/998) docs: add in a missing closing quote [backport] ([@chriskrycho](https://github.com/chriskrycho))
@@ -39,7 +57,7 @@ This *mostly* comes down to fixing a bug introduced in v8.5.1 in the definition 
 
 The first of what will likely be several 8.5.x bug fix releases to address issues found in the past few months!
 
-#### :bug: Bug Fix
+#### (:bug: Bug Fix)
 * [#987](https://github.com/true-myth/true-myth/pull/987) [backport] Fix type definition of `Strategy` ([@chriskrycho](https://github.com/chriskrycho))
 * [#959](https://github.com/true-myth/true-myth/pull/959) Bug: `all` and `any` should preserve order of types ([@chriskrycho](https://github.com/chriskrycho))
 
@@ -52,10 +70,10 @@ Adds a powerful `Task.withRetries` utility for retrying tasks, along with a new 
 
 [discussion]: https://github.com/true-myth/true-myth/discussions/931
 
-#### :rocket: Enhancement
+#### (:rocket: Enhancement)
 * [#939](https://github.com/true-myth/true-myth/pull/939) [backport] Task: add a new `withRetries` function ([@chriskrycho](https://github.com/chriskrycho))
 
-#### :house: Internal
+#### (:house: Internal)
 * [#926](https://github.com/true-myth/true-myth/pull/926) internal: Introduce a separate CI job for any 8.x work ([@chriskrycho](https://github.com/chriskrycho))
 
 #### Committers: 1
@@ -66,14 +84,14 @@ Adds a powerful `Task.withRetries` utility for retrying tasks, along with a new 
 
 Highlight: adds auto-curried, module-scope versions of all the `Task` instance methods like `map` and `andThen` and more. Hot on the heels of 8.3.0, with what we *think* is probably the last set of features for this release!
 
-#### :rocket: Enhancement
+#### (:rocket: Enhancement)
 * [#918](https://github.com/true-myth/true-myth/pull/918) Task: module-scoped versions of instance methods ([@chriskrycho](https://github.com/chriskrycho))
 
-#### :memo: Documentation
+#### (:memo: Documentation)
 * [#920](https://github.com/true-myth/true-myth/pull/920) docs: clarify tips aboout auto-curried forms ([@chriskrycho](https://github.com/chriskrycho))
 * [#919](https://github.com/true-myth/true-myth/pull/919) docs: add many type parameter docs ([@chriskrycho](https://github.com/chriskrycho))
 
-#### :house: Internal
+#### (:house: Internal)
 * [#917](https://github.com/true-myth/true-myth/pull/917) internal: clean up a `console.log` ([@chriskrycho](https://github.com/chriskrycho))
 
 #### Committers: 1
@@ -94,25 +112,25 @@ This release also introduces some deprecations to tackle some mistakes we (read:
 > [!NOTE]
 > We will be releasing v9.0.0 very soon, removing those deprecations and updating our TypeScript support matrix. However, we expect 8.3 to be stable enough that you could stay on it without issues—potentially for *years*. If there are any showstopper bugs, we will of course backport a fix for them, but there shouldn’t be any!
 
-#### :rocket: Enhancement
+#### (:rocket: Enhancement)
 * [#916](https://github.com/true-myth/true-myth/pull/916) Task: add module-scoped `resolve`, `reject`, and `withResolvers` ([@chriskrycho](https://github.com/chriskrycho))
 * [#909](https://github.com/true-myth/true-myth/pull/909) Maybe: rename `wrapReturn` to `safe` ([@chriskrycho](https://github.com/chriskrycho))
 * [#902](https://github.com/true-myth/true-myth/pull/902) Task: add `all`, `allSettled`, `any`, `race`, `timer`, and `timeout` ([@chriskrycho](https://github.com/chriskrycho))
 * [#901](https://github.com/true-myth/true-myth/pull/901) Task: better inference for chaining combinators ([@chriskrycho](https://github.com/chriskrycho))
 * [#898](https://github.com/true-myth/true-myth/pull/898) Maybe: support readonly arrays in `transposeArray` ([@chriskrycho](https://github.com/chriskrycho))
 
-#### :memo: Documentation
+#### (:memo: Documentation)
 * [#915](https://github.com/true-myth/true-myth/pull/915) docs: expand on `Task` in README ([@chriskrycho](https://github.com/chriskrycho))
 * [#914](https://github.com/true-myth/true-myth/pull/914) Task: document `safelyTryOr` and `safelyTryOrElse` ([@chriskrycho](https://github.com/chriskrycho))
 * [#894](https://github.com/true-myth/true-myth/pull/894) doc: fix task-basics link ([@priegger](https://github.com/priegger))
 
-#### :house: Internal
+#### (:house: Internal)
 * [#910](https://github.com/true-myth/true-myth/pull/910) internal: add deprecation type to lerna-changelog ([@chriskrycho](https://github.com/chriskrycho))
 * [#903](https://github.com/true-myth/true-myth/pull/903) internal: Pin to the oldest TS version we support for dev ([@chriskrycho](https://github.com/chriskrycho))
 * [#900](https://github.com/true-myth/true-myth/pull/900) Task(tests): group and name tests more clearly ([@chriskrycho](https://github.com/chriskrycho))
 * [#899](https://github.com/true-myth/true-myth/pull/899) internal: tweak Zed settings ([@chriskrycho](https://github.com/chriskrycho))
 
-#### :wastebasket: Deprecation
+#### (:wastebasket: Deprecation)
 * [#909](https://github.com/true-myth/true-myth/pull/909) Maybe: rename `wrapReturn` to `safe` ([@chriskrycho](https://github.com/chriskrycho))
 * [#908](https://github.com/true-myth/true-myth/pull/908) Task: deprecate `Task.try`, `Task.tryOr`, and `Task.tryOrElse` ([@chriskrycho](https://github.com/chriskrycho))
 * [#913](https://github.com/true-myth/true-myth/pull/913) Task: deprecate static `fromResult`, `fromPromise`, and `fromUnsafePromise`
