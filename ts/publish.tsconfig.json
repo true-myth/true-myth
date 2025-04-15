@@ -3,11 +3,10 @@
   "extends": "./base.tsconfig.json",
   "include": ["../src"],
   "compilerOptions": {
-    "module": "CommonJS",
     "removeComments": false,
     "declaration": true,
     "declarationMap": true,
     "sourceMap": true,
-    "outDir": "../dist/cjs"
+    "outDir": "../dist"
   }
 }
