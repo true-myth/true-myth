@@ -1,9 +1,0 @@
-#!/usr/bin/env sh
-rm -rf docs/api && \
-  mkdir -p docs/api && \
-  ./node_modules/.bin/typedoc --tsconfig ts/doc.tsconfig.json src && \
-  cd docs && \
-  ../node_modules/.bin/vitepress build && \
-  cd .. && \
-  cp -r docs/.vitepress/dist/* docs-dist/ && \
-  echo "true-myth.js.org" > docs-dist/CNAME
