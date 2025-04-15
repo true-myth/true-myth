@@ -44,7 +44,7 @@ jobs:
         run: pnpm add --save-dev typescript@latest
 
       - name: Generate docs
-        run: pnpm docs
+        run: pnpm run docs
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
