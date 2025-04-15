@@ -58,9 +58,8 @@ See [the docs](https://true-myth.js.org) for setup, guides, and API docs!
 ## Requirements
 
 - Node 18+
-- TS 4.7+
+- TS 5.3+
 - `tsconfig.json`:
-  - `moduleResolution: "Node16"`
 - `package.json`
   - `type: "module"` (or else use `import()` to import True Myth into a commonJS build)
 
@@ -71,7 +70,7 @@ For details on using a pure ES modules package in TypeScript, see [the TypeScrip
 
 This project follows the current draft of [the Semantic Versioning for TypeScript Types][semver] specification.
 
-- **Currently supported TypeScript versions:** 4.7, 4.8, 4.9, 5.0, 5.1, 5.2, and 5.3
+- **Currently supported TypeScript versions:** 5.3, 5.4, 5.5, 5.6, and 5.7
 - **Compiler support policy:** [simple majors][sm]
 - **Public API:** all published types not in a `-private` module are public
 

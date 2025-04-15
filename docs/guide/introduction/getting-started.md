@@ -5,9 +5,10 @@ True Myth has no additional dependencies and is ready to start using immediately
 ## Requirements
 
 - Node 18+
-- TS 4.7+
+- TS 5.3+
 - `tsconfig.json`:
-  - `moduleResolution: "Node16"`
+  - `moduleResolution`: use `"Node16"` or later
+  - `strict: true`
 - `package.json`
   - `type: "module"` (or else use `import()` to import True Myth into a commonJS build)
 
