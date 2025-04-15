@@ -21,36 +21,24 @@
   },
   "version": "8.6.0",
   "type": "module",
-  "main": "dist/es/index.js",
-  "module": "dist/es/index.js",
+  "main": "dist/index.js",
+  "module": "dist/index.js",
   "exports": {
     ".": {
-      "import": {
-        "types": "./dist/es/index.d.ts",
-        "default": "./dist/es/index.js"
-      },
-      "require": {
-        "types": "./dist/cjs/index.d.cts",
-        "default": "./dist/cjs/index.cjs"
-      }
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
     },
     "./package.json": "./package.json",
     "./*": {
-      "import": {
-        "types": "./dist/es/*.d.ts",
-        "default": "./dist/es/*.js"
-      },
-      "require": {
-        "types": "./dist/cjs/*.d.cts",
-        "default": "./dist/cjs/*.cjs"
-      }
+      "types": "./dist/*.d.ts",
+      "default": "./dist/*.js"
     },
     "./-private/*": null
   },
-  "types": "dist/es/index.d.ts",
+  "types": "dist/index.d.ts",
   "keywords": ["typescript", "functional programming", "maybe", "result"],
   "scripts": {
-    "build": "node ./ts/publish.js",
+    "build": "tsc ts/publish.tsconfig.json",
     "clean": "rimraf ./dist",
     "prepublishOnly": "pnpm test && pnpm build",
     "postpublish": "pnpm clean",
