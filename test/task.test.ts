@@ -1790,7 +1790,7 @@ describe('module-scope functions', () => {
     });
   });
 
-  describe('safelyTryOr', () => {
+  describe('tryOr', () => {
     describe('with a non-throwing function', () => {
       test('with a promise that resolves', async () => {
         let theTask = tryOr('error', () => Promise.resolve(123));
@@ -1828,7 +1828,7 @@ describe('module-scope functions', () => {
     });
   });
 
-  describe('safelyTryOrElse', () => {
+  describe('tryOrElse', () => {
     describe('with a non-throwing function', () => {
       test('with a promise that resolves', async () => {
         let theTask = tryOrElse(stringify, () => Promise.resolve(123));
@@ -2531,27 +2531,30 @@ describe('module-scope functions', () => {
         declare readonly _name: T;
       }
 
-      class RejA extends Branded<'rej-a'> { }
-      class RejB extends Branded<'rej-b'> { }
+      class RejA extends Branded<'rej-a'> {}
+      class RejB extends Branded<'rej-b'> {}
 
-      class ResA extends Branded<'res-a'> { }
-      class ResB extends Branded<'res-b'> { }
+      class ResA extends Branded<'res-a'> {}
+      class ResB extends Branded<'res-b'> {}
 
-      let theTask = andThen((_) => {
-        if (Math.random() < 0.1) {
-          return Task.resolve(new ResA());
-        }
+      let theTask = andThen(
+        (_) => {
+          if (Math.random() < 0.1) {
+            return Task.resolve(new ResA());
+          }
 
-        if (Math.random() < 0.2) {
-          return Task.reject(new RejA());
-        }
+          if (Math.random() < 0.2) {
+            return Task.reject(new RejA());
+          }
 
-        if (Math.random() < 0.3) {
-          return Task.resolve(new ResB());
-        }
+          if (Math.random() < 0.3) {
+            return Task.resolve(new ResB());
+          }
 
-        return Task.reject(new RejB());
-      }, new Task<Branded<'res'>, Branded<'rej'>>(() => { }));
+          return Task.reject(new RejB());
+        },
+        new Task<Branded<'res'>, Branded<'rej'>>(() => {})
+      );
 
       if (theTask.isResolved) {
         // Does *not* absorb initial type.
@@ -2673,27 +2676,30 @@ describe('module-scope functions', () => {
         declare readonly _name: T;
       }
 
-      class RejA extends Branded<'rej-a'> { }
-      class RejB extends Branded<'rej-b'> { }
+      class RejA extends Branded<'rej-a'> {}
+      class RejB extends Branded<'rej-b'> {}
 
-      class ResA extends Branded<'res-a'> { }
-      class ResB extends Branded<'res-b'> { }
+      class ResA extends Branded<'res-a'> {}
+      class ResB extends Branded<'res-b'> {}
 
-      let theTask = orElse((_) => {
-        if (Math.random() < 0.1) {
-          return Task.resolve(new ResA());
-        }
+      let theTask = orElse(
+        (_) => {
+          if (Math.random() < 0.1) {
+            return Task.resolve(new ResA());
+          }
 
-        if (Math.random() < 0.2) {
-          return Task.reject(new RejA());
-        }
+          if (Math.random() < 0.2) {
+            return Task.reject(new RejA());
+          }
 
-        if (Math.random() < 0.3) {
-          return Task.resolve(new ResB());
-        }
+          if (Math.random() < 0.3) {
+            return Task.resolve(new ResB());
+          }
 
-        return Task.reject(new RejB());
-      }, new Task<Branded<'res'>, Branded<'rej'>>(() => { }));
+          return Task.reject(new RejB());
+        },
+        new Task<Branded<'res'>, Branded<'rej'>>(() => {})
+      );
 
       if (theTask.isResolved) {
         // Absorbs initial type as well.
