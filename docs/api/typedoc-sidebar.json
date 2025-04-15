@@ -1,0 +1,771 @@
+[
+  {
+    "text": "index",
+    "link": "/api/index/"
+  },
+  {
+    "text": "maybe",
+    "link": "/api/maybe/",
+    "collapsed": true,
+    "items": [
+      {
+        "text": "Classes",
+        "collapsed": true,
+        "items": [
+          {
+            "text": "Maybe",
+            "link": "/api/maybe/classes/Maybe.md"
+          }
+        ]
+      },
+      {
+        "text": "Interfaces",
+        "collapsed": true,
+        "items": [
+          {
+            "text": "Just",
+            "link": "/api/maybe/interfaces/Just.md"
+          },
+          {
+            "text": "JustJSON",
+            "link": "/api/maybe/interfaces/JustJSON.md"
+          },
+          {
+            "text": "MaybeConstructor",
+            "link": "/api/maybe/interfaces/MaybeConstructor.md"
+          },
+          {
+            "text": "Nothing",
+            "link": "/api/maybe/interfaces/Nothing.md"
+          },
+          {
+            "text": "NothingJSON",
+            "link": "/api/maybe/interfaces/NothingJSON.md"
+          }
+        ]
+      },
+      {
+        "text": "Type Aliases",
+        "collapsed": true,
+        "items": [
+          {
+            "text": "AnyArray",
+            "link": "/api/maybe/type-aliases/AnyArray.md"
+          },
+          {
+            "text": "Matcher",
+            "link": "/api/maybe/type-aliases/Matcher.md"
+          },
+          {
+            "text": "MaybeJSON",
+            "link": "/api/maybe/type-aliases/MaybeJSON.md"
+          },
+          {
+            "text": "NarrowingPredicate",
+            "link": "/api/maybe/type-aliases/NarrowingPredicate.md"
+          },
+          {
+            "text": "Predicate",
+            "link": "/api/maybe/type-aliases/Predicate.md"
+          },
+          {
+            "text": "TransposedArray",
+            "link": "/api/maybe/type-aliases/TransposedArray.md"
+          },
+          {
+            "text": "Unwrapped",
+            "link": "/api/maybe/type-aliases/Unwrapped.md"
+          },
+          {
+            "text": "Variant",
+            "link": "/api/maybe/type-aliases/Variant.md"
+          }
+        ]
+      },
+      {
+        "text": "Variables",
+        "collapsed": true,
+        "items": [
+          {
+            "text": "just",
+            "link": "/api/maybe/variables/just.md"
+          },
+          {
+            "text": "nothing",
+            "link": "/api/maybe/variables/nothing.md"
+          },
+          {
+            "text": "of",
+            "link": "/api/maybe/variables/of.md"
+          },
+          {
+            "text": "Variant",
+            "link": "/api/maybe/variables/Variant.md"
+          }
+        ]
+      },
+      {
+        "text": "Functions",
+        "collapsed": true,
+        "items": [
+          {
+            "text": "and",
+            "link": "/api/maybe/functions/and.md"
+          },
+          {
+            "text": "andThen",
+            "link": "/api/maybe/functions/andThen.md"
+          },
+          {
+            "text": "ap",
+            "link": "/api/maybe/functions/ap.md"
+          },
+          {
+            "text": "equals",
+            "link": "/api/maybe/functions/equals.md"
+          },
+          {
+            "text": "find",
+            "link": "/api/maybe/functions/find.md"
+          },
+          {
+            "text": "first",
+            "link": "/api/maybe/functions/first.md"
+          },
+          {
+            "text": "get",
+            "link": "/api/maybe/functions/get.md"
+          },
+          {
+            "text": "isInstance",
+            "link": "/api/maybe/functions/isInstance.md"
+          },
+          {
+            "text": "isJust",
+            "link": "/api/maybe/functions/isJust.md"
+          },
+          {
+            "text": "isNothing",
+            "link": "/api/maybe/functions/isNothing.md"
+          },
+          {
+            "text": "last",
+            "link": "/api/maybe/functions/last.md"
+          },
+          {
+            "text": "map",
+            "link": "/api/maybe/functions/map.md"
+          },
+          {
+            "text": "mapOr",
+            "link": "/api/maybe/functions/mapOr.md"
+          },
+          {
+            "text": "mapOrElse",
+            "link": "/api/maybe/functions/mapOrElse.md"
+          },
+          {
+            "text": "match",
+            "link": "/api/maybe/functions/match.md"
+          },
+          {
+            "text": "or",
+            "link": "/api/maybe/functions/or.md"
+          },
+          {
+            "text": "orElse",
+            "link": "/api/maybe/functions/orElse.md"
+          },
+          {
+            "text": "property",
+            "link": "/api/maybe/functions/property.md"
+          },
+          {
+            "text": "safe",
+            "link": "/api/maybe/functions/safe.md"
+          },
+          {
+            "text": "toJSON",
+            "link": "/api/maybe/functions/toJSON.md"
+          },
+          {
+            "text": "toString",
+            "link": "/api/maybe/functions/toString.md"
+          },
+          {
+            "text": "transposeArray",
+            "link": "/api/maybe/functions/transposeArray.md"
+          },
+          {
+            "text": "unwrapOr",
+            "link": "/api/maybe/functions/unwrapOr.md"
+          },
+          {
+            "text": "unwrapOrElse",
+            "link": "/api/maybe/functions/unwrapOrElse.md"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "text": "result",
+    "link": "/api/result/",
+    "collapsed": true,
+    "items": [
+      {
+        "text": "Classes",
+        "collapsed": true,
+        "items": [
+          {
+            "text": "Result",
+            "link": "/api/result/classes/Result.md"
+          }
+        ]
+      },
+      {
+        "text": "Interfaces",
+        "collapsed": true,
+        "items": [
+          {
+            "text": "Err",
+            "link": "/api/result/interfaces/Err.md"
+          },
+          {
+            "text": "ErrJSON",
+            "link": "/api/result/interfaces/ErrJSON.md"
+          },
+          {
+            "text": "Ok",
+            "link": "/api/result/interfaces/Ok.md"
+          },
+          {
+            "text": "OkJSON",
+            "link": "/api/result/interfaces/OkJSON.md"
+          },
+          {
+            "text": "ResultConstructor",
+            "link": "/api/result/interfaces/ResultConstructor.md"
+          }
+        ]
+      },
+      {
+        "text": "Type Aliases",
+        "collapsed": true,
+        "items": [
+          {
+            "text": "Matcher",
+            "link": "/api/result/type-aliases/Matcher.md"
+          },
+          {
+            "text": "ResultJSON",
+            "link": "/api/result/type-aliases/ResultJSON.md"
+          },
+          {
+            "text": "Variant",
+            "link": "/api/result/type-aliases/Variant.md"
+          }
+        ]
+      },
+      {
+        "text": "Variables",
+        "collapsed": true,
+        "items": [
+          {
+            "text": "err",
+            "link": "/api/result/variables/err.md"
+          },
+          {
+            "text": "ok",
+            "link": "/api/result/variables/ok.md"
+          },
+          {
+            "text": "Variant",
+            "link": "/api/result/variables/Variant.md"
+          }
+        ]
+      },
+      {
+        "text": "Functions",
+        "collapsed": true,
+        "items": [
+          {
+            "text": "and",
+            "link": "/api/result/functions/and.md"
+          },
+          {
+            "text": "andThen",
+            "link": "/api/result/functions/andThen.md"
+          },
+          {
+            "text": "ap",
+            "link": "/api/result/functions/ap.md"
+          },
+          {
+            "text": "equals",
+            "link": "/api/result/functions/equals.md"
+          },
+          {
+            "text": "isErr",
+            "link": "/api/result/functions/isErr.md"
+          },
+          {
+            "text": "isInstance",
+            "link": "/api/result/functions/isInstance.md"
+          },
+          {
+            "text": "isOk",
+            "link": "/api/result/functions/isOk.md"
+          },
+          {
+            "text": "map",
+            "link": "/api/result/functions/map.md"
+          },
+          {
+            "text": "mapErr",
+            "link": "/api/result/functions/mapErr.md"
+          },
+          {
+            "text": "mapOr",
+            "link": "/api/result/functions/mapOr.md"
+          },
+          {
+            "text": "mapOrElse",
+            "link": "/api/result/functions/mapOrElse.md"
+          },
+          {
+            "text": "match",
+            "link": "/api/result/functions/match.md"
+          },
+          {
+            "text": "or",
+            "link": "/api/result/functions/or.md"
+          },
+          {
+            "text": "orElse",
+            "link": "/api/result/functions/orElse.md"
+          },
+          {
+            "text": "safe",
+            "link": "/api/result/functions/safe.md"
+          },
+          {
+            "text": "toJSON",
+            "link": "/api/result/functions/toJSON.md"
+          },
+          {
+            "text": "toString",
+            "link": "/api/result/functions/toString.md"
+          },
+          {
+            "text": "tryOr",
+            "link": "/api/result/functions/tryOr.md"
+          },
+          {
+            "text": "tryOrElse",
+            "link": "/api/result/functions/tryOrElse.md"
+          },
+          {
+            "text": "unwrapOr",
+            "link": "/api/result/functions/unwrapOr.md"
+          },
+          {
+            "text": "unwrapOrElse",
+            "link": "/api/result/functions/unwrapOrElse.md"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "text": "task",
+    "link": "/api/task/",
+    "collapsed": true,
+    "items": [
+      {
+        "text": "Classes",
+        "collapsed": true,
+        "items": [
+          {
+            "text": "AggregateRejection",
+            "link": "/api/task/classes/AggregateRejection.md"
+          },
+          {
+            "text": "InvalidAccess",
+            "link": "/api/task/classes/InvalidAccess.md"
+          },
+          {
+            "text": "Task",
+            "link": "/api/task/classes/Task.md"
+          },
+          {
+            "text": "Timeout",
+            "link": "/api/task/classes/Timeout.md"
+          }
+        ]
+      },
+      {
+        "text": "Interfaces",
+        "collapsed": true,
+        "items": [
+          {
+            "text": "RetryStatus",
+            "link": "/api/task/interfaces/RetryStatus.md"
+          },
+          {
+            "text": "TaskConstructor",
+            "link": "/api/task/interfaces/TaskConstructor.md"
+          }
+        ]
+      },
+      {
+        "text": "Type Aliases",
+        "collapsed": true,
+        "items": [
+          {
+            "text": "Matcher",
+            "link": "/api/task/type-aliases/Matcher.md"
+          },
+          {
+            "text": "TaskTypesFor",
+            "link": "/api/task/type-aliases/TaskTypesFor.md"
+          },
+          {
+            "text": "Timer",
+            "link": "/api/task/type-aliases/Timer.md"
+          },
+          {
+            "text": "WithResolvers",
+            "link": "/api/task/type-aliases/WithResolvers.md"
+          }
+        ]
+      },
+      {
+        "text": "Constructors",
+        "collapsed": true,
+        "items": [
+          {
+            "text": "reject",
+            "link": "/api/task/variables/reject.md"
+          },
+          {
+            "text": "resolve",
+            "link": "/api/task/variables/resolve.md"
+          },
+          {
+            "text": "withResolvers",
+            "link": "/api/task/variables/withResolvers.md"
+          },
+          {
+            "text": "fromPromise",
+            "link": "/api/task/functions/fromPromise.md"
+          },
+          {
+            "text": "fromUnsafePromise",
+            "link": "/api/task/functions/fromUnsafePromise.md"
+          }
+        ]
+      },
+      {
+        "text": "Variables",
+        "collapsed": true,
+        "items": [
+          {
+            "text": "RETRY_FAILED_NAME",
+            "link": "/api/task/variables/RETRY_FAILED_NAME.md"
+          },
+          {
+            "text": "safelyTryOr",
+            "link": "/api/task/variables/safelyTryOr.md"
+          },
+          {
+            "text": "safelyTryOrElse",
+            "link": "/api/task/variables/safelyTryOrElse.md"
+          },
+          {
+            "text": "State",
+            "link": "/api/task/variables/State.md"
+          }
+        ]
+      },
+      {
+        "text": "Functions",
+        "collapsed": true,
+        "items": [
+          {
+            "text": "all",
+            "link": "/api/task/functions/all.md"
+          },
+          {
+            "text": "allSettled",
+            "link": "/api/task/functions/allSettled.md"
+          },
+          {
+            "text": "and",
+            "link": "/api/task/functions/and.md"
+          },
+          {
+            "text": "andThen",
+            "link": "/api/task/functions/andThen.md"
+          },
+          {
+            "text": "any",
+            "link": "/api/task/functions/any.md"
+          },
+          {
+            "text": "fromResult",
+            "link": "/api/task/functions/fromResult.md"
+          },
+          {
+            "text": "isRetryFailed",
+            "link": "/api/task/functions/isRetryFailed.md"
+          },
+          {
+            "text": "map",
+            "link": "/api/task/functions/map.md"
+          },
+          {
+            "text": "mapRejected",
+            "link": "/api/task/functions/mapRejected.md"
+          },
+          {
+            "text": "match",
+            "link": "/api/task/functions/match.md"
+          },
+          {
+            "text": "or",
+            "link": "/api/task/functions/or.md"
+          },
+          {
+            "text": "orElse",
+            "link": "/api/task/functions/orElse.md"
+          },
+          {
+            "text": "race",
+            "link": "/api/task/functions/race.md"
+          },
+          {
+            "text": "safe",
+            "link": "/api/task/functions/safe.md"
+          },
+          {
+            "text": "safelyTry",
+            "link": "/api/task/functions/safelyTry.md"
+          },
+          {
+            "text": "safeNullable",
+            "link": "/api/task/functions/safeNullable.md"
+          },
+          {
+            "text": "stopRetrying",
+            "link": "/api/task/functions/stopRetrying.md"
+          },
+          {
+            "text": "timeout",
+            "link": "/api/task/functions/timeout.md"
+          },
+          {
+            "text": "timer",
+            "link": "/api/task/functions/timer.md"
+          },
+          {
+            "text": "toPromise",
+            "link": "/api/task/functions/toPromise.md"
+          },
+          {
+            "text": "tryOr",
+            "link": "/api/task/functions/tryOr.md"
+          },
+          {
+            "text": "tryOrElse",
+            "link": "/api/task/functions/tryOrElse.md"
+          },
+          {
+            "text": "withRetries",
+            "link": "/api/task/functions/withRetries.md"
+          }
+        ]
+      },
+      {
+        "text": "Errors",
+        "collapsed": true,
+        "items": [
+          {
+            "text": "RetryFailed",
+            "link": "/api/task/classes/RetryFailed.md"
+          },
+          {
+            "text": "StopRetrying",
+            "link": "/api/task/classes/StopRetrying.md"
+          },
+          {
+            "text": "TaskExecutorException",
+            "link": "/api/task/classes/TaskExecutorException.md"
+          },
+          {
+            "text": "UnsafePromise",
+            "link": "/api/task/classes/UnsafePromise.md"
+          }
+        ]
+      },
+      {
+        "text": "Task Variants",
+        "collapsed": true,
+        "items": [
+          {
+            "text": "Pending",
+            "link": "/api/task/interfaces/Pending.md"
+          },
+          {
+            "text": "Rejected",
+            "link": "/api/task/interfaces/Rejected.md"
+          },
+          {
+            "text": "Resolved",
+            "link": "/api/task/interfaces/Resolved.md"
+          }
+        ]
+      },
+      {
+        "text": "delay",
+        "link": "/api/task/delay/",
+        "collapsed": true,
+        "items": [
+          {
+            "text": "Interfaces",
+            "collapsed": true,
+            "items": [
+              {
+                "text": "Strategy",
+                "link": "/api/task/delay/interfaces/Strategy.md"
+              }
+            ]
+          },
+          {
+            "text": "Functions",
+            "collapsed": true,
+            "items": [
+              {
+                "text": "exponential",
+                "link": "/api/task/delay/functions/exponential.md"
+              },
+              {
+                "text": "fibonacci",
+                "link": "/api/task/delay/functions/fibonacci.md"
+              },
+              {
+                "text": "fixed",
+                "link": "/api/task/delay/functions/fixed.md"
+              },
+              {
+                "text": "immediate",
+                "link": "/api/task/delay/functions/immediate.md"
+              },
+              {
+                "text": "jitter",
+                "link": "/api/task/delay/functions/jitter.md"
+              },
+              {
+                "text": "linear",
+                "link": "/api/task/delay/functions/linear.md"
+              },
+              {
+                "text": "none",
+                "link": "/api/task/delay/functions/none.md"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "text": "test-support",
+    "link": "/api/test-support/",
+    "collapsed": true,
+    "items": [
+      {
+        "text": "Functions",
+        "collapsed": true,
+        "items": [
+          {
+            "text": "unwrap",
+            "link": "/api/test-support/functions/unwrap.md"
+          },
+          {
+            "text": "unwrapErr",
+            "link": "/api/test-support/functions/unwrapErr.md"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "text": "toolbelt",
+    "link": "/api/toolbelt/",
+    "collapsed": true,
+    "items": [
+      {
+        "text": "Functions",
+        "collapsed": true,
+        "items": [
+          {
+            "text": "fromMaybe",
+            "link": "/api/toolbelt/functions/fromMaybe.md"
+          },
+          {
+            "text": "fromResult",
+            "link": "/api/toolbelt/functions/fromResult.md"
+          },
+          {
+            "text": "toMaybe",
+            "link": "/api/toolbelt/functions/toMaybe.md"
+          },
+          {
+            "text": "toOkOrElseErr",
+            "link": "/api/toolbelt/functions/toOkOrElseErr.md"
+          },
+          {
+            "text": "toOkOrErr",
+            "link": "/api/toolbelt/functions/toOkOrErr.md"
+          },
+          {
+            "text": "transposeMaybe",
+            "link": "/api/toolbelt/functions/transposeMaybe.md"
+          },
+          {
+            "text": "transposeResult",
+            "link": "/api/toolbelt/functions/transposeResult.md"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "text": "unit",
+    "link": "/api/unit/",
+    "collapsed": true,
+    "items": [
+      {
+        "text": "Interfaces",
+        "collapsed": true,
+        "items": [
+          {
+            "text": "Unit",
+            "link": "/api/unit/interfaces/Unit.md"
+          }
+        ]
+      },
+      {
+        "text": "Variables",
+        "collapsed": true,
+        "items": [
+          {
+            "text": "Unit",
+            "link": "/api/unit/variables/Unit.md"
+          }
+        ]
+      }
+    ]
+  }
+]
