@@ -57,9 +57,11 @@ See [the docs](https://true-myth.js.org) for setup, guides, and API docs!
 
 ## Requirements
 
-- Node 18+
+- Node 20+
 - TS 5.3+
 - `tsconfig.json`:
+  - `moduleResolution`: use `"Node16"` or later
+  - `strict: true`
 - `package.json`
   - `type: "module"` (or else use `import()` to import True Myth into a commonJS build)
 
