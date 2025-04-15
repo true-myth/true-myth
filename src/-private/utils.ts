@@ -13,7 +13,7 @@ export const isVoid = (value: unknown): value is undefined | null =>
   typeof value === 'undefined' || value === null;
 
 /** @internal */
-export function curry1<T, U>(op: (t: T) => U, item?: T) {
+export function curry1<T, U>(op: (t: T) => U, item?: T): U | ((t: T) => U) {
   return item !== undefined ? op(item) : op;
 }
 

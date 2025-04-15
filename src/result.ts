@@ -36,9 +36,23 @@ export type ResultJSON<T, E> = OkJSON<T> | ErrJSON<E>;
 
 type Repr<T, E> = [tag: 'Ok', value: T] | [tag: 'Err', error: E];
 
+declare const IsResult: unique symbol;
+type AnyResult = Result<unknown, unknown>;
+
+type SomeResult<T, E> = { [IsResult]: [T, E] };
+
+type TypesFor<R extends AnyResult> = R extends SomeResult<infer T, infer E>
+  ? { ok: T; err: E }
+  : never;
+
+type OkFor<R extends AnyResult> = TypesFor<R>['ok'];
+type ErrFor<R extends AnyResult> = TypesFor<R>['err'];
+
 // Defines the *implementation*, but not the *types*. See the exports below.
 class ResultImpl<T, E> {
   private constructor(private repr: Repr<T, E>) {}
+
+  declare readonly [IsResult]: [T, E];
 
   /**
     Create an instance of {@linkcode Ok}.
@@ -167,8 +181,10 @@ class ResultImpl<T, E> {
   }
 
   /** Method variant for {@linkcode orElse} */
+  orElse<F>(orElseFn: (err: E) => Result<T, F>): Result<T, F>;
+  orElse<R extends AnyResult>(orElseFn: (err: E) => R): Result<T | OkFor<R>, ErrFor<R>>;
   orElse<F>(orElseFn: (err: E) => Result<T, F>): Result<T, F> {
-    return (this.repr[0] === 'Ok' ? this : orElseFn(this.repr[1])) as Result<T, F>;
+    return this.repr[0] === 'Ok' ? (this as Ok<T, E>).cast() : orElseFn(this.repr[1]);
   }
 
   /** Method variant for {@linkcode and} */
@@ -178,8 +194,10 @@ class ResultImpl<T, E> {
   }
 
   /** Method variant for {@linkcode andThen} */
+  andThen<U>(andThenFn: (t: T) => Result<U, E>): Result<U, E>;
+  andThen<R extends AnyResult>(andThenFn: (t: T) => R): Result<OkFor<R>, E | ErrFor<R>>;
   andThen<U>(andThenFn: (t: T) => Result<U, E>): Result<U, E> {
-    return (this.repr[0] === 'Ok' ? andThenFn(this.repr[1]) : this) as Result<U, E>;
+    return this.repr[0] === 'Ok' ? andThenFn(this.repr[1]) : (this as Err<T, E>).cast();
   }
 
   /** Method variant for {@linkcode unwrapOr} */
@@ -779,17 +797,17 @@ export function and<T, U, E>(
   @param thenFn  The function to apply to the wrapped `T` if `maybe` is `Just`.
   @param result  The `Maybe` to evaluate and possibly apply a function to.
  */
-export function andThen<T, U, E>(
-  thenFn: (t: T) => Result<U, E>,
+export function andThen<T, E, R extends AnyResult>(
+  thenFn: (t: T) => R,
   result: Result<T, E>
-): Result<U, E>;
-export function andThen<T, U, E>(
-  thenFn: (t: T) => Result<U, E>
-): (result: Result<T, E>) => Result<U, E>;
-export function andThen<T, U, E>(
-  thenFn: (t: T) => Result<U, E>,
+): Result<OkFor<R>, E | ErrFor<R>>;
+export function andThen<T, E, R extends AnyResult>(
+  thenFn: (t: T) => R
+): (result: Result<T, E>) => Result<OkFor<R>, E | ErrFor<R>>;
+export function andThen<T, E, R extends AnyResult>(
+  thenFn: (t: T) => R,
   result?: Result<T, E>
-): Result<U, E> | ((result: Result<T, E>) => Result<U, E>) {
+): Result<OkFor<R>, E | ErrFor<R>> | ((result: Result<T, E>) => Result<OkFor<R>, E | ErrFor<R>>) {
   const op = (r: Result<T, E>) => r.andThen(thenFn);
   return curry1(op, result);
 }
@@ -853,17 +871,17 @@ export function or<T, E, F>(
   @returns      The `result` if it is `Ok`, or the `Result` returned by `elseFn`
                 if `result` is an `Err.
  */
-export function orElse<T, E, F>(
-  elseFn: (err: E) => Result<T, F>,
+export function orElse<T, E, R extends AnyResult>(
+  elseFn: (err: E) => R,
   result: Result<T, E>
-): Result<T, F>;
-export function orElse<T, E, F>(
-  elseFn: (err: E) => Result<T, F>
-): (result: Result<T, E>) => Result<T, F>;
-export function orElse<T, E, F>(
-  elseFn: (err: E) => Result<T, F>,
+): Result<T | OkFor<R>, ErrFor<R>>;
+export function orElse<T, E, R extends AnyResult>(
+  elseFn: (err: E) => R
+): (result: Result<T, E>) => Result<T | OkFor<R>, ErrFor<R>>;
+export function orElse<T, E, R extends AnyResult>(
+  elseFn: (err: E) => R,
   result?: Result<T, E>
-): Result<T, F> | ((result: Result<T, E>) => Result<T, F>) {
+): Result<T | OkFor<R>, ErrFor<R>> | ((result: Result<T, E>) => Result<T | OkFor<R>, ErrFor<R>>) {
   const op = (r: Result<T, E>) => r.orElse(elseFn);
   return curry1(op, result);
 }
