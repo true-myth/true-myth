@@ -1,102 +1,17 @@
 /**
-  {@include ../doc/delay.md}
+  Types and helpers for managing retry delays with the `withRetries` helper from
+  `Task`.
 
   @module
  */
 
 /**
-  A `Strategy` is any iterator which yields numbers. You can implement it using
-  the `Iterator` interface, i.e. `implements Strategy`, or you can write a
-  generator function which produces `Generator<number>`, or you can subclass the
-  `Iterator` built-in class if target a version of JavaScript that supports it
-  or via a polyfill.
+  A retry delay strategy is just an `Iterator<number>`.
 
-  ## Examples
+  For details on how to use or implement a `Strategy`, as well as why it exists
+  as a distinct type, see [the guide][guide].
 
-  You can define your own generator functions or iterable iterators and pass
-  them as the strategy for the delay, or you can implement a class which
-  implements this interface. If you are able to target ES2025 (including by
-  using a polyfill), you can also provide subclasses of `Iterator`.
-
-  ```ts
-  function* randomInRange(min: number, max: number): Strategy<number> {
-    while (true) {
-      let scaled = Math.random() * (max - min + 1);
-      let scaledInt = Math.floor(scaled);
-      let startingAtMin = scaledInt + min;
-      yield startingAtMin
-    }
-  }
-
-  //
-  class RandomInteger implements Strategy {
-    #nextValue: number;
-
-    constructor(initial: number) {
-      this.#nextValue = initial;
-    }
-
-    next(): IteratorResult<number, void> {
-      this.#nextValue = Math.floor(Math.random() * Number.MAX_SAFE_INTEGER);
-      return { done: false, value: this.#nextValue };
-    }
-
-    return(value: number): IteratorResult<number, void> {
-      return { done: false, value };
-    }
-
-    throw(_error: unknown): IteratorResult<number, void> {
-      return { done: true, value: undefined };
-    }
-
-    [Symbol.iterator](): Generator<number, any, unknown> {
-      return this;
-    }
-  }
-
-  class Range extends Iterator {
-    readonly #start: number;
-    readonly #end: number;
-    readonly #step: number;
-
-    constructor(start: number, end: number, step = 1) {
-      this.#start = start;
-      this.#end = end;
-      this.#step = step;
-    }
-
-    *[Symbol.iterator]() {
-      for (let value = this.#start; value <= this.#end; value += this.#step) {
-        yield value;
-      }
-    }
-  }
-  ```
-
-  Then you can use any of these as a retry strategy (note that these examples
-  assume you have access to [the ES2025 iterator helper methods][helpers]):
-
-  [helpers]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Iterator#iterator_helper_methods
-
-  ```ts
-  import * as task from 'true-myth/task';
-  import { someRetryableTask } from 'somewhere/in/your-app';
-
-  let usingRandomInRange = task.withRetries(
-    someRetryableTask,
-    randomInRange(1, 100).take(10)
-  );
-
-  let usingRandomInteger = task.withRetries(
-    someRetryableTask,
-    new RandomInteger().take(10)
-  );
-
-  let usingRangeIterator = task.withRetries(
-    someRetryableTask,
-    new Range(1, 100, 5).take(10)
-  );
-  ```
+  [guide]: /guide/understanding/task/retries-and-delays
  */
 export interface Strategy extends Iterator<number> {}
 

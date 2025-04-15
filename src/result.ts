@@ -1,5 +1,12 @@
 /**
-  {@include doc/result.md}
+  A {@linkcode Result Result<T, E>} is a type representing the value result of a
+  synchronous operation which may fail, with a successful value of type `T` or
+  an error of type `E`.
+
+  If the result is a success, it is {@linkcode Ok Ok(value)}. If the result is a
+  failure, it is {@linkcode Err Err(reason)}.
+
+  For a deep dive on the type, see [the guide](/guide/understanding/result.md).
 
   @module
  */
@@ -22,36 +29,45 @@ export const Variant = {
 
 export type Variant = keyof typeof Variant;
 
+/** Representation of an {@linkcode Ok} when serialized to JSON. */
 export interface OkJSON<T> {
   variant: 'Ok';
   value: T;
 }
 
+/** Representation of an {@linkcode Err} when serialized to JSON. */
 export interface ErrJSON<E> {
   variant: 'Err';
   error: E;
 }
 
+/** Representation of a {@linkcode Result} when serialized to JSON. */
 export type ResultJSON<T, E> = OkJSON<T> | ErrJSON<E>;
 
 type Repr<T, E> = [tag: 'Ok', value: T] | [tag: 'Err', error: E];
 
 declare const IsResult: unique symbol;
-type AnyResult = Result<unknown, unknown>;
+
+/** A convenient way to name `Result<unknown, unknown>`. */
+export type AnyResult = Result<unknown, unknown>;
 
 type SomeResult<T, E> = { [IsResult]: [T, E] };
 
-type TypesFor<R extends AnyResult> = R extends SomeResult<infer T, infer E>
+/** @internal */
+export type TypesFor<R extends AnyResult> = R extends SomeResult<infer T, infer E>
   ? { ok: T; err: E }
   : never;
 
-type OkFor<R extends AnyResult> = TypesFor<R>['ok'];
-type ErrFor<R extends AnyResult> = TypesFor<R>['err'];
+/** @internal */
+export type OkFor<R extends AnyResult> = TypesFor<R>['ok'];
+/** @internal */
+export type ErrFor<R extends AnyResult> = TypesFor<R>['err'];
 
 // Defines the *implementation*, but not the *types*. See the exports below.
 class ResultImpl<T, E> {
   private constructor(private repr: Repr<T, E>) {}
 
+  /** @internal */
   declare readonly [IsResult]: [T, E];
 
   /**
@@ -440,18 +456,23 @@ export const err = ResultImpl.err;
   function returns.
 
   ```ts
+  import { tryOrElse } from 'true-myth/result';
+
   const aSuccessfulOperation = () => 2 + 2;
 
-  const anOkResult = Result.tryOrElse(
+  const anOkResult = tryOrElse(
     (e) => e,
     aSuccessfulOperation
   ); // => Ok(4)
 
   const thisOperationThrows = () => throw 'Bummer'
 
-  const anErrResult = Result.tryOrElse((e) => e, () => {
-    thisOperationThrows();
-  }); // => Err('Bummer')
+  const anErrResult = tryOrElse(
+    (e) => e,
+    () => {
+      thisOperationThrows();
+    }
+  ); // => Err('Bummer')
  ```
 
   @param onError A function that takes `e` exception and returns what will
@@ -1000,9 +1021,16 @@ export const toJSON = <T, E>(result: Result<T, E>): ResultJSON<T, E> => {
 /**
   A lightweight object defining how to handle each variant of a
   {@linkcode Result}.
+
+  @template T The success type
+  @template E The error type
+  @template A The type resulting from calling {@linkcode match} on a
+    {@linkcode Result}
  */
 export type Matcher<T, E, A> = {
+  /** Transform a `T` into the resulting type `A`. */
   Ok: (value: T) => A;
+  /** Transform an `E` into the resulting type `A`. */
   Err: (error: E) => A;
 };
 
@@ -1327,8 +1355,8 @@ export function ap<A, B, E>(
 
 /**
   Transform a function which may throw an error into one with an identical call
-  signature except that it will return a {@linkcode} instead of throwing an
-  error.
+  signature except that it will return a {@linkcode Result} instead of throwing
+  an error.
 
   This allows you to handle the error locally with all the normal `Result` tools
   rather than having to catch an exception. Where the {@linkcode tryOr} and
@@ -1362,8 +1390,8 @@ export function safe<F extends AnyFunction, P extends Parameters<F>, R extends R
 ): (...params: P) => Result<R, unknown>;
 /**
   Transform a function which may throw an error into one with an identical call
-  signature except that it will return a {@linkcode} instead of throwing an
-  error.
+  signature except that it will return a {@linkcode Result} instead of throwing
+  an error.
 
   This allows you to handle the error locally with all the normal `Result` tools
   rather than having to catch an exception. Where the {@linkcode tryOr} and
@@ -1434,6 +1462,10 @@ export interface ResultConstructor {
   err: typeof ResultImpl.err;
 }
 
+// Duplicate documentation because it will show up more nicely when rendered in
+// TypeDoc than if it applies to only one or the other; using `@inheritdoc` will
+// also work but works less well in terms of how editors render it (they do not
+// process that “directive” in general).
 /**
   A `Result` represents success ({@linkcode Ok}) or failure ({@linkcode Err}).
 
@@ -1443,5 +1475,13 @@ export interface ResultConstructor {
   @class
  */
 export const Result: ResultConstructor = ResultImpl as ResultConstructor;
+/**
+  A `Result` represents success ({@linkcode Ok}) or failure ({@linkcode Err}).
+
+  The behavior of this type is checked by TypeScript at compile time, and bears
+  no runtime overhead other than the very small cost of the container object.
+
+  @class
+ */
 export type Result<T, E> = Ok<T, E> | Err<T, E>;
 export default Result;

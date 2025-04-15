@@ -1,5 +1,13 @@
 /**
-  {@include doc/task.md}
+  A {@linkcode Task Task<T, E>} is a type representing an asynchronous operation
+  that may fail, with a successful (“resolved”) value of type `T` and an error
+  (“rejected”) value of type `E`.
+
+  If the `Task` is pending, it is {@linkcode Pending}. If it has resolved, it is
+  {@linkcode Resolved Resolved(value)}. If it has rejected, it is {@linkcode
+  Rejected Rejected(reason)}.
+
+  For more, see [the guide](/guide/understanding/task/).
 
   @module
  */
@@ -65,8 +73,36 @@ class TaskImpl<T, E> implements PromiseLike<Result<T, E>> {
   #state: Repr<T, E> = [State.Pending];
 
   // Attach the type-only symbol here so that it can be used for inference.
+  /** @internal */
   declare readonly [IsTask]: [T, E];
 
+  /**
+    Construct a new `Task`, using callbacks to wrap APIs which do not natively
+    provide a `Promise`.
+
+    This is identical to the [Promise][promise] constructor, with one very
+    important difference: rather than producing a value upon resolution and
+    throwing an exception when a rejection occurs like `Promise`, a `Task`
+    always “succeeds” in producing a usable value, just like {@linkcode Result}
+    for synchronous code.
+
+    [promise]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/Promise
+
+    For constructing a `Task` from an existing `Promise`, see:
+
+    - {@linkcode fromPromise}
+    - {@linkcode safelyTry}
+    - {@linkcode tryOr}
+    - {@linkcode tryOrElse}
+
+    For constructing a `Task` immediately resolved or rejected with given
+    values, see {@linkcode Task.resolve} and {@linkcode Task.reject}
+    respectively.
+
+    @param executor A function which the constructor will execute to manage
+      the lifecycle of the `Task`. The executor in turn has two functions as
+      parameters: one to call on resolution, the other on rejection.
+   */
   constructor(executor: (resolve: (value: T) => void, reject: (reason: E) => void) => void) {
     this.#promise = new Promise<Result<T, E>>((resolve) => {
       executor(
@@ -292,13 +328,13 @@ class TaskImpl<T, E> implements PromiseLike<Result<T, E>> {
     import Task from 'true-myth/task';
     const double = n => n * 2;
 
-    const aResolvedTask = Task.resolved(12);
+    const aResolvedTask = Task.resolve(12);
     const mappedResolved = aResolvedTask.map(double);
     let resolvedResult = await aResolvedTask;
     console.log(resolvedResult.toString()); // Ok(24)
 
-    const aRejectedTask = Task.rejected("nothing here!");
-    const mappedRejected = map(double, aRejectedTask);
+    const aRejectedTask = Task.reject("nothing here!");
+    const mappedRejected = aRejectedTask.map(double);
     let rejectedResult = await aRejectedTask;
     console.log(rejectedResult.toString()); // Err("nothing here!")
     ```
@@ -328,12 +364,12 @@ class TaskImpl<T, E> implements PromiseLike<Result<T, E>> {
 
     const extractReason = (err: { code: number, reason: string }) => err.reason;
 
-    const aResolvedTask = Task.resolved(12);
-    const mappedResolved = aResolvedTask.mapErr(extractReason);
+    const aResolvedTask = Task.resolve(12);
+    const mappedResolved = aResolvedTask.mapRejected(extractReason);
     console.log(mappedOk));  // Ok(12)
 
-    const aRejectedTask = Task.rejected({ code: 101, reason: 'bad file' });
-    const mappedRejection = await aRejectedTask.map(extractReason);
+    const aRejectedTask = Task.reject({ code: 101, reason: 'bad file' });
+    const mappedRejection = await aRejectedTask.mapRejected(extractReason);
     console.log(toString(mappedRejection));  // Err("bad file")
     ```
 
@@ -365,10 +401,12 @@ class TaskImpl<T, E> implements PromiseLike<Result<T, E>> {
     ## Examples
 
     ```ts
-    let resolvedA = Task.resolved<string, string>('A');
-    let resolvedB = Task.resolved<string, string>('B');
-    let rejectedA = Task.rejected<string, string>('bad');
-    let rejectedB = Task.rejected<string, string>('lame');
+    import Task from 'true-myth/task';
+
+    let resolvedA = Task.resolve<string, string>('A');
+    let resolvedB = Task.resolve<string, string>('B');
+    let rejectedA = Task.reject<string, string>('bad');
+    let rejectedB = Task.reject<string, string>('lame');
 
     let aAndB = resolvedA.and(resolvedB);
     await aAndB;
@@ -444,11 +482,11 @@ class TaskImpl<T, E> implements PromiseLike<Result<T, E>> {
 
     const toLengthAsResult = (s: string) => ok(s.length);
 
-    const aResolvedTask = Task.resolved('just a string');
+    const aResolvedTask = Task.resolve('just a string');
     const lengthAsResult = await aResolvedTask.andThen(toLengthAsResult);
     console.log(lengthAsResult.toString());  // Ok(13)
 
-    const aRejectedTask = Task.rejected(['srsly', 'whatever']);
+    const aRejectedTask = Task.reject(['srsly', 'whatever']);
     const notLengthAsResult = await aRejectedTask.andThen(toLengthAsResult);
     console.log(notLengthAsResult.toString());  // Err(srsly,whatever)
     ```
@@ -496,10 +534,10 @@ class TaskImpl<T, E> implements PromiseLike<Result<T, E>> {
     ```ts
     import Task from 'true-utils/task';
 
-    const resolvedA = Task.resolved<string, string>('a');
-    const resolvedB = Task.resolved<string, string>('b');
-    const rejectedWat = Task.rejected<string, string>(':wat:');
-    const rejectedHeaddesk = Task.rejected<string, string>(':headdesk:');
+    const resolvedA = Task.resolve<string, string>('a');
+    const resolvedB = Task.resolve<string, string>('b');
+    const rejectedWat = Task.reject<string, string>(':wat:');
+    const rejectedHeaddesk = Task.reject<string, string>(':headdesk:');
 
     console.log(resolvedA.or(resolvedB).toString());  // Resolved("a")
     console.log(resolvedA.or(rejectedWat).toString());  // Resolved("a")
@@ -712,12 +750,20 @@ export type ResolvesTo<T extends AnyTask> = TypesFor<T>['resolution'];
 export type RejectsWith<T extends AnyTask> = TypesFor<T>['rejection'];
 
 /**
-  Create a {@linkcode Task} which will resolve to {@linkcode Unit} after a set
-  interval. (Safely wraps [`setTimeout`][setTimeout].)
+  Create a {@linkcode Task} which will resolve to the number of milliseconds the
+  timer waited for that time elapses. (In other words, it safely wraps the
+  [`setTimeout`][setTimeout] function.)
 
   [setTimeout]: https://developer.mozilla.org/en-US/docs/Web/API/Window/setTimeout
 
-  This can be combined with the {@linkcode Task.timeout} instance method.
+  This can be used as a “timeout” by calling it in conjunction any of the
+  {@linkcode Task} helpers like {@linkcode all}, {@linkcode race}, and so on. As
+  a convenience to use it as a timeout for another task, you can also combine it
+  with the {@linkcode Task.timeout} instance method or the standalone
+  {@linkcode timeout} function.
+
+  Provides the requested duration of the timer in case it is useful for working
+  with multiple timers.
 
   @param ms The number of milliseconds to wait before resolving the `Task`.
   @returns a Task which resolves to the passed-in number of milliseconds.
@@ -1297,7 +1343,7 @@ export declare class Phantom<T extends PropertyKey> {
   > This type has zero runtime overhead, including for construction: it is just
   > a `Task` with additional *type information*.
  */
-export type Timer = Task<number, never> & Phantom<'Timer'>;
+export type Timer = Task<number, never>;
 
 /**
   An `Error` type representing a timeout, as when a {@linkcode Timer} elapses.
@@ -1397,11 +1443,13 @@ export function fromPromise<T>(
   > This does not (and by definition cannot) handle errors that happen during
   > construction of the `Result`, because those happen before this is called.
   > See {@linkcode tryOr} and {@linkcode tryOrElse} as well as the corresponding
-  > `Result.tryOr` and `Result.tryOrElse` methods for synchronous functions.
+  > {@linkcode "result".tryOr result.tryOr} and {@linkcode "result".tryOrElse
+  > result.tryOrElse} methods for synchronous functions.
 
   ## Examples
 
-  Given an `Ok`, `fromResult` will produces a {@linkcode Resolved} task.
+  Given an {@linkcode "result".Ok Ok<T, E>}, `fromResult` will produces a
+  {@linkcode Resolved Resolved<T, E>} task.
 
   ```ts
   import { fromResult } from 'true-myth/task';
@@ -1489,8 +1537,8 @@ export function fromUnsafePromise<T, E>(promise: Promise<Result<T, E>>): Task<T,
   Given a function which takes no arguments and returns a `Promise`, return a
   {@linkcode Task Task<T, unknown>} for the result of invoking that function.
   This safely handles functions which fail synchronously or asynchronously, so
-  unlike {@linkcode Task.try} is safe to use with values which may throw errors
-  _before_ producing a `Promise`.
+  unlike {@linkcode fromPromise} is safe to use with values which may throw
+  errors _before_ producing a `Promise`.
 
   ## Examples
 
@@ -1621,14 +1669,14 @@ export const safelyTryOrElse = tryOrElse;
   ## Examples
 
   ```ts
-  import { safelyTryOrElse } from 'true-myth/task';
+  import { tryOrElse } from 'true-myth/task';
 
   function throws(): Promise<number> {
     throw new Error("Uh oh!");
   }
 
   // Note: passing the function by name, *not* calling it.
-  let theTask = safelyTryOr(
+  let theTask = tryOrElse(
     (reason) => `Something went wrong: ${reason}`,
     throws
   );
@@ -1640,14 +1688,14 @@ export const safelyTryOrElse = tryOrElse;
   getting back a function which accepts the:
 
   ```ts
-  import { safelyTryOr } from 'true-myth/task';
+  import { tryOrElse } from 'true-myth/task';
 
   function throws(): Promise<number> {
     throw new Error("Uh oh!");
   }
 
   // Note: passing the function by name, *not* calling it.
-  let withFallback = safelyTryOrElse<number, string>(
+  let withFallback = tryOrElse<number, string>(
     (reason) => `Something went wrong: ${reason}`
   );
   let theResult = await withFallback(throws);
@@ -1698,7 +1746,7 @@ export function tryOrElse<T, E>(
 
   You can use this to create a safe version of the `fetch` function, which will
   produce a `Task` instead of a `Promise` and which does not throw an error for
-  rejections, but instead produces a {@Rejected} variant of the `Task`.
+  rejections, but instead produces a {@linkcode Rejected} variant of the `Task`.
 
   ```ts
   import { safe } from 'true-myth/task';
@@ -1728,7 +1776,7 @@ export function safe<
 
   You can use this to create a safe version of the `fetch` function, which will
   produce a `Task` instead of a `Promise` and which does not throw an error for
-  rejections, but instead produces a {@Rejected} variant of the `Task`.
+  rejections, but instead produces a {@linkcode Rejected} variant of the `Task`.
 
   ```ts
   import { safe } from 'true-myth/task';
@@ -2320,7 +2368,12 @@ export function withRetries<T, E>(
 
     if (taskOrErr instanceof Error) {
       return Task.reject(
-        new RetryFailed({ tries: count, totalDuration, rejections, cause: taskOrErr })
+        new RetryFailed({
+          tries: count,
+          totalDuration,
+          rejections,
+          cause: taskOrErr,
+        })
       );
     }
 
@@ -2335,7 +2388,12 @@ export function withRetries<T, E>(
     return taskOrErr.orElse((reason) => {
       if (reason instanceof StopRetrying) {
         return Task.reject(
-          new RetryFailed({ tries: count, totalDuration, rejections, cause: reason })
+          new RetryFailed({
+            tries: count,
+            totalDuration,
+            rejections,
+            cause: reason,
+          })
         );
       }
 
@@ -2460,7 +2518,9 @@ class RetryFailed<E> extends Error {
     rejections: E[];
     cause?: Error;
   }) {
-    super(`Stopped retrying after ${tries} tries (${totalDuration}ms)`, { cause });
+    super(`Stopped retrying after ${tries} tries (${totalDuration}ms)`, {
+      cause,
+    });
     this.rejections = rejections;
     this.tries = tries;
     this.totalDuration = totalDuration;

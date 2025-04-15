@@ -1,5 +1,9 @@
 /**
-  {@include doc/maybe.md}
+  A value of type `T` which may, or may not, be present. If the value is
+  present, it is {@linkcode Just Just(value)}. If it's absent, it is {@linkcode
+  Nothing} instead.
+
+For a deep dive on the type, see [the guide](/guide/understanding/maybe.md).
 
   @module
  */
@@ -33,10 +37,15 @@ export type MaybeJSON<T> = JustJSON<T> | NothingJSON;
 type Repr<T> = [tag: 'Just', value: T] | [tag: 'Nothing'];
 
 declare const IsMaybe: unique symbol;
-type AnyMaybe = Maybe<{}>;
 
+/** A convenient way to name `Maybe<{}>`. */
+export type AnyMaybe = Maybe<{}>;
+
+/** @internal */
 type SomeMaybe<T> = { [IsMaybe]: T };
-type ValueFor<R extends AnyMaybe> = R extends SomeMaybe<infer T> ? T : never;
+
+/** @internal */
+export type ValueFor<R extends AnyMaybe> = R extends SomeMaybe<infer T> ? T : never;
 
 /**
   A single instance of the `Nothing` object, to minimize memory usage. No matter
@@ -54,6 +63,7 @@ class MaybeImpl<T> {
   // when `NOTHING` does not already exist.
   private repr!: Repr<T>;
 
+  /** @internal */
   declare readonly [IsMaybe]: T;
 
   constructor(value?: T | null | undefined) {
@@ -321,7 +331,6 @@ class MaybeImpl<T> {
   @template T The type wrapped in this `Just` variant of `Maybe`.
  */
 export interface Just<T> extends MaybeImpl<T> {
-  /** `Just` is always {@linkcode Variant.Just}. */
   readonly variant: 'Just';
   /** The wrapped value. */
   value: T;
@@ -338,7 +347,6 @@ export interface Just<T> extends MaybeImpl<T> {
     the {@linkcode Maybe}.
  */
 export interface Nothing<T> extends Omit<MaybeImpl<T>, 'value'> {
-  /** `Nothing` is always {@linkcode Variant.Nothing}. */
   readonly variant: 'Nothing';
 
   isJust: false;
@@ -790,10 +798,7 @@ export function or<T>(
   @returns      The `maybe` if it is `Just`, or the `Maybe` returned by `elseFn`
                 if the `maybe` is `Nothing`.
  */
-export function orElse<T, R extends AnyMaybe>(
-  elseFn: () => R,
-  maybe: Maybe<T>
-): Maybe<ValueFor<R>>;
+export function orElse<T, R extends AnyMaybe>(elseFn: () => R, maybe: Maybe<T>): Maybe<ValueFor<R>>;
 export function orElse<T, R extends AnyMaybe>(
   elseFn: () => R
 ): (maybe: Maybe<T>) => Maybe<ValueFor<R>>;
@@ -1595,6 +1600,10 @@ export interface MaybeConstructor {
   nothing: typeof MaybeImpl.nothing;
 }
 
+// Duplicate documentation because it will show up more nicely when rendered in
+// TypeDoc than if it applies to only one or the other; using `@inheritdoc` will
+// also work but works less well in terms of how editors render it (they do not
+// process that “directive” in general).
 /**
  * `Maybe` represents a value which may ({@linkcode Just `Just<T>`}) or may not
  * ({@linkcode Nothing}) be present.
@@ -1602,5 +1611,11 @@ export interface MaybeConstructor {
  * @class
  */
 export const Maybe: MaybeConstructor = MaybeImpl as MaybeConstructor;
+/**
+ * `Maybe` represents a value which may ({@linkcode Just `Just<T>`}) or may not
+ * ({@linkcode Nothing}) be present.
+ *
+ * @class
+ */
 export type Maybe<T> = Just<T> | Nothing<T>;
 export default Maybe;
