@@ -13,7 +13,7 @@ _If you're unsure of why you would want to use the library, you might jump down 
 These examples don't cover every corner of the API; it's just here to show you what a few of the functions are like. [Full API documentation is available!][docs] You can also [view the source][source] if you prefer.
 
 [docs]: https://true-myth.js.org
-[source]: https://github.com/chriskrycho/true-myth
+[source]: https://github.com/true-myth/true-myth
 
 ### `Result` with a functional style
 

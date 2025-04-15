@@ -167,9 +167,9 @@ This time, the type of `readTask` is `Task<string, unknown>`, and this is actual
 
 ## Working with `Task`s
 
-:::info 🚧 Under Construction 🚧
+:::warning 🚧 Under Construction 🚧
 
-There will be content here Soon™. We didn’t want to block getting the new docs site live on having fleshed out every detail of this!
+There will be more, different, and better content here Soon™. We didn’t want to block getting the new docs site live on having fleshed out the whole tutorial!
 
 :::
 
