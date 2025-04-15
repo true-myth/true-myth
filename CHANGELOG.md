@@ -16,6 +16,24 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 
 
+## 8.6.0 (2025-04-15)
+
+The headlining feature here is making the `andThen` and `orElse` functions work more like people intuitively expect them to! See [#1003](https://github.com/true-myth/true-myth/pull/1003) for details. Additionally, this fixes a long-standing (but easy-to-miss) bug in the behavior of `maybe.get`.
+
+This final release in the v8.x series includes all the *features* which will be present on v9.0. To prepare for the v9.0 release, all you need to do is make sure you are on a sufficiently recent version of TypeScript and switch from any deprecated functions to their supported replacements.
+
+### Changes
+
+#### (:rocket: Enhancement)
+* [#1003](https://github.com/true-myth/true-myth/pull/1003) Feature: generalize inference for `andThen` and `orElse` [backport] ([@chriskrycho](https://github.com/chriskrycho))
+
+#### (:bug: Bug Fix)
+* [#1011](https://github.com/true-myth/true-myth/pull/1011) bug: fix `maybe.get` types [backport] ([@chriskrycho](https://github.com/chriskrycho))
+
+### Committers: 1
+- Chris Krycho ([@chriskrycho](https://github.com/chriskrycho))
+
+
 ## 8.5.3 (2025-04-09)
 
 ### Changes
