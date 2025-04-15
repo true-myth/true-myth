@@ -4,7 +4,7 @@ True Myth has no additional dependencies and is ready to start using immediately
 
 ## Requirements
 
-- Node 18+
+- Node 20+
 - TS 5.3+
 - `tsconfig.json`:
   - `moduleResolution`: use `"Node16"` or later
