@@ -536,8 +536,7 @@ describe('`Maybe` pure functions', () => {
       test('with tuples', () => {
         type ExpectedOutputType = Maybe<readonly [number, string]>;
 
-        let theInput = [maybe.just(123), maybe.just('hello')] as const;
-        let theOutput = maybe.transposeArray(theInput);
+        let theOutput = maybe.transposeArray([maybe.just(123), maybe.just('hello')]);
 
         expectTypeOf(theOutput).toEqualTypeOf<ExpectedOutputType>();
         expect(theOutput).toEqual(maybe.just([123, 'hello']));

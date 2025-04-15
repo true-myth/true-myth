@@ -1356,7 +1356,7 @@ export function last<T>(array: AnyArray<T | null | undefined>): Maybe<T> {
 
   @param maybes The `Maybe`s to resolve to a single `Maybe`.
  */
-export function transposeArray<T extends ReadonlyArray<Maybe<unknown>>>(
+export function transposeArray<const T extends ReadonlyArray<Maybe<unknown>>>(
   maybes: T
 ): TransposedArray<T> {
   // The slightly odd-seeming use of `[...ms, m]` here instead of `concat` is
