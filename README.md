@@ -47,9 +47,6 @@ True Myth provides standard, type-safe wrappers and helper functions to help you
 
 You could implement all of these yourself – it's not hard! – but it's much easier to just have one extremely well-tested library you can use everywhere to solve this problem once and for all.
 
-> [!NOTE]
-> This documentation is for versions 6.x–8.x, which [require](#requirements) using TypeScript's more recent `moduleResolution` modes: `"node16"`, `"nodenext"`, or `"bundler"`. (See [TypeScript's docs on `moduleResolution`](https://www.typescriptlang.org/tsconfig#moduleResolution) for more details!) If you cannot use that yet, please use version 5.x.*
-
 See [the docs](https://true-myth.js.org) for setup, guides, and API docs!
 
 ### Contents

@@ -1581,14 +1581,14 @@ export function safelyTry<T>(fn: () => Promise<T>): Task<T, unknown> {
   ## Examples
 
   ```ts
-  import { safelyTryOr } from 'true-myth/task';
+  import { tryOr } from 'true-myth/task';
 
   function throws(): Promise<number> {
     throw new Error("Uh oh!");
   }
 
   // Note: passing the function by name, *not* calling it.
-  let theTask = safelyTryOr("fallback", throws);
+  let theTask = tryOr("fallback", throws);
   let theResult = await theTask;
   if (theResult.isErr) {
     console.error(theResult.error); // "fallback"
@@ -1599,14 +1599,14 @@ export function safelyTry<T>(fn: () => Promise<T>): Task<T, unknown> {
   getting back a function which accepts the:
 
   ```ts
-  import { safelyTryOr } from 'true-myth/task';
+  import { tryOr } from 'true-myth/task';
 
   function throws(): Promise<number> {
     throw new Error("Uh oh!");
   }
 
   // Note: passing the function by name, *not* calling it.
-  let withFallback = safelyTryOr<number, string>("fallback");
+  let withFallback = tryOr<number, string>("fallback");
   let theResult = await withFallback(throws);
   if (theResult.isErr) {
     console.error(theResult.error); // "fallback"

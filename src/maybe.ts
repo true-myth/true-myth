@@ -1559,15 +1559,15 @@ export function get<T extends { [key: string]: unknown }, K extends keyof T>(
     .unwrapOr('black');
   ```
 
-  With `wrapReturn`, though, you can create a transformed version of a function
+  With `safe`, though, you can create a transformed version of a function
   *once* and then be able to use it freely throughout your codebase, *always*
   getting back a `Maybe`:
 
   ```ts
-  import { wrapReturn } from 'true-myth/maybe';
+  import { safe } from 'true-myth/maybe';
 
-  const querySelector = wrapReturn(document.querySelector.bind(document));
-  const safelyGetStyle = wrapReturn(getStyle);
+  const querySelector = safe(document.querySelector.bind(document));
+  const safelyGetStyle = safe(getStyle);
 
   const aWidth = querySelector('#foo')
     .map(el => el.getBoundingClientRect().width)
