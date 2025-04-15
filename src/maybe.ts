@@ -110,17 +110,17 @@ class MaybeImpl<T> {
   static of<F extends (...args: any) => {}>(value: F): Maybe<F>;
   static of<T extends {}, F extends (...args: any) => T | null | undefined>(value: F): never;
   static of<F extends (...args: any) => null | undefined>(value: F): never;
-  // For all other non-null types, allow `null | undefined` implicitly via the
-  // `unknown` type, since in those cases we will produce `Nothing`.
+  // For all other non-null types, allow `null | undefined`, since in those cases we will
+  // produce `Nothing`.
   static of<T extends {}>(value: T | null | undefined): Maybe<T>;
   // Finally, with a type that falls back entirely to `unknown`, produce a non-
   // null type, because that is the one thing we know to be true by construction
   // in that case.
   static of<T>(value: T): Maybe<NonNullable<T>>;
-  // Then the implementation signature is simply the same as the final overload,
-  // because we do not *and cannot* prevent the undesired function types from
-  // appearing here at runtime: doing so would require having a value on which
-  // to (maybe) apply the function!
+  // Then the implementation signature is simply the same as the last two,
+  // overloads because we do not *and cannot* prevent the undesired function
+  // types from appearing here at runtime: doing so would require having a value
+  // on which to (maybe) apply the function!
   static of<T>(value: T | null | undefined): Maybe<T> {
     return new Maybe(value);
   }
@@ -1266,20 +1266,41 @@ export function find<T, U extends T>(
   item if the array has at least one item in it, or {@linkcode Nothing} if it is
   empty.
 
+  This produces a `Maybe<Maybe<T>>` rather than `Maybe<T>` to distinguish
+  between arrays that include `null` or `undefined` and empty arrays.
+
   ## Examples
 
   ```ts
+  import { first } from 'true-myth/maybe';
+
   let empty = [];
-  Maybe.head(empty); // => Nothing
+  first(empty); // => Nothing
 
   let full = [1, 2, 3];
-  Maybe.head(full); // => Just(1)
+  first(full); // => Just(Just(1))
+
+  let mixed = [undefined, 1];
+  first(mixed); // => Just(Nothing)
   ```
+
+  @note Unfortunately, it is not possible to distinguish between these
+    statically in a single call signature in a reasonable way: we do not want to
+    change the types and runtime result produced by calling this function simply
+    because the input array had *its* type changed (to include, or not include,
+    `null` or `undefined`). Although the types and runtime could be guaranteed
+    to align, correctly doing so would require every item in the array to check
+    whether *any* items are `null` or `undefined`, making the performance linear
+    on the size of the array ($O(n)$) instead of constant time ($O(1)$). This is
+    _quite_ undesirable!
 
   @param array The array to get the first item from.
  */
-export function first<T>(array: AnyArray<T>): Maybe<NonNullable<T>> {
-  return Maybe.of(array[0]);
+export function first<T extends {}>(array: AnyArray<T>): Maybe<Just<T>>;
+export function first(array: AnyArray<null | undefined>): Maybe<Nothing<{}>>;
+export function first<T extends {}>(array: AnyArray<T | null | undefined>): Maybe<Maybe<T>>;
+export function first(array: AnyArray<unknown>): Maybe<Maybe<{}>> {
+  return array.length !== 0 ? Maybe.just(Maybe.of(array[0])) : Maybe.nothing();
 }
 
 /**
@@ -1287,20 +1308,41 @@ export function first<T>(array: AnyArray<T>): Maybe<NonNullable<T>> {
   if the array has at least one item in it, or {@linkcode Nothing} if it is
   empty.
 
+  This produces a `Maybe<Maybe<T>>` rather than `Maybe<T>` to distinguish
+  between arrays that include `null` or `undefined` and empty arrays.
+
   ## Examples
 
   ```ts
+  import { last } from 'true-myth/maybe';
+
   let empty = [];
-  Maybe.last(empty); // => Nothing
+  last(empty); // => Nothing
 
   let full = [1, 2, 3];
-  Maybe.last(full); // => Just(3)
+  last(full); // => Just(Just(3))
+
+  let mixed = [1, null, 2, null];
+  last(mixed); // Just(Nothing)
   ```
+
+  @note Unfortunately, it is not possible to distinguish between these
+    statically in a single call signature in a reasonable way: we do not want to
+    change the types and runtime result produced by calling this function simply
+    because the input array had *its* type changed (to include, or not include,
+    `null` or `undefined`). Although the types and runtime could be guaranteed
+    to align, correctly doing so would require every item in the array to check
+    whether *any* items are `null` or `undefined`, making the performance linear
+    on the size of the array ($O(n)$) instead of constant time ($O(1)$). This is
+    _quite_ undesirable!
 
   @param array The array to get the first item from.
  */
-export function last<T>(array: AnyArray<T | null | undefined>): Maybe<NonNullable<T>> {
-  return Maybe.of(array[array.length - 1]);
+export function last<T extends {}>(array: AnyArray<T>): Maybe<Just<T>>;
+export function last(array: AnyArray<null | undefined>): Maybe<Nothing<never>>;
+export function last<T extends {}>(array: AnyArray<T | null | undefined>): Maybe<Maybe<T>>;
+export function last(array: AnyArray<unknown>): Maybe<Maybe<{}>> {
+  return array.length !== 0 ? Maybe.just(Maybe.of(array[array.length - 1])) : Maybe.nothing();
 }
 
 /**

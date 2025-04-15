@@ -491,24 +491,64 @@ describe('`Maybe` pure functions', () => {
 
     test('`first`', () => {
       expect(maybe.first([])).toEqual(maybe.nothing());
-      expect(maybe.first([1])).toEqual(maybe.just(1));
-      expect(maybe.first([1, 2, 3])).toEqual(maybe.just(1));
+      expect(maybe.first([1])).toEqual(maybe.just(maybe.just(1)));
+      expect(maybe.first([1, 2, 3])).toEqual(maybe.just(maybe.just(1)));
 
       const readonlyEmpty: readonly number[] = [];
       expect(maybe.first(readonlyEmpty)).toEqual(maybe.nothing());
       const readonlyFilled: readonly number[] = [1, 2, 3];
-      expect(maybe.first(readonlyFilled)).toEqual(maybe.just(1));
+      expect(maybe.first(readonlyFilled)).toEqual(maybe.just(maybe.just(1)));
+
+      const mixedWithNull = [null, 1, null, 2];
+      const firstOfMixedWithNull = maybe.first(mixedWithNull);
+      expectTypeOf(firstOfMixedWithNull).toEqualTypeOf<Maybe<Maybe<number>>>();
+      expect(firstOfMixedWithNull).toEqual(Maybe.just(Maybe.nothing()));
+
+      const mixedWithUndefined = [undefined, 1, undefined, 2];
+      const firstOfMixedWithUndefined = maybe.first(mixedWithUndefined);
+      expectTypeOf(firstOfMixedWithUndefined).toEqualTypeOf<Maybe<Maybe<number>>>();
+      expect(firstOfMixedWithNull).toEqual(Maybe.just(Maybe.nothing()));
+
+      const mixedWithBothNullFirst = [null, 1, undefined, 2];
+      const firstOfMixedWithBothNullFirst = maybe.first(mixedWithBothNullFirst);
+      expectTypeOf(firstOfMixedWithBothNullFirst).toEqualTypeOf<Maybe<Maybe<number>>>();
+      expect(firstOfMixedWithNull).toEqual(Maybe.just(Maybe.nothing()));
+
+      const mixedWithBothUndefinedFirst = [undefined, 1, null, 2];
+      const firstOfMixedWithBothUndefinedFirst = maybe.first(mixedWithBothUndefinedFirst);
+      expectTypeOf(firstOfMixedWithBothUndefinedFirst).toEqualTypeOf<Maybe<Maybe<number>>>();
+      expect(firstOfMixedWithNull).toEqual(Maybe.just(Maybe.nothing()));
     });
 
     test('`last`', () => {
       expect(maybe.last([])).toEqual(maybe.nothing());
-      expect(maybe.last([1])).toEqual(maybe.just(1));
-      expect(maybe.last([1, 2, 3])).toEqual(maybe.just(3));
+      expect(maybe.last([1])).toEqual(maybe.just(maybe.just(1)));
+      expect(maybe.last([1, 2, 3])).toEqual(maybe.just(maybe.just(3)));
 
       const readonlyEmpty: readonly number[] = [];
       expect(maybe.last(readonlyEmpty)).toEqual(maybe.nothing());
       const readonlyFilled: readonly number[] = [1, 2, 3];
-      expect(maybe.last(readonlyFilled)).toEqual(maybe.just(3));
+      expect(maybe.last(readonlyFilled)).toEqual(maybe.just(maybe.just(3)));
+
+      const mixedWithNull = [1, null, 2, null];
+      const lastOfMixedWithNull = maybe.last(mixedWithNull);
+      expectTypeOf(lastOfMixedWithNull).toEqualTypeOf<Maybe<Maybe<number>>>();
+      expect(lastOfMixedWithNull).toEqual(Maybe.just(Maybe.nothing()));
+
+      const mixedWithUndefined = [1, undefined, 2, undefined];
+      const lastOfMixedWithUndefined = maybe.last(mixedWithUndefined);
+      expectTypeOf(lastOfMixedWithUndefined).toEqualTypeOf<Maybe<Maybe<number>>>();
+      expect(lastOfMixedWithNull).toEqual(Maybe.just(Maybe.nothing()));
+
+      const mixedWithBothNullLast = [1, undefined, 2, null];
+      const lastOfMixedWithBothNullLast = maybe.last(mixedWithBothNullLast);
+      expectTypeOf(lastOfMixedWithBothNullLast).toEqualTypeOf<Maybe<Maybe<number>>>();
+      expect(lastOfMixedWithNull).toEqual(Maybe.just(Maybe.nothing()));
+
+      const mixedWithBothUndefinedLast = [1, null, 2, undefined];
+      const lastOfMixedWithBothUndefinedLast = maybe.last(mixedWithBothUndefinedLast);
+      expectTypeOf(lastOfMixedWithBothUndefinedLast).toEqualTypeOf<Maybe<Maybe<number>>>();
+      expect(lastOfMixedWithNull).toEqual(Maybe.just(Maybe.nothing()));
     });
 
     describe('`transposeArray`', () => {
