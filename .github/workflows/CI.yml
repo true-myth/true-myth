@@ -11,11 +11,11 @@ env:
 
 jobs:
   tests_linux:
-    name: 'Tests: Node ${{ matrix.node-version }}'
+    name: "Tests: Node ${{ matrix.node-version }}"
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: ['20', '22']
+        node-version: ["20", "22"]
 
     steps:
       - uses: actions/checkout@v4
@@ -26,12 +26,12 @@ jobs:
       - run: pnpm test
 
   tests_ts:
-    name: 'Tests: TS ${{ matrix.ts-version }}'
+    name: "Tests: TS ${{ matrix.ts-version }}"
     runs-on: ubuntu-latest
     continue-on-error: false
     strategy:
       matrix:
-        ts-version: ['5.3', '5.4', '5.5', '5.6', '5.7', 'next']
+        ts-version: ["5.3", "5.4", "5.5", "5.6", "5.7", "5.8", "next"]
 
     steps:
       - uses: actions/checkout@v4
@@ -41,7 +41,7 @@ jobs:
       - run: pnpm type-check
 
   check_docs:
-    name: 'Build docs'
+    name: "Build docs"
     runs-on: ubuntu-latest
     continue-on-error: false
     steps:
