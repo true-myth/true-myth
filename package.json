@@ -43,7 +43,7 @@
     "result"
   ],
   "scripts": {
-    "build": "tsc ts/publish.tsconfig.json",
+    "build": "tsc --project ts/publish.tsconfig.json",
     "clean": "rimraf ./dist",
     "prepublishOnly": "pnpm test && pnpm build",
     "postpublish": "pnpm clean",
