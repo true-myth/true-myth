@@ -5,6 +5,53 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 
+## 9.0.0 (2025-04-16)
+
+Now with nicer internals. cleaner public APIs, a brand new docs site! For more details, see [the announcement blog post](https://v5.chriskrycho.com/elsewhere/true-myth-releases-8.6-9.0-and-a-new-docs-site/).
+
+### Changes
+
+#### :boom: Breaking Change
+* [#1025](https://github.com/true-myth/true-myth/pull/1025) breaking: use lowercase names for root namespace re-exports ([@chriskrycho](https://github.com/chriskrycho))
+* [#1023](https://github.com/true-myth/true-myth/pull/1023) build: drop CJS build output ([@chriskrycho](https://github.com/chriskrycho))
+* [#1019](https://github.com/true-myth/true-myth/pull/1019) Maybe: correctly handle arrays which include null and undefined ([@chriskrycho](https://github.com/chriskrycho))
+* [#1017](https://github.com/true-myth/true-myth/pull/1017) breaking: require Node v20+ for v9 ([@chriskrycho](https://github.com/chriskrycho))
+* [#923](https://github.com/true-myth/true-myth/pull/923) Bump minimum TS version to 5.3 ([@chriskrycho](https://github.com/chriskrycho))
+* [#921](https://github.com/true-myth/true-myth/pull/921) v9.0: remove deprecated code ([@chriskrycho](https://github.com/chriskrycho))
+
+#### :rocket: Enhancement
+* [#1019](https://github.com/true-myth/true-myth/pull/1019) Maybe: correctly handle arrays which include null and undefined ([@chriskrycho](https://github.com/chriskrycho))
+* [#1018](https://github.com/true-myth/true-myth/pull/1018) Maybe: add a new overload for `Maybe.of(unknown) -> Maybe<{}>` ([@chriskrycho](https://github.com/chriskrycho))
+
+#### :memo: Documentation
+* [#1026](https://github.com/true-myth/true-myth/pull/1026) docs: fix missing info in retry status and RetryFailed ([@chriskrycho](https://github.com/chriskrycho))
+* [#1024](https://github.com/true-myth/true-myth/pull/1024) docs: update measurements of library size ([@chriskrycho](https://github.com/chriskrycho))
+* [#1021](https://github.com/true-myth/true-myth/pull/1021) docs: fix incomplete sentence ([@chriskrycho](https://github.com/chriskrycho))
+* [#1016](https://github.com/true-myth/true-myth/pull/1016) docs: update for v9’s TS version support matrix ([@chriskrycho](https://github.com/chriskrycho))
+* [#1013](https://github.com/true-myth/true-myth/pull/1013) docs: add missing root for `background` section ([@chriskrycho](https://github.com/chriskrycho))
+* [#1012](https://github.com/true-myth/true-myth/pull/1012) docs: update given deprecated code removal for v9 ([@chriskrycho](https://github.com/chriskrycho))
+* [#988](https://github.com/true-myth/true-myth/pull/988) docs: new Vitepress-based site ([@chriskrycho](https://github.com/chriskrycho))
+* [#927](https://github.com/true-myth/true-myth/pull/927) docs: update README table of contents and installation instructions ([@chriskrycho](https://github.com/chriskrycho))
+
+#### :house: Internal
+* [#1027](https://github.com/true-myth/true-myth/pull/1027) build: fix (p)npm build script tsc invocation ([@chriskrycho](https://github.com/chriskrycho))
+* [#1022](https://github.com/true-myth/true-myth/pull/1022) Update package.json with relevant changes from v8 branch ([@chriskrycho](https://github.com/chriskrycho))
+* [#1020](https://github.com/true-myth/true-myth/pull/1020) Maybe: get rid of one cast by calling `nothing()` ([@chriskrycho](https://github.com/chriskrycho))
+* [#1015](https://github.com/true-myth/true-myth/pull/1015) cleanup: remove unused `as const` annotations ([@chriskrycho](https://github.com/chriskrycho))
+* [#1014](https://github.com/true-myth/true-myth/pull/1014) build: Fix documentation build, and always check it. ([@chriskrycho](https://github.com/chriskrycho))
+* [#1008](https://github.com/true-myth/true-myth/pull/1008) cleanup: use lowercase name convention for namespaces ([@chriskrycho](https://github.com/chriskrycho))
+* [#983](https://github.com/true-myth/true-myth/pull/983) build: use Biome for formatting ([@chriskrycho](https://github.com/chriskrycho))
+* [#934](https://github.com/true-myth/true-myth/pull/934) Task (tests): remove dead code after throwing errors ([@chriskrycho](https://github.com/chriskrycho))
+* [#922](https://github.com/true-myth/true-myth/pull/922) internal: Introduce a separate CI job for any 8.x work ([@chriskrycho](https://github.com/chriskrycho))
+
+#### :wastebasket: Deprecation
+* [#1002](https://github.com/true-myth/true-myth/pull/1002) Task: rename `Delay` re-export to `delay` ([@chriskrycho](https://github.com/chriskrycho))
+
+### Committers: 2
+- Chris Krycho ([@chriskrycho](https://github.com/chriskrycho))
+- Lochlan Bunn ([@loklaan](https://github.com/loklaan))
+
+
 ## 8.6.0 (2025-04-15)
 
 The headlining feature here is making the `andThen` and `orElse` functions work more like people intuitively expect them to! See [#1003](https://github.com/true-myth/true-myth/pull/1003) for details. Additionally, this fixes a long-standing (but easy-to-miss) bug in the behavior of `maybe.get`.
