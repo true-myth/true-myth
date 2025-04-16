@@ -74,7 +74,7 @@ This project follows the current draft of [the Semantic Versioning for TypeScrip
 
 - **Currently supported TypeScript versions:** 5.3, 5.4, 5.5, 5.6, and 5.7
 - **Compiler support policy:** [simple majors][sm]
-- **Public API:** all published types not in a `-private` module are public
+- **Public API:** all published, documented types not in a `-private` module and not marked as `@internal` or `@private` are public
 
 [semver]: https://www.semver-ts.org
 [sm]: https://www.semver-ts.org/formal-spec/5-compiler-considerations.html#simple-majors
