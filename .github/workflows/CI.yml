@@ -25,6 +25,16 @@ jobs:
       - run: pnpm install
       - run: pnpm test
 
+  build:
+    name: "Build"
+    runs-on: ubuntu-latest
+    continue-on-error: false
+    steps:
+      - uses: actions/checkout@v4
+      - uses: volta-cli/action@v4
+      - run: pnpm install
+      - run: pnpm build
+
   tests_ts:
     name: "Tests: TS ${{ matrix.ts-version }}"
     runs-on: ubuntu-latest
