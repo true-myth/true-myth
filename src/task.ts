@@ -2506,8 +2506,13 @@ class RetryFailed<E> extends Error {
     return RETRY_FAILED_NAME;
   }
 
+  /** Number of retries before the task failed. */
   readonly tries: number;
+
+  /** Elapsed time in milliseconds. */
   readonly totalDuration: number;
+
+  /** Set of all rejections collected during retries. */
   readonly rejections: E[];
 
   /** @internal */

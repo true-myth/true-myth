@@ -16,10 +16,10 @@ Although you _can_ customize nearly every part of this, you do not _have_ to cus
 Here’s the simplest version of a function that retries a `fetch` call:
 
 ```ts
-import * as Task from 'true-myth/task';
+import * as task from 'true-myth/task';
 
-let fetcher = () => Task.fromPromise(fetch('https://true-myth.js.org'));
-let fetchWithRetries = Task.withRetries(fetcher);
+let fetcher = () => task.fromPromise(fetch('https://true-myth.js.org'));
+let fetchWithRetries = task.withRetries(fetcher);
 ```
 
 The `fetchWithRetries` value has the type `Task<Response, RetryFailed<unknown>>`. If the `fetch` call succeeds, the `Task` will resolve with the `Response` from the `fetch` call. If the `fetch` call fails, `withRetries` will retry it immediately, up to 3 times, before stopping. If it stops, the `Task` will reject with a `RetryFailed` type: a special error subclass that is only available within the `true-myth/task` module. You can use its public APIs, as we will cover later, but you cannot construct one yourself: it only exists to allow True Myth to tell you that a `Task` rejected because retries failed.
@@ -69,7 +69,32 @@ let fetcher = ({ count, elapsed }: task.RetryStatus): Task<Response, Error> => {
 let taskWithRetries = withRetries(fetcher);
 ```
 
-In this example, we reject with an error if the task has already been retried more than 100 times or if it has taken more 1,000 milliseconds (one second). The resulting `Task`
+In this example, we reject with an error if the task has already been retried more than 100 times or if it has taken more 1,000 milliseconds (one second). The resulting `Task` has the type `Task<Response, RetryFailed<Error>>`. [The `RetryFailed` type](/api/task/classes/RetryFailed) gathers up all the different kinds of errors emitted during retries so you can inspect them:
+
+```ts
+let described = taskWithRetries.orElse((retryFailed) => {
+  let tries = `Failed ${retryFailed.tries} times.`;
+  let time = `Took ${retryFailed.totalDuration}ms.`;
+
+  const LI = '\n- ';
+
+  let reasons =
+    retryFailed.rejections.length > 0
+      ? LI +
+      retryFailed.rejections
+        .map((err) => {
+          let cause = err.cause ? `\nCaused by: ${err.cause}` : '';
+          let stack = err.stack ? `\n${err.stack}` : '';
+          return err.message + cause + stack;
+        })
+        .join(LI)
+      : '';
+
+  let description = `${tries}\n${time}\n${reasons}`;
+
+  return Task.reject(description);
+});
+```
 
 ### A retry strategy
 
@@ -296,12 +321,12 @@ All the helpers from [`true-myth/task/delay`](/api/task/delay/) are infinite exc
 Update to at least TS 5.6+, or use a TypeScript-aware polyfill for the Iterator Helpers feature (ES2025). In that case, you can simply use the `take` method directly:
 
 ```ts
-import * as Task from 'true-myth/task';
-import * as Delay from 'true-myth/task/delay';
+import * as task from 'true-myth/task';
+import * as delay from 'true-myth/task/delay';
 
-let theTask = Task.withRetries(
-  () => Task.fromPromise(fetch('https://example.com/')),
-  Delay.exponential().map(Delay.jitter).take(5)
+let theTask = task.withRetries(
+  () => task.fromPromise(fetch('https://example.com/')),
+  delay.exponential().map(Delay.jitter).take(5)
 );
 ```
 
