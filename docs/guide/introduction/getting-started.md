@@ -43,20 +43,24 @@ bun add true-myth
 True Myth is organized into modules within its public API, so you will generally not import from the root of the package, but from the dedicated module for each major type:
 
 ```ts
-import Maybe from 'true-myth/maybe';
-import Result from 'true-myth/result';
-import Task from 'true-myth/task';
+import Maybe, * as maybe from 'true-myth/maybe';
+import Result, * as result from 'true-myth/result';
+import Task, * as task from 'true-myth/task';
 import { exponential, jitter } from 'true-myth/task/delay';
 ```
 
-If for some reason you *need* to import from the root, however,the default export and the full contents of each module are both available there. For example, you can import both the `Maybe` *type* and the contents of the `true-myth/maybe` module as a *namespace* like so:
+If for some reason you *need* to import from the root, however, the default export and the full contents of each module are both available there. For example, you can import both the `Maybe` *type* and the contents of the `true-myth/maybe` module as a *namespace* like so:
 
 ```ts
-import { Maybe, MaybeNS } from 'true-myth';
+import { Maybe, maybe } from 'true-myth';
 ```
 
-:::tip
+If you want to, you can even use a namespace import to reference all the types and namespaces from the root:
 
-This is not idiomatic and may be removed in a future version.
+```ts
+import * as tm from 'true-myth';
 
-:::
+function useMaybe(someMaybe: tm.Maybe<string>) {
+  // ...
+}
+```
