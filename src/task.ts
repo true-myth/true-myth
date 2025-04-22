@@ -2204,7 +2204,7 @@ function identity<T>(value: T): T {
   import * as task from 'true-myth/task';
   import * as delay from 'true-myth/task/delay';
 
-  let theTask = withRetries(
+  let theTask = task.withRetries(
     () => task.fromPromise(fetch('https://example.com')).andThen((res) => {
         if (res.status === 200) {
           return task.fromPromise(res.json());
