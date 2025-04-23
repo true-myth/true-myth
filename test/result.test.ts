@@ -201,7 +201,7 @@ describe("`Result` pure functions", () => {
 
     test("with multiple types in the `Result` returned", () => {
       class Branded<T extends string> {
-        constructor(public readonly name: T) {}
+        constructor(public readonly name: T) { }
       }
 
       let initial = Result.ok<Branded<"ok">, Branded<"err">>(new Branded("ok"));
@@ -268,7 +268,7 @@ describe("`Result` pure functions", () => {
 
     test("with multiple types in the `Result` returned", () => {
       class Branded<T extends string> {
-        constructor(public readonly name: T) {}
+        constructor(public readonly name: T) { }
       }
 
       let initial = Result.err<Branded<"ok">, Branded<"err">>(
@@ -426,45 +426,123 @@ describe("`Result` pure functions", () => {
     });
   });
 
-  test("`toJSON`", () => {
-    const theValue = { thisIsReally: "something", b: null };
-    const anOk = result.ok(theValue);
-    expect(result.toJSON(anOk)).toEqual({
-      variant: Variant.Ok,
-      value: theValue,
+  describe("`toJSON`", () => {
+    test("simple", () => {
+      const theValue = { thisIsReally: "something", b: null };
+      const anOk = result.ok(theValue);
+      expect(result.toJSON(anOk)).toEqual({
+        variant: Variant.Ok,
+        value: theValue,
+      });
+
+      const errValue = ["oh", "no", null];
+      const anErr = result.err(errValue);
+      expect(result.toJSON(anErr)).toEqual({
+        variant: Variant.Err,
+        error: errValue,
+      });
     });
 
-    const errValue = ["oh", "no", null];
-    const anErr = result.err(errValue);
-    expect(result.toJSON(anErr)).toEqual({
-      variant: Variant.Err,
-      error: errValue,
-    });
-  });
+    test('with nested `Result` instances', () => {
+      const okWrappingOk = result.ok(result.ok(123));
+      expect(okWrappingOk.toJSON()).toEqual({ variant: Variant.Ok, value: { variant: Variant.Ok, value: 123 } });
 
-  test("`toJSON` through serialization", () => {
-    const actualSerializedOk = JSON.stringify(result.ok(42));
-    const actualSerializedErr = JSON.stringify(
-      result.err({ someInfo: "error" }),
-    );
-    const actualSerializedUnitErr = JSON.stringify(result.err());
-    const expectedSerializedOk = JSON.stringify({
-      variant: Variant.Ok,
-      value: 42,
-    });
-    const expectedSerializedErr = JSON.stringify({
-      variant: Variant.Err,
-      error: { someInfo: "error" },
-    });
-    const expectedSerializedUnitErr = JSON.stringify({
-      variant: Variant.Err,
-      error: Unit,
+      const okWrappingErr = result.ok(result.err(123));
+      expect(okWrappingErr.toJSON()).toEqual({ variant: Variant.Ok, value: { variant: Variant.Err, error: 123 } });
+
+      const errWrappingOk = result.err(result.ok(123));
+      expect(errWrappingOk.toJSON()).toEqual({ variant: Variant.Err, error: { variant: Variant.Ok, value: 123 } });
+
+      const errWrappingErr = result.err(result.err(123));
+      expect(errWrappingErr.toJSON()).toEqual({ variant: Variant.Err, error: { variant: Variant.Err, error: 123 } });
     });
 
-    expect(actualSerializedOk).toEqual(expectedSerializedOk);
-    expect(actualSerializedErr).toEqual(expectedSerializedErr);
-    expect(actualSerializedUnitErr).toEqual(expectedSerializedUnitErr);
-  });
+    test("through serialization", () => {
+      const actualSerializedOk = JSON.stringify(result.ok(42));
+      const expectedSerializedOk = JSON.stringify({
+        variant: Variant.Ok,
+        value: 42,
+      });
+      expect(actualSerializedOk).toEqual(expectedSerializedOk);
+
+      const actualSerializedErr = JSON.stringify(
+        result.err({ someInfo: "error" }),
+      );
+      const expectedSerializedErr = JSON.stringify({
+        variant: Variant.Err,
+        error: { someInfo: "error" },
+      });
+      expect(actualSerializedErr).toEqual(expectedSerializedErr);
+
+      const actualSerializedUnitErr = JSON.stringify(result.err());
+      const expectedSerializedUnitErr = JSON.stringify({
+        variant: Variant.Err,
+        error: Unit,
+      });
+      expect(actualSerializedUnitErr).toEqual(expectedSerializedUnitErr);
+
+      const complexObjGraph = result.ok({
+        simpleOk: result.ok(123),
+        simpleErr: result.err(123),
+        okWrappingObj: result.ok({
+          innerOk: result.ok(123),
+          innerErr: result.err(123),
+          innerValue: 123,
+        }),
+        errWrappingObj: result.err({
+          innerOk: result.ok(123),
+          innerErr: result.err(123),
+          innerValue: 123,
+        }),
+        nestedObj: {
+          innerOk: result.ok(123),
+          innerErr: result.err(123),
+          innerValue: 123,
+        }
+      });
+
+      expect(JSON.stringify(complexObjGraph)).toEqual(JSON.stringify({
+        variant: Variant.Ok,
+        value: {
+          simpleOk: { variant: Variant.Ok, value: 123 },
+          simpleErr: { variant: Variant.Err, error: 123 },
+          okWrappingObj: {
+            variant: Variant.Ok,
+            value: {
+              innerOk: { variant: Variant.Ok, value: 123 },
+              innerErr: { variant: Variant.Err, error: 123 },
+              innerValue: 123,
+            }
+          },
+          errWrappingObj: {
+            variant: Variant.Err,
+            error: {
+              innerOk: { variant: Variant.Ok, value: 123 },
+              innerErr: { variant: Variant.Err, error: 123 },
+              innerValue: 123,
+            }
+          },
+          nestedObj: {
+            innerOk: { variant: Variant.Ok, value: 123 },
+            innerErr: { variant: Variant.Err, error: 123 },
+            innerValue: 123,
+          }
+        }
+      }))
+    });
+  })
+
+  test("fromJSON", () => {
+    const okJson: result.ResultJSON<string, unknown> = { variant: 'Ok', value: 'hello' };
+    let deserializedOk = result.fromJSON(okJson);
+    expectTypeOf(deserializedOk).toEqualTypeOf<Result<string, unknown>>();
+    expect(deserializedOk).toEqual(result.ok("hello"));
+
+    const errJson: result.ResultJSON<unknown, string> = { variant: 'Err', error: 'oh no' };
+    let deserializedErr = result.fromJSON(errJson);
+    expectTypeOf(deserializedErr).toEqualTypeOf<Result<unknown, string>>();
+    expect(deserializedErr).toEqual(result.err("oh no"))
+  })
 
   test("`equals`", () => {
     const a = result.ok<string, string>("a");
@@ -865,7 +943,7 @@ describe("`Ok` instance", () => {
 
     test("with multiple types in the `Result` returned", () => {
       class Branded<T extends string> {
-        constructor(public readonly name: T) {}
+        constructor(public readonly name: T) { }
       }
 
       let theResult = Result.ok<Branded<"ok">, Branded<"err">>(
@@ -919,7 +997,7 @@ describe("`Ok` instance", () => {
 
     test("with multiple types in the `Result` returned", () => {
       class Branded<T extends string> {
-        constructor(public readonly name: T) {}
+        constructor(public readonly name: T) { }
       }
 
       let theResult = Result.err<Branded<"ok">, Branded<"err">>(
@@ -1155,7 +1233,7 @@ describe("`result.Err` class", () => {
 
     test("with multiple types in the `Result` returned", () => {
       class Branded<T extends string> {
-        constructor(public readonly name: T) {}
+        constructor(public readonly name: T) { }
       }
 
       let theResult = Result.ok<Branded<"ok">, Branded<"err">>(
@@ -1211,7 +1289,7 @@ describe("`result.Err` class", () => {
 
     test("with multiple types in the `Result` returned", () => {
       class Branded<T extends string> {
-        constructor(public readonly name: T) {}
+        constructor(public readonly name: T) { }
       }
 
       let theResult = Result.err<Branded<"ok">, Branded<"err">>(

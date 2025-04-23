@@ -8,7 +8,7 @@ For a deep dive on the type, see [the guide](/guide/understanding/maybe.md).
   @module
  */
 
-import { AnyFunction, curry1, isVoid, safeToString } from './-private/utils.js';
+import { type AnyFunction, curry1, isVoid, safeToString } from './-private/utils.js';
 
 /**
   Discriminant for the {@linkcode Just} and {@linkcode Nothing} type instances.
@@ -28,11 +28,18 @@ export interface JustJSON<T> {
   value: T;
 }
 
-export interface NothingJSON {
+
+interface NothingJSON<_T = {}> {
   variant: 'Nothing';
 }
 
-export type MaybeJSON<T extends {}> = JustJSON<T> | NothingJSON;
+export type { NothingJSON }
+
+export type MaybeJSON<T extends {}> = JustJSON<T> | NothingJSON<T>;
+
+export type Serialized<M extends {}> = M extends Maybe<infer U>
+  ? MaybeJSON<Serialized<U>>
+  : MaybeJSON<M>;
 
 type Repr<T extends {}> = [tag: 'Just', value: T] | [tag: 'Nothing'];
 
@@ -257,15 +264,15 @@ class MaybeImpl<T extends {}> implements SomeMaybe<T> {
   }
 
   /** Method variant for {@linkcode toJSON} */
-  toJSON(): MaybeJSON<{}> {
+  toJSON(): Serialized<T> {
     const variant = this.repr[0];
 
+    // Handle nested Maybes
     if (variant === 'Just') {
-      // Handle nested Maybes
-      let value = isInstance(this.repr[1]) ? this.repr[1].toJSON() : this.repr[1];
-      return { variant, value };
+      const value = isInstance(this.repr[1]) ? this.repr[1].toJSON() : this.repr[1];
+      return { variant, value } as Serialized<T>;
     } else {
-      return { variant };
+      return { variant } as Serialized<T>;
     }
   }
 
@@ -915,9 +922,20 @@ export function toString<T extends {}>(maybe: Maybe<T>): string {
  * @param maybe The value to convert to JSON
  * @returns     The JSON representation of the `Maybe`
  */
-export function toJSON<T extends {}>(maybe: Maybe<T>): MaybeJSON<{}> {
+export function toJSON<T extends {}>(maybe: Maybe<T>): Serialized<T> {
   return maybe.toJSON();
 }
+
+/**
+ * Given a {@linkcode MaybeJSON} instance, convert it into a {@linkcode Maybe}.
+ *
+ * @param json The value to convert to JSON
+ * @returns     The JSON representation of the `Maybe`
+ */
+export function fromJSON<T extends {}>(json: MaybeJSON<T>): Maybe<T> {
+  return json.variant === Variant.Just ? just(json.value) : nothing();
+}
+
 
 /**
   A lightweight object defining how to handle each variant of a {@linkcode Maybe}.
@@ -1173,6 +1191,8 @@ export function ap<T extends {}, U extends {}>(
 
   @param item The item to check.
  */
+export function isInstance<T extends {}>(item: Maybe<T>): item is Maybe<T>;
+export function isInstance(item: unknown): item is Maybe<{}>;
 export function isInstance<T extends {}>(item: unknown): item is Maybe<T> {
   return item instanceof Maybe;
 }
@@ -1418,7 +1438,7 @@ export function transposeArray<const T extends ReadonlyArray<Maybe<{}>>>(
   ) as TransposedArray<T>;
 }
 
-export type Unwrapped<T> = T extends Maybe<infer U> ? U : T;
+export type Unwrapped<T> = T extends Maybe<infer U> ? Unwrapped<U> : T;
 
 export type TransposedArray<T extends ReadonlyArray<Maybe<{}>>> =
   // Array only extends T when the item is *not* `readonly`.
