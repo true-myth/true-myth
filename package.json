@@ -69,7 +69,7 @@
     "@types/markdown-it": "^14.1.2",
     "@types/node": "^22.0.0",
     "@vitest/coverage-v8": "^2.1.9",
-    "feed": "^4.2.2",
+    "feed": "^5.0.0",
     "markdown-it-deflist": "^3.0.0",
     "markdown-it-footnote": "^4.0.0",
     "miniglob": "^0.1.2",
