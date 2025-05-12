@@ -76,7 +76,7 @@
     "prettier": "^3.0.0",
     "release-it": "^17.0.1",
     "rimraf": "^6.0.0",
-    "shelljs": "^0.9.1",
+    "shelljs": "^0.10.0",
     "typedoc": "^0.28.0",
     "typedoc-plugin-markdown": "^4.6.0",
     "typedoc-vitepress-theme": "^1.1.2",
