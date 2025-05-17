@@ -126,8 +126,8 @@ class TaskImpl<T, E> implements PromiseLike<Result<T, E>> {
   // unwrapping of “thenables” to produce new `Task`s even when there is an
   // intermediate `Promise`.
   then<A, B>(
-    onSuccess?: (result: Result<T, E>) => A | PromiseLike<A>,
-    onRejected?: (reason: unknown) => B | PromiseLike<B>
+    onSuccess?: ((result: Result<T, E>) => A | PromiseLike<A>) | null | undefined,
+    onRejected?: ((reason: unknown) => B | PromiseLike<B>) | null | undefined
   ): PromiseLike<A | B> {
     return this.#promise.then(onSuccess, onRejected);
   }
