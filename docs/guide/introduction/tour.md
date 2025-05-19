@@ -8,8 +8,6 @@ This page gives a high-level tour of the library, for folks who already have an 
 
 ## Just the API, please
 
-_If you're unsure of why you would want to use the library, you might jump down to [**Why do I need this?**](#why-do-i-need-this)._
-
 These examples don't cover every corner of the API; it's just here to show you what a few of the functions are like. [Full API documentation is available!][docs] You can also [view the source][source] if you prefer.
 
 [docs]: https://true-myth.js.org
