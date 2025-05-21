@@ -100,6 +100,14 @@ describe('`Task`', () => {
     expectTypeOf(result).toEqualTypeOf<Result<string, unknown>>();
     expect(unwrap(result)).toBe('hello');
   });
+  test('assignable to `PromiseLike<Result<A, B>>`', async () => {
+    let result: PromiseLike<Result<string, unknown>> = Task.resolve<string, unknown>('hello');
+    expect(unwrap(await result)).toBe('hello');
+  });
+  test('assignable to `PromiseLike<unknown>`', async () => {
+    let result: PromiseLike<unknown> = Task.resolve<string, unknown>('hello');
+    expect(unwrap(await (result as Task<string, unknown>))).toBe('hello');
+  });
 
   describe('static constructors', () => {
     describe('withResolvers', () => {
