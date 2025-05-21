@@ -74,7 +74,7 @@
     "markdown-it-footnote": "^4.0.0",
     "miniglob": "^0.1.2",
     "prettier": "^3.0.0",
-    "release-it": "^17.0.1",
+    "release-it": "^17.11.0",
     "rimraf": "^6.0.0",
     "shelljs": "^0.10.0",
     "typedoc": "^0.28.0",
