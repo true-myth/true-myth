@@ -5,6 +5,28 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 
+
+## 9.0.1 (2025-05-21)
+
+Fixes an assignability bug with the `PromiseLike` interface and continues cleaning up some docs. This one comes entirely from external contributors—thanks, folks!
+
+#### :bug: Bug Fix
+* [#1051](https://github.com/true-myth/true-myth/pull/1051) Task: align with `PromiseLike` interface ([@auvred](https://github.com/auvred))
+
+#### :memo: Documentation
+* [#1052](https://github.com/true-myth/true-myth/pull/1052) Remove "Why do I need this?" reference ([@viniciuskneves](https://github.com/viniciuskneves))
+* [#1029](https://github.com/true-myth/true-myth/pull/1029) docs/build: add TS 5.8 to matrix ([@chriskrycho](https://github.com/chriskrycho))
+* [#1028](https://github.com/true-myth/true-myth/pull/1028) docs: clarify public API ([@chriskrycho](https://github.com/chriskrycho))
+
+#### :house: Internal
+* [#1030](https://github.com/true-myth/true-myth/pull/1030) build: check build script in CI ([@chriskrycho](https://github.com/chriskrycho))
+
+#### Committers: 3
+- Chris Krycho ([@chriskrycho](https://github.com/chriskrycho))
+- Vinicius Kiatkoski Neves ([@viniciuskneves](https://github.com/viniciuskneves))
+- [@auvred](https://github.com/auvred)
+
+
 ## 9.0.0 (2025-04-16)
 
 Now with nicer internals. cleaner public APIs, a brand new docs site! For more details, see [the announcement blog post](https://v5.chriskrycho.com/elsewhere/true-myth-releases-8.6-9.0-and-a-new-docs-site/).
