@@ -25,7 +25,7 @@ importers:
         version: 2.1.9(vitest@2.1.9(@types/node@22.15.21))
       feed:
         specifier: ^5.0.1
-        version: 5.0.1
+        version: 5.1.0
       markdown-it-deflist:
         specifier: ^3.0.0
         version: 3.0.0
@@ -1237,8 +1237,8 @@ packages:
   fastq@1.19.1:
     resolution: {integrity: sha512-GwLTyxkCXjXbxqIhTsMI2Nui8huMPtnxg7krajPJAjnEG/iiOS7i+zCtWGZR9G0NBKbXKh6X9m9UIsYX/N6vvQ==}
 
-  feed@5.0.1:
-    resolution: {integrity: sha512-kOveKLHucVZ6RI91bdWAts9O0L1N2mGzRGVCDQPRnHh4HmgqLdN66Cp/5dMeJZGn/qnBslWliwX37FEBq8DCIA==}
+  feed@5.1.0:
+    resolution: {integrity: sha512-qGNhgYygnefSkAHHrNHqC7p3R8J0/xQDS/cYUud8er/qD9EFGWyCdUDfULHTJQN1d3H3WprzVwMc9MfB4J50Wg==}
     engines: {node: '>=20', pnpm: '>=10'}
 
   fill-range@7.1.1:
@@ -3861,7 +3861,7 @@ snapshots:
     dependencies:
       reusify: 1.1.0
 
-  feed@5.0.1:
+  feed@5.1.0:
     dependencies:
       xml-js: 1.6.11
 
