@@ -381,8 +381,35 @@ class ResultImpl<T, E> {
     return this.andThen(identity);
   }
 
+  // TODO: think through these semantics. This is basically just an `unwrap()`
+  // with a special error type. We got rid of `unwrap` a long time ago because
+  // in general the better move is to `match`. HMM.
+  orThrow<R extends Err<unknown, E>>(this: R): never;
+  orThrow(this: Result<T, E>): T;
+  orThrow<R extends Err<unknown, E>>(this: R | Result<T, E>): T {
+    if (this.isErr) {
+      throw new ErrorFromResult(this.error);
+    }
+
+    return this.value;
+  }
+
   cast() {
     return this;
+  }
+}
+
+/** An Error produced by calling {@linkcode throw} on an {@linkcode Err} */
+class ErrorFromResult<E> extends Error {
+  get name(): 'TrueMyth.ErrorFromResult' {
+    return 'TrueMyth.ErrorFromResult';
+  }
+
+  readonly cause: E;
+
+  constructor(error: E) {
+    super('Error converted from `Result`', { cause: error });
+    this.cause = error;
   }
 }
 

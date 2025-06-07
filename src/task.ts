@@ -16,8 +16,8 @@ import { curry1, identity, safeToString } from './-private/utils.js';
 import Maybe from './maybe.js';
 import Result, * as result from './result.js';
 import type { AnyResult, SomeResult } from './result.js';
-import Unit from './unit.js';
 import * as delay from './task/delay.js';
+import Unit from './unit.js';
 
 // Make the `delay` namespace available as `task.delay` for convenience, and as
 // `task.Delay` for backward compatibility. This lets people do something like
@@ -174,8 +174,8 @@ class TaskImpl<T, E> implements PromiseLike<Result<T, E>> {
   static resolve(value?: {}): Task<unknown, unknown> {
     // We produce `Unit` *only* in the case where no arguments are passed, so
     // that we can allow `undefined` in the cases where someone explicitly opts
-    // into something like `Result<undefined, Blah>`.
-    let result = arguments.length === 0 ? Unit : value;
+    // into something like `Task<undefined, Blah>`.
+    const result = arguments.length === 0 ? Unit : value;
     return new Task((resolve) => resolve(result));
   }
 
@@ -200,8 +200,8 @@ class TaskImpl<T, E> implements PromiseLike<Result<T, E>> {
   static reject(reason?: {}): Task<unknown, unknown> {
     // We produce `Unit` *only* in the case where no arguments are passed, so
     // that we can allow `undefined` in the cases where someone explicitly opts
-    // into something like `Result<Blah, undefined>`.
-    let result = arguments.length === 0 ? Unit : reason;
+    // into something like `Task<Blah, undefined>`.
+    const result = arguments.length === 0 ? Unit : reason;
     return new Task((_, reject) => reject(result));
   }
 
@@ -242,7 +242,7 @@ class TaskImpl<T, E> implements PromiseLike<Result<T, E>> {
     // SAFETY: immediately initialized via the `Task` constructor’s executor.
     let resolve!: WithResolvers<T, E>['resolve'];
     let reject!: WithResolvers<T, E>['reject'];
-    let task = new Task<T, E>((resolveTask, rejectTask) => {
+    const task = new Task<T, E>((resolveTask, rejectTask) => {
       resolve = resolveTask;
       reject = rejectTask;
     });
@@ -897,8 +897,8 @@ class TaskImpl<T, E> implements PromiseLike<Result<T, E>> {
       if the timer elapsed.
    */
   timeout(timerOrMs: Timer | number): Task<T, E | Timeout> {
-    let timerTask = typeof timerOrMs === 'number' ? timer(timerOrMs) : timerOrMs;
-    let timeout = timerTask.andThen((ms) => Task.reject(new Timeout(ms)));
+    const timerTask = typeof timerOrMs === 'number' ? timer(timerOrMs) : timerOrMs;
+    const timeout = timerTask.andThen((ms) => Task.reject(new Timeout(ms)));
     return race([this as Task<T, E>, timeout]);
   }
 
@@ -1072,8 +1072,8 @@ export function all(tasks: AnyTask[]): Task<unknown, unknown> {
     return Task.resolve([]);
   }
 
-  let total = tasks.length;
-  let oks = Array.from({ length: tasks.length });
+  const total = tasks.length;
+  const oks = Array.from({ length: tasks.length });
   let resolved = 0;
   let hasRejected = false;
 
@@ -1081,7 +1081,7 @@ export function all(tasks: AnyTask[]): Task<unknown, unknown> {
     // Because all tasks will *always* resolve, we need to manage this manually,
     // rather than using `Promise.all`, so that we produce a rejected `Task` as
     // soon as *any* `Task` rejects.
-    for (let [idx, task] of tasks.entries()) {
+    for (const [idx, task] of tasks.entries()) {
       // Instead, each `Task` wires up handlers for resolution and rejection.
       task.match({
         // If it rejected, then check whether one of the other tasks has already
@@ -1236,16 +1236,16 @@ export function any(tasks: readonly [] | readonly AnyTask[]): AnyTask {
     return Task.reject(new AggregateRejection([]));
   }
 
-  let total = tasks.length;
+  const total = tasks.length;
   let hasResolved = false;
-  let rejections = Array.from({ length: tasks.length });
+  const rejections = Array.from({ length: tasks.length });
   let rejected = 0;
 
   return new Task((resolve, reject) => {
     // We cannot use `Promise.any`, because it will only return the first `Task`
     // that resolves, and the `Promise` for a `Task` *always* either resolves if
     // it settles.
-    for (let [idx, task] of tasks.entries()) {
+    for (const [idx, task] of tasks.entries()) {
       // Instead, each `Task` wires up handlers for resolution and rejection.
       task.match({
         // If it resolved, then check whether one of the other tasks has already
@@ -1344,7 +1344,7 @@ export class AggregateRejection<E extends unknown[]> extends Error {
   }
 
   toString() {
-    let internalMessage = this.errors.length > 0 ? `[${safeToString(this.errors)}]` : 'No tasks';
+    const internalMessage = this.errors.length > 0 ? `[${safeToString(this.errors)}]` : 'No tasks';
     return super.toString() + `: ${internalMessage}`;
   }
 }
@@ -1433,7 +1433,7 @@ export type Matcher<T, E, A> = {
   @group Errors
  */
 export class TaskExecutorException extends Error {
-  name = 'TrueMyth.Task.ThrowingExecutor';
+  readonly name = 'TrueMyth.Task.ThrowingExecutor';
 
   constructor(originalError: unknown) {
     super('The executor for `Task` threw an error. This cannot be handled safely.', {
@@ -1452,7 +1452,7 @@ export class UnsafePromise extends Error {
   readonly name = 'TrueMyth.Task.UnsafePromise';
 
   constructor(unhandledError: unknown) {
-    let explanation =
+    const explanation =
       'If you see this message, it means someone constructed a True Myth `Task` with a `Promise<Result<T, E>` but where the `Promise` could still reject. To fix it, make sure all calls to `Task.fromUnsafePromise` have a `catch` handler. Never use `Task.fromUnsafePromise` with a `Promise` on which you cannot verify by inspection that it was created with a catch handler.';
 
     super(`Called 'Task.fromUnsafePromise' with an unsafe promise.\n${explanation}`, {
@@ -1730,7 +1730,7 @@ export function fromPromise<T>(
   promise: Promise<T>,
   onRejection?: (reason: unknown) => unknown
 ): Task<T, unknown> {
-  let handleError = onRejection ?? identity;
+  const handleError = onRejection ?? identity;
   return new Task((resolve, reject) => {
     promise.then(resolve, (reason) => reject(handleError(reason)));
   });
@@ -2116,7 +2116,7 @@ export function safe<
   P extends Parameters<F>,
   E,
 >(fn: F, onError?: (reason: unknown) => E): (...params: P) => Task<unknown, unknown> {
-  let handleError = onError ?? identity;
+  const handleError = onError ?? identity;
   return (...params) => tryOrElse(handleError, () => fn(...params));
 }
 
@@ -2208,10 +2208,10 @@ export function safeNullable<
   R extends Awaited<ReturnType<F>>,
   E,
 >(fn: F, onError?: (reason: unknown) => E): (...params: P) => Task<Maybe<NonNullable<R>>, unknown> {
-  let handleError = onError ?? identity;
+  const handleError = onError ?? identity;
   return (...params) =>
     tryOrElse(handleError, async () => {
-      let theValue = (await fn(...params)) as R;
+      const theValue = (await fn(...params)) as R;
       return Maybe.of(theValue) as Maybe<NonNullable<R>>;
     });
 }
@@ -2883,7 +2883,7 @@ export function flatten<T, E, F>(nestedTask: Task<Task<T, E>, F>): Task<T, E | F
  */
 export function withRetries<T, E>(
   retryable: (status: RetryStatus) => Task<T, E | StopRetrying> | StopRetrying,
-  strategy: delay.Strategy = (function* () {
+  strategy: delay.Strategy = (function*() {
     for (let i = 0; i < 3; i++) {
       yield 0;
     }
@@ -2893,7 +2893,7 @@ export function withRetries<T, E>(
 
   let count = 0;
   let totalDuration = 0;
-  let rejections = new Array<E>();
+  const rejections = new Array<E>();
 
   /**
     Internal helper so the operation can recurse. Note: if you have too large a
@@ -2904,7 +2904,7 @@ export function withRetries<T, E>(
    */
   function helper(): Task<T, RetryFailed<E>> {
     // Try it!
-    let taskOrErr = retryable({ count, elapsed: totalDuration });
+    const taskOrErr = retryable({ count, elapsed: totalDuration });
 
     if (taskOrErr instanceof Error) {
       return Task.reject(
@@ -2939,12 +2939,12 @@ export function withRetries<T, E>(
 
       rejections.push(reason);
 
-      let next = strategy.next();
+      const next = strategy.next();
       if (next.done) {
         return Task.reject(new RetryFailed({ tries: count, totalDuration, rejections }));
       }
 
-      let delay = next.value;
+      const delay = next.value;
       totalDuration += Date.now() - startTime;
       count += 1;
 
