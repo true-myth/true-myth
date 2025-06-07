@@ -51,7 +51,7 @@ declare const IsResult: unique symbol;
 /** A convenient way to name `Result<unknown, unknown>`. */
 export type AnyResult = Result<unknown, unknown>;
 
-type SomeResult<T, E> = { [IsResult]: [T, E] };
+export type SomeResult<T, E> = { [IsResult]: [T, E] };
 
 /** @internal */
 export type TypesFor<R extends AnyResult> = R extends SomeResult<infer T, infer E>
