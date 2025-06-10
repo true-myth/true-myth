@@ -67,7 +67,7 @@
     "@biomejs/biome": "1.9.4",
     "@release-it-plugins/lerna-changelog": "^7.0.0",
     "@types/markdown-it": "^14.1.2",
-    "@types/node": "^22.15.21",
+    "@types/node": "^24.0.0",
     "@vitest/coverage-v8": "^2.1.9",
     "feed": "^5.0.1",
     "markdown-it-deflist": "^3.0.0",
