@@ -3,22 +3,18 @@
   "compilerOptions": {
     "target": "es2022",
     "module": "Node16",
-    "lib": ["es2022"],
-
+    "lib": [
+      "es2022",
+      // For `setTimeout`.
+      "DOM"
+    ],
     "strict": true,
     "noUncheckedIndexedAccess": true,
     "exactOptionalPropertyTypes": true,
-
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noImplicitReturns": true,
-
     "moduleResolution": "Node16",
-
-    // Normally, this is a *very* bad idea. However, here the library *itself*
-    // has no dependencies, and so type checking should always be completely
-    // localized.
-    "skipLibCheck": true
   },
   // as a base, don't include anything: specify that in the other files
   "include": []

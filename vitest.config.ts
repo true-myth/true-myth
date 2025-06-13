@@ -1,11 +1,9 @@
+import tsconfigPaths from 'vite-tsconfig-paths';
 import { defineConfig } from 'vitest/config';
-import path from 'path';
 
 export default defineConfig({
+  plugins: [tsconfigPaths()],
   test: {
-    alias: {
-      'true-myth': path.resolve(__dirname, './src'),
-    },
     include: ['test/*.test.ts'],
     typecheck: {
       enabled: true,
