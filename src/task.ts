@@ -1199,9 +1199,6 @@ export class TaskExecutorException extends Error {
   constructor(originalError: unknown) {
     super(
       'The executor for `Task` threw an error. This cannot be handled safely.',
-      // TODO (v9.0): remove this.
-      // @ts-ignore -- the types for `cause` required `Error | undefined` for a
-      // while before being loosened to allow `unknown`.
       { cause: originalError }
     );
   }
@@ -1222,9 +1219,6 @@ export class UnsafePromise extends Error {
 
     super(
       `Called 'Task.fromUnsafePromise' with an unsafe promise.\n${explanation}`,
-      // TODO (v9.0): remove this.
-      // @ts-ignore -- the types for `cause` required `Error | undefined` for a
-      // while before being loosened to allow `unknown`.
       { cause: unhandledError }
     );
   }
