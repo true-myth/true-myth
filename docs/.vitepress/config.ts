@@ -21,6 +21,7 @@ export default defineConfig({
       { text: 'Guide', link: '/guide/introduction/' },
       { text: 'API', link: '/api/' },
       { text: 'Releases', link: 'https://github.com/true-myth/true-myth/releases' },
+      { text: 'true-myth-zod', link: 'https://github.com/true-myth/true-myth-zod' },
     ],
 
     sidebar: {
