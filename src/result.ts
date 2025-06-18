@@ -1453,6 +1453,103 @@ export function isInstance<T, E>(item: unknown): item is Result<T, E> {
   return item instanceof ResultImpl;
 }
 
+type AnyResults = readonly AnyResult[];
+
+type OkType<A extends AnyResults> = { [P in keyof A]: OkFor<A[P]> };
+
+type OkForSome<A extends AnyResults> = OkType<A>[number][];
+
+type OkForAll<A extends AnyResults> = [...OkType<A>];
+
+type ErrType<A extends AnyResults> = { [P in keyof A]: ErrFor<A[P]> };
+
+type ErrForSome<A extends AnyResults> = ErrType<A>[number][];
+
+/**
+  A type utility for mapping an input array of results into the appropriate output
+  for `all`.
+
+  @internal
+ */
+export type All<A extends AnyResults> = Result<OkForAll<A>, ErrForSome<A>>;
+
+type ReducedResult<A extends AnyResults> = {
+  readonly oks: OkForSome<A>;
+  readonly errs: ErrForSome<A>;
+};
+
+function isAllOk<A extends AnyResults>(
+  result: ReducedResult<A>
+): result is { oks: OkForAll<A>; errs: [] } {
+  return result.errs.length === 0;
+}
+
+/**
+  Given an array of results, return a new `OK` if all results are {@linkcode Ok} or a new `Err` if some result is {@linkcode Err}.
+
+  ## Examples
+
+  If all results are {@linkcode Ok}:
+
+  ```ts
+  import Result, { all } from 'true-myth/result';
+
+  let result = all([
+    Result.ok(10),
+    Result.ok(100),
+    Result.ok(1000)
+  ]);
+
+  console.log(result.toString()); // Ok(10,100,1000)
+  ```
+
+  If any result is {@linkcode Err}:
+
+  ```ts
+  import Result, { all } from 'true-myth/result';
+
+  let result = all([
+    Result.ok(10),
+    Result.ok(100),
+    Result.err("something went wrong")
+  ]);
+
+  console.log(result.toString()); // Err(something went wrong)
+  ```
+
+  @param results The list of results.
+
+  @template A The type of the array or tuple of results.
+*/
+export function all<const A extends AnyResults>(results: A): All<A> {
+  const reducedResult = results.reduce<ReducedResult<A>>(
+    (resultsReducer, result) => {
+      const { oks: oksReducer, errs: errsReducer } = resultsReducer;
+
+      return result.match({
+        // If the result is an `Ok`, add it to the list of oks.
+        Ok: (value) => {
+          return { oks: [...oksReducer, value], errs: errsReducer };
+        },
+        // If the result is an `Err`, add it to the list of errs.
+        Err: (error) => {
+          return { oks: oksReducer, errs: [...errsReducer, error] };
+        },
+      });
+    },
+    { oks: [], errs: [] }
+  );
+
+  // If there are no errors, it can be safely assumed that all results were `Ok`
+  // and return an `Ok` with the list of oks.
+  if (isAllOk(reducedResult)) {
+    return Result.ok(reducedResult.oks);
+  }
+
+  // If not all taks were `Ok`, return an `Err` with the list of errors.
+  return Result.err(reducedResult.errs);
+}
+
 /**
   The public interface for the {@linkcode Result} class *as a value*: the static
   constructors `ok` and `err` produce a `Result` with that variant.
