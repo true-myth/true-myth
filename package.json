@@ -65,7 +65,7 @@
   "license": "MIT",
   "devDependencies": {
     "@biomejs/biome": "2.0.0",
-    "@release-it-plugins/lerna-changelog": "^7.0.0",
+    "@release-it-plugins/lerna-changelog": "^8.0.1",
     "@types/markdown-it": "^14.1.2",
     "@vitest/coverage-v8": "^2.1.9",
     "feed": "^5.0.1",
