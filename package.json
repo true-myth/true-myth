@@ -67,7 +67,7 @@
     "@biomejs/biome": "2.0.5",
     "@release-it-plugins/lerna-changelog": "^8.0.1",
     "@types/markdown-it": "^14.1.2",
-    "@vitest/coverage-v8": "^2.1.9",
+    "@vitest/coverage-v8": "^3.2.4",
     "feed": "^5.0.1",
     "markdown-it-deflist": "^3.0.0",
     "markdown-it-footnote": "^4.0.0",
@@ -82,7 +82,7 @@
     "typescript": "5.3.3",
     "vite-tsconfig-paths": "^5.1.4",
     "vitepress": "^1.6.3",
-    "vitest": "^2.1.9"
+    "vitest": "^3.2.4"
   },
   "engines": {
     "node": "18.* || >= 20.*"
@@ -115,6 +115,9 @@
   "pnpm": {
     "onlyBuiltDependencies": [
       "@biomejs/biome"
-    ]
+    ],
+    "overrides": {
+      "vite": "npm:rolldown-vite@latest"
+    }
   }
 }
