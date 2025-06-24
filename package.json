@@ -115,6 +115,9 @@
   "pnpm": {
     "onlyBuiltDependencies": [
       "@biomejs/biome"
-    ]
+    ],
+    "overrides": {
+      "vite": "npm:rolldown-vite@latest"
+    }
   }
 }
