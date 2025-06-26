@@ -1472,11 +1472,13 @@ export type All<A extends AnyResults> = Result<
 >;
 
 /**
-  Given an array of results, return a new `OK` if all results are {@linkcode Ok} or a new `Err` if some result is {@linkcode Err}.
+  Given an array of results, return a new {@linkcode Ok} result if all results are {@linkcode Ok}
+  or a new {@linkcode Err} result if some result is {@linkcode Err}.
 
   ## Examples
 
-  If all results are {@linkcode Ok}, return a new `Ok` containing an array of all given `Ok` values:
+  If all results are {@linkcode Ok}, return a new {@linkcode Ok} result containing an array of all
+  given {@linkcode Ok} values:
 
   ```ts
   import Result, { all } from 'true-myth/result';
@@ -1490,7 +1492,8 @@ export type All<A extends AnyResults> = Result<
   console.log(result.toString()); // Ok(10,100,1000)
   ```
 
-  If any result is {@linkcode Err}, return a new `Err` containing the first error encountered:
+  If any result is {@linkcode Err}, return a new {@linkcode Err} result containing the first
+  {@linkcode Err} encountered:
 
   ```ts
   import Result, { all } from 'true-myth/result';
@@ -1505,6 +1508,9 @@ export type All<A extends AnyResults> = Result<
   ```
 
   @param results The list of results.
+  @return A new {@linkcode Result} containing an array of all {@linkcode Ok} values if all
+    results are {@linkcode Ok}, or a new {@linkcode Err} result containing the first
+    {@linkcode Err} encountered.
 
   @template A The type of the array or tuple of results.
 */
@@ -1536,11 +1542,13 @@ export type AllResults<A extends AnyResults> = Result<
 >;
 
 /**
-  Given an array of results, return a new `OK` if all results are {@linkcode Ok} or a new `Err` if some result is {@linkcode Err}.
+  Given an array of results, return a new {@linkcode Ok} result if all results are {@linkcode Ok}
+  or a new {@linkcode Err} result if some result is {@linkcode Err}.
 
   ## Examples
 
-  If all results are {@linkcode Ok}, return a new `Ok` containing an array of all given `Ok` values:
+  If all results are {@linkcode Ok}, return a new {@linkcode Ok} result containing an array of
+  all given {@linkcode Ok} values:
 
   ```ts
   import Result, { all } from 'true-myth/result';
@@ -1554,7 +1562,8 @@ export type AllResults<A extends AnyResults> = Result<
   console.log(result.toString()); // Ok(10,100,1000)
   ```
 
-  If any result is {@linkcode Err}, return a new `Err` containing an array of all errors encountered:
+  If any result is {@linkcode Err}, return a new {@linkcode Err} result containing an array of all
+  {@linkcode Err} encountered:
 
   ```ts
   import Result, { all } from 'true-myth/result';
@@ -1569,6 +1578,9 @@ export type AllResults<A extends AnyResults> = Result<
   ```
 
   @param results The list of results.
+  @return A new {@linkcode Result} containing an array of all {@linkcode Ok} values if all results
+    are {@linkcode Ok}, or a new {@linkcode Err} result containing an array of all {@linkcode Err}
+    encountered.
 
   @template A The type of the array or tuple of results.
 */
@@ -1591,6 +1603,71 @@ export function allResults(results: AnyResults): Result<unknown[], unknown[]> {
   }
 
   return Result.ok(oks);
+}
+
+/**
+  Given an array of results, return a new {@linkcode Ok} result if _any_ of the results is
+  {@linkcode Ok}, or a new {@linkcode Err} result if _all_ the results are {@linkcode Err}.
+
+  ## Examples
+
+  When any result is {@linkcode Ok}, return a new {@linkcode Ok} result containing the value of
+  the first {@linkcode Ok} result:
+
+  ```ts
+  import { any } from 'true-myth/result';
+
+  let result = any([
+    Result.err("something went wrong"),
+    Result.ok(10),
+    Result.err("something else went wrong")
+  ]);
+
+  console.log(result.toString()); // Ok(10);
+  ```
+
+  When all results are {@linkcode Err}, return a new {@linkcode Err} result containing an array of
+  all {@linkcode Err} encountered:
+
+  ```ts
+  import { any } from 'true-myth/result';
+
+  let result = any([
+    Result.err("something went wrong"),
+    Result.err("something else went wrong"),
+    Result.err("even more went wrong")
+  ]);
+
+  console.log(result.toString()); // Err(something went wrong,something else went wrong,even more went wrong)
+  ```
+
+  @param results The list of results to check.
+  @returns A new {@linkcode Result} containing the value of the first {@linkcode Ok} result if any
+    results are {@linkcode Ok}, or a new {@linkcode Err} result containing an array of all
+    {@linkcode Err} encountered if all results are {@linkcode Err}.
+
+  @template A The type of the array or tuple of tasks.
+*/
+export function any(results: []): Result<[], never>;
+export function any<const A extends AnyResults>(
+  results: A
+): Result<ResultTypesFor<A>['ok'], [...ResultTypesFor<A>['err']]>;
+export function any(results: readonly [] | readonly AnyResult[]): Result<unknown, unknown[]> {
+  if (results.length === 0) {
+    return Result.err([]);
+  }
+
+  const errs = [];
+
+  for (const result of results) {
+    if (result.isOk) {
+      return Result.ok(result.value);
+    } else {
+      errs.push(result.error);
+    }
+  }
+
+  return Result.err(errs);
 }
 
 /**
