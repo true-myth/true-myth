@@ -616,7 +616,7 @@ describe('`Result` pure functions', () => {
   });
 });
 
-describe('allResults method', () => {
+describe('`allResults` method', () => {
   test('with empty results', () => {
     const empty = result.allResults([]);
 
@@ -651,6 +651,44 @@ describe('allResults method', () => {
     const someErr = result.allResults([result.ok(1), result.err('error 2'), result.ok(3)]);
 
     expect(someErr).toEqual(result.err(['error 2']));
+  });
+});
+
+describe('`any` method', () => {
+  test('with empty results', () => {
+    const empty = result.any([]);
+
+    expect(empty).toEqual(result.err([]));
+  });
+
+  test('with one Ok', () => {
+    const oneOk = result.any([result.ok(1)]);
+
+    expect(oneOk).toEqual(result.ok(1));
+  });
+
+  test('with one Err', () => {
+    const oneErr = result.any([result.err('error 1')]);
+
+    expect(oneErr).toEqual(result.err(['error 1']));
+  });
+
+  test('with all Ok', () => {
+    const allOk = result.any([result.ok(1), result.ok(2), result.ok(3)]);
+
+    expect(allOk).toEqual(result.ok(1));
+  });
+
+  test('with all Err', () => {
+    const allErr = result.any([result.err('error 1'), result.err('error 2')]);
+
+    expect(allErr).toEqual(result.err(['error 1', 'error 2']));
+  });
+
+  test('with some Err', () => {
+    const someErr = result.any([result.err('error 1'), result.err('error 2'), result.ok(3)]);
+
+    expect(someErr).toEqual(result.ok(3));
   });
 });
 
