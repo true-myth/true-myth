@@ -1240,7 +1240,7 @@ function unreachable(value: never): never {
   The public interface for the {@linkcode Task} class *as a value*: a
   constructor and the associated static properties.
  */
-export interface TaskConstructor extends Omit<typeof TaskImpl, 'constructor'> {
+export interface TaskConstructor {
   /**
     Construct a new `Task`, using callbacks to wrap APIs which do not natively
     provide a `Promise`.
@@ -1271,6 +1271,71 @@ export interface TaskConstructor extends Omit<typeof TaskImpl, 'constructor'> {
   new <T, E>(
     executor: (resolve: (value: T) => void, reject: (reason: E) => void) => void
   ): Task<T, E>;
+
+  /**
+    Construct a `Task` which is already resolved. Useful when you have a value
+    already, but need it to be available in an API which expects a `Task`.
+
+    @group Constructors
+   */
+  resolve<T extends Unit, E = never>(): Task<Unit, E>;
+  /**
+    Construct a `Task` which is already resolved. Useful when you have a value
+    already, but need it to be available in an API which expects a `Task`.
+
+    @group Constructors
+   */
+  resolve<T, E = never>(value: T): Task<T, E>;
+
+  /**
+    Construct a `Task` which is already rejected. Useful when you have an error
+    already, but need it to be available in an API which expects a `Task`.
+
+    @group Constructors
+   */
+  reject<T = never, E extends {} = {}>(): Task<T, Unit>;
+  /**
+    Construct a `Task` which is already rejected. Useful when you have an error
+    already, but need it to be available in an API which expects a `Task`.
+
+    @group Constructors
+   */
+  reject<T = never, E = unknown>(reason: E): Task<T, E>;
+
+  /**
+    Create a pending `Task` and supply `resolveWith` and `rejectWith` helpers,
+    similar to the [`Promise.withResolvers`][pwr] static method, but producing a
+    `Task` with the usual safety guarantees.
+
+    [pwr]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/withResolvers
+
+    ## Examples
+
+    ### Resolution
+
+    ```ts
+    let { task, resolveWith, rejectWith } = Task.withResolvers<string, Error>();
+    resolveWith("Hello!");
+
+    let result = await task.map((s) => s.length);
+    let length = result.unwrapOr(0);
+    console.log(length); // 5
+    ```
+
+    ### Rejection
+
+    ```ts
+    let { task, resolveWith, rejectWith } = Task.withResolvers<string, Error>();
+    rejectWith(new Error("oh teh noes!"));
+
+    let result = await task.mapRejection((s) => s.length);
+    let errLength = result.isErr ? result.error : 0;
+    console.log(errLength); // 5
+    ```
+
+    @group Constructors
+   */
+  withResolvers<T, E>(): WithResolvers<T, E>
 }
 
 // Duplicate documentation because it will show up more nicely when rendered in

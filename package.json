@@ -52,7 +52,7 @@
     "type-check": "tsc --noEmit",
     "docs": "pnpm docs:prepare && pnpm docs:build",
     "docs:prepare": "typedoc --tsconfig docs/tsconfig.json src",
-    "docs:dev": "vitepress dev docs",
+    "docs:dev": "pnpm docs:prepare && vitepress dev docs",
     "docs:build": "vitepress build docs",
     "docs:preview": "vitepress preview docs"
   },
