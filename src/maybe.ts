@@ -1284,15 +1284,16 @@ export function find<T, U extends T>(
   first(mixed); // => Just(Nothing)
   ```
 
-  @note Unfortunately, it is not possible to distinguish between these
-    statically in a single call signature in a reasonable way: we do not want to
-    change the types and runtime result produced by calling this function simply
-    because the input array had *its* type changed (to include, or not include,
-    `null` or `undefined`). Although the types and runtime could be guaranteed
-    to align, correctly doing so would require every item in the array to check
-    whether *any* items are `null` or `undefined`, making the performance linear
-    on the size of the array ($O(n)$) instead of constant time ($O(1)$). This is
-    _quite_ undesirable!
+  > [!NOTE]
+  > Unfortunately, it is not possible to distinguish between these
+  > statically in a single call signature in a reasonable way: we do not want to
+  > change the types and runtime result produced by calling this function simply
+  > because the input array had *its* type changed (to include, or not include,
+  > `null` or `undefined`). Although the types and runtime could be guaranteed
+  > to align, correctly doing so would require every item in the array to check
+  > whether *any* items are `null` or `undefined`, making the performance linear
+  > on the size of the array ($O(n)$) instead of constant time ($O(1)$). This is
+  > _quite_ undesirable!
 
   @param array The array to get the first item from.
  */
@@ -1326,15 +1327,16 @@ export function first(array: AnyArray<unknown>): Maybe<Maybe<{}>> {
   last(mixed); // Just(Nothing)
   ```
 
-  @note Unfortunately, it is not possible to distinguish between these
-    statically in a single call signature in a reasonable way: we do not want to
-    change the types and runtime result produced by calling this function simply
-    because the input array had *its* type changed (to include, or not include,
-    `null` or `undefined`). Although the types and runtime could be guaranteed
-    to align, correctly doing so would require every item in the array to check
-    whether *any* items are `null` or `undefined`, making the performance linear
-    on the size of the array ($O(n)$) instead of constant time ($O(1)$). This is
-    _quite_ undesirable!
+  > [!NOTE]
+  > Unfortunately, it is not possible to distinguish between these
+  > statically in a single call signature in a reasonable way: we do not want to
+  > change the types and runtime result produced by calling this function simply
+  > because the input array had *its* type changed (to include, or not include,
+  > `null` or `undefined`). Although the types and runtime could be guaranteed
+  > to align, correctly doing so would require every item in the array to check
+  > whether *any* items are `null` or `undefined`, making the performance linear
+  > on the size of the array ($O(n)$) instead of constant time ($O(1)$). This is
+  > _quite_ undesirable!
 
   @param array The array to get the first item from.
  */

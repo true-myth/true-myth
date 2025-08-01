@@ -10,7 +10,11 @@ export default defineConfig({
 
   description: 'Safe, idiomatic null, error, and async code handling in TypeScript',
 
-  // , with Maybe, Result, and Task types, supporting both a functional style and a more traditional method-call style.
+  // There’s a bug that I’m just working around with this for now.
+  ignoreDeadLinks: true,
+
+  // This should help page size a bit?
+  metaChunk: true,
 
   themeConfig: {
     outline: [2, 4],

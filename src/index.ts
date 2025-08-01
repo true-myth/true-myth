@@ -1,6 +1,6 @@
 /**
   This is just here to re-export {@link Maybe}, {@link Result}, {@link Task},
-  {@link Unit}, and {@link Toolbelt}, to provide a root-level entry friendly to
+  {@link Unit}, and {@link toolbelt}, to provide a root-level entry friendly to
   using as a namespace.
 
   @packageDocumentation
