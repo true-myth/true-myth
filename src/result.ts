@@ -1453,6 +1453,223 @@ export function isInstance<T, E>(item: unknown): item is Result<T, E> {
   return item instanceof ResultImpl;
 }
 
+type AnyResults = readonly AnyResult[];
+
+type ResultTypesFor<A extends AnyResults> = {
+  ok: { -readonly [P in keyof A]: OkFor<A[P]> };
+  err: { -readonly [P in keyof A]: ErrFor<A[P]> };
+};
+
+/**
+  A type utility for mapping an input array of results into the appropriate output
+  for `all`.
+
+  @internal
+ */
+export type All<A extends AnyResults> = Result<
+  [...ResultTypesFor<A>['ok']],
+  ResultTypesFor<A>['err']
+>;
+
+/**
+  Given an array of results, return a new {@linkcode Ok} result if all results are {@linkcode Ok}
+  or a new {@linkcode Err} result if some result is {@linkcode Err}.
+
+  ## Examples
+
+  If all results are {@linkcode Ok}, return a new {@linkcode Ok} result containing an array of all
+  given {@linkcode Ok} values:
+
+  ```ts
+  import Result, { all } from 'true-myth/result';
+
+  let result = all([
+    Result.ok(10),
+    Result.ok(100),
+    Result.ok(1000)
+  ]);
+
+  console.log(result.toString()); // Ok(10,100,1000)
+  ```
+
+  If any result is {@linkcode Err}, return a new {@linkcode Err} result containing the first
+  {@linkcode Err} encountered:
+
+  ```ts
+  import Result, { all } from 'true-myth/result';
+
+  let result = all([
+    Result.ok(10),
+    Result.ok("something went wrong"),
+    Result.err("something else went wrong")
+  ]);
+
+  console.log(result.toString()); // Err(something went wrong)
+  ```
+
+  @param results The list of results.
+  @return A new {@linkcode Result} containing an array of all {@linkcode Ok} values if all
+    results are {@linkcode Ok}, or a new {@linkcode Err} result containing the first
+    {@linkcode Err} encountered.
+
+  @template A The type of the array or tuple of results.
+*/
+export function all(results: readonly []): Result<[], never>;
+export function all<const A extends AnyResults>(results: A): All<A>;
+export function all(results: AnyResults): Result<unknown[], unknown> {
+  const oks = [];
+
+  for (const result of results) {
+    if (result.isErr) {
+      return Result.err(result.error);
+    }
+
+    oks.push(result.value);
+  }
+
+  return Result.ok(oks);
+}
+
+/**
+  A type utility for mapping an input array of results into the appropriate output
+  for `allResults`.
+
+  @internal
+ */
+export type AllResults<A extends AnyResults> = Result<
+  [...ResultTypesFor<A>['ok']],
+  ResultTypesFor<A>['err'][]
+>;
+
+/**
+  Given an array of results, return a new {@linkcode Ok} result if all results are {@linkcode Ok}
+  or a new {@linkcode Err} result if some result is {@linkcode Err}.
+
+  ## Examples
+
+  If all results are {@linkcode Ok}, return a new {@linkcode Ok} result containing an array of
+  all given {@linkcode Ok} values:
+
+  ```ts
+  import Result, { all } from 'true-myth/result';
+
+  let result = all([
+    Result.ok(10),
+    Result.ok(100),
+    Result.ok(1000)
+  ]);
+
+  console.log(result.toString()); // Ok(10,100,1000)
+  ```
+
+  If any result is {@linkcode Err}, return a new {@linkcode Err} result containing an array of all
+  {@linkcode Err} encountered:
+
+  ```ts
+  import Result, { all } from 'true-myth/result';
+
+  let result = all([
+    Result.ok(10),
+    Result.ok("something went wrong"),
+    Result.err("something else went wrong")
+  ]);
+
+  console.log(result.toString()); // Err(something went wrong,something else went wrong)
+  ```
+
+  @param results The list of results.
+  @return A new {@linkcode Result} containing an array of all {@linkcode Ok} values if all results
+    are {@linkcode Ok}, or a new {@linkcode Err} result containing an array of all {@linkcode Err}
+    encountered.
+
+  @template A The type of the array or tuple of results.
+*/
+export function allResults(results: readonly []): Result<[], never>;
+export function allResults<const A extends AnyResults>(results: A): AllResults<A>;
+export function allResults(results: AnyResults): Result<unknown[], unknown[]> {
+  const oks = [];
+  const errs = [];
+
+  for (const result of results) {
+    if (result.isErr) {
+      errs.push(result.error);
+    } else if (errs.length === 0) {
+      oks.push(result.value);
+    }
+  }
+
+  if (errs.length > 0) {
+    return Result.err(errs);
+  }
+
+  return Result.ok(oks);
+}
+
+/**
+  Given an array of results, return a new {@linkcode Ok} result if _any_ of the results is
+  {@linkcode Ok}, or a new {@linkcode Err} result if _all_ the results are {@linkcode Err}.
+
+  ## Examples
+
+  When any result is {@linkcode Ok}, return a new {@linkcode Ok} result containing the value of
+  the first {@linkcode Ok} result:
+
+  ```ts
+  import { any } from 'true-myth/result';
+
+  let result = any([
+    Result.err("something went wrong"),
+    Result.ok(10),
+    Result.err("something else went wrong")
+  ]);
+
+  console.log(result.toString()); // Ok(10);
+  ```
+
+  When all results are {@linkcode Err}, return a new {@linkcode Err} result containing an array of
+  all {@linkcode Err} encountered:
+
+  ```ts
+  import { any } from 'true-myth/result';
+
+  let result = any([
+    Result.err("something went wrong"),
+    Result.err("something else went wrong"),
+    Result.err("even more went wrong")
+  ]);
+
+  console.log(result.toString()); // Err(something went wrong,something else went wrong,even more went wrong)
+  ```
+
+  @param results The list of results to check.
+  @returns A new {@linkcode Result} containing the value of the first {@linkcode Ok} result if any
+    results are {@linkcode Ok}, or a new {@linkcode Err} result containing an array of all
+    {@linkcode Err} encountered if all results are {@linkcode Err}.
+
+  @template A The type of the array or tuple of tasks.
+*/
+export function any(results: []): Result<[], never>;
+export function any<const A extends AnyResults>(
+  results: A
+): Result<ResultTypesFor<A>['ok'], [...ResultTypesFor<A>['err']]>;
+export function any(results: readonly [] | readonly AnyResult[]): Result<unknown, unknown[]> {
+  if (results.length === 0) {
+    return Result.err([]);
+  }
+
+  const errs = [];
+
+  for (const result of results) {
+    if (result.isOk) {
+      return Result.ok(result.value);
+    } else {
+      errs.push(result.error);
+    }
+  }
+
+  return Result.err(errs);
+}
+
 /**
   The public interface for the {@linkcode Result} class *as a value*: the static
   constructors `ok` and `err` produce a `Result` with that variant.
