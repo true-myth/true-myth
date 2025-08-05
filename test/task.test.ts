@@ -2003,7 +2003,11 @@ describe('module-scope functions', () => {
         throwErr = false,
         rejectPromise = false,
         returnNull = false,
-      }: { throwErr?: boolean; rejectPromise?: boolean; returnNull?: boolean } = {
+      }: {
+        throwErr?: boolean;
+        rejectPromise?: boolean;
+        returnNull?: boolean;
+      } = {
         throwErr: false,
         rejectPromise: false,
         returnNull: false,
@@ -2025,7 +2029,11 @@ describe('module-scope functions', () => {
       expectTypeOf(safeExample).toEqualTypeOf<
         (
           value: number,
-          should?: { throwErr?: boolean; rejectPromise?: boolean; returnNull?: boolean }
+          should?: {
+            throwErr?: boolean;
+            rejectPromise?: boolean;
+            returnNull?: boolean;
+          }
         ) => Task<Maybe<number>, unknown>
       >();
 
@@ -2082,7 +2090,11 @@ describe('module-scope functions', () => {
       expectTypeOf(safeExample).toEqualTypeOf<
         (
           value: number,
-          should?: { throwErr?: boolean; rejectPromise?: boolean; returnNull?: boolean }
+          should?: {
+            throwErr?: boolean;
+            rejectPromise?: boolean;
+            returnNull?: boolean;
+          }
         ) => Task<Maybe<number>, string>
       >();
 
