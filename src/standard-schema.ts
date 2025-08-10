@@ -1,3 +1,12 @@
+/**
+  Provides useful integrations between True Myth’s {@linkcode Result} and
+  {@linkcode Task} types and any library that implements [Standard Schema][ss].
+
+  [ss]: https://standardschema.dev
+
+  @module
+ */
+
 import Result, * as result from './result.js';
 import Task, * as task from './task.js';
 
