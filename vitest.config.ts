@@ -1,15 +1,22 @@
 import tsconfigPaths from 'vite-tsconfig-paths';
 import { defineConfig } from 'vitest/config';
 
-export default defineConfig({
+export const BaseConfig = defineConfig({
   plugins: [tsconfigPaths()],
+});
+
+export default defineConfig({
+  ...BaseConfig,
   test: {
-    include: ['test/*.test.ts'],
     typecheck: {
+      tsconfig: './ts/test.tsconfig.json',
       enabled: true,
       include: ['test/*.test.ts'],
     },
+    include: ['test/**/*.test.ts'],
+    exclude: ['test/integration'],
     coverage: {
+      enabled: true,
       reporter: ['text'],
       include: ['src/**/*.ts'],
       exclude: ['src/index.ts'],
@@ -20,5 +27,5 @@ export default defineConfig({
         lines: 100,
       },
     },
-  },
+  }
 });

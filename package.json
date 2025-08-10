@@ -47,9 +47,9 @@
     "clean": "rimraf ./dist",
     "prepublishOnly": "pnpm test && pnpm build",
     "postpublish": "pnpm clean",
-    "test": "vitest run --coverage",
+    "test": "vitest run",
     "tdd": "vitest",
-    "type-check": "tsc --noEmit",
+    "type-check": "tsc --noEmit --project ts/test.tsconfig.json",
     "docs": "pnpm docs:prepare && pnpm docs:build",
     "docs:prepare": "typedoc --tsconfig docs/tsconfig.json src",
     "docs:dev": "pnpm docs:prepare && vitepress dev docs",
@@ -68,6 +68,8 @@
     "@release-it-plugins/lerna-changelog": "^8.0.1",
     "@types/markdown-it": "^14.1.2",
     "@vitest/coverage-v8": "^3.2.4",
+    "arktype": "^2.1.20",
+    "effect": "^3.17.5",
     "feed": "^5.0.1",
     "markdown-it-deflist": "^3.0.0",
     "markdown-it-footnote": "^4.0.0",
@@ -81,9 +83,11 @@
     "typedoc-plugin-markdown": "^4.8.0",
     "typedoc-vitepress-theme": "^1.1.2",
     "typescript": "5.3.3",
+    "valibot": "^1.1.0",
     "vite-tsconfig-paths": "^5.1.4",
     "vitepress": "^2.0.0-alpha.9",
-    "vitest": "^3.2.4"
+    "vitest": "^3.2.4",
+    "zod": "4"
   },
   "engines": {
     "node": "18.* || >= 20.*"

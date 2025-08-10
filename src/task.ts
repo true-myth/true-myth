@@ -1197,10 +1197,9 @@ export class TaskExecutorException extends Error {
   name = 'TrueMyth.Task.ThrowingExecutor';
 
   constructor(originalError: unknown) {
-    super(
-      'The executor for `Task` threw an error. This cannot be handled safely.',
-      { cause: originalError }
-    );
+    super('The executor for `Task` threw an error. This cannot be handled safely.', {
+      cause: originalError,
+    });
   }
 }
 
@@ -1217,10 +1216,9 @@ export class UnsafePromise extends Error {
     let explanation =
       'If you see this message, it means someone constructed a True Myth `Task` with a `Promise<Result<T, E>` but where the `Promise` could still reject. To fix it, make sure all calls to `Task.fromUnsafePromise` have a `catch` handler. Never use `Task.fromUnsafePromise` with a `Promise` on which you cannot verify by inspection that it was created with a catch handler.';
 
-    super(
-      `Called 'Task.fromUnsafePromise' with an unsafe promise.\n${explanation}`,
-      { cause: unhandledError }
-    );
+    super(`Called 'Task.fromUnsafePromise' with an unsafe promise.\n${explanation}`, {
+      cause: unhandledError,
+    });
   }
 }
 
@@ -1335,7 +1333,7 @@ export interface TaskConstructor {
 
     @group Constructors
    */
-  withResolvers<T, E>(): WithResolvers<T, E>
+  withResolvers<T, E>(): WithResolvers<T, E>;
 }
 
 // Duplicate documentation because it will show up more nicely when rendered in

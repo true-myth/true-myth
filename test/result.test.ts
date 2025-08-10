@@ -418,18 +418,27 @@ describe('`Result` pure functions', () => {
   test('`toJSON`', () => {
     const theValue = { thisIsReally: 'something', b: null };
     const anOk = result.ok(theValue);
-    expect(result.toJSON(anOk)).toEqual({ variant: Variant.Ok, value: theValue });
+    expect(result.toJSON(anOk)).toEqual({
+      variant: Variant.Ok,
+      value: theValue,
+    });
 
     const errValue = ['oh', 'no', null];
     const anErr = result.err(errValue);
-    expect(result.toJSON(anErr)).toEqual({ variant: Variant.Err, error: errValue });
+    expect(result.toJSON(anErr)).toEqual({
+      variant: Variant.Err,
+      error: errValue,
+    });
   });
 
   test('`toJSON` through serialization', () => {
     const actualSerializedOk = JSON.stringify(result.ok(42));
     const actualSerializedErr = JSON.stringify(result.err({ someInfo: 'error' }));
     const actualSerializedUnitErr = JSON.stringify(result.err());
-    const expectedSerializedOk = JSON.stringify({ variant: Variant.Ok, value: 42 });
+    const expectedSerializedOk = JSON.stringify({
+      variant: Variant.Ok,
+      value: 42,
+    });
     const expectedSerializedErr = JSON.stringify({
       variant: Variant.Err,
       error: { someInfo: 'error' },
@@ -516,7 +525,9 @@ describe('`Result` pure functions', () => {
 
     function example(
       value: number,
-      { throwErr: shouldThrow = false }: { throwErr?: boolean } = { throwErr: false }
+      { throwErr: shouldThrow = false }: { throwErr?: boolean } = {
+        throwErr: false,
+      }
     ): string {
       if (shouldThrow) {
         throw new Error(THE_MESSAGE);

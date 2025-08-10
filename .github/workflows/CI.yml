@@ -50,6 +50,17 @@ jobs:
       - run: pnpm add --save-dev typescript@${{ matrix.ts-version }}
       - run: pnpm type-check
 
+  tests_integration:
+    name: "Tests: 3rd-party integrations"
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v4
+      - uses: volta-cli/action@v4
+      - run: pnpm install
+      - run: pnpm add --save-dev typescript@latest
+      - run: pnpm test --config vitest.integration.config.ts
+
   check_docs:
     name: "Build docs"
     runs-on: ubuntu-latest

@@ -385,8 +385,13 @@ describe('`Maybe` pure functions', () => {
   });
 
   test('`toJSON`', () => {
-    expect(maybe.toJSON(maybe.of(42))).toEqual({ variant: maybe.Variant.Just, value: 42 });
-    expect(maybe.toJSON(maybe.nothing())).toEqual({ variant: maybe.Variant.Nothing });
+    expect(maybe.toJSON(maybe.of(42))).toEqual({
+      variant: maybe.Variant.Just,
+      value: 42,
+    });
+    expect(maybe.toJSON(maybe.nothing())).toEqual({
+      variant: maybe.Variant.Nothing,
+    });
     expect(maybe.toJSON(maybe.of({ a: 42, b: null }))).toEqual({
       variant: maybe.Variant.Just,
       value: { a: 42, b: null },
@@ -396,8 +401,13 @@ describe('`Maybe` pure functions', () => {
   test('`toJSON` through serialization', () => {
     const actualSerializedJust = JSON.stringify(maybe.of(42));
     const actualSerializedNothing = JSON.stringify(maybe.nothing());
-    const expectedSerializedJust = JSON.stringify({ variant: maybe.Variant.Just, value: 42 });
-    const expectedSerializedNothing = JSON.stringify({ variant: maybe.Variant.Nothing });
+    const expectedSerializedJust = JSON.stringify({
+      variant: maybe.Variant.Just,
+      value: 42,
+    });
+    const expectedSerializedNothing = JSON.stringify({
+      variant: maybe.Variant.Nothing,
+    });
 
     expect(actualSerializedJust).toEqual(expectedSerializedJust);
     expect(actualSerializedNothing).toEqual(expectedSerializedNothing);
@@ -625,9 +635,13 @@ describe('`Maybe` pure functions', () => {
     });
 
     test('curried form', () => {
-      type DeepType = { something?: { with?: { deeper?: { 'key names'?: string } } } };
+      type DeepType = {
+        something?: { with?: { deeper?: { 'key names'?: string } } };
+      };
 
-      const allSet: DeepType = { something: { with: { deeper: { 'key names': 'like this' } } } };
+      const allSet: DeepType = {
+        something: { with: { deeper: { 'key names': 'like this' } } },
+      };
       let fromSet = maybe.get(
         'key names',
         maybe.get('deeper', maybe.get('with', maybe.get('something', Maybe.of(allSet))))
@@ -1015,9 +1029,13 @@ describe('`Maybe` class', () => {
     });
 
     test('`get` method', () => {
-      type DeepType = { something?: { with?: { deeper?: { 'key names'?: string } } } };
+      type DeepType = {
+        something?: { with?: { deeper?: { 'key names'?: string } } };
+      };
 
-      const allSet: DeepType = { something: { with: { deeper: { 'key names': 'like this' } } } };
+      const allSet: DeepType = {
+        something: { with: { deeper: { 'key names': 'like this' } } },
+      };
       const deepResult = new Maybe(allSet)
         .get('something')
         .get('with')
@@ -1223,7 +1241,9 @@ describe('`Maybe` class', () => {
     });
 
     test('`toJSON` method', () => {
-      expect(maybe.nothing().toJSON()).toEqual({ variant: maybe.Variant.Nothing });
+      expect(maybe.nothing().toJSON()).toEqual({
+        variant: maybe.Variant.Nothing,
+      });
       expect(maybe.of(maybe.nothing()).toJSON()).toEqual({
         variant: maybe.Variant.Just,
         value: { variant: maybe.Variant.Nothing },
@@ -1248,7 +1268,9 @@ describe('`Maybe` class', () => {
     });
 
     test('`property` method', () => {
-      type DeepType = { something?: { with?: { deeper?: { 'key names'?: string } } } };
+      type DeepType = {
+        something?: { with?: { deeper?: { 'key names'?: string } } };
+      };
 
       const result = new Maybe<DeepType>()
         .get('something')
