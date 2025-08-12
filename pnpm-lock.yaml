@@ -55,16 +55,16 @@ importers:
         version: 0.28.9(typescript@5.3.3)
       typedoc-plugin-markdown:
         specifier: ^4.8.0
-        version: 4.8.0(typedoc@0.28.9(typescript@5.3.3))
+        version: 4.8.1(typedoc@0.28.9(typescript@5.3.3))
       typedoc-vitepress-theme:
         specifier: ^1.1.2
-        version: 1.1.2(typedoc-plugin-markdown@4.8.0(typedoc@0.28.9(typescript@5.3.3)))
+        version: 1.1.2(typedoc-plugin-markdown@4.8.1(typedoc@0.28.9(typescript@5.3.3)))
       typescript:
         specifier: 5.3.3
         version: 5.3.3
       vite-tsconfig-paths:
         specifier: ^5.1.4
-        version: 5.1.4(rolldown-vite@7.1.1(@types/node@24.0.1)(jiti@2.5.1)(yaml@2.8.0))(typescript@5.3.3)
+        version: 5.1.4(rolldown-vite@7.1.2(@types/node@24.0.1)(jiti@2.5.1)(yaml@2.8.0))(typescript@5.3.3)
       vitepress:
         specifier: ^2.0.0-alpha.9
         version: 2.0.0-alpha.9(@types/node@24.0.1)(jiti@2.5.1)(oxc-minify@0.82.0)(postcss@8.5.6)(typescript@5.3.3)(yaml@2.8.0)
@@ -2079,8 +2079,8 @@ packages:
     engines: {node: 20 || >=22}
     hasBin: true
 
-  rolldown-vite@7.1.1:
-    resolution: {integrity: sha512-5aLF5FjaMQuwi3d8xK8HrL4cmN5LGaDrpm9TxdLf6iEGtT1EIBLz8lnRVnTcgsU6wbQuOsptK1Vi4OCHYD08TA==}
+  rolldown-vite@7.1.2:
+    resolution: {integrity: sha512-9VwY/BOirnPDJ8HXiXTdVdLXTSQkNGDVgpuhfmMxAH7HxSBb71VaTyQh/FHPtMk2psAyglQXWheYKXV53N27/Q==}
     engines: {node: ^20.19.0 || >=22.12.0}
     hasBin: true
     peerDependencies:
@@ -2342,8 +2342,8 @@ packages:
     resolution: {integrity: sha512-RAH822pAdBgcNMAfWnCBU3CFZcfZ/i1eZjwFU/dsLKumyuuP3niueg2UAukXYF0E2AAoc82ZSSf9J0WQBinzHA==}
     engines: {node: '>=12.20'}
 
-  typedoc-plugin-markdown@4.8.0:
-    resolution: {integrity: sha512-BQqXnT9PETe6WEFf8bcsvvGEGQHbwTo/BFyY+RUIsSB05Y0Wn56iF+fK1PY2OKJJIhV4kp4dp7osaP9Bm5a0Zw==}
+  typedoc-plugin-markdown@4.8.1:
+    resolution: {integrity: sha512-ug7fc4j0SiJxSwBGLncpSo8tLvrT9VONvPUQqQDTKPxCoFQBADLli832RGPtj6sfSVJebNSrHZQRUdEryYH/7g==}
     engines: {node: '>= 18'}
     peerDependencies:
       typedoc: 0.28.x
@@ -3139,10 +3139,10 @@ snapshots:
 
   '@ungap/structured-clone@1.3.0': {}
 
-  '@vitejs/plugin-vue@6.0.1(rolldown-vite@7.1.1(@types/node@24.0.1)(jiti@2.5.1)(yaml@2.8.0))(vue@3.5.18(typescript@5.3.3))':
+  '@vitejs/plugin-vue@6.0.1(rolldown-vite@7.1.2(@types/node@24.0.1)(jiti@2.5.1)(yaml@2.8.0))(vue@3.5.18(typescript@5.3.3))':
     dependencies:
       '@rolldown/pluginutils': 1.0.0-beta.29
-      vite: rolldown-vite@7.1.1(@types/node@24.0.1)(jiti@2.5.1)(yaml@2.8.0)
+      vite: rolldown-vite@7.1.2(@types/node@24.0.1)(jiti@2.5.1)(yaml@2.8.0)
       vue: 3.5.18(typescript@5.3.3)
 
   '@vitest/coverage-v8@3.2.4(vitest@3.2.4(@types/debug@4.1.12)(@types/node@24.0.1)(jiti@2.5.1)(yaml@2.8.0))':
@@ -3172,13 +3172,13 @@ snapshots:
       chai: 5.2.0
       tinyrainbow: 2.0.0
 
-  '@vitest/mocker@3.2.4(rolldown-vite@7.1.1(@types/node@24.0.1)(jiti@2.5.1)(yaml@2.8.0))':
+  '@vitest/mocker@3.2.4(rolldown-vite@7.1.2(@types/node@24.0.1)(jiti@2.5.1)(yaml@2.8.0))':
     dependencies:
       '@vitest/spy': 3.2.4
       estree-walker: 3.0.3
       magic-string: 0.30.17
     optionalDependencies:
-      vite: rolldown-vite@7.1.1(@types/node@24.0.1)(jiti@2.5.1)(yaml@2.8.0)
+      vite: rolldown-vite@7.1.2(@types/node@24.0.1)(jiti@2.5.1)(yaml@2.8.0)
 
   '@vitest/pretty-format@3.2.4':
     dependencies:
@@ -4648,7 +4648,7 @@ snapshots:
       glob: 11.0.2
       package-json-from-dist: 1.0.1
 
-  rolldown-vite@7.1.1(@types/node@24.0.1)(jiti@2.5.1)(yaml@2.8.0):
+  rolldown-vite@7.1.2(@types/node@24.0.1)(jiti@2.5.1)(yaml@2.8.0):
     dependencies:
       fdir: 6.4.6(picomatch@4.0.3)
       lightningcss: 1.30.1
@@ -4885,13 +4885,13 @@ snapshots:
 
   type-fest@2.19.0: {}
 
-  typedoc-plugin-markdown@4.8.0(typedoc@0.28.9(typescript@5.3.3)):
+  typedoc-plugin-markdown@4.8.1(typedoc@0.28.9(typescript@5.3.3)):
     dependencies:
       typedoc: 0.28.9(typescript@5.3.3)
 
-  typedoc-vitepress-theme@1.1.2(typedoc-plugin-markdown@4.8.0(typedoc@0.28.9(typescript@5.3.3))):
+  typedoc-vitepress-theme@1.1.2(typedoc-plugin-markdown@4.8.1(typedoc@0.28.9(typescript@5.3.3))):
     dependencies:
-      typedoc-plugin-markdown: 4.8.0(typedoc@0.28.9(typescript@5.3.3))
+      typedoc-plugin-markdown: 4.8.1(typedoc@0.28.9(typescript@5.3.3))
 
   typedoc@0.28.9(typescript@5.3.3):
     dependencies:
@@ -4967,7 +4967,7 @@ snapshots:
       debug: 4.4.1
       es-module-lexer: 1.7.0
       pathe: 2.0.3
-      vite: rolldown-vite@7.1.1(@types/node@24.0.1)(jiti@2.5.1)(yaml@2.8.0)
+      vite: rolldown-vite@7.1.2(@types/node@24.0.1)(jiti@2.5.1)(yaml@2.8.0)
     transitivePeerDependencies:
       - '@types/node'
       - esbuild
@@ -4982,13 +4982,13 @@ snapshots:
       - tsx
       - yaml
 
-  vite-tsconfig-paths@5.1.4(rolldown-vite@7.1.1(@types/node@24.0.1)(jiti@2.5.1)(yaml@2.8.0))(typescript@5.3.3):
+  vite-tsconfig-paths@5.1.4(rolldown-vite@7.1.2(@types/node@24.0.1)(jiti@2.5.1)(yaml@2.8.0))(typescript@5.3.3):
     dependencies:
       debug: 4.4.1
       globrex: 0.1.2
       tsconfck: 3.1.6(typescript@5.3.3)
     optionalDependencies:
-      vite: rolldown-vite@7.1.1(@types/node@24.0.1)(jiti@2.5.1)(yaml@2.8.0)
+      vite: rolldown-vite@7.1.2(@types/node@24.0.1)(jiti@2.5.1)(yaml@2.8.0)
     transitivePeerDependencies:
       - supports-color
       - typescript
@@ -5001,7 +5001,7 @@ snapshots:
       '@shikijs/core': 3.9.1
       '@shikijs/transformers': 3.9.1
       '@shikijs/types': 3.9.1
-      '@vitejs/plugin-vue': 6.0.1(rolldown-vite@7.1.1(@types/node@24.0.1)(jiti@2.5.1)(yaml@2.8.0))(vue@3.5.18(typescript@5.3.3))
+      '@vitejs/plugin-vue': 6.0.1(rolldown-vite@7.1.2(@types/node@24.0.1)(jiti@2.5.1)(yaml@2.8.0))(vue@3.5.18(typescript@5.3.3))
       '@vue/devtools-api': 7.7.7
       '@vue/shared': 3.5.18
       '@vueuse/core': 13.6.0(vue@3.5.18(typescript@5.3.3))
@@ -5010,7 +5010,7 @@ snapshots:
       mark.js: 8.11.1
       minisearch: 7.1.2
       shiki: 3.9.1
-      vite: rolldown-vite@7.1.1(@types/node@24.0.1)(jiti@2.5.1)(yaml@2.8.0)
+      vite: rolldown-vite@7.1.2(@types/node@24.0.1)(jiti@2.5.1)(yaml@2.8.0)
       vue: 3.5.18(typescript@5.3.3)
     optionalDependencies:
       oxc-minify: 0.82.0
@@ -5044,7 +5044,7 @@ snapshots:
     dependencies:
       '@types/chai': 5.2.2
       '@vitest/expect': 3.2.4
-      '@vitest/mocker': 3.2.4(rolldown-vite@7.1.1(@types/node@24.0.1)(jiti@2.5.1)(yaml@2.8.0))
+      '@vitest/mocker': 3.2.4(rolldown-vite@7.1.2(@types/node@24.0.1)(jiti@2.5.1)(yaml@2.8.0))
       '@vitest/pretty-format': 3.2.4
       '@vitest/runner': 3.2.4
       '@vitest/snapshot': 3.2.4
@@ -5062,7 +5062,7 @@ snapshots:
       tinyglobby: 0.2.14
       tinypool: 1.1.1
       tinyrainbow: 2.0.0
-      vite: rolldown-vite@7.1.1(@types/node@24.0.1)(jiti@2.5.1)(yaml@2.8.0)
+      vite: rolldown-vite@7.1.2(@types/node@24.0.1)(jiti@2.5.1)(yaml@2.8.0)
       vite-node: 3.2.4(@types/node@24.0.1)(jiti@2.5.1)(yaml@2.8.0)
       why-is-node-running: 2.3.0
     optionalDependencies:
