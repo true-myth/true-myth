@@ -67,7 +67,7 @@ importers:
         version: 5.1.4(rolldown-vite@7.1.2(@types/node@24.0.1)(jiti@2.5.1)(yaml@2.8.1))(typescript@5.3.3)
       vitepress:
         specifier: ^2.0.0-alpha.9
-        version: 2.0.0-alpha.10(@types/node@24.0.1)(jiti@2.5.1)(oxc-minify@0.82.0)(postcss@8.5.6)(typescript@5.3.3)(yaml@2.8.1)
+        version: 2.0.0-alpha.11(@types/node@24.0.1)(jiti@2.5.1)(oxc-minify@0.82.0)(postcss@8.5.6)(typescript@5.3.3)(yaml@2.8.1)
       vitest:
         specifier: ^3.2.4
         version: 3.2.4(@types/debug@4.1.12)(@types/node@24.0.1)(jiti@2.5.1)(yaml@2.8.1)
@@ -2414,8 +2414,8 @@ packages:
       vite:
         optional: true
 
-  vitepress@2.0.0-alpha.10:
-    resolution: {integrity: sha512-RqnglVOngEHB74pv4Ho/RqOPhqaxN8KBvZkdKFj2hfvrG30QXhQQ/5qk31uuTVuCG+2qXj/c4kpHCPEJKGQMDw==}
+  vitepress@2.0.0-alpha.11:
+    resolution: {integrity: sha512-l3FFkGtcB3u3iMlpnvkCR+MdOYqNaz2z+xPRlgZZnx8Xne4XLgQR0yfEfTqY/UyloTymXwxvRvu443Yo9Cr8pA==}
     hasBin: true
     peerDependencies:
       markdown-it-mathjax3: ^4
@@ -4963,7 +4963,7 @@ snapshots:
       - supports-color
       - typescript
 
-  vitepress@2.0.0-alpha.10(@types/node@24.0.1)(jiti@2.5.1)(oxc-minify@0.82.0)(postcss@8.5.6)(typescript@5.3.3)(yaml@2.8.1):
+  vitepress@2.0.0-alpha.11(@types/node@24.0.1)(jiti@2.5.1)(oxc-minify@0.82.0)(postcss@8.5.6)(typescript@5.3.3)(yaml@2.8.1):
     dependencies:
       '@docsearch/css': 4.0.0-beta.6
       '@docsearch/js': 4.0.0-beta.6
