@@ -67,8 +67,8 @@ export default defineConfig({
                 },
               ],
             },
-
-            { text: 'Reference types', link: '/guide/understanding/reference-types' },
+            { text: 'Reference Types', link: '/guide/understanding/reference-types' },
+            { text: 'Standard Schema Integration', link: '/guide/understanding/standard-schema' },
           ],
         },
         {
