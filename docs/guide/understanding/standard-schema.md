@@ -42,7 +42,7 @@ const parsePersonWithArktype = parserFor(personParserArktype);
 const parsePersonWithZod = parserFor(personParserZod);
 ```
 
-The related utility types, `ParserFor` and `AsyncParserFor`, are shorthands for functions that can take unknown data and produce . In other words: they’re fully generic aliases for the type of a function produced by `parserFor` and `asyncParserFor` respectively.
+The related utility types, `ParserFor` and `AsyncParserFor`, are shorthands for functions that can take unknown data and produce parsed data wrapped in a `Result` or `Task`. In other words: they’re fully generic aliases for the type of a function produced by `parserFor` and `asyncParserFor` respectively.
 
 ```ts
 import { parserFor } from 'true-myth';
