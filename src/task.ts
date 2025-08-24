@@ -64,10 +64,10 @@ type SomeTask<T, E> = { [IsTask]: [T, E] };
 /** @internal */
 type TypesFor<S extends AnyTask | AnyResult> =
   S extends SomeTask<infer T, infer E>
-    ? { resolution: T; rejection: E }
-    : S extends SomeResult<infer T, infer E>
-      ? { resolution: T; rejection: E }
-      : never;
+  ? { resolution: T; rejection: E }
+  : S extends SomeResult<infer T, infer E>
+  ? { resolution: T; rejection: E }
+  : never;
 
 /**
   Internal implementation details for {@linkcode Task}.
@@ -410,7 +410,17 @@ class TaskImpl<T, E> implements PromiseLike<Result<T, E>> {
     Notice that, unlike in {@linkcode map Task.prototype.map}, the original
     `task` resolution value is not involved in constructing the new `Task`.
 
+    ## Comparison with `andThen`
+
+    When you need to perform tasks in sequence, use `andThen` instead: it will
+    only run the function that produces the next `Task` if the first one
+    resolves successfully. You should only use `and` when you have two `Task`
+    instances running concurrently and only need the value from the second if
+    they both resolve.
+
     ## Examples
+
+    Using `and` to get new `Task` values from other `Task` values:
 
     ```ts
     import Task from 'true-myth/task';
@@ -438,23 +448,59 @@ class TaskImpl<T, E> implements PromiseLike<Result<T, E>> {
     expect(raAndRb.toString()).toEqual('Task.Rejected("bad")');
     ```
 
+    Using `and` to get new `Task` values from a `Result`:
+
+    ```ts
+    import Task from 'true-myth/task';
+
+    let resolved = Task.resolve<string, string>('A');
+    let rejected = Task.reject<string, string>('bad');
+    let ok = Result.ok<string, string>('B');
+    let err = Result.err<string, string>('lame');
+
+    let aAndB = resolved.and(ok);
+    await aAndB;
+
+    let aAndRA = resolved.and(err);
+    await aAndRA;
+
+    let raAndA = rejected.and(ok);
+    await raAndA;
+
+    let raAndRb = rejected.and(err);
+    await raAndRb;
+
+    expect(aAndB.toString()).toEqual('Task.Resolved("B")');
+    expect(aAndRA.toString()).toEqual('Task.Rejected("bad")');
+    expect(raAndA.toString()).toEqual('Task.Rejected("bad")');
+    expect(raAndRb.toString()).toEqual('Task.Rejected("bad")');
+    ```
+
     @template U The type of the value for a resolved version of the `other`
       `Task`, i.e., the success type of the final `Task` present if the first
       `Task` is `Ok`.
 
     @param other The `Task` instance to return if `this` is `Rejected`.
    */
-  and<U, F = E>(other: Task<U, F>): Task<U, E | F> {
+  and<U, F = E>(other: Task<U, F> | Result<U, F>): Task<U, E | F> {
     return new Task((resolve, reject) => {
       this.#promise.then(
         result.match({
           Ok: (_) => {
-            (other as TaskImpl<U, F>).#promise.then(
-              result.match({
+            if (result.isInstance(other)) {
+              other.match({
                 Ok: resolve,
                 Err: reject,
-              }),
-            );
+              })
+            } else {
+              (other as TaskImpl<U, F>).#promise.then(
+                result.match({
+                  Ok: resolve,
+                  Err: reject,
+                }),
+              );
+            }
+
           },
           Err: reject,
         }),
@@ -578,8 +624,20 @@ class TaskImpl<T, E> implements PromiseLike<Result<T, E>> {
     `Task` always ends up getting a {@linkcode Resolved} variant, by supplying a
     default value for the case that you currently have an {@linkcode Rejected}.
 
+    ## Comparison with `orElse`
+
+    When you need to run a `Task` in sequence if another `Task` rejects, use
+    `orElse` instead: it will only run the function that produces the next
+    `Task` if the first one rejects. You should only use `or` when you have two
+    `Task` instances running concurrently and only need the value from the
+    second if the first rejects.
+
+    ## Examples
+
+    Using `or` to get new `Task` values from other `Task` values:
+
     ```ts
-    import Task from 'true-utils/task';
+    import Task from 'true-myth/task';
 
     const resolvedA = Task.resolve<string, string>('a');
     const resolvedB = Task.resolve<string, string>('b');
@@ -592,22 +650,46 @@ class TaskImpl<T, E> implements PromiseLike<Result<T, E>> {
     console.log(rejectedWat.or(rejectedHeaddesk).toString());  // Rejected(":headdesk:")
     ```
 
+    Using `or` to get new `Task` values from `Result` values:
+
+    ```ts
+    import Task from 'true-myth/task';
+    import Result from 'true-myth/result';
+
+    const resolved = Task.resolve<string, string>('resolved');
+    const rejected = Task.reject<string, string>('rejected');
+    const ok = Result.ok<string, string>('ok');
+    const err = Result.err<string, string>('err');
+
+    console.log(resolved.or(ok).toString());  // Resolved("resolved")
+    console.log(resolved.or(err).toString());  // Resolved("err")
+    console.log(rejected.or(ok).toString());  // Resolved("ok")
+    console.log(rejected.or(err).toString());  // Rejected("err")
+    ```
+
     @template F   The type wrapped in the `Rejected` case of `other`.
     @param other  The `Result` to use if `this` is `Rejected`.
     @returns      `this` if it is `Resolved`, otherwise `other`.
    */
-  or<F, U = T>(other: Task<U, F>): Task<T | U, F> {
+  or<F, U = T>(other: Task<U, F> | Result<U, F>): Task<T | U, F> {
     return new Task((resolve, reject) => {
       this.#promise.then(
         result.match({
           Ok: resolve,
           Err: (_) => {
-            (other as TaskImpl<U, F>).#promise.then(
-              result.match({
+            if (result.isInstance(other)) {
+              other.match({
                 Ok: resolve,
                 Err: reject,
-              }),
-            );
+              });
+            } else {
+              (other as TaskImpl<U, F>).#promise.then(
+                result.match({
+                  Ok: resolve,
+                  Err: reject,
+                }),
+              );
+            }
           },
         }),
       );
@@ -2519,7 +2601,7 @@ function identity<T>(value: T): T {
  */
 export function withRetries<T, E>(
   retryable: (status: RetryStatus) => Task<T, E | StopRetrying> | StopRetrying,
-  strategy: delay.Strategy = (function* () {
+  strategy: delay.Strategy = (function*() {
     for (let i = 0; i < 3; i++) {
       yield 0;
     }

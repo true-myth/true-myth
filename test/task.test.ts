@@ -272,67 +272,109 @@ describe("`Task`", () => {
     });
 
     describe("`and`", () => {
-      describe("when the first Task resolves", () => {
-        test("when the second Task resolves", async () => {
-          let theValue = "hello";
-          let theTask = Task.resolve(123).and(Task.resolve(theValue));
-          expectTypeOf(theTask).toEqualTypeOf<Task<string, never>>();
-          let theResult = await theTask;
-          expect(unwrap(theResult)).toEqual(theValue);
+      describe("with a `Task`", () => {
+        describe("when the first Task resolves", () => {
+          test("when the second Task resolves", async () => {
+            let theValue = "hello";
+            let theTask = Task.resolve(123).and(Task.resolve(theValue));
+            expectTypeOf(theTask).toEqualTypeOf<Task<string, never>>();
+            let theResult = await theTask;
+            expect(unwrap(theResult)).toEqual(theValue);
+          });
+
+          test("when the second Task rejects", async () => {
+            let theReason = "hello";
+            let theTask = Task.resolve<number, string>(123).and(
+              Task.reject(theReason),
+            );
+            expectTypeOf(theTask).toEqualTypeOf<Task<never, string>>();
+            let theResult = await theTask;
+            expect(unwrapErr(theResult)).toEqual(theReason);
+          });
         });
 
-        test("when the second Task rejects", async () => {
-          let theReason = "hello";
-          let theTask = Task.resolve<number, string>(123).and(
-            Task.reject(theReason),
-          );
-          expectTypeOf(theTask).toEqualTypeOf<Task<never, string>>();
-          let theResult = await theTask;
-          expect(unwrapErr(theResult)).toEqual(theReason);
+        describe("when the first Task rejects", () => {
+          test("when the second Task resolves", async () => {
+            let theReason = 123;
+            let theTask = Task.reject(theReason).and(Task.resolve(456));
+            expectTypeOf(theTask).toEqualTypeOf<Task<number, number>>();
+            let theResult = await theTask;
+            expect(unwrapErr(theResult)).toEqual(theReason);
+          });
+
+          test("when the second Task rejects", async () => {
+            let theReason = 123;
+            let theTask = Task.reject(theReason).and(Task.reject(456));
+            expectTypeOf(theTask).toEqualTypeOf<Task<never, number>>();
+            let theResult = await theTask;
+            expect(unwrapErr(theResult)).toEqual(theReason);
+          });
+        });
+
+        // Matches the text in the docs.
+        test("all combinations", async () => {
+          let resolvedA = Task.resolve("A");
+          let resolvedB = Task.resolve("B");
+          let rejectedA = Task.reject("bad");
+          let rejectedB = Task.reject("lame");
+
+          let aAndB = resolvedA.and(resolvedB);
+          await aAndB;
+
+          let aAndRA = resolvedA.and(rejectedA);
+          await aAndRA;
+
+          let raAndA = rejectedA.and(resolvedA);
+          await raAndA;
+
+          let raAndRb = rejectedA.and(rejectedB);
+          await raAndRb;
+
+          expect(aAndB.toString()).toEqual('Task.Resolved("B")');
+          expect(aAndRA.toString()).toEqual('Task.Rejected("bad")');
+          expect(raAndA.toString()).toEqual('Task.Rejected("bad")');
+          expect(raAndRb.toString()).toEqual('Task.Rejected("bad")');
         });
       });
 
-      describe("when the first Task rejects", () => {
-        test("when the second Task resolves", async () => {
-          let theReason = 123;
-          let theTask = Task.reject(theReason).and(Task.resolve(456));
-          expectTypeOf(theTask).toEqualTypeOf<Task<number, number>>();
-          let theResult = await theTask;
-          expect(unwrapErr(theResult)).toEqual(theReason);
+      describe("with a `Result`", () => {
+        describe("when the Task resolves", () => {
+          test("when the `Result` is an `Ok`", async () => {
+            let theValue = "hello";
+            let theTask = Task.resolve(123).and(Result.ok(theValue));
+            expectTypeOf(theTask).toEqualTypeOf<Task<string, never>>();
+            let theResult = await theTask;
+            expect(unwrap(theResult)).toEqual(theValue);
+          });
+
+          test("when the `Result` is an `Err`", async () => {
+            let theReason = "hello";
+            let theTask = Task.resolve<number, string>(123).and(
+              Result.err(theReason),
+            );
+            expectTypeOf(theTask).toEqualTypeOf<Task<never, string>>();
+            let theResult = await theTask;
+            expect(unwrapErr(theResult)).toEqual(theReason);
+          });
         });
 
-        test("when the second Task rejects", async () => {
-          let theReason = 123;
-          let theTask = Task.reject(theReason).and(Task.reject(456));
-          expectTypeOf(theTask).toEqualTypeOf<Task<never, number>>();
-          let theResult = await theTask;
-          expect(unwrapErr(theResult)).toEqual(theReason);
+        describe("when the `Task` rejects", () => {
+          test("when the `Result` is an `Ok`", async () => {
+            let theReason = 123;
+            let theTask = Task.reject(theReason).and(Result.ok(456));
+            expectTypeOf(theTask).toEqualTypeOf<Task<number, number>>();
+            let theResult = await theTask;
+            expect(unwrapErr(theResult)).toEqual(theReason);
+          });
+
+          test("when the `Result` is an `Err`", async () => {
+            let theReason = 123;
+            let theTask = Task.reject(theReason).and(Result.err(456));
+            expectTypeOf(theTask).toEqualTypeOf<Task<never, number>>();
+            let theResult = await theTask;
+            expect(unwrapErr(theResult)).toEqual(theReason);
+          });
         });
-      });
-
-      // Matches the text in the docs.
-      test("all combinations", async () => {
-        let resolvedA = Task.resolve("A");
-        let resolvedB = Task.resolve("B");
-        let rejectedA = Task.reject("bad");
-        let rejectedB = Task.reject("lame");
-
-        let aAndB = resolvedA.and(resolvedB);
-        await aAndB;
-
-        let aAndRA = resolvedA.and(rejectedA);
-        await aAndRA;
-
-        let raAndA = rejectedA.and(resolvedA);
-        await raAndA;
-
-        let raAndRb = rejectedA.and(rejectedB);
-        await raAndRb;
-
-        expect(aAndB.toString()).toEqual('Task.Resolved("B")');
-        expect(aAndRA.toString()).toEqual('Task.Rejected("bad")');
-        expect(raAndA.toString()).toEqual('Task.Rejected("bad")');
-        expect(raAndRb.toString()).toEqual('Task.Rejected("bad")');
       });
     });
 
@@ -433,14 +475,14 @@ describe("`Task`", () => {
             declare readonly _name: T;
           }
 
-          class RejA extends Branded<"rej-a"> {}
-          class RejB extends Branded<"rej-b"> {}
+          class RejA extends Branded<"rej-a"> { }
+          class RejB extends Branded<"rej-b"> { }
 
-          class ResA extends Branded<"res-a"> {}
-          class ResB extends Branded<"res-b"> {}
+          class ResA extends Branded<"res-a"> { }
+          class ResB extends Branded<"res-b"> { }
 
           let theTask = new Task<Branded<"res">, Branded<"rej">>(
-            () => {},
+            () => { },
           ).andThen((_) => {
             if (Math.random() < 0.1) {
               return Task.resolve(new ResA());
@@ -479,7 +521,7 @@ describe("`Task`", () => {
           await theTask;
         });
 
-        describe("when the first `Task` resolves", () => {
+        describe("when the `Task` resolves", () => {
           test("when the `Result` is an `Ok`", async () => {
             let { promise, resolve } = deferred<number, string>();
             let theTask = tryOrElse(stringify, () => promise).andThen((n) =>
@@ -536,14 +578,14 @@ describe("`Task`", () => {
             declare readonly _name: T;
           }
 
-          class RejA extends Branded<"rej-a"> {}
-          class RejB extends Branded<"rej-b"> {}
+          class RejA extends Branded<"rej-a"> { }
+          class RejB extends Branded<"rej-b"> { }
 
-          class ResA extends Branded<"res-a"> {}
-          class ResB extends Branded<"res-b"> {}
+          class ResA extends Branded<"res-a"> { }
+          class ResB extends Branded<"res-b"> { }
 
           let theTask = new Task<Branded<"res">, Branded<"rej">>(
-            () => {},
+            () => { },
           ).andThen((_) => {
             if (Math.random() < 0.1) {
               return Result.ok(new ResA());
@@ -572,91 +614,170 @@ describe("`Task`", () => {
     });
 
     describe("`or`", () => {
-      describe("when the first Task resolves", async () => {
-        test("when the second is pending", async () => {
-          let theFirst = Task.resolve(123);
-          let theSecond = new Task<number, never>(noOp);
+      describe("with two `Task`s", () => {
 
-          let theChain = theFirst.or(theSecond);
-          expect(theFirst.state).toBe(State.Resolved);
-          expect(theSecond.state).toBe(State.Pending);
-          expect(theChain.state).toBe(State.Pending);
-          await theFirst;
-          expect(theFirst.state).toBe(State.Resolved);
-          expect(theSecond.state).toBe(State.Pending);
-          expect(theChain.state).toBe(State.Resolved);
+
+        describe("when the first `Task` resolves", async () => {
+          test("when the second `Task` is pending", async () => {
+            let theFirst = Task.resolve(123);
+            let theSecond = new Task<number, never>(noOp);
+
+            let theChain = theFirst.or(theSecond);
+            expect(theFirst.state).toBe(State.Resolved);
+            expect(theSecond.state).toBe(State.Pending);
+            expect(theChain.state).toBe(State.Pending);
+            await theFirst;
+            expect(theFirst.state).toBe(State.Resolved);
+            expect(theSecond.state).toBe(State.Pending);
+            expect(theChain.state).toBe(State.Resolved);
+          });
+
+          test("when the second Task resolves", async () => {
+            let theTask = Task.resolve(123).or(Task.resolve(456));
+            expectTypeOf(theTask).toEqualTypeOf<Task<number, never>>();
+            let theResult = await theTask;
+            expect(unwrap(theResult)).toEqual(123);
+          });
+
+          test("when the second Task rejects", async () => {
+            let theReason = "hello";
+            let theTask = Task.resolve(123).or(Task.reject(theReason));
+            expectTypeOf(theTask).toEqualTypeOf<Task<number, string>>();
+            let theResult = await theTask;
+            expect(unwrap(theResult)).toEqual(123);
+          });
         });
 
-        test("when the second Task resolves", async () => {
-          let theTask = Task.resolve(123).or(Task.resolve(456));
-          expectTypeOf(theTask).toEqualTypeOf<Task<number, never>>();
-          let theResult = await theTask;
-          expect(unwrap(theResult)).toEqual(123);
+        describe("when the first Task rejects", () => {
+          test("when the second is pending", async () => {
+            let theFirst = Task.reject("blergh");
+            let theSecond = new Task<number, never>(noOp);
+
+            let theChain = theFirst.or(theSecond);
+            expect(theFirst.state).toBe(State.Rejected);
+            expect(theSecond.state).toBe(State.Pending);
+            expect(theChain.state).toBe(State.Pending);
+            await theFirst;
+            expect(theFirst.state).toBe(State.Rejected);
+            expect(theSecond.state).toBe(State.Pending);
+            expect(theChain.state).toBe(State.Pending);
+          });
+
+          test("when the second Task resolves", async () => {
+            let theTask = Task.reject(123).or(Task.resolve("hello"));
+            expectTypeOf(theTask).toEqualTypeOf<Task<string, never>>();
+            let theResult = await theTask;
+            expect(unwrap(theResult)).toBe("hello");
+          });
+
+          test("when the second Task rejects", async () => {
+            let theReason = 123;
+            let theTask = Task.reject(theReason).or(Task.reject(456));
+            expectTypeOf(theTask).toEqualTypeOf<Task<never, number>>();
+            let theResult = await theTask;
+            expect(unwrapErr(theResult)).toEqual(456);
+          });
         });
 
-        test("when the second Task rejects", async () => {
-          let theReason = "hello";
-          let theTask = Task.resolve(123).or(Task.reject(theReason));
-          expectTypeOf(theTask).toEqualTypeOf<Task<number, string>>();
-          let theResult = await theTask;
-          expect(unwrap(theResult)).toEqual(123);
+        // Matches the text in the docs.
+        test("all combinations", async () => {
+          let resolvedA = Task.resolve("A");
+          let resolvedB = Task.resolve("B");
+          let rejectedA = Task.reject("bad");
+          let rejectedB = Task.reject("lame");
+
+          let aOrB = resolvedA.or(resolvedB);
+          await aOrB;
+
+          let aOrRA = resolvedA.or(rejectedA);
+          await aOrRA;
+
+          let raOrA = rejectedA.or(resolvedA);
+          await raOrA;
+
+          let raOrRb = rejectedA.or(rejectedB);
+          await raOrRb;
+
+          expect(aOrB.toString()).toEqual('Task.Resolved("A")');
+          expect(aOrRA.toString()).toEqual('Task.Resolved("A")');
+          expect(raOrA.toString()).toEqual('Task.Resolved("A")');
+          expect(raOrRb.toString()).toEqual('Task.Rejected("lame")');
         });
       });
 
-      describe("when the first Task rejects", () => {
-        test("when the second is pending", async () => {
-          let theFirst = Task.reject("blergh");
-          let theSecond = new Task<number, never>(noOp);
+      describe("with a `Result`", () => {
+        describe("when the `Task` resolves", async () => {
 
-          let theChain = theFirst.or(theSecond);
-          expect(theFirst.state).toBe(State.Rejected);
-          expect(theSecond.state).toBe(State.Pending);
-          expect(theChain.state).toBe(State.Pending);
-          await theFirst;
-          expect(theFirst.state).toBe(State.Rejected);
-          expect(theSecond.state).toBe(State.Pending);
-          expect(theChain.state).toBe(State.Pending);
+          test("when the `Result` is an `Ok`", async () => {
+            let theTask = Task.resolve(123).or(Result.ok(456));
+            expectTypeOf(theTask).toEqualTypeOf<Task<number, never>>();
+            let theResult = await theTask;
+            expect(unwrap(theResult)).toEqual(123);
+          });
+
+          test("when the `Result` is an `Err`", async () => {
+            let theReason = "hello";
+            let theTask = Task.resolve(123).or(Result.err(theReason));
+            expectTypeOf(theTask).toEqualTypeOf<Task<number, string>>();
+            let theResult = await theTask;
+            expect(unwrap(theResult)).toEqual(123);
+          });
         });
 
-        test("when the second Task resolves", async () => {
-          let theTask = Task.reject(123).or(Task.resolve("hello"));
-          expectTypeOf(theTask).toEqualTypeOf<Task<string, never>>();
-          let theResult = await theTask;
-          expect(unwrap(theResult)).toBe("hello");
+        describe("when the `Task` rejects", () => {
+
+          test("when the `Result` is an `Ok`", async () => {
+            let theTask = Task.reject(123).or(Result.ok("hello"));
+            expectTypeOf(theTask).toEqualTypeOf<Task<string, never>>();
+            let theResult = await theTask;
+            expect(unwrap(theResult)).toBe("hello");
+          });
+
+          test("when the `Result` is an `Err`", async () => {
+            let theReason = 123;
+            let theTask = Task.reject(theReason).or(Result.err(456));
+            expectTypeOf(theTask).toEqualTypeOf<Task<never, number>>();
+            let theResult = await theTask;
+            expect(unwrapErr(theResult)).toEqual(456);
+          });
+
+          test('example', async () => {
+            const resolved = Task.resolve<string, string>('resolved');
+            const rejected = Task.reject<string, string>('rejected');
+            const ok = Result.ok<string, string>('ok');
+            const err = Result.err<string, string>('err');
+
+            expect(resolved.or(ok)).toEqual(resolved);
+            expect(resolved.or(err)).toEqual(Task.resolve("err"));
+            expect(rejected.or(ok)).toEqual(Task.resolve("ok"));
+            expect(rejected.or(err)).toEqual(Task.reject("err"));
+          })
         });
 
-        test("when the second Task rejects", async () => {
-          let theReason = 123;
-          let theTask = Task.reject(theReason).or(Task.reject(456));
-          expectTypeOf(theTask).toEqualTypeOf<Task<never, number>>();
-          let theResult = await theTask;
-          expect(unwrapErr(theResult)).toEqual(456);
+        // Matches the text in the docs.
+        test("all combinations", async () => {
+          let resolvedA = Task.resolve("A");
+          let resolvedB = Task.resolve("B");
+          let rejectedA = Task.reject("bad");
+          let rejectedB = Task.reject("lame");
+
+          let aOrB = resolvedA.or(resolvedB);
+          await aOrB;
+
+          let aOrRA = resolvedA.or(rejectedA);
+          await aOrRA;
+
+          let raOrA = rejectedA.or(resolvedA);
+          await raOrA;
+
+          let raOrRb = rejectedA.or(rejectedB);
+          await raOrRb;
+
+          expect(aOrB.toString()).toEqual('Task.Resolved("A")');
+          expect(aOrRA.toString()).toEqual('Task.Resolved("A")');
+          expect(raOrA.toString()).toEqual('Task.Resolved("A")');
+          expect(raOrRb.toString()).toEqual('Task.Rejected("lame")');
         });
-      });
-
-      // Matches the text in the docs.
-      test("all combinations", async () => {
-        let resolvedA = Task.resolve("A");
-        let resolvedB = Task.resolve("B");
-        let rejectedA = Task.reject("bad");
-        let rejectedB = Task.reject("lame");
-
-        let aOrB = resolvedA.or(resolvedB);
-        await aOrB;
-
-        let aOrRA = resolvedA.or(rejectedA);
-        await aOrRA;
-
-        let raOrA = rejectedA.or(resolvedA);
-        await raOrA;
-
-        let raOrRb = rejectedA.or(rejectedB);
-        await raOrRb;
-
-        expect(aOrB.toString()).toEqual('Task.Resolved("A")');
-        expect(aOrRA.toString()).toEqual('Task.Resolved("A")');
-        expect(raOrA.toString()).toEqual('Task.Resolved("A")');
-        expect(raOrRb.toString()).toEqual('Task.Rejected("lame")');
       });
     });
 
@@ -748,14 +869,14 @@ describe("`Task`", () => {
             declare readonly _name: T;
           }
 
-          class RejA extends Branded<"rej-a"> {}
-          class RejB extends Branded<"rej-b"> {}
+          class RejA extends Branded<"rej-a"> { }
+          class RejB extends Branded<"rej-b"> { }
 
-          class ResA extends Branded<"res-a"> {}
-          class ResB extends Branded<"res-b"> {}
+          class ResA extends Branded<"res-a"> { }
+          class ResB extends Branded<"res-b"> { }
 
           let theTask = new Task<Branded<"res">, Branded<"rej">>(
-            () => {},
+            () => { },
           ).orElse((_) => {
             if (Math.random() < 0.1) {
               return Task.resolve(new ResA());
@@ -841,14 +962,14 @@ describe("`Task`", () => {
             declare readonly _name: T;
           }
 
-          class RejA extends Branded<"rej-a"> {}
-          class RejB extends Branded<"rej-b"> {}
+          class RejA extends Branded<"rej-a"> { }
+          class RejB extends Branded<"rej-b"> { }
 
-          class ResA extends Branded<"res-a"> {}
-          class ResB extends Branded<"res-b"> {}
+          class ResA extends Branded<"res-a"> { }
+          class ResB extends Branded<"res-b"> { }
 
           let theTask = new Task<Branded<"res">, Branded<"rej">>(
-            () => {},
+            () => { },
           ).orElse((_) => {
             if (Math.random() < 0.1) {
               return Result.ok(new ResA());
@@ -897,7 +1018,7 @@ describe("`Task`", () => {
         // Will never resolve, but should be collected at the end of the test.
         // Note that this test passes when, and only when, no test assertions
         // run at all.
-        let task = new Task(() => {});
+        let task = new Task(() => { });
         task.match({
           Resolved: () => expect.unreachable(),
           Rejected: () => expect.unreachable(),
@@ -2308,9 +2429,9 @@ describe("module-scope functions", () => {
         throwErr = false,
         rejectPromise = false,
       }: { throwErr?: boolean; rejectPromise?: boolean } = {
-        throwErr: false,
-        rejectPromise: false,
-      },
+          throwErr: false,
+          rejectPromise: false,
+        },
     ): Promise<number> {
       if (throwErr) {
         throw new Error(ERROR_MESSAGE);
@@ -2331,7 +2452,7 @@ describe("module-scope functions", () => {
       >();
 
       // @ts-expect-error: `safe` only accepts functions which return promises.
-      safe(() => {});
+      safe(() => { });
       // @ts-expect-error: `safe` only accepts functions which return promises.
       safe(() => 123);
       // @ts-expect-error: `safe` only accepts functions which return promises.
@@ -2432,10 +2553,10 @@ describe("module-scope functions", () => {
         rejectPromise?: boolean;
         returnNull?: boolean;
       } = {
-        throwErr: false,
-        rejectPromise: false,
-        returnNull: false,
-      },
+          throwErr: false,
+          rejectPromise: false,
+          returnNull: false,
+        },
     ): Promise<number | null> {
       if (throwErr) {
         throw new Error(ERROR_MESSAGE);
@@ -2983,11 +3104,11 @@ describe("module-scope functions", () => {
         declare readonly _name: T;
       }
 
-      class RejA extends Branded<"rej-a"> {}
-      class RejB extends Branded<"rej-b"> {}
+      class RejA extends Branded<"rej-a"> { }
+      class RejB extends Branded<"rej-b"> { }
 
-      class ResA extends Branded<"res-a"> {}
-      class ResB extends Branded<"res-b"> {}
+      class ResA extends Branded<"res-a"> { }
+      class ResB extends Branded<"res-b"> { }
 
       let theTask = andThen(
         (_) => {
@@ -3005,7 +3126,7 @@ describe("module-scope functions", () => {
 
           return Task.reject(new RejB());
         },
-        new Task<Branded<"res">, Branded<"rej">>(() => {}),
+        new Task<Branded<"res">, Branded<"rej">>(() => { }),
       );
 
       if (theTask.isResolved) {
@@ -3135,11 +3256,11 @@ describe("module-scope functions", () => {
         declare readonly _name: T;
       }
 
-      class RejA extends Branded<"rej-a"> {}
-      class RejB extends Branded<"rej-b"> {}
+      class RejA extends Branded<"rej-a"> { }
+      class RejB extends Branded<"rej-b"> { }
 
-      class ResA extends Branded<"res-a"> {}
-      class ResB extends Branded<"res-b"> {}
+      class ResA extends Branded<"res-a"> { }
+      class ResB extends Branded<"res-b"> { }
 
       let theTask = orElse(
         (_) => {
@@ -3157,7 +3278,7 @@ describe("module-scope functions", () => {
 
           return Task.reject(new RejB());
         },
-        new Task<Branded<"res">, Branded<"rej">>(() => {}),
+        new Task<Branded<"res">, Branded<"rej">>(() => { }),
       );
 
       if (theTask.isResolved) {
@@ -3482,8 +3603,8 @@ describe("module-scope functions", () => {
     });
 
     test("type checks when explicitly passed a `Strategy`", () => {
-      let retryable = () => new Task(() => {});
-      let strategy = function* (): Strategy {};
+      let retryable = () => new Task(() => { });
+      let strategy = function*(): Strategy { };
       expectTypeOf(withRetries).toBeCallableWith(retryable, strategy());
     });
   });
@@ -3687,7 +3808,7 @@ function stringify(reason: unknown): string {
   return JSON.stringify(reason, null, 2);
 }
 
-function noOp() {}
+function noOp() { }
 
 function* take<T>(iterable: Iterable<T>, count: number): IterableIterator<T> {
   let taken = 0;
