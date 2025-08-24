@@ -351,7 +351,7 @@ describe("`Maybe` pure functions", () => {
     );
 
     // test unwrapping to undefined
-    const noop = (): undefined => undefined;
+    const noop = () => undefined;
     const undefinedOr42 = maybe.unwrapOrElse(noop, just42);
     expectTypeOf(undefinedOr42).toEqualTypeOf<number | undefined>();
     expect(undefinedOr42).toEqual(42);
@@ -790,12 +790,12 @@ test("narrowing", () => {
 
   const oneNothing = maybe.nothing();
   if (oneNothing.isNothing) {
-    expectTypeOf(oneNothing).toEqualTypeOf<Nothing<unknown>>();
+    expectTypeOf(oneNothing).toEqualTypeOf<Nothing<{}>>();
   }
 
   const anotherNothing = maybe.nothing();
   if (anotherNothing.variant === Variant.Nothing) {
-    expectTypeOf(anotherNothing).toEqualTypeOf<Nothing<unknown>>();
+    expectTypeOf(anotherNothing).toEqualTypeOf<Nothing<{}>>();
   }
 
   expect("this type checked, hooray").toBeTruthy();
@@ -812,7 +812,7 @@ describe("`Maybe` class", () => {
       expectTypeOf(maybe).toHaveProperty("value");
     }
     expectTypeOf(Maybe).constructorParameters.toEqualTypeOf<
-      [value?: unknown]
+      [value?: {} | null | undefined]
     >();
   });
 

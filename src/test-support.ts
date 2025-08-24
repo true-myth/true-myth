@@ -11,17 +11,17 @@ import Result, { type Err, type Ok } from './result.js';
   Unwrap the contained {@linkcode Just} value. Throws if `maybe` is {@linkcode
   "maybe".Nothing Nothing}.
  */
-export function unwrap<T>(maybe: Maybe<T>): T;
+export function unwrap<T extends {}>(maybe: Maybe<T>): T;
 /**
   Unwrap the contained {@linkcode Ok} value. Throws if `result` is an {@linkcode
   Err}.
  */
 export function unwrap<T, E>(result: Result<T, E>): T;
-export function unwrap<T>(wrapped: Maybe<T> | Result<T, unknown>): T {
+export function unwrap(wrapped: Maybe<{}> | Result<unknown, unknown>): unknown {
   if (isMaybe(wrapped)) {
-    return (wrapped as Just<T>).value;
+    return (wrapped as Just<{}>).value;
   } else {
-    return (wrapped as Ok<T, unknown>).value;
+    return (wrapped as Ok<unknown, unknown>).value;
   }
 }
 
