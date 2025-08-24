@@ -4,7 +4,7 @@ We welcome [contributions](https://www.youtube.com/watch?v=Abu2BNixXak) to True 
 
 For bugs or ideas, please start a conversation *before* opening a PR:
 
-- For bugs, start by [opening an issue][issues] with a clear reproduction. For one, there may be a reason for the existing behavior. For another
+- For bugs, start by [opening an issue][issues] with a clear reproduction. For one, there may be a reason for the existing behavior. For another, figuring out the right solution may be less straightforward than it initially seems!
 
 - Do you have an idea for a new feature? Open a [discussion][discussions] about your idea—and check to see if it has already been discussed there (or in the [issues][issues] from before we had Discussions).
 
