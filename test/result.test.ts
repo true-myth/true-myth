@@ -650,37 +650,37 @@ describe("`Result` pure functions", () => {
 
 describe('`allResults` method', () => {
   test('with empty results', () => {
-    const empty = result.allResults([]);
+    const empty = result.transposeAll([]);
 
     expect(empty).toEqual(result.ok([]));
   });
 
   test('with one Ok', () => {
-    const oneOk = result.allResults([result.ok(1)]);
+    const oneOk = result.transposeAll([result.ok(1)]);
 
     expect(oneOk).toEqual(result.ok([1]));
   });
 
   test('with one Err', () => {
-    const oneErr = result.allResults([result.err('error 1')]);
+    const oneErr = result.transposeAll([result.err('error 1')]);
 
     expect(oneErr).toEqual(result.err(['error 1']));
   });
 
   test('with all Ok', () => {
-    const allOk = result.allResults([result.ok(1), result.ok(2), result.ok(3)]);
+    const allOk = result.transposeAll([result.ok(1), result.ok(2), result.ok(3)]);
 
     expect(allOk).toEqual(result.ok([1, 2, 3]));
   });
 
   test('with all Err', () => {
-    const allErr = result.allResults([result.err('error 1'), result.err('error 2')]);
+    const allErr = result.transposeAll([result.err('error 1'), result.err('error 2')]);
 
     expect(allErr).toEqual(result.err(['error 1', 'error 2']));
   });
 
   test('with some Err', () => {
-    const someErr = result.allResults([result.ok(1), result.err('error 2'), result.ok(3)]);
+    const someErr = result.transposeAll([result.ok(1), result.err('error 2'), result.ok(3)]);
 
     expect(someErr).toEqual(result.err(['error 2']));
   });
@@ -688,37 +688,37 @@ describe('`allResults` method', () => {
 
 describe('`any` method', () => {
   test('with empty results', () => {
-    const empty = result.any([]);
+    const empty = result.transposeAny([]);
 
     expect(empty).toEqual(result.err([]));
   });
 
   test('with one Ok', () => {
-    const oneOk = result.any([result.ok(1)]);
+    const oneOk = result.transposeAny([result.ok(1)]);
 
     expect(oneOk).toEqual(result.ok(1));
   });
 
   test('with one Err', () => {
-    const oneErr = result.any([result.err('error 1')]);
+    const oneErr = result.transposeAny([result.err('error 1')]);
 
     expect(oneErr).toEqual(result.err(['error 1']));
   });
 
   test('with all Ok', () => {
-    const allOk = result.any([result.ok(1), result.ok(2), result.ok(3)]);
+    const allOk = result.transposeAny([result.ok(1), result.ok(2), result.ok(3)]);
 
     expect(allOk).toEqual(result.ok(1));
   });
 
   test('with all Err', () => {
-    const allErr = result.any([result.err('error 1'), result.err('error 2')]);
+    const allErr = result.transposeAny([result.err('error 1'), result.err('error 2')]);
 
     expect(allErr).toEqual(result.err(['error 1', 'error 2']));
   });
 
   test('with some Err', () => {
-    const someErr = result.any([result.err('error 1'), result.err('error 2'), result.ok(3)]);
+    const someErr = result.transposeAny([result.err('error 1'), result.err('error 2'), result.ok(3)]);
 
     expect(someErr).toEqual(result.ok(3));
   });

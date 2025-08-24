@@ -929,7 +929,7 @@ export type All<A extends readonly AnyTask[]> = Task<
 >;
 
 /**
-  Given an array of tasks, return a new `Task` which resolves once all tasks
+  Given an array of tasks, return a new `Task` that resolves once all tasks
   successfully resolve or any task rejects.
 
   ## Examples

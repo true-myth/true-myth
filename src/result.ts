@@ -65,7 +65,7 @@ export type ErrFor<R extends AnyResult> = TypesFor<R>['err'];
 
 // Defines the *implementation*, but not the *types*. See the exports below.
 class ResultImpl<T, E> {
-  private constructor(private repr: Repr<T, E>) {}
+  private constructor(private repr: Repr<T, E>) { }
 
   /** @internal */
   declare readonly [IsResult]: [T, E];
@@ -92,8 +92,8 @@ class ResultImpl<T, E> {
     return arguments.length === 0
       ? (new ResultImpl<Unit, E>(['Ok', Unit]) as Result<Unit, E>)
       : // SAFETY: TS does not understand that the arity check above accounts for
-        // the case where the value is not passed.
-        (new ResultImpl<T, E>(['Ok', value as T]) as Result<T, E>);
+      // the case where the value is not passed.
+      (new ResultImpl<T, E>(['Ok', value as T]) as Result<T, E>);
   }
 
   /**
@@ -121,8 +121,8 @@ class ResultImpl<T, E> {
     return arguments.length === 0
       ? (new ResultImpl<T, Unit>(['Err', Unit]) as Result<T, Unit>)
       : // SAFETY: TS does not understand that the arity check above accounts for
-        // the case where the value is not passed.
-        (new ResultImpl<T, E>(['Err', error as E]) as Result<T, E>);
+      // the case where the value is not passed.
+      (new ResultImpl<T, E>(['Err', error as E]) as Result<T, E>);
   }
 
   /** Distinguish between the {@linkcode Variant.Ok} and {@linkcode Variant.Err} {@linkcode Variant variants}. */
@@ -1453,32 +1453,31 @@ export function isInstance<T, E>(item: unknown): item is Result<T, E> {
   return item instanceof ResultImpl;
 }
 
-type AnyResults = readonly AnyResult[];
-
-type ResultTypesFor<A extends AnyResults> = {
+type ResultTypesFor<A extends readonly AnyResult[]> = {
   ok: { -readonly [P in keyof A]: OkFor<A[P]> };
   err: { -readonly [P in keyof A]: ErrFor<A[P]> };
 };
 
 /**
-  A type utility for mapping an input array of results into the appropriate output
-  for `all`.
+  A type utility for mapping an input array of results into the appropriate
+  output for `all`.
 
   @internal
  */
-export type All<A extends AnyResults> = Result<
+export type All<A extends readonly AnyResult[]> = Result<
   [...ResultTypesFor<A>['ok']],
   ResultTypesFor<A>['err']
 >;
 
 /**
-  Given an array of results, return a new {@linkcode Ok} result if all results are {@linkcode Ok}
-  or a new {@linkcode Err} result if some result is {@linkcode Err}.
+  Given an array of results, return a new {@linkcode Ok} result if all results
+  are {@linkcode Ok} or a new {@linkcode Err} result if some result is
+  {@linkcode Err}.
 
   ## Examples
 
-  If all results are {@linkcode Ok}, return a new {@linkcode Ok} result containing an array of all
-  given {@linkcode Ok} values:
+  If all results are {@linkcode Ok}, return a new {@linkcode Ok} result
+  containing an array of all given {@linkcode Ok} values:
 
   ```ts
   import Result, { all } from 'true-myth/result';
@@ -1492,8 +1491,8 @@ export type All<A extends AnyResults> = Result<
   console.log(result.toString()); // Ok(10,100,1000)
   ```
 
-  If any result is {@linkcode Err}, return a new {@linkcode Err} result containing the first
-  {@linkcode Err} encountered:
+  If any result is {@linkcode Err}, return a new {@linkcode Err} result
+  containing the first {@linkcode Err} encountered:
 
   ```ts
   import Result, { all } from 'true-myth/result';
@@ -1508,15 +1507,15 @@ export type All<A extends AnyResults> = Result<
   ```
 
   @param results The list of results.
-  @return A new {@linkcode Result} containing an array of all {@linkcode Ok} values if all
-    results are {@linkcode Ok}, or a new {@linkcode Err} result containing the first
-    {@linkcode Err} encountered.
+  @return A new {@linkcode Result} containing an array of all {@linkcode Ok}
+    values if all results are {@linkcode Ok}, or a new {@linkcode Err} result
+    containing the first {@linkcode Err} encountered.
 
   @template A The type of the array or tuple of results.
 */
 export function all(results: readonly []): Result<[], never>;
-export function all<const A extends AnyResults>(results: A): All<A>;
-export function all(results: AnyResults): Result<unknown[], unknown> {
+export function all<const A extends readonly AnyResult[]>(results: A): All<A>;
+export function all(results: readonly AnyResult[]): Result<unknown[], unknown> {
   const oks = [];
 
   for (const result of results) {
@@ -1531,24 +1530,25 @@ export function all(results: AnyResults): Result<unknown[], unknown> {
 }
 
 /**
-  A type utility for mapping an input array of results into the appropriate output
-  for `allResults`.
+  A type utility for mapping an input array of results into the appropriate
+  output for `allResults`.
 
   @internal
  */
-export type AllResults<A extends AnyResults> = Result<
+export type AllResults<A extends readonly AnyResult[]> = Result<
   [...ResultTypesFor<A>['ok']],
   ResultTypesFor<A>['err'][]
 >;
 
 /**
-  Given an array of results, return a new {@linkcode Ok} result if all results are {@linkcode Ok}
-  or a new {@linkcode Err} result if some result is {@linkcode Err}.
+  Given an array of results, return a new {@linkcode Ok} result if all results
+  are {@linkcode Ok} or a new {@linkcode Err} result if some result is
+  {@linkcode Err}.
 
   ## Examples
 
-  If all results are {@linkcode Ok}, return a new {@linkcode Ok} result containing an array of
-  all given {@linkcode Ok} values:
+  If all results are {@linkcode Ok}, return a new {@linkcode Ok} result
+  containing an array of all provided {@linkcode Ok} values:
 
   ```ts
   import Result, { all } from 'true-myth/result';
@@ -1562,15 +1562,15 @@ export type AllResults<A extends AnyResults> = Result<
   console.log(result.toString()); // Ok(10,100,1000)
   ```
 
-  If any result is {@linkcode Err}, return a new {@linkcode Err} result containing an array of all
-  {@linkcode Err} encountered:
+  If any result is {@linkcode Err}, return a new {@linkcode Err} result
+  containing an array of all {@linkcode Err} encountered:
 
   ```ts
   import Result, { all } from 'true-myth/result';
 
   let result = all([
     Result.ok(10),
-    Result.ok("something went wrong"),
+    Result.err("something went wrong"),
     Result.err("something else went wrong")
   ]);
 
@@ -1578,15 +1578,15 @@ export type AllResults<A extends AnyResults> = Result<
   ```
 
   @param results The list of results.
-  @return A new {@linkcode Result} containing an array of all {@linkcode Ok} values if all results
-    are {@linkcode Ok}, or a new {@linkcode Err} result containing an array of all {@linkcode Err}
-    encountered.
+  @return A new {@linkcode Result} containing an array of all {@linkcode Ok}
+    values if all results are {@linkcode Ok}, or a new {@linkcode Err} result
+    containing an array of all {@linkcode Err} encountered.
 
   @template A The type of the array or tuple of results.
 */
-export function allResults(results: readonly []): Result<[], never>;
-export function allResults<const A extends AnyResults>(results: A): AllResults<A>;
-export function allResults(results: AnyResults): Result<unknown[], unknown[]> {
+export function transposeAll(results: readonly []): Result<[], never>;
+export function transposeAll<const A extends readonly AnyResult[]>(results: A): AllResults<A>;
+export function transposeAll(results: readonly AnyResult[]): Result<unknown[], unknown[]> {
   const oks = [];
   const errs = [];
 
@@ -1598,21 +1598,18 @@ export function allResults(results: AnyResults): Result<unknown[], unknown[]> {
     }
   }
 
-  if (errs.length > 0) {
-    return Result.err(errs);
-  }
-
-  return Result.ok(oks);
+  return errs.length === 0 ? Result.ok(oks) : Result.err(errs);
 }
 
 /**
-  Given an array of results, return a new {@linkcode Ok} result if _any_ of the results is
-  {@linkcode Ok}, or a new {@linkcode Err} result if _all_ the results are {@linkcode Err}.
+  Given an array of results, return a new {@linkcode Ok} result if _any_ of the
+  results is {@linkcode Ok}, or a new {@linkcode Err} result if _all_ the
+  results are {@linkcode Err}.
 
   ## Examples
 
-  When any result is {@linkcode Ok}, return a new {@linkcode Ok} result containing the value of
-  the first {@linkcode Ok} result:
+  When any result is {@linkcode Ok}, return a new {@linkcode Ok} result
+  containing the value of the first {@linkcode Ok} result:
 
   ```ts
   import { any } from 'true-myth/result';
@@ -1626,8 +1623,8 @@ export function allResults(results: AnyResults): Result<unknown[], unknown[]> {
   console.log(result.toString()); // Ok(10);
   ```
 
-  When all results are {@linkcode Err}, return a new {@linkcode Err} result containing an array of
-  all {@linkcode Err} encountered:
+  When all results are {@linkcode Err}, return a new {@linkcode Err} result
+  containing an array of all {@linkcode Err} encountered:
 
   ```ts
   import { any } from 'true-myth/result';
@@ -1642,17 +1639,18 @@ export function allResults(results: AnyResults): Result<unknown[], unknown[]> {
   ```
 
   @param results The list of results to check.
-  @returns A new {@linkcode Result} containing the value of the first {@linkcode Ok} result if any
-    results are {@linkcode Ok}, or a new {@linkcode Err} result containing an array of all
-    {@linkcode Err} encountered if all results are {@linkcode Err}.
+  @returns A new {@linkcode Result} containing the value of the first {@linkcode
+    Ok} result if any results are {@linkcode Ok}, or a new {@linkcode Err}
+    result containing an array of all {@linkcode Err} encountered if all results
+    are {@linkcode Err}.
 
   @template A The type of the array or tuple of tasks.
 */
-export function any(results: []): Result<[], never>;
-export function any<const A extends AnyResults>(
+export function transposeAny(results: []): Result<[], never>;
+export function transposeAny<const A extends AnyResult[]>(
   results: A
 ): Result<ResultTypesFor<A>['ok'], [...ResultTypesFor<A>['err']]>;
-export function any(results: readonly [] | readonly AnyResult[]): Result<unknown, unknown[]> {
+export function transposeAny(results: readonly [] | readonly AnyResult[]): Result<unknown, unknown[]> {
   if (results.length === 0) {
     return Result.err([]);
   }
