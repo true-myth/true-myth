@@ -16,7 +16,7 @@
     <img src='https://img.shields.io/badge/Node-18%20LTS%20%7C%2020%20LTS%20%7C%2022-darkgreen' alt='supported Node versions'>
   </a>
   <a href='https://github.com/true-myth/true-myth/blob/main/.github/workflows/CI.yml#L59'>
-    <img src='https://img.shields.io/badge/TypeScript-5.3%20%3C=%205.8%20%7C%20next-3178c6' alt='supported TypeScript versions'>
+    <img src='https://img.shields.io/badge/TypeScript-5.3%20%3C=%205.8%20%7C%205.9%20%7C%20next-3178c6' alt='supported TypeScript versions'>
   </a>
   <a href='https://github.com/true-myth/true-myth/blob/main/.github/workflows/Nightly.yml'>
     <img src='https://github.com/true-myth/true-myth/workflows/Nightly%20TypeScript%20Run/badge.svg' alt='Nightly TypeScript Run'>
@@ -72,7 +72,7 @@ For details on using a pure ES modules package in TypeScript, see [the TypeScrip
 
 This project follows the current draft of [the Semantic Versioning for TypeScript Types][semver] specification.
 
-- **Currently supported TypeScript versions:** 5.3, 5.4, 5.5, 5.6, 5.7, and 5.8
+- **Currently supported TypeScript versions:** 5.3, 5.4, 5.5, 5.6, 5.7, 5.8, and 5.9
 - **Compiler support policy:** [simple majors][sm]
 - **Public API:** all published, documented types not in a `-private` module and not marked as `@internal` or `@private` are public
 
