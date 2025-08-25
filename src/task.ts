@@ -510,8 +510,9 @@ class TaskImpl<T, E> implements PromiseLike<Result<T, E>> {
 
     Because it is very common to work with a mix of synchronous and asynchronous
     operations, `andThen` also “lifts” a {@linkcode Result} value into a `Task`.
-    An {@linkcode Ok} will produce the same outcome as a `Resolved` `Task`, and
-    an {@linkcode Err} will produce the same outcome as a `Rejected` `Task`.
+    An {@linkcode result.Ok Ok} will produce the same outcome as a `Resolved`
+    `Task`, and an {@linkcode result.Err Err} will produce the same outcome as a
+    `Rejected` `Task`.
 
     The [`Promise.prototype.then`][then] method is a helpful comparison: if you
     have a `Promise`, you can pass its `then` method a callback which returns

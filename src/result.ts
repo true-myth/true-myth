@@ -44,9 +44,15 @@ export interface ErrJSON<E> {
 /** Representation of a {@linkcode Result} when serialized to JSON. */
 export type ResultJSON<T, E> = OkJSON<T> | ErrJSON<E>;
 
+/** Representation of a possibly-nested {@linkcode Result} when serialized. */
 export type Serialized<T, E> = ResultJSON<FlattenedJSON<T>, FlattenedJSON<E>>;
 
-type FlattenedJSON<T> =
+/**
+  Representation of a possibly-nested {@linkcode Result} when serialized.
+
+  @internal
+ */
+export type FlattenedJSON<T> =
   T extends SomeResult<infer U, infer F> ? ResultJSON<FlattenedJSON<U>, FlattenedJSON<F>> : T;
 
 type Repr<T, E> = [tag: 'Ok', value: T] | [tag: 'Err', error: E];
