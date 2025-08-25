@@ -12,12 +12,12 @@
   @module
  */
 
-import { curry1, safeToString } from "./-private/utils.js";
-import Maybe from "./maybe.js";
-import Result, * as result from "./result.js";
-import type { AnyResult, SomeResult } from "./result.js";
-import Unit from "./unit.js";
-import * as delay from "./task/delay.js";
+import { curry1, safeToString } from './-private/utils.js';
+import Maybe from './maybe.js';
+import Result, * as result from './result.js';
+import type { AnyResult, SomeResult } from './result.js';
+import Unit from './unit.js';
+import * as delay from './task/delay.js';
 
 // Make the `delay` namespace available as `task.delay` for convenience, and as
 // `task.Delay` for backward compatibility. This lets people do something like
@@ -64,10 +64,10 @@ type SomeTask<T, E> = { [IsTask]: [T, E] };
 /** @internal */
 type TypesFor<S extends AnyTask | AnyResult> =
   S extends SomeTask<infer T, infer E>
-  ? { resolution: T; rejection: E }
-  : S extends SomeResult<infer T, infer E>
-  ? { resolution: T; rejection: E }
-  : never;
+    ? { resolution: T; rejection: E }
+    : S extends SomeResult<infer T, infer E>
+      ? { resolution: T; rejection: E }
+      : never;
 
 /**
   Internal implementation details for {@linkcode Task}.
@@ -107,12 +107,7 @@ class TaskImpl<T, E> implements PromiseLike<Result<T, E>> {
       the lifecycle of the `Task`. The executor in turn has two functions as
       parameters: one to call on resolution, the other on rejection.
    */
-  constructor(
-    executor: (
-      resolve: (value: T) => void,
-      reject: (reason: E) => void,
-    ) => void,
-  ) {
+  constructor(executor: (resolve: (value: T) => void, reject: (reason: E) => void) => void) {
     this.#promise = new Promise<Result<T, E>>((resolve) => {
       executor(
         (value) => {
@@ -122,7 +117,7 @@ class TaskImpl<T, E> implements PromiseLike<Result<T, E>> {
         (reason) => {
           this.#state = [State.Rejected, reason];
           resolve(Result.err(reason));
-        },
+        }
       );
     }).catch((e) => {
       throw new TaskExecutorException(e);
@@ -135,11 +130,8 @@ class TaskImpl<T, E> implements PromiseLike<Result<T, E>> {
   // unwrapping of “thenables” to produce new `Task`s even when there is an
   // intermediate `Promise`.
   then<A, B>(
-    onSuccess?:
-      | ((result: Result<T, E>) => A | PromiseLike<A>)
-      | null
-      | undefined,
-    onRejected?: ((reason: unknown) => B | PromiseLike<B>) | null | undefined,
+    onSuccess?: ((result: Result<T, E>) => A | PromiseLike<A>) | null | undefined,
+    onRejected?: ((reason: unknown) => B | PromiseLike<B>) | null | undefined
   ): PromiseLike<A | B> {
     return this.#promise.then(onSuccess, onRejected);
   }
@@ -147,7 +139,7 @@ class TaskImpl<T, E> implements PromiseLike<Result<T, E>> {
   toString() {
     switch (this.#state[0]) {
       case State.Pending:
-        return "Task.Pending";
+        return 'Task.Pending';
 
       case State.Resolved:
         return `Task.Resolved(${safeToString(this.#state[1])})`;
@@ -248,8 +240,8 @@ class TaskImpl<T, E> implements PromiseLike<Result<T, E>> {
    */
   static withResolvers<T, E>(): WithResolvers<T, E> {
     // SAFETY: immediately initialized via the `Task` constructor’s executor.
-    let resolve!: WithResolvers<T, E>["resolve"];
-    let reject!: WithResolvers<T, E>["reject"];
+    let resolve!: WithResolvers<T, E>['resolve'];
+    let reject!: WithResolvers<T, E>['reject'];
     let task = new Task<T, E>((resolveTask, rejectTask) => {
       resolve = resolveTask;
       reject = rejectTask;
@@ -285,7 +277,7 @@ class TaskImpl<T, E> implements PromiseLike<Result<T, E>> {
       return this.#state[1];
     }
 
-    throw new InvalidAccess("value", this.#state[0]);
+    throw new InvalidAccess('value', this.#state[0]);
   }
 
   /**
@@ -300,7 +292,7 @@ class TaskImpl<T, E> implements PromiseLike<Result<T, E>> {
       return this.#state[1];
     }
 
-    throw new InvalidAccess("reason", this.#state[0]);
+    throw new InvalidAccess('reason', this.#state[0]);
   }
 
   /**
@@ -491,19 +483,18 @@ class TaskImpl<T, E> implements PromiseLike<Result<T, E>> {
               other.match({
                 Ok: resolve,
                 Err: reject,
-              })
+              });
             } else {
               (other as TaskImpl<U, F>).#promise.then(
                 result.match({
                   Ok: resolve,
                   Err: reject,
-                }),
+                })
               );
             }
-
           },
           Err: reject,
-        }),
+        })
       );
     });
   }
@@ -578,7 +569,7 @@ class TaskImpl<T, E> implements PromiseLike<Result<T, E>> {
    */
   andThen<U>(thenFn: (t: T) => Task<U, E> | Result<U, E>): Task<U, E>;
   andThen<R extends AnyTask | AnyResult>(
-    thenFn: (t: T) => R,
+    thenFn: (t: T) => R
   ): Task<ResolvesTo<R>, E | RejectsWith<R>>;
   andThen<U>(thenFn: (t: T) => Task<U, E> | Result<U, E>): Task<U, E> {
     return new Task((resolve, reject) => {
@@ -605,12 +596,12 @@ class TaskImpl<T, E> implements PromiseLike<Result<T, E>> {
                 result.match({
                   Ok: resolve,
                   Err: reject,
-                }),
+                })
               );
             }
           },
           Err: reject,
-        }),
+        })
       );
     });
   }
@@ -687,11 +678,11 @@ class TaskImpl<T, E> implements PromiseLike<Result<T, E>> {
                 result.match({
                   Ok: resolve,
                   Err: reject,
-                }),
+                })
               );
             }
           },
-        }),
+        })
       );
     });
   }
@@ -718,7 +709,7 @@ class TaskImpl<T, E> implements PromiseLike<Result<T, E>> {
    */
   orElse<F>(elseFn: (reason: E) => Task<T, F> | Result<T, F>): Task<T, F>;
   orElse<R extends AnyTask | AnyResult>(
-    elseFn: (reason: E) => R,
+    elseFn: (reason: E) => R
   ): Task<T | ResolvesTo<R>, RejectsWith<R>>;
   orElse<F>(elseFn: (reason: E) => Task<T, F> | Result<T, F>): Task<T, F> {
     return new Task((resolve, reject) => {
@@ -737,11 +728,11 @@ class TaskImpl<T, E> implements PromiseLike<Result<T, E>> {
                 result.match({
                   Ok: resolve,
                   Err: reject,
-                }),
+                })
               );
             }
           },
-        }),
+        })
       );
     });
   }
@@ -821,7 +812,7 @@ class TaskImpl<T, E> implements PromiseLike<Result<T, E>> {
       result.match({
         Ok: matcher.Resolved,
         Err: matcher.Rejected,
-      }),
+      })
     );
   }
 
@@ -839,8 +830,7 @@ class TaskImpl<T, E> implements PromiseLike<Result<T, E>> {
       if the timer elapsed.
    */
   timeout(timerOrMs: Timer | number): Task<T, E | Timeout> {
-    let timerTask =
-      typeof timerOrMs === "number" ? timer(timerOrMs) : timerOrMs;
+    let timerTask = typeof timerOrMs === 'number' ? timer(timerOrMs) : timerOrMs;
     let timeout = timerTask.andThen((ms) => Task.reject(new Timeout(ms)));
     return race([this as Task<T, E>, timeout]);
   }
@@ -882,15 +872,13 @@ export type TaskTypesFor<A extends readonly AnyTask[]> = {
   The resolution type for a given {@linkcode Task}.
   @internal
  */
-export type ResolvesTo<T extends AnyTask | AnyResult> =
-  TypesFor<T>["resolution"];
+export type ResolvesTo<T extends AnyTask | AnyResult> = TypesFor<T>['resolution'];
 
 /**
   The rejection type for a given {@linkcode Task}
   @internal
  */
-export type RejectsWith<T extends AnyTask | AnyResult> =
-  TypesFor<T>["rejection"];
+export type RejectsWith<T extends AnyTask | AnyResult> = TypesFor<T>['rejection'];
 
 /**
   Create a {@linkcode Task} which will resolve to the number of milliseconds the
@@ -923,9 +911,9 @@ export function timer(ms: number): Timer {
  */
 export type All<A extends readonly AnyTask[]> = Task<
   // `[...]` to keep the ordering for a tuple type
-  [...TaskTypesFor<A>["resolution"]],
+  [...TaskTypesFor<A>['resolution']],
   // `[number]` to turn it into an unordered array
-  TaskTypesFor<A>["rejection"][number]
+  TaskTypesFor<A>['rejection'][number]
 >;
 
 /**
@@ -1067,9 +1055,7 @@ export type Settled<A extends readonly AnyTask[]> = {
 
   @template A The type of the array or tuple of tasks.
  */
-export function allSettled<const A extends readonly AnyTask[]>(
-  tasks: A,
-): Task<Settled<A>, never>;
+export function allSettled<const A extends readonly AnyTask[]>(tasks: A): Task<Settled<A>, never>;
 export function allSettled(tasks: AnyTask[]): Task<unknown, never> {
   // All task promises should resolve; none should ever reject, by definition.
   // The “settled” state here is represented by the `Task` itself, *not* by the
@@ -1130,12 +1116,12 @@ export function allSettled(tasks: AnyTask[]): Task<unknown, never> {
 */
 export function any(tasks: []): Task<never, AggregateRejection<[]>>;
 export function any<const A extends readonly AnyTask[]>(
-  tasks: A,
+  tasks: A
 ): Task<
   // `[number]` to turn it into an unordered array
-  TaskTypesFor<A>["resolution"][number],
+  TaskTypesFor<A>['resolution'][number],
   // `[...]` to keep the ordering for a tuple type
-  AggregateRejection<[...TaskTypesFor<A>["rejection"]]>
+  AggregateRejection<[...TaskTypesFor<A>['rejection']]>
 >;
 export function any(tasks: readonly [] | readonly AnyTask[]): AnyTask {
   if (tasks.length === 0) {
@@ -1214,11 +1200,8 @@ export function any(tasks: readonly [] | readonly AnyTask[]): AnyTask {
  */
 export function race(tasks: []): Task<never, never>;
 export function race<A extends readonly AnyTask[]>(
-  tasks: A,
-): Task<
-  TaskTypesFor<A>["resolution"][number],
-  TaskTypesFor<A>["rejection"][number]
->;
+  tasks: A
+): Task<TaskTypesFor<A>['resolution'][number], TaskTypesFor<A>['rejection'][number]>;
 export function race(tasks: [] | AnyTask[]): AnyTask {
   if (tasks.length === 0) {
     return new Task(() => {
@@ -1231,7 +1214,7 @@ export function race(tasks: [] | AnyTask[]): AnyTask {
       result.match({
         Ok: resolve,
         Err: reject,
-      }),
+      })
     );
   });
 }
@@ -1246,15 +1229,14 @@ export function race(tasks: [] | AnyTask[]): AnyTask {
   @template E The type of the rejection reasons.
 */
 export class AggregateRejection<E extends unknown[]> extends Error {
-  readonly name = "AggregateRejection";
+  readonly name = 'AggregateRejection';
 
   constructor(readonly errors: E) {
-    super("`Task.any`");
+    super('`Task.any`');
   }
 
   toString() {
-    let internalMessage =
-      this.errors.length > 0 ? `[${safeToString(this.errors)}]` : "No tasks";
+    let internalMessage = this.errors.length > 0 ? `[${safeToString(this.errors)}]` : 'No tasks';
     return super.toString() + `: ${internalMessage}`;
   }
 }
@@ -1267,8 +1249,7 @@ export class AggregateRejection<E extends unknown[]> extends Error {
 
   @group Task Variants
  */
-export interface Pending<T, E>
-  extends Omit<TaskImpl<T, E>, "value" | "reason"> {
+export interface Pending<T, E> extends Omit<TaskImpl<T, E>, 'value' | 'reason'> {
   get isPending(): true;
   get isResolved(): false;
   get isRejected(): false;
@@ -1283,7 +1264,7 @@ export interface Pending<T, E>
 
   @group Task Variants
  */
-export interface Resolved<T, E> extends Omit<TaskImpl<T, E>, "reason"> {
+export interface Resolved<T, E> extends Omit<TaskImpl<T, E>, 'reason'> {
   get isPending(): false;
   get isResolved(): true;
   get isRejected(): false;
@@ -1299,7 +1280,7 @@ export interface Resolved<T, E> extends Omit<TaskImpl<T, E>, "reason"> {
 
   @group Task Variants
  */
-export interface Rejected<T, E> extends Omit<TaskImpl<T, E>, "value"> {
+export interface Rejected<T, E> extends Omit<TaskImpl<T, E>, 'value'> {
   get isPending(): false;
   get isResolved(): false;
   get isRejected(): true;
@@ -1308,9 +1289,9 @@ export interface Rejected<T, E> extends Omit<TaskImpl<T, E>, "value"> {
 }
 
 export const State = {
-  Pending: "Pending",
-  Resolved: "Resolved",
-  Rejected: "Rejected",
+  Pending: 'Pending',
+  Resolved: 'Resolved',
+  Rejected: 'Rejected',
 } as const;
 
 type State = (typeof State)[keyof typeof State];
@@ -1344,15 +1325,12 @@ export type Matcher<T, E, A> = {
   @group Errors
  */
 export class TaskExecutorException extends Error {
-  name = "TrueMyth.Task.ThrowingExecutor";
+  name = 'TrueMyth.Task.ThrowingExecutor';
 
   constructor(originalError: unknown) {
-    super(
-      "The executor for `Task` threw an error. This cannot be handled safely.",
-      {
-        cause: originalError,
-      },
-    );
+    super('The executor for `Task` threw an error. This cannot be handled safely.', {
+      cause: originalError,
+    });
   }
 }
 
@@ -1363,24 +1341,21 @@ export class TaskExecutorException extends Error {
   @group Errors
 */
 export class UnsafePromise extends Error {
-  readonly name = "TrueMyth.Task.UnsafePromise";
+  readonly name = 'TrueMyth.Task.UnsafePromise';
 
   constructor(unhandledError: unknown) {
     let explanation =
-      "If you see this message, it means someone constructed a True Myth `Task` with a `Promise<Result<T, E>` but where the `Promise` could still reject. To fix it, make sure all calls to `Task.fromUnsafePromise` have a `catch` handler. Never use `Task.fromUnsafePromise` with a `Promise` on which you cannot verify by inspection that it was created with a catch handler.";
+      'If you see this message, it means someone constructed a True Myth `Task` with a `Promise<Result<T, E>` but where the `Promise` could still reject. To fix it, make sure all calls to `Task.fromUnsafePromise` have a `catch` handler. Never use `Task.fromUnsafePromise` with a `Promise` on which you cannot verify by inspection that it was created with a catch handler.';
 
-    super(
-      `Called 'Task.fromUnsafePromise' with an unsafe promise.\n${explanation}`,
-      {
-        cause: unhandledError,
-      },
-    );
+    super(`Called 'Task.fromUnsafePromise' with an unsafe promise.\n${explanation}`, {
+      cause: unhandledError,
+    });
   }
 }
 
 export class InvalidAccess extends Error {
-  readonly name = "TrueMyth.Task.InvalidAccess";
-  constructor(field: "value" | "reason", state: State) {
+  readonly name = 'TrueMyth.Task.InvalidAccess';
+  constructor(field: 'value' | 'reason', state: State) {
     super(`Tried to access 'Task.${field}' when its state was '${state}'`);
   }
 }
@@ -1423,10 +1398,7 @@ export interface TaskConstructor {
       parameters: one to call on resolution, the other on rejection.
    */
   new <T, E>(
-    executor: (
-      resolve: (value: T) => void,
-      reject: (reason: E) => void,
-    ) => void,
+    executor: (resolve: (value: T) => void, reject: (reason: E) => void) => void
   ): Task<T, E>;
 
   /**
@@ -1644,11 +1616,11 @@ export function fromPromise<T>(promise: Promise<T>): Task<T, unknown>;
  */
 export function fromPromise<T, E>(
   promise: Promise<T>,
-  onRejection: (reason: unknown) => E,
+  onRejection: (reason: unknown) => E
 ): Task<T, E>;
 export function fromPromise<T>(
   promise: Promise<T>,
-  onRejection?: (reason: unknown) => unknown,
+  onRejection?: (reason: unknown) => unknown
 ): Task<T, unknown> {
   let handleError = onRejection ?? identity;
   return new Task((resolve, reject) => {
@@ -1712,7 +1684,7 @@ export function fromResult<T, E>(result: Result<T, E>): Task<T, E> {
     result.match({
       Ok: resolve,
       Err: reject,
-    }),
+    })
   );
 }
 
@@ -1739,9 +1711,7 @@ export function fromResult<T, E>(result: Result<T, E>): Task<T, E> {
 
   @group Constructors
  */
-export function fromUnsafePromise<T, E>(
-  promise: Promise<Result<T, E>>,
-): Task<T, E> {
+export function fromUnsafePromise<T, E>(promise: Promise<Result<T, E>>): Task<T, E> {
   return new Task((resolve, reject) => {
     promise.then(
       result.match({
@@ -1750,7 +1720,7 @@ export function fromUnsafePromise<T, E>(
       }),
       (rejectionReason: unknown) => {
         throw new UnsafePromise(rejectionReason);
-      },
+      }
     );
   });
 }
@@ -1848,7 +1818,7 @@ export function tryOr<T, E>(rejection: E, fn: () => Promise<T>): Task<T, E>;
 export function tryOr<T, E>(rejection: E): (fn: () => Promise<T>) => Task<T, E>;
 export function tryOr<T, E>(
   rejection: E,
-  fn?: () => Promise<T>,
+  fn?: () => Promise<T>
 ): Task<T, E> | ((fn: () => Promise<T>) => Task<T, E>) {
   const op = (curriedFn: () => Promise<T>): Task<T, E> =>
     new Task((resolve, reject) => {
@@ -1936,14 +1906,14 @@ export const safelyTryOrElse = tryOrElse;
 */
 export function tryOrElse<T, E>(
   onError: (reason: unknown) => E,
-  fn: () => PromiseLike<T>,
+  fn: () => PromiseLike<T>
 ): Task<T, E>;
 export function tryOrElse<T, E>(
-  onError: (reason: unknown) => E,
+  onError: (reason: unknown) => E
 ): (fn: () => PromiseLike<T>) => Task<T, E>;
 export function tryOrElse<T, E>(
   onError: (reason: unknown) => E,
-  fn?: () => PromiseLike<T>,
+  fn?: () => PromiseLike<T>
 ): Task<T, E> | ((fn: () => PromiseLike<T>) => Task<T, E>) {
   const op = (fn: () => PromiseLike<T>): Task<T, E> =>
     new Task((resolve, reject) => {
@@ -2037,10 +2007,7 @@ export function safe<
   F extends (...params: never[]) => PromiseLike<unknown>,
   P extends Parameters<F>,
   E,
->(
-  fn: F,
-  onError?: (reason: unknown) => E,
-): (...params: P) => Task<unknown, unknown> {
+>(fn: F, onError?: (reason: unknown) => E): (...params: P) => Task<unknown, unknown> {
   let handleError = onError ?? identity;
   return (...params) => tryOrElse(handleError, () => fn(...params));
 }
@@ -2126,19 +2093,13 @@ export function safeNullable<
   P extends Parameters<F>,
   R extends Awaited<ReturnType<F>>,
   E,
->(
-  fn: F,
-  onError: (reason: unknown) => E,
-): (...params: P) => Task<Maybe<NonNullable<R>>, E>;
+>(fn: F, onError: (reason: unknown) => E): (...params: P) => Task<Maybe<NonNullable<R>>, E>;
 export function safeNullable<
   F extends (...params: never[]) => PromiseLike<unknown>,
   P extends Parameters<F>,
   R extends Awaited<ReturnType<F>>,
   E,
->(
-  fn: F,
-  onError?: (reason: unknown) => E,
-): (...params: P) => Task<Maybe<NonNullable<R>>, unknown> {
+>(fn: F, onError?: (reason: unknown) => E): (...params: P) => Task<Maybe<NonNullable<R>>, unknown> {
   let handleError = onError ?? identity;
   return (...params) =>
     tryOrElse(handleError, async () => {
@@ -2164,13 +2125,11 @@ export function safeNullable<
   @template T The type of the value when the `Task` resolves successfully.
   @template E The type of the rejection reason when the `Task` rejects.
  */
-export function map<T, U, E>(
-  mapFn: (t: T) => U,
-): (task: Task<T, E>) => Task<U, E>;
+export function map<T, U, E>(mapFn: (t: T) => U): (task: Task<T, E>) => Task<U, E>;
 export function map<T, U, E>(mapFn: (t: T) => U, task: Task<T, E>): Task<U, E>;
 export function map<T, U, E>(
   mapFn: (t: T) => U,
-  task?: Task<T, E>,
+  task?: Task<T, E>
 ): Task<U, E> | ((task: Task<T, E>) => Task<U, E>) {
   return curry1((task) => task.map(mapFn), task);
 }
@@ -2192,16 +2151,11 @@ export function map<T, U, E>(
   @template T The type of the value when the `Task` resolves successfully.
   @template E The type of the rejection reason when the `Task` rejects.
  */
+export function mapRejected<T, E, F>(mapFn: (e: E) => F): (task: Task<T, E>) => Task<T, F>;
+export function mapRejected<T, E, F>(mapFn: (e: E) => F, task: Task<T, E>): Task<T, F>;
 export function mapRejected<T, E, F>(
   mapFn: (e: E) => F,
-): (task: Task<T, E>) => Task<T, F>;
-export function mapRejected<T, E, F>(
-  mapFn: (e: E) => F,
-  task: Task<T, E>,
-): Task<T, F>;
-export function mapRejected<T, E, F>(
-  mapFn: (e: E) => F,
-  task?: Task<T, E>,
+  task?: Task<T, E>
 ): Task<T, F> | ((task: Task<T, E>) => Task<T, F>) {
   return curry1((task) => task.mapRejected(mapFn), task);
 }
@@ -2223,13 +2177,11 @@ export function mapRejected<T, E, F>(
   @template T The type of the value when the `Task` resolves successfully.
   @template E The type of the rejection reason when the `Task` rejects.
  */
-export function and<T, U, E>(
-  andTask: Task<U, E>,
-): (task: Task<T, E>) => Task<U, E>;
+export function and<T, U, E>(andTask: Task<U, E>): (task: Task<T, E>) => Task<U, E>;
 export function and<T, U, E>(andTask: Task<U, E>, task: Task<T, E>): Task<U, E>;
 export function and<T, U, E>(
   andTask: Task<U, E>,
-  task?: Task<T, E>,
+  task?: Task<T, E>
 ): Task<U, E> | ((task: Task<T, E>) => Task<U, E>) {
   return curry1((task) => task.and(andTask), task);
 }
@@ -2252,22 +2204,20 @@ export function and<T, U, E>(
   @template E The type of the rejection reason when the `Task` rejects.
  */
 export function andThen<T, E, R extends AnyTask | AnyResult>(
-  thenFn: (t: T) => R,
+  thenFn: (t: T) => R
 ): (task: Task<T, E>) => Task<ResolvesTo<R>, E | RejectsWith<R>>;
-export function andThen<T, U, E>(
-  thenFn: (t: T) => U,
-): (task: Task<T, E>) => Task<U, E>;
+export function andThen<T, U, E>(thenFn: (t: T) => U): (task: Task<T, E>) => Task<U, E>;
 export function andThen<T, E, R extends AnyTask | AnyResult>(
   thenFn: (t: T) => R,
-  task: Task<T, E>,
+  task: Task<T, E>
 ): Task<ResolvesTo<R>, E | RejectsWith<R>>;
 export function andThen<T, U, E>(
   thenFn: (t: T) => Task<U, E> | Result<U, E>,
-  task: Task<T, E>,
+  task: Task<T, E>
 ): Task<U, E>;
 export function andThen<T, U, E>(
   thenFn: (t: T) => Task<U, E> | Result<U, E>,
-  task?: Task<T, E>,
+  task?: Task<T, E>
 ): Task<U, E> | ((task: Task<T, E>) => Task<U, E> | Result<U, E>) {
   return curry1((task) => task.andThen(thenFn), task);
 }
@@ -2289,16 +2239,11 @@ export function andThen<T, U, E>(
   @template T The type of the value when the `Task` resolves successfully.
   @template E The type of the rejection reason when the `Task` rejects.
  */
+export function or<U, F, T, E>(other: Task<U, F>): (task: Task<T, E>) => Task<T | U, F>;
+export function or<U, F, T, E>(other: Task<U, F>, task: Task<T, E>): Task<T | U, F>;
 export function or<U, F, T, E>(
   other: Task<U, F>,
-): (task: Task<T, E>) => Task<T | U, F>;
-export function or<U, F, T, E>(
-  other: Task<U, F>,
-  task: Task<T, E>,
-): Task<T | U, F>;
-export function or<U, F, T, E>(
-  other: Task<U, F>,
-  task?: Task<T, E>,
+  task?: Task<T, E>
 ): Task<T | U, F> | ((task: Task<T, E>) => Task<T | U, F>) {
   return curry1((task) => task.or(other), task);
 }
@@ -2321,22 +2266,22 @@ export function or<U, F, T, E>(
   @template E The type of the rejection reason when the `Task` rejects.
  */
 export function orElse<T, E, F, U = T>(
-  elseFn: (reason: E) => Task<U, F>,
+  elseFn: (reason: E) => Task<U, F>
 ): (task: Task<T, E>) => Task<T | U, F>;
 export function orElse<T, E, R extends AnyTask>(
-  elseFn: (reason: E) => R,
+  elseFn: (reason: E) => R
 ): (task: Task<T, E>) => Task<T | ResolvesTo<R>, RejectsWith<R>>;
 export function orElse<T, E, F, U = T>(
   elseFn: (reason: E) => Task<U, F>,
-  task: Task<T, E>,
+  task: Task<T, E>
 ): Task<T | U, F>;
 export function orElse<T, E, R extends AnyTask>(
   elseFn: (reason: E) => R,
-  task: Task<T, E>,
+  task: Task<T, E>
 ): Task<T | ResolvesTo<R>, RejectsWith<R>>;
 export function orElse<T, E, F, U = T>(
   elseFn: (reason: E) => Task<U, F>,
-  task?: Task<T, E>,
+  task?: Task<T, E>
 ): Task<T | U, F> | ((task: Task<T, E>) => Task<T | U, F>) {
   return curry1((task) => task.orElse(elseFn), task);
 }
@@ -2358,16 +2303,11 @@ export function orElse<T, E, F, U = T>(
   @template T The type of the value when the `Task` resolves successfully.
   @template E The type of the rejection reason when the `Task` rejects.
  */
+export function match<T, E, A>(matcher: Matcher<T, E, A>): (task: Task<T, E>) => Promise<A>;
+export function match<T, E, A>(matcher: Matcher<T, E, A>, task: Task<T, E>): Promise<A>;
 export function match<T, E, A>(
   matcher: Matcher<T, E, A>,
-): (task: Task<T, E>) => Promise<A>;
-export function match<T, E, A>(
-  matcher: Matcher<T, E, A>,
-  task: Task<T, E>,
-): Promise<A>;
-export function match<T, E, A>(
-  matcher: Matcher<T, E, A>,
-  task?: Task<T, E>,
+  task?: Task<T, E>
 ): Promise<A> | ((task: Task<T, E>) => Promise<A>) {
   return curry1((task) => task.match(matcher), task);
 }
@@ -2390,15 +2330,12 @@ export function match<T, E, A>(
   @template E The type of the rejection reason when the `Task` rejects.
  */
 export function timeout<T, E>(
-  timerOrMs: Timer | number,
+  timerOrMs: Timer | number
 ): (task: Task<T, E>) => Task<T, E | Timeout>;
+export function timeout<T, E>(timerOrMs: Timer | number, task: Task<T, E>): Task<T, E | Timeout>;
 export function timeout<T, E>(
   timerOrMs: Timer | number,
-  task: Task<T, E>,
-): Task<T, E | Timeout>;
-export function timeout<T, E>(
-  timerOrMs: Timer | number,
-  task?: Task<T, E>,
+  task?: Task<T, E>
 ): Task<T, E | Timeout> | ((task: Task<T, E>) => Task<T, E | Timeout>) {
   return curry1((task) => task.timeout(timerOrMs), task);
 }
@@ -2601,11 +2538,11 @@ function identity<T>(value: T): T {
  */
 export function withRetries<T, E>(
   retryable: (status: RetryStatus) => Task<T, E | StopRetrying> | StopRetrying,
-  strategy: delay.Strategy = (function*() {
+  strategy: delay.Strategy = (function* () {
     for (let i = 0; i < 3; i++) {
       yield 0;
     }
-  })(),
+  })()
 ): Task<T, RetryFailed<E>> {
   const startTime = Date.now();
 
@@ -2631,7 +2568,7 @@ export function withRetries<T, E>(
           totalDuration,
           rejections,
           cause: taskOrErr,
-        }),
+        })
       );
     }
 
@@ -2651,7 +2588,7 @@ export function withRetries<T, E>(
             totalDuration,
             rejections,
             cause: reason,
-          }),
+          })
         );
       }
 
@@ -2659,9 +2596,7 @@ export function withRetries<T, E>(
 
       let next = strategy.next();
       if (next.done) {
-        return Task.reject(
-          new RetryFailed({ tries: count, totalDuration, rejections }),
-        );
+        return Task.reject(new RetryFailed({ tries: count, totalDuration, rejections }));
       }
 
       let delay = next.value;
@@ -2698,7 +2633,7 @@ export interface RetryStatus {
  */
 class StopRetrying extends Error {
   get name(): string {
-    return "TrueMyth.Task.StopRetrying";
+    return 'TrueMyth.Task.StopRetrying';
   }
 }
 
@@ -2716,7 +2651,7 @@ export function stopRetrying(message: string, cause?: unknown): StopRetrying {
   return new StopRetrying(message, { cause });
 }
 
-export const RETRY_FAILED_NAME = "TrueMyth.Task.RetryFailed";
+export const RETRY_FAILED_NAME = 'TrueMyth.Task.RetryFailed';
 
 /**
   An [`Error`][mdn-error] subclass for when a `Task` rejected after a specified

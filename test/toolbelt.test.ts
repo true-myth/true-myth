@@ -1,7 +1,7 @@
-import { describe, expect, expectTypeOf, test } from "vitest";
+import { describe, expect, expectTypeOf, test } from 'vitest';
 
-import Maybe from "true-myth/maybe";
-import Result from "true-myth/result";
+import Maybe from 'true-myth/maybe';
+import Result from 'true-myth/result';
 import {
   transposeResult,
   transposeMaybe,
@@ -10,43 +10,43 @@ import {
   fromResult,
   fromMaybe,
   toMaybe,
-} from "true-myth/toolbelt";
+} from 'true-myth/toolbelt';
 
-describe("transposeResult", () => {
-  test("Ok(Just(T))", () => {
+describe('transposeResult', () => {
+  test('Ok(Just(T))', () => {
     let result = Result.ok<Maybe<number>, string>(Maybe.just(12));
     let transposed = transposeResult(result);
     expect(transposed).toStrictEqual(Maybe.just(Result.ok(12)));
     expectTypeOf(transposed).toEqualTypeOf<Maybe<Result<number, string>>>();
   });
 
-  test("Ok(Nothing)", () => {
+  test('Ok(Nothing)', () => {
     let result = Result.ok<Maybe<number>, string>(Maybe.nothing<number>());
     let transposed = transposeResult(result);
     expect(transposed).toStrictEqual(Maybe.nothing());
     expectTypeOf(transposed).toEqualTypeOf<Maybe<Result<number, string>>>();
   });
 
-  test("Err(E)", () => {
-    let result = Result.err<Maybe<number>, string>("hello");
+  test('Err(E)', () => {
+    let result = Result.err<Maybe<number>, string>('hello');
     let transposed = transposeResult(result);
-    expect(transposed).toStrictEqual(Maybe.just(Result.err("hello")));
+    expect(transposed).toStrictEqual(Maybe.just(Result.err('hello')));
     expectTypeOf(transposed).toEqualTypeOf<Maybe<Result<number, string>>>();
   });
 });
 
-test("`toMaybe`", () => {
-  const theValue = "huzzah";
+test('`toMaybe`', () => {
+  const theValue = 'huzzah';
   const anOk = Result.ok(theValue);
   expect(toMaybe(anOk)).toEqual(Maybe.just(theValue));
 
-  const anErr = Result.err<number, string>("uh uh");
+  const anErr = Result.err<number, string>('uh uh');
   expect(toMaybe(anErr)).toEqual(Maybe.nothing());
 });
 
-test("fromMaybe", () => {
-  const theValue = "something";
-  const errValue = "what happened?";
+test('fromMaybe', () => {
+  const theValue = 'something';
+  const errValue = 'what happened?';
 
   const aJust = Maybe.just(theValue);
   const anOk = Result.ok(theValue);
@@ -57,22 +57,22 @@ test("fromMaybe", () => {
   expect(fromMaybe(errValue, aNothing)).toEqual(anErr);
 });
 
-describe("transposeMaybe", () => {
-  test("Just(Ok(T))", () => {
+describe('transposeMaybe', () => {
+  test('Just(Ok(T))', () => {
     let maybe = Maybe.just(Result.ok<number, string>(12));
     let transposed = transposeMaybe(maybe);
     expect(transposed).toStrictEqual(Result.ok(Maybe.just(12)));
     expectTypeOf(transposed).toEqualTypeOf<Result<Maybe<number>, string>>();
   });
 
-  test("Just(Err(E))", () => {
-    let maybe = Maybe.just(Result.err<number, string>("whoops"));
+  test('Just(Err(E))', () => {
+    let maybe = Maybe.just(Result.err<number, string>('whoops'));
     let transposed = transposeMaybe(maybe);
-    expect(transposed).toStrictEqual(Result.err("whoops"));
+    expect(transposed).toStrictEqual(Result.err('whoops'));
     expectTypeOf(transposed).toEqualTypeOf<Result<Maybe<number>, string>>();
   });
 
-  test("Nothing", () => {
+  test('Nothing', () => {
     let maybe = Maybe.nothing<Result<number, string>>();
     let transposed = transposeMaybe(maybe);
     expect(transposed).toStrictEqual(Result.ok(Maybe.nothing()));
@@ -80,40 +80,38 @@ describe("transposeMaybe", () => {
   });
 });
 
-test("`toOkOrErr`", () => {
-  const theValue = "string";
+test('`toOkOrErr`', () => {
+  const theValue = 'string';
   const theJust = Maybe.of(theValue);
-  const errValue = { reason: "such badness" };
+  const errValue = { reason: 'such badness' };
 
   expect(toOkOrErr(errValue, theJust)).toEqual(Result.ok(theValue));
   expect(toOkOrErr(errValue, Maybe.nothing())).toEqual(Result.err(errValue));
 
   expect(toOkOrErr<string, typeof errValue>(errValue)(theJust)).toEqual(
-    toOkOrErr(errValue, theJust),
+    toOkOrErr(errValue, theJust)
   );
 });
 
-test("`toOkOrElseErr`", () => {
+test('`toOkOrElseErr`', () => {
   const theJust = Maybe.of(12);
   const errValue = 24;
   const getErrValue = () => errValue;
 
   expect(toOkOrElseErr(getErrValue, theJust)).toEqual(Result.ok(12));
-  expect(toOkOrElseErr(getErrValue, Maybe.nothing())).toEqual(
-    Result.err(errValue),
-  );
+  expect(toOkOrElseErr(getErrValue, Maybe.nothing())).toEqual(Result.err(errValue));
 
   expect(toOkOrElseErr<number, number>(getErrValue)(theJust)).toEqual(
-    toOkOrElseErr(getErrValue, theJust),
+    toOkOrElseErr(getErrValue, theJust)
   );
 });
 
-test("`fromResult`", () => {
+test('`fromResult`', () => {
   const value = 1000;
   const anOk = Result.ok(value);
   expect(fromResult(anOk)).toEqual(Maybe.just(value));
 
-  const reason = "oh teh noes";
+  const reason = 'oh teh noes';
   const anErr = Result.err<number, string>(reason);
   expect(fromResult(anErr)).toEqual(Maybe.nothing());
 });

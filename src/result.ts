@@ -46,7 +46,8 @@ export type ResultJSON<T, E> = OkJSON<T> | ErrJSON<E>;
 
 export type Serialized<T, E> = ResultJSON<FlattenedJSON<T>, FlattenedJSON<E>>;
 
-type FlattenedJSON<T> = T extends SomeResult<infer U, infer F> ? ResultJSON<FlattenedJSON<U>, FlattenedJSON<F>> : T;
+type FlattenedJSON<T> =
+  T extends SomeResult<infer U, infer F> ? ResultJSON<FlattenedJSON<U>, FlattenedJSON<F>> : T;
 
 type Repr<T, E> = [tag: 'Ok', value: T] | [tag: 'Err', error: E];
 
@@ -58,9 +59,8 @@ export type AnyResult = Result<unknown, unknown>;
 export type SomeResult<T, E> = { [IsResult]: [T, E] };
 
 /** @internal */
-export type TypesFor<R extends AnyResult> = R extends SomeResult<infer T, infer E>
-  ? { ok: T; err: E }
-  : never;
+export type TypesFor<R extends AnyResult> =
+  R extends SomeResult<infer T, infer E> ? { ok: T; err: E } : never;
 
 /** @internal */
 export type OkFor<R extends AnyResult> = TypesFor<R>['ok'];
@@ -69,7 +69,7 @@ export type ErrFor<R extends AnyResult> = TypesFor<R>['err'];
 
 // Defines the *implementation*, but not the *types*. See the exports below.
 class ResultImpl<T, E> {
-  private constructor(private repr: Repr<T, E>) { }
+  private constructor(private repr: Repr<T, E>) {}
 
   /** @internal */
   declare readonly [IsResult]: [T, E];
@@ -96,8 +96,8 @@ class ResultImpl<T, E> {
     return arguments.length === 0
       ? (new ResultImpl<Unit, E>(['Ok', Unit]) as Result<Unit, E>)
       : // SAFETY: TS does not understand that the arity check above accounts for
-      // the case where the value is not passed.
-      (new ResultImpl<T, E>(['Ok', value as T]) as Result<T, E>);
+        // the case where the value is not passed.
+        (new ResultImpl<T, E>(['Ok', value as T]) as Result<T, E>);
   }
 
   /**
@@ -125,8 +125,8 @@ class ResultImpl<T, E> {
     return arguments.length === 0
       ? (new ResultImpl<T, Unit>(['Err', Unit]) as Result<T, Unit>)
       : // SAFETY: TS does not understand that the arity check above accounts for
-      // the case where the value is not passed.
-      (new ResultImpl<T, E>(['Err', error as E]) as Result<T, E>);
+        // the case where the value is not passed.
+        (new ResultImpl<T, E>(['Err', error as E]) as Result<T, E>);
   }
 
   /** Distinguish between the {@linkcode Variant.Ok} and {@linkcode Variant.Err} {@linkcode Variant variants}. */
@@ -1666,7 +1666,9 @@ export function transposeAny(results: []): Result<[], never>;
 export function transposeAny<const A extends AnyResult[]>(
   results: A
 ): Result<ResultTypesFor<A>['ok'], [...ResultTypesFor<A>['err']]>;
-export function transposeAny(results: readonly [] | readonly AnyResult[]): Result<unknown, unknown[]> {
+export function transposeAny(
+  results: readonly [] | readonly AnyResult[]
+): Result<unknown, unknown[]> {
   if (results.length === 0) {
     return Result.err([]);
   }
