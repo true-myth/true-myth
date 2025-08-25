@@ -13,15 +13,19 @@ What that means in practice is that libraries like True Myth can provide an impl
 
 Our integration provides two functions and two corresponding types for each:
 
-| function         | produces         | parser utility type |
-| ---------------- | ---------------- | ------------------- |
-| `parserFor`      | `ParseResult<T>` | `ParserFor<T>`      |
-| `asyncParserFor` | `ParseTask<T>`   | `AsyncParserFor<T>` |
+| function                | produces                | parser utility type         |
+| ----------------------- | ----------------------- | --------------------------- |
+| [`parserFor`][pF]       | [`ParseResult<T>`][PRT] | [`ParserFor<T>`][PFT]       |
+| [`asyncParserFor`][apF] | [`ParseTask<T>`][PTT]   | [`AsyncParserFor<T>`][APFT] |
 
-- , and `ParserFor`
--  and `AsyncParserFor`
+[pF]: /api/standard-schema/functions/parserFor.html
+[aPF]: /api/standard-schema/functions/asyncParserFor.html
+[PRT]: /api/standard-schema/type-aliases/ParseResult.html
+[PTT]: /api/standard-schema/type-aliases/ParseTask.html
+[PFT]: /api/standard-schema/type-aliases/ParserFor.html
+[APFT]: /api/standard-schema/type-aliases/AsyncParserFor.html
 
-As their names imply, the `parserFor` and `asyncParserFor` functions accept a schema from one of the Standard Schema-compliant libraries and produce a `ParseResult` or `ParseTask` wrapping the type that would be produced by the schema—but using True Myth’s `Result` and `Task` types respectively, instead of the Standard Schema Result type.
+As their names imply, the [`parserFor`][pF] and [`asyncParserFor`][aPF] functions accept a schema from one of the Standard Schema-compliant libraries and produce a [`ParseResult`][PRT] or [`ParseTask`][PTT] wrapping the type that would be produced by the schema—but using True Myth’s `Result` and `Task` types respectively, instead of the Standard Schema Result type.
 
 ```ts
 import { parserFor } from 'true-myth';
@@ -42,7 +46,7 @@ const parsePersonWithArktype = parserFor(personParserArktype);
 const parsePersonWithZod = parserFor(personParserZod);
 ```
 
-The related utility types, `ParserFor` and `AsyncParserFor`, are shorthands for functions that can take unknown data and produce parsed data wrapped in a `Result` or `Task`. In other words: they’re fully generic aliases for the type of a function produced by `parserFor` and `asyncParserFor` respectively.
+The related utility types, [`ParserFor`][PFT] and [`AsyncParserFor`][APFT], are shorthands for functions that can take unknown data and produce parsed data wrapped in a `Result` or `Task`. In other words: they’re fully generic aliases for the type of a function produced by `parserFor` and `asyncParserFor` respectively.
 
 ```ts
 import { parserFor } from 'true-myth';
@@ -78,3 +82,5 @@ The async versions of these work exactly the same as the synchronous versions, b
 > and asynchronous parsers due to limitations in Zod.
 >
 > [gh]: https://github.com/standard-schema/standard-schema/issues/22
+
+For more, see [the API docs](/api/standard-schema).
