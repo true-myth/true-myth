@@ -72,10 +72,10 @@ let theTask = Task.tryOrElse(
 
 ```ts
 // `resolved` has the type `Task<number, never>`
-let resolved = Task.resolved(123);
+let resolved = Task.resolve(123);
 
 // `rejected` has the type `Task<never, string>`
-let rejected = Task.rejected("something went wrong");
+let rejected = Task.rejecte("something went wrong");
 ```
 
 
@@ -86,7 +86,7 @@ There are many helpers (“combinators”) for working with a `Task`. The most c
 - `map` transforms a value “within” a `Task` context:
 
     ```ts
-    let theTask = Task.resolved(123);
+    let theTask = Task.resolve(123);
     let doubled = theTask.map((n) => n * 2);
     let theResult = await doubled;
     console.log(theResult); // Ok(456)
@@ -95,7 +95,7 @@ There are many helpers (“combinators”) for working with a `Task`. The most c
 - `mapRejected` does the same, but for a rejection:
 
     ```ts
-    let theTask = Task.rejected(new Error("ugh"));
+    let theTask = Task.reject(new Error("ugh"));
     let wrapped = theTask.mapRejected(
       (err) => new Error(`sigh (caused by: ${err.message})`)
     );
@@ -149,6 +149,6 @@ There are many others; see the API docs!
 
 ## Timing
 
-Because `Task` wraps `Promise`, it (currently) always requires *at least* two ticks of the microtask queue before it will produce its final state. In practical terms, you must *always* `await` a `Task` before its `state` will be `Resolved` or `Rejected`, even with `Task.resolved` and `Task.rejected`. If the (Stage 1) [Faster Promise Adoption][fpa] TC39 proposal is adopted, this *may* change/improve.
+Because `Task` wraps `Promise`, it (currently) always requires *at least* two ticks of the microtask queue before it will produce its final state. In practical terms, you must *always* `await` a `Task` before its `state` will be `Resolved` or `Rejected`, even with `Task.resolve` and `Task.reject`. If the (Stage 1) [Faster Promise Adoption][fpa] TC39 proposal is adopted, this *may* change/improve.
 
 [fpa]: https://github.com/tc39/proposal-faster-promise-adoption

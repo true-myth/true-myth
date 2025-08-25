@@ -181,11 +181,11 @@ const User = z.object({
 const Users = z.array(User);
 
 let usersTask = task.tryOrElse(
-  fetch('https://api.example.com/users'),
-  (httpError) => new Error('Fetch error', { cause: httpError })
-).andThen((res) => tryOrElse(
-  res.json(),
-  (parseError) => new Error('Parse error', { cause: parseError })
+  (httpError) => new Error('Fetch error', { cause: httpError }),
+  () => fetch('https://api.example.com/users')
+).andThen((res) => task.tryOrElse(
+  (parseError) => new Error('Parse error', { cause: parseError }),
+  () => res.json(),
 )).andThen((json) => {
   let result = Users.safeParse(json);
   return result.success
@@ -200,7 +200,15 @@ The resulting type here will be `Task<Array<User>>, Error>`. You can then perfor
 usersTask.match({
   Resolved: (users) => {
     for (let user of users) {
-      console.log(user.name ?? "someone", "is", user.age, "years old");
+      const today = new Date();
+      console.log("Hello,", user.name ?? "someone", "!");
+
+      if (
+        today.getDate() == user.birthday.getDate() &&
+        today.getMonth() == user.birthday.getMonth()
+      ) {
+        console.log();
+      }
     }
   },
   Rejected: (error) => {
