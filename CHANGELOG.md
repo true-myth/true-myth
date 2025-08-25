@@ -6,6 +6,27 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 
 
+
+## 9.1.0 (2025-08-25)
+
+#### :rocket: Enhancement
+* [#1118](https://github.com/true-myth/true-myth/pull/1118) feature: implement `fromJSON` functions ([@chriskrycho](https://github.com/chriskrycho))
+* [#1116](https://github.com/true-myth/true-myth/pull/1116) Maybe: constrain wrapped type to be `{}` at construction ([@chriskrycho](https://github.com/chriskrycho))
+* [#1093](https://github.com/true-myth/true-myth/pull/1093) Standard Schema: introduce general-purpose parser support ([@chriskrycho](https://github.com/chriskrycho))
+* [#1117](https://github.com/true-myth/true-myth/pull/1117) Result: merge multiple results into one ([@hannesborch](https://github.com/hannesborch) and [@chriskrycho](https://github.com/chriskrycho))
+
+#### :memo: Documentation
+* [#1092](https://github.com/true-myth/true-myth/pull/1092) docs: fix warnings and errors ([@chriskrycho](https://github.com/chriskrycho))
+
+#### :house: Internal
+* [#1074](https://github.com/true-myth/true-myth/pull/1074) internal: cleanup defunct `ts-ignore` pragmas ([@chriskrycho](https://github.com/chriskrycho))
+* [#1068](https://github.com/true-myth/true-myth/pull/1068) internal: simplify build and types ([@chriskrycho](https://github.com/chriskrycho))
+
+#### Committers: 2
+- Chris Krycho ([@chriskrycho](https://github.com/chriskrycho))
+- Hannes Borch ([@hannesborch](https://github.com/hannesborch))
+
+
 ## 9.0.1 (2025-05-21)
 
 Fixes an assignability bug with the `PromiseLike` interface and continues cleaning up some docs. This one comes entirely from external contributors—thanks, folks!
