@@ -949,9 +949,12 @@ export function toJSON<T extends {}>(maybe: Maybe<T>): Serialized<T> {
 }
 
 /**
- * Given a {@linkcode MaybeJSON} instance, convert it into a {@linkcode Maybe}.
+ * Given a {@linkcode MaybeJSON} object, convert it into a {@linkcode Maybe}.
  *
- * @param json The value to convert to JSON
+ * Note that this is not designed for parsing data off the wire, but requires
+ * you to have *already* parsed it into the {@linkcode MaybeJSON} format.
+ *
+ * @param json  The value to convert to JSON
  * @returns     The JSON representation of the `Maybe`
  */
 export function fromJSON<T extends {}>(json: MaybeJSON<T>): Maybe<T> {

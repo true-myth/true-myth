@@ -1034,6 +1034,15 @@ export function toJSON<T, E>(result: Result<T, E>): Serialized<T, E> {
   return result.toJSON();
 }
 
+/**
+ * Given a {@linkcode ResultJSON} object, convert it into a {@linkcode Result}.
+ *
+ * Note that this is not designed for parsing data off the wire, but requires
+ * you to have *already* parsed it into the {@linkcode ResultJSON} format.
+ *
+ * @param {ResultJSON<T,E>} json  The value to convert from a JSON object.
+ * @returns {Result<T,E>}         The converted `Result` type.
+ */
 export function fromJSON<T, E>(json: ResultJSON<T, E>): Result<T, E> {
   return json.variant === Variant.Ok ? ok(json.value) : err(json.error);
 }
