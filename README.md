@@ -107,16 +107,16 @@ Notes:
 
     In detail, here are the dependencies of each module:
 
-    | Module               | Depends on                                                        |
-    | -------------------- | ----------------------------------------------------------------- |
-    | `index.js`           | All, but as tree-shakeable as possible)                           |
-    | `maybe.js`           | 'unit.js' , '-private/utils.js'                                   |
-    | `result.js`          | 'unit.js', '-private/utils.js'                                    |
-    | `standard-schema.js` | `task.js`, `result.js`                                            |
-    | `task.js`            | `result.js`, 'unit.js', 'task/delay.js', '-private/utils.js'      |
-    | `task/delay.js`      | None                                                              |
-    | `test-support.js`    | `maybe.js`, `result.js`                                           |
-    | `toolbelt.js`        | `maybe.js`, `result.js`, '-private/utils.js'                      |
+    | Module               | Depends on                                                   |
+    | -------------------- | ------------------------------------------------------------ |
+    | `index.js`           | All, but as tree-shakeable as possible                       |
+    | `maybe.js`           | `unit.js`, `-private/utils.js`                               |
+    | `result.js`          | `unit.js`, `-private/utils.js`                               |
+    | `standard-schema.js` | `task.js`, `result.js`                                       |
+    | `task.js`            | `result.js`, `unit.js`, `task/delay.js`, `-private/utils.js` |
+    | `task/delay.js`      | None                                                         |
+    | `test-support.js`    | `maybe.js`, `result.js`                                      |
+    | `toolbelt.js`        | `maybe.js`, `result.js`, `-private/utils.js`                 |
 
 [^terser]: Using [terser](https://github.com/terser/terser) 5.37.0 with `--compress --mangle --mangle-props`.
 
