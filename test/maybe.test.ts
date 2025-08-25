@@ -1,8 +1,8 @@
 import { describe, expect, expectTypeOf, test } from "vitest";
 
-import Maybe, { Variant, Nothing, Just, Matcher } from "true-myth/maybe";
-import * as maybe from "true-myth/maybe";
-import { Unit } from "true-myth/unit";
+import Maybe, { Variant, type Nothing, type Just, type Matcher } from 'true-myth/maybe';
+import * as maybe from 'true-myth/maybe';
+import { Unit } from 'true-myth/unit';
 
 type Neat = { neat: string };
 
@@ -39,7 +39,7 @@ describe("`Maybe` pure functions", () => {
     expectTypeOf(Maybe.just(() => null)).toBeNever();
     expectTypeOf(Maybe.just(() => undefined)).toBeNever();
 
-    let example = (): string | undefined => undefined;
+    const example = (): string | undefined => undefined;
     expectTypeOf(Maybe.just(example)).toBeNever();
     expectTypeOf(Maybe.just(() => "hello")).toEqualTypeOf<
       Maybe<() => string>
@@ -70,11 +70,11 @@ describe("`Maybe` pure functions", () => {
     expectTypeOf(Maybe.of(() => null)).toBeNever();
     expectTypeOf(Maybe.of(() => undefined)).toBeNever();
 
-    let example = (): string | undefined => undefined;
+    const example = (): string | undefined => undefined;
     expectTypeOf(Maybe.of(example)).toBeNever();
     expectTypeOf(Maybe.of(() => "hello")).toEqualTypeOf<Maybe<() => string>>();
 
-    let unknownVal: unknown = 123;
+    const unknownVal: unknown = 123;
     expectTypeOf(Maybe.of(unknownVal)).toEqualTypeOf<Maybe<{}>>();
 
     test("with `null", () => {
@@ -215,10 +215,10 @@ describe("`Maybe` pure functions", () => {
 
     test("with multiple types in the returned `Maybe` instances", () => {
       class Branded<T extends string> {
-        constructor(public readonly name: T) {}
+        constructor(public readonly name: T) { }
       }
 
-      let theOutput = maybe.andThen(
+      const theOutput = maybe.andThen(
         (_) => {
           if (Math.random() < 0.1) {
             return maybe.just(new Branded("just-a"));
@@ -266,6 +266,7 @@ describe("`Maybe` pure functions", () => {
       expect(maybe.orElse(getWaffles, maybe.of(null as string | null))).toEqual(
         maybe.just("waffles"),
       );
+      expect(maybe.orElse(() => maybe.of(null as string | null), just42)).toEqual(maybe.just('42'));
       expect(
         maybe.orElse(() => maybe.of(null as string | null), just42),
       ).toEqual(maybe.just("42"));
@@ -283,10 +284,10 @@ describe("`Maybe` pure functions", () => {
 
     test("with multiple types in the returned `Maybe` instances", () => {
       class Branded<T extends string> {
-        constructor(public readonly name: T) {}
+        constructor(public readonly name: T) { }
       }
 
-      let theOutput = maybe.orElse(() => {
+      const theOutput = maybe.orElse(() => {
         if (Math.random() < 0.1) {
           return maybe.just(new Branded("just-a"));
         }
@@ -421,6 +422,11 @@ describe("`Maybe` pure functions", () => {
       variant: maybe.Variant.Just,
       value: { a: 42, b: null },
     });
+
+    expect(maybe.toJSON(maybe.of(maybe.of(42)))).toEqual({
+      variant: maybe.Variant.Just,
+      value: { variant: maybe.Variant.Just, value: 42 },
+    });
   });
 
   test("`toJSON` through serialization", () => {
@@ -436,6 +442,34 @@ describe("`Maybe` pure functions", () => {
 
     expect(actualSerializedJust).toEqual(expectedSerializedJust);
     expect(actualSerializedNothing).toEqual(expectedSerializedNothing);
+  });
+
+  describe('fromJSON', () => {
+    test('with MaybeJSON', () => {
+      const justJSON: maybe.MaybeJSON<number> = { variant: maybe.Variant.Just, value: 42 };
+      const justResult = maybe.fromJSON(justJSON);
+      expect(justResult).toEqual(maybe.of(42));
+      expectTypeOf(justResult).toEqualTypeOf(maybe.of(42));
+
+      const nothingJSON = maybe.toJSON(maybe.nothing<number>());
+      const nothingResult = maybe.fromJSON(nothingJSON);
+      expect(nothingResult).toEqual(maybe.nothing());
+      expectTypeOf(nothingResult).toEqualTypeOf<Maybe<number>>();
+    });
+
+    test('with JustJSON', () => {
+      const json: maybe.JustJSON<number> = { variant: maybe.Variant.Just, value: 42 };
+      const result = maybe.fromJSON(json);
+      expect(result).toEqual(maybe.of(42));
+      expectTypeOf(result).toEqualTypeOf(maybe.of(42));
+    });
+
+    test('with NothingJSON', () => {
+      const nothingJSON: maybe.JustJSON<number> = { variant: maybe.Variant.Just, value: 42 };
+      const nothingResult = maybe.fromJSON(nothingJSON);
+      expect(nothingResult).toEqual(maybe.of(42));
+      expectTypeOf(nothingResult).toEqualTypeOf(maybe.of(42));
+    });
   });
 
   test("`equals`", () => {
@@ -615,8 +649,8 @@ describe("`Maybe` pure functions", () => {
         expectTypeOf(onlyJustsAll).toEqualTypeOf<ExpectedOutputType>();
         expect(onlyJustsAll).toEqual(maybe.just([2, "three"]));
 
-        let hasNothing = [maybe.just(2), maybe.nothing<string>()];
-        let hasNothingAll = maybe.transposeArray(hasNothing);
+        const hasNothing = [maybe.just(2), maybe.nothing<string>()];
+        const hasNothingAll = maybe.transposeArray(hasNothing);
         expectTypeOf(hasNothingAll).toEqualTypeOf<ExpectedOutputType>();
         expect(hasNothingAll).toEqual(maybe.nothing());
       });
@@ -954,7 +988,7 @@ describe("`Maybe` class", () => {
 
       test("with multiple types in the returned `Maybe` instances", () => {
         class Branded<T extends string> {
-          constructor(public readonly name: T) {}
+          constructor(public readonly name: T) { }
         }
 
         let theOutput = Maybe.just(new Branded("just")).orElse(() => {
@@ -1005,7 +1039,7 @@ describe("`Maybe` class", () => {
 
       test("with multiple types in the returned `Maybe` instances", () => {
         class Branded<T extends string> {
-          constructor(public readonly name: T) {}
+          constructor(public readonly name: T) { }
         }
 
         let theOutput = Maybe.of(new Branded("just")).andThen((_) => {
@@ -1211,7 +1245,7 @@ describe("`Maybe` class", () => {
 
       test("with multiple types in the returned `Maybe` instances", () => {
         class Branded<T extends string> {
-          constructor(public readonly name: T) {}
+          constructor(public readonly name: T) { }
         }
 
         let theOutput = Maybe.nothing<"empty-start">().orElse(() => {
@@ -1255,7 +1289,7 @@ describe("`Maybe` class", () => {
 
       test("with multiple types in the returned `Maybe` instances", () => {
         class Branded<T extends string> {
-          constructor(public readonly name: T) {}
+          constructor(public readonly name: T) { }
         }
 
         let theOutput = Maybe.nothing<"empty-start">().andThen((_) => {

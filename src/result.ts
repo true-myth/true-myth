@@ -11,9 +11,9 @@
   @module
  */
 
-import Unit from './unit.js';
 import { curry1, safeToString } from './-private/utils.js';
-import { AnyFunction } from './-private/utils.js';
+import type { AnyFunction } from './-private/utils.js';
+import Unit from './unit.js';
 
 /**
   Discriminant for {@linkcode Ok} and {@linkcode Err} variants of the
@@ -43,6 +43,10 @@ export interface ErrJSON<E> {
 
 /** Representation of a {@linkcode Result} when serialized to JSON. */
 export type ResultJSON<T, E> = OkJSON<T> | ErrJSON<E>;
+
+export type Serialized<T, E> = ResultJSON<FlattenedJSON<T>, FlattenedJSON<E>>;
+
+type FlattenedJSON<T> = T extends SomeResult<infer U, infer F> ? ResultJSON<FlattenedJSON<U>, FlattenedJSON<F>> : T;
 
 type Repr<T, E> = [tag: 'Ok', value: T] | [tag: 'Err', error: E];
 
@@ -232,9 +236,15 @@ class ResultImpl<T, E> {
   }
 
   /** Method variant for {@linkcode toJSON} */
-  toJSON(): ResultJSON<T, E> {
+  toJSON(): Serialized<T, E> {
     const variant = this.repr[0];
-    return variant === 'Ok' ? { variant, value: this.repr[1] } : { variant, error: this.repr[1] };
+    if (variant === Variant.Ok) {
+      const value = isInstance(this.repr[1]) ? this.repr[1].toJSON() : this.repr[1];
+      return { variant, value } as Serialized<T, E>;
+    } else {
+      const error = isInstance(this.repr[1]) ? this.repr[1].toJSON() : this.repr[1];
+      return { variant, error } as Serialized<T, E>;
+    }
   }
 
   /** Method variant for {@linkcode equals} */
@@ -1014,9 +1024,13 @@ export const toString = <T, E>(result: Result<T, E>): string => {
  * @param result  The value to convert to JSON
  * @returns       The JSON representation of the `Result`
  */
-export const toJSON = <T, E>(result: Result<T, E>): ResultJSON<T, E> => {
+export function toJSON<T, E>(result: Result<T, E>): Serialized<T, E> {
   return result.toJSON();
-};
+}
+
+export function fromJSON<T, E>(json: ResultJSON<T, E>): Result<T, E> {
+  return json.variant === Variant.Ok ? ok(json.value) : err(json.error);
+}
 
 /**
   A lightweight object defining how to handle each variant of a
@@ -1440,7 +1454,7 @@ export function safe<F extends AnyFunction, P extends Parameters<F>, R extends R
   fn: F,
   handleErr?: (error: unknown) => E
 ): (...params: P) => Result<R, unknown> {
-  let errorHandler = handleErr ?? ((e) => e);
+  const errorHandler = handleErr ?? ((e) => e);
   return (...params) => tryOrElse(errorHandler, () => fn(...params) as R);
 }
 
@@ -1449,7 +1463,9 @@ export function safe<F extends AnyFunction, P extends Parameters<F>, R extends R
 
   @param item The item to check.
  */
-export function isInstance<T, E>(item: unknown): item is Result<T, E> {
+export function isInstance<T, E>(item: Result<T, E>): item is Result<T, E>;
+export function isInstance(item: unknown): item is Result<unknown, unknown>;
+export function isInstance(item: unknown): item is Result<unknown, unknown> {
   return item instanceof ResultImpl;
 }
 
