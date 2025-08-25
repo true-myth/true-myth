@@ -28,8 +28,8 @@ brotli -kq 11 ./**/*.min.js
 cp ./**/*.min.js ./**/*.min.js.br ../measure
 
 # Generate markdown table header
-echo "|       file        | size (B) | terser[^terser] (B) | terser and brotli[^brotli] (B) |" >> ../size-report.md
-echo "| ----------------- | -------- | ------------------- | ------------------------------ |" >> ../size-report.md
+echo "|       file         | size (B) | terser[^terser] (B) | terser and brotli[^brotli] (B) |" >> ../size-report.md
+echo "| ------------------ | -------- | ------------------- | ------------------------------ |" >> ../size-report.md
 
 # Initialize totals
 set total_orig 0
@@ -53,11 +53,11 @@ for orig_file in $files
     set total_br (math $total_br + $br_size)
 
     # Output table row with right-aligned numbers
-    printf "| %-17s | %8d | %19d | %30d |\n" $orig_file $file_size $min_size $br_size >> ../size-report.md
+    printf "| %-18s | %8d | %19d | %30d |\n" $orig_file $file_size $min_size $br_size >> ../size-report.md
 end
 
 # Add total row
-printf "| %-17s | %8d | %19d | %30d |\n" "**total[^total]**" $total_orig $total_min $total_br >> ../size-report.md
+printf "| %-18s | %8d | %19d | %30d |\n" "**total[^total]**" $total_orig $total_min $total_br >> ../size-report.md
 
 # Display the report
 cat ../size-report.md

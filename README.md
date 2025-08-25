@@ -83,25 +83,40 @@ This project follows the current draft of [the Semantic Versioning for TypeScrip
 
 Size of the ESM build without tree-shaking (yes, these are in *bytes*: this is a pretty small library!):
 
-|       file        | size (B) | terser[^terser] (B) | terser and brotli[^brotli] (B) |
-| ----------------- | -------- | ------------------- | ------------------------------ |
-| -private/utils.js |      888 |                 321 |                            166 |
-| index.js          |      646 |                 273 |                            108 |
-| maybe.js          |    18683 |                3553 |                            889 |
-| result.js         |    14111 |                3258 |                            812 |
-| task/delay.js     |     3901 |                 649 |                            259 |
-| task.js           |    51219 |                7254 |                           1997 |
-| test-support.js   |      473 |                 142 |                             89 |
-| toolbelt.js       |     3739 |                 890 |                            277 |
-| unit.js           |      656 |                  58 |                             57 |
-| **total[^total]** |    94316 |               16398 |                           4654 |
+|       file         | size (B) | terser[^terser] (B) | terser and brotli[^brotli] (B) |
+| ------------------ | -------- | ------------------- | ------------------------------ |
+| -private/utils.js  |      888 |                 321 |                            166 |
+| index.js           |      644 |                 352 |                            122 |
+| maybe.js           |    18872 |                3637 |                            908 |
+| result.js          |    15274 |                3927 |                            972 |
+| standard-schema.js |     5975 |                 762 |                            317 |
+| task/delay.js      |     3901 |                 649 |                            259 |
+| task.js            |    54755 |                7448 |                           2025 |
+| test-support.js    |      473 |                 142 |                             89 |
+| toolbelt.js        |     3739 |                 890 |                            277 |
+| unit.js            |      656 |                  58 |                             57 |
+| **total[^total]**  |   105177 |               18186 |                           5192 |
+
 
 Notes:
 
 - The unmodified size *includes comments*.
-- Thus, running through Terser gets us a much more realistic size: about 16.4KB to parse.
-- The total size across the wire of the whole library will be ~4.7KB.
-- This is all tree-shakeable to a significant degree. If your production bundle does not import or use anything from `true-myth/test-support`, you will not pay for it. However, some parts of the library do depend directly on other parts: for example, `toolbelt` uses exports from `result` and `maybe`, and `Task` makes extensive use of `Result` under the hood.
+- Thus, running through Terser gets us a much more realistic size: about 18.1KB to parse.
+- The total size across the wire of the whole library will be ~5.2KB.
+- This is all tree-shakeable to a significant degree: you should only have to “pay for” the types and functions you actually use, directly or indirectly. If your production bundle does not import or use anything from `true-myth/test-support`, you will not pay for it, for example. However, some parts of the library do depend directly on other parts: for example, `toolbelt` uses exports from `result` and `maybe`, and `Task` makes extensive use of `Result` under the hood.
+
+    In detail, here are the dependencies of each module:
+
+    | Module               | Depends on                                                        |
+    | -------------------- | ----------------------------------------------------------------- |
+    | `index.js`           | All, but as tree-shakeable as possible)                           |
+    | `maybe.js`           | 'unit.js' , '-private/utils.js'                                   |
+    | `result.js`          | 'unit.js', '-private/utils.js'                                    |
+    | `standard-schema.js` | `task.js`, `result.js`                                            |
+    | `task.js`            | `result.js`, 'unit.js', 'task/delay.js', '-private/utils.js'      |
+    | `task/delay.js`      | None                                                              |
+    | `test-support.js`    | `maybe.js`, `result.js`                                           |
+    | `toolbelt.js`        | `maybe.js`, `result.js`, '-private/utils.js'                      |
 
 [^terser]: Using [terser](https://github.com/terser/terser) 5.37.0 with `--compress --mangle --mangle-props`.
 
