@@ -96,6 +96,7 @@ class MaybeImpl<T extends {}> implements SomeMaybe<T> {
     invoke `Maybe.of` with an explicit type parameter:
 
     ```ts
+    import Maybe from 'true-myth/maybe';
     const foo = Maybe.of<string>(null);
     ```
 
@@ -166,6 +167,8 @@ class MaybeImpl<T extends {}> implements SomeMaybe<T> {
     value to give it, you can use a type parameter:
 
     ```ts
+    import Maybe from 'true-myth/maybe';
+
     const notString = Maybe.nothing<string>();
     ```
 
@@ -339,7 +342,7 @@ class MaybeImpl<T extends {}> implements SomeMaybe<T> {
       }
     };
 
-    const fullySet: DeepType = {
+    const fullySet: DeepOptionalType = {
       something: {
         with: {
           deeperKeys: 'like this'
@@ -481,6 +484,8 @@ export function isNothing<T extends {}>(maybe: Maybe<T>): maybe is Nothing<T> {
   value to give it, you can use a type parameter:
 
   ```ts
+  import Maybe from 'true-myth/maybe';
+
   const notString = Maybe.nothing<string>();
   ```
 
@@ -537,6 +542,8 @@ export const of = MaybeImpl.of;
   interfaces, like those in this module.)
 
   ```ts
+  import Maybe, { map } from 'true-myth/maybe';
+
   const length = (s: string) => s.length;
 
   const justAString = Maybe.just('string');
@@ -578,6 +585,8 @@ export function map<T extends {}, U extends {}>(mapFn: (t: T) => U): (maybe: May
   interfaces, like those in this module.)
 
   ```ts
+  import Maybe, { map } from 'true-myth/maybe';
+
   const length = (s: string) => s.length;
 
   const justAString = Maybe.just('string');
@@ -611,6 +620,8 @@ export function map<T extends {}, U extends {}>(
   {@linkcode Nothing}.
 
   ```ts
+  import Maybe, { mapOr } from 'true-myth/maybe';
+
   const length = (s: string) => s.length;
 
   const justAString = Maybe.just('string');
@@ -618,7 +629,7 @@ export function map<T extends {}, U extends {}>(
   console.log(theStringLength); // 6
 
   const notAString = Maybe.nothing<string>();
-  const notAStringLength = mapOr(0, length, notAString)
+  const notAStringLength = mapOr(0, length, notAString);
   console.log(notAStringLength); // 0
   ```
 
@@ -666,6 +677,8 @@ export function mapOr<T extends {}, U extends {}>(
   {@linkcode Nothing}.
 
   ```ts
+  import Maybe, { mapOrElse } from 'true-myth/maybe';
+
   const length = (s: string) => s.length;
   const getDefault = () => 0;
 
@@ -674,7 +687,7 @@ export function mapOr<T extends {}, U extends {}>(
   console.log(theStringLength); // 6
 
   const notAString = Maybe.nothing<string>();
-  const notAStringLength = mapOrElse(getDefault, length, notAString)
+  const notAStringLength = mapOrElse(getDefault, length, notAString);
   console.log(notAStringLength); // 0
   ```
 
@@ -736,7 +749,7 @@ export function mapOrElse<T extends {}, U extends {}>(
   not involved in constructing the new `Maybe`.
 
   ```ts
-  import Maybe from 'true-myth/maybe';
+  import Maybe, { nothing } from 'true-myth/maybe';
 
   const justA = Maybe.just('A');
   const justB = Maybe.just('B');
@@ -848,7 +861,7 @@ export function andThen<T extends {}, U extends {}>(
   case that you currently have a nothing.
 
   ```ts
-  import Maybe from 'true-utils/maybe';
+  import Maybe, { nothing } from 'true-myth/maybe';
 
   const justA = Maybe.just("a");
   const justB = Maybe.just("b");
@@ -1153,14 +1166,16 @@ export function match<T extends {}, A>(
   {@linkcode Maybe maybe} instances without having to unwrap them first.
 
   ```ts
+  import Maybe, { equals } from 'true-myth/maybe';
+
   const a = Maybe.of(3);
   const b = Maybe.of(3);
   const c = Maybe.of(null);
   const d = Maybe.nothing();
 
-  Maybe.equals(a, b); // true
-  Maybe.equals(a, c); // false
-  Maybe.equals(c, d); // true
+  equals(a, b); // true
+  equals(a, c); // false
+  equals(c, d); // true
   ```
 
   @param mb A `maybe` to compare to.
@@ -1195,7 +1210,7 @@ export function equals<T extends {}>(
 
   maybeAdd.ap(one).ap(five); // Just(6)
   maybeAdd.ap(one).ap(none); // Nothing
-  maybeAdd.ap(none).ap(five) // Nothing
+  maybeAdd.ap(none).ap(five); // Nothing
   ```
 
   Without `ap`, you'd need to do something like a nested `match`:
@@ -1374,11 +1389,14 @@ export type AnyArray<T> = Array<T> | ReadonlyArray<T>;
   The basic form is:
 
   ```ts
-  import Maybe from 'true-myth/maybe';
+  import * as maybe from 'true-myth/maybe';
 
   let array = [1, 2, 3];
-  Maybe.find(v => v > 1, array); // Just(2)
-  Maybe.find(v => v < 1, array); // Nothing
+  const found = maybe.find(v => v > 1, array); // Just(2)
+  const notFound = maybe.find(v => v < 1, array); // Nothing
+
+  console.log(found.toString()); // Just(2)
+  console.log(notFound.toString()); // Nothing
   ```
 
   The function is curried so you can use it in a functional chain. For example
@@ -1447,7 +1465,7 @@ export function find<T extends {}, U extends T>(
   ```ts
   import { first } from 'true-myth/maybe';
 
-  let empty = [];
+  let empty: number[] = [];
   first(empty); // => Nothing
 
   let full = [1, 2, 3];
@@ -1490,7 +1508,7 @@ export function first(array: AnyArray<unknown>): Maybe<Maybe<{}>> {
   ```ts
   import { last } from 'true-myth/maybe';
 
-  let empty = [];
+  let empty: number[] = [];
   last(empty); // => Nothing
 
   let full = [1, 2, 3];
@@ -1670,7 +1688,7 @@ export function property<T, K extends keyof T>(
   up a property that TypeScript *knows* doesn't exist on the object.
 
   ```ts
-  import { get, just, nothing } from 'true-myth/maybe';
+  import Maybe, { get, just, nothing } from 'true-myth/maybe';
 
   type Person = { name?: string };
 
@@ -1684,7 +1702,7 @@ export function property<T, K extends keyof T>(
   However, it also works correctly with dictionary types:
 
   ```ts
-  import { get, just } from 'true-myth/maybe';
+  import Maybe, { get, just } from 'true-myth/maybe';
 
   type Dict<T> = { [key: string]: T };
 

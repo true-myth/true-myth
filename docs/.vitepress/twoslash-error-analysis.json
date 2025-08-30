@@ -1,0 +1,3263 @@
+{
+  "timestamp": "2025-08-30T18:14:17.231Z",
+  "summary": {
+    "totalErrors": 317,
+    "categories": [
+      "SYNTAX_ERROR,UNDECLARED_VARIABLE,UNDECLARED_VARIABLE,UNDECLARED_VARIABLE",
+      "OTHER",
+      "INCOMPLETE_CODE",
+      "SYNTAX_ERROR",
+      "INCOMPLETE_CODE,SYNTAX_ERROR",
+      "SYNTAX_ERROR,UNDECLARED_VARIABLE",
+      "SYNTAX_ERROR,UNDECLARED_VARIABLE,UNDECLARED_VARIABLE,UNDECLARED_VARIABLE,UNDECLARED_VARIABLE",
+      "UNDECLARED_VARIABLE",
+      "INCOMPLETE_CODE,UNDECLARED_VARIABLE",
+      "SYNTAX_ERROR,WRONG_IMPORT_PATH",
+      "SYNTAX_ERROR,UNDECLARED_VARIABLE,UNDECLARED_VARIABLE",
+      "INCOMPLETE_CODE,SYNTAX_ERROR,UNDECLARED_VARIABLE",
+      "UNDECLARED_VARIABLE,UNDECLARED_VARIABLE"
+    ]
+  },
+  "errors": {
+    "SYNTAX_ERROR,UNDECLARED_VARIABLE,UNDECLARED_VARIABLE,UNDECLARED_VARIABLE": [
+      {
+        "index": 1,
+        "code": "const length = (s: string) => s.length;\n\nconst justAString = Maybe.just('string');\nconst theStringLength = mapOr(0, length, justAString);\nconsole.log(theStringLength); // 6\n\nconst notAString = Maybe.nothing<string>();\nconst notAStringLength = mapOr(0, length, notAString)\nconsole.log(notAStringLength); // 0\n",
+        "categories": [
+          "SYNTAX_ERROR",
+          "UNDECLARED_VARIABLE",
+          "UNDECLARED_VARIABLE",
+          "UNDECLARED_VARIABLE"
+        ],
+        "suggestions": [
+          "Add import: import Maybe from \"true-myth/maybe\";",
+          "Fix syntax errors - missing semicolons, braces, etc."
+        ]
+      },
+      {
+        "index": 2,
+        "code": "const length = (s: string) => s.length;\n\nconst justAString = Maybe.just('string');\nconst theStringLength = mapOr(0, length, justAString);\nconsole.log(theStringLength); // 6\n\nconst notAString = Maybe.nothing<string>();\nconst notAStringLength = mapOr(0, length, notAString)\nconsole.log(notAStringLength); // 0\n",
+        "categories": [
+          "SYNTAX_ERROR",
+          "UNDECLARED_VARIABLE",
+          "UNDECLARED_VARIABLE",
+          "UNDECLARED_VARIABLE"
+        ],
+        "suggestions": [
+          "Add import: import Maybe from \"true-myth/maybe\";",
+          "Fix syntax errors - missing semicolons, braces, etc."
+        ]
+      },
+      {
+        "index": 3,
+        "code": "const length = (s: string) => s.length;\n\nconst justAString = Maybe.just('string');\nconst theStringLength = mapOr(0, length, justAString);\nconsole.log(theStringLength); // 6\n\nconst notAString = Maybe.nothing<string>();\nconst notAStringLength = mapOr(0, length, notAString)\nconsole.log(notAStringLength); // 0\n",
+        "categories": [
+          "SYNTAX_ERROR",
+          "UNDECLARED_VARIABLE",
+          "UNDECLARED_VARIABLE",
+          "UNDECLARED_VARIABLE"
+        ],
+        "suggestions": [
+          "Add import: import Maybe from \"true-myth/maybe\";",
+          "Fix syntax errors - missing semicolons, braces, etc."
+        ]
+      },
+      {
+        "index": 181,
+        "code": "let theTask = Task.resolve(123);\nlet doubled = theTask.map((n) => n * 2);\nlet theResult = await doubled;\nconsole.log(theResult); // Ok(456)\n",
+        "categories": [
+          "SYNTAX_ERROR",
+          "UNDECLARED_VARIABLE",
+          "UNDECLARED_VARIABLE",
+          "UNDECLARED_VARIABLE"
+        ],
+        "suggestions": [
+          "Add import for map function from appropriate module",
+          "Fix syntax errors - missing semicolons, braces, etc."
+        ]
+      },
+      {
+        "index": 182,
+        "code": "let theTask = Task.reject(new Error(\"ugh\"));\nlet wrapped = theTask.mapRejected(\n  (err) => new Error(`sigh (caused by: ${err.message})`)\n);\nlet theResult = await wrapped;\nconsole.log(theResult); // Err(\"Error: sigh (caused by: ugh)\")\n",
+        "categories": [
+          "SYNTAX_ERROR",
+          "UNDECLARED_VARIABLE",
+          "UNDECLARED_VARIABLE",
+          "UNDECLARED_VARIABLE"
+        ],
+        "suggestions": [
+          "Fix syntax errors - missing semicolons, braces, etc."
+        ]
+      },
+      {
+        "index": 247,
+        "code": "const length = (s: string) => s.length;\n\nconst justAString = Maybe.just('string');\nconst theStringLength = mapOr(0, length, justAString);\nconsole.log(theStringLength); // 6\n\nconst notAString = Maybe.nothing<string>();\nconst notAStringLength = mapOr(0, length, notAString)\nconsole.log(notAStringLength); // 0\n",
+        "categories": [
+          "SYNTAX_ERROR",
+          "UNDECLARED_VARIABLE",
+          "UNDECLARED_VARIABLE",
+          "UNDECLARED_VARIABLE"
+        ],
+        "suggestions": [
+          "Add import: import Maybe from \"true-myth/maybe\";",
+          "Fix syntax errors - missing semicolons, braces, etc."
+        ]
+      },
+      {
+        "index": 248,
+        "code": "const length = (s: string) => s.length;\n\nconst justAString = Maybe.just('string');\nconst theStringLength = mapOr(0, length, justAString);\nconsole.log(theStringLength); // 6\n\nconst notAString = Maybe.nothing<string>();\nconst notAStringLength = mapOr(0, length, notAString)\nconsole.log(notAStringLength); // 0\n",
+        "categories": [
+          "SYNTAX_ERROR",
+          "UNDECLARED_VARIABLE",
+          "UNDECLARED_VARIABLE",
+          "UNDECLARED_VARIABLE"
+        ],
+        "suggestions": [
+          "Add import: import Maybe from \"true-myth/maybe\";",
+          "Fix syntax errors - missing semicolons, braces, etc."
+        ]
+      },
+      {
+        "index": 249,
+        "code": "const length = (s: string) => s.length;\n\nconst justAString = Maybe.just('string');\nconst theStringLength = mapOr(0, length, justAString);\nconsole.log(theStringLength); // 6\n\nconst notAString = Maybe.nothing<string>();\nconst notAStringLength = mapOr(0, length, notAString)\nconsole.log(notAStringLength); // 0\n",
+        "categories": [
+          "SYNTAX_ERROR",
+          "UNDECLARED_VARIABLE",
+          "UNDECLARED_VARIABLE",
+          "UNDECLARED_VARIABLE"
+        ],
+        "suggestions": [
+          "Add import: import Maybe from \"true-myth/maybe\";",
+          "Fix syntax errors - missing semicolons, braces, etc."
+        ]
+      }
+    ],
+    "OTHER": [
+      {
+        "index": 4,
+        "code": "import { just, nothing } from 'true-myth/maybe';\n\nconst one = just(1);\nconst five = just(5);\nconst none = nothing();\n\nconst add = (a: number) => (b: number) => a + b;\nconst maybeAdd = just(add);\n\nmaybeAdd.ap(one).ap(five); // Just(6)\nmaybeAdd.ap(one).ap(none); // Nothing\nmaybeAdd.ap(none).ap(five) // Nothing\n",
+        "categories": [
+          "OTHER"
+        ],
+        "suggestions": []
+      },
+      {
+        "index": 6,
+        "code": "import Maybe from 'true-myth/maybe';\nimport { is as immutableIs, Set } from 'immutable';\n\nconst is = (first: unknown) =>  (second: unknown) =>\n  immutableIs(first, second);\n\nconst x = Maybe.of(Set.of(1, 2, 3));\nconst y = Maybe.of(Set.of(2, 3, 4));\n\nMaybe.of(is).ap(x).ap(y); // Just(false)\n",
+        "categories": [
+          "OTHER"
+        ],
+        "suggestions": []
+      },
+      {
+        "index": 8,
+        "code": "const add3 = (a: number) => (b: number) => (c: number) => a + b + c;\n\nconst maybeAdd = just(add3); // Just((a: number) => (b: number) => (c: number) => a + b + c)\nconst maybeAdd1 = maybeAdd.ap(just(1)); // Just((b: number) => (c: number) => 1 + b + c)\nconst maybeAdd1And2 = maybeAdd1.ap(just(2)) // Just((c: number) => 1 + 2 + c)\nconst final = maybeAdd1.ap(just(3)); // Just(4)\n",
+        "categories": [
+          "OTHER"
+        ],
+        "suggestions": []
+      },
+      {
+        "index": 9,
+        "code": "const toStr = (v: { toString(): string }) => v.toString();\njust(toStr).ap(12); // Just(\"12\")\n",
+        "categories": [
+          "OTHER"
+        ],
+        "suggestions": []
+      },
+      {
+        "index": 10,
+        "code": "import { just, nothing } from 'true-myth/maybe';\n\nconst one = just(1);\nconst five = just(5);\nconst none = nothing();\n\nconst add = (a: number) => (b: number) => a + b;\nconst maybeAdd = just(add);\n\nmaybeAdd.ap(one).ap(five); // Just(6)\nmaybeAdd.ap(one).ap(none); // Nothing\nmaybeAdd.ap(none).ap(five) // Nothing\n",
+        "categories": [
+          "OTHER"
+        ],
+        "suggestions": []
+      },
+      {
+        "index": 12,
+        "code": "import Maybe from 'true-myth/maybe';\nimport { is as immutableIs, Set } from 'immutable';\n\nconst is = (first: unknown) =>  (second: unknown) =>\n  immutableIs(first, second);\n\nconst x = Maybe.of(Set.of(1, 2, 3));\nconst y = Maybe.of(Set.of(2, 3, 4));\n\nMaybe.of(is).ap(x).ap(y); // Just(false)\n",
+        "categories": [
+          "OTHER"
+        ],
+        "suggestions": []
+      },
+      {
+        "index": 14,
+        "code": "const add3 = (a: number) => (b: number) => (c: number) => a + b + c;\n\nconst maybeAdd = just(add3); // Just((a: number) => (b: number) => (c: number) => a + b + c)\nconst maybeAdd1 = maybeAdd.ap(just(1)); // Just((b: number) => (c: number) => 1 + b + c)\nconst maybeAdd1And2 = maybeAdd1.ap(just(2)) // Just((c: number) => 1 + 2 + c)\nconst final = maybeAdd1.ap(just(3)); // Just(4)\n",
+        "categories": [
+          "OTHER"
+        ],
+        "suggestions": []
+      },
+      {
+        "index": 15,
+        "code": "const toStr = (v: { toString(): string }) => v.toString();\njust(toStr).ap(12); // Just(\"12\")\n",
+        "categories": [
+          "OTHER"
+        ],
+        "suggestions": []
+      },
+      {
+        "index": 52,
+        "code": "import Maybe from 'true-myth/maybe';\n\nconst aWidth = Maybe.of(document.querySelector('#foo'))\n  .map(el => el.getBoundingClientRect().width)\n  .unwrapOr(0);\n\nconst aColor = Maybe.of(document.querySelector('.bar'))\n  .andThen(el => Maybe.of(getStyle(el, 'color'))\n  .unwrapOr('black');\n",
+        "categories": [
+          "OTHER"
+        ],
+        "suggestions": []
+      },
+      {
+        "index": 53,
+        "code": "import { safe } from 'true-myth/maybe';\n\nconst querySelector = safe(document.querySelector.bind(document));\nconst safelyGetStyle = safe(getStyle);\n\nconst aWidth = querySelector('#foo')\n  .map(el => el.getBoundingClientRect().width)\n  .unwrapOr(0);\n\nconst aColor = querySelector('.bar')\n  .andThen(el => safelyGetStyle(el, 'color'))\n  .unwrapOr('black');\n",
+        "categories": [
+          "OTHER"
+        ],
+        "suggestions": []
+      },
+      {
+        "index": 55,
+        "code": "import Maybe from 'true-myth/maybe';\n\nlet array = [1, 2, 3];\nMaybe.find(v => v > 1, array); // Just(2)\nMaybe.find(v => v < 1, array); // Nothing\n",
+        "categories": [
+          "OTHER"
+        ],
+        "suggestions": []
+      },
+      {
+        "index": 57,
+        "code": "import Maybe from 'true-myth/maybe';\n\nlet array = [1, 2, 3];\nMaybe.find(v => v > 1, array); // Just(2)\nMaybe.find(v => v < 1, array); // Nothing\n",
+        "categories": [
+          "OTHER"
+        ],
+        "suggestions": []
+      },
+      {
+        "index": 59,
+        "code": "import Maybe from 'true-myth/maybe';\n\nlet array = [1, 2, 3];\nMaybe.find(v => v > 1, array); // Just(2)\nMaybe.find(v => v < 1, array); // Nothing\n",
+        "categories": [
+          "OTHER"
+        ],
+        "suggestions": []
+      },
+      {
+        "index": 61,
+        "code": "import Maybe from 'true-myth/maybe';\n\nlet array = [1, 2, 3];\nMaybe.find(v => v > 1, array); // Just(2)\nMaybe.find(v => v < 1, array); // Nothing\n",
+        "categories": [
+          "OTHER"
+        ],
+        "suggestions": []
+      },
+      {
+        "index": 73,
+        "code": "import { any } from 'true-myth/result';\n\nlet result = any([\n  Result.err(\"something went wrong\"),\n  Result.ok(10),\n  Result.err(\"something else went wrong\")\n]);\n\nconsole.log(result.toString()); // Ok(10);\n",
+        "categories": [
+          "OTHER"
+        ],
+        "suggestions": []
+      },
+      {
+        "index": 75,
+        "code": "import { any } from 'true-myth/result';\n\nlet result = any([\n  Result.err(\"something went wrong\"),\n  Result.ok(10),\n  Result.err(\"something else went wrong\")\n]);\n\nconsole.log(result.toString()); // Ok(10);\n",
+        "categories": [
+          "OTHER"
+        ],
+        "suggestions": []
+      },
+      {
+        "index": 80,
+        "code": "import { last } from 'true-myth/maybe';\n\nlet empty = [];\nlast(empty); // => Nothing\n\nlet full = [1, 2, 3];\nlast(full); // => Just(Just(3))\n\nlet mixed = [1, null, 2, null];\nlast(mixed); // Just(Nothing)\n",
+        "categories": [
+          "OTHER"
+        ],
+        "suggestions": []
+      },
+      {
+        "index": 81,
+        "code": "import { last } from 'true-myth/maybe';\n\nlet empty = [];\nlast(empty); // => Nothing\n\nlet full = [1, 2, 3];\nlast(full); // => Just(Just(3))\n\nlet mixed = [1, null, 2, null];\nlast(mixed); // Just(Nothing)\n",
+        "categories": [
+          "OTHER"
+        ],
+        "suggestions": []
+      },
+      {
+        "index": 82,
+        "code": "import { last } from 'true-myth/maybe';\n\nlet empty = [];\nlast(empty); // => Nothing\n\nlet full = [1, 2, 3];\nlast(full); // => Just(Just(3))\n\nlet mixed = [1, null, 2, null];\nlast(mixed); // Just(Nothing)\n",
+        "categories": [
+          "OTHER"
+        ],
+        "suggestions": []
+      },
+      {
+        "index": 89,
+        "code": "import { ok } from 'true-myth/result';\nimport { is as immutableIs, Set } from 'immutable';\n\nconst is = (first: unknown) =>  (second: unknown) =>\n  immutableIs(first, second);\n\nconst x = ok(Set.of(1, 2, 3));\nconst y = ok(Set.of(2, 3, 4));\n\nok(is).ap(x).ap(y); // Ok(false)\n",
+        "categories": [
+          "OTHER"
+        ],
+        "suggestions": []
+      },
+      {
+        "index": 91,
+        "code": "const add3 = (a: number) => (b: number) => (c: number) => a + b + c;\n\nconst resultAdd = ok(add); // Ok((a: number) => (b: number) => (c: number) => a + b + c)\nconst resultAdd1 = resultAdd.ap(ok(1)); // Ok((b: number) => (c: number) => 1 + b + c)\nconst resultAdd1And2 = resultAdd1.ap(ok(2)) // Ok((c: number) => 1 + 2 + c)\nconst final = maybeAdd1.ap(ok(3)); // Ok(4)\n",
+        "categories": [
+          "OTHER"
+        ],
+        "suggestions": []
+      },
+      {
+        "index": 92,
+        "code": "const toStr = (v: { toString(): string }) => v.toString();\nok(toStr).ap(12); // Ok(\"12\")\n",
+        "categories": [
+          "OTHER"
+        ],
+        "suggestions": []
+      },
+      {
+        "index": 93,
+        "code": "import Result from 'true-myth/result';\nimport { curry } from 'lodash';\n\nconst merge3Strs = (a: string, b: string, c: string) => string;\nconst curriedMerge = curry(merge3Strs);\n\nconst fn = Result.ok<typeof curriedMerge, string>(curriedMerge);\n",
+        "categories": [
+          "OTHER"
+        ],
+        "suggestions": []
+      },
+      {
+        "index": 96,
+        "code": "import { ok } from 'true-myth/result';\nimport { is as immutableIs, Set } from 'immutable';\n\nconst is = (first: unknown) =>  (second: unknown) =>\n  immutableIs(first, second);\n\nconst x = ok(Set.of(1, 2, 3));\nconst y = ok(Set.of(2, 3, 4));\n\nok(is).ap(x).ap(y); // Ok(false)\n",
+        "categories": [
+          "OTHER"
+        ],
+        "suggestions": []
+      },
+      {
+        "index": 98,
+        "code": "const add3 = (a: number) => (b: number) => (c: number) => a + b + c;\n\nconst resultAdd = ok(add); // Ok((a: number) => (b: number) => (c: number) => a + b + c)\nconst resultAdd1 = resultAdd.ap(ok(1)); // Ok((b: number) => (c: number) => 1 + b + c)\nconst resultAdd1And2 = resultAdd1.ap(ok(2)) // Ok((c: number) => 1 + 2 + c)\nconst final = maybeAdd1.ap(ok(3)); // Ok(4)\n",
+        "categories": [
+          "OTHER"
+        ],
+        "suggestions": []
+      },
+      {
+        "index": 99,
+        "code": "const toStr = (v: { toString(): string }) => v.toString();\nok(toStr).ap(12); // Ok(\"12\")\n",
+        "categories": [
+          "OTHER"
+        ],
+        "suggestions": []
+      },
+      {
+        "index": 100,
+        "code": "import Result from 'true-myth/result';\nimport { curry } from 'lodash';\n\nconst merge3Strs = (a: string, b: string, c: string) => string;\nconst curriedMerge = curry(merge3Strs);\n\nconst fn = Result.ok<typeof curriedMerge, string>(curriedMerge);\n",
+        "categories": [
+          "OTHER"
+        ],
+        "suggestions": []
+      },
+      {
+        "index": 103,
+        "code": "import { first } from 'true-myth/maybe';\n\nlet empty = [];\nfirst(empty); // => Nothing\n\nlet full = [1, 2, 3];\nfirst(full); // => Just(Just(1))\n\nlet mixed = [undefined, 1];\nfirst(mixed); // => Just(Nothing)\n",
+        "categories": [
+          "OTHER"
+        ],
+        "suggestions": []
+      },
+      {
+        "index": 104,
+        "code": "import { first } from 'true-myth/maybe';\n\nlet empty = [];\nfirst(empty); // => Nothing\n\nlet full = [1, 2, 3];\nfirst(full); // => Just(Just(1))\n\nlet mixed = [undefined, 1];\nfirst(mixed); // => Just(Nothing)\n",
+        "categories": [
+          "OTHER"
+        ],
+        "suggestions": []
+      },
+      {
+        "index": 105,
+        "code": "import { first } from 'true-myth/maybe';\n\nlet empty = [];\nfirst(empty); // => Nothing\n\nlet full = [1, 2, 3];\nfirst(full); // => Just(Just(1))\n\nlet mixed = [undefined, 1];\nfirst(mixed); // => Just(Nothing)\n",
+        "categories": [
+          "OTHER"
+        ],
+        "suggestions": []
+      },
+      {
+        "index": 146,
+        "code": "import * as _ from 'lodash/fp';\nimport { just, nothing, map } from 'true-myth/maybe';\n\nconst length = (s: string) => s.length;\nconst even = (n: number) => n % 2 === 0;\nconst timesThree = (n: number) => n * 3;\n\nconst transform = _.flow(\n  // transform strings to their length: Just(3), Nothing, etc.\n  _.map(map(length)),\n  // drop `Nothing` instances\n  _.filter(_.prop('isJust')),\n  // get value now that it's safe to do so (TS will not allow it earlier)\n  _.map(_.prop('value')),\n  // only keep the even numbers ('fish' => 4)\n",
+        "categories": [
+          "OTHER"
+        ],
+        "suggestions": []
+      },
+      {
+        "index": 147,
+        "code": "import * as _ from 'lodash';\nimport Maybe, { map } from 'true-myth/maybe';\n\nconst length = (s: string) => s.length;\nconst even = (n: number) => n % 2 === 0;\nconst timesThree = (n: number) => n * 3;\n\nconst result = transform([\n  Maybe.of('yay'),\n  Maybe.nothing(),\n  Maybe.nothing(),\n  Maybe.of('waffles'),\n  Maybe.of('fish'),\n  Maybe.of('oh'),\n]);\n",
+        "categories": [
+          "OTHER"
+        ],
+        "suggestions": []
+      },
+      {
+        "index": 148,
+        "code": "function readFile(\n  path: string,\n  callback: (err: ErrnoException | null, data: string) => void,\n): void;\n",
+        "categories": [
+          "OTHER"
+        ],
+        "suggestions": []
+      },
+      {
+        "index": 150,
+        "code": "function readFile(path: string): Promise<string>;\n",
+        "categories": [
+          "OTHER"
+        ],
+        "suggestions": []
+      },
+      {
+        "index": 151,
+        "code": "import { readFile } from 'node:fs/promises';\n\nlet data = await readFile('does-not-exist.lol');\n",
+        "categories": [
+          "OTHER"
+        ],
+        "suggestions": []
+      },
+      {
+        "index": 155,
+        "code": "import { readFile } from 'node:fs/promises';\nimport Task from 'true-myth/task';\n\nlet filePromise = readFile(\"does-not-exist.lol\", { encoding: \"utf-8\" });\nlet readTask = Task.fromPromise(promise);\n",
+        "categories": [
+          "OTHER"
+        ],
+        "suggestions": []
+      },
+      {
+        "index": 158,
+        "code": "import Task from 'true-myth/task';\n\nlet resolvedA = Task.resolve<string, string>('A');\nlet resolvedB = Task.resolve<string, string>('B');\nlet rejectedA = Task.reject<string, string>('bad');\nlet rejectedB = Task.reject<string, string>('lame');\n\nlet aAndB = resolvedA.and(resolvedB);\nawait aAndB;\n\nlet aAndRA = resolvedA.and(rejectedA);\nawait aAndRA;\n\nlet raAndA = rejectedA.and(resolvedA);\nawait raAndA;\n",
+        "categories": [
+          "OTHER"
+        ],
+        "suggestions": []
+      },
+      {
+        "index": 159,
+        "code": "import Task from 'true-myth/task';\n\nlet resolved = Task.resolve<string, string>('A');\nlet rejected = Task.reject<string, string>('bad');\nlet ok = Result.ok<string, string>('B');\nlet err = Result.err<string, string>('lame');\n\nlet aAndB = resolved.and(ok);\nawait aAndB;\n\nlet aAndRA = resolved.and(err);\nawait aAndRA;\n\nlet raAndA = rejected.and(ok);\nawait raAndA;\n",
+        "categories": [
+          "OTHER"
+        ],
+        "suggestions": []
+      },
+      {
+        "index": 168,
+        "code": "import * as task from \"true-myth/task\";\nimport { exponential } from \"true-myth/task/delay\";\n\nlet fetcher = () =>\n  task.fromPromise(fetch(\"https://true-myth.js.org\")).mapRejected(intoError);\n\nlet taskWithRetries = task.withRetries(\n  fetcher,\n  exponential({ from: 10, withFactor: 10 }),\n);\n",
+        "categories": [
+          "OTHER"
+        ],
+        "suggestions": []
+      },
+      {
+        "index": 171,
+        "code": "import * as task from 'true-myth/task';\nimport { someRetryableTask } from 'somewhere/in/your-app';\n\nlet usingRandomInRange = task.withRetries(\n  someRetryableTask,\n  randomInRange(1, 100).take(10)\n);\n\nlet usingRandomInteger = task.withRetries(\n  someRetryableTask,\n  Iterator.from(new RandomInteger()).take(10)\n);\n\nlet usingRangeIterator = task.withRetries(\n  someRetryableTask,\n",
+        "categories": [
+          "OTHER"
+        ],
+        "suggestions": []
+      },
+      {
+        "index": 173,
+        "code": "import * as task from 'true-myth/task';\nimport * as delay from 'true-myth/task/delay';\n\nlet theTask = task.withRetries(\n  () => task.fromPromise(fetch('https://example.com/')),\n  delay.exponential().map(Delay.jitter).take(5)\n);\n",
+        "categories": [
+          "OTHER"
+        ],
+        "suggestions": []
+      },
+      {
+        "index": 174,
+        "code": "import Maybe from 'true-myth/maybe';\n\n// Construct a `Just` where you have a value to use, and the function accepts\n// a `Maybe`.\nconst aKnownNumber = Maybe.just(12);\n\n// Construct a `Nothing` where you don't have a value to use, but the\n// function requires a value (and accepts a `Maybe`).\nconst aKnownNothing = Maybe.nothing<string>();\n\n// Construct a `Maybe` where you don't know whether the value will exist or\n// not, using `of`.\ntype WhoKnows = { mightBeAThing?: boolean[] };\n\nconst whoKnows: WhoKnows = {};\n",
+        "categories": [
+          "OTHER"
+        ],
+        "suggestions": []
+      },
+      {
+        "index": 175,
+        "code": "import { isVoid } from 'true-myth/utils';\nimport Maybe, { Just, Nothing } from 'true-myth/maybe';\n\n// Construct a `Just` where you have a value to use, and the function accepts\n// a `Maybe`.\nconst aKnownNumber = new Just(12);\n\n// Once the item is constructed, you can apply methods directly on it.\nconst fromMappedJust = aKnownNumber.map((x) => x * 2).unwrapOr(0);\nconsole.log(fromMappedJust); // 24\n\n// Construct a `Nothing` where you don't have a value to use, but the\n// function requires a value (and accepts a `Maybe<string>`).\nconst aKnownNothing = new Nothing();\n",
+        "categories": [
+          "OTHER"
+        ],
+        "suggestions": []
+      },
+      {
+        "index": 184,
+        "code": "import Task from 'true-myth/task';\n\nlet resolvedA = Task.resolve<string, string>('A');\nlet resolvedB = Task.resolve<string, string>('B');\nlet rejectedA = Task.reject<string, string>('bad');\nlet rejectedB = Task.reject<string, string>('lame');\n\nlet aAndB = resolvedA.and(resolvedB);\nawait aAndB;\n\nlet aAndRA = resolvedA.and(rejectedA);\nawait aAndRA;\n\nlet raAndA = rejectedA.and(resolvedA);\nawait raAndA;\n",
+        "categories": [
+          "OTHER"
+        ],
+        "suggestions": []
+      },
+      {
+        "index": 185,
+        "code": "import Task from 'true-myth/task';\n\nlet resolved = Task.resolve<string, string>('A');\nlet rejected = Task.reject<string, string>('bad');\nlet ok = Result.ok<string, string>('B');\nlet err = Result.err<string, string>('lame');\n\nlet aAndB = resolved.and(ok);\nawait aAndB;\n\nlet aAndRA = resolved.and(err);\nawait aAndRA;\n\nlet raAndA = rejected.and(ok);\nawait raAndA;\n",
+        "categories": [
+          "OTHER"
+        ],
+        "suggestions": []
+      },
+      {
+        "index": 190,
+        "code": "import Task from 'true-myth/task';\n\nlet resolvedA = Task.resolve<string, string>('A');\nlet resolvedB = Task.resolve<string, string>('B');\nlet rejectedA = Task.reject<string, string>('bad');\nlet rejectedB = Task.reject<string, string>('lame');\n\nlet aAndB = resolvedA.and(resolvedB);\nawait aAndB;\n\nlet aAndRA = resolvedA.and(rejectedA);\nawait aAndRA;\n\nlet raAndA = rejectedA.and(resolvedA);\nawait raAndA;\n",
+        "categories": [
+          "OTHER"
+        ],
+        "suggestions": []
+      },
+      {
+        "index": 191,
+        "code": "import Task from 'true-myth/task';\n\nlet resolved = Task.resolve<string, string>('A');\nlet rejected = Task.reject<string, string>('bad');\nlet ok = Result.ok<string, string>('B');\nlet err = Result.err<string, string>('lame');\n\nlet aAndB = resolved.and(ok);\nawait aAndB;\n\nlet aAndRA = resolved.and(err);\nawait aAndRA;\n\nlet raAndA = rejected.and(ok);\nawait raAndA;\n",
+        "categories": [
+          "OTHER"
+        ],
+        "suggestions": []
+      },
+      {
+        "index": 196,
+        "code": "import { safe } from 'true-myth/task';\n\nconst fetch = safe(window.fetch);\nconst toJson = safe((response: Response) => response.json() as unknown);\nlet json = fetch('https://www.example.com/api/users').andThen(toJson);\n",
+        "categories": [
+          "OTHER"
+        ],
+        "suggestions": []
+      },
+      {
+        "index": 201,
+        "code": "import Task from 'true-myth/task';\n\nlet resolvedA = Task.resolve<string, string>('A');\nlet resolvedB = Task.resolve<string, string>('B');\nlet rejectedA = Task.reject<string, string>('bad');\nlet rejectedB = Task.reject<string, string>('lame');\n\nlet aAndB = resolvedA.and(resolvedB);\nawait aAndB;\n\nlet aAndRA = resolvedA.and(rejectedA);\nawait aAndRA;\n\nlet raAndA = rejectedA.and(resolvedA);\nawait raAndA;\n",
+        "categories": [
+          "OTHER"
+        ],
+        "suggestions": []
+      },
+      {
+        "index": 202,
+        "code": "import Task from 'true-myth/task';\n\nlet resolved = Task.resolve<string, string>('A');\nlet rejected = Task.reject<string, string>('bad');\nlet ok = Result.ok<string, string>('B');\nlet err = Result.err<string, string>('lame');\n\nlet aAndB = resolved.and(ok);\nawait aAndB;\n\nlet aAndRA = resolved.and(err);\nawait aAndRA;\n\nlet raAndA = rejected.and(ok);\nawait raAndA;\n",
+        "categories": [
+          "OTHER"
+        ],
+        "suggestions": []
+      },
+      {
+        "index": 207,
+        "code": "import { fromResult: taskFromResult } from 'true-myth/task';\nimport { err } from 'true-myth/result';\n\nlet theTask = taskFromResult(err(\"oh no!\"));\n",
+        "categories": [
+          "OTHER"
+        ],
+        "suggestions": []
+      },
+      {
+        "index": 213,
+        "code": "import { just, nothing } from 'true-myth/maybe';\n\nconst one = just(1);\nconst five = just(5);\nconst none = nothing();\n\nconst add = (a: number) => (b: number) => a + b;\nconst maybeAdd = just(add);\n\nmaybeAdd.ap(one).ap(five); // Just(6)\nmaybeAdd.ap(one).ap(none); // Nothing\nmaybeAdd.ap(none).ap(five) // Nothing\n",
+        "categories": [
+          "OTHER"
+        ],
+        "suggestions": []
+      },
+      {
+        "index": 215,
+        "code": "import Maybe from 'true-myth/maybe';\nimport { is as immutableIs, Set } from 'immutable';\n\nconst is = (first: unknown) =>  (second: unknown) =>\n  immutableIs(first, second);\n\nconst x = Maybe.of(Set.of(1, 2, 3));\nconst y = Maybe.of(Set.of(2, 3, 4));\n\nMaybe.of(is).ap(x).ap(y); // Just(false)\n",
+        "categories": [
+          "OTHER"
+        ],
+        "suggestions": []
+      },
+      {
+        "index": 217,
+        "code": "const add3 = (a: number) => (b: number) => (c: number) => a + b + c;\n\nconst maybeAdd = just(add3); // Just((a: number) => (b: number) => (c: number) => a + b + c)\nconst maybeAdd1 = maybeAdd.ap(just(1)); // Just((b: number) => (c: number) => 1 + b + c)\nconst maybeAdd1And2 = maybeAdd1.ap(just(2)) // Just((c: number) => 1 + 2 + c)\nconst final = maybeAdd1.ap(just(3)); // Just(4)\n",
+        "categories": [
+          "OTHER"
+        ],
+        "suggestions": []
+      },
+      {
+        "index": 218,
+        "code": "const toStr = (v: { toString(): string }) => v.toString();\njust(toStr).ap(12); // Just(\"12\")\n",
+        "categories": [
+          "OTHER"
+        ],
+        "suggestions": []
+      },
+      {
+        "index": 219,
+        "code": "import { just, nothing } from 'true-myth/maybe';\n\nconst one = just(1);\nconst five = just(5);\nconst none = nothing();\n\nconst add = (a: number) => (b: number) => a + b;\nconst maybeAdd = just(add);\n\nmaybeAdd.ap(one).ap(five); // Just(6)\nmaybeAdd.ap(one).ap(none); // Nothing\nmaybeAdd.ap(none).ap(five) // Nothing\n",
+        "categories": [
+          "OTHER"
+        ],
+        "suggestions": []
+      },
+      {
+        "index": 221,
+        "code": "import Maybe from 'true-myth/maybe';\nimport { is as immutableIs, Set } from 'immutable';\n\nconst is = (first: unknown) =>  (second: unknown) =>\n  immutableIs(first, second);\n\nconst x = Maybe.of(Set.of(1, 2, 3));\nconst y = Maybe.of(Set.of(2, 3, 4));\n\nMaybe.of(is).ap(x).ap(y); // Just(false)\n",
+        "categories": [
+          "OTHER"
+        ],
+        "suggestions": []
+      },
+      {
+        "index": 223,
+        "code": "const add3 = (a: number) => (b: number) => (c: number) => a + b + c;\n\nconst maybeAdd = just(add3); // Just((a: number) => (b: number) => (c: number) => a + b + c)\nconst maybeAdd1 = maybeAdd.ap(just(1)); // Just((b: number) => (c: number) => 1 + b + c)\nconst maybeAdd1And2 = maybeAdd1.ap(just(2)) // Just((c: number) => 1 + 2 + c)\nconst final = maybeAdd1.ap(just(3)); // Just(4)\n",
+        "categories": [
+          "OTHER"
+        ],
+        "suggestions": []
+      },
+      {
+        "index": 224,
+        "code": "const toStr = (v: { toString(): string }) => v.toString();\njust(toStr).ap(12); // Just(\"12\")\n",
+        "categories": [
+          "OTHER"
+        ],
+        "suggestions": []
+      },
+      {
+        "index": 227,
+        "code": "import Maybe from 'true-myth/maybe';\n\nlet array = [1, 2, 3];\nMaybe.find(v => v > 1, array); // Just(2)\nMaybe.find(v => v < 1, array); // Nothing\n",
+        "categories": [
+          "OTHER"
+        ],
+        "suggestions": []
+      },
+      {
+        "index": 229,
+        "code": "import Maybe from 'true-myth/maybe';\n\nlet array = [1, 2, 3];\nMaybe.find(v => v > 1, array); // Just(2)\nMaybe.find(v => v < 1, array); // Nothing\n",
+        "categories": [
+          "OTHER"
+        ],
+        "suggestions": []
+      },
+      {
+        "index": 231,
+        "code": "import Maybe from 'true-myth/maybe';\n\nlet array = [1, 2, 3];\nMaybe.find(v => v > 1, array); // Just(2)\nMaybe.find(v => v < 1, array); // Nothing\n",
+        "categories": [
+          "OTHER"
+        ],
+        "suggestions": []
+      },
+      {
+        "index": 233,
+        "code": "import Maybe from 'true-myth/maybe';\n\nlet array = [1, 2, 3];\nMaybe.find(v => v > 1, array); // Just(2)\nMaybe.find(v => v < 1, array); // Nothing\n",
+        "categories": [
+          "OTHER"
+        ],
+        "suggestions": []
+      },
+      {
+        "index": 242,
+        "code": "import { first } from 'true-myth/maybe';\n\nlet empty = [];\nfirst(empty); // => Nothing\n\nlet full = [1, 2, 3];\nfirst(full); // => Just(Just(1))\n\nlet mixed = [undefined, 1];\nfirst(mixed); // => Just(Nothing)\n",
+        "categories": [
+          "OTHER"
+        ],
+        "suggestions": []
+      },
+      {
+        "index": 243,
+        "code": "import { first } from 'true-myth/maybe';\n\nlet empty = [];\nfirst(empty); // => Nothing\n\nlet full = [1, 2, 3];\nfirst(full); // => Just(Just(1))\n\nlet mixed = [undefined, 1];\nfirst(mixed); // => Just(Nothing)\n",
+        "categories": [
+          "OTHER"
+        ],
+        "suggestions": []
+      },
+      {
+        "index": 244,
+        "code": "import { first } from 'true-myth/maybe';\n\nlet empty = [];\nfirst(empty); // => Nothing\n\nlet full = [1, 2, 3];\nfirst(full); // => Just(Just(1))\n\nlet mixed = [undefined, 1];\nfirst(mixed); // => Just(Nothing)\n",
+        "categories": [
+          "OTHER"
+        ],
+        "suggestions": []
+      },
+      {
+        "index": 269,
+        "code": "import { last } from 'true-myth/maybe';\n\nlet empty = [];\nlast(empty); // => Nothing\n\nlet full = [1, 2, 3];\nlast(full); // => Just(Just(3))\n\nlet mixed = [1, null, 2, null];\nlast(mixed); // Just(Nothing)\n",
+        "categories": [
+          "OTHER"
+        ],
+        "suggestions": []
+      },
+      {
+        "index": 270,
+        "code": "import { last } from 'true-myth/maybe';\n\nlet empty = [];\nlast(empty); // => Nothing\n\nlet full = [1, 2, 3];\nlast(full); // => Just(Just(3))\n\nlet mixed = [1, null, 2, null];\nlast(mixed); // Just(Nothing)\n",
+        "categories": [
+          "OTHER"
+        ],
+        "suggestions": []
+      },
+      {
+        "index": 271,
+        "code": "import { last } from 'true-myth/maybe';\n\nlet empty = [];\nlast(empty); // => Nothing\n\nlet full = [1, 2, 3];\nlast(full); // => Just(Just(3))\n\nlet mixed = [1, null, 2, null];\nlast(mixed); // Just(Nothing)\n",
+        "categories": [
+          "OTHER"
+        ],
+        "suggestions": []
+      },
+      {
+        "index": 285,
+        "code": "import Maybe from 'true-myth/maybe';\n\nconst aWidth = Maybe.of(document.querySelector('#foo'))\n  .map(el => el.getBoundingClientRect().width)\n  .unwrapOr(0);\n\nconst aColor = Maybe.of(document.querySelector('.bar'))\n  .andThen(el => Maybe.of(getStyle(el, 'color'))\n  .unwrapOr('black');\n",
+        "categories": [
+          "OTHER"
+        ],
+        "suggestions": []
+      },
+      {
+        "index": 286,
+        "code": "import { safe } from 'true-myth/maybe';\n\nconst querySelector = safe(document.querySelector.bind(document));\nconst safelyGetStyle = safe(getStyle);\n\nconst aWidth = querySelector('#foo')\n  .map(el => el.getBoundingClientRect().width)\n  .unwrapOr(0);\n\nconst aColor = querySelector('.bar')\n  .andThen(el => safelyGetStyle(el, 'color'))\n  .unwrapOr('black');\n",
+        "categories": [
+          "OTHER"
+        ],
+        "suggestions": []
+      },
+      {
+        "index": 297,
+        "code": "import { ok } from 'true-myth/result';\nimport { is as immutableIs, Set } from 'immutable';\n\nconst is = (first: unknown) =>  (second: unknown) =>\n  immutableIs(first, second);\n\nconst x = ok(Set.of(1, 2, 3));\nconst y = ok(Set.of(2, 3, 4));\n\nok(is).ap(x).ap(y); // Ok(false)\n",
+        "categories": [
+          "OTHER"
+        ],
+        "suggestions": []
+      },
+      {
+        "index": 299,
+        "code": "const add3 = (a: number) => (b: number) => (c: number) => a + b + c;\n\nconst resultAdd = ok(add); // Ok((a: number) => (b: number) => (c: number) => a + b + c)\nconst resultAdd1 = resultAdd.ap(ok(1)); // Ok((b: number) => (c: number) => 1 + b + c)\nconst resultAdd1And2 = resultAdd1.ap(ok(2)) // Ok((c: number) => 1 + 2 + c)\nconst final = maybeAdd1.ap(ok(3)); // Ok(4)\n",
+        "categories": [
+          "OTHER"
+        ],
+        "suggestions": []
+      },
+      {
+        "index": 300,
+        "code": "const toStr = (v: { toString(): string }) => v.toString();\nok(toStr).ap(12); // Ok(\"12\")\n",
+        "categories": [
+          "OTHER"
+        ],
+        "suggestions": []
+      },
+      {
+        "index": 301,
+        "code": "import Result from 'true-myth/result';\nimport { curry } from 'lodash';\n\nconst merge3Strs = (a: string, b: string, c: string) => string;\nconst curriedMerge = curry(merge3Strs);\n\nconst fn = Result.ok<typeof curriedMerge, string>(curriedMerge);\n",
+        "categories": [
+          "OTHER"
+        ],
+        "suggestions": []
+      },
+      {
+        "index": 304,
+        "code": "import { ok } from 'true-myth/result';\nimport { is as immutableIs, Set } from 'immutable';\n\nconst is = (first: unknown) =>  (second: unknown) =>\n  immutableIs(first, second);\n\nconst x = ok(Set.of(1, 2, 3));\nconst y = ok(Set.of(2, 3, 4));\n\nok(is).ap(x).ap(y); // Ok(false)\n",
+        "categories": [
+          "OTHER"
+        ],
+        "suggestions": []
+      },
+      {
+        "index": 306,
+        "code": "const add3 = (a: number) => (b: number) => (c: number) => a + b + c;\n\nconst resultAdd = ok(add); // Ok((a: number) => (b: number) => (c: number) => a + b + c)\nconst resultAdd1 = resultAdd.ap(ok(1)); // Ok((b: number) => (c: number) => 1 + b + c)\nconst resultAdd1And2 = resultAdd1.ap(ok(2)) // Ok((c: number) => 1 + 2 + c)\nconst final = maybeAdd1.ap(ok(3)); // Ok(4)\n",
+        "categories": [
+          "OTHER"
+        ],
+        "suggestions": []
+      },
+      {
+        "index": 307,
+        "code": "const toStr = (v: { toString(): string }) => v.toString();\nok(toStr).ap(12); // Ok(\"12\")\n",
+        "categories": [
+          "OTHER"
+        ],
+        "suggestions": []
+      },
+      {
+        "index": 308,
+        "code": "import Result from 'true-myth/result';\nimport { curry } from 'lodash';\n\nconst merge3Strs = (a: string, b: string, c: string) => string;\nconst curriedMerge = curry(merge3Strs);\n\nconst fn = Result.ok<typeof curriedMerge, string>(curriedMerge);\n",
+        "categories": [
+          "OTHER"
+        ],
+        "suggestions": []
+      }
+    ],
+    "INCOMPLETE_CODE": [
+      {
+        "index": 5,
+        "code": "import { just, nothing } from 'true-myth/maybe';\n\nconst one = just(1);\nconst five = just(5);\nconst none = nothing();\n\none.match({\n  Just: n => five.match({\n    Just: o => just(n + o),\n    Nothing: () => nothing(),\n  }),\n  Nothing: ()  => nothing(),\n}); // Just(6)\n\none.match({\n",
+        "categories": [
+          "INCOMPLETE_CODE"
+        ],
+        "suggestions": [
+          "Complete the code example or mark as @noErrors if intentionally incomplete"
+        ]
+      },
+      {
+        "index": 7,
+        "code": "import Maybe, { just, nothing } from 'true-myth/maybe';\nimport { is, Set } from 'immutable';\n\nconst x = Maybe.of(Set.of(1, 2, 3));\nconst y = Maybe.of(Set.of(2, 3, 4));\n\nx.match({\n  Just: iX => y.match({\n    Just: iY => Maybe.just(is(iX, iY)),\n    Nothing: () => Maybe.nothing(),\n  })\n  Nothing: () => Maybe.nothing(),\n}); // Just(false)\n",
+        "categories": [
+          "INCOMPLETE_CODE"
+        ],
+        "suggestions": [
+          "Complete the code example or mark as @noErrors if intentionally incomplete"
+        ]
+      },
+      {
+        "index": 11,
+        "code": "import { just, nothing } from 'true-myth/maybe';\n\nconst one = just(1);\nconst five = just(5);\nconst none = nothing();\n\none.match({\n  Just: n => five.match({\n    Just: o => just(n + o),\n    Nothing: () => nothing(),\n  }),\n  Nothing: ()  => nothing(),\n}); // Just(6)\n\none.match({\n",
+        "categories": [
+          "INCOMPLETE_CODE"
+        ],
+        "suggestions": [
+          "Complete the code example or mark as @noErrors if intentionally incomplete"
+        ]
+      },
+      {
+        "index": 13,
+        "code": "import Maybe, { just, nothing } from 'true-myth/maybe';\nimport { is, Set } from 'immutable';\n\nconst x = Maybe.of(Set.of(1, 2, 3));\nconst y = Maybe.of(Set.of(2, 3, 4));\n\nx.match({\n  Just: iX => y.match({\n    Just: iY => Maybe.just(is(iX, iY)),\n    Nothing: () => Maybe.nothing(),\n  })\n  Nothing: () => Maybe.nothing(),\n}); // Just(false)\n",
+        "categories": [
+          "INCOMPLETE_CODE"
+        ],
+        "suggestions": [
+          "Complete the code example or mark as @noErrors if intentionally incomplete"
+        ]
+      },
+      {
+        "index": 26,
+        "code": "import Maybe from 'true-myth/maybe';\n\nconst logValue = (mightBeANumber: Maybe<number>) => {\n  const valueToLog = Maybe.mightBeANumber.isJust\n    ? mightBeANumber.value.toString()\n    : 'Nothing to log.';\n\n  console.log(valueToLog);\n};\n",
+        "categories": [
+          "INCOMPLETE_CODE"
+        ],
+        "suggestions": [
+          "Complete the code example or mark as @noErrors if intentionally incomplete"
+        ]
+      },
+      {
+        "index": 27,
+        "code": "import { match } from 'true-myth/maybe';\n\nconst logValue = (mightBeANumber: Maybe<number>) => {\n  const value = match(\n    {\n      Just: n => n.toString(),\n      Nothing: () => 'Nothing to log.',\n    },\n    mightBeANumber\n  );\n\n  console.log(value);\n};\n",
+        "categories": [
+          "INCOMPLETE_CODE"
+        ],
+        "suggestions": [
+          "Complete the code example or mark as @noErrors if intentionally incomplete"
+        ]
+      },
+      {
+        "index": 28,
+        "code": "import Maybe from 'true-myth/maybe';\n\nconst logValue = (mightBeANumber: Maybe<number>) => {\n  const valueToLog = Maybe.mightBeANumber.isJust\n    ? mightBeANumber.value.toString()\n    : 'Nothing to log.';\n\n  console.log(valueToLog);\n};\n",
+        "categories": [
+          "INCOMPLETE_CODE"
+        ],
+        "suggestions": [
+          "Complete the code example or mark as @noErrors if intentionally incomplete"
+        ]
+      },
+      {
+        "index": 29,
+        "code": "import { match } from 'true-myth/maybe';\n\nconst logValue = (mightBeANumber: Maybe<number>) => {\n  const value = match(\n    {\n      Just: n => n.toString(),\n      Nothing: () => 'Nothing to log.',\n    },\n    mightBeANumber\n  );\n\n  console.log(value);\n};\n",
+        "categories": [
+          "INCOMPLETE_CODE"
+        ],
+        "suggestions": [
+          "Complete the code example or mark as @noErrors if intentionally incomplete"
+        ]
+      },
+      {
+        "index": 69,
+        "code": "import { tryOrElse } from 'true-myth/result';\n\nconst aSuccessfulOperation = () => 2 + 2;\n\nconst anOkResult = tryOrElse(\n  (e) => e,\n  aSuccessfulOperation\n); // => Ok(4)\n\nconst thisOperationThrows = () => throw 'Bummer'\n\nconst anErrResult = tryOrElse(\n  (e) => e,\n  () => {\n    thisOperationThrows();\n",
+        "categories": [
+          "INCOMPLETE_CODE"
+        ],
+        "suggestions": [
+          "Complete the code example or mark as @noErrors if intentionally incomplete"
+        ]
+      },
+      {
+        "index": 70,
+        "code": "import { tryOrElse } from 'true-myth/result';\n\nconst aSuccessfulOperation = () => 2 + 2;\n\nconst anOkResult = tryOrElse(\n  (e) => e,\n  aSuccessfulOperation\n); // => Ok(4)\n\nconst thisOperationThrows = () => throw 'Bummer'\n\nconst anErrResult = tryOrElse(\n  (e) => e,\n  () => {\n    thisOperationThrows();\n",
+        "categories": [
+          "INCOMPLETE_CODE"
+        ],
+        "suggestions": [
+          "Complete the code example or mark as @noErrors if intentionally incomplete"
+        ]
+      },
+      {
+        "index": 83,
+        "code": "parsePerson({ name: \"Old!\", age: 112 }).match({\n  Ok: (person) => {\n    console.log(`${person.name ?? \"someone\"} is ${person.age} years old.`);\n  },\n  Err: (error) => {\n    console.error(\"Something is wrong!\", ...error.issues);\n  }\n});\n",
+        "categories": [
+          "INCOMPLETE_CODE"
+        ],
+        "suggestions": [
+          "Complete the code example or mark as @noErrors if intentionally incomplete"
+        ]
+      },
+      {
+        "index": 88,
+        "code": "import { ok, err } from 'true-myth/result';\n\nconst one = ok<number, string>(1);\nconst five = ok<number, string>(5);\nconst whoops = err<number, string>('oh no');\n\none.match({\n  Ok: n => five.match({\n    Ok: o => ok<number, string>(n + o),\n    Err: e => err<number, string>(e),\n  }),\n  Err: e  => err<number, string>(e),\n}); // Ok(6)\n\none.match({\n",
+        "categories": [
+          "INCOMPLETE_CODE"
+        ],
+        "suggestions": [
+          "Complete the code example or mark as @noErrors if intentionally incomplete"
+        ]
+      },
+      {
+        "index": 90,
+        "code": "import Result, { ok, err } from 'true-myth/result';\nimport { is, Set } from 'immutable';\n\nconst x = ok(Set.of(1, 2, 3));\nconst y = ok(Set.of(2, 3, 4));\n\nx.match({\n  Ok: iX => y.match({\n    Ok: iY => Result.of(is(iX, iY)),\n    Err: (e) => ok(false),\n  })\n  Err: (e) => ok(false),\n}); // Ok(false)\n",
+        "categories": [
+          "INCOMPLETE_CODE"
+        ],
+        "suggestions": [
+          "Complete the code example or mark as @noErrors if intentionally incomplete"
+        ]
+      },
+      {
+        "index": 95,
+        "code": "import { ok, err } from 'true-myth/result';\n\nconst one = ok<number, string>(1);\nconst five = ok<number, string>(5);\nconst whoops = err<number, string>('oh no');\n\none.match({\n  Ok: n => five.match({\n    Ok: o => ok<number, string>(n + o),\n    Err: e => err<number, string>(e),\n  }),\n  Err: e  => err<number, string>(e),\n}); // Ok(6)\n\none.match({\n",
+        "categories": [
+          "INCOMPLETE_CODE"
+        ],
+        "suggestions": [
+          "Complete the code example or mark as @noErrors if intentionally incomplete"
+        ]
+      },
+      {
+        "index": 97,
+        "code": "import Result, { ok, err } from 'true-myth/result';\nimport { is, Set } from 'immutable';\n\nconst x = ok(Set.of(1, 2, 3));\nconst y = ok(Set.of(2, 3, 4));\n\nx.match({\n  Ok: iX => y.match({\n    Ok: iY => Result.of(is(iX, iY)),\n    Err: (e) => ok(false),\n  })\n  Err: (e) => ok(false),\n}); // Ok(false)\n",
+        "categories": [
+          "INCOMPLETE_CODE"
+        ],
+        "suggestions": [
+          "Complete the code example or mark as @noErrors if intentionally incomplete"
+        ]
+      },
+      {
+        "index": 102,
+        "code": "await parsePerson({ name: \"Old!\", age: 112 }).match({\n  Resolved: (person) => {\n    console.log(`${person.name ?? \"someone\"} is ${person.age} years old.`);\n  },\n  Rejected: (error) => {\n    console.error(\"Something is wrong!\", ...error.issues);\n  }\n});\n",
+        "categories": [
+          "INCOMPLETE_CODE"
+        ],
+        "suggestions": [
+          "Complete the code example or mark as @noErrors if intentionally incomplete"
+        ]
+      },
+      {
+        "index": 115,
+        "code": "import Result, { isOk, match } from 'true-myth/result';\n\nconst logValue = (mightBeANumber: Result<number, string>) => {\n  console.log(\n    mightBeANumber.isOk\n      ? mightBeANumber.value.toString()\n      : `There was an error: ${unsafelyGetErr(mightBeANumber)}`\n  );\n};\n",
+        "categories": [
+          "INCOMPLETE_CODE"
+        ],
+        "suggestions": [
+          "Complete the code example or mark as @noErrors if intentionally incomplete"
+        ]
+      },
+      {
+        "index": 116,
+        "code": "import Result, { isOk, match } from 'true-myth/result';\n\nconst logValue = (mightBeANumber: Result<number, string>) => {\n  console.log(\n    mightBeANumber.isOk\n      ? mightBeANumber.value.toString()\n      : `There was an error: ${unsafelyGetErr(mightBeANumber)}`\n  );\n};\n",
+        "categories": [
+          "INCOMPLETE_CODE"
+        ],
+        "suggestions": [
+          "Complete the code example or mark as @noErrors if intentionally incomplete"
+        ]
+      },
+      {
+        "index": 126,
+        "code": "import * as task from 'true-myth/task';\nimport * as delay from 'true-myth/task/delay';\n\nlet theTask = task.withRetries(\n  () => task.fromPromise(fetch('https://example.com')).andThen((res) => {\n      if (res.status === 200) {\n        return task.fromPromise(res.json());\n      } else if (res.status === 408) {\n        return task.reject(res.statusText);\n      } else {\n        return task.stopRetrying(res.statusText);\n      }\n    }),\n  delay.fibonacci().map(delay.jitter).take(10)\n);\n",
+        "categories": [
+          "INCOMPLETE_CODE"
+        ],
+        "suggestions": [
+          "Complete the code example or mark as @noErrors if intentionally incomplete"
+        ]
+      },
+      {
+        "index": 127,
+        "code": "import * as task from 'true-myth/task';\nimport { fibonacci, jitter } from 'true-myth/task/delay';\nimport { doSomethingThatMayFailWithAppError } from 'someplace/in/my-app';\n\nlet theTask = task.withRetries(\n  () => {\n    doSomethingThatMayFailWithAppError().orElse((rejection) => {\n      if (rejection.isFatal) {\n        return task.stopRetrying(\"It was fatal!\", { cause: rejection });\n      }\n\n      return task.reject(rejection);\n    });\n  },\n  fibonacci().map(jitter).take(20)\n",
+        "categories": [
+          "INCOMPLETE_CODE"
+        ],
+        "suggestions": [
+          "Complete the code example or mark as @noErrors if intentionally incomplete"
+        ]
+      },
+      {
+        "index": 128,
+        "code": "import * as task from 'true-myth/task';\n\nfunction* randomIncrease(options?: { from: number }) {\n  // always use integral values, and default to one second.\n  let value = options ? Math.round(options.from) : 1_000;\n  while (true) {\n    yield value;\n    value += Math.ceil(Math.random() * value); // always increase!\n  }\n}\n\nawait task.withRetries(({ count }) => {\n  let delay = Math.round(Math.random() * 100);\n  return task.timer(delay).andThen((time) =>\n    task.reject(`Rejection #${count} after ${time}ms`),\n",
+        "categories": [
+          "INCOMPLETE_CODE"
+        ],
+        "suggestions": [
+          "Complete the code example or mark as @noErrors if intentionally incomplete"
+        ]
+      },
+      {
+        "index": 132,
+        "code": "import * as task from 'true-myth/task';\n\n// snip\nlet result = await someFnThatReturnsATask();\nif (result.isErr) {\n  if (task.isRetryFailed(result.error)) {\n    if (result.error.cause) {\n      console.error('You quit on purpose: ', cause);\n    }\n\n    for (let rejection of result.error.rejections) {\n      console.error(rejection);\n     }\n  } else {\n    // handle other error types\n",
+        "categories": [
+          "INCOMPLETE_CODE"
+        ],
+        "suggestions": [
+          "Complete the code example or mark as @noErrors if intentionally incomplete"
+        ]
+      },
+      {
+        "index": 138,
+        "code": "import fs from 'node:fs';\nimport * as result from 'true-myth/result';\n\nconst rename = result.safe(fs.renameSync);\n\nlet renameResult = rename('original', 'updated');\nif (renameResult.isErr) {\n  console.error(renameResult.error);\n}\n",
+        "categories": [
+          "INCOMPLETE_CODE"
+        ],
+        "suggestions": [
+          "Complete the code example or mark as @noErrors if intentionally incomplete"
+        ]
+      },
+      {
+        "index": 142,
+        "code": "import Maybe, { mapOr } from 'true-myth/maybe';\n\nfunction acceptsANullOhNo(value: number | null): Maybe<string> {\n  const maybeNumber = Maybe.of(value);\n  return mapOr('0', (n) => n.toString(), maybeNumber);\n}\n",
+        "categories": [
+          "INCOMPLETE_CODE"
+        ],
+        "suggestions": [
+          "Complete the code example or mark as @noErrors if intentionally incomplete"
+        ]
+      },
+      {
+        "index": 143,
+        "code": "import { filter, map, pipe, prop } from 'ramda';\nimport * as result from 'true-myth/result';\nimport { unwrapErr } from 'true-myth/test-support';\n\nfunction getErrorMessages(results: Array<Result<string, Error>>) {\n  return results\n    .filter(result.isErr)\n    .map(result.unwrapErr) // would not type-checkout with previous line\n    .map((error) => error.message);\n}\n",
+        "categories": [
+          "INCOMPLETE_CODE"
+        ],
+        "suggestions": [
+          "Complete the code example or mark as @noErrors if intentionally incomplete"
+        ]
+      },
+      {
+        "index": 149,
+        "code": "import { readFile } from 'node:fs';\n\nreadFile('does-not-exist.lol', (err, data) => {\n  console.log(data.length);\n});\n",
+        "categories": [
+          "INCOMPLETE_CODE"
+        ],
+        "suggestions": [
+          "Complete the code example or mark as @noErrors if intentionally incomplete"
+        ]
+      },
+      {
+        "index": 152,
+        "code": "import { readFile } from 'node:fs';\n\nimport Task from 'true-myth/task';\n\nlet readTask = new Task<string, NodeJS.ErrnoException>((resolve, reject) => {\n  readFile('does-not-exist.lol', { encoding: 'utf-8' }, (err, data) => {\n    if (err) {\n      reject(err);\n    } else {\n      resolve(data);\n    }\n  });\n});\n",
+        "categories": [
+          "INCOMPLETE_CODE"
+        ],
+        "suggestions": [
+          "Complete the code example or mark as @noErrors if intentionally incomplete"
+        ]
+      },
+      {
+        "index": 154,
+        "code": "import { readFile } from 'node:fs/promises';\n\nimport Task from 'true-myth/task';\n\nlet readTask = new Task<string, NodeJS.ErrnoException>((resolve, reject) => {\n  readFile(\"does-not-exist.lol\", { encoding: \"utf-8\" }).then(resolve, reject);\n});\n",
+        "categories": [
+          "INCOMPLETE_CODE"
+        ],
+        "suggestions": [
+          "Complete the code example or mark as @noErrors if intentionally incomplete"
+        ]
+      },
+      {
+        "index": 156,
+        "code": "import { parserFor } from 'true-myth';\nimport { type } from 'arktype';\nimport * as z from 'zod';\n\nconst personParserArktype = type({\n  age: \"number >= 0\",\n  \"name?\": \"string\",\n});\n\nconst personParserZod = z.object({\n  age: z.number().nonnegative(),\n  name: z.string().optional(),\n});\n\nconst parsePersonWithArktype = parserFor(personParserArktype);\n",
+        "categories": [
+          "INCOMPLETE_CODE"
+        ],
+        "suggestions": [
+          "Complete the code example or mark as @noErrors if intentionally incomplete"
+        ]
+      },
+      {
+        "index": 157,
+        "code": "import { parserFor } from 'true-myth';\nimport { type } from 'arktype';\nimport * as z from 'zod';\n\ninterface Person {\n  age: number;\n  name?: string | undefined;\n}\n\nconst parsePersonWithArktype: ParserFor<Person> = parserFor(type({\n  age: \"number >= 0\",\n  \"name?\": \"string\",\n}));\n\nconst parsePersonWithZod: ParserFor<Person> = parserFor(z.object({\n",
+        "categories": [
+          "INCOMPLETE_CODE"
+        ],
+        "suggestions": [
+          "Complete the code example or mark as @noErrors if intentionally incomplete"
+        ]
+      },
+      {
+        "index": 166,
+        "code": "import Task, * as task from 'true-myth/task';\n\nlet fetcher = ({ count, elapsed }: task.RetryStatus): Task<Response, Error> => {\n  if (count > 100 || elapsed > 1_000) {\n    let message = `Overdid it! Count: ${count} | Time elapsed: ${elapsed}`;\n    return task.reject(new Error(message));\n  }\n\n  return task\n    .fromPromise(fetch('https://true-myth.js.org'))\n    .mapRejected(intoError);\n};\n\nlet taskWithRetries = withRetries(fetcher);\n",
+        "categories": [
+          "INCOMPLETE_CODE"
+        ],
+        "suggestions": [
+          "Complete the code example or mark as @noErrors if intentionally incomplete"
+        ]
+      },
+      {
+        "index": 169,
+        "code": "import * as task from 'true-myth/task';\nimport { exponential, jitter } from 'true-myth/task/delay';\n\nlet fetchTask = task.withRetries(\n  ({ count, elapsed }) => {\n    if (elapsed > 100_000) {\n      return task.stopRetrying(`Went too long: ${elapsed}ms`);\n    }\n\n    return task.fromPromise(fetch('https://true-myth.js.org')).orElse((rejection) => {\n      let wrapped = new Error(`fetch has rejected ${count} times`, { cause: rejection });\n      return task.reject(wrapped);\n    });\n  },\n  exponential({ from: 10, factor: 3 }).map(jitter).take(10)\n",
+        "categories": [
+          "INCOMPLETE_CODE"
+        ],
+        "suggestions": [
+          "Complete the code example or mark as @noErrors if intentionally incomplete"
+        ]
+      },
+      {
+        "index": 170,
+        "code": "import * as task from 'true-myth/task';\n\nfunction* random10Times(): task.delay.Strategy {\n  const MAX = 10_000;\n\n  let retries = 0;\n  while (retries < 10) {\n    yield Math.round(Math.random() * MAX);\n    retries += 1;\n  }\n}\n\nlet taskWithRetries = task.withRetries(unpredictable, random10Times());\n",
+        "categories": [
+          "INCOMPLETE_CODE"
+        ],
+        "suggestions": [
+          "Complete the code example or mark as @noErrors if intentionally incomplete"
+        ]
+      },
+      {
+        "index": 176,
+        "code": "import Maybe, { nothing } from 'true-myth/maybe';\n\n// ERROR: Type 'Maybe<{}>' is not assignable to type 'Maybe<number>'.\nconst getAMaybeNotAssignable = (): Maybe<number> => {\n  const theMaybe = nothing();\n  return theMaybe;\n};\n\n// Succeeds\nconst getAMaybeExpression = (shouldBeJust: boolean): Maybe<number> => nothing();\n\n// Succeeds\nconst getAMaybeReturn = (shouldBeJust: boolean): Maybe<number> => {\n  return nothing();\n};\n",
+        "categories": [
+          "INCOMPLETE_CODE"
+        ],
+        "suggestions": [
+          "Complete the code example or mark as @noErrors if intentionally incomplete"
+        ]
+      },
+      {
+        "index": 197,
+        "code": "import { safe } from 'true-myth/task';\n\nclass CustomError extends Error {\n  constructor(name: string, cause: unknown) {\n    super(`my-lib.error.${name}`, { cause });\n    this.name = name;\n  }\n}\n\nfunction handleErr(name: string): (cause: unknown) => CustomError {\n  return (cause) => new CustomError(name);\n}\n\nconst fetch = safe(window.fetch, handleErr('fetch'));\nconst toJson = safe(\n",
+        "categories": [
+          "INCOMPLETE_CODE"
+        ],
+        "suggestions": [
+          "Complete the code example or mark as @noErrors if intentionally incomplete"
+        ]
+      },
+      {
+        "index": 210,
+        "code": "// in one part of the codebase\nfunction getMeAValue(url) {\n  if (isMalformed(url)) {\n    throw new Error(`The url `${url}` is malformed!`);\n  }\n\n  // do something else to load data from the URL\n}\n\n// somewhere else in the codebase\nconst value = getMeAValue('http:/www.google.com');  // missing slash\n",
+        "categories": [
+          "INCOMPLETE_CODE"
+        ],
+        "suggestions": [
+          "Complete the code example or mark as @noErrors if intentionally incomplete"
+        ]
+      },
+      {
+        "index": 214,
+        "code": "import { just, nothing } from 'true-myth/maybe';\n\nconst one = just(1);\nconst five = just(5);\nconst none = nothing();\n\none.match({\n  Just: n => five.match({\n    Just: o => just(n + o),\n    Nothing: () => nothing(),\n  }),\n  Nothing: ()  => nothing(),\n}); // Just(6)\n\none.match({\n",
+        "categories": [
+          "INCOMPLETE_CODE"
+        ],
+        "suggestions": [
+          "Complete the code example or mark as @noErrors if intentionally incomplete"
+        ]
+      },
+      {
+        "index": 216,
+        "code": "import Maybe, { just, nothing } from 'true-myth/maybe';\nimport { is, Set } from 'immutable';\n\nconst x = Maybe.of(Set.of(1, 2, 3));\nconst y = Maybe.of(Set.of(2, 3, 4));\n\nx.match({\n  Just: iX => y.match({\n    Just: iY => Maybe.just(is(iX, iY)),\n    Nothing: () => Maybe.nothing(),\n  })\n  Nothing: () => Maybe.nothing(),\n}); // Just(false)\n",
+        "categories": [
+          "INCOMPLETE_CODE"
+        ],
+        "suggestions": [
+          "Complete the code example or mark as @noErrors if intentionally incomplete"
+        ]
+      },
+      {
+        "index": 220,
+        "code": "import { just, nothing } from 'true-myth/maybe';\n\nconst one = just(1);\nconst five = just(5);\nconst none = nothing();\n\none.match({\n  Just: n => five.match({\n    Just: o => just(n + o),\n    Nothing: () => nothing(),\n  }),\n  Nothing: ()  => nothing(),\n}); // Just(6)\n\none.match({\n",
+        "categories": [
+          "INCOMPLETE_CODE"
+        ],
+        "suggestions": [
+          "Complete the code example or mark as @noErrors if intentionally incomplete"
+        ]
+      },
+      {
+        "index": 222,
+        "code": "import Maybe, { just, nothing } from 'true-myth/maybe';\nimport { is, Set } from 'immutable';\n\nconst x = Maybe.of(Set.of(1, 2, 3));\nconst y = Maybe.of(Set.of(2, 3, 4));\n\nx.match({\n  Just: iX => y.match({\n    Just: iY => Maybe.just(is(iX, iY)),\n    Nothing: () => Maybe.nothing(),\n  })\n  Nothing: () => Maybe.nothing(),\n}); // Just(false)\n",
+        "categories": [
+          "INCOMPLETE_CODE"
+        ],
+        "suggestions": [
+          "Complete the code example or mark as @noErrors if intentionally incomplete"
+        ]
+      },
+      {
+        "index": 253,
+        "code": "import Maybe from 'true-myth/maybe';\n\nconst logValue = (mightBeANumber: Maybe<number>) => {\n  const valueToLog = Maybe.mightBeANumber.isJust\n    ? mightBeANumber.value.toString()\n    : 'Nothing to log.';\n\n  console.log(valueToLog);\n};\n",
+        "categories": [
+          "INCOMPLETE_CODE"
+        ],
+        "suggestions": [
+          "Complete the code example or mark as @noErrors if intentionally incomplete"
+        ]
+      },
+      {
+        "index": 254,
+        "code": "import { match } from 'true-myth/maybe';\n\nconst logValue = (mightBeANumber: Maybe<number>) => {\n  const value = match(\n    {\n      Just: n => n.toString(),\n      Nothing: () => 'Nothing to log.',\n    },\n    mightBeANumber\n  );\n\n  console.log(value);\n};\n",
+        "categories": [
+          "INCOMPLETE_CODE"
+        ],
+        "suggestions": [
+          "Complete the code example or mark as @noErrors if intentionally incomplete"
+        ]
+      },
+      {
+        "index": 255,
+        "code": "import Maybe from 'true-myth/maybe';\n\nconst logValue = (mightBeANumber: Maybe<number>) => {\n  const valueToLog = Maybe.mightBeANumber.isJust\n    ? mightBeANumber.value.toString()\n    : 'Nothing to log.';\n\n  console.log(valueToLog);\n};\n",
+        "categories": [
+          "INCOMPLETE_CODE"
+        ],
+        "suggestions": [
+          "Complete the code example or mark as @noErrors if intentionally incomplete"
+        ]
+      },
+      {
+        "index": 256,
+        "code": "import { match } from 'true-myth/maybe';\n\nconst logValue = (mightBeANumber: Maybe<number>) => {\n  const value = match(\n    {\n      Just: n => n.toString(),\n      Nothing: () => 'Nothing to log.',\n    },\n    mightBeANumber\n  );\n\n  console.log(value);\n};\n",
+        "categories": [
+          "INCOMPLETE_CODE"
+        ],
+        "suggestions": [
+          "Complete the code example or mark as @noErrors if intentionally incomplete"
+        ]
+      },
+      {
+        "index": 296,
+        "code": "import { ok, err } from 'true-myth/result';\n\nconst one = ok<number, string>(1);\nconst five = ok<number, string>(5);\nconst whoops = err<number, string>('oh no');\n\none.match({\n  Ok: n => five.match({\n    Ok: o => ok<number, string>(n + o),\n    Err: e => err<number, string>(e),\n  }),\n  Err: e  => err<number, string>(e),\n}); // Ok(6)\n\none.match({\n",
+        "categories": [
+          "INCOMPLETE_CODE"
+        ],
+        "suggestions": [
+          "Complete the code example or mark as @noErrors if intentionally incomplete"
+        ]
+      },
+      {
+        "index": 298,
+        "code": "import Result, { ok, err } from 'true-myth/result';\nimport { is, Set } from 'immutable';\n\nconst x = ok(Set.of(1, 2, 3));\nconst y = ok(Set.of(2, 3, 4));\n\nx.match({\n  Ok: iX => y.match({\n    Ok: iY => Result.of(is(iX, iY)),\n    Err: (e) => ok(false),\n  })\n  Err: (e) => ok(false),\n}); // Ok(false)\n",
+        "categories": [
+          "INCOMPLETE_CODE"
+        ],
+        "suggestions": [
+          "Complete the code example or mark as @noErrors if intentionally incomplete"
+        ]
+      },
+      {
+        "index": 303,
+        "code": "import { ok, err } from 'true-myth/result';\n\nconst one = ok<number, string>(1);\nconst five = ok<number, string>(5);\nconst whoops = err<number, string>('oh no');\n\none.match({\n  Ok: n => five.match({\n    Ok: o => ok<number, string>(n + o),\n    Err: e => err<number, string>(e),\n  }),\n  Err: e  => err<number, string>(e),\n}); // Ok(6)\n\none.match({\n",
+        "categories": [
+          "INCOMPLETE_CODE"
+        ],
+        "suggestions": [
+          "Complete the code example or mark as @noErrors if intentionally incomplete"
+        ]
+      },
+      {
+        "index": 305,
+        "code": "import Result, { ok, err } from 'true-myth/result';\nimport { is, Set } from 'immutable';\n\nconst x = ok(Set.of(1, 2, 3));\nconst y = ok(Set.of(2, 3, 4));\n\nx.match({\n  Ok: iX => y.match({\n    Ok: iY => Result.of(is(iX, iY)),\n    Err: (e) => ok(false),\n  })\n  Err: (e) => ok(false),\n}); // Ok(false)\n",
+        "categories": [
+          "INCOMPLETE_CODE"
+        ],
+        "suggestions": [
+          "Complete the code example or mark as @noErrors if intentionally incomplete"
+        ]
+      },
+      {
+        "index": 314,
+        "code": "import Result, { isOk, match } from 'true-myth/result';\n\nconst logValue = (mightBeANumber: Result<number, string>) => {\n  console.log(\n    mightBeANumber.isOk\n      ? mightBeANumber.value.toString()\n      : `There was an error: ${unsafelyGetErr(mightBeANumber)}`\n  );\n};\n",
+        "categories": [
+          "INCOMPLETE_CODE"
+        ],
+        "suggestions": [
+          "Complete the code example or mark as @noErrors if intentionally incomplete"
+        ]
+      },
+      {
+        "index": 315,
+        "code": "import Result, { isOk, match } from 'true-myth/result';\n\nconst logValue = (mightBeANumber: Result<number, string>) => {\n  console.log(\n    mightBeANumber.isOk\n      ? mightBeANumber.value.toString()\n      : `There was an error: ${unsafelyGetErr(mightBeANumber)}`\n  );\n};\n",
+        "categories": [
+          "INCOMPLETE_CODE"
+        ],
+        "suggestions": [
+          "Complete the code example or mark as @noErrors if intentionally incomplete"
+        ]
+      }
+    ],
+    "SYNTAX_ERROR": [
+      {
+        "index": 16,
+        "code": "import { get, just, nothing } from 'true-myth/maybe';\n\ntype Person = { name?: string };\n\nconst me: Maybe<Person> = just({ name: 'Chris' });\nconsole.log(get('name', me)); // Just('Chris')\n\nconst nobody = nothing<Person>();\nconsole.log(get('name', nobody)); // Nothing\n",
+        "categories": [
+          "SYNTAX_ERROR"
+        ],
+        "suggestions": [
+          "Fix syntax errors - missing semicolons, braces, etc."
+        ]
+      },
+      {
+        "index": 18,
+        "code": "import { get, just } from 'true-myth/maybe';\n\ntype Person = { name?: string };\n\nconst lookupName = get('name');\n\nconst me: Person = { name: 'Chris' };\nconsole.log(lookupName(me)); // Just('Chris')\n\nconst nobody: Person = {};\nconsole.log(lookupName(nobody)); // Nothing\n",
+        "categories": [
+          "SYNTAX_ERROR"
+        ],
+        "suggestions": [
+          "Fix syntax errors - missing semicolons, braces, etc."
+        ]
+      },
+      {
+        "index": 19,
+        "code": "import { get, just, nothing } from 'true-myth/maybe';\n\ntype Person = { name?: string };\n\nconst me: Maybe<Person> = just({ name: 'Chris' });\nconsole.log(get('name', me)); // Just('Chris')\n\nconst nobody = nothing<Person>();\nconsole.log(get('name', nobody)); // Nothing\n",
+        "categories": [
+          "SYNTAX_ERROR"
+        ],
+        "suggestions": [
+          "Fix syntax errors - missing semicolons, braces, etc."
+        ]
+      },
+      {
+        "index": 21,
+        "code": "import { get, just } from 'true-myth/maybe';\n\ntype Person = { name?: string };\n\nconst lookupName = get('name');\n\nconst me: Person = { name: 'Chris' };\nconsole.log(lookupName(me)); // Just('Chris')\n\nconst nobody: Person = {};\nconsole.log(lookupName(nobody)); // Nothing\n",
+        "categories": [
+          "SYNTAX_ERROR"
+        ],
+        "suggestions": [
+          "Fix syntax errors - missing semicolons, braces, etc."
+        ]
+      },
+      {
+        "index": 33,
+        "code": "import Maybe from 'true-myth/maybe';\n\nconst justA = Maybe.just('A');\nconst justB = Maybe.just('B');\nconst nothing: Maybe<number> = nothing();\n\nconsole.log(Maybe.and(justB, justA).toString());  // Just(B)\nconsole.log(Maybe.and(justB, nothing).toString());  // Nothing\nconsole.log(Maybe.and(nothing, justA).toString());  // Nothing\nconsole.log(Maybe.and(nothing, nothing).toString());  // Nothing\n",
+        "categories": [
+          "SYNTAX_ERROR"
+        ],
+        "suggestions": [
+          "Fix syntax errors - missing semicolons, braces, etc."
+        ]
+      },
+      {
+        "index": 34,
+        "code": "import Maybe from 'true-myth/maybe';\n\nconst justA = Maybe.just('A');\nconst justB = Maybe.just('B');\nconst nothing: Maybe<number> = nothing();\n\nconsole.log(Maybe.and(justB, justA).toString());  // Just(B)\nconsole.log(Maybe.and(justB, nothing).toString());  // Nothing\nconsole.log(Maybe.and(nothing, justA).toString());  // Nothing\nconsole.log(Maybe.and(nothing, nothing).toString());  // Nothing\n",
+        "categories": [
+          "SYNTAX_ERROR"
+        ],
+        "suggestions": [
+          "Fix syntax errors - missing semicolons, braces, etc."
+        ]
+      },
+      {
+        "index": 43,
+        "code": "import Maybe from 'true-myth/maybe';\n\nconst notAString = Maybe.nothing<string>();\nconst isAString = Maybe.just('look ma! some characters!');\n\nconsole.log(Maybe.unwrapOr('<empty>', notAString));  // \"<empty>\"\nconsole.log(Maybe.unwrapOr('<empty>', isAString));  // \"look ma! some characters!\"\n",
+        "categories": [
+          "SYNTAX_ERROR"
+        ],
+        "suggestions": [
+          "Fix syntax errors - missing semicolons, braces, etc."
+        ]
+      },
+      {
+        "index": 44,
+        "code": "import Maybe from 'true-myth/maybe';\n\nconst notAString = Maybe.nothing<string>();\nconst isAString = Maybe.just('look ma! some characters!');\n\nconsole.log(Maybe.unwrapOr('<empty>', notAString));  // \"<empty>\"\nconsole.log(Maybe.unwrapOr('<empty>', isAString));  // \"look ma! some characters!\"\n",
+        "categories": [
+          "SYNTAX_ERROR"
+        ],
+        "suggestions": [
+          "Fix syntax errors - missing semicolons, braces, etc."
+        ]
+      },
+      {
+        "index": 63,
+        "code": "import Maybe from 'true-myth/maybe';\n\n// You can imagine that someOtherValue might be dynamic.\nconst someOtherValue = 99;\nconst handleNothing = () => someOtherValue;\n\nconst aJust = Maybe.just(42);\nconsole.log(Maybe.unwrapOrElse(handleNothing, aJust));  // 42\n\nconst aNothing = nothing<number>();\nconsole.log(Maybe.unwrapOrElse(handleNothing, aNothing)); // 99\n",
+        "categories": [
+          "SYNTAX_ERROR"
+        ],
+        "suggestions": [
+          "Fix syntax errors - missing semicolons, braces, etc."
+        ]
+      },
+      {
+        "index": 64,
+        "code": "import Maybe from 'true-myth/maybe';\n\n// You can imagine that someOtherValue might be dynamic.\nconst someOtherValue = 99;\nconst handleNothing = () => someOtherValue;\n\nconst aJust = Maybe.just(42);\nconsole.log(Maybe.unwrapOrElse(handleNothing, aJust));  // 42\n\nconst aNothing = nothing<number>();\nconsole.log(Maybe.unwrapOrElse(handleNothing, aNothing)); // 99\n",
+        "categories": [
+          "SYNTAX_ERROR"
+        ],
+        "suggestions": [
+          "Fix syntax errors - missing semicolons, braces, etc."
+        ]
+      },
+      {
+        "index": 74,
+        "code": "import { any } from 'true-myth/result';\n\nlet result = any([\n  Result.err(\"something went wrong\"),\n  Result.err(\"something else went wrong\"),\n  Result.err(\"even more went wrong\")\n]);\n\nconsole.log(result.toString()); // Err(something went wrong,something else went wrong,even more went wrong)\n",
+        "categories": [
+          "SYNTAX_ERROR"
+        ],
+        "suggestions": [
+          "Fix syntax errors - missing semicolons, braces, etc."
+        ]
+      },
+      {
+        "index": 76,
+        "code": "import { any } from 'true-myth/result';\n\nlet result = any([\n  Result.err(\"something went wrong\"),\n  Result.err(\"something else went wrong\"),\n  Result.err(\"even more went wrong\")\n]);\n\nconsole.log(result.toString()); // Err(something went wrong,something else went wrong,even more went wrong)\n",
+        "categories": [
+          "SYNTAX_ERROR"
+        ],
+        "suggestions": [
+          "Fix syntax errors - missing semicolons, braces, etc."
+        ]
+      },
+      {
+        "index": 86,
+        "code": "import { ok, err, map, toString } from 'true-myth/result';\nconst double = n => n * 2;\n\nconst anOk = ok(12);\nconst mappedOk = map(double, anOk);\nconsole.log(toString(mappedOk)); // Ok(24)\n\nconst anErr = err(\"nothing here!\");\nconst mappedErr = map(double, anErr);\nconsole.log(toString(mappedErr)); // Err(nothing here!)\n",
+        "categories": [
+          "SYNTAX_ERROR"
+        ],
+        "suggestions": [
+          "Fix syntax errors - missing semicolons, braces, etc."
+        ]
+      },
+      {
+        "index": 87,
+        "code": "import { ok, err, map, toString } from 'true-myth/result';\nconst double = n => n * 2;\n\nconst anOk = ok(12);\nconst mappedOk = map(double, anOk);\nconsole.log(toString(mappedOk)); // Ok(24)\n\nconst anErr = err(\"nothing here!\");\nconst mappedErr = map(double, anErr);\nconsole.log(toString(mappedErr)); // Err(nothing here!)\n",
+        "categories": [
+          "SYNTAX_ERROR"
+        ],
+        "suggestions": [
+          "Fix syntax errors - missing semicolons, braces, etc."
+        ]
+      },
+      {
+        "index": 160,
+        "code": "import * as task from 'true-myth/task';\n\nconst toLengthAsResult = (s: string) => ok(s.length);\n\nconst aResolvedTask = task.resolve('just a string');\nconst lengthAsResult = await aResolvedTask.andThen(toLengthAsResult);\nconsole.log(lengthAsResult.toString()); // Ok(13)\n\nconst aRejectedTask = task.reject(['srsly', 'whatever']);\nconst notLengthAsResult = await aRejectedTask.andThen(toLengthAsResult);\nconsole.log(notLengthAsResult.toString()); // Err(srsly,whatever)\n",
+        "categories": [
+          "SYNTAX_ERROR"
+        ],
+        "suggestions": [
+          "Fix syntax errors - missing semicolons, braces, etc."
+        ]
+      },
+      {
+        "index": 161,
+        "code": "import * as task from 'true-myth/task';\n\nconst toLengthAsResult = (s: string) => ok(s.length);\n\nconst aResolvedTask = task.resolve('just a string');\nconst lengthAsResult = await aResolvedTask.andThen(toLengthAsResult);\nconsole.log(lengthAsResult.toString()); // Ok(13)\n\nconst aRejectedTask = task.reject(['srsly', 'whatever']);\nconst notLengthAsResult = await aRejectedTask.andThen(toLengthAsResult);\nconsole.log(notLengthAsResult.toString()); // Err(srsly,whatever)\n",
+        "categories": [
+          "SYNTAX_ERROR"
+        ],
+        "suggestions": [
+          "Fix syntax errors - missing semicolons, braces, etc."
+        ]
+      },
+      {
+        "index": 162,
+        "code": "import Task from 'true-myth/task';\nconst double = n => n * 2;\n\nconst aResolvedTask = Task.resolve(12);\nconst mappedResolved = aResolvedTask.map(double);\nlet resolvedResult = await aResolvedTask;\nconsole.log(resolvedResult.toString()); // Ok(24)\n\nconst aRejectedTask = Task.reject(\"nothing here!\");\nconst mappedRejected = aRejectedTask.map(double);\nlet rejectedResult = await aRejectedTask;\nconsole.log(rejectedResult.toString()); // Err(\"nothing here!\")\n",
+        "categories": [
+          "SYNTAX_ERROR"
+        ],
+        "suggestions": [
+          "Fix syntax errors - missing semicolons, braces, etc."
+        ]
+      },
+      {
+        "index": 163,
+        "code": "import Task from 'true-myth/task';\n\nconst extractReason = (err: { code: number, reason: string }) => err.reason;\n\nconst aResolvedTask = Task.resolve(12);\nconst mappedResolved = aResolvedTask.mapRejected(extractReason);\nconsole.log(mappedOk));  // Ok(12)\n\nconst aRejectedTask = Task.reject({ code: 101, reason: 'bad file' });\nconst mappedRejection = await aRejectedTask.mapRejected(extractReason);\nconsole.log(toString(mappedRejection));  // Err(\"bad file\")\n",
+        "categories": [
+          "SYNTAX_ERROR"
+        ],
+        "suggestions": [
+          "Fix syntax errors - missing semicolons, braces, etc."
+        ]
+      },
+      {
+        "index": 164,
+        "code": "import Task, { timer } from 'true-myth/task';\n\nlet anyTask = any([\n  timer(20).andThen((time) => Task.reject(`${time}ms`)),\n  timer(10).andThen((time) => Task.reject(`${time}ms`)),\n  timer(30).andThen((time) => Task.reject(`${time}ms`)),\n]);\n\nlet result = await anyTask;\nconsole.log(result.toString()); // Err(AggregateRejection: `Task.any`: 10ms,20ms,30ms)\n",
+        "categories": [
+          "SYNTAX_ERROR"
+        ],
+        "suggestions": [
+          "Fix syntax errors - missing semicolons, braces, etc."
+        ]
+      },
+      {
+        "index": 165,
+        "code": "import Task, { timer } from 'true-myth/task';\n\nlet anyTask = any([\n  timer(20).andThen((time) => Task.reject(`${time}ms`)),\n  timer(10).andThen((time) => Task.reject(`${time}ms`)),\n  timer(30).andThen((time) => Task.reject(`${time}ms`)),\n]);\n\nlet result = await anyTask;\nconsole.log(result.toString()); // Err(AggregateRejection: `Task.any`: 10ms,20ms,30ms)\n",
+        "categories": [
+          "SYNTAX_ERROR"
+        ],
+        "suggestions": [
+          "Fix syntax errors - missing semicolons, braces, etc."
+        ]
+      },
+      {
+        "index": 177,
+        "code": "let { promise, reject } = Promise.withResolvers<number>();\n\n// `theTask` has the type `Task<number, unknown>`\nlet theTask = Task.fromPromise(promise);\n\n// The rejection will always produce\nreject(\"Tasks always safely handle errors!\");\nawait theTask;\nconsole.log(theTask.state); // State.Rejected\n\n// The `reason` here is of type `unknown`. Attempting to access it on a pending\n// or resolved `Task` (rather than a rejected `Task`) will throw an error.\nconsole.log(theTask.reason); // \"Tasks always safely handle errors!\"\n",
+        "categories": [
+          "SYNTAX_ERROR"
+        ],
+        "suggestions": [
+          "Fix syntax errors - missing semicolons, braces, etc."
+        ]
+      },
+      {
+        "index": 186,
+        "code": "import * as task from 'true-myth/task';\n\nconst toLengthAsResult = (s: string) => ok(s.length);\n\nconst aResolvedTask = task.resolve('just a string');\nconst lengthAsResult = await aResolvedTask.andThen(toLengthAsResult);\nconsole.log(lengthAsResult.toString()); // Ok(13)\n\nconst aRejectedTask = task.reject(['srsly', 'whatever']);\nconst notLengthAsResult = await aRejectedTask.andThen(toLengthAsResult);\nconsole.log(notLengthAsResult.toString()); // Err(srsly,whatever)\n",
+        "categories": [
+          "SYNTAX_ERROR"
+        ],
+        "suggestions": [
+          "Fix syntax errors - missing semicolons, braces, etc."
+        ]
+      },
+      {
+        "index": 187,
+        "code": "import * as task from 'true-myth/task';\n\nconst toLengthAsResult = (s: string) => ok(s.length);\n\nconst aResolvedTask = task.resolve('just a string');\nconst lengthAsResult = await aResolvedTask.andThen(toLengthAsResult);\nconsole.log(lengthAsResult.toString()); // Ok(13)\n\nconst aRejectedTask = task.reject(['srsly', 'whatever']);\nconst notLengthAsResult = await aRejectedTask.andThen(toLengthAsResult);\nconsole.log(notLengthAsResult.toString()); // Err(srsly,whatever)\n",
+        "categories": [
+          "SYNTAX_ERROR"
+        ],
+        "suggestions": [
+          "Fix syntax errors - missing semicolons, braces, etc."
+        ]
+      },
+      {
+        "index": 188,
+        "code": "import Task from 'true-myth/task';\nconst double = n => n * 2;\n\nconst aResolvedTask = Task.resolve(12);\nconst mappedResolved = aResolvedTask.map(double);\nlet resolvedResult = await aResolvedTask;\nconsole.log(resolvedResult.toString()); // Ok(24)\n\nconst aRejectedTask = Task.reject(\"nothing here!\");\nconst mappedRejected = aRejectedTask.map(double);\nlet rejectedResult = await aRejectedTask;\nconsole.log(rejectedResult.toString()); // Err(\"nothing here!\")\n",
+        "categories": [
+          "SYNTAX_ERROR"
+        ],
+        "suggestions": [
+          "Fix syntax errors - missing semicolons, braces, etc."
+        ]
+      },
+      {
+        "index": 189,
+        "code": "import Task from 'true-myth/task';\n\nconst extractReason = (err: { code: number, reason: string }) => err.reason;\n\nconst aResolvedTask = Task.resolve(12);\nconst mappedResolved = aResolvedTask.mapRejected(extractReason);\nconsole.log(mappedOk));  // Ok(12)\n\nconst aRejectedTask = Task.reject({ code: 101, reason: 'bad file' });\nconst mappedRejection = await aRejectedTask.mapRejected(extractReason);\nconsole.log(toString(mappedRejection));  // Err(\"bad file\")\n",
+        "categories": [
+          "SYNTAX_ERROR"
+        ],
+        "suggestions": [
+          "Fix syntax errors - missing semicolons, braces, etc."
+        ]
+      },
+      {
+        "index": 192,
+        "code": "import * as task from 'true-myth/task';\n\nconst toLengthAsResult = (s: string) => ok(s.length);\n\nconst aResolvedTask = task.resolve('just a string');\nconst lengthAsResult = await aResolvedTask.andThen(toLengthAsResult);\nconsole.log(lengthAsResult.toString()); // Ok(13)\n\nconst aRejectedTask = task.reject(['srsly', 'whatever']);\nconst notLengthAsResult = await aRejectedTask.andThen(toLengthAsResult);\nconsole.log(notLengthAsResult.toString()); // Err(srsly,whatever)\n",
+        "categories": [
+          "SYNTAX_ERROR"
+        ],
+        "suggestions": [
+          "Fix syntax errors - missing semicolons, braces, etc."
+        ]
+      },
+      {
+        "index": 193,
+        "code": "import * as task from 'true-myth/task';\n\nconst toLengthAsResult = (s: string) => ok(s.length);\n\nconst aResolvedTask = task.resolve('just a string');\nconst lengthAsResult = await aResolvedTask.andThen(toLengthAsResult);\nconsole.log(lengthAsResult.toString()); // Ok(13)\n\nconst aRejectedTask = task.reject(['srsly', 'whatever']);\nconst notLengthAsResult = await aRejectedTask.andThen(toLengthAsResult);\nconsole.log(notLengthAsResult.toString()); // Err(srsly,whatever)\n",
+        "categories": [
+          "SYNTAX_ERROR"
+        ],
+        "suggestions": [
+          "Fix syntax errors - missing semicolons, braces, etc."
+        ]
+      },
+      {
+        "index": 194,
+        "code": "import Task from 'true-myth/task';\nconst double = n => n * 2;\n\nconst aResolvedTask = Task.resolve(12);\nconst mappedResolved = aResolvedTask.map(double);\nlet resolvedResult = await aResolvedTask;\nconsole.log(resolvedResult.toString()); // Ok(24)\n\nconst aRejectedTask = Task.reject(\"nothing here!\");\nconst mappedRejected = aRejectedTask.map(double);\nlet rejectedResult = await aRejectedTask;\nconsole.log(rejectedResult.toString()); // Err(\"nothing here!\")\n",
+        "categories": [
+          "SYNTAX_ERROR"
+        ],
+        "suggestions": [
+          "Fix syntax errors - missing semicolons, braces, etc."
+        ]
+      },
+      {
+        "index": 195,
+        "code": "import Task from 'true-myth/task';\n\nconst extractReason = (err: { code: number, reason: string }) => err.reason;\n\nconst aResolvedTask = Task.resolve(12);\nconst mappedResolved = aResolvedTask.mapRejected(extractReason);\nconsole.log(mappedOk));  // Ok(12)\n\nconst aRejectedTask = Task.reject({ code: 101, reason: 'bad file' });\nconst mappedRejection = await aRejectedTask.mapRejected(extractReason);\nconsole.log(toString(mappedRejection));  // Err(\"bad file\")\n",
+        "categories": [
+          "SYNTAX_ERROR"
+        ],
+        "suggestions": [
+          "Fix syntax errors - missing semicolons, braces, etc."
+        ]
+      },
+      {
+        "index": 203,
+        "code": "import * as task from 'true-myth/task';\n\nconst toLengthAsResult = (s: string) => ok(s.length);\n\nconst aResolvedTask = task.resolve('just a string');\nconst lengthAsResult = await aResolvedTask.andThen(toLengthAsResult);\nconsole.log(lengthAsResult.toString()); // Ok(13)\n\nconst aRejectedTask = task.reject(['srsly', 'whatever']);\nconst notLengthAsResult = await aRejectedTask.andThen(toLengthAsResult);\nconsole.log(notLengthAsResult.toString()); // Err(srsly,whatever)\n",
+        "categories": [
+          "SYNTAX_ERROR"
+        ],
+        "suggestions": [
+          "Fix syntax errors - missing semicolons, braces, etc."
+        ]
+      },
+      {
+        "index": 204,
+        "code": "import * as task from 'true-myth/task';\n\nconst toLengthAsResult = (s: string) => ok(s.length);\n\nconst aResolvedTask = task.resolve('just a string');\nconst lengthAsResult = await aResolvedTask.andThen(toLengthAsResult);\nconsole.log(lengthAsResult.toString()); // Ok(13)\n\nconst aRejectedTask = task.reject(['srsly', 'whatever']);\nconst notLengthAsResult = await aRejectedTask.andThen(toLengthAsResult);\nconsole.log(notLengthAsResult.toString()); // Err(srsly,whatever)\n",
+        "categories": [
+          "SYNTAX_ERROR"
+        ],
+        "suggestions": [
+          "Fix syntax errors - missing semicolons, braces, etc."
+        ]
+      },
+      {
+        "index": 205,
+        "code": "import Task from 'true-myth/task';\nconst double = n => n * 2;\n\nconst aResolvedTask = Task.resolve(12);\nconst mappedResolved = aResolvedTask.map(double);\nlet resolvedResult = await aResolvedTask;\nconsole.log(resolvedResult.toString()); // Ok(24)\n\nconst aRejectedTask = Task.reject(\"nothing here!\");\nconst mappedRejected = aRejectedTask.map(double);\nlet rejectedResult = await aRejectedTask;\nconsole.log(rejectedResult.toString()); // Err(\"nothing here!\")\n",
+        "categories": [
+          "SYNTAX_ERROR"
+        ],
+        "suggestions": [
+          "Fix syntax errors - missing semicolons, braces, etc."
+        ]
+      },
+      {
+        "index": 206,
+        "code": "import Task from 'true-myth/task';\n\nconst extractReason = (err: { code: number, reason: string }) => err.reason;\n\nconst aResolvedTask = Task.resolve(12);\nconst mappedResolved = aResolvedTask.mapRejected(extractReason);\nconsole.log(mappedOk));  // Ok(12)\n\nconst aRejectedTask = Task.reject({ code: 101, reason: 'bad file' });\nconst mappedRejection = await aRejectedTask.mapRejected(extractReason);\nconsole.log(toString(mappedRejection));  // Err(\"bad file\")\n",
+        "categories": [
+          "SYNTAX_ERROR"
+        ],
+        "suggestions": [
+          "Fix syntax errors - missing semicolons, braces, etc."
+        ]
+      },
+      {
+        "index": 211,
+        "code": "import Maybe from 'true-myth/maybe';\n\nconst justA = Maybe.just('A');\nconst justB = Maybe.just('B');\nconst nothing: Maybe<number> = nothing();\n\nconsole.log(Maybe.and(justB, justA).toString());  // Just(B)\nconsole.log(Maybe.and(justB, nothing).toString());  // Nothing\nconsole.log(Maybe.and(nothing, justA).toString());  // Nothing\nconsole.log(Maybe.and(nothing, nothing).toString());  // Nothing\n",
+        "categories": [
+          "SYNTAX_ERROR"
+        ],
+        "suggestions": [
+          "Fix syntax errors - missing semicolons, braces, etc."
+        ]
+      },
+      {
+        "index": 212,
+        "code": "import Maybe from 'true-myth/maybe';\n\nconst justA = Maybe.just('A');\nconst justB = Maybe.just('B');\nconst nothing: Maybe<number> = nothing();\n\nconsole.log(Maybe.and(justB, justA).toString());  // Just(B)\nconsole.log(Maybe.and(justB, nothing).toString());  // Nothing\nconsole.log(Maybe.and(nothing, justA).toString());  // Nothing\nconsole.log(Maybe.and(nothing, nothing).toString());  // Nothing\n",
+        "categories": [
+          "SYNTAX_ERROR"
+        ],
+        "suggestions": [
+          "Fix syntax errors - missing semicolons, braces, etc."
+        ]
+      },
+      {
+        "index": 259,
+        "code": "import { get, just, nothing } from 'true-myth/maybe';\n\ntype Person = { name?: string };\n\nconst me: Maybe<Person> = just({ name: 'Chris' });\nconsole.log(get('name', me)); // Just('Chris')\n\nconst nobody = nothing<Person>();\nconsole.log(get('name', nobody)); // Nothing\n",
+        "categories": [
+          "SYNTAX_ERROR"
+        ],
+        "suggestions": [
+          "Fix syntax errors - missing semicolons, braces, etc."
+        ]
+      },
+      {
+        "index": 261,
+        "code": "import { get, just } from 'true-myth/maybe';\n\ntype Person = { name?: string };\n\nconst lookupName = get('name');\n\nconst me: Person = { name: 'Chris' };\nconsole.log(lookupName(me)); // Just('Chris')\n\nconst nobody: Person = {};\nconsole.log(lookupName(nobody)); // Nothing\n",
+        "categories": [
+          "SYNTAX_ERROR"
+        ],
+        "suggestions": [
+          "Fix syntax errors - missing semicolons, braces, etc."
+        ]
+      },
+      {
+        "index": 262,
+        "code": "import { get, just, nothing } from 'true-myth/maybe';\n\ntype Person = { name?: string };\n\nconst me: Maybe<Person> = just({ name: 'Chris' });\nconsole.log(get('name', me)); // Just('Chris')\n\nconst nobody = nothing<Person>();\nconsole.log(get('name', nobody)); // Nothing\n",
+        "categories": [
+          "SYNTAX_ERROR"
+        ],
+        "suggestions": [
+          "Fix syntax errors - missing semicolons, braces, etc."
+        ]
+      },
+      {
+        "index": 264,
+        "code": "import { get, just } from 'true-myth/maybe';\n\ntype Person = { name?: string };\n\nconst lookupName = get('name');\n\nconst me: Person = { name: 'Chris' };\nconsole.log(lookupName(me)); // Just('Chris')\n\nconst nobody: Person = {};\nconsole.log(lookupName(nobody)); // Nothing\n",
+        "categories": [
+          "SYNTAX_ERROR"
+        ],
+        "suggestions": [
+          "Fix syntax errors - missing semicolons, braces, etc."
+        ]
+      },
+      {
+        "index": 272,
+        "code": "import Maybe from 'true-myth/maybe';\n\n// You can imagine that someOtherValue might be dynamic.\nconst someOtherValue = 99;\nconst handleNothing = () => someOtherValue;\n\nconst aJust = Maybe.just(42);\nconsole.log(Maybe.unwrapOrElse(handleNothing, aJust));  // 42\n\nconst aNothing = nothing<number>();\nconsole.log(Maybe.unwrapOrElse(handleNothing, aNothing)); // 99\n",
+        "categories": [
+          "SYNTAX_ERROR"
+        ],
+        "suggestions": [
+          "Fix syntax errors - missing semicolons, braces, etc."
+        ]
+      },
+      {
+        "index": 273,
+        "code": "import Maybe from 'true-myth/maybe';\n\n// You can imagine that someOtherValue might be dynamic.\nconst someOtherValue = 99;\nconst handleNothing = () => someOtherValue;\n\nconst aJust = Maybe.just(42);\nconsole.log(Maybe.unwrapOrElse(handleNothing, aJust));  // 42\n\nconst aNothing = nothing<number>();\nconsole.log(Maybe.unwrapOrElse(handleNothing, aNothing)); // 99\n",
+        "categories": [
+          "SYNTAX_ERROR"
+        ],
+        "suggestions": [
+          "Fix syntax errors - missing semicolons, braces, etc."
+        ]
+      },
+      {
+        "index": 281,
+        "code": "import Maybe from 'true-myth/maybe';\n\nconst notAString = Maybe.nothing<string>();\nconst isAString = Maybe.just('look ma! some characters!');\n\nconsole.log(Maybe.unwrapOr('<empty>', notAString));  // \"<empty>\"\nconsole.log(Maybe.unwrapOr('<empty>', isAString));  // \"look ma! some characters!\"\n",
+        "categories": [
+          "SYNTAX_ERROR"
+        ],
+        "suggestions": [
+          "Fix syntax errors - missing semicolons, braces, etc."
+        ]
+      },
+      {
+        "index": 282,
+        "code": "import Maybe from 'true-myth/maybe';\n\nconst notAString = Maybe.nothing<string>();\nconst isAString = Maybe.just('look ma! some characters!');\n\nconsole.log(Maybe.unwrapOr('<empty>', notAString));  // \"<empty>\"\nconsole.log(Maybe.unwrapOr('<empty>', isAString));  // \"look ma! some characters!\"\n",
+        "categories": [
+          "SYNTAX_ERROR"
+        ],
+        "suggestions": [
+          "Fix syntax errors - missing semicolons, braces, etc."
+        ]
+      },
+      {
+        "index": 312,
+        "code": "import { ok, err, map, toString } from 'true-myth/result';\nconst double = n => n * 2;\n\nconst anOk = ok(12);\nconst mappedOk = map(double, anOk);\nconsole.log(toString(mappedOk)); // Ok(24)\n\nconst anErr = err(\"nothing here!\");\nconst mappedErr = map(double, anErr);\nconsole.log(toString(mappedErr)); // Err(nothing here!)\n",
+        "categories": [
+          "SYNTAX_ERROR"
+        ],
+        "suggestions": [
+          "Fix syntax errors - missing semicolons, braces, etc."
+        ]
+      },
+      {
+        "index": 313,
+        "code": "import { ok, err, map, toString } from 'true-myth/result';\nconst double = n => n * 2;\n\nconst anOk = ok(12);\nconst mappedOk = map(double, anOk);\nconsole.log(toString(mappedOk)); // Ok(24)\n\nconst anErr = err(\"nothing here!\");\nconst mappedErr = map(double, anErr);\nconsole.log(toString(mappedErr)); // Err(nothing here!)\n",
+        "categories": [
+          "SYNTAX_ERROR"
+        ],
+        "suggestions": [
+          "Fix syntax errors - missing semicolons, braces, etc."
+        ]
+      }
+    ],
+    "INCOMPLETE_CODE,SYNTAX_ERROR": [
+      {
+        "index": 17,
+        "code": "import { get, just } from 'true-myth/maybe';\n\ntype Dict<T> = { [key: string]: T };\n\nconst score: Maybe<Dict<number>> = just({\n  player1: 0,\n  player2: 1\n});\n\nconsole.log(get('player1', score)); // Just(0)\nconsole.log(get('player2', score)); // Just(1)\nconsole.log(get('player3', score)); // Nothing\n",
+        "categories": [
+          "INCOMPLETE_CODE",
+          "SYNTAX_ERROR"
+        ],
+        "suggestions": [
+          "Fix syntax errors - missing semicolons, braces, etc.",
+          "Complete the code example or mark as @noErrors if intentionally incomplete"
+        ]
+      },
+      {
+        "index": 20,
+        "code": "import { get, just } from 'true-myth/maybe';\n\ntype Dict<T> = { [key: string]: T };\n\nconst score: Maybe<Dict<number>> = just({\n  player1: 0,\n  player2: 1\n});\n\nconsole.log(get('player1', score)); // Just(0)\nconsole.log(get('player2', score)); // Just(1)\nconsole.log(get('player3', score)); // Nothing\n",
+        "categories": [
+          "INCOMPLETE_CODE",
+          "SYNTAX_ERROR"
+        ],
+        "suggestions": [
+          "Fix syntax errors - missing semicolons, braces, etc.",
+          "Complete the code example or mark as @noErrors if intentionally incomplete"
+        ]
+      },
+      {
+        "index": 56,
+        "code": "import Maybe from 'true-myth/maybe';\n\ntype Item = { count: number; name: string };\ntype Response = Array<Item>;\n\n// curried variant!\nconst findAtLeast100 = Maybe.find(({ count }: Item) => count > 100);\n\nfetch('https://arrays.example.com')\n  .then(response => response.json() as Response)\n  .then(findAtLeast100)\n  .then(found => {\n    if (found.isJust) {\n      console.log(`The matching value is ${found.value.name}!`);\n    }\n",
+        "categories": [
+          "INCOMPLETE_CODE",
+          "SYNTAX_ERROR"
+        ],
+        "suggestions": [
+          "Fix syntax errors - missing semicolons, braces, etc.",
+          "Complete the code example or mark as @noErrors if intentionally incomplete"
+        ]
+      },
+      {
+        "index": 58,
+        "code": "import Maybe from 'true-myth/maybe';\n\ntype Item = { count: number; name: string };\ntype Response = Array<Item>;\n\n// curried variant!\nconst findAtLeast100 = Maybe.find(({ count }: Item) => count > 100);\n\nfetch('https://arrays.example.com')\n  .then(response => response.json() as Response)\n  .then(findAtLeast100)\n  .then(found => {\n    if (found.isJust) {\n      console.log(`The matching value is ${found.value.name}!`);\n    }\n",
+        "categories": [
+          "INCOMPLETE_CODE",
+          "SYNTAX_ERROR"
+        ],
+        "suggestions": [
+          "Fix syntax errors - missing semicolons, braces, etc.",
+          "Complete the code example or mark as @noErrors if intentionally incomplete"
+        ]
+      },
+      {
+        "index": 60,
+        "code": "import Maybe from 'true-myth/maybe';\n\ntype Item = { count: number; name: string };\ntype Response = Array<Item>;\n\n// curried variant!\nconst findAtLeast100 = Maybe.find(({ count }: Item) => count > 100);\n\nfetch('https://arrays.example.com')\n  .then(response => response.json() as Response)\n  .then(findAtLeast100)\n  .then(found => {\n    if (found.isJust) {\n      console.log(`The matching value is ${found.value.name}!`);\n    }\n",
+        "categories": [
+          "INCOMPLETE_CODE",
+          "SYNTAX_ERROR"
+        ],
+        "suggestions": [
+          "Fix syntax errors - missing semicolons, braces, etc.",
+          "Complete the code example or mark as @noErrors if intentionally incomplete"
+        ]
+      },
+      {
+        "index": 62,
+        "code": "import Maybe from 'true-myth/maybe';\n\ntype Item = { count: number; name: string };\ntype Response = Array<Item>;\n\n// curried variant!\nconst findAtLeast100 = Maybe.find(({ count }: Item) => count > 100);\n\nfetch('https://arrays.example.com')\n  .then(response => response.json() as Response)\n  .then(findAtLeast100)\n  .then(found => {\n    if (found.isJust) {\n      console.log(`The matching value is ${found.value.name}!`);\n    }\n",
+        "categories": [
+          "INCOMPLETE_CODE",
+          "SYNTAX_ERROR"
+        ],
+        "suggestions": [
+          "Fix syntax errors - missing semicolons, braces, etc.",
+          "Complete the code example or mark as @noErrors if intentionally incomplete"
+        ]
+      },
+      {
+        "index": 135,
+        "code": "import { just, map, type Just } from 'true-myth/maybe';\n\nconst anObjectToWrap = {\n  desc: ['this', ' ', 'is a string'],\n  val: 42,\n};\n\nconst wrapped = just(anObjectToWrap);\nconst updated = map((obj) => ({ ...obj, val: 92 }), wrapped);\n\nconsole.log((anObjectToWrap as Just<number>).val); // 42\nconsole.log((updated as Just<number>).val); // 92\nconsole.log((anObjectToWrap as Just<string[]>).desc); // [\"this\", \" \", \"is a string\"]\nconsole.log((updated as Just<string[]>).desc); // [\"this\", \" \", \"is a string\"]\n",
+        "categories": [
+          "INCOMPLETE_CODE",
+          "SYNTAX_ERROR"
+        ],
+        "suggestions": [
+          "Fix syntax errors - missing semicolons, braces, etc.",
+          "Complete the code example or mark as @noErrors if intentionally incomplete"
+        ]
+      },
+      {
+        "index": 139,
+        "code": "import fs from 'node:fs';\nimport * as result from 'true-myth/result';\n\nconst rename = result.safe(fs.renameSync, (error) => {\n  if (error instanceof Error) {\n    return error;\n  } else {\n    return new Error('Unexpected error in renameSync', { cause: error });\n  }\n});\n\nlet renameResult = rename('original', 'updated');\nif (renameResult.isErr) {\n  console.error(renameResult.error);\n}\n",
+        "categories": [
+          "INCOMPLETE_CODE",
+          "SYNTAX_ERROR"
+        ],
+        "suggestions": [
+          "Fix syntax errors - missing semicolons, braces, etc.",
+          "Complete the code example or mark as @noErrors if intentionally incomplete"
+        ]
+      },
+      {
+        "index": 140,
+        "code": "import fs from 'node:fs';\nimport * as result from 'true-myth/result';\n\nlet renameResult = result.tryOrElse(\n  (error) => {\n    if (error instanceof Error) {\n      return error;\n    } else {\n      return new Error('Unexpected error in renameSync', { cause: error });\n    }\n  },\n  () => fs.renameSync('original', 'updated')\n);\n\nif (renameResult.isErr) {\n",
+        "categories": [
+          "INCOMPLETE_CODE",
+          "SYNTAX_ERROR"
+        ],
+        "suggestions": [
+          "Fix syntax errors - missing semicolons, braces, etc.",
+          "Complete the code example or mark as @noErrors if intentionally incomplete"
+        ]
+      },
+      {
+        "index": 198,
+        "code": "import { safelyTry } from 'true-myth/task';\n\nfunction throws(): Promise<T> {\n  throw new Error(\"Uh oh!\");\n}\n\n// Note: passing the function by name, *not* calling it.\nlet theTask = safelyTry(throws);\nlet theResult = await theTask;\nconsole.log(theResult.toString()); // Err(Error: Uh oh!)\n",
+        "categories": [
+          "INCOMPLETE_CODE",
+          "SYNTAX_ERROR"
+        ],
+        "suggestions": [
+          "Fix syntax errors - missing semicolons, braces, etc.",
+          "Complete the code example or mark as @noErrors if intentionally incomplete"
+        ]
+      },
+      {
+        "index": 228,
+        "code": "import Maybe from 'true-myth/maybe';\n\ntype Item = { count: number; name: string };\ntype Response = Array<Item>;\n\n// curried variant!\nconst findAtLeast100 = Maybe.find(({ count }: Item) => count > 100);\n\nfetch('https://arrays.example.com')\n  .then(response => response.json() as Response)\n  .then(findAtLeast100)\n  .then(found => {\n    if (found.isJust) {\n      console.log(`The matching value is ${found.value.name}!`);\n    }\n",
+        "categories": [
+          "INCOMPLETE_CODE",
+          "SYNTAX_ERROR"
+        ],
+        "suggestions": [
+          "Fix syntax errors - missing semicolons, braces, etc.",
+          "Complete the code example or mark as @noErrors if intentionally incomplete"
+        ]
+      },
+      {
+        "index": 230,
+        "code": "import Maybe from 'true-myth/maybe';\n\ntype Item = { count: number; name: string };\ntype Response = Array<Item>;\n\n// curried variant!\nconst findAtLeast100 = Maybe.find(({ count }: Item) => count > 100);\n\nfetch('https://arrays.example.com')\n  .then(response => response.json() as Response)\n  .then(findAtLeast100)\n  .then(found => {\n    if (found.isJust) {\n      console.log(`The matching value is ${found.value.name}!`);\n    }\n",
+        "categories": [
+          "INCOMPLETE_CODE",
+          "SYNTAX_ERROR"
+        ],
+        "suggestions": [
+          "Fix syntax errors - missing semicolons, braces, etc.",
+          "Complete the code example or mark as @noErrors if intentionally incomplete"
+        ]
+      },
+      {
+        "index": 232,
+        "code": "import Maybe from 'true-myth/maybe';\n\ntype Item = { count: number; name: string };\ntype Response = Array<Item>;\n\n// curried variant!\nconst findAtLeast100 = Maybe.find(({ count }: Item) => count > 100);\n\nfetch('https://arrays.example.com')\n  .then(response => response.json() as Response)\n  .then(findAtLeast100)\n  .then(found => {\n    if (found.isJust) {\n      console.log(`The matching value is ${found.value.name}!`);\n    }\n",
+        "categories": [
+          "INCOMPLETE_CODE",
+          "SYNTAX_ERROR"
+        ],
+        "suggestions": [
+          "Fix syntax errors - missing semicolons, braces, etc.",
+          "Complete the code example or mark as @noErrors if intentionally incomplete"
+        ]
+      },
+      {
+        "index": 234,
+        "code": "import Maybe from 'true-myth/maybe';\n\ntype Item = { count: number; name: string };\ntype Response = Array<Item>;\n\n// curried variant!\nconst findAtLeast100 = Maybe.find(({ count }: Item) => count > 100);\n\nfetch('https://arrays.example.com')\n  .then(response => response.json() as Response)\n  .then(findAtLeast100)\n  .then(found => {\n    if (found.isJust) {\n      console.log(`The matching value is ${found.value.name}!`);\n    }\n",
+        "categories": [
+          "INCOMPLETE_CODE",
+          "SYNTAX_ERROR"
+        ],
+        "suggestions": [
+          "Fix syntax errors - missing semicolons, braces, etc.",
+          "Complete the code example or mark as @noErrors if intentionally incomplete"
+        ]
+      },
+      {
+        "index": 260,
+        "code": "import { get, just } from 'true-myth/maybe';\n\ntype Dict<T> = { [key: string]: T };\n\nconst score: Maybe<Dict<number>> = just({\n  player1: 0,\n  player2: 1\n});\n\nconsole.log(get('player1', score)); // Just(0)\nconsole.log(get('player2', score)); // Just(1)\nconsole.log(get('player3', score)); // Nothing\n",
+        "categories": [
+          "INCOMPLETE_CODE",
+          "SYNTAX_ERROR"
+        ],
+        "suggestions": [
+          "Fix syntax errors - missing semicolons, braces, etc.",
+          "Complete the code example or mark as @noErrors if intentionally incomplete"
+        ]
+      },
+      {
+        "index": 263,
+        "code": "import { get, just } from 'true-myth/maybe';\n\ntype Dict<T> = { [key: string]: T };\n\nconst score: Maybe<Dict<number>> = just({\n  player1: 0,\n  player2: 1\n});\n\nconsole.log(get('player1', score)); // Just(0)\nconsole.log(get('player2', score)); // Just(1)\nconsole.log(get('player3', score)); // Nothing\n",
+        "categories": [
+          "INCOMPLETE_CODE",
+          "SYNTAX_ERROR"
+        ],
+        "suggestions": [
+          "Fix syntax errors - missing semicolons, braces, etc.",
+          "Complete the code example or mark as @noErrors if intentionally incomplete"
+        ]
+      }
+    ],
+    "SYNTAX_ERROR,UNDECLARED_VARIABLE": [
+      {
+        "index": 22,
+        "code": "type Person = { name?: string };\n\nconst me: Person = { name: 'Chris' };\nconsole.log(Maybe.property('name', me)); // Just('Chris')\n\nconst nobody: Person = {};\nconsole.log(Maybe.property('name', nobody)); // Nothing\n",
+        "categories": [
+          "SYNTAX_ERROR",
+          "UNDECLARED_VARIABLE"
+        ],
+        "suggestions": [
+          "Add import: import Maybe from \"true-myth/maybe\";",
+          "Fix syntax errors - missing semicolons, braces, etc."
+        ]
+      },
+      {
+        "index": 23,
+        "code": "type Person = { name?: string };\n\nconst lookupName = maybe.property('name');\n\nconst me: Person = { name: 'Chris' };\nconsole.log(lookupName(me)); // Just('Chris')\n\nconst nobody: Person = {};\nconsole.log(lookupName(nobody)); // Nothing\n",
+        "categories": [
+          "SYNTAX_ERROR",
+          "UNDECLARED_VARIABLE"
+        ],
+        "suggestions": [
+          "Fix capitalization: change maybe.property to Maybe.property",
+          "Fix syntax errors - missing semicolons, braces, etc."
+        ]
+      },
+      {
+        "index": 24,
+        "code": "type Person = { name?: string };\n\nconst me: Person = { name: 'Chris' };\nconsole.log(Maybe.property('name', me)); // Just('Chris')\n\nconst nobody: Person = {};\nconsole.log(Maybe.property('name', nobody)); // Nothing\n",
+        "categories": [
+          "SYNTAX_ERROR",
+          "UNDECLARED_VARIABLE"
+        ],
+        "suggestions": [
+          "Add import: import Maybe from \"true-myth/maybe\";",
+          "Fix syntax errors - missing semicolons, braces, etc."
+        ]
+      },
+      {
+        "index": 25,
+        "code": "type Person = { name?: string };\n\nconst lookupName = maybe.property('name');\n\nconst me: Person = { name: 'Chris' };\nconsole.log(lookupName(me)); // Just('Chris')\n\nconst nobody: Person = {};\nconsole.log(lookupName(nobody)); // Nothing\n",
+        "categories": [
+          "SYNTAX_ERROR",
+          "UNDECLARED_VARIABLE"
+        ],
+        "suggestions": [
+          "Fix capitalization: change maybe.property to Maybe.property",
+          "Fix syntax errors - missing semicolons, braces, etc."
+        ]
+      },
+      {
+        "index": 124,
+        "code": "let { task: willReject, reject } = Task.withResolvers<never, string>();\n\nlet allTasks = all([\n  timer(10),\n  timer(20),\n  willReject,\n]);\n\nreject(\"something went wrong\");\nlet result = await allTasks;\nconsole.log(result.toString()); // Err(\"something went wrong\")\n",
+        "categories": [
+          "SYNTAX_ERROR",
+          "UNDECLARED_VARIABLE"
+        ],
+        "suggestions": [
+          "Fix syntax errors - missing semicolons, braces, etc."
+        ]
+      },
+      {
+        "index": 125,
+        "code": "let { task: willReject, reject } = Task.withResolvers<never, string>();\n\nlet allTasks = all([\n  timer(10),\n  timer(20),\n  willReject,\n]);\n\nreject(\"something went wrong\");\nlet result = await allTasks;\nconsole.log(result.toString()); // Err(\"something went wrong\")\n",
+        "categories": [
+          "SYNTAX_ERROR",
+          "UNDECLARED_VARIABLE"
+        ],
+        "suggestions": [
+          "Fix syntax errors - missing semicolons, braces, etc."
+        ]
+      },
+      {
+        "index": 178,
+        "code": "let { promise, reject } = Promise.withResolvers<number>();\n\n// `theTask` has the type `Task<number, string>`\nlet theTask = Task.tryOr(promise, \"a fallback error\");\n\nreject({ thisStructuredObject: \"will be ignored!\" });\nawait theTask;\n\nconsole.log(theTask.reason); // \"a fallback error\"\n",
+        "categories": [
+          "SYNTAX_ERROR",
+          "UNDECLARED_VARIABLE"
+        ],
+        "suggestions": [
+          "Fix syntax errors - missing semicolons, braces, etc."
+        ]
+      },
+      {
+        "index": 265,
+        "code": "type Person = { name?: string };\n\nconst me: Person = { name: 'Chris' };\nconsole.log(Maybe.property('name', me)); // Just('Chris')\n\nconst nobody: Person = {};\nconsole.log(Maybe.property('name', nobody)); // Nothing\n",
+        "categories": [
+          "SYNTAX_ERROR",
+          "UNDECLARED_VARIABLE"
+        ],
+        "suggestions": [
+          "Add import: import Maybe from \"true-myth/maybe\";",
+          "Fix syntax errors - missing semicolons, braces, etc."
+        ]
+      },
+      {
+        "index": 266,
+        "code": "type Person = { name?: string };\n\nconst lookupName = maybe.property('name');\n\nconst me: Person = { name: 'Chris' };\nconsole.log(lookupName(me)); // Just('Chris')\n\nconst nobody: Person = {};\nconsole.log(lookupName(nobody)); // Nothing\n",
+        "categories": [
+          "SYNTAX_ERROR",
+          "UNDECLARED_VARIABLE"
+        ],
+        "suggestions": [
+          "Fix capitalization: change maybe.property to Maybe.property",
+          "Fix syntax errors - missing semicolons, braces, etc."
+        ]
+      },
+      {
+        "index": 267,
+        "code": "type Person = { name?: string };\n\nconst me: Person = { name: 'Chris' };\nconsole.log(Maybe.property('name', me)); // Just('Chris')\n\nconst nobody: Person = {};\nconsole.log(Maybe.property('name', nobody)); // Nothing\n",
+        "categories": [
+          "SYNTAX_ERROR",
+          "UNDECLARED_VARIABLE"
+        ],
+        "suggestions": [
+          "Add import: import Maybe from \"true-myth/maybe\";",
+          "Fix syntax errors - missing semicolons, braces, etc."
+        ]
+      },
+      {
+        "index": 268,
+        "code": "type Person = { name?: string };\n\nconst lookupName = maybe.property('name');\n\nconst me: Person = { name: 'Chris' };\nconsole.log(lookupName(me)); // Just('Chris')\n\nconst nobody: Person = {};\nconsole.log(lookupName(nobody)); // Nothing\n",
+        "categories": [
+          "SYNTAX_ERROR",
+          "UNDECLARED_VARIABLE"
+        ],
+        "suggestions": [
+          "Fix capitalization: change maybe.property to Maybe.property",
+          "Fix syntax errors - missing semicolons, braces, etc."
+        ]
+      }
+    ],
+    "SYNTAX_ERROR,UNDECLARED_VARIABLE,UNDECLARED_VARIABLE,UNDECLARED_VARIABLE,UNDECLARED_VARIABLE": [
+      {
+        "index": 30,
+        "code": "const length = (s: string) => s.length;\nconst getDefault = () => 0;\n\nconst justAString = Maybe.just('string');\nconst theStringLength = mapOrElse(getDefault, length, justAString);\nconsole.log(theStringLength); // 6\n\nconst notAString = Maybe.nothing<string>();\nconst notAStringLength = mapOrElse(getDefault, length, notAString)\nconsole.log(notAStringLength); // 0\n",
+        "categories": [
+          "SYNTAX_ERROR",
+          "UNDECLARED_VARIABLE",
+          "UNDECLARED_VARIABLE",
+          "UNDECLARED_VARIABLE",
+          "UNDECLARED_VARIABLE"
+        ],
+        "suggestions": [
+          "Add import: import Maybe from \"true-myth/maybe\";",
+          "Fix syntax errors - missing semicolons, braces, etc."
+        ]
+      },
+      {
+        "index": 31,
+        "code": "const length = (s: string) => s.length;\nconst getDefault = () => 0;\n\nconst justAString = Maybe.just('string');\nconst theStringLength = mapOrElse(getDefault, length, justAString);\nconsole.log(theStringLength); // 6\n\nconst notAString = Maybe.nothing<string>();\nconst notAStringLength = mapOrElse(getDefault, length, notAString)\nconsole.log(notAStringLength); // 0\n",
+        "categories": [
+          "SYNTAX_ERROR",
+          "UNDECLARED_VARIABLE",
+          "UNDECLARED_VARIABLE",
+          "UNDECLARED_VARIABLE",
+          "UNDECLARED_VARIABLE"
+        ],
+        "suggestions": [
+          "Add import: import Maybe from \"true-myth/maybe\";",
+          "Fix syntax errors - missing semicolons, braces, etc."
+        ]
+      },
+      {
+        "index": 32,
+        "code": "const length = (s: string) => s.length;\nconst getDefault = () => 0;\n\nconst justAString = Maybe.just('string');\nconst theStringLength = mapOrElse(getDefault, length, justAString);\nconsole.log(theStringLength); // 6\n\nconst notAString = Maybe.nothing<string>();\nconst notAStringLength = mapOrElse(getDefault, length, notAString)\nconsole.log(notAStringLength); // 0\n",
+        "categories": [
+          "SYNTAX_ERROR",
+          "UNDECLARED_VARIABLE",
+          "UNDECLARED_VARIABLE",
+          "UNDECLARED_VARIABLE",
+          "UNDECLARED_VARIABLE"
+        ],
+        "suggestions": [
+          "Add import: import Maybe from \"true-myth/maybe\";",
+          "Fix syntax errors - missing semicolons, braces, etc."
+        ]
+      },
+      {
+        "index": 250,
+        "code": "const length = (s: string) => s.length;\nconst getDefault = () => 0;\n\nconst justAString = Maybe.just('string');\nconst theStringLength = mapOrElse(getDefault, length, justAString);\nconsole.log(theStringLength); // 6\n\nconst notAString = Maybe.nothing<string>();\nconst notAStringLength = mapOrElse(getDefault, length, notAString)\nconsole.log(notAStringLength); // 0\n",
+        "categories": [
+          "SYNTAX_ERROR",
+          "UNDECLARED_VARIABLE",
+          "UNDECLARED_VARIABLE",
+          "UNDECLARED_VARIABLE",
+          "UNDECLARED_VARIABLE"
+        ],
+        "suggestions": [
+          "Add import: import Maybe from \"true-myth/maybe\";",
+          "Fix syntax errors - missing semicolons, braces, etc."
+        ]
+      },
+      {
+        "index": 251,
+        "code": "const length = (s: string) => s.length;\nconst getDefault = () => 0;\n\nconst justAString = Maybe.just('string');\nconst theStringLength = mapOrElse(getDefault, length, justAString);\nconsole.log(theStringLength); // 6\n\nconst notAString = Maybe.nothing<string>();\nconst notAStringLength = mapOrElse(getDefault, length, notAString)\nconsole.log(notAStringLength); // 0\n",
+        "categories": [
+          "SYNTAX_ERROR",
+          "UNDECLARED_VARIABLE",
+          "UNDECLARED_VARIABLE",
+          "UNDECLARED_VARIABLE",
+          "UNDECLARED_VARIABLE"
+        ],
+        "suggestions": [
+          "Add import: import Maybe from \"true-myth/maybe\";",
+          "Fix syntax errors - missing semicolons, braces, etc."
+        ]
+      },
+      {
+        "index": 252,
+        "code": "const length = (s: string) => s.length;\nconst getDefault = () => 0;\n\nconst justAString = Maybe.just('string');\nconst theStringLength = mapOrElse(getDefault, length, justAString);\nconsole.log(theStringLength); // 6\n\nconst notAString = Maybe.nothing<string>();\nconst notAStringLength = mapOrElse(getDefault, length, notAString)\nconsole.log(notAStringLength); // 0\n",
+        "categories": [
+          "SYNTAX_ERROR",
+          "UNDECLARED_VARIABLE",
+          "UNDECLARED_VARIABLE",
+          "UNDECLARED_VARIABLE",
+          "UNDECLARED_VARIABLE"
+        ],
+        "suggestions": [
+          "Add import: import Maybe from \"true-myth/maybe\";",
+          "Fix syntax errors - missing semicolons, braces, etc."
+        ]
+      }
+    ],
+    "UNDECLARED_VARIABLE": [
+      {
+        "index": 35,
+        "code": "const notString = Maybe.nothing<string>();\n",
+        "categories": [
+          "UNDECLARED_VARIABLE"
+        ],
+        "suggestions": [
+          "Add import: import Maybe from \"true-myth/maybe\";"
+        ]
+      },
+      {
+        "index": 36,
+        "code": "const foo = Maybe.of<string>(null);\n",
+        "categories": [
+          "UNDECLARED_VARIABLE"
+        ],
+        "suggestions": [
+          "Add import: import Maybe from \"true-myth/maybe\";"
+        ]
+      },
+      {
+        "index": 37,
+        "code": "const foo = Maybe.of<string>(null);\n",
+        "categories": [
+          "UNDECLARED_VARIABLE"
+        ],
+        "suggestions": [
+          "Add import: import Maybe from \"true-myth/maybe\";"
+        ]
+      },
+      {
+        "index": 38,
+        "code": "const foo = Maybe.of<string>(null);\n",
+        "categories": [
+          "UNDECLARED_VARIABLE"
+        ],
+        "suggestions": [
+          "Add import: import Maybe from \"true-myth/maybe\";"
+        ]
+      },
+      {
+        "index": 39,
+        "code": "const foo = Maybe.of<string>(null);\n",
+        "categories": [
+          "UNDECLARED_VARIABLE"
+        ],
+        "suggestions": [
+          "Add import: import Maybe from \"true-myth/maybe\";"
+        ]
+      },
+      {
+        "index": 40,
+        "code": "const foo = Maybe.of<string>(null);\n",
+        "categories": [
+          "UNDECLARED_VARIABLE"
+        ],
+        "suggestions": [
+          "Add import: import Maybe from \"true-myth/maybe\";"
+        ]
+      },
+      {
+        "index": 45,
+        "code": "const notString = Maybe.nothing<string>();\n",
+        "categories": [
+          "UNDECLARED_VARIABLE"
+        ],
+        "suggestions": [
+          "Add import: import Maybe from \"true-myth/maybe\";"
+        ]
+      },
+      {
+        "index": 46,
+        "code": "const foo = Maybe.of<string>(null);\n",
+        "categories": [
+          "UNDECLARED_VARIABLE"
+        ],
+        "suggestions": [
+          "Add import: import Maybe from \"true-myth/maybe\";"
+        ]
+      },
+      {
+        "index": 47,
+        "code": "const foo = Maybe.of<string>(null);\n",
+        "categories": [
+          "UNDECLARED_VARIABLE"
+        ],
+        "suggestions": [
+          "Add import: import Maybe from \"true-myth/maybe\";"
+        ]
+      },
+      {
+        "index": 48,
+        "code": "const foo = Maybe.of<string>(null);\n",
+        "categories": [
+          "UNDECLARED_VARIABLE"
+        ],
+        "suggestions": [
+          "Add import: import Maybe from \"true-myth/maybe\";"
+        ]
+      },
+      {
+        "index": 49,
+        "code": "const foo = Maybe.of<string>(null);\n",
+        "categories": [
+          "UNDECLARED_VARIABLE"
+        ],
+        "suggestions": [
+          "Add import: import Maybe from \"true-myth/maybe\";"
+        ]
+      },
+      {
+        "index": 50,
+        "code": "const foo = Maybe.of<string>(null);\n",
+        "categories": [
+          "UNDECLARED_VARIABLE"
+        ],
+        "suggestions": [
+          "Add import: import Maybe from \"true-myth/maybe\";"
+        ]
+      },
+      {
+        "index": 77,
+        "code": "const yayNumber = Result.ok<number, string>(12);\n",
+        "categories": [
+          "UNDECLARED_VARIABLE"
+        ],
+        "suggestions": [
+          "Add import: import Result from \"true-myth/result\";"
+        ]
+      },
+      {
+        "index": 78,
+        "code": "const normalResult = Result.ok<number, string>(42);\nconst explicitUnit = Result.ok<Unit, string>(Unit);\nconst implicitUnit = Result.ok<Unit, string>();\n",
+        "categories": [
+          "UNDECLARED_VARIABLE"
+        ],
+        "suggestions": [
+          "Add import: import Result from \"true-myth/result\";"
+        ]
+      },
+      {
+        "index": 84,
+        "code": "const notString = Maybe.nothing<string>();\n",
+        "categories": [
+          "UNDECLARED_VARIABLE"
+        ],
+        "suggestions": [
+          "Add import: import Maybe from \"true-myth/maybe\";"
+        ]
+      },
+      {
+        "index": 85,
+        "code": "const notString = Maybe.nothing<string>();\n",
+        "categories": [
+          "UNDECLARED_VARIABLE"
+        ],
+        "suggestions": [
+          "Add import: import Maybe from \"true-myth/maybe\";"
+        ]
+      },
+      {
+        "index": 94,
+        "code": "const fn = Result.ok<(a: string) => (b: string) => (c: string) => string, string>(curriedMerge);\n",
+        "categories": [
+          "UNDECLARED_VARIABLE"
+        ],
+        "suggestions": [
+          "Add import: import Result from \"true-myth/result\";"
+        ]
+      },
+      {
+        "index": 101,
+        "code": "const fn = Result.ok<(a: string) => (b: string) => (c: string) => string, string>(curriedMerge);\n",
+        "categories": [
+          "UNDECLARED_VARIABLE"
+        ],
+        "suggestions": [
+          "Add import: import Result from \"true-myth/result\";"
+        ]
+      },
+      {
+        "index": 108,
+        "code": "const foo = Maybe.of<string>(null);\n",
+        "categories": [
+          "UNDECLARED_VARIABLE"
+        ],
+        "suggestions": [
+          "Add import: import Maybe from \"true-myth/maybe\";"
+        ]
+      },
+      {
+        "index": 109,
+        "code": "const foo = Maybe.of<string>(null);\n",
+        "categories": [
+          "UNDECLARED_VARIABLE"
+        ],
+        "suggestions": [
+          "Add import: import Maybe from \"true-myth/maybe\";"
+        ]
+      },
+      {
+        "index": 110,
+        "code": "const foo = Maybe.of<string>(null);\n",
+        "categories": [
+          "UNDECLARED_VARIABLE"
+        ],
+        "suggestions": [
+          "Add import: import Maybe from \"true-myth/maybe\";"
+        ]
+      },
+      {
+        "index": 111,
+        "code": "const foo = Maybe.of<string>(null);\n",
+        "categories": [
+          "UNDECLARED_VARIABLE"
+        ],
+        "suggestions": [
+          "Add import: import Maybe from \"true-myth/maybe\";"
+        ]
+      },
+      {
+        "index": 112,
+        "code": "const foo = Maybe.of<string>(null);\n",
+        "categories": [
+          "UNDECLARED_VARIABLE"
+        ],
+        "suggestions": [
+          "Add import: import Maybe from \"true-myth/maybe\";"
+        ]
+      },
+      {
+        "index": 113,
+        "code": "const anErr = Result.err('alas, failure');\n",
+        "categories": [
+          "UNDECLARED_VARIABLE"
+        ],
+        "suggestions": [
+          "Add import: import Result from \"true-myth/result\";"
+        ]
+      },
+      {
+        "index": 114,
+        "code": "const anErr = Result.err('alas, failure');\n",
+        "categories": [
+          "UNDECLARED_VARIABLE"
+        ],
+        "suggestions": [
+          "Add import: import Result from \"true-myth/result\";"
+        ]
+      },
+      {
+        "index": 117,
+        "code": "const anErr = Result.err('alas, failure');\n",
+        "categories": [
+          "UNDECLARED_VARIABLE"
+        ],
+        "suggestions": [
+          "Add import: import Result from \"true-myth/result\";"
+        ]
+      },
+      {
+        "index": 118,
+        "code": "const anErr = Result.err('alas, failure');\n",
+        "categories": [
+          "UNDECLARED_VARIABLE"
+        ],
+        "suggestions": [
+          "Add import: import Result from \"true-myth/result\";"
+        ]
+      },
+      {
+        "index": 119,
+        "code": "const notString = Result.err<number, string>('something went wrong');\n",
+        "categories": [
+          "UNDECLARED_VARIABLE"
+        ],
+        "suggestions": [
+          "Add import: import Result from \"true-myth/result\";"
+        ]
+      },
+      {
+        "index": 120,
+        "code": "const normalResult = Result.err<number, string>('oh no');\nconst explicitUnit = Result.err<number, Unit>(Unit);\nconst implicitUnit = Result.err<number, Unit>();\n",
+        "categories": [
+          "UNDECLARED_VARIABLE"
+        ],
+        "suggestions": [
+          "Add import: import Result from \"true-myth/result\";"
+        ]
+      },
+      {
+        "index": 122,
+        "code": "const anErr = Result.err('alas, failure');\n",
+        "categories": [
+          "UNDECLARED_VARIABLE"
+        ],
+        "suggestions": [
+          "Add import: import Result from \"true-myth/result\";"
+        ]
+      },
+      {
+        "index": 123,
+        "code": "const anErr = Result.err('alas, failure');\n",
+        "categories": [
+          "UNDECLARED_VARIABLE"
+        ],
+        "suggestions": [
+          "Add import: import Result from \"true-myth/result\";"
+        ]
+      },
+      {
+        "index": 141,
+        "code": "let renameResult = result.tryOrElse(withWrappedError('renameSync'), () =>\n  fs.renameSync('original', 'updated')\n);\n",
+        "categories": [
+          "UNDECLARED_VARIABLE"
+        ],
+        "suggestions": []
+      },
+      {
+        "index": 145,
+        "code": "let users = (await usersTask).unwrapOr([]);\n",
+        "categories": [
+          "UNDECLARED_VARIABLE"
+        ],
+        "suggestions": []
+      },
+      {
+        "index": 179,
+        "code": "let { promise, reject } = Promise.withResolvers<number>();\n\n// `theTask` has the type `Task<number, Error>`\nlet theTask = Task.tryOrElse(\n  promise,\n  (reason) => new Error(\"Promise was rejected\", { cause: reason })\n);\n",
+        "categories": [
+          "UNDECLARED_VARIABLE"
+        ],
+        "suggestions": []
+      },
+      {
+        "index": 180,
+        "code": "// `resolved` has the type `Task<number, never>`\nlet resolved = Task.resolve(123);\n\n// `rejected` has the type `Task<never, string>`\nlet rejected = Task.rejecte(\"something went wrong\");\n",
+        "categories": [
+          "UNDECLARED_VARIABLE"
+        ],
+        "suggestions": []
+      },
+      {
+        "index": 235,
+        "code": "const notString = Maybe.nothing<string>();\n",
+        "categories": [
+          "UNDECLARED_VARIABLE"
+        ],
+        "suggestions": [
+          "Add import: import Maybe from \"true-myth/maybe\";"
+        ]
+      },
+      {
+        "index": 236,
+        "code": "const foo = Maybe.of<string>(null);\n",
+        "categories": [
+          "UNDECLARED_VARIABLE"
+        ],
+        "suggestions": [
+          "Add import: import Maybe from \"true-myth/maybe\";"
+        ]
+      },
+      {
+        "index": 237,
+        "code": "const foo = Maybe.of<string>(null);\n",
+        "categories": [
+          "UNDECLARED_VARIABLE"
+        ],
+        "suggestions": [
+          "Add import: import Maybe from \"true-myth/maybe\";"
+        ]
+      },
+      {
+        "index": 238,
+        "code": "const foo = Maybe.of<string>(null);\n",
+        "categories": [
+          "UNDECLARED_VARIABLE"
+        ],
+        "suggestions": [
+          "Add import: import Maybe from \"true-myth/maybe\";"
+        ]
+      },
+      {
+        "index": 239,
+        "code": "const foo = Maybe.of<string>(null);\n",
+        "categories": [
+          "UNDECLARED_VARIABLE"
+        ],
+        "suggestions": [
+          "Add import: import Maybe from \"true-myth/maybe\";"
+        ]
+      },
+      {
+        "index": 240,
+        "code": "const foo = Maybe.of<string>(null);\n",
+        "categories": [
+          "UNDECLARED_VARIABLE"
+        ],
+        "suggestions": [
+          "Add import: import Maybe from \"true-myth/maybe\";"
+        ]
+      },
+      {
+        "index": 275,
+        "code": "const notString = Maybe.nothing<string>();\n",
+        "categories": [
+          "UNDECLARED_VARIABLE"
+        ],
+        "suggestions": [
+          "Add import: import Maybe from \"true-myth/maybe\";"
+        ]
+      },
+      {
+        "index": 276,
+        "code": "const foo = Maybe.of<string>(null);\n",
+        "categories": [
+          "UNDECLARED_VARIABLE"
+        ],
+        "suggestions": [
+          "Add import: import Maybe from \"true-myth/maybe\";"
+        ]
+      },
+      {
+        "index": 277,
+        "code": "const foo = Maybe.of<string>(null);\n",
+        "categories": [
+          "UNDECLARED_VARIABLE"
+        ],
+        "suggestions": [
+          "Add import: import Maybe from \"true-myth/maybe\";"
+        ]
+      },
+      {
+        "index": 278,
+        "code": "const foo = Maybe.of<string>(null);\n",
+        "categories": [
+          "UNDECLARED_VARIABLE"
+        ],
+        "suggestions": [
+          "Add import: import Maybe from \"true-myth/maybe\";"
+        ]
+      },
+      {
+        "index": 279,
+        "code": "const foo = Maybe.of<string>(null);\n",
+        "categories": [
+          "UNDECLARED_VARIABLE"
+        ],
+        "suggestions": [
+          "Add import: import Maybe from \"true-myth/maybe\";"
+        ]
+      },
+      {
+        "index": 280,
+        "code": "const foo = Maybe.of<string>(null);\n",
+        "categories": [
+          "UNDECLARED_VARIABLE"
+        ],
+        "suggestions": [
+          "Add import: import Maybe from \"true-myth/maybe\";"
+        ]
+      },
+      {
+        "index": 287,
+        "code": "const notString = Maybe.nothing<string>();\n",
+        "categories": [
+          "UNDECLARED_VARIABLE"
+        ],
+        "suggestions": [
+          "Add import: import Maybe from \"true-myth/maybe\";"
+        ]
+      },
+      {
+        "index": 288,
+        "code": "const notString = Maybe.nothing<string>();\n",
+        "categories": [
+          "UNDECLARED_VARIABLE"
+        ],
+        "suggestions": [
+          "Add import: import Maybe from \"true-myth/maybe\";"
+        ]
+      },
+      {
+        "index": 289,
+        "code": "const foo = Maybe.of<string>(null);\n",
+        "categories": [
+          "UNDECLARED_VARIABLE"
+        ],
+        "suggestions": [
+          "Add import: import Maybe from \"true-myth/maybe\";"
+        ]
+      },
+      {
+        "index": 290,
+        "code": "const foo = Maybe.of<string>(null);\n",
+        "categories": [
+          "UNDECLARED_VARIABLE"
+        ],
+        "suggestions": [
+          "Add import: import Maybe from \"true-myth/maybe\";"
+        ]
+      },
+      {
+        "index": 291,
+        "code": "const foo = Maybe.of<string>(null);\n",
+        "categories": [
+          "UNDECLARED_VARIABLE"
+        ],
+        "suggestions": [
+          "Add import: import Maybe from \"true-myth/maybe\";"
+        ]
+      },
+      {
+        "index": 292,
+        "code": "const foo = Maybe.of<string>(null);\n",
+        "categories": [
+          "UNDECLARED_VARIABLE"
+        ],
+        "suggestions": [
+          "Add import: import Maybe from \"true-myth/maybe\";"
+        ]
+      },
+      {
+        "index": 293,
+        "code": "const foo = Maybe.of<string>(null);\n",
+        "categories": [
+          "UNDECLARED_VARIABLE"
+        ],
+        "suggestions": [
+          "Add import: import Maybe from \"true-myth/maybe\";"
+        ]
+      },
+      {
+        "index": 294,
+        "code": "const anErr = Result.err('alas, failure');\n",
+        "categories": [
+          "UNDECLARED_VARIABLE"
+        ],
+        "suggestions": [
+          "Add import: import Result from \"true-myth/result\";"
+        ]
+      },
+      {
+        "index": 295,
+        "code": "const anErr = Result.err('alas, failure');\n",
+        "categories": [
+          "UNDECLARED_VARIABLE"
+        ],
+        "suggestions": [
+          "Add import: import Result from \"true-myth/result\";"
+        ]
+      },
+      {
+        "index": 302,
+        "code": "const fn = Result.ok<(a: string) => (b: string) => (c: string) => string, string>(curriedMerge);\n",
+        "categories": [
+          "UNDECLARED_VARIABLE"
+        ],
+        "suggestions": [
+          "Add import: import Result from \"true-myth/result\";"
+        ]
+      },
+      {
+        "index": 309,
+        "code": "const fn = Result.ok<(a: string) => (b: string) => (c: string) => string, string>(curriedMerge);\n",
+        "categories": [
+          "UNDECLARED_VARIABLE"
+        ],
+        "suggestions": [
+          "Add import: import Result from \"true-myth/result\";"
+        ]
+      }
+    ],
+    "INCOMPLETE_CODE,UNDECLARED_VARIABLE": [
+      {
+        "index": 41,
+        "code": "type DeepOptionalType = {\n  something?: {\n    with?: {\n      deeperKeys?: string;\n    }\n  }\n};\n\nconst fullySet: DeepType = {\n  something: {\n    with: {\n      deeperKeys: 'like this'\n    }\n  }\n};\n",
+        "categories": [
+          "INCOMPLETE_CODE",
+          "UNDECLARED_VARIABLE"
+        ],
+        "suggestions": [
+          "Fix type name: change DeepType to DeepOptionalType",
+          "Complete the code example or mark as @noErrors if intentionally incomplete"
+        ]
+      },
+      {
+        "index": 42,
+        "code": "type DeepOptionalType = {\n  something?: {\n    with?: {\n      deeperKeys?: string;\n    }\n  }\n};\n\nconst fullySet: DeepType = {\n  something: {\n    with: {\n      deeperKeys: 'like this'\n    }\n  }\n};\n",
+        "categories": [
+          "INCOMPLETE_CODE",
+          "UNDECLARED_VARIABLE"
+        ],
+        "suggestions": [
+          "Fix type name: change DeepType to DeepOptionalType",
+          "Complete the code example or mark as @noErrors if intentionally incomplete"
+        ]
+      },
+      {
+        "index": 51,
+        "code": "const foo = document.querySelector('#foo');\nlet width: number;\nif (foo !== null) {\n  width = foo.getBoundingClientRect().width;\n} else {\n  width = 0;\n}\n\nconst getStyle = (el: HTMLElement, rule: string) => el.style[rule];\nconst bar = document.querySelector('.bar');\nlet color: string;\nif (bar != null) {\n  let possibleColor = getStyle(bar, 'color');\n  if (possibleColor !== null) {\n    color = possibleColor;\n",
+        "categories": [
+          "INCOMPLETE_CODE",
+          "UNDECLARED_VARIABLE"
+        ],
+        "suggestions": [
+          "Complete the code example or mark as @noErrors if intentionally incomplete"
+        ]
+      },
+      {
+        "index": 54,
+        "code": "type DeepOptionalType = {\n  something?: {\n    with?: {\n      deeperKeys?: string;\n    }\n  }\n};\n\nconst fullySet: DeepType = {\n  something: {\n    with: {\n      deeperKeys: 'like this'\n    }\n  }\n};\n",
+        "categories": [
+          "INCOMPLETE_CODE",
+          "UNDECLARED_VARIABLE"
+        ],
+        "suggestions": [
+          "Fix type name: change DeepType to DeepOptionalType",
+          "Complete the code example or mark as @noErrors if intentionally incomplete"
+        ]
+      },
+      {
+        "index": 65,
+        "code": "const aSuccessfulOperation = () => 2 + 2;\n\nconst anOkResult = Result.tryOr('Oh noes!!1', () => {\n  aSuccessfulOperation()\n}); // => Ok(4)\n\nconst thisOperationThrows = () => throw new Error('Bummer');\n\nconst anErrResult = Result.tryOr('Oh noes!!1', () => {\n  thisOperationThrows();\n}); // => Err('Oh noes!!1')\n",
+        "categories": [
+          "INCOMPLETE_CODE",
+          "UNDECLARED_VARIABLE"
+        ],
+        "suggestions": [
+          "Add import: import Result from \"true-myth/result\";",
+          "Complete the code example or mark as @noErrors if intentionally incomplete"
+        ]
+      },
+      {
+        "index": 66,
+        "code": "const aSuccessfulOperation = () => 2 + 2;\n\nconst anOkResult = Result.tryOr('Oh noes!!1', () => {\n  aSuccessfulOperation()\n}); // => Ok(4)\n\nconst thisOperationThrows = () => throw new Error('Bummer');\n\nconst anErrResult = Result.tryOr('Oh noes!!1', () => {\n  thisOperationThrows();\n}); // => Err('Oh noes!!1')\n",
+        "categories": [
+          "INCOMPLETE_CODE",
+          "UNDECLARED_VARIABLE"
+        ],
+        "suggestions": [
+          "Add import: import Result from \"true-myth/result\";",
+          "Complete the code example or mark as @noErrors if intentionally incomplete"
+        ]
+      },
+      {
+        "index": 79,
+        "code": "type SomeData = {\n  //...\n};\n\nconst isValid = (data: SomeData): boolean => {\n  // true or false...\n}\n\nconst arrowValidate = (data: SomeData): Result<Unit, string> =>\n  isValid(data) ? Result.ok() : Result.err('something was wrong!');\n\nfunction fnValidate(data: someData): Result<Unit, string> {\n  return isValid(data) ? Result.ok() : Result.err('something was wrong');\n}\n",
+        "categories": [
+          "INCOMPLETE_CODE",
+          "UNDECLARED_VARIABLE"
+        ],
+        "suggestions": [
+          "Add import: import Result from \"true-myth/result\";",
+          "Complete the code example or mark as @noErrors if intentionally incomplete"
+        ]
+      },
+      {
+        "index": 121,
+        "code": "type SomeData = {\n  //...\n};\n\nconst isValid = (data: SomeData): boolean => {\n  // true or false...\n}\n\nconst arrowValidate = (data: SomeData): Result<number, Unit> =>\n  isValid(data) ? Result.ok(42) : Result.err();\n\nfunction fnValidate(data: someData): Result<number, Unit> {\n  return isValid(data) ? Result.ok(42) : Result.err();\n}\n",
+        "categories": [
+          "INCOMPLETE_CODE",
+          "UNDECLARED_VARIABLE"
+        ],
+        "suggestions": [
+          "Add import: import Result from \"true-myth/result\";",
+          "Complete the code example or mark as @noErrors if intentionally incomplete"
+        ]
+      },
+      {
+        "index": 153,
+        "code": "function timer(ms: number): Task<number, never> {\n  return new Task((resolve) => {\n    setTimeout(() => resolve(ms), ms);\n  });\n}\n",
+        "categories": [
+          "INCOMPLETE_CODE",
+          "UNDECLARED_VARIABLE"
+        ],
+        "suggestions": [
+          "Complete the code example or mark as @noErrors if intentionally incomplete"
+        ]
+      },
+      {
+        "index": 167,
+        "code": "let described = taskWithRetries.orElse((retryFailed) => {\n  let tries = `Failed ${retryFailed.tries} times.`;\n  let time = `Took ${retryFailed.totalDuration}ms.`;\n\n  const LI = '\\n- ';\n\n  let reasons =\n    retryFailed.rejections.length > 0\n      ? LI +\n      retryFailed.rejections\n        .map((err) => {\n          let cause = err.cause ? `\\nCaused by: ${err.cause}` : '';\n          let stack = err.stack ? `\\n${err.stack}` : '';\n          return err.message + cause + stack;\n        })\n",
+        "categories": [
+          "INCOMPLETE_CODE",
+          "UNDECLARED_VARIABLE"
+        ],
+        "suggestions": [
+          "Add import for map function from appropriate module",
+          "Complete the code example or mark as @noErrors if intentionally incomplete"
+        ]
+      },
+      {
+        "index": 172,
+        "code": "class RandomInteger implements Iterator<number> {\n  #nextValue: number;\n\n  constructor(initial: number) {\n    this.#nextValue = initial;\n  }\n\n  next(): IteratorResult<number, void> {\n    let value = this.#nextValue;\n    this.#nextValue = Math.floor(Math.random() * Number.MAX_SAFE_INTEGER);\n    return { done: false, value };\n  }\n\n  return(value: number): IteratorResult<number, void> {\n    return { done: false, value };\n",
+        "categories": [
+          "INCOMPLETE_CODE",
+          "UNDECLARED_VARIABLE"
+        ],
+        "suggestions": [
+          "Complete the code example or mark as @noErrors if intentionally incomplete"
+        ]
+      },
+      {
+        "index": 241,
+        "code": "type DeepOptionalType = {\n  something?: {\n    with?: {\n      deeperKeys?: string;\n    }\n  }\n};\n\nconst fullySet: DeepType = {\n  something: {\n    with: {\n      deeperKeys: 'like this'\n    }\n  }\n};\n",
+        "categories": [
+          "INCOMPLETE_CODE",
+          "UNDECLARED_VARIABLE"
+        ],
+        "suggestions": [
+          "Fix type name: change DeepType to DeepOptionalType",
+          "Complete the code example or mark as @noErrors if intentionally incomplete"
+        ]
+      },
+      {
+        "index": 274,
+        "code": "type DeepOptionalType = {\n  something?: {\n    with?: {\n      deeperKeys?: string;\n    }\n  }\n};\n\nconst fullySet: DeepType = {\n  something: {\n    with: {\n      deeperKeys: 'like this'\n    }\n  }\n};\n",
+        "categories": [
+          "INCOMPLETE_CODE",
+          "UNDECLARED_VARIABLE"
+        ],
+        "suggestions": [
+          "Fix type name: change DeepType to DeepOptionalType",
+          "Complete the code example or mark as @noErrors if intentionally incomplete"
+        ]
+      },
+      {
+        "index": 283,
+        "code": "type DeepOptionalType = {\n  something?: {\n    with?: {\n      deeperKeys?: string;\n    }\n  }\n};\n\nconst fullySet: DeepType = {\n  something: {\n    with: {\n      deeperKeys: 'like this'\n    }\n  }\n};\n",
+        "categories": [
+          "INCOMPLETE_CODE",
+          "UNDECLARED_VARIABLE"
+        ],
+        "suggestions": [
+          "Fix type name: change DeepType to DeepOptionalType",
+          "Complete the code example or mark as @noErrors if intentionally incomplete"
+        ]
+      },
+      {
+        "index": 284,
+        "code": "const foo = document.querySelector('#foo');\nlet width: number;\nif (foo !== null) {\n  width = foo.getBoundingClientRect().width;\n} else {\n  width = 0;\n}\n\nconst getStyle = (el: HTMLElement, rule: string) => el.style[rule];\nconst bar = document.querySelector('.bar');\nlet color: string;\nif (bar != null) {\n  let possibleColor = getStyle(bar, 'color');\n  if (possibleColor !== null) {\n    color = possibleColor;\n",
+        "categories": [
+          "INCOMPLETE_CODE",
+          "UNDECLARED_VARIABLE"
+        ],
+        "suggestions": [
+          "Complete the code example or mark as @noErrors if intentionally incomplete"
+        ]
+      }
+    ],
+    "SYNTAX_ERROR,WRONG_IMPORT_PATH": [
+      {
+        "index": 67,
+        "code": "import { ok, err, Result, or } from 'true-utils/result';\n\nconst okA = ok<string, string>('a');\nconst okB = ok<string, string>('b');\nconst anErr = err<string, string>(':wat:');\nconst anotherErr = err<string, string>(':headdesk:');\n\nconsole.log(or(okB, okA).toString());  // Ok(A)\nconsole.log(or(anErr, okA).toString());  // Ok(A)\nconsole.log(or(okB, anErr).toString());  // Ok(B)\nconsole.log(or(anotherErr, anErr).toString());  // Err(:headdesk:)\n",
+        "categories": [
+          "SYNTAX_ERROR",
+          "WRONG_IMPORT_PATH"
+        ],
+        "suggestions": [
+          "Replace \"true-utils\" with \"true-myth\" in imports",
+          "Fix syntax errors - missing semicolons, braces, etc."
+        ]
+      },
+      {
+        "index": 68,
+        "code": "import { ok, err, Result, or } from 'true-utils/result';\n\nconst okA = ok<string, string>('a');\nconst okB = ok<string, string>('b');\nconst anErr = err<string, string>(':wat:');\nconst anotherErr = err<string, string>(':headdesk:');\n\nconsole.log(or(okB, okA).toString());  // Ok(A)\nconsole.log(or(anErr, okA).toString());  // Ok(A)\nconsole.log(or(okB, anErr).toString());  // Ok(B)\nconsole.log(or(anotherErr, anErr).toString());  // Err(:headdesk:)\n",
+        "categories": [
+          "SYNTAX_ERROR",
+          "WRONG_IMPORT_PATH"
+        ],
+        "suggestions": [
+          "Replace \"true-utils\" with \"true-myth\" in imports",
+          "Fix syntax errors - missing semicolons, braces, etc."
+        ]
+      },
+      {
+        "index": 71,
+        "code": "import Maybe from 'true-utils/maybe';\n\nconst justA = Maybe.just(\"a\");\nconst justB = Maybe.just(\"b\");\nconst aNothing: Maybe<string> = nothing();\n\nconsole.log(Maybe.or(justB, justA).toString());  // Just(A)\nconsole.log(Maybe.or(aNothing, justA).toString());  // Just(A)\nconsole.log(Maybe.or(justB, aNothing).toString());  // Just(B)\nconsole.log(Maybe.or(aNothing, aNothing).toString());  // Nothing\n",
+        "categories": [
+          "SYNTAX_ERROR",
+          "WRONG_IMPORT_PATH"
+        ],
+        "suggestions": [
+          "Replace \"true-utils\" with \"true-myth\" in imports",
+          "Fix syntax errors - missing semicolons, braces, etc."
+        ]
+      },
+      {
+        "index": 72,
+        "code": "import Maybe from 'true-utils/maybe';\n\nconst justA = Maybe.just(\"a\");\nconst justB = Maybe.just(\"b\");\nconst aNothing: Maybe<string> = nothing();\n\nconsole.log(Maybe.or(justB, justA).toString());  // Just(A)\nconsole.log(Maybe.or(aNothing, justA).toString());  // Just(A)\nconsole.log(Maybe.or(justB, aNothing).toString());  // Just(B)\nconsole.log(Maybe.or(aNothing, aNothing).toString());  // Nothing\n",
+        "categories": [
+          "SYNTAX_ERROR",
+          "WRONG_IMPORT_PATH"
+        ],
+        "suggestions": [
+          "Replace \"true-utils\" with \"true-myth\" in imports",
+          "Fix syntax errors - missing semicolons, braces, etc."
+        ]
+      },
+      {
+        "index": 257,
+        "code": "import Maybe from 'true-utils/maybe';\n\nconst justA = Maybe.just(\"a\");\nconst justB = Maybe.just(\"b\");\nconst aNothing: Maybe<string> = nothing();\n\nconsole.log(Maybe.or(justB, justA).toString());  // Just(A)\nconsole.log(Maybe.or(aNothing, justA).toString());  // Just(A)\nconsole.log(Maybe.or(justB, aNothing).toString());  // Just(B)\nconsole.log(Maybe.or(aNothing, aNothing).toString());  // Nothing\n",
+        "categories": [
+          "SYNTAX_ERROR",
+          "WRONG_IMPORT_PATH"
+        ],
+        "suggestions": [
+          "Replace \"true-utils\" with \"true-myth\" in imports",
+          "Fix syntax errors - missing semicolons, braces, etc."
+        ]
+      },
+      {
+        "index": 258,
+        "code": "import Maybe from 'true-utils/maybe';\n\nconst justA = Maybe.just(\"a\");\nconst justB = Maybe.just(\"b\");\nconst aNothing: Maybe<string> = nothing();\n\nconsole.log(Maybe.or(justB, justA).toString());  // Just(A)\nconsole.log(Maybe.or(aNothing, justA).toString());  // Just(A)\nconsole.log(Maybe.or(justB, aNothing).toString());  // Just(B)\nconsole.log(Maybe.or(aNothing, aNothing).toString());  // Nothing\n",
+        "categories": [
+          "SYNTAX_ERROR",
+          "WRONG_IMPORT_PATH"
+        ],
+        "suggestions": [
+          "Replace \"true-utils\" with \"true-myth\" in imports",
+          "Fix syntax errors - missing semicolons, braces, etc."
+        ]
+      },
+      {
+        "index": 316,
+        "code": "import { ok, err, Result, or } from 'true-utils/result';\n\nconst okA = ok<string, string>('a');\nconst okB = ok<string, string>('b');\nconst anErr = err<string, string>(':wat:');\nconst anotherErr = err<string, string>(':headdesk:');\n\nconsole.log(or(okB, okA).toString());  // Ok(A)\nconsole.log(or(anErr, okA).toString());  // Ok(A)\nconsole.log(or(okB, anErr).toString());  // Ok(B)\nconsole.log(or(anotherErr, anErr).toString());  // Err(:headdesk:)\n",
+        "categories": [
+          "SYNTAX_ERROR",
+          "WRONG_IMPORT_PATH"
+        ],
+        "suggestions": [
+          "Replace \"true-utils\" with \"true-myth\" in imports",
+          "Fix syntax errors - missing semicolons, braces, etc."
+        ]
+      },
+      {
+        "index": 317,
+        "code": "import { ok, err, Result, or } from 'true-utils/result';\n\nconst okA = ok<string, string>('a');\nconst okB = ok<string, string>('b');\nconst anErr = err<string, string>(':wat:');\nconst anotherErr = err<string, string>(':headdesk:');\n\nconsole.log(or(okB, okA).toString());  // Ok(A)\nconsole.log(or(anErr, okA).toString());  // Ok(A)\nconsole.log(or(okB, anErr).toString());  // Ok(B)\nconsole.log(or(anotherErr, anErr).toString());  // Err(:headdesk:)\n",
+        "categories": [
+          "SYNTAX_ERROR",
+          "WRONG_IMPORT_PATH"
+        ],
+        "suggestions": [
+          "Replace \"true-utils\" with \"true-myth\" in imports",
+          "Fix syntax errors - missing semicolons, braces, etc."
+        ]
+      }
+    ],
+    "SYNTAX_ERROR,UNDECLARED_VARIABLE,UNDECLARED_VARIABLE": [
+      {
+        "index": 106,
+        "code": "const length = (s: string) => s.length;\n\nconst justAString = Maybe.just('string');\nconst justTheStringLength = map(length, justAString);\nconsole.log(justTheStringLength.toString()); // Just(6)\n\nconst notAString = Maybe.nothing<string>();\nconst notAStringLength = map(length, notAString);\nconsole.log(notAStringLength.toString()); // \"Nothing\"\n",
+        "categories": [
+          "SYNTAX_ERROR",
+          "UNDECLARED_VARIABLE",
+          "UNDECLARED_VARIABLE"
+        ],
+        "suggestions": [
+          "Add import: import Maybe from \"true-myth/maybe\";",
+          "Add import for map function from appropriate module",
+          "Fix syntax errors - missing semicolons, braces, etc."
+        ]
+      },
+      {
+        "index": 107,
+        "code": "const length = (s: string) => s.length;\n\nconst justAString = Maybe.just('string');\nconst justTheStringLength = map(length, justAString);\nconsole.log(justTheStringLength.toString()); // Just(6)\n\nconst notAString = Maybe.nothing<string>();\nconst notAStringLength = map(length, notAString);\nconsole.log(notAStringLength.toString()); // \"Nothing\"\n",
+        "categories": [
+          "SYNTAX_ERROR",
+          "UNDECLARED_VARIABLE",
+          "UNDECLARED_VARIABLE"
+        ],
+        "suggestions": [
+          "Add import: import Maybe from \"true-myth/maybe\";",
+          "Add import for map function from appropriate module",
+          "Fix syntax errors - missing semicolons, braces, etc."
+        ]
+      },
+      {
+        "index": 129,
+        "code": "let { task, resolveWith, rejectWith } = Task.withResolvers<string, Error>();\nresolveWith(\"Hello!\");\n\nlet result = await task.map((s) => s.length);\nlet length = result.unwrapOr(0);\nconsole.log(length); // 5\n",
+        "categories": [
+          "SYNTAX_ERROR",
+          "UNDECLARED_VARIABLE",
+          "UNDECLARED_VARIABLE"
+        ],
+        "suggestions": [
+          "Add import for map function from appropriate module",
+          "Fix syntax errors - missing semicolons, braces, etc."
+        ]
+      },
+      {
+        "index": 130,
+        "code": "let { task, resolveWith, rejectWith } = Task.withResolvers<string, Error>();\nrejectWith(new Error(\"oh teh noes!\"));\n\nlet result = await task.mapRejection((s) => s.length);\nlet errLength = result.isErr ? result.error : 0;\nconsole.log(errLength); // 5\n",
+        "categories": [
+          "SYNTAX_ERROR",
+          "UNDECLARED_VARIABLE",
+          "UNDECLARED_VARIABLE"
+        ],
+        "suggestions": [
+          "Fix syntax errors - missing semicolons, braces, etc."
+        ]
+      },
+      {
+        "index": 199,
+        "code": "let { task, resolveWith, rejectWith } = Task.withResolvers<string, Error>();\nresolveWith(\"Hello!\");\n\nlet result = await task.map((s) => s.length);\nlet length = result.unwrapOr(0);\nconsole.log(length); // 5\n",
+        "categories": [
+          "SYNTAX_ERROR",
+          "UNDECLARED_VARIABLE",
+          "UNDECLARED_VARIABLE"
+        ],
+        "suggestions": [
+          "Add import for map function from appropriate module",
+          "Fix syntax errors - missing semicolons, braces, etc."
+        ]
+      },
+      {
+        "index": 200,
+        "code": "let { task, resolveWith, rejectWith } = Task.withResolvers<string, Error>();\nrejectWith(new Error(\"oh teh noes!\"));\n\nlet result = await task.mapRejection((s) => s.length);\nlet errLength = result.isErr ? result.error : 0;\nconsole.log(errLength); // 5\n",
+        "categories": [
+          "SYNTAX_ERROR",
+          "UNDECLARED_VARIABLE",
+          "UNDECLARED_VARIABLE"
+        ],
+        "suggestions": [
+          "Fix syntax errors - missing semicolons, braces, etc."
+        ]
+      },
+      {
+        "index": 208,
+        "code": "let { task, resolveWith, rejectWith } = Task.withResolvers<string, Error>();\nresolveWith(\"Hello!\");\n\nlet result = await task.map((s) => s.length);\nlet length = result.unwrapOr(0);\nconsole.log(length); // 5\n",
+        "categories": [
+          "SYNTAX_ERROR",
+          "UNDECLARED_VARIABLE",
+          "UNDECLARED_VARIABLE"
+        ],
+        "suggestions": [
+          "Add import for map function from appropriate module",
+          "Fix syntax errors - missing semicolons, braces, etc."
+        ]
+      },
+      {
+        "index": 209,
+        "code": "let { task, resolveWith, rejectWith } = Task.withResolvers<string, Error>();\nrejectWith(new Error(\"oh teh noes!\"));\n\nlet result = await task.mapRejection((s) => s.length);\nlet errLength = result.isErr ? result.error : 0;\nconsole.log(errLength); // 5\n",
+        "categories": [
+          "SYNTAX_ERROR",
+          "UNDECLARED_VARIABLE",
+          "UNDECLARED_VARIABLE"
+        ],
+        "suggestions": [
+          "Fix syntax errors - missing semicolons, braces, etc."
+        ]
+      },
+      {
+        "index": 245,
+        "code": "const length = (s: string) => s.length;\n\nconst justAString = Maybe.just('string');\nconst justTheStringLength = map(length, justAString);\nconsole.log(justTheStringLength.toString()); // Just(6)\n\nconst notAString = Maybe.nothing<string>();\nconst notAStringLength = map(length, notAString);\nconsole.log(notAStringLength.toString()); // \"Nothing\"\n",
+        "categories": [
+          "SYNTAX_ERROR",
+          "UNDECLARED_VARIABLE",
+          "UNDECLARED_VARIABLE"
+        ],
+        "suggestions": [
+          "Add import: import Maybe from \"true-myth/maybe\";",
+          "Add import for map function from appropriate module",
+          "Fix syntax errors - missing semicolons, braces, etc."
+        ]
+      },
+      {
+        "index": 246,
+        "code": "const length = (s: string) => s.length;\n\nconst justAString = Maybe.just('string');\nconst justTheStringLength = map(length, justAString);\nconsole.log(justTheStringLength.toString()); // Just(6)\n\nconst notAString = Maybe.nothing<string>();\nconst notAStringLength = map(length, notAString);\nconsole.log(notAStringLength.toString()); // \"Nothing\"\n",
+        "categories": [
+          "SYNTAX_ERROR",
+          "UNDECLARED_VARIABLE",
+          "UNDECLARED_VARIABLE"
+        ],
+        "suggestions": [
+          "Add import: import Maybe from \"true-myth/maybe\";",
+          "Add import for map function from appropriate module",
+          "Fix syntax errors - missing semicolons, braces, etc."
+        ]
+      }
+    ],
+    "INCOMPLETE_CODE,SYNTAX_ERROR,UNDECLARED_VARIABLE": [
+      {
+        "index": 131,
+        "code": "let settledTask = allSettled([\n  Task.resolve<string, number>(\"hello\"),\n  Task.reject<number, boolean>(true),\n  Task.resolve<{ fancy: boolean }>, Error>({ fancy: true }),\n]);\n\nlet output = await settledTask;\nif (output.isOk) { // always true, not currently statically knowable\n  for (let result of output.value) {\n    console.log(result.toString());\n  }\n}\n",
+        "categories": [
+          "INCOMPLETE_CODE",
+          "SYNTAX_ERROR",
+          "UNDECLARED_VARIABLE"
+        ],
+        "suggestions": [
+          "Fix syntax errors - missing semicolons, braces, etc.",
+          "Complete the code example or mark as @noErrors if intentionally incomplete"
+        ]
+      },
+      {
+        "index": 144,
+        "code": "usersTask.match({\n  Resolved: (users) => {\n    for (let user of users) {\n      const today = new Date();\n      console.log(\"Hello,\", user.name ?? \"someone\", \"!\");\n\n      if (\n        today.getDate() == user.birthday.getDate() &&\n        today.getMonth() == user.birthday.getMonth()\n      ) {\n        console.log();\n      }\n    }\n  },\n  Rejected: (error) => {\n",
+        "categories": [
+          "INCOMPLETE_CODE",
+          "SYNTAX_ERROR",
+          "UNDECLARED_VARIABLE"
+        ],
+        "suggestions": [
+          "Fix syntax errors - missing semicolons, braces, etc.",
+          "Complete the code example or mark as @noErrors if intentionally incomplete"
+        ]
+      },
+      {
+        "index": 183,
+        "code": "let fetchUsersTask = Task.try(fetch(/* some endpoint */))\n  .orElse(handleError('http'))\n  .andThen((res) => Task.try(res.json().orElse(handleError('parse')))\n  .match({\n    Resolved: (users) => {\n      for (let user of users) {\n        console.log(user);\n      }\n    },\n    Rejected: (error) => {\n      let currentError = error;\n      console.error(currentError.message)\n      while (currentError = currentError.cause) {\n        console.error(currentError.message);\n      }\n",
+        "categories": [
+          "INCOMPLETE_CODE",
+          "SYNTAX_ERROR",
+          "UNDECLARED_VARIABLE"
+        ],
+        "suggestions": [
+          "Fix syntax errors - missing semicolons, braces, etc.",
+          "Complete the code example or mark as @noErrors if intentionally incomplete"
+        ]
+      }
+    ],
+    "UNDECLARED_VARIABLE,UNDECLARED_VARIABLE": [
+      {
+        "index": 133,
+        "code": "const a = Result.of(3)\nconst b = Result.of(3)\nconst c = Result.of(null)\nconst d = Result.nothing()\n\nResult.equals(a, b) // true\nResult.equals(a, c) // false\nResult.equals(c, d) // true\n",
+        "categories": [
+          "UNDECLARED_VARIABLE",
+          "UNDECLARED_VARIABLE"
+        ],
+        "suggestions": [
+          "Add import: import { nothing } from \"true-myth/maybe\";",
+          "Add import: import Result from \"true-myth/result\";"
+        ]
+      },
+      {
+        "index": 134,
+        "code": "const a = Result.of(3)\nconst b = Result.of(3)\nconst c = Result.of(null)\nconst d = Result.nothing()\n\nResult.equals(a, b) // true\nResult.equals(a, c) // false\nResult.equals(c, d) // true\n",
+        "categories": [
+          "UNDECLARED_VARIABLE",
+          "UNDECLARED_VARIABLE"
+        ],
+        "suggestions": [
+          "Add import: import { nothing } from \"true-myth/maybe\";",
+          "Add import: import Result from \"true-myth/result\";"
+        ]
+      },
+      {
+        "index": 136,
+        "code": "const a = Maybe.of(3);\nconst b = Maybe.of(3);\nconst c = Maybe.of(null);\nconst d = Maybe.nothing();\n\nMaybe.equals(a, b); // true\nMaybe.equals(a, c); // false\nMaybe.equals(c, d); // true\n",
+        "categories": [
+          "UNDECLARED_VARIABLE",
+          "UNDECLARED_VARIABLE"
+        ],
+        "suggestions": [
+          "Add import: import { nothing } from \"true-myth/maybe\";",
+          "Add import: import Maybe from \"true-myth/maybe\";"
+        ]
+      },
+      {
+        "index": 137,
+        "code": "const a = Maybe.of(3);\nconst b = Maybe.of(3);\nconst c = Maybe.of(null);\nconst d = Maybe.nothing();\n\nMaybe.equals(a, b); // true\nMaybe.equals(a, c); // false\nMaybe.equals(c, d); // true\n",
+        "categories": [
+          "UNDECLARED_VARIABLE",
+          "UNDECLARED_VARIABLE"
+        ],
+        "suggestions": [
+          "Add import: import { nothing } from \"true-myth/maybe\";",
+          "Add import: import Maybe from \"true-myth/maybe\";"
+        ]
+      },
+      {
+        "index": 225,
+        "code": "const a = Maybe.of(3);\nconst b = Maybe.of(3);\nconst c = Maybe.of(null);\nconst d = Maybe.nothing();\n\nMaybe.equals(a, b); // true\nMaybe.equals(a, c); // false\nMaybe.equals(c, d); // true\n",
+        "categories": [
+          "UNDECLARED_VARIABLE",
+          "UNDECLARED_VARIABLE"
+        ],
+        "suggestions": [
+          "Add import: import { nothing } from \"true-myth/maybe\";",
+          "Add import: import Maybe from \"true-myth/maybe\";"
+        ]
+      },
+      {
+        "index": 226,
+        "code": "const a = Maybe.of(3);\nconst b = Maybe.of(3);\nconst c = Maybe.of(null);\nconst d = Maybe.nothing();\n\nMaybe.equals(a, b); // true\nMaybe.equals(a, c); // false\nMaybe.equals(c, d); // true\n",
+        "categories": [
+          "UNDECLARED_VARIABLE",
+          "UNDECLARED_VARIABLE"
+        ],
+        "suggestions": [
+          "Add import: import { nothing } from \"true-myth/maybe\";",
+          "Add import: import Maybe from \"true-myth/maybe\";"
+        ]
+      },
+      {
+        "index": 310,
+        "code": "const a = Result.of(3)\nconst b = Result.of(3)\nconst c = Result.of(null)\nconst d = Result.nothing()\n\nResult.equals(a, b) // true\nResult.equals(a, c) // false\nResult.equals(c, d) // true\n",
+        "categories": [
+          "UNDECLARED_VARIABLE",
+          "UNDECLARED_VARIABLE"
+        ],
+        "suggestions": [
+          "Add import: import { nothing } from \"true-myth/maybe\";",
+          "Add import: import Result from \"true-myth/result\";"
+        ]
+      },
+      {
+        "index": 311,
+        "code": "const a = Result.of(3)\nconst b = Result.of(3)\nconst c = Result.of(null)\nconst d = Result.nothing()\n\nResult.equals(a, b) // true\nResult.equals(a, c) // false\nResult.equals(c, d) // true\n",
+        "categories": [
+          "UNDECLARED_VARIABLE",
+          "UNDECLARED_VARIABLE"
+        ],
+        "suggestions": [
+          "Add import: import { nothing } from \"true-myth/maybe\";",
+          "Add import: import Result from \"true-myth/result\";"
+        ]
+      }
+    ]
+  }
+}
