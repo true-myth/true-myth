@@ -14,7 +14,7 @@ These docs do *not* try to introduce async programming with promises or callback
 
 Callbacks generally need to handle an error provided as an argument—but in many callback-based designs, nothing *actually* requires you to handle that. For example, here is a slightly simplified version of the type signature for the classic callback-based Node API for reading a file:
 
-```ts
+```typescript
 function readFile(
   path: string,
   callback: (err: ErrnoException | null, data: string) => void,
@@ -23,7 +23,7 @@ function readFile(
 
 This tells you what kind of error may be present (an `ErrnoException`), but you can blithely try to read the `data` regardless. Worse, as of the time of this writing (and for a long time historically) the Node types *lie*: they promise that `data` is present, but in fact if there is an `err`, `data` will be `undefined`.[^why] So if you write this…
 
-```ts
+```typescript
 import { readFile } from 'node:fs';
 
 readFile('does-not-exist.lol', (err, data) => {
@@ -39,13 +39,13 @@ You will see one of JavaScript’s most infamous error messages:
 
 Similarly, `Promise` has a `catch` method, but TypeScript’s types for `Promise` only include the type for the successful resolution of the `Promise`, not the type of any rejections (they are at best). Here is a similarly simplified version of the type signature for the `Promise`-based version of the Node API for reading a file:
 
-```ts
+```typescript
 function readFile(path: string): Promise<string>;
 ```
 
 This type signature does not even tell you that it will actually throw an error of type `ErrnoException`! Again, if you call it like this:
 
-```ts
+```typescript
 import { readFile } from 'node:fs/promises';
 
 let data = await readFile('does-not-exist.lol');
@@ -114,7 +114,7 @@ Then the `readFile` callback produces either an `err` or `data`. If `err` is not
 
 You can use this same approach to turn *any* callback-based API into a `Task`-based API. For example, you could implement a `Task`-based timer around `setTimeout` like this:
 
-```ts
+```typescript
 function timer(ms: number): Task<number, never> {
   return new Task((resolve) => {
     setTimeout(() => resolve(ms), ms);
@@ -135,7 +135,7 @@ That’s the same implementation we use for [the `timer` function](/api/task/fun
 
 To start with, we can do the same thing as we did with callbacks. Here, because the `.then` method for a `Promise` takes handlers for both resolution and rejection, we can simply pass the `resolve` and `reject` arguments to it directly:
 
-```ts
+```typescript
 import { readFile } from 'node:fs/promises';
 
 import Task from 'true-myth/task';
@@ -155,7 +155,7 @@ The rejection type is untyped, so this is actually *less* safe than the callback
 
 However, because this is an *incredibly* common pattern—indeed, probably the most common thing you will do with `Task`!—we also provide the `fromPromise` constructor. Thus, we can rewrite the above example like this:
 
-```ts
+```typescript
 import { readFile } from 'node:fs/promises';
 import Task from 'true-myth/task';
 

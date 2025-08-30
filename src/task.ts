@@ -26,7 +26,7 @@ export {
   /**
     Re-exports `true-myth/task/delay` as a namespace object for convenience.
 
-    ```ts
+    ```typescript
     import * as task from 'true-myth/task';
     let strategy = task.delay.exponential({ from: 5, withFactor: 5 }).take(5);
     ```
@@ -37,7 +37,7 @@ export {
 
     @deprecated Use `delay` instead:
 
-      ```ts
+      ```typescript
       import * as task from 'true-myth/task';
       let strategy = task.delay.exponential({ from: 5, withFactor: 5 }).take(5);
       ```
@@ -216,7 +216,7 @@ class TaskImpl<T, E> implements PromiseLike<Result<T, E>> {
 
     ### Resolution
 
-    ```ts
+    ```typescript
     import Task from 'true-myth/task';
 
     let { task, resolve } = Task.withResolvers<string, Error>();
@@ -229,7 +229,7 @@ class TaskImpl<T, E> implements PromiseLike<Result<T, E>> {
 
     ### Rejection
 
-    ```ts
+    ```typescript
     import Task from 'true-myth/task';
 
     let { task, reject } = Task.withResolvers<string, Error>();
@@ -332,7 +332,7 @@ class TaskImpl<T, E> implements PromiseLike<Result<T, E>> {
 
     ## Examples
 
-    ```ts
+    ```typescript
     import Task from 'true-myth/task';
     const double = (n: number) => n * 2;
 
@@ -367,7 +367,7 @@ class TaskImpl<T, E> implements PromiseLike<Result<T, E>> {
 
     ## Examples
 
-    ```ts
+    ```typescript
     import Task from 'true-myth/task';
 
     const extractReason = (err: { code: number, reason: string }) => err.reason;
@@ -418,7 +418,7 @@ class TaskImpl<T, E> implements PromiseLike<Result<T, E>> {
 
     Using `and` to get new `Task` values from other `Task` values:
 
-    ```ts
+    ```typescript
     import Task from 'true-myth/task';
 
     let resolvedA = Task.resolve<string, string>('A');
@@ -446,7 +446,7 @@ class TaskImpl<T, E> implements PromiseLike<Result<T, E>> {
 
     Using `and` to get new `Task` values from a `Result`:
 
-    ```ts
+    ```typescript
     import Task from 'true-myth/task';
     import Result from 'true-myth/result';
     import { expect } from 'vitest';
@@ -540,7 +540,7 @@ class TaskImpl<T, E> implements PromiseLike<Result<T, E>> {
 
     Using `andThen` to construct a new `Task` from a `Task` value:
 
-    ```ts
+    ```typescript
     import * as task from 'true-myth/task';
 
     const toLengthAsResolved = (s: string) => task.resolve(s.length);
@@ -556,7 +556,7 @@ class TaskImpl<T, E> implements PromiseLike<Result<T, E>> {
 
     Using `andThen` to construct a new `Task` from a `Result` value:
 
-    ```ts
+    ```typescript
     import * as task from 'true-myth/task';
     import { ok } from 'true-myth/result';
 
@@ -635,7 +635,7 @@ class TaskImpl<T, E> implements PromiseLike<Result<T, E>> {
 
     Using `or` to get new `Task` values from other `Task` values:
 
-    ```ts
+    ```typescript
     import Task from 'true-myth/task';
 
     const resolvedA = Task.resolve<string, string>('a');
@@ -651,7 +651,7 @@ class TaskImpl<T, E> implements PromiseLike<Result<T, E>> {
 
     Using `or` to get new `Task` values from `Result` values:
 
-    ```ts
+    ```typescript
     import Task from 'true-myth/task';
     import Result from 'true-myth/result';
 
@@ -754,7 +754,7 @@ class TaskImpl<T, E> implements PromiseLike<Result<T, E>> {
 
     ## Example
 
-    ```ts
+    ```typescript
     import Task from 'true-myth/task';
 
     let theTask = new Task<number, Error>((resolve, reject) => {
@@ -787,7 +787,7 @@ class TaskImpl<T, E> implements PromiseLike<Result<T, E>> {
     > You could also write the above example like this, taking advantage of how
     > awaiting a `Task` produces its inner `Result`:
     >
-    > ```ts
+    > ```typescript
     > import Task from 'true-myth/task';
     >
     > let theTask = new Task<number, Error>((resolve, reject) => {
@@ -932,7 +932,7 @@ export type All<A extends readonly AnyTask[]> = Task<
 
   Once all tasks resolve:
 
-  ```ts
+  ```typescript
   import { all, timer } from 'true-myth/task';
 
   let allTasks = all([
@@ -947,7 +947,7 @@ export type All<A extends readonly AnyTask[]> = Task<
 
   If any tasks do *not* resolve:
 
-  ```ts
+  ```typescript
   import { all, timer } from 'true-myth/task';
   import Task from 'true-myth/task';
 
@@ -1039,7 +1039,7 @@ export type Settled<A extends readonly AnyTask[]> = {
 
   Given a mix of resolving and rejecting tasks:
 
-  ```ts
+  ```typescript
   import Task, { allSettled } from 'true-myth/task';
 
   let settledTask = allSettled([
@@ -1088,7 +1088,7 @@ export function allSettled(tasks: AnyTask[]): Task<unknown, never> {
 
   When any item resolves:
 
-  ```ts
+  ```typescript
   import { any, timer } from 'true-myth/task';
 
   let anyTask = any([
@@ -1103,7 +1103,7 @@ export function allSettled(tasks: AnyTask[]): Task<unknown, never> {
 
   When all items reject:
 
-  ```ts
+  ```typescript
   import Task, { any, timer } from 'true-myth/task';
 
   let anyTask = any([
@@ -1195,7 +1195,7 @@ export function any(tasks: readonly [] | readonly AnyTask[]): AnyTask {
 
   ## Example
 
-  ```ts
+  ```typescript
   import Task, { race } from 'true-myth/task';
 
   let { task: task1, resolve } = Task.withResolvers();
@@ -1455,7 +1455,7 @@ export interface TaskConstructor {
 
     ### Resolution
 
-    ```ts
+    ```typescript
     import Task from 'true-myth/task';
 
     let { task, resolve } = Task.withResolvers<string, Error>();
@@ -1468,7 +1468,7 @@ export interface TaskConstructor {
 
     ### Rejection
 
-    ```ts
+    ```typescript
     import Task from 'true-myth/task';
 
    let { task, reject } = Task.withResolvers<string, Error>();
@@ -1660,7 +1660,7 @@ export function fromPromise<T>(
   Given an {@linkcode "result".Ok Ok<T, E>}, `fromResult` will produces a
   {@linkcode Resolved Resolved<T, E>} task.
 
-  ```ts
+  ```typescript
   import { fromResult } from 'true-myth/task';
   import { ok } from 'true-myth/result';
 
@@ -1670,7 +1670,7 @@ export function fromPromise<T>(
   Likewise, given an `Err`, `fromResult` will produces a {@linkcode Rejected}
   task.
 
-  ```ts
+  ```typescript
   import { fromResult } from 'true-myth/task';
   import { err } from 'true-myth/result';
 
@@ -1679,7 +1679,7 @@ export function fromPromise<T>(
 
   It is often clearest to access the function via a namespace-style import:
 
-  ```ts
+  ```typescript
 
   import * as task from 'true-myth/task';
   import { ok } from 'true-myth/result';
@@ -1689,7 +1689,7 @@ export function fromPromise<T>(
 
   As an alternative, it can be useful to rename the import:
 
-  ```ts
+  ```typescript
   import { fromResult: taskFromResult } from 'true-myth/task';
   import { err } from 'true-myth/result';
 
@@ -1751,7 +1751,7 @@ export function fromUnsafePromise<T, E>(promise: Promise<Result<T, E>>): Task<T,
 
   ## Examples
 
-  ```ts
+  ```typescript
   import { safelyTry } from 'true-myth/task';
 
   function throws(): Promise<T> {
@@ -1789,7 +1789,7 @@ export function safelyTry<T>(fn: () => Promise<T>): Task<T, unknown> {
 
   ## Examples
 
-  ```ts
+  ```typescript
   import { tryOr } from 'true-myth/task';
 
   function throws(): Promise<number> {
@@ -1807,7 +1807,7 @@ export function safelyTry<T>(fn: () => Promise<T>): Task<T, unknown> {
   You can also write this in “curried” form, passing just the fallback value and
   getting back a function which accepts the:
 
-  ```ts
+  ```typescript
   import { tryOr } from 'true-myth/task';
 
   function throws(): Promise<number> {
@@ -1877,7 +1877,7 @@ export const safelyTryOrElse = tryOrElse;
 
   ## Examples
 
-  ```ts
+  ```typescript
   import { tryOrElse } from 'true-myth/task';
 
   function throws(): Promise<number> {
@@ -1896,7 +1896,7 @@ export const safelyTryOrElse = tryOrElse;
   You can also write this in “curried” form, passing just the fallback value and
   getting back a function which accepts the:
 
-  ```ts
+  ```typescript
   import { tryOrElse } from 'true-myth/task';
 
   function throws(): Promise<number> {
@@ -1957,7 +1957,7 @@ export function tryOrElse<T, E>(
   produce a `Task` instead of a `Promise` and which does not throw an error for
   rejections, but instead produces a {@linkcode Rejected} variant of the `Task`.
 
-  ```ts
+  ```typescript
   import { safe } from 'true-myth/task';
 
   const fetch = safe(window.fetch);
@@ -1987,7 +1987,7 @@ export function safe<
   produce a `Task` instead of a `Promise` and which does not throw an error for
   rejections, but instead produces a {@linkcode Rejected} variant of the `Task`.
 
-  ```ts
+  ```typescript
   import { safe } from 'true-myth/task';
 
   class CustomError extends Error {
@@ -2040,7 +2040,7 @@ export function safe<
   This is basically just a convenience for something you could do yourself by
   chaining `safe` with `Maybe.of`:
 
-  ```ts
+  ```typescript
   import Maybe from 'true-myth/maybe';
   import { safe, safeNullable } from 'true-myth/task';
 
@@ -2080,7 +2080,7 @@ export function safeNullable<
   This is basically just a convenience for something you could do yourself by
   chaining `safe` with `Maybe.of`:
 
-  ```ts
+  ```typescript
   import Maybe from 'true-myth/maybe';
   import { safe, safeNullable } from 'true-myth/task';
 
@@ -2408,7 +2408,7 @@ function identity<T>(value: T): T {
   timeout but that the client is allowed to try again. For other error codes, it
   will simply reject immediately.
 
-  ```ts
+  ```typescript
   import * as task from 'true-myth/task';
   import * as delay from 'true-myth/task/delay';
 
@@ -2443,7 +2443,7 @@ function identity<T>(value: T): T {
   For example, imagine you have a library function that returns a custom `Error`
   subclass that includes an `isFatal` value on it, something like this::
 
-  ```ts
+  ```typescript
   class AppError extends Error {
     isFatal: boolean;
     constructor(message: string, options?: { isFatal?: boolean, cause?: unknown }) {
@@ -2456,7 +2456,7 @@ function identity<T>(value: T): T {
   You could check that flag in a `Task` rejection and return `stopRetrying()` if
   it is set:
 
-  ```ts
+  ```typescript
   import * as task from 'true-myth/task';
   import { fibonacci, jitter } from 'true-myth/task/delay';
   import { doSomethingThatMayFailWithAppError } from 'someplace/in/my-app';
@@ -2487,7 +2487,7 @@ function identity<T>(value: T): T {
   response to JSON fails. It also stops if it has tried the call more than 10
   times or if the total elapsed time exceeds 10 seconds.
 
-  ```ts
+  ```typescript
   import * as task from 'true-myth/task';
   import { exponential, jitter } from 'true-myth/task/delay';
 
@@ -2523,7 +2523,7 @@ function identity<T>(value: T): T {
   [monotonically increasing][monotonic] value proportional to the current
   value:
 
-  ```ts
+  ```typescript
   import * as task from 'true-myth/task';
 
   function* randomIncrease(options?: { from: number }) {
@@ -2685,7 +2685,7 @@ export const RETRY_FAILED_NAME = 'TrueMyth.Task.RetryFailed';
   can check whether its `name` is {@linkcode RETRY_FAILED_NAME} or you can use
   the {@linkcode isRetryFailed} helper function:
 
-  ```ts
+  ```typescript
   import * as task from 'true-myth/task';
 
   // snip
