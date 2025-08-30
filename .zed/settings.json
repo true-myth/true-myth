@@ -5,11 +5,30 @@
 {
   "languages": {
     "TypeScript": {
-      "wrap_guides": [80, 100]
+      "wrap_guides": [
+        80,
+        100
+      ],
+      "formatter": {
+        "external": {
+          "command": "prettier",
+          "arguments": [
+            "--stdin-filepath",
+            "{buffer_path}"
+          ]
+        }
+      }
+    },
+    "JSON": {
+      "formatter": {
+        "external": {
+          "command": "prettier",
+          "arguments": [
+            "--stdin-filepath",
+            "{buffer_path}"
+          ]
+        }
+      }
     }
-  },
-  "code_actions_on_format": {
-      "source.fixAll.biome": true,
-      "source.organizeImports.biome": true
-    }
+  }
 }
