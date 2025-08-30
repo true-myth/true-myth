@@ -95,7 +95,7 @@ class MaybeImpl<T extends {}> implements SomeMaybe<T> {
     To specify that the result should be interpreted as a specific type, you may
     invoke `Maybe.of` with an explicit type parameter:
 
-    ```ts
+    ```ts twoslash
     import Maybe from 'true-myth/maybe';
     const foo = Maybe.of<string>(null);
     ```
@@ -166,7 +166,7 @@ class MaybeImpl<T extends {}> implements SomeMaybe<T> {
     function which expects a `Maybe<T>` where the `<T>` is known but you have no
     value to give it, you can use a type parameter:
 
-    ```ts
+    ```ts twoslash
     import Maybe from 'true-myth/maybe';
 
     const notString = Maybe.nothing<string>();
@@ -333,7 +333,7 @@ class MaybeImpl<T extends {}> implements SomeMaybe<T> {
     If you have a `Maybe` of an object type, you can do `thatMaybe.get('a key')`
     to look up the next layer down in the object.
 
-    ```ts
+    ```ts twoslash
     type DeepOptionalType = {
       something?: {
         with?: {
@@ -483,7 +483,7 @@ export function isNothing<T extends {}>(maybe: Maybe<T>): maybe is Nothing<T> {
   function which expects a `Maybe<T>` where the `<T>` is known but you have no
   value to give it, you can use a type parameter:
 
-  ```ts
+  ```ts twoslash
   import Maybe from 'true-myth/maybe';
 
   const notString = Maybe.nothing<string>();
@@ -500,7 +500,7 @@ export const nothing = MaybeImpl.nothing;
   To specify that the result should be interpreted as a specific type, you may
   invoke `Maybe.of` with an explicit type parameter:
 
-  ```ts
+  ```ts twoslash
   import * as maybe from 'true-myth/maybe';
   const foo = maybe.of<string>(null);
   ```
@@ -541,7 +541,7 @@ export const of = MaybeImpl.of;
   rather than "0 to n" items. And this lets us implement a whole set of *other*
   interfaces, like those in this module.)
 
-  ```ts
+  ```ts twoslash
   import Maybe, { map } from 'true-myth/maybe';
 
   const length = (s: string) => s.length;
@@ -584,7 +584,7 @@ export function map<T extends {}, U extends {}>(mapFn: (t: T) => U): (maybe: May
   rather than "0 to n" items. And this lets us implement a whole set of *other*
   interfaces, like those in this module.)
 
-  ```ts
+  ```ts twoslash
   import Maybe, { map } from 'true-myth/maybe';
 
   const length = (s: string) => s.length;
@@ -619,7 +619,7 @@ export function map<T extends {}, U extends {}>(
   {@linkcode Just}, or return a default value if `maybe` is a
   {@linkcode Nothing}.
 
-  ```ts
+  ```ts twoslash
   import Maybe, { mapOr } from 'true-myth/maybe';
 
   const length = (s: string) => s.length;
@@ -676,7 +676,7 @@ export function mapOr<T extends {}, U extends {}>(
   {@linkcode Just}, or use a function to construct a default value if `maybe` is
   {@linkcode Nothing}.
 
-  ```ts
+  ```ts twoslash
   import Maybe, { mapOrElse } from 'true-myth/maybe';
 
   const length = (s: string) => s.length;
@@ -748,17 +748,17 @@ export function mapOrElse<T extends {}, U extends {}>(
   Notice that, unlike in [`map`](#map) or its variants, the original `maybe` is
   not involved in constructing the new `Maybe`.
 
-  ```ts
-  import Maybe, { nothing } from 'true-myth/maybe';
+  ```ts twoslash
+  import Maybe, * as maybe from 'true-myth/maybe';
 
   const justA = Maybe.just('A');
   const justB = Maybe.just('B');
-  const nothing: Maybe<number> = nothing();
+  const aNothing = maybe.nothing<number>();
 
-  console.log(Maybe.and(justB, justA).toString());  // Just(B)
-  console.log(Maybe.and(justB, nothing).toString());  // Nothing
-  console.log(Maybe.and(nothing, justA).toString());  // Nothing
-  console.log(Maybe.and(nothing, nothing).toString());  // Nothing
+  console.log(maybe.and(justB, justA).toString());  // Just(B)
+  console.log(maybe.and(justB, aNothing).toString());  // Nothing
+  console.log(maybe.and(aNothing, justA).toString());  // Nothing
+  console.log(maybe.and(aNothing, aNothing).toString());  // Nothing
   ```
 
   @template T    The type of the initial wrapped value.
@@ -805,7 +805,7 @@ export function and<T extends {}, U extends {}>(
   (This is a somewhat contrived example, but it serves to show the way the
   function behaves.)
 
-  ```ts
+  ```ts twoslash
   import Maybe, { andThen, toString } from 'true-myth/maybe';
 
   // string -> Maybe<number>
@@ -860,17 +860,17 @@ export function andThen<T extends {}, U extends {}>(
   always ends up getting a `Just` variant, by supplying a default value for the
   case that you currently have a nothing.
 
-  ```ts
-  import Maybe, { nothing } from 'true-myth/maybe';
+  ```ts twoslash
+  import Maybe, { nothing, or } from 'true-myth/maybe';
 
   const justA = Maybe.just("a");
   const justB = Maybe.just("b");
   const aNothing: Maybe<string> = nothing();
 
-  console.log(Maybe.or(justB, justA).toString());  // Just(A)
-  console.log(Maybe.or(aNothing, justA).toString());  // Just(A)
-  console.log(Maybe.or(justB, aNothing).toString());  // Just(B)
-  console.log(Maybe.or(aNothing, aNothing).toString());  // Nothing
+  console.log(or(justB, justA).toString());  // Just(A)
+  console.log(or(aNothing, justA).toString());  // Just(A)
+  console.log(or(justB, aNothing).toString());  // Just(B)
+  console.log(or(aNothing, aNothing).toString());  // Nothing
   ```
 
   @template T        The type of the wrapped value.
@@ -926,14 +926,14 @@ export function orElse<T extends {}, R extends AnyMaybe>(
   {@linkcode Nothing}. This is the recommended way to get a value out of a
   `Maybe` most of the time.
 
-  ```ts
-  import Maybe from 'true-myth/maybe';
+  ```ts twoslash
+  import * as maybe from 'true-myth/maybe';
 
-  const notAString = Maybe.nothing<string>();
-  const isAString = Maybe.just('look ma! some characters!');
+  const notAString = maybe.nothing<string>();
+  const isAString = maybe.just('look ma! some characters!');
 
-  console.log(Maybe.unwrapOr('<empty>', notAString));  // "<empty>"
-  console.log(Maybe.unwrapOr('<empty>', isAString));  // "look ma! some characters!"
+  console.log(maybe.unwrapOr('<empty>', notAString));  // "<empty>"
+  console.log(maybe.unwrapOr('<empty>', isAString));  // "look ma! some characters!"
   ```
 
   @template T        The type of the wrapped value.
@@ -958,7 +958,7 @@ export function unwrapOr<T extends {}, U>(defaultValue: U, maybe?: Maybe<T>) {
   values in the environment – whether preloaded or by local closure) instead of
   having a single default value available (as in {@linkcode unwrapOr}).
 
-  ```ts
+  ```ts twoslash
   import Maybe from 'true-myth/maybe';
 
   // You can imagine that someOtherValue might be dynamic.
@@ -1112,7 +1112,7 @@ export type Matcher<T, A> = {
 
   Instead of code like this:
 
-  ```ts
+  ```ts twoslash
   import Maybe from 'true-myth/maybe';
 
   const logValue = (mightBeANumber: Maybe<number>) => {
@@ -1126,7 +1126,7 @@ export type Matcher<T, A> = {
 
   ...we can write code like this:
 
-  ```ts
+  ```ts twoslash
   import { match } from 'true-myth/maybe';
 
   const logValue = (mightBeANumber: Maybe<number>) => {
@@ -1165,7 +1165,7 @@ export function match<T extends {}, A>(
   Allows quick triple-equal equality check between the values inside two
   {@linkcode Maybe maybe} instances without having to unwrap them first.
 
-  ```ts
+  ```ts twoslash
   import Maybe, { equals } from 'true-myth/maybe';
 
   const a = Maybe.of(3);
@@ -1198,7 +1198,7 @@ export function equals<T extends {}>(
   first but lets you do some very elegant things. For example, `ap` allows you
   to this:
 
-  ```ts
+  ```ts twoslash
   import { just, nothing } from 'true-myth/maybe';
 
   const one = just(1);
@@ -1215,7 +1215,7 @@ export function equals<T extends {}>(
 
   Without `ap`, you'd need to do something like a nested `match`:
 
-  ```ts
+  ```ts twoslash
   import { just, nothing } from 'true-myth/maybe';
 
   const one = just(1);
@@ -1254,7 +1254,7 @@ export function equals<T extends {}>(
   ImmutableJS data structures, where a `===` comparison won't work. With `ap`,
   that's as simple as this:
 
-  ```ts
+  ```ts twoslash
   import Maybe from 'true-myth/maybe';
   import { is as immutableIs, Set } from 'immutable';
 
@@ -1269,7 +1269,7 @@ export function equals<T extends {}>(
 
   Without `ap`, we're back to that gnarly nested `match`:
 
-  ```ts
+  ```ts twoslash
   import Maybe, { just, nothing } from 'true-myth/maybe';
   import { is, Set } from 'immutable';
 
@@ -1305,7 +1305,7 @@ export function equals<T extends {}>(
       need to call `ap` twice: once for `a`, and once for `b`. To see why, let's
       look at what the result in each phase is:
 
-      ```ts
+      ```ts twoslash
       const add3 = (a: number) => (b: number) => (c: number) => a + b + c;
 
       const maybeAdd = just(add3); // Just((a: number) => (b: number) => (c: number) => a + b + c)
@@ -1317,7 +1317,7 @@ export function equals<T extends {}>(
       So for `toString`, which just takes a single argument, you would only need
       to call `ap` once.
 
-      ```ts
+      ```ts twoslash
       const toStr = (v: { toString(): string }) => v.toString();
       just(toStr).ap(12); // Just("12")
       ```
@@ -1388,7 +1388,7 @@ export type AnyArray<T> = Array<T> | ReadonlyArray<T>;
 
   The basic form is:
 
-  ```ts
+  ```ts twoslash
   import * as maybe from 'true-myth/maybe';
 
   let array = [1, 2, 3];
@@ -1405,7 +1405,7 @@ export type AnyArray<T> = Array<T> | ReadonlyArray<T>;
   `Array<{ count: number, name: string }>`, and we wanted to get the first
   of these where `count` was at least 100. We could write this:
 
-  ```ts
+  ```ts twoslash
   import Maybe from 'true-myth/maybe';
 
   type Item = { count: number; name: string };
@@ -1462,7 +1462,7 @@ export function find<T extends {}, U extends T>(
 
   ## Examples
 
-  ```ts
+  ```ts twoslash
   import { first } from 'true-myth/maybe';
 
   let empty: number[] = [];
@@ -1505,7 +1505,7 @@ export function first(array: AnyArray<unknown>): Maybe<Maybe<{}>> {
 
   ## Examples
 
-  ```ts
+  ```ts twoslash
   import { last } from 'true-myth/maybe';
 
   let empty: number[] = [];
@@ -1557,7 +1557,7 @@ export function last(array: AnyArray<unknown>): Maybe<Maybe<{}>> {
   here will have the type `Maybe<Array<string | number>>`, but will be `Just`
   and `Nothing` respectively.
 
-  ```ts
+  ```ts twoslash
   import Maybe, { transposeArray } from 'true-myth/maybe';
 
   let valid = [Maybe.just(2), Maybe.just('three')];
@@ -1571,7 +1571,7 @@ export function last(array: AnyArray<unknown>): Maybe<Maybe<{}>> {
   for example, `result` has the type `Maybe<[string, number]>` and will be
   `Nothing`:
 
-  ```ts
+  ```ts twoslash
   import Maybe, { transposeArray } from 'true-myth/maybe';
 
   type Tuple = [Maybe<string>, Maybe<number>];
@@ -1584,7 +1584,7 @@ export function last(array: AnyArray<unknown>): Maybe<Maybe<{}>> {
   tuple of the values of the items. Here, for example, `result` again has the
   type `Maybe<[string, number]>` and will be `Just(['hey', 12]`:
 
-  ```ts
+  ```ts twoslash
   import Maybe, { transposeArray } from 'true-myth/maybe';
 
   type Tuple = [Maybe<string>, Maybe<number>];
@@ -1624,7 +1624,7 @@ export type TransposedArray<T extends ReadonlyArray<Maybe<{}>>> =
   The check is type-safe: you won't even be able to compile if you try to look
   up a property that TypeScript *knows* doesn't exist on the object.
 
-  ```ts
+  ```ts twoslash
   type Person = { name?: string };
 
   const me: Person = { name: 'Chris' };
@@ -1636,7 +1636,7 @@ export type TransposedArray<T extends ReadonlyArray<Maybe<{}>>> =
 
   However, it also works correctly with dictionary types:
 
-  ```ts
+  ```ts twoslash
   import * as maybe from 'true-myth/maybe';
 
   type Dict<T> = { [key: string]: T };
@@ -1653,7 +1653,7 @@ export type TransposedArray<T extends ReadonlyArray<Maybe<{}>>> =
 
   The order of keys is so that it can be partially applied:
 
-  ```ts
+  ```ts twoslash
   type Person = { name?: string };
 
   const lookupName = maybe.property('name');
@@ -1687,7 +1687,7 @@ export function property<T, K extends keyof T>(
   The check is type-safe: you won't even be able to compile if you try to look
   up a property that TypeScript *knows* doesn't exist on the object.
 
-  ```ts
+  ```ts twoslash
   import Maybe, { get, just, nothing } from 'true-myth/maybe';
 
   type Person = { name?: string };
@@ -1701,7 +1701,7 @@ export function property<T, K extends keyof T>(
 
   However, it also works correctly with dictionary types:
 
-  ```ts
+  ```ts twoslash
   import Maybe, { get, just } from 'true-myth/maybe';
 
   type Dict<T> = { [key: string]: T };
@@ -1718,7 +1718,7 @@ export function property<T, K extends keyof T>(
 
   The order of keys is so that it can be partially applied:
 
-  ```ts
+  ```ts twoslash
   import { get, just } from 'true-myth/maybe';
 
   type Person = { name?: string };
@@ -1756,7 +1756,7 @@ export function get<T extends { [key: string]: unknown }, K extends keyof T>(
   For example, dealing with the `Document#querySelector` DOM API involves a
   *lot* of things which can be `null`:
 
-  ```ts
+  ```ts twoslash
   const foo = document.querySelector('#foo');
   let width: number;
   if (foo !== null) {
@@ -1786,7 +1786,7 @@ export function get<T extends { [key: string]: unknown }, K extends keyof T>(
   We can work around this with `Maybe`, always wrapping each layer in
   {@linkcode Maybe.of} invocations, and this is *somewhat* better:
 
-  ```ts
+  ```ts twoslash
   import Maybe from 'true-myth/maybe';
 
   const aWidth = Maybe.of(document.querySelector('#foo'))
@@ -1802,7 +1802,7 @@ export function get<T extends { [key: string]: unknown }, K extends keyof T>(
   *once* and then be able to use it freely throughout your codebase, *always*
   getting back a `Maybe`:
 
-  ```ts
+  ```ts twoslash
   import { safe } from 'true-myth/maybe';
 
   const querySelector = safe(document.querySelector.bind(document));
