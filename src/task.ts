@@ -59,7 +59,7 @@ export {
 // so cannot be attached to any type *other* than the ones we apply it to.
 declare const IsTask: unique symbol;
 
-type SomeTask<T, E> = { [IsTask]: [T, E] };
+    type SomeTask<T, E> = { [IsTask]: [T, E] };
 
 /** @internal */
 type TypesFor<S extends AnyTask | AnyResult> =
