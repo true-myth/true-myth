@@ -355,7 +355,7 @@ Beta release with `Task`, so folks can easily test it out!
 
 The big feature: a new module just for test support, with two functions in it: `unwrap` and `unwrapErr`. You can now write this:
 
-```ts
+```typescript
 import { expect, test } from 'vitest'; // or your testing library of choice
 
 import Maybe from 'true-myth/maybe';
@@ -729,14 +729,14 @@ This is the final release for v5.x, and only exists to make sure there are fully
 
 - The top-level namespace-style export has been removed. If you were relying on the static members to be present when doing `import Maybe from 'true-myth/maybe'` or `import Result from 'true-myth/result';`, you can replace them with `import * as Maybe from 'true-myth/maybe';` or `import * as Result from 'true-myth/result';`. This should make for much better tree-shaking with bundlers like Rollup, which can see “through” a namespace import in a way they cannot with a manually-created namespace object. Where you want to maintain the type *and* namespace imports, you can do this:
 
-    ```ts
+    ```typescript
     import * as Maybe from 'true-myth/maybe';
     type Maybe<T> = Maybe.Maybe<T>; // convenience alias
     ```
 
     In general, though, you should prefer to simply import the named functions instead:
 
-    ```ts
+    ```typescript
     import Maybe, { transposeArray } from 'true-myth/maybe';
     ```
 
@@ -773,7 +773,7 @@ This is the final release for v5.x, and only exists to make sure there are fully
 
     **Before:**
 
-    ```ts
+    ```typescript
     import Maybe, { all, just, nothing, tuple } from 'true-myth/maybe';
 
     // arrays
@@ -794,7 +794,7 @@ This is the final release for v5.x, and only exists to make sure there are fully
 
     **After:**
 
-    ```ts
+    ```typescript
     import Maybe, { arrayTranspose, just, nothing } from 'true-myth/maybe';
 
     // arrays
@@ -816,7 +816,7 @@ This is the final release for v5.x, and only exists to make sure there are fully
 
 -   `Maybe.transpose` and `Result.transpose`: for when you have a `Maybe<Result<T, E>>` or a `Result<Maybe<T>, E>` and need to invert them.
 
-    ```ts
+    ```typescript
     import Maybe, { just, nothing } from 'true-myth/maybe';
     import Result, { ok, err } from 'true-myth/result';
 
@@ -925,7 +925,7 @@ True Myth now includes the `Maybe.wrapReturn` function, conveniently aliased as 
 
 [qs]: https://developer.mozilla.org/en-US/docs/Web/API/Document/querySelector
 
-```ts
+```typescript
 const querySelector = Maybe.wrapReturn(document.querySelector.bind(document));
 querySelector('#neat'); // Maybe<Element>
 ```
@@ -936,7 +936,7 @@ See [the docs](https://true-myth.js.org/modules/_maybe_.html#wrapreturn) for mor
 
 All `Maybe` helper functions must now return `NonNullable<T>`. This example, which previously compiled and resulted in the type `Maybe<string | null>`, will now cause a type error:
 
-```ts
+```typescript
 Maybe.of(document.querySelector('#neat'))
   .map(el => el.style.color); // `color` may be `null`
 ```

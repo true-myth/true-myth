@@ -27,7 +27,7 @@ Our integration provides two functions and two corresponding types for each:
 
 As their names imply, the [`parserFor`][pF] and [`asyncParserFor`][aPF] functions accept a schema from one of the Standard Schema-compliant libraries and produce a [`ParseResult`][PRT] or [`ParseTask`][PTT] wrapping the type that would be produced by the schema—but using True Myth’s `Result` and `Task` types respectively, instead of the Standard Schema Result type.
 
-```ts
+```typescript
 import { parserFor } from 'true-myth';
 import { type } from 'arktype';
 import * as z from 'zod';
@@ -48,7 +48,7 @@ const parsePersonWithZod = parserFor(personParserZod);
 
 The related utility types, [`ParserFor`][PFT] and [`AsyncParserFor`][APFT], are shorthands for functions that can take unknown data and produce parsed data wrapped in a `Result` or `Task`. In other words: they’re fully generic aliases for the type of a function produced by `parserFor` and `asyncParserFor` respectively.
 
-```ts
+```typescript
 import { parserFor } from 'true-myth';
 import { type } from 'arktype';
 import * as z from 'zod';
