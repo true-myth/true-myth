@@ -50,7 +50,7 @@ TypeScript takes us a big step in the right direction, so long as our type annot
 
 But we still end up writing a ton of repeated boilerplate to deal with this problem. Rather than just handling it once and being done with it, we play a never-ending game of whack-a-mole. It just uses [type narrowing][narrowing] to make it safe:
 
-```ts
+```typescript
 function isNil(thingToCheck: unknown): thingToCheck is null | undefined {
   return thingToCheck === undefined || thingToCheck === null;
 }

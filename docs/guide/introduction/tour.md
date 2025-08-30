@@ -120,7 +120,7 @@ A `Task` is effectively the composition of a `Promise` and a `Result`.[^task-imp
 
 You can wrap existing, non-`Promise`-based async operations using the `Task` constructor, much like you could with a `Promise`. For example, if you have some reason to use the old `XMLHttpRequest` instead of the more modern `fetch` API, you can wrap it with a `Task` like this:
 
-```ts
+```typescript
 import Task from 'true-myth/task';
 
 interface RequestError {
@@ -168,7 +168,7 @@ With `Task` in place, you could write a single adapter for `XMLHttpRequest` in o
 
 With `Task`’s ability to robustly handled all the error cases, you can use this just like you would a `Promise`, with `async` and `await`, or you can use `Task`’s own robust library of combinators. For example, to preserve type safety while working with a response, you might combine `Task` with [the excellent `zod` library][zod] to handle API responses robustly, like so:
 
-```ts
+```typescript
 import * as task from 'true-myth/task';
 import { z } from 'zod';
 
@@ -196,7 +196,7 @@ let usersTask = task.tryOrElse(
 
 The resulting type here will be `Task<Array<User>>, Error>`. You can then perform further operations on it using more tools like `map` or `match`:
 
-```ts
+```typescript
 usersTask.match({
   Resolved: (users) => {
     for (let user of users) {
@@ -219,7 +219,7 @@ usersTask.match({
 
 Alternatively, you can `await` it and operate on its underlying `Result`:
 
-```ts
+```typescript
 let users = (await usersTask).unwrapOr([]);
 ```
 
@@ -232,7 +232,7 @@ let users = (await usersTask).unwrapOr([]);
 
 All static functions which take two or more parameters are automatically partially applied/curried so you can supply only _some_ of the arguments as makes sense. For example, if you were using [lodash], you might have something like this:
 
-```ts
+```typescript
 import * as _ from 'lodash/fp';
 import { just, nothing, map } from 'true-myth/maybe';
 
@@ -269,7 +269,7 @@ console.log(result); // 18
 
 This makes for a much nicer API than needing to include the parameters for every function. If we _didn't_ have the curried functions, we'd have a much, _much_ noisier input:
 
-```ts
+```typescript
 import * as _ from 'lodash';
 import Maybe, { map } from 'true-myth/maybe';
 

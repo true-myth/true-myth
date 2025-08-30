@@ -26,7 +26,7 @@ You can think of a `Task<T, E>` as being basically a `Promise<Result<T, E>>`, be
 
 The simplest way to create a `Task` is to call `Task.fromPromise(somePromise)`. Because any promise may reject/throw an error, this simplest form catches all rejections and maps them into the `Rejected` variant. Given a `Promise<T>`, the resulting `Task` thus has the type `Task<T, unknown>`. For example:
 
-```ts
+```typescript
 let { promise, reject } = Promise.withResolvers<number>();
 
 // `theTask` has the type `Task<number, unknown>`
@@ -44,7 +44,7 @@ console.log(theTask.reason); // "Tasks always safely handle errors!"
 
 You can also provide a fallback value for the error using `tryOr`:
 
-```ts
+```typescript
 let { promise, reject } = Promise.withResolvers<number>();
 
 // `theTask` has the type `Task<number, string>`
@@ -58,7 +58,7 @@ console.log(theTask.reason); // "a fallback error"
 
 You can use `Task.tryOrElse` to produce a known rejection reason from the `unknown` rejection reason of a `Promise`:
 
-```ts
+```typescript
 let { promise, reject } = Promise.withResolvers<number>();
 
 // `theTask` has the type `Task<number, Error>`
@@ -70,7 +70,7 @@ let theTask = Task.tryOrElse(
 
 `Task` also has `resolved` and `rejected` static helpers:
 
-```ts
+```typescript
 // `resolved` has the type `Task<number, never>`
 let resolved = Task.resolve(123);
 
@@ -85,7 +85,7 @@ There are many helpers (“combinators”) for working with a `Task`. The most c
 
 - `map` transforms a value “within” a `Task` context:
 
-    ```ts
+    ```typescript
     let theTask = Task.resolve(123);
     let doubled = theTask.map((n) => n * 2);
     let theResult = await doubled;
@@ -94,7 +94,7 @@ There are many helpers (“combinators”) for working with a `Task`. The most c
 
 - `mapRejected` does the same, but for a rejection:
 
-    ```ts
+    ```typescript
     let theTask = Task.reject(new Error("ugh"));
     let wrapped = theTask.mapRejected(
       (err) => new Error(`sigh (caused by: ${err.message})`)
@@ -105,7 +105,7 @@ There are many helpers (“combinators”) for working with a `Task`. The most c
 
 - `andThen` uses the value produced by one resolved `Task` to create another `Task`, but without nesting them. `orElse` is like `andThen`, but for the `Rejection`. You can often combine them to good effect. For example, a safe `fetch` usage might look like this:
 
-    ```ts
+    ```typescript
     let fetchUsersTask = Task.try(fetch(/* some endpoint */))
       .orElse(handleError('http'))
       .andThen((res) => Task.try(res.json().orElse(handleError('parse')))

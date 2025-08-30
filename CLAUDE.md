@@ -110,7 +110,7 @@ For files that appear in `docs/api`, do not modify them directly. Instead, fix t
 ### 3.1 Identify Code Examples ✅
 **Agent Task**: Scan documentation for existing code blocks
 
-**Files with TypeScript code blocks**: 75 files containing ````ts` blocks, including:
+**Files with TypeScript code blocks**: 75 files containing ````typescript` blocks, including:
 - Guide documentation: tutorial files, understanding sections
 - API documentation: auto-generated TypeDoc files with examples
 - Mixed content: both basic examples and complex demonstrations
