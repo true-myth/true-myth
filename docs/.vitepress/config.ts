@@ -103,7 +103,9 @@ export default defineConfig({
 
   markdown: {
     codeTransformers: [
-      transformerTwoslash()
+      transformerTwoslash({
+        explicitTrigger: false
+      })
     ],
     config: (md) => {
       md.use(deflist).use(footnote);

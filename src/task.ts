@@ -217,6 +217,8 @@ class TaskImpl<T, E> implements PromiseLike<Result<T, E>> {
     ### Resolution
 
     ```ts
+    import Task from 'true-myth/task';
+
     let { task, resolveWith, rejectWith } = Task.withResolvers<string, Error>();
     resolveWith("Hello!");
 
@@ -228,6 +230,8 @@ class TaskImpl<T, E> implements PromiseLike<Result<T, E>> {
     ### Rejection
 
     ```ts
+    import Task from 'true-myth/task';
+
     let { task, resolveWith, rejectWith } = Task.withResolvers<string, Error>();
     rejectWith(new Error("oh teh noes!"));
 
@@ -618,6 +622,7 @@ class TaskImpl<T, E> implements PromiseLike<Result<T, E>> {
 
     ```ts
     import * as task from 'true-myth/task';
+    import { ok } from 'true-myth/result';
 
     const toLengthAsResult = (s: string) => ok(s.length);
 
@@ -1137,10 +1142,12 @@ export type Settled<A extends readonly AnyTask[]> = {
   Given a mix of resolving and rejecting tasks:
 
   ```ts
+  import Task, { allSettled } from 'true-myth/task';
+
   let settledTask = allSettled([
     Task.resolve<string, number>("hello"),
     Task.reject<number, boolean>(true),
-    Task.resolve<{ fancy: boolean }>, Error>({ fancy: true }),
+    Task.resolve<{ fancy: boolean }, Error>({ fancy: true }),
   ]);
 
   let output = await settledTask;
@@ -1200,7 +1207,7 @@ export function allSettled(tasks: AnyTask[]): Task<unknown, never> {
   When all items reject:
 
   ```ts
-  import Task, { timer } from 'true-myth/task';
+  import Task, { any, timer } from 'true-myth/task';
 
   let anyTask = any([
     timer(20).andThen((time) => Task.reject(`${time}ms`)),
@@ -1551,6 +1558,8 @@ export interface TaskConstructor {
     ### Resolution
 
     ```ts
+    import Task from 'true-myth/task';
+
     let { task, resolveWith, rejectWith } = Task.withResolvers<string, Error>();
     resolveWith("Hello!");
 
@@ -1562,6 +1571,8 @@ export interface TaskConstructor {
     ### Rejection
 
     ```ts
+    import Task from 'true-myth/task';
+
     let { task, resolveWith, rejectWith } = Task.withResolvers<string, Error>();
     rejectWith(new Error("oh teh noes!"));
 
