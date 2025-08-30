@@ -59,6 +59,12 @@ importers:
       shelljs:
         specifier: ^0.10.0
         version: 0.10.0
+      shiki:
+        specifier: ^3.12.0
+        version: 3.13.0
+      tsx:
+        specifier: ^4.20.5
+        version: 4.20.5
       typedoc:
         specifier: ^0.28.4
         version: 0.28.12(typescript@5.9.2)
@@ -4130,7 +4136,6 @@ snapshots:
       '@esbuild/win32-arm64': 0.25.10
       '@esbuild/win32-ia32': 0.25.10
       '@esbuild/win32-x64': 0.25.10
-    optional: true
 
   escalade@3.2.0: {}
 
@@ -4255,7 +4260,6 @@ snapshots:
   get-tsconfig@4.10.1:
     dependencies:
       resolve-pkg-maps: 1.0.0
-    optional: true
 
   get-uri@6.0.5:
     dependencies:
@@ -5294,8 +5298,7 @@ snapshots:
     dependencies:
       path-root: 0.1.1
 
-  resolve-pkg-maps@1.0.0:
-    optional: true
+  resolve-pkg-maps@1.0.0: {}
 
   restore-cursor@5.1.0:
     dependencies:
@@ -5558,7 +5561,6 @@ snapshots:
       get-tsconfig: 4.10.1
     optionalDependencies:
       fsevents: 2.3.3
-    optional: true
 
   twoslash-protocol@0.3.4: {}
 
