@@ -206,9 +206,9 @@ class TaskImpl<T, E> implements PromiseLike<Result<T, E>> {
   }
 
   /**
-    Create a pending `Task` and supply `resolveWith` and `rejectWith` helpers,
-    similar to the [`Promise.withResolvers`][pwr] static method, but producing a
-    `Task` with the usual safety guarantees.
+    Create a pending `Task` and supply `resolve` and `reject` helpers, similar
+    to the [`Promise.withResolvers`][pwr] static method, but producing a `Task`
+    with the usual safety guarantees.
 
     [pwr]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/withResolvers
 
@@ -219,8 +219,8 @@ class TaskImpl<T, E> implements PromiseLike<Result<T, E>> {
     ```ts
     import Task from 'true-myth/task';
 
-    let { task, resolveWith, rejectWith } = Task.withResolvers<string, Error>();
-    resolveWith("Hello!");
+    let { task, resolve } = Task.withResolvers<string, Error>();
+    resolve("Hello!");
 
     let result = await task.map((s) => s.length);
     let length = result.unwrapOr(0);
@@ -232,8 +232,8 @@ class TaskImpl<T, E> implements PromiseLike<Result<T, E>> {
     ```ts
     import Task from 'true-myth/task';
 
-    let { task, resolveWith, rejectWith } = Task.withResolvers<string, Error>();
-    rejectWith(new Error("oh teh noes!"));
+    let { task, reject } = Task.withResolvers<string, Error>();
+    reject(new Error("oh teh noes!"));
 
     let result = await task.mapRejection((s) => s.length);
     let errLength = result.isErr ? result.error : 0;
@@ -334,7 +334,7 @@ class TaskImpl<T, E> implements PromiseLike<Result<T, E>> {
 
     ```ts
     import Task from 'true-myth/task';
-    const double = n => n * 2;
+    const double = (n: number) => n * 2;
 
     const aResolvedTask = Task.resolve(12);
     const mappedResolved = aResolvedTask.map(double);
@@ -440,11 +440,11 @@ class TaskImpl<T, E> implements PromiseLike<Result<T, E>> {
 
     const aResolvedTask = Task.resolve(12);
     const mappedResolved = aResolvedTask.mapRejected(extractReason);
-    console.log(mappedOk));  // Ok(12)
+    console.log(mappedResolved);  // Resolved(12)
 
     const aRejectedTask = Task.reject({ code: 101, reason: 'bad file' });
     const mappedRejection = await aRejectedTask.mapRejected(extractReason);
-    console.log(toString(mappedRejection));  // Err("bad file")
+    console.log(mappedRejection.toString());  // Err("bad file")
     ```
 
     @template T The type of the value produced if the `Task` resolves.
@@ -514,6 +514,8 @@ class TaskImpl<T, E> implements PromiseLike<Result<T, E>> {
 
     ```ts
     import Task from 'true-myth/task';
+    import Result from 'true-myth/result';
+    import { expect } from 'vitest';
 
     let resolved = Task.resolve<string, string>('A');
     let rejected = Task.reject<string, string>('bad');
@@ -1547,9 +1549,9 @@ export interface TaskConstructor {
   reject<T = never, E = unknown>(reason: E): Task<T, E>;
 
   /**
-    Create a pending `Task` and supply `resolveWith` and `rejectWith` helpers,
-    similar to the [`Promise.withResolvers`][pwr] static method, but producing a
-    `Task` with the usual safety guarantees.
+    Create a pending `Task` and supply `resolve` and `reject` helpers, similar
+    to the [`Promise.withResolvers`][pwr] static method, but producing a `Task`
+    with the usual safety guarantees.
 
     [pwr]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/withResolvers
 
@@ -1560,8 +1562,8 @@ export interface TaskConstructor {
     ```ts
     import Task from 'true-myth/task';
 
-    let { task, resolveWith, rejectWith } = Task.withResolvers<string, Error>();
-    resolveWith("Hello!");
+    let { task, resolve } = Task.withResolvers<string, Error>();
+    resolve("Hello!");
 
     let result = await task.map((s) => s.length);
     let length = result.unwrapOr(0);
@@ -1573,8 +1575,8 @@ export interface TaskConstructor {
     ```ts
     import Task from 'true-myth/task';
 
-    let { task, resolveWith, rejectWith } = Task.withResolvers<string, Error>();
-    rejectWith(new Error("oh teh noes!"));
+   let { task, reject } = Task.withResolvers<string, Error>();
+    reject(new Error("oh teh noes!"));
 
     let result = await task.mapRejection((s) => s.length);
     let errLength = result.isErr ? result.error : 0;

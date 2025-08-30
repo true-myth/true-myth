@@ -109,7 +109,7 @@ class ResultImpl<T, E> {
   /**
     Create an instance of {@linkcode Err}.
 
-    ```ts
+    ```ts twoslash
     import { err } from 'true-myth/result';
 
     const anErr = err('alas, failure');
@@ -119,7 +119,7 @@ class ResultImpl<T, E> {
   /**
     Create an instance of {@linkcode Err}.
 
-    ```ts
+    ```ts twoslash
     import { err } from 'true-myth/result';
 
     const anErr = err('alas, failure');
@@ -430,7 +430,7 @@ export interface Err<T, E> extends Omit<ResultImpl<T, E>, 'value' | 'cast'> {
   Execute the provided callback, wrapping the return value in {@linkcode Ok} or
   {@linkcode Err Err(error)} if there is an exception.
 
-  ```ts
+  ```ts twoslash
   import { tryOr } from 'true-myth/result';
 
   const aSuccessfulOperation = () => 2 + 2;
@@ -473,7 +473,7 @@ export function tryOr<T, E>(
   are not constructing immediately for a function return or as an argument to a
   function), you can use a type parameter:
 
-  ```ts
+  ```ts twoslash
   import { ok } from 'true-myth/result';
 
   const yayNumber = ok<number, string>(12);
@@ -484,7 +484,7 @@ export function tryOr<T, E>(
   practice quite annoying `Result<null, string>` etc. See {@linkcode Unit} for
   more.
 
-  ```ts
+  ```ts twoslash
   import { ok } from 'true-myth/result';
   import { Unit } from 'true-myth/unit';
 
@@ -497,7 +497,7 @@ export function tryOr<T, E>(
   single expression value, you do not have to specify the types, so this can be
   quite convenient.
 
-  ```ts
+  ```ts twoslash
   import { ok, err } from 'true-myth/result';
   import { Unit } from 'true-myth/unit';
 
@@ -551,7 +551,7 @@ export function isErr<T, E>(result: Result<T, E>): result is Err<T, E> {
   are not constructing immediately for a function return or as an argument to a
   function), you can use a type parameter:
 
-  ```ts
+  ```ts twoslash
   import { err } from 'true-myth/result';
 
   const notString = err<number, string>('something went wrong');
@@ -562,7 +562,7 @@ export function isErr<T, E>(result: Result<T, E>): result is Err<T, E> {
   practice quite annoying `Result<null, string>` etc. See {@linkcode Unit} for
   more.
 
-  ```ts
+  ```ts twoslash
   import { err } from 'true-myth/result';
   import { Unit } from 'true-myth/unit';
 
@@ -575,7 +575,7 @@ export function isErr<T, E>(result: Result<T, E>): result is Err<T, E> {
   single expression value, you do not have to specify the types, so this can be
   quite convenient.
 
-  ```ts
+  ```ts twoslash
   import { ok, err } from 'true-myth/result';
   import { Unit } from 'true-myth/unit';
 
@@ -605,7 +605,7 @@ export const err = ResultImpl.err;
   If there is an exception, return a {@linkcode Err} of whatever the `onError`
   function returns.
 
-  ```ts
+  ```ts twoslash
   import { tryOrElse } from 'true-myth/result';
 
   const aSuccessfulOperation = () => 2 + 2;
@@ -673,7 +673,7 @@ export function tryOrElse<T, E>(
   `Ok` variant, the map function is applied to it, and you get back a new
   `Result` with the value transformed, and still wrapped in an `Ok`.
 
-  ```ts
+  ```ts twoslash
   import { ok, err, map, toString } from 'true-myth/result';
   const double = n => n * 2;
 
@@ -712,7 +712,7 @@ export function map<T, U, E>(
   value if `result` is an {@linkcode Ok}, or return a default value if `result`
   is an {@linkcode Err}.
 
-  ```ts
+  ```ts twoslash
   import { ok, err, mapOr } from 'true-myth/result';
 
   const length = (s: string) => s.length;
@@ -768,7 +768,7 @@ export function mapOr<T, U, E>(
   Like {@linkcode mapOr} but using a function to transform the error into a
   usable value instead of simply using a default value.
 
-  ```ts
+  ```ts twoslash
   import { ok, err, mapOrElse } from 'true-myth/result';
 
   const summarize = (s: string) => `The response was: '${s}'`;
@@ -839,7 +839,7 @@ export function mapOrElse<T, U, E>(
   different types of errors, or if you need an error of one shape to be in a
   different shape to use somewhere else in your codebase.
 
-  ```ts
+  ```ts twoslash
   import { ok, err, mapErr, toString } from 'true-myth/result';
 
   const reason = (err: { code: number, reason: string }) => err.reason;
@@ -883,7 +883,7 @@ export function mapErr<T, E, F>(
   Notice that, unlike in [`map`](#map) or its variants, the original `result` is
   not involved in constructing the new `Result`.
 
-  ```ts
+  ```ts twoslash
   import { and, ok, err, toString } from 'true-myth/result';
 
   const okA = ok('A');
@@ -935,7 +935,7 @@ export function and<T, U, E>(
 
   [bind]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function/bind
 
-  ```ts
+  ```ts twoslash
   import { ok, err, andThen, toString } from 'true-myth/result';
 
   const toLengthAsResult = (s: string) => ok(s.length);
@@ -980,7 +980,7 @@ export function andThen<T, E, R extends AnyResult>(
   `Result` always ends up getting an `Ok` variant, by supplying a default value
   for the case that you currently have an {@linkcode Err}.
 
-  ```ts
+  ```ts twoslash
   import { ok, err, Result, or } from 'true-myth/result';
 
   const okA = ok<string, string>('a');
@@ -1050,7 +1050,7 @@ export function orElse<T, E, R extends AnyResult>(
 
   This is the recommended way to get a value out of a `Result` most of the time.
 
-  ```ts
+  ```ts twoslash
   import { ok, err, unwrapOr } from 'true-myth/result';
 
   const anOk = ok<number, string>(12);
@@ -1086,7 +1086,7 @@ export function unwrapOr<T, U, E>(
   values in the environment – whether preloaded or by local closure) instead of
   having a single default value available (as in {@linkcode unwrapOr}).
 
-  ```ts
+  ```ts twoslash
   import { ok, err, unwrapOrElse } from 'true-myth/result';
 
   // You can imagine that someOtherValue might be dynamic.
@@ -1369,7 +1369,7 @@ export type Matcher<T, E, A> = {
 
   Instead of code like this:
 
-  ```ts
+  ```ts twoslash
   import Result, { isOk, match } from 'true-myth/result';
 
   const logValue = (mightBeANumber: Result<number, string>) => {
@@ -1383,7 +1383,7 @@ export type Matcher<T, E, A> = {
 
   ...we can write code like this:
 
-  ```ts
+  ```ts twoslash
   import Result, { match } from 'true-myth/result';
 
   const logValue = (mightBeANumber: Result<number, string>) => {
@@ -1420,7 +1420,7 @@ export function match<T, E, A>(matcher: Matcher<T, E, A>, result: Result<T, E>):
 
   Instead of code like this:
 
-  ```ts
+  ```ts twoslash
   import Result, { isOk, match } from 'true-myth/result';
 
   const logValue = (mightBeANumber: Result<number, string>) => {
@@ -1434,7 +1434,7 @@ export function match<T, E, A>(matcher: Matcher<T, E, A>, result: Result<T, E>):
 
   ...we can write code like this:
 
-  ```ts
+  ```ts twoslash
   import Result, { match } from 'true-myth/result';
 
   const logValue = (mightBeANumber: Result<number, string>) => {
@@ -1470,7 +1470,7 @@ export function match<T, E, A>(
   Allows quick triple-equal equality check between the values inside two
   {@linkcode Result}s without having to unwrap them first.
 
-  ```ts
+  ```ts twoslash
   import { ok, err, equals } from 'true-myth/result';
 
   const a = ok(3);
@@ -1504,7 +1504,7 @@ export function equals<T, E>(
   allows you to do this (using the method form, since nesting `ap` calls is
   awkward):
 
-  ```ts
+  ```ts twoslash
   import { ap, ok, err } from 'true-myth/result';
 
   const one = ok<number, string>(1);
@@ -1519,10 +1519,11 @@ export function equals<T, E>(
   resultAdd.ap(whoops).ap(five) // Err('oh no')
   ```
 
-  Without `ap`, you'd need to do something like a nested `match`:
+  Without `ap`, you'd need to do something like a nested `match` (and note that
+  you may have to explicitly set the types on the return types):
 
-  ```ts
-  import { ok, err } from 'true-myth/result';
+  ```ts twoslash
+  import Result, { ok, err } from 'true-myth/result';
 
   const one = ok<number, string>(1);
   const five = ok<number, string>(5);
@@ -1545,7 +1546,7 @@ export function equals<T, E>(
   }); // Err('oh no')
 
   whoops.match({
-    Ok: n => five.match({
+    Ok: n => five.match<Result<number, string>>({
       Ok: o => ok(n + o),
       Err: e => err(e),
     }),
@@ -1560,7 +1561,7 @@ export function equals<T, E>(
   ImmutableJS data structures, where a `===` comparison won't work. With `ap`,
   that's as simple as this:
 
-  ```ts
+  ```ts twoslash
   import { ok } from 'true-myth/result';
   import { is as immutableIs, Set } from 'immutable';
 
@@ -1575,7 +1576,7 @@ export function equals<T, E>(
 
   Without `ap`, we're back to that gnarly nested `match`:
 
-  ```ts
+  ```ts twoslash
   import Result, { ok, err } from 'true-myth/result';
   import { is, Set } from 'immutable';
 
@@ -1611,7 +1612,7 @@ export function equals<T, E>(
       need to call `ap` twice: once for `a`, and once for `b`. To see why, let's
       look at what the result in each phase is:
 
-      ```ts
+      ```ts twoslash
       const add3 = (a: number) => (b: number) => (c: number) => a + b + c;
 
       const resultAdd = ok(add); // Ok((a: number) => (b: number) => (c: number) => a + b + c)
@@ -1623,7 +1624,7 @@ export function equals<T, E>(
       So for `toString`, which just takes a single argument, you would only need
       to call `ap` once.
 
-      ```ts
+      ```ts twoslash
       const toStr = (v: { toString(): string }) => v.toString();
       ok(toStr).ap(12); // Ok("12")
       ```
@@ -1639,7 +1640,7 @@ export function equals<T, E>(
   write out the type of a curried function. For example, if you had a function
   that simply merged three strings, you might write it like this:
 
-  ```ts
+  ```ts twoslash
   import Result from 'true-myth/result';
   import { curry } from 'lodash';
 
@@ -1697,7 +1698,7 @@ export function ap<A, B, E>(
   The `JSON.parse` method will throw if the string passed to it is invalid. You
   can use this `safe` method to transform it into a form which will *not* throw:
 
-  ```ts
+  ```ts twoslash
   import { safe } from 'true-myth/task';
   const parse = safe(JSON.parse);
 
@@ -1732,7 +1733,7 @@ export function safe<F extends AnyFunction, P extends Parameters<F>, R extends R
   can use this `safe` method to transform it into a form which will *not* throw,
   wrapping it in a custom error :
 
-  ```ts
+  ```ts twoslash
   import { safe } from 'true-myth/task';
 
   class ParsingError extends Error {
@@ -1808,7 +1809,7 @@ export type All<A extends readonly AnyResult[]> = Result<
   If all results are {@linkcode Ok}, return a new {@linkcode Ok} result
   containing an array of all given {@linkcode Ok} values:
 
-  ```ts
+  ```ts twoslash
   import Result, { all } from 'true-myth/result';
 
   let result = all([
@@ -1823,7 +1824,7 @@ export type All<A extends readonly AnyResult[]> = Result<
   If any result is {@linkcode Err}, return a new {@linkcode Err} result
   containing the first {@linkcode Err} encountered:
 
-  ```ts
+  ```ts twoslash
   import Result, { all } from 'true-myth/result';
 
   let result = all([
@@ -1884,7 +1885,7 @@ export type AllResults<A extends readonly AnyResult[]> = Result<
   If all results are {@linkcode Ok}, return a new {@linkcode Ok} result
   containing an array of all provided {@linkcode Ok} values:
 
-  ```ts
+  ```ts twoslash
   import Result, { transposeAll } from 'true-myth/result';
 
   let result = transposeAll([
@@ -1899,7 +1900,7 @@ export type AllResults<A extends readonly AnyResult[]> = Result<
   If any result is {@linkcode Err}, return a new {@linkcode Err} result
   containing an array of all {@linkcode Err} encountered:
 
-  ```ts
+  ```ts twoslash
   import Result, { transposeAll } from 'true-myth/result';
 
   let result = transposeAll([
@@ -1945,13 +1946,13 @@ export function transposeAll(results: readonly AnyResult[]): Result<unknown[], u
   When any result is {@linkcode Ok}, return a new {@linkcode Ok} result
   containing the value of the first {@linkcode Ok} result:
 
-  ```ts
-  import { transposeAny } from 'true-myth/result';
+  ```ts twoslash
+  import { err, ok transposeAny } from 'true-myth/result';
 
   let result = transposeAny([
-    Result.err("something went wrong"),
-    Result.ok(10),
-    Result.err("something else went wrong")
+    err("something went wrong"),
+    ok(10),
+    err("something else went wrong")
   ]);
 
   console.log(result.toString()); // Ok(10);
@@ -1960,13 +1961,13 @@ export function transposeAll(results: readonly AnyResult[]): Result<unknown[], u
   When all results are {@linkcode Err}, return a new {@linkcode Err} result
   containing an array of all {@linkcode Err} encountered:
 
-  ```ts
-  import { transposeAny } from 'true-myth/result';
+  ```ts twoslash
+  import { err, transposeAny } from 'true-myth/result';
 
   let result = transposeAny([
-    Result.err("something went wrong"),
-    Result.err("something else went wrong"),
-    Result.err("even more went wrong")
+    err("something went wrong"),
+    err("something else went wrong"),
+    err("even more went wrong")
   ]);
 
   console.log(result.toString()); // Err(something went wrong,something else went wrong,even more went wrong)
