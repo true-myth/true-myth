@@ -67,6 +67,8 @@
   "license": "MIT",
   "devDependencies": {
     "@release-it-plugins/lerna-changelog": "^8.0.1",
+    "@shikijs/twoslash": "^3.12.0",
+    "@shikijs/vitepress-twoslash": "^3.12.0",
     "@types/markdown-it": "^14.1.2",
     "@types/node": "^25.0.3",
     "@vitest/coverage-v8": "^3.2.4",
@@ -84,7 +86,7 @@
     "typedoc": "^0.28.14",
     "typedoc-plugin-markdown": "^4.9.0",
     "typedoc-vitepress-theme": "^1.1.2",
-    "typescript": "5.3.3",
+    "typescript": "^5.9.3",
     "valibot": "^1.2.0",
     "vite-tsconfig-paths": "^6.0.1",
     "vitepress": "2.0.0-alpha.15",

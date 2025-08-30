@@ -1,6 +1,8 @@
 import { defineConfig } from 'vitepress';
+import { transformerTwoslash } from '@shikijs/vitepress-twoslash';
 import deflist from 'markdown-it-deflist';
 import footnote from 'markdown-it-footnote';
+import path from 'path';
 
 import typedocSidebar from '../api/typedoc-sidebar.json';
 
@@ -100,8 +102,19 @@ export default defineConfig({
   },
 
   markdown: {
+    codeTransformers: [
+      transformerTwoslash()
+    ],
     config: (md) => {
       md.use(deflist).use(footnote);
     },
+  },
+
+  vite: {
+    resolve: {
+      alias: {
+        'true-myth': path.resolve(__dirname, '../src')
+      }
+    }
   },
 });
