@@ -148,7 +148,7 @@ It might be nice to live in a world where everything *already* used `Result` to 
 
 For example, if you are using the Node `fs.renameFileSync` to rename a file synchronously (perhaps in a script where asynchrony is not necessary), you could capture its error cases with a `Result`, instead of with exceptions.
 
-```ts
+```typescript
 import fs from 'node:fs';
 import * as result from 'true-myth/result';
 
@@ -164,7 +164,7 @@ The type of the new `rename` variable we have created is exactly the same as the
 
 This most basic version of using `result.safe` already helps us out a bunch by getting rid of errors thrown. There is an even more powerful overload that allows you to transform the error
 
-```ts
+```typescript
 import fs from 'node:fs';
 import * as result from 'true-myth/result';
 
@@ -191,7 +191,7 @@ Unfortunately, if you try to use `result.safe` with functions that are defined w
 
 There is also a more general version of `safe` that allows you to handle any function call that may throw an error, `tryOrElse`. Unlike with `safe`, you will usually `tryOrElse` not by creating a new function, but by invoking it directly in a callback. For example, instead of creating a `rename` function, we could call `fs.renameSync` directly. We pass a callback which invokes the fallible function, like this, so that `result.tryOrElse` can catch the error (if we didn’t pass a callback, the error would be thrown before `tryOrElse` had a chance to run):
 
-```ts
+```typescript
 import fs from 'node:fs';
 import * as result from 'true-myth/result';
 
@@ -221,7 +221,7 @@ Using `result.tryOrElse` does *not* have the problem that `result.safe` does, so
 
 You may have noticed that we are repeating some of that boilerplate for error wrapping. We can define that as a standalone function that we can then use anywhere. We can even make it able to provide useful information about the context it is coming from by accepting a `context` argument that can be any string, and returning the callback that handles the unknown error type:
 
-```ts
+```typescript
 function withWrappedError(context: string): (error: unknown) => Error {
   return (error) => {
     if (error instanceof Error) {
@@ -235,7 +235,7 @@ function withWrappedError(context: string): (error: unknown) => Error {
 
 With that defined, we could update our invocation to look like this:
 
-```ts
+```typescript
 let renameResult = result.tryOrElse(withWrappedError('renameSync'), () =>
   fs.renameSync('original', 'updated')
 );

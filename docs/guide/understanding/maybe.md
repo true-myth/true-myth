@@ -14,7 +14,7 @@ The library is designed to be used with a functional style, allowing you to comp
 
 ### Examples: functional style
 
-```ts
+```typescript
 import Maybe from 'true-myth/maybe';
 
 // Construct a `Just` where you have a value to use, and the function accepts

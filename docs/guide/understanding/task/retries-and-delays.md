@@ -15,7 +15,7 @@ Although you _can_ customize nearly every part of this, you do not _have_ to cus
 
 Here’s the simplest version of a function that retries a `fetch` call:
 
-```ts
+```typescript
 import * as task from 'true-myth/task';
 
 let fetcher = () => task.fromPromise(fetch('https://true-myth.js.org'));
@@ -32,7 +32,7 @@ We also provide the following tools to customize the behavior of `withRetries`:
 
 In each of the following examples, we’ll use the following helper to give us slightly nicer types to work with in the case of rejections:
 
-```ts
+```typescript
 function intoError(cause: unknown): Error {
   return new Error('unknown error', { cause });
 }
@@ -52,7 +52,7 @@ The `elapsed` value will always be greater than or equal to the requested elapse
 
 Here’s one example of using the retry status in practice.
 
-```ts
+```typescript
 import Task, * as task from 'true-myth/task';
 
 let fetcher = ({ count, elapsed }: task.RetryStatus): Task<Response, Error> => {
@@ -71,7 +71,7 @@ let taskWithRetries = withRetries(fetcher);
 
 In this example, we reject with an error if the task has already been retried more than 100 times or if it has taken more 1,000 milliseconds (one second). The resulting `Task` has the type `Task<Response, RetryFailed<Error>>`. [The `RetryFailed` type](/api/task/classes/RetryFailed) gathers up all the different kinds of errors emitted during retries so you can inspect them:
 
-```ts
+```typescript
 let described = taskWithRetries.orElse((retryFailed) => {
   let tries = `Failed ${retryFailed.tries} times.`;
   let time = `Took ${retryFailed.totalDuration}ms.`;
@@ -102,7 +102,7 @@ Second, you can supply a retry strategy, which tells `task.withRetries` how ofte
 
 For example, to use an exponential backoff strategy with the original `fetcher`, starting at 10 milliseconds and increasing by a factor of 10 with each retry, you could write this:
 
-```ts
+```typescript
 import * as task from "true-myth/task";
 import { exponential } from "true-myth/task/delay";
 
@@ -123,7 +123,7 @@ Third, you can stop retrying at any time, using the supplied `stopRetrying()` fu
 
 This next example show roughly the full <abbr title='application programming interface'>API</abbr> available, using the `exponential` delay strategy supplied by the library (there other supplied strategies are `fibonacci`, `fixed`, `immediate`, `linear`, and `none`):
 
-```ts
+```typescript
 import * as task from 'true-myth/task';
 import { exponential, jitter } from 'true-myth/task/delay';
 
@@ -191,7 +191,7 @@ There are three basic patterns for creating custom retry strategies:
 
 For the following examples, we’ll use this function to get a `Result` that usually rejects.
 
-```ts
+```typescript
 import Task from 'true-myth/task';
 
 const unpredictable = () => Math.random() > 0.9
@@ -203,7 +203,7 @@ const unpredictable = () => Math.random() > 0.9
 
 Here’s an example of implementing a custom retry strategy using a generator function to produce up to 10 random backoffs of up to 10 seconds (10,000 milliseconds) each:
 
-```ts
+```typescript
 import * as task from 'true-myth/task';
 
 function* random10Times(): task.delay.Strategy {
@@ -223,7 +223,7 @@ We use a generator function that yields a random integer somewhere between `0` a
 
 ### Subclassing `Iterator`
 
-```ts
+```typescript
 class InRange extends Iterator<number> {
   readonly #start: number;
   readonly #end: number;
@@ -255,7 +255,7 @@ Then you can use any of these as a retry strategy (note that these examples assu
 
 [helpers]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Iterator#iterator_helper_methods
 
-```ts
+```typescript
 import * as task from 'true-myth/task';
 import { someRetryableTask } from 'somewhere/in/your-app';
 
@@ -283,7 +283,7 @@ There will be more content here Soon™. We didn’t want to block getting the n
 
 :::
 
-```ts
+```typescript
 class RandomInteger implements Iterator<number> {
   #nextValue: number;
 
@@ -320,7 +320,7 @@ All the helpers from [`true-myth/task/delay`](/api/task/delay/) are infinite exc
 
 Update to at least TS 5.6+, or use a TypeScript-aware polyfill for the Iterator Helpers feature (ES2025). In that case, you can simply use the `take` method directly:
 
-```ts
+```typescript
 import * as task from 'true-myth/task';
 import * as delay from 'true-myth/task/delay';
 
@@ -334,7 +334,7 @@ let theTask = task.withRetries(
 
 If you are unable to use a polyfill or upgrade to TS 5.6 for now, you can still use these safely using generator functions, which are long-standing JavaScript features available in all modern browsers since ES6. The above example might be written like this (note that these are fully-general versions of the `take` and `map` functions—that is, much more general than is required for working with the “strategies” from True Myth).
 
-```ts
+```typescript
 import * as task from 'true-myth/task';
 import * as delay from 'true-myth/task/delay';
 

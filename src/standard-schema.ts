@@ -25,7 +25,7 @@ export type ParseResult<T> = Result<T, StandardSchemaV1.FailureResult>;
 
   ## Example
 
-  ```ts
+  ```typescript
   import { parserFor, type ParserFor } from 'true-myth/standard-schema';
   import * as z from 'zod';
 
@@ -57,7 +57,7 @@ export type ParseTask<T> = Task<T, StandardSchemaV1.FailureResult>;
 
   ## Example
 
-  ```ts
+  ```typescript
   import { parserFor, type ParserFor } from 'true-myth/standard-schema';
   import { type } from 'arktype';
 
@@ -87,7 +87,7 @@ export type AsyncParserFor<T> = (data: unknown) => ParseTask<T>;
 
   Creating a parser with Zod:
 
-  ```ts
+  ```typescript
   import { parserFor } from 'true-myth/standard-schema';
   import * as z from 'zod';
 
@@ -104,7 +104,7 @@ export type AsyncParserFor<T> = (data: unknown) => ParseTask<T>;
 
   Creating a parser with Arktype:
 
-  ```ts
+  ```typescript
   import { parserFor } from 'true-myth/standard-schema';
   import { type } from 'arktype';
 
@@ -124,7 +124,7 @@ export type AsyncParserFor<T> = (data: unknown) => ParseTask<T>;
   Once you have a parser, you can simply call it with any value and then use the
   normal {@linkcode Result} APIs.
 
-  ```ts
+  ```typescript
   parsePerson({ name: "Old!", age: 112 }).match({
     Ok: (person) => {
       console.log(`${person.name ?? "someone"} is ${person.age} years old.`);
@@ -199,7 +199,7 @@ function isSuccess<O>(sr: StandardSchemaV1.Result<O>): sr is StandardSchemaV1.Su
 
   With Zod:
 
-  ```ts
+  ```typescript
   import { asyncParserFor } from 'true-myth/standard-schema';
   import * as z from 'zod';
 
@@ -222,7 +222,7 @@ function isSuccess<O>(sr: StandardSchemaV1.Result<O>): sr is StandardSchemaV1.Su
   Once you have a parser, you can simply call it with any value and then use the
   normal {@linkcode Task} APIs.
 
-  ```ts
+  ```typescript
   await parsePerson({ name: "Old!", age: 112 }).match({
     Resolved: (person) => {
       console.log(`${person.name ?? "someone"} is ${person.age} years old.`);
