@@ -1,7 +1,6 @@
 import { h } from 'vue'
 import type { Theme } from 'vitepress'
 import DefaultTheme from 'vitepress/theme'
-import TwoslashFloatingVue from '@shikijs/vitepress-twoslash/client'
 import '@shikijs/vitepress-twoslash/style.css'
 
 export default {
@@ -12,6 +11,11 @@ export default {
     })
   },
   enhanceApp({ app, router, siteData }) {
-    app.use(TwoslashFloatingVue)
+    // Only load on client-side to avoid SSR issues
+    if (typeof window !== 'undefined') {
+      import('@shikijs/vitepress-twoslash/client').then((m) => {
+        app.use(m.default)
+      })
+    }
   }
 } satisfies Theme

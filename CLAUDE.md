@@ -3,9 +3,9 @@
 ## Overview
 This plan outlines how to use LLM-based agents (like Cursor or Claude Code) to integrate the twoslash package into True Myth's VitePress documentation, enabling interactive TypeScript code examples with hover information, error checking, and autocomplete.
 
-## Phase 1: Analysis and Setup
+## Phase 1: Analysis and Setup ✅
 
-### 1.1 Repository Analysis
+### 1.1 Repository Analysis ✅
 **Agent Task**: Analyze the current True Myth codebase structure
 ```bash
 # Commands for the agent to run
@@ -22,7 +22,7 @@ ls -la docs/ || ls -la documentation/
 - Documentation structure and markdown files
 - Current code example patterns
 
-### 1.2 Dependency Assessment
+### 1.2 Dependency Assessment ✅
 **Agent Task**: Check current dependencies and compatibility
 ```typescript
 // Agent should analyze package.json for:
@@ -32,9 +32,9 @@ ls -la docs/ || ls -la documentation/
 // - Any conflicting packages
 ```
 
-## Phase 2: Configuration Implementation
+## Phase 2: Configuration Implementation ✅
 
-### 2.1 Install Required Dependencies
+### 2.1 Install Required Dependencies ✅
 **Agent Task**: Update package.json with twoslash dependencies
 ```bash
 npm install -D @shikijs/vitepress-twoslash @shikijs/twoslash
@@ -42,7 +42,7 @@ npm install -D @shikijs/vitepress-twoslash @shikijs/twoslash
 yarn add -D @shikijs/vitepress-twoslash @shikijs/twoslash
 ```
 
-### 2.2 VitePress Configuration
+### 2.2 VitePress Configuration ✅
 **Agent Task**: Modify `.vitepress/config.js` or `.vitepress/config.ts`
 
 **Key Integration Points**:
@@ -67,7 +67,7 @@ export default defineConfig({
 })
 ```
 
-### 2.3 TypeScript Configuration
+### 2.3 TypeScript Configuration ✅
 **Agent Task**: Create or update `tsconfig.json` for documentation
 ```json
 {
@@ -87,13 +87,39 @@ export default defineConfig({
 
 ## Phase 3: Content Migration Strategy
 
-### 3.1 Identify Code Examples
+### 3.0 Identify Code with Errors ✅
+**Agent Task**: Run the updated VitePress config and read its output, and list all failing code samples so the human author can fix them or mark them as expected errors, using the output from the script..
+
+**Analysis Complete**: Found 317 code samples with twoslash errors, categorized as follows:
+- 58 × Missing import statements (UNDECLARED_VARIABLE)
+- 45 × Syntax issues (SYNTAX_ERROR) - missing semicolons, braces
+- 50 × Incomplete code examples (INCOMPLETE_CODE)
+- 8 × Wrong import paths (WRONG_IMPORT_PATH) - "true-utils" instead of "true-myth"
+- 79 × Other issues requiring investigation
+
+**Priority Fix Order**:
+1. **Low effort, high impact**: Fix wrong import paths (8 errors)
+2. **Low effort, medium impact**: Fix syntax errors (45 errors)
+3. **Medium effort, high impact**: Add missing imports (58 errors)
+4. **High effort, medium impact**: Complete or mark incomplete examples (50+ errors)
+
+**DO NOT** try to create a script to fix these patterns automatically. Just work through them one by one and fix them manually.
+
+For files that appear in `docs/api`, do not modify them directly. Instead, fix the error in the docstring that appears in the corresponding TypeScript source code.
+
+### 3.1 Identify Code Examples ✅
 **Agent Task**: Scan documentation for existing code blocks
-```bash
-# Find all TypeScript/JavaScript code blocks
-grep -r "```ts" docs/ || grep -r "```typescript" docs/
-grep -r "```js" docs/ || grep -r "```javascript" docs/
-```
+
+**Files with TypeScript code blocks**: 75 files containing ````ts` blocks, including:
+- Guide documentation: tutorial files, understanding sections
+- API documentation: auto-generated TypeDoc files with examples
+- Mixed content: both basic examples and complex demonstrations
+
+**Key patterns identified**:
+- Import statements missing or incorrect
+- Standalone code fragments without proper context
+- Examples using variables not defined in scope
+- Incomplete code blocks (intentionally or accidentally)
 
 ### 3.2 Conversion Patterns
 **Agent Task**: Create conversion templates for common patterns
@@ -127,41 +153,61 @@ const failure = Result.err('Something went wrong');
 3. **Type Inference**: Demonstrate how True Myth's types flow through code
 4. **Composition Examples**: Show complex chaining with type information
 
+### 3.2 Systematic Error Fixing Strategy
+**Agent Task**: Execute fixes in priority order for maximum impact
+
+**Phase 3.2.1 - Quick Wins (Low Effort, High Impact)**:
+- Fix 8 wrong import paths: `true-utils` → `true-myth`
+- Fix basic syntax errors: missing semicolons, incomplete statements
+- Add missing imports for commonly used types (Maybe, Result, Task)
+
+**Phase 3.2.2 - Medium Impact Fixes**:
+- Complete incomplete code examples or mark as intentionally partial
+- Fix variable declaration issues
+- Correct property access errors (e.g., `Maybe.mightBeANumber` → `mightBeANumber`)
+
+**Phase 3.2.3 - Complex Cases**:
+- Handle examples requiring external dependencies (immutable.js)
+- Fix complex type annotation issues
+- Address edge cases and "OTHER" category errors
+
 ## Phase 4: Content Enhancement
 
 ### 4.1 True Myth Specific Enhancements
-**Agent Task**: Create enhanced examples for key concepts
+**Agent Task**: After fixing errors, enhance examples with twoslash features
 
-**Result Type Examples**:
-```typescript
-// Show type inference in action
+**Enhanced Result Type Examples**:
+```typescript twoslash
+import Result from 'true-myth/result';
+
 const parseNumber = (input: string): Result<number, string> => {
   const num = parseInt(input, 10);
   return isNaN(num) ? Result.err('Invalid number') : Result.ok(num);
 };
 
 const result = parseNumber('42');
-//    ^? Result<number, string>
+//    ^?
 
 result.map(n => n * 2)
-//     ^? Result<number, string>
+//     ^?
       .unwrapOr(0);
-//     ^? number
+//     ^?
 ```
 
-**Maybe Type Examples**:
-```typescript
-// Demonstrate Maybe chaining with types
+**Enhanced Maybe Type Examples**:
+```typescript twoslash
+import Maybe from 'true-myth/maybe';
+
 const safeDivide = (a: number, b: number): Maybe<number> => {
   return b === 0 ? Maybe.nothing() : Maybe.just(a / b);
 };
 
 safeDivide(10, 2)
-// ^? Maybe<number>
+// ^?
   .map(x => x.toString())
-// ^? Maybe<string>
+// ^?
   .unwrapOr('Division by zero');
-// ^? string
+// ^?
 ```
 
 ### 4.2 Interactive Examples
@@ -170,7 +216,7 @@ safeDivide(10, 2)
 **Error Demonstrations**:
 ```typescript twoslash
 // @errors: 2345
-import { Result } from 'true-myth';
+import Result from 'true-myth/result';
 
 // This should show a TypeScript error
 const bad: Result<string, number> = Result.ok(42);
@@ -178,7 +224,7 @@ const bad: Result<string, number> = Result.ok(42);
 
 **Autocomplete Hints**:
 ```typescript twoslash
-import { Maybe } from 'true-myth';
+import Maybe from 'true-myth/maybe';
 
 const value = Maybe.just(42);
 value.
@@ -187,14 +233,16 @@ value.
 
 ## Phase 5: Automation and Validation
 
-### 5.1 Content Validation Script
+### 5.1 Content Validation Script ✅
 **Agent Task**: Create a validation script
-```typescript
-// scripts/validate-twoslash.ts
-// Check that all twoslash examples compile correctly
-// Verify True Myth imports work
-// Ensure no broken type annotations
-```
+
+**Script Created**: `scripts/analyze-twoslash-errors.js`
+- Captures and categorizes twoslash compilation errors
+- Provides fix suggestions for common patterns
+- Generates priority-ordered action plans
+- Outputs detailed JSON report for systematic fixing
+
+**Current Status**: 317 errors identified and categorized, ready for systematic fixing
 
 ### 5.2 CI Integration
 **Agent Task**: Update GitHub Actions workflow

@@ -110,7 +110,9 @@ class ResultImpl<T, E> {
     Create an instance of {@linkcode Err}.
 
     ```ts
-    const anErr = Result.err('alas, failure');
+    import { err } from 'true-myth/result';
+
+    const anErr = err('alas, failure');
     ```
    */
   static err<T = never, E = unknown>(): Result<T, Unit>;
@@ -118,7 +120,9 @@ class ResultImpl<T, E> {
     Create an instance of {@linkcode Err}.
 
     ```ts
-    const anErr = Result.err('alas, failure');
+    import { err } from 'true-myth/result';
+
+    const anErr = err('alas, failure');
     ```
 
     @param error The value to wrap in an `Err`.
@@ -315,18 +319,20 @@ export interface Err<T, E> extends Omit<ResultImpl<T, E>, 'value' | 'cast'> {
   {@linkcode Err Err(error)} if there is an exception.
 
   ```ts
+  import { tryOr } from 'true-myth/result';
+
   const aSuccessfulOperation = () => 2 + 2;
 
-  const anOkResult = Result.tryOr('Oh noes!!1', () => {
-    aSuccessfulOperation()
+  const anOkResult = tryOr('Oh noes!!1', () => {
+    return aSuccessfulOperation();
   }); // => Ok(4)
 
-  const thisOperationThrows = () => throw new Error('Bummer');
+  const thisOperationThrows = () => { throw new Error('Bummer'); };
 
-  const anErrResult = Result.tryOr('Oh noes!!1', () => {
-    thisOperationThrows();
+  const anErrResult = tryOr('Oh noes!!1', () => {
+    return thisOperationThrows();
   }); // => Err('Oh noes!!1')
- ```
+  ```
 
   @param error The error value in case of an exception
   @param callback The callback to try executing
@@ -356,7 +362,9 @@ export function tryOr<T, E>(
   function), you can use a type parameter:
 
   ```ts
-  const yayNumber = Result.ok<number, string>(12);
+  import { ok } from 'true-myth/result';
+
+  const yayNumber = ok<number, string>(12);
   ```
 
   Note: passing nothing, or passing `null` or `undefined` explicitly, will
@@ -365,9 +373,12 @@ export function tryOr<T, E>(
   more.
 
   ```ts
-  const normalResult = Result.ok<number, string>(42);
-  const explicitUnit = Result.ok<Unit, string>(Unit);
-  const implicitUnit = Result.ok<Unit, string>();
+  import { ok } from 'true-myth/result';
+  import { Unit } from 'true-myth/unit';
+
+  const normalResult = ok<number, string>(42);
+  const explicitUnit = ok<Unit, string>(Unit);
+  const implicitUnit = ok<Unit, string>();
   ```
 
   In the context of an immediate function return, or an arrow function with a
@@ -375,6 +386,9 @@ export function tryOr<T, E>(
   quite convenient.
 
   ```ts
+  import { ok, err } from 'true-myth/result';
+  import { Unit } from 'true-myth/unit';
+
   type SomeData = {
     //...
   };
@@ -384,10 +398,10 @@ export function tryOr<T, E>(
   }
 
   const arrowValidate = (data: SomeData): Result<Unit, string> =>
-    isValid(data) ? Result.ok() : Result.err('something was wrong!');
+    isValid(data) ? ok() : err('something was wrong!');
 
-  function fnValidate(data: someData): Result<Unit, string> {
-    return isValid(data) ? Result.ok() : Result.err('something was wrong');
+  function fnValidate(data: SomeData): Result<Unit, string> {
+    return isValid(data) ? ok() : err('something was wrong');
   }
   ```
 
@@ -426,7 +440,9 @@ export function isErr<T, E>(result: Result<T, E>): result is Err<T, E> {
   function), you can use a type parameter:
 
   ```ts
-  const notString = Result.err<number, string>('something went wrong');
+  import { err } from 'true-myth/result';
+
+  const notString = err<number, string>('something went wrong');
   ```
 
   Note: passing nothing, or passing `null` or `undefined` explicitly, will
@@ -435,9 +451,12 @@ export function isErr<T, E>(result: Result<T, E>): result is Err<T, E> {
   more.
 
   ```ts
-  const normalResult = Result.err<number, string>('oh no');
-  const explicitUnit = Result.err<number, Unit>(Unit);
-  const implicitUnit = Result.err<number, Unit>();
+  import { err } from 'true-myth/result';
+  import { Unit } from 'true-myth/unit';
+
+  const normalResult = err<number, string>('oh no');
+  const explicitUnit = err<number, Unit>(Unit);
+  const implicitUnit = err<number, Unit>();
   ```
 
   In the context of an immediate function return, or an arrow function with a
@@ -445,6 +464,9 @@ export function isErr<T, E>(result: Result<T, E>): result is Err<T, E> {
   quite convenient.
 
   ```ts
+  import { ok, err } from 'true-myth/result';
+  import { Unit } from 'true-myth/unit';
+
   type SomeData = {
     //...
   };
@@ -454,10 +476,10 @@ export function isErr<T, E>(result: Result<T, E>): result is Err<T, E> {
   }
 
   const arrowValidate = (data: SomeData): Result<number, Unit> =>
-    isValid(data) ? Result.ok(42) : Result.err();
+    isValid(data) ? ok(42) : err();
 
-  function fnValidate(data: someData): Result<number, Unit> {
-    return isValid(data) ? Result.ok(42) : Result.err();
+  function fnValidate(data: SomeData): Result<number, Unit> {
+    return isValid(data) ? ok(42) : err();
   }
   ```
 
@@ -859,7 +881,7 @@ export function andThen<T, E, R extends AnyResult>(
   for the case that you currently have an {@linkcode Err}.
 
   ```ts
-  import { ok, err, Result, or } from 'true-utils/result';
+  import { ok, err, Result, or } from 'true-myth/result';
 
   const okA = ok<string, string>('a');
   const okB = ok<string, string>('b');
@@ -1177,14 +1199,16 @@ export function match<T, E, A>(
   {@linkcode Result}s without having to unwrap them first.
 
   ```ts
-  const a = Result.of(3)
-  const b = Result.of(3)
-  const c = Result.of(null)
-  const d = Result.nothing()
+  import { ok, err, equals } from 'true-myth/result';
 
-  Result.equals(a, b) // true
-  Result.equals(a, c) // false
-  Result.equals(c, d) // true
+  const a = ok(3);
+  const b = ok(3);
+  const c = ok(null);
+  const d = err('error');
+
+  equals(a, b); // true
+  equals(a, c); // false
+  equals(c, d); // false
   ```
 
   @param resultB A `maybe` to compare to.
