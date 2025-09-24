@@ -1,8 +1,5 @@
 name: Nightly TypeScript Run
 
-env:
-  VOLTA_FEATURE_PNPM: 1
-
 # run the typescript@next Ember Try job...
 jobs:
   ts-next:

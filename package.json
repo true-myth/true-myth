@@ -114,10 +114,6 @@
       "deprecation": ":wastebasket: Deprecation"
     }
   },
-  "volta": {
-    "node": "20.18.0",
-    "pnpm": "10.6.1"
-  },
   "pnpm": {
     "overrides": {
       "vite": "npm:rolldown-vite@latest"
