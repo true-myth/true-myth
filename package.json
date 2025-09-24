@@ -45,6 +45,8 @@
   "scripts": {
     "build": "tsc --project ts/publish.tsconfig.json",
     "clean": "rimraf ./dist",
+    "format": "prettier",
+    "prettier": "prettier",
     "prepublishOnly": "pnpm test && pnpm build",
     "postpublish": "pnpm clean",
     "test": "vitest run",
