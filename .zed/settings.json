@@ -11,8 +11,11 @@
       ],
       "formatter": {
         "external": {
-          "command": "prettier",
+          "command": "pnpm",
           "arguments": [
+            "run",
+            "--silent",
+            "format",
             "--stdin-filepath",
             "{buffer_path}"
           ]
@@ -22,8 +25,11 @@
     "JSON": {
       "formatter": {
         "external": {
-          "command": "prettier",
+          "command": "pnpm",
           "arguments": [
+            "run",
+            "--silent",
+            "format",
             "--stdin-filepath",
             "{buffer_path}"
           ]
