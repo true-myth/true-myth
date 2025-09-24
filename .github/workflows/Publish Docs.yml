@@ -13,7 +13,7 @@ permissions:
   id-token: write
 
 env:
-    VOLTA_FEATURE_PNPM: 1
+  VOLTA_FEATURE_PNPM: 1
 
 # Allow only one concurrent deployment, skipping runs queued between the run
 # in-progress and latest queued. However, do NOT cancel in-progress runs as we
@@ -31,8 +31,8 @@ jobs:
         with:
           fetch-depth: 0 # Not needed if lastUpdated is not enabled
 
-      - name: Toolchain setup with Volta
-        uses: volta-cli/action@v4
+      - name: Toolchain setup with mise
+        uses: jdx/mise-action@v3
 
       - name: Setup Pages
         uses: actions/configure-pages@v4
