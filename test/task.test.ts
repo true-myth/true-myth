@@ -39,6 +39,7 @@ import Task, {
   withRetries,
   stopRetrying,
   isRetryFailed,
+  flatten,
 } from 'true-myth/task';
 import {
   exponential,
@@ -1224,6 +1225,32 @@ describe('`Task`', () => {
         expect(theTask.isResolved).toBe(false);
         expect(theTask.isRejected).toBe(true);
       }
+    });
+  });
+
+  describe('`flatten` method', () => {
+    test('with `Resolved(Resolved(value))`', async () => {
+      let wrapped = Task.resolve(Task.resolve(123));
+      await wrapped;
+      expect(wrapped.flatten()).toEqual(Task.resolve(123));
+    });
+
+    test('with `Resolved(Rejected(reason))`', async () => {
+      let wrapped = Task.resolve(Task.reject('inner error'));
+      await wrapped;
+      expect(wrapped.flatten()).toEqual(Task.reject('inner error'));
+    });
+
+    test('with `Rejected<Task<string, string>, string>`', async () => {
+      let wrapped = Task.reject<Task<string, string>, string>('outer error');
+      await wrapped;
+      expect(wrapped.flatten()).toEqual(Task.reject('outer error'));
+    });
+
+    test('with `Rejected(Rejected(reason))`', async () => {
+      let wrapped = Task.reject(Task.reject('inner error'));
+      await wrapped;
+      expect(wrapped.flatten()).toEqual(wrapped);
     });
   });
 });
@@ -3455,6 +3482,45 @@ describe('module-scope functions', () => {
           expect(output[index]).toBeGreaterThanOrEqual(0);
         }
       });
+    });
+  });
+
+  describe('`flatten` function', () => {
+    test('with `Resolved(Resolved(value))`', async () => {
+      let wrapped = Task.resolve(Task.resolve(123));
+      await wrapped;
+      expect(flatten(wrapped)).toEqual(Task.resolve(123));
+    });
+
+    test('with `Resolved(Rejected(error))`', async () => {
+      let wrapped = Task.resolve(Task.reject('inner error'));
+      await wrapped;
+      expect(flatten(wrapped)).toEqual(Task.reject('inner error'));
+    });
+
+    test('with `Rejected<Task<string, string>, string>`', async () => {
+      let wrapped = Task.reject<Task<string, string>, string>('outer error');
+      await wrapped;
+      expect(flatten(wrapped)).toEqual(Task.reject('outer error'));
+    });
+
+    test('with `Rejected(Rejected(reason))`', async () => {
+      let wrapped = Task.reject(Task.reject('inner error'));
+      await wrapped;
+      expect(flatten(wrapped)).toEqual(wrapped);
+    });
+
+    test('is not callable when the type is not nested', async () => {
+      let normal = Task.resolve(123);
+      await normal;
+
+      let flattened =
+        // @ts-expect-error -- cannot call `flatten` on non-nested methods.
+        normal
+          // this comment prevents reformatting: we want the pragma to apply to
+          // the previous line only!
+          .flatten();
+      expect(flattened.state).toBe(State.Pending);
     });
   });
 });

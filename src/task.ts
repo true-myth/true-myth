@@ -12,7 +12,7 @@
   @module
  */
 
-import { curry1, safeToString } from './-private/utils.js';
+import { curry1, identity, safeToString } from './-private/utils.js';
 import Maybe from './maybe.js';
 import Result, * as result from './result.js';
 import type { AnyResult, SomeResult } from './result.js';
@@ -853,6 +853,44 @@ class TaskImpl<T, E> implements PromiseLike<Result<T, E>> {
    */
   toPromise(): Promise<Result<T, E>> {
     return this.#promise;
+  }
+
+  /**
+    Given a nested `Task`, remove one layer of nesting.
+
+    For example, given a `Task<Task<string, E2>, E1>`, the resulting type after
+    using this method will be `Task<string, E1 | E2>`.
+
+    ## Note
+
+    This method only works when the value wrapped in `Task` is another `Task`.
+    If you have a `Task<string, E>` or `Task<number, E>`, this method won't
+    work. If you have a `Task<Task<string, E2>, E1>`, then you can call
+    `.flatten()` to get back a `Task<string, E1 | E2>`.
+
+    ## Examples
+
+    ```ts
+    import * as task from 'true-myth/task';
+
+    const nested = task.resolve(task.resolve('hello'));
+    const flattened = nested.flatten(); // Task<string, never>
+    await flattened;
+    console.log(flattened); // `Resolved('hello')`
+
+    const nestedError = task.resolve(task.reject('inner error'));
+    const flattenedError = nestedError.flatten(); // Task<never, string>
+    await flattenedError;
+    console.log(flattenedError); // `Rejected('inner error')`
+
+    const errorNested = task.reject<Task<string, string>, string>('outer error');
+    const flattenedOuter = errorNested.flatten(); // Task<string, string>
+    await flattenedOuter;
+    console.log(flattenedOuter); // `Rejected('outer error')`
+    ```
+   */
+  flatten<A, F, G>(this: Task<Task<A, F>, G>): Task<A, F | G> {
+    return this.andThen(identity);
   }
 }
 
@@ -2351,8 +2389,44 @@ export function toPromise<T, E>(task: Task<T, E>) {
   return task.toPromise();
 }
 
-function identity<T>(value: T): T {
-  return value;
+/**
+  Given a nested `Task`, remove one layer of nesting.
+
+  For example, given a `Task<Task<string, E2>, E1>`, the resulting type after
+  using this function will be `Task<string, E1 | E2>`.
+
+  ## Note
+
+  This function only works when the value wrapped in `Task` is another `Task`.
+  If you have a `Task<string, E>` or `Task<number, E>`, this function won't
+  work. If you have a `Task<Task<string, E2>, E1>`, then you can call
+  `.flatten()` to get back a `Task<string, E1 | E2>`.
+
+  ## Examples
+
+  ```ts
+  import * as task from 'true-myth/task';
+
+  const nested = task.resolve(task.resolve('hello'));
+  const flattened = task.flatten(nested); // Task<string, never>
+  await flattened;
+  console.log(flattened); // `Resolved('hello')`
+
+  const nestedError = task.resolve(task.reject('inner error'));
+  const flattenedError = task.flatten(nestedError); // Task<never, string>
+  await flattenedError;
+  console.log(flattenedError); // `Rejected('inner error')`
+
+  const errorNested = task.reject<Task<string, string>, string>('outer error');
+  const flattenedOuter = task.flatten(errorNested); // Task<string, string>
+  await flattenedOuter;
+  console.log(flattenedOuter); // `Rejected('outer error')`
+  ```
+ */
+export function flatten<T, E, F>(nestedTask: Task<Task<T, E>, F>): Task<T, E | F> {
+  // Uses `andThen` directly rather than calling `.flatten()` to avoid an extra
+  // function dispatch.
+  return nestedTask.andThen(identity);
 }
 
 /**

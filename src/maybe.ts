@@ -8,7 +8,7 @@ For a deep dive on the type, see [the guide](/guide/understanding/maybe.md).
   @module
  */
 
-import { type AnyFunction, curry1, isVoid, safeToString } from './-private/utils.js';
+import { type AnyFunction, curry1, identity, isVoid, safeToString } from './-private/utils.js';
 
 /**
   Discriminant for the {@linkcode Just} and {@linkcode Nothing} type instances.
@@ -330,7 +330,45 @@ class MaybeImpl<T extends {}> implements SomeMaybe<T> {
     ```
    */
   get<K extends keyof T>(key: K): Maybe<NonNullable<T[K]>> {
-    return this.andThen(property(key));
+    return this.andThen((obj) => property(key, obj));
+  }
+
+  /**
+    Given a nested `Maybe`, remove one layer of nesting.
+
+    For example, given a `Maybe<Maybe<string>>`, the resulting type after using
+    this method will be `Maybe<string>`.
+
+    ## Note
+
+    This method only works when the value wrapped in `Maybe` is another `Maybe`.
+    If you have a `Maybe<string>` or `Maybe<number>`, this method won't work. If
+    you have a `Maybe<Maybe<string>>`, then you can call `.flatten()` to get
+    back a `Maybe<string>`.
+
+    ## Examples
+
+    ```ts
+    import * as maybe from 'true-myth/maybe';
+
+    const nested = maybe.just(maybe.just('hello'));
+    const flattened = nested.flatten(); // Maybe<string>
+    console.log(flattened); // Just('hello')
+
+    const nestedNothing = maybe.just(maybe.nothing<string>());
+    const flattenedNothing = nestedNothing.flatten(); // Maybe<string>
+    console.log(flattenedNothing); // Nothing
+
+    const nothingNested = maybe.nothing<Maybe<string>>();
+    const flattenedOuter = nothingNested.flatten(); // Maybe<string>
+    console.log(flattenedOuter); // Nothing
+    ```
+   */
+  // NOTE: it is necessary to express the type constraint on the `this` value
+  // like this, rather than like `this: Maybe<Maybe<T>>`, to avoid producing a
+  // `Maybe<Maybe<Maybe<T>>>` at call sites with the wrapped value.
+  flatten<A extends {}>(this: Maybe<Maybe<A>>): Maybe<A> {
+    return this.andThen(identity);
   }
 }
 
@@ -1690,6 +1728,43 @@ export function safe<
   R extends NonNullable<ReturnType<F>>,
 >(fn: F): (...params: P) => Maybe<R> {
   return (...params) => Maybe.of(fn(...params) as R);
+}
+
+/**
+  Given a nested `Maybe`, remove one layer of nesting.
+
+  For example, given a `Maybe<Maybe<string>>`, the resulting type after using
+  this function will be `Maybe<string>`.
+
+  ## Note
+
+  This function only works when the value wrapped in `Maybe` is another `Maybe`.
+  If you have a `Maybe<string>` or `Maybe<number>`, this function won't work. If
+  you have a `Maybe<Maybe<string>>`, then you can call `maybe.flatten(theMaybe)`
+  to get back a `Maybe<string>`.
+
+  ## Examples
+
+  ```ts
+  import * as maybe from 'true-myth/maybe';
+
+  const nested = maybe.just(maybe.just('hello'));
+  const flattened = maybe.flatten(nested); // Maybe<string>
+  console.log(flattened); // Just('hello')
+
+  const nestedNothing = maybe.just(maybe.nothing<string>());
+  const flattenedNothing = maybe.flatten(nestedNothing); // Maybe<string>
+  console.log(flattenedNothing); // Nothing
+
+  const nothingNested = maybe.nothing<Maybe<string>>();
+  const flattenedOuter = maybe.flatten(nothingNested); // Maybe<string>
+  console.log(flattenedOuter); // Nothing
+  ```
+ */
+export function flatten<T extends {}>(nested: Maybe<Maybe<T>>): Maybe<T> {
+  // Uses `andThen` directly rather than calling `.flatten()` to avoid an extra
+  // function dispatch.
+  return nested.andThen(identity);
 }
 
 /**
