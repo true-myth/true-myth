@@ -58,10 +58,10 @@ importers:
         version: 0.28.12(typescript@5.3.3)
       typedoc-plugin-markdown:
         specifier: ^4.8.0
-        version: 4.8.1(typedoc@0.28.12(typescript@5.3.3))
+        version: 4.9.0(typedoc@0.28.12(typescript@5.3.3))
       typedoc-vitepress-theme:
         specifier: ^1.1.2
-        version: 1.1.2(typedoc-plugin-markdown@4.8.1(typedoc@0.28.12(typescript@5.3.3)))
+        version: 1.1.2(typedoc-plugin-markdown@4.9.0(typedoc@0.28.12(typescript@5.3.3)))
       typescript:
         specifier: 5.3.3
         version: 5.3.3
@@ -718,7 +718,7 @@ packages:
     resolution: {integrity: sha512-+MaE752hU0wfPFJEUAIxqw18+20euHHdxVtMvbFcOEpjEyfqXH/5DCoTHiVJ0J29EhTJdoTkjEv5YBKU9dnoTw==}
     engines: {node: ^20.19.0 || >=22.12.0}
     peerDependencies:
-      vite: ^5.0.0 || ^6.0.0 || ^7.0.0
+      vite: npm:rolldown-vite@latest
       vue: ^3.2.25
 
   '@vitest/coverage-v8@3.2.4':
@@ -737,7 +737,7 @@ packages:
     resolution: {integrity: sha512-46ryTE9RZO/rfDd7pEqFl7etuyzekzEhUbTW3BvmeO/BcCMEgq59BKhek3dXDWgAj4oMK6OZi+vRr1wPW6qjEQ==}
     peerDependencies:
       msw: ^2.4.9
-      vite: ^5.0.0 || ^6.0.0 || ^7.0.0-0
+      vite: npm:rolldown-vite@latest
     peerDependenciesMeta:
       msw:
         optional: true
@@ -2360,8 +2360,8 @@ packages:
     resolution: {integrity: sha512-RAH822pAdBgcNMAfWnCBU3CFZcfZ/i1eZjwFU/dsLKumyuuP3niueg2UAukXYF0E2AAoc82ZSSf9J0WQBinzHA==}
     engines: {node: '>=12.20'}
 
-  typedoc-plugin-markdown@4.8.1:
-    resolution: {integrity: sha512-ug7fc4j0SiJxSwBGLncpSo8tLvrT9VONvPUQqQDTKPxCoFQBADLli832RGPtj6sfSVJebNSrHZQRUdEryYH/7g==}
+  typedoc-plugin-markdown@4.9.0:
+    resolution: {integrity: sha512-9Uu4WR9L7ZBgAl60N/h+jqmPxxvnC9nQAlnnO/OujtG2ubjnKTVUFY1XDhcMY+pCqlX3N2HsQM2QTYZIU9tJuw==}
     engines: {node: '>= 18'}
     peerDependencies:
       typedoc: 0.28.x
@@ -2447,7 +2447,7 @@ packages:
   vite-tsconfig-paths@5.1.4:
     resolution: {integrity: sha512-cYj0LRuLV2c2sMqhqhGpaO3LretdtMn/BVX4cPLanIZuwwrkVl+lK84E/miEXkCHWXuq65rhNN4rXsBcOB3S4w==}
     peerDependencies:
-      vite: '*'
+      vite: npm:rolldown-vite@latest
     peerDependenciesMeta:
       vite:
         optional: true
@@ -4935,13 +4935,13 @@ snapshots:
 
   type-fest@2.19.0: {}
 
-  typedoc-plugin-markdown@4.8.1(typedoc@0.28.12(typescript@5.3.3)):
+  typedoc-plugin-markdown@4.9.0(typedoc@0.28.12(typescript@5.3.3)):
     dependencies:
       typedoc: 0.28.12(typescript@5.3.3)
 
-  typedoc-vitepress-theme@1.1.2(typedoc-plugin-markdown@4.8.1(typedoc@0.28.12(typescript@5.3.3))):
+  typedoc-vitepress-theme@1.1.2(typedoc-plugin-markdown@4.9.0(typedoc@0.28.12(typescript@5.3.3))):
     dependencies:
-      typedoc-plugin-markdown: 4.8.1(typedoc@0.28.12(typescript@5.3.3))
+      typedoc-plugin-markdown: 4.9.0(typedoc@0.28.12(typescript@5.3.3))
 
   typedoc@0.28.12(typescript@5.3.3):
     dependencies:
