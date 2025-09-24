@@ -6,7 +6,6 @@
   <a href='https://github.com/true-myth/true-myth/blob/main/.github/workflows/CI.yml'><img src='https://github.com/true-myth/true-myth/actions/workflows/CI.yml/badge.svg?branch=main' title='CI'></a>
   <a href='https://github.com/true-myth/true-myth/blob/master/package.json#L78-L85'><img src='https://img.shields.io/badge/Vitest-100%25-0a7c00.svg' alt='Test coverage: 100%'></a>
   <a href='https://www.npmjs.com/package/true-myth'><img src='https://img.shields.io/npm/v/true-myth.svg' alt='npm'></a>
-  <a href='https://github.com/true-myth/true-myth/blob/main/.github/workflows/CI.yml#L25'><img src='https://img.shields.io/badge/Node-18%20LTS%20%7C%2020%20LTS%20%7C%2022-darkgreen' alt='supported Node versions'></a>
   <a href='https://github.com/true-myth/true-myth/blob/main/.github/workflows/CI.yml#L59'><img src='https://img.shields.io/badge/TypeScript-5.3%20%3C=%205.9%20%7C%20next-3178c6' alt='supported TypeScript versions'></a>
   <a href='https://github.com/true-myth/true-myth/actions/workflows/Nightly.yml'><img src='https://github.com/true-myth/true-myth/workflows/Nightly%20TypeScript%20Run/badge.svg' alt='Nightly TypeScript Run'></a>
   <img src='https://img.shields.io/badge/stability-active-663399' alt='Stability: Active'>
@@ -39,7 +38,6 @@ See [the docs](https://true-myth.js.org) for setup, guides, and API docs!
 
 ## Requirements
 
-- Node 20+
 - TS 5.3+
 - `tsconfig.json`:
   - `moduleResolution`: use `"Node16"` or later
