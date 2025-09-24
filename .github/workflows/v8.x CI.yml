@@ -8,9 +8,6 @@ on:
     branches:
       - v8.x
 
-env:
-  VOLTA_FEATURE_PNPM: 1
-
 jobs:
   tests_linux:
     name: 'Tests: Node ${{ matrix.node-version }}'
@@ -21,7 +18,7 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
-      - uses: volta-cli/action@v4
+      - uses: jdx/mise-action@v3
         with:
           node-version: ${{ matrix.node-version }}
       - run: pnpm install
@@ -38,7 +35,7 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
-      - uses: volta-cli/action@v4
+      - uses: jdx/mise-action@v3
       - run: pnpm install
       - run: pnpm add --save-dev typescript@${{ matrix.ts-version }}
       - run: pnpm type-check
