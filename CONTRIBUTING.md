@@ -36,7 +36,7 @@ Once you have followed the steps above and are working on a new contribution, yo
     $ pnpm install
     ```
 
-    Note that we use [Mise](https://mise.jdx.dev) to manage our JavaScript toolchain. If you are having problems getting the project, you should start by installing Volta, which will give you the same versions of Node and pnpm we use for development and testing.
+    Note that we use [Mise](https://mise.jdx.dev) to manage our JavaScript toolchain. If you are having problems getting the project, you should start by installing Mise, which will give you the same versions of Node and pnpm we use for development and testing.
 
 -   Run the tests as you work, using `pnpm test` or `pnpm test --watch`.
 
