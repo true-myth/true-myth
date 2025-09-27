@@ -79,3 +79,5 @@ jsconfig.json
 
 # Nova config
 .nova
+.codanna/index
+.fastembed_cache
