@@ -7,6 +7,45 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 
 
+## 9.2.0 (2025-09-27)
+
+Adds a `flatten` helper and method to each of `Maybe`, `Result`, and `Task` to help with the situations where you end up with a nested version of each. For example, with `Maybe`:
+
+```ts
+import Maybe from 'true-myth/maybe';
+
+const wrapped = Maybe.of(Maybe.of(123));
+console.log(wrapped.toString());  // Just(Just(123))
+
+const flattened = wrapped.flatten();
+console.log(flattened.toString()); // Just(123)
+```
+
+Note that the method or function removes only a single layer of wrapping.
+
+### Changes
+
+#### :rocket: Enhancement
+
+* [#1148](https://github.com/true-myth/true-myth/pull/1148) Add `flatten` functions and methods to `Maybe`, `Result`, and `Task` ([@chriskrycho](https://github.com/chriskrycho))
+
+#### :memo: Documentation
+
+* [#1147](https://github.com/true-myth/true-myth/pull/1147) docs: remove Node version badge from README ([@chriskrycho](https://github.com/chriskrycho))
+
+#### :house: Internal
+
+* [#1146](https://github.com/true-myth/true-myth/pull/1146) infra: finish switch-over to Mise from Volta ([@chriskrycho](https://github.com/chriskrycho))
+* [#1145](https://github.com/true-myth/true-myth/pull/1145) infra: fix Zed Prettier settings ([@chriskrycho](https://github.com/chriskrycho))
+* [#1144](https://github.com/true-myth/true-myth/pull/1144) infra: drop CI for v8 branch ([@chriskrycho](https://github.com/chriskrycho))
+* [#1143](https://github.com/true-myth/true-myth/pull/1143) infra: use mise action instead of Volta action ([@chriskrycho](https://github.com/chriskrycho))
+
+### Committers: 2
+
+- 2hu ([@2hu12](https://github.com/2hu12))
+- Chris Krycho ([@chriskrycho](https://github.com/chriskrycho))
+
+
 ## 9.1.0 (2025-08-25)
 
 #### :rocket: Enhancement
