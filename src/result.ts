@@ -11,7 +11,7 @@
   @module
  */
 
-import { curry1, safeToString } from './-private/utils.js';
+import { curry1, identity, safeToString } from './-private/utils.js';
 import type { AnyFunction } from './-private/utils.js';
 import Unit from './unit.js';
 
@@ -267,6 +267,45 @@ class ResultImpl<T, E> {
   /** Method variant for {@linkcode ap} */
   ap<A, B>(this: Result<(a: A) => B, E>, r: Result<A, E>): Result<B, E> {
     return r.andThen((val) => this.map((fn) => fn(val)));
+  }
+
+  /**
+    Given a nested `Result`, remove one layer of nesting.
+
+    For example, given a `Result<Result<string, E2>, E1>`, the resulting type
+    after using this method will be `Result<string, E1 | E2>`.
+
+    ## Note
+
+    This method only works when the value wrapped in `Result` is another
+    `Result`. If you have a `Result<string, E>` or `Result<number, E>`, this
+    method won't work. If you have a `Result<Result<string, E2>, E1>`, then you
+    can call `.flatten()` to get back a `Result<string, E1 | E2>`.
+
+    ## Examples
+
+    ```ts
+    import * as result from 'true-myth/result';
+
+    const nested = result.ok(result.ok('hello'));
+    const flattened = nested.flatten(); // Result<string, never>
+    console.log(flattened); // Ok('hello')
+
+    const nestedError = result.ok(result.err('inner error'));
+    const flattenedError = nestedError.flatten(); // Result<never, string>
+    console.log(flattenedError); // Err('inner error')
+
+    const errorNested = result.err<Result<string, string>, string>('outer error');
+    const flattenedOuter = errorNested.flatten(); // Result<string, string>
+    console.log(flattenedOuter); // Err('outer error')
+    ```
+   */
+  // NOTE: it is necessary to express the type constraint on the `this` value
+  // like this, rather than like `this: Result<Result<T, E2>, E1>`, to avoid
+  // producing a `Result<Result<Result<T, E2>, E1>, E2>` at call sites with the
+  // wrapped value.
+  flatten<A, F>(this: Result<Result<A, F>, E>): Result<A, E | F> {
+    return this.andThen(identity);
   }
 
   cast() {
@@ -1699,6 +1738,43 @@ export function transposeAny(
   }
 
   return Result.err(errs);
+}
+
+/**
+  Given a nested `Result`, remove one layer of nesting.
+
+  For example, given a `Result<Result<string, E2>, E1>`, the resulting type
+  after using this function will be `Result<string, E1 | E2>`.
+
+  ## Note
+
+  This function only works when the value wrapped in `Result` is another `Result`.
+  If you have a `Result<string, E>` or `Result<number, E>`, this function won't
+  work. If you have a `Result<Result<string, E2>, E1>`, then you can call
+  `result.flatten(theResult)` to get back a `Result<string, E1 | E2>`.
+
+  ## Examples
+
+  ```ts
+  import * as result from 'true-myth/result';
+
+  const nested = result.ok(result.ok('hello'));
+  const flattened = result.flatten(nested); // Result<string, never>
+  console.log(flattened); // Ok('hello')
+
+  const nestedError = result.ok(result.err('inner error'));
+  const flattenedError = result.flatten(nestedError); // Result<never, string>
+  console.log(flattenedError); // Err('inner error')
+
+  const errorNested = result.err<Result<string, string>, string>('outer error');
+  const flattenedOuter = result.flatten(errorNested); // Result<string, string>
+  console.log(flattenedOuter); // Err('outer error')
+  ```
+  */
+export function flatten<T, E1, E2>(nested: Result<Result<T, E2>, E1>): Result<T, E1 | E2> {
+  // Uses `andThen` directly rather than calling `.flatten()` to avoid an extra
+  // function dispatch.
+  return nested.andThen(identity);
 }
 
 /**

@@ -34,6 +34,10 @@ export function safeToString(value: unknown): string {
   }
 }
 
+export function identity<T>(value: T): T {
+  return value;
+}
+
 /**
   This is the standard *correct* definition for a function which is a proper
   subtype of all other functions: parameters of a function subtype must be

@@ -3,6 +3,7 @@ import { describe, expect, expectTypeOf, test } from 'vitest';
 import Result, { Ok, Variant, Err } from 'true-myth/result';
 import * as result from 'true-myth/result';
 import Unit from 'true-myth/unit';
+import { unwrap } from 'true-myth/test-support';
 
 const length = (x: { length: number }) => x.length;
 const double = (x: number) => x * 2;
@@ -717,6 +718,28 @@ describe('`Result` pure functions', () => {
       expect(someErr).toEqual(result.err('error 2'));
     });
   });
+
+  describe('`flatten` function', () => {
+    test('with `Ok(Ok(value))`', () => {
+      let wrapped = result.ok(result.ok(123));
+      expect(result.flatten(wrapped)).toEqual(result.ok(123));
+    });
+
+    test('with `Ok(Err(error))`', () => {
+      let wrapped = result.ok(result.err('inner error'));
+      expect(result.flatten(wrapped)).toEqual(result.err('inner error'));
+    });
+
+    test('with `Err<Result<string, string>, string>`', () => {
+      let wrapped = result.err<Result<string, string>, string>('outer error');
+      expect(result.flatten(wrapped)).toEqual(result.err('outer error'));
+    });
+
+    test('with `Err(Err(error))`', () => {
+      let wrapped = result.err(result.err('inner error'));
+      expect(result.flatten(wrapped)).toEqual(wrapped);
+    });
+  });
 });
 
 describe('`allResults` method', () => {
@@ -1366,5 +1389,42 @@ describe('`result.Err` class', () => {
     const result = fn.ap(val);
 
     expect(result.toString()).toEqual(`Err("ERR_ALLURBASE")`);
+  });
+});
+
+describe('`Result` method tests', () => {
+  // Applies to *combination* of `Ok` and `Err`.
+  describe('`flatten` method', () => {
+    test('with `Ok(Ok(value))`', () => {
+      let wrapped = result.ok(result.ok(123));
+      expect(wrapped.flatten()).toEqual(result.ok(123));
+    });
+
+    test('with `Ok(Err(error))`', () => {
+      let wrapped = result.ok(result.err('inner error'));
+      expect(wrapped.flatten()).toEqual(result.err('inner error'));
+    });
+
+    test('with `Err<Result<string, string>, string>`', () => {
+      let wrapped = result.err<Result<string, string>, string>('outer error');
+      expect(wrapped.flatten()).toEqual(result.err('outer error'));
+    });
+
+    test('with `Err(Err(error))`', () => {
+      let wrapped = result.err(result.err('inner error'));
+      expect(wrapped.flatten()).toEqual(wrapped);
+    });
+
+    test('is not callable when the type is not nested', () => {
+      let normal = result.ok(123);
+
+      let flattened =
+        // @ts-expect-error -- cannot call `flatten` on non-nested methods.
+        normal
+          // this comment prevents reformatting: we want the pragma to apply to
+          // the previous line only!
+          .flatten();
+      expect(unwrap(flattened)).toBeUndefined();
+    });
   });
 });

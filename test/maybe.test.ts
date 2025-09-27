@@ -3,6 +3,7 @@ import { describe, expect, expectTypeOf, test } from 'vitest';
 import Maybe, { Variant, type Nothing, type Just, type Matcher } from 'true-myth/maybe';
 import * as maybe from 'true-myth/maybe';
 import { Unit } from 'true-myth/unit';
+import { unwrap } from 'true-myth/test-support';
 
 type Neat = { neat: string };
 
@@ -747,6 +748,23 @@ describe('`Maybe` pure functions', () => {
 
     expect(maybe.isNothing(testNothing)).toEqual(true);
   });
+
+  describe('`flatten`', () => {
+    test('with `Just(Just(value))', () => {
+      let wrapped = maybe.just(maybe.just(123));
+      expect(maybe.flatten(wrapped)).toEqual(maybe.just(123));
+    });
+
+    test('with `Just(Nothing)`', () => {
+      let wrapped = maybe.just(maybe.nothing());
+      expect(maybe.flatten(wrapped)).toEqual(maybe.nothing());
+    });
+
+    test('with `Nothing<Maybe<string>>`', () => {
+      let wrapped = maybe.nothing<Maybe<string>>();
+      expect(maybe.flatten(wrapped)).toEqual(maybe.nothing());
+    });
+  });
 });
 
 // We aren't even really concerned with the "runtime" behavior here, which we
@@ -1312,6 +1330,36 @@ describe('`Maybe` class', () => {
         .get('deeper')
         .get('key names');
       expect(result).toEqual(maybe.nothing());
+    });
+  });
+
+  // Applies to *combination* of `Just` and `Nothing`.
+  describe('`flatten` method', () => {
+    test('with `Just(Just(value))', () => {
+      let wrapped = maybe.just(maybe.just(123));
+      expect(wrapped.flatten()).toEqual(maybe.just(123));
+    });
+
+    test('with `Just(Nothing)`', () => {
+      let wrapped = maybe.just(maybe.nothing());
+      expect(wrapped.flatten()).toEqual(maybe.nothing());
+    });
+
+    test('with `Nothing<Maybe<string>>`', () => {
+      let wrapped = maybe.nothing<Maybe<string>>();
+      expect(wrapped.flatten()).toEqual(maybe.nothing());
+    });
+
+    test('is not callable when the type is not nested', () => {
+      let normal = maybe.of(123);
+
+      let flattened =
+        // @ts-expect-error -- cannot call `flatten` on on-nested methods.
+        normal
+          // this comment prevents reformatting: we want the pragma to apply to
+          // the previous line only!
+          .flatten();
+      expect(unwrap(flattened)).toBeUndefined();
     });
   });
 });
