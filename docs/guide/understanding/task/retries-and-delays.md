@@ -326,7 +326,7 @@ import * as delay from 'true-myth/task/delay';
 
 let theTask = task.withRetries(
   () => task.fromPromise(fetch('https://example.com/')),
-  delay.exponential().map(Delay.jitter).take(5)
+  delay.exponential().map(delay.jitter).take(5)
 );
 ```
 
