@@ -75,7 +75,7 @@ let theTask = Task.tryOrElse(
 let resolved = Task.resolve(123);
 
 // `rejected` has the type `Task<never, string>`
-let rejected = Task.rejecte("something went wrong");
+let rejected = Task.rejected("something went wrong");
 ```
 
 
