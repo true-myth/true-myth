@@ -68,7 +68,7 @@
   "devDependencies": {
     "@release-it-plugins/lerna-changelog": "^8.0.1",
     "@types/markdown-it": "^14.1.2",
-    "@types/node": "^24.7.0",
+    "@types/node": "^24.7.1",
     "@vitest/coverage-v8": "^3.2.4",
     "arktype": "^2.1.20",
     "effect": "^3.17.5",

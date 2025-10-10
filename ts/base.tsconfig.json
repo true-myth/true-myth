@@ -10,10 +10,7 @@
     ],
     "strict": true,
     "noUncheckedIndexedAccess": true,
-    // This breaks with TS v6.0 and current `@types/node` (v24.7). Turn it back
-    // on when that’s fixed. We don’t currently depend on that behavior in any
-    // way, but we prefer to enable it.
-    // "exactOptionalPropertyTypes": true,
+    "exactOptionalPropertyTypes": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noImplicitReturns": true,
