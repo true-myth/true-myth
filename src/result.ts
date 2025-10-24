@@ -113,7 +113,7 @@ class ResultImpl<T, E> {
     const anErr = Result.err('alas, failure');
     ```
    */
-  static err<T = never, E = unknown>(): Result<T, Unit>;
+  static err<T = never>(): Result<T, Unit>;
   /**
     Create an instance of {@linkcode Err}.
 
