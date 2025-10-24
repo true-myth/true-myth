@@ -5,6 +5,9 @@
 {
   "languages": {
     "TypeScript": {
+      "language_servers": [
+        "tsgo"
+      ],
       "wrap_guides": [
         80,
         100
