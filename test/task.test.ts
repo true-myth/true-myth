@@ -3530,7 +3530,7 @@ describe('type utilities', () => {
     expectTypeOf<Settled<[Task<string, number>]>>().toEqualTypeOf<[Result<string, number>]>();
     expectTypeOf<Settled<[Task<string, number>, Task<number, string>]>>().toEqualTypeOf<
       [Result<string, number>, Result<number, string>]
-    >;
+    >();
     expectTypeOf<
       Settled<
         [
