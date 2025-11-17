@@ -381,6 +381,126 @@ describe('`Result` pure functions', () => {
     expect(anErrOrUndefined).toEqual(undefined);
   });
 
+  describe('inspect', () => {
+    test('with Ok', () => {
+      const value = 42;
+      const theOk = result.ok<number, string>(value);
+      let sideEffect: number | null = null;
+
+      const resultValue = result.inspect((v) => {
+        sideEffect = v;
+      }, theOk);
+
+      expect(sideEffect).toBe(value);
+      expect(resultValue).toBe(theOk);
+      expectTypeOf(resultValue).toEqualTypeOf<Result<number, string>>();
+    });
+
+    test('with Err', () => {
+      const error = 'something went wrong';
+      const theErr = result.err<number, string>(error);
+      let sideEffect: number | null = null;
+
+      const resultValue = result.inspect((v) => {
+        sideEffect = v;
+      }, theErr);
+
+      expect(sideEffect).toBe(null);
+      expect(resultValue).toBe(theErr);
+      expectTypeOf(resultValue).toEqualTypeOf<Result<number, string>>();
+    });
+
+    test('curried form', () => {
+      const value = 'hello';
+      const theOk = result.ok<string, number>(value);
+      let sideEffect: string | null = null;
+
+      const inspectFn = result.inspect((v: string) => {
+        sideEffect = v;
+      });
+
+      const resultValue = inspectFn(theOk);
+
+      expect(sideEffect).toBe(value);
+      expect(resultValue).toBe(theOk);
+    });
+
+    test('curried form with Err', () => {
+      const error = 404;
+      const theErr = result.err<string, number>(error);
+      let sideEffect: string | null = null;
+
+      const inspectFn = result.inspect((v: string) => {
+        sideEffect = v;
+      });
+
+      const resultValue = inspectFn(theErr);
+
+      expect(sideEffect).toBe(null);
+      expect(resultValue).toBe(theErr);
+    });
+  });
+
+  describe('inspectErr', () => {
+    test('with Ok', () => {
+      const value = 42;
+      const theOk = result.ok<number, string>(value);
+      let sideEffect: string | null = null;
+
+      const resultValue = result.inspectErr((e) => {
+        sideEffect = e;
+      }, theOk);
+
+      expect(sideEffect).toBe(null);
+      expect(resultValue).toBe(theOk);
+      expectTypeOf(resultValue).toEqualTypeOf<Result<number, string>>();
+    });
+
+    test('with Err', () => {
+      const error = 'something went wrong';
+      const theErr = result.err<number, string>(error);
+      let sideEffect: string | null = null;
+
+      const resultValue = result.inspectErr((e) => {
+        sideEffect = e;
+      }, theErr);
+
+      expect(sideEffect).toBe(error);
+      expect(resultValue).toBe(theErr);
+      expectTypeOf(resultValue).toEqualTypeOf<Result<number, string>>();
+    });
+
+    test('curried form', () => {
+      const error = 404;
+      const theErr = result.err<string, number>(error);
+      let sideEffect: number | null = null;
+
+      const inspectErrFn = result.inspectErr((e: number) => {
+        sideEffect = e;
+      });
+
+      const resultValue = inspectErrFn(theErr);
+
+      expect(sideEffect).toBe(error);
+      expect(resultValue).toBe(theErr);
+    });
+
+    test('curried form with Ok', () => {
+      const value = 'hello';
+      const theOk = result.ok<string, number>(value);
+      let sideEffect: number | null = null;
+
+      const inspectErrFn = result.inspectErr((e: number) => {
+        sideEffect = e;
+      });
+
+      const resultValue = inspectErrFn(theOk);
+
+      expect(sideEffect).toBe(null);
+      expect(resultValue).toBe(theOk);
+    });
+  });
+
   describe('toString', () => {
     test('normal cases', () => {
       const theValue = { thisIsReally: 'something' };
@@ -1082,6 +1202,34 @@ describe('`Ok` instance', () => {
     expect(theOk.unwrapOrElse(getDefault)).toBe(theValue);
   });
 
+  test('`inspect` method', () => {
+    const value = 42;
+    const theOk = Result.ok<number, string>(value);
+    let sideEffect: number | null = null;
+
+    const resultValue = theOk.inspect((v) => {
+      sideEffect = v;
+    });
+
+    expect(sideEffect).toBe(value);
+    expect(resultValue).toBe(theOk);
+    expectTypeOf(resultValue).toEqualTypeOf<Result<number, string>>();
+  });
+
+  test('`inspectErr` method', () => {
+    const value = 42;
+    const theOk = Result.ok<number, string>(value);
+    let sideEffect: string | null = null;
+
+    const resultValue = theOk.inspectErr((e) => {
+      sideEffect = e;
+    });
+
+    expect(sideEffect).toBe(null);
+    expect(resultValue).toBe(theOk);
+    expectTypeOf(resultValue).toEqualTypeOf<Result<number, string>>();
+  });
+
   test('`toString` method', () => {
     const theValue = 42;
     const theOk = Result.ok(theValue);
@@ -1356,6 +1504,34 @@ describe('`result.Err` class', () => {
     const theReason = 'alas';
     const theErr = Result.err<number, string>(theReason);
     expect(theErr.unwrapOrElse(length)).toEqual(length(theReason));
+  });
+
+  test('`inspect` method', () => {
+    const error = 'something went wrong';
+    const theErr = Result.err<number, string>(error);
+    let sideEffect: number | null = null;
+
+    const resultValue = theErr.inspect((v) => {
+      sideEffect = v;
+    });
+
+    expect(sideEffect).toBe(null);
+    expect(resultValue).toBe(theErr);
+    expectTypeOf(resultValue).toEqualTypeOf<Result<number, string>>();
+  });
+
+  test('`inspectErr` method', () => {
+    const error = 'something went wrong';
+    const theErr = Result.err<number, string>(error);
+    let sideEffect: string | null = null;
+
+    const resultValue = theErr.inspectErr((e) => {
+      sideEffect = e;
+    });
+
+    expect(sideEffect).toBe(error);
+    expect(resultValue).toBe(theErr);
+    expectTypeOf(resultValue).toEqualTypeOf<Result<number, string>>();
   });
 
   test('`toString` method', () => {

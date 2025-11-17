@@ -353,6 +353,24 @@ class TaskImpl<T, E> implements PromiseLike<Result<T, E>> {
   }
 
   /**
+    Method variant for {@linkcode inspect}
+
+    Run a side effect with the resolved value without modifying the {@linkcode Task}.
+    The function is only called if the Task resolves, and the original Task is
+    returned unchanged for further chaining.
+
+    @param fn The function to call with the resolved value (only called on resolution)
+   */
+  inspect(fn: (value: T) => void): Task<T, E> {
+    return fromUnsafePromise(this.#promise.then(result.inspect(fn)));
+  }
+
+  /** Method variant for {@linkcode inspectRejection} */
+  inspectRejection(fn: (error: E) => void): Task<T, E> {
+    return fromUnsafePromise(this.#promise.then(result.inspectErr(fn)));
+  }
+
+  /**
     Map over a {@linkcode Task}, exactly as in {@linkcode map}, but operating on
     the rejection reason if the `Task` rejects, producing a new `Task`, still
     rejected, with the value returned from the function. If the task completed
@@ -2171,6 +2189,58 @@ export function map<T, U, E>(
   task?: Task<T, E>
 ): Task<U, E> | ((task: Task<T, E>) => Task<U, E>) {
   return curry1((task) => task.map(mapFn), task);
+}
+
+/**
+  Auto-curried, standalone function form of
+  {@linkcode Task.inspect Task.prototype.inspect}.
+
+  Run a side effect with the resolved value without modifying the Task.
+  The function is only called if the Task resolves, and the original Task is
+  returned unchanged for further chaining.
+
+  > **NOTE:** TypeScript type inference may be limited with the curried form.
+  > You may need to provide explicit type parameters.
+
+  @template T The type of the value when the `Task` resolves successfully.
+  @template E The type of the rejection reason when the `Task` rejects.
+  @param fn The function to call with the resolved value (only called on resolution)
+  @param task The Task to inspect
+  @returns The original Task, unchanged
+ */
+export function inspect<T, E>(fn: (value: T) => void): (task: Task<T, E>) => Task<T, E>;
+export function inspect<T, E>(fn: (value: T) => void, task: Task<T, E>): Task<T, E>;
+export function inspect<T, E>(
+  fn: (value: T) => void,
+  task?: Task<T, E>
+): Task<T, E> | ((task: Task<T, E>) => Task<T, E>) {
+  return curry1((task) => task.inspect(fn), task);
+}
+
+/**
+  Auto-curried, standalone function form of
+  {@linkcode Task.inspectRejection Task.prototype.inspectRejection}.
+
+  Executes a side-effect function with the rejection reason if the `Task` rejects,
+  without modifying the `Task` itself. The original `Task` is returned unchanged
+  for further chaining. If the `Task` resolves, the function is not called.
+
+  > **NOTE:** TypeScript type inference may be limited with the curried form.
+  > You may need to provide explicit type parameters.
+
+  @template T The type of the value when the `Task` resolves successfully.
+  @template E The type of the rejection reason when the `Task` rejects.
+  @param fn The function to call with the rejection reason (only called on rejection)
+  @param task The Task to inspect
+  @returns The original Task, unchanged
+ */
+export function inspectRejection<T, E>(fn: (error: E) => void): (task: Task<T, E>) => Task<T, E>;
+export function inspectRejection<T, E>(fn: (error: E) => void, task: Task<T, E>): Task<T, E>;
+export function inspectRejection<T, E>(
+  fn: (error: E) => void,
+  task?: Task<T, E>
+): Task<T, E> | ((task: Task<T, E>) => Task<T, E>) {
+  return curry1((task) => task.inspectRejection(fn), task);
 }
 
 /**

@@ -258,6 +258,46 @@ class MaybeImpl<T extends {}> implements SomeMaybe<T> {
     return this.repr[0] === 'Just' ? this.repr[1] : elseFn();
   }
 
+  /**
+    Run a side effect with the wrapped value without modifying the
+    {@linkcode Maybe}.
+
+    This is useful for performing actions like logging, debugging, or other
+    “side effects” that are safe. The function is only called if the `Maybe` is
+    a {@linkcode Just}, and the original `Maybe` is returned unchanged for
+    further operations.
+
+    NOTE: You should *never* mutate the value in the callback. Doing so will be
+    extremely surprising to your callers.
+
+    #### Examples
+
+    ```ts
+    import * as maybe from 'true-myth/maybe';
+
+    const log = (value: unknown) => console.log(value);
+    const double = (value: number) => value * 2;
+
+    // Logs `42` then `84`, and returns `Just(84)`.
+    maybe.just(42).inspect(log).map(double).inspect(log);
+
+    // Does not log anything, and returns `Nothing`.
+    maybe.nothing<number>().inspect(log).map(double).inspect(log);
+    ```
+
+    @template T The type of the wrapped value
+    @param fn The function to call with the wrapped value (only called for Just)
+    @param maybe The Maybe to inspect
+    @returns The original Maybe, unchanged
+   */
+  inspect(fn: (value: T) => void): Maybe<T> {
+    if (this.repr[0] === 'Just') {
+      fn(this.repr[1]);
+    }
+
+    return this as Maybe<T>;
+  }
+
   /** Method variant for {@linkcode toString} */
   toString(): string {
     return this.repr[0] === 'Just' ? `Just(${safeToString(this.repr[1])})` : 'Nothing';
@@ -948,6 +988,54 @@ export function unwrapOrElse<T extends {}, U>(
   maybe?: Maybe<T>
 ): (T | U) | ((maybe: Maybe<T>) => T | U) {
   const op = (m: Maybe<T>) => m.unwrapOrElse(orElseFn);
+  return curry1(op, maybe);
+}
+
+/**
+  Run a side effect with the wrapped value without modifying the {@linkcode Maybe}.
+
+  This is useful for performing actions like logging, debugging, or other “side
+  effects” that are safe. The function is only called if the `Maybe` is a
+  {@linkcode Just}, and the original `Maybe` is returned unchanged for further operations.
+
+  NOTE: You should *never* mutate the value in the callback. Doing so will be
+  extremely surprising to your callers.
+
+  ```ts
+  import * as maybe from 'true-myth/maybe';
+
+  const log = (value: unknown) => console.log(value);
+  const double = (value: number) => value * 2;
+
+  // Logs `42` then `84`, and returns `Just(84)`.
+  maybe.inspect(
+    maybe.map(
+      double,
+      maybe.inspect(maybe.just(42))
+    )
+  );
+
+  // Does not log anything, and returns `Nothing`.
+  maybe.inspect(
+    maybe.map(
+      double,
+      maybe.inspect(maybe.nothing<number>())
+    )
+  );
+  ```
+
+  @template T The type of the wrapped value
+  @param fn The function to call with the wrapped value (only called for Just)
+  @param maybe The Maybe to inspect
+  @returns The original Maybe, unchanged
+ */
+export function inspect<T extends {}>(fn: (value: T) => void, maybe: Maybe<T>): Maybe<T>;
+export function inspect<T extends {}>(fn: (value: T) => void): (maybe: Maybe<T>) => Maybe<T>;
+export function inspect<T extends {}>(
+  fn: (value: T) => void,
+  maybe?: Maybe<T>
+): Maybe<T> | ((maybe: Maybe<T>) => Maybe<T>) {
+  const op = (m: Maybe<T>) => m.inspect(fn);
   return curry1(op, maybe);
 }
 

@@ -236,6 +236,53 @@ class ResultImpl<T, E> {
     return this.repr[0] === 'Ok' ? this.repr[1] : elseFn(this.repr[1]);
   }
 
+  /**
+    Run a side effect with the wrapped value without modifying the
+    {@linkcode Result}.
+
+    This is useful for performing actions like logging, debugging, or other
+    “side effects” that are safe. The function is only called if the `Result` is
+    {@linkcode Ok}, and the original `Result` is returned unchanged for further
+    chaining.
+
+    #### Examples
+
+    ```ts
+    import * as result from 'true-myth/result';
+
+    const double = (n: number) => n * 2;
+    const log = (value: unknown) => console.log(value);
+
+    // Logs `42` then `84`, and returns `Ok(84)`.
+    result.ok<number, string>(42).inspect(log).map(double).inspect(log);
+
+    // Does not log anything, and returns `Err('error')`.
+    result.err<number, string>('error').inspect(log).map(double).inspect(log);
+    ```
+
+    @template T The type of the wrapped value
+    @template E The type of the error value
+    @param fn The function to call with the wrapped value (only called for Ok)
+    @param result The Result to inspect
+    @returns The original Result, unchanged
+   */
+  inspect(fn: (value: T) => void): Result<T, E> {
+    if (this.repr[0] === 'Ok') {
+      fn(this.repr[1]);
+    }
+
+    return this as Result<T, E>;
+  }
+
+  /** Method variant for {@linkcode inspectErr} */
+  inspectErr(fn: (error: E) => void): Result<T, E> {
+    if (this.repr[0] === 'Err') {
+      fn(this.repr[1]);
+    }
+
+    return this as Result<T, E>;
+  }
+
   /** Method variant for {@linkcode toString} */
   toString(): string {
     return `${this.repr[0]}(${safeToString(this.repr[1])})`;
@@ -1032,6 +1079,91 @@ export function unwrapOrElse<T, U, E>(
   result?: Result<T, E>
 ): (T | U) | ((result: Result<T, E>) => T | U) {
   const op = (r: Result<T, E>) => r.unwrapOrElse(orElseFn);
+  return curry1(op, result);
+}
+
+/**
+  Run a side effect with the wrapped value without modifying the
+  {@linkcode Result}.
+
+  This is useful for performing actions like logging, debugging, or other
+  “side effects” that are safe. The function is only called if the `Result` is
+  {@linkcode Ok}, and the original `Result` is returned unchanged for further
+  chaining.
+
+  #### Examples
+
+  ```ts
+  import * as result from 'true-myth/result';
+
+  result.ok(42)
+    .inspect((value) => console.log('Got value:', value))
+    .map((x) => x * 2);
+  // Logs: "Got value: 42"
+  // Returns: Ok(84)
+
+  result.err<number, string>('error')
+    .inspect((value) => console.log('Got value:', value))
+    .map((x) => x * 2);
+  // Logs nothing
+  // Returns: Err('error')
+  ```
+
+  @template T The type of the wrapped value
+  @template E The type of the error value
+  @param fn The function to call with the wrapped value (only called for Ok)
+  @param result The Result to inspect
+  @returns The original Result, unchanged
+ */
+export function inspect<T, E>(fn: (value: T) => void, result: Result<T, E>): Result<T, E>;
+export function inspect<T, E>(fn: (value: T) => void): (result: Result<T, E>) => Result<T, E>;
+export function inspect<T, E>(
+  fn: (value: T) => void,
+  result?: Result<T, E>
+): Result<T, E> | ((result: Result<T, E>) => Result<T, E>) {
+  const op = (r: Result<T, E>) => r.inspect(fn);
+  return curry1(op, result);
+}
+
+/**
+  Run a side effect with the error value without modifying the {@linkcode Result}.
+
+  This is useful for performing actions like logging, debugging, or other side
+  effects while maintaining the fluent chaining style. The function is only
+  called if the `Result` is {@linkcode Err}, and the original `Result` is
+  returned unchanged for further chaining.
+
+  #### Examples
+
+  ```ts
+  import * as result from 'true-myth/result';
+
+  result.err<number, string>('error')
+    .inspectErr((error) => console.log('Got error:', error))
+    .mapErr((e) => e.toUpperCase());
+  // Logs: "Got error: error"
+  // Returns: Err('ERROR')
+
+  result.ok<number, string>(42)
+    .inspectErr((error) => console.log('Got error:', error))
+    .mapErr((e) => e.toUpperCase());
+  // Logs nothing
+  // Returns: Ok(42)
+  ```
+
+  @template T The type of the wrapped value
+  @template E The type of the error value
+  @param fn The function to call with the error value (only called for Err)
+  @param result The Result to inspect
+  @returns The original Result, unchanged
+ */
+export function inspectErr<T, E>(fn: (error: E) => void, result: Result<T, E>): Result<T, E>;
+export function inspectErr<T, E>(fn: (error: E) => void): (result: Result<T, E>) => Result<T, E>;
+export function inspectErr<T, E>(
+  fn: (error: E) => void,
+  result?: Result<T, E>
+): Result<T, E> | ((result: Result<T, E>) => Result<T, E>) {
+  const op = (r: Result<T, E>) => r.inspectErr(fn);
   return curry1(op, result);
 }
 
