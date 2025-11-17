@@ -33,6 +33,8 @@ import Task, {
   and,
   mapRejected,
   map,
+  inspect,
+  inspectRejected,
   timeout,
   Timeout,
   toPromise,
@@ -252,6 +254,78 @@ describe('`Task`', () => {
         reject(theReason);
         let result = await theTask;
         expect(unwrapErr(result)).toEqual(stringify(theReason));
+      });
+    });
+
+    describe('`inspect`', () => {
+      test('when the task resolves', async () => {
+        let { promise, resolve } = deferred<number, string>();
+        let sideEffect: number | null = null;
+
+        let theTask = fromPromise(promise).inspect((value) => {
+          sideEffect = value;
+        });
+        expectTypeOf(theTask).toEqualTypeOf<Task<number, unknown>>();
+
+        let theValue = 42;
+        resolve(theValue);
+        let result = await theTask;
+
+        expect(sideEffect).toBe(theValue);
+        expect(unwrap(result)).toBe(theValue);
+      });
+
+      test('when the task rejects', async () => {
+        let { promise, reject } = deferred<number, string>();
+        let sideEffect: number | null = null;
+
+        let theTask = fromPromise(promise).inspect((value) => {
+          sideEffect = value;
+        });
+        expectTypeOf(theTask).toEqualTypeOf<Task<number, unknown>>();
+
+        let theReason = 'error';
+        reject(theReason);
+        let result = await theTask;
+
+        expect(sideEffect).toBe(null);
+        expect(unwrapErr(result)).toBe(theReason);
+      });
+    });
+
+    describe('`inspectRejection`', () => {
+      test('when the task resolves', async () => {
+        let { task, resolve } = Task.withResolvers<number, string>();
+        let sideEffect: string | null = null;
+
+        let theTask = task.inspectRejected((error) => {
+          sideEffect = error;
+        });
+        expectTypeOf(theTask).toEqualTypeOf<Task<number, string>>();
+
+        let theValue = 42;
+        resolve(theValue);
+        let result = await theTask;
+
+        expect(sideEffect).toBe(null);
+        expect(unwrap(result)).toBe(theValue);
+      });
+
+      test('when the task rejects', async () => {
+        let { task, reject } = Task.withResolvers<number, string>();
+        let sideEffect: string | null = null;
+
+        let theTask = task.inspectRejected((error) => {
+          sideEffect = error;
+        });
+        expectTypeOf(theTask).toEqualTypeOf<Task<number, string>>();
+
+        let theReason = 'error';
+        reject(theReason);
+        let result = await theTask;
+
+        expect(sideEffect).toBe(theReason);
+        expect(unwrapErr(result)).toBe(theReason);
       });
     });
 
@@ -2656,6 +2730,154 @@ describe('module-scope functions', () => {
         reject(theReason);
         let result = await theTask;
         expect(unwrapErr(result)).toEqual(theReason);
+      });
+    });
+  });
+
+  describe('inspect', () => {
+    test('when the task resolves', async () => {
+      let { task, resolve } = Task.withResolvers<number, string>();
+      let sideEffect: number | null = null;
+
+      let theTask = inspect((value) => {
+        sideEffect = value;
+      }, task);
+      expectTypeOf(theTask).toEqualTypeOf<Task<number, string>>();
+
+      let theValue = 42;
+      resolve(theValue);
+      let result = await theTask;
+
+      expect(sideEffect).toBe(theValue);
+      expect(unwrap(result)).toBe(theValue);
+    });
+
+    test('when the task rejects', async () => {
+      let { task, reject } = Task.withResolvers<number, string>();
+      let sideEffect: number | null = null;
+
+      let theTask = inspect((value) => {
+        sideEffect = value;
+      }, task);
+      expectTypeOf(theTask).toEqualTypeOf<Task<number, string>>();
+
+      let theReason = 'error';
+      reject(theReason);
+      let result = await theTask;
+
+      expect(sideEffect).toBe(null);
+      expect(unwrapErr(result)).toBe(theReason);
+    });
+
+    describe('with curried form', () => {
+      test('when the task resolves', async () => {
+        let { task, resolve } = Task.withResolvers<number, string>();
+        let sideEffect: number | null = null;
+
+        let inspectFn = inspect((value: number) => {
+          sideEffect = value;
+        });
+        let theTask = inspectFn(task);
+        expectTypeOf(theTask).toEqualTypeOf<Task<number, unknown>>();
+
+        let theValue = 42;
+        resolve(theValue);
+        let result = await theTask;
+
+        expect(sideEffect).toBe(theValue);
+        expect(unwrap(result)).toBe(theValue);
+      });
+
+      test('when the task rejects', async () => {
+        let { task, reject } = Task.withResolvers<number, string>();
+        let sideEffect: number | null = null;
+
+        let inspectFn = inspect((value: number) => {
+          sideEffect = value;
+        });
+        let theTask = inspectFn(task);
+        expectTypeOf(theTask).toEqualTypeOf<Task<number, unknown>>();
+
+        let theReason = 'error';
+        reject(theReason);
+        let result = await theTask;
+
+        expect(sideEffect).toBe(null);
+        expect(unwrapErr(result)).toBe(theReason);
+      });
+    });
+  });
+
+  describe('inspectRejection', () => {
+    test('when the task resolves', async () => {
+      let { task, resolve } = Task.withResolvers<number, string>();
+      let sideEffect: string | null = null;
+
+      let theTask = inspectRejected((error) => {
+        sideEffect = error;
+      }, task);
+      expectTypeOf(theTask).toEqualTypeOf<Task<number, string>>();
+
+      let theValue = 42;
+      resolve(theValue);
+      let result = await theTask;
+
+      expect(sideEffect).toBe(null);
+      expect(unwrap(result)).toBe(theValue);
+    });
+
+    test('when the task rejects', async () => {
+      let { task, reject } = Task.withResolvers<number, string>();
+      let sideEffect: string | null = null;
+
+      let theTask = inspectRejected((error) => {
+        sideEffect = error;
+      }, task);
+      expectTypeOf(theTask).toEqualTypeOf<Task<number, string>>();
+
+      let theReason = 'error';
+      reject(theReason);
+      let result = await theTask;
+
+      expect(sideEffect).toBe(theReason);
+      expect(unwrapErr(result)).toBe(theReason);
+    });
+
+    describe('with curried form', () => {
+      test('when the task resolves', async () => {
+        let { task, resolve } = Task.withResolvers<number, string>();
+        let sideEffect: string | null = null;
+
+        let inspectRejectionFn = inspectRejected((error: string) => {
+          sideEffect = error;
+        });
+        let theTask = inspectRejectionFn(task);
+        expectTypeOf(theTask).toEqualTypeOf<Task<unknown, string>>();
+
+        let theValue = 42;
+        resolve(theValue);
+        let result = await theTask;
+
+        expect(sideEffect).toBe(null);
+        expect(unwrap(result)).toBe(theValue);
+      });
+
+      test('when the task rejects', async () => {
+        let { task, reject } = Task.withResolvers<number, string>();
+        let sideEffect: string | null = null;
+
+        let inspectRejectionFn = inspectRejected((error: string) => {
+          sideEffect = error;
+        });
+        let theTask = inspectRejectionFn(task);
+        expectTypeOf(theTask).toEqualTypeOf<Task<unknown, string>>();
+
+        let theReason = 'error';
+        reject(theReason);
+        let result = await theTask;
+
+        expect(sideEffect).toBe(theReason);
+        expect(unwrapErr(result)).toBe(theReason);
       });
     });
   });

@@ -236,6 +236,79 @@ class ResultImpl<T, E> {
     return this.repr[0] === 'Ok' ? this.repr[1] : elseFn(this.repr[1]);
   }
 
+  /**
+    Run a side effect with the wrapped value without modifying the
+    {@linkcode Result}.
+
+    This is useful for performing actions like logging, debugging, or other
+    “side effects” external to the wrapped value. (**Note:** You should *never*
+    mutate the value in the callback. Doing so will be extremely surprising to
+    callers.) The function is only called if the `Result` is {@linkcode Ok}, and
+    the original `Result` is returned unchanged for further chaining.
+
+    ```ts
+    import * as result from 'true-myth/result';
+
+    const double = (n: number) => n * 2;
+    const log = (value: unknown) => console.log(value);
+
+    // Logs `42` then `84`, and returns `Ok(84)`.
+    result.ok<number, string>(42).inspect(log).map(double).inspect(log);
+
+    // Does not log anything, and returns `Err('error')`.
+    result.err<number, string>('error').inspect(log).map(double).inspect(log);
+    ```
+
+    @param fn The function to call with the wrapped value, only called for `Ok`.
+    @returns The original `Result`, unchanged
+   */
+  inspect(fn: (value: T) => void): Result<T, E> {
+    if (this.repr[0] === 'Ok') {
+      fn(this.repr[1]);
+    }
+
+    return this as Result<T, E>;
+  }
+
+  /**
+    Run a side effect with a wrapped error value without modifying the
+    {@linkcode Result}.
+
+    This is useful for performing actions like logging, debugging, or other
+    “side effects” external to the wrapped value. (**Note:** You should *never*
+    mutate the value in the callback. Doing so will be extremely surprising to
+    callers.) The function is only called if the `Result` is {@linkcode Err},
+    and the original `Result` is returned unchanged for further chaining.
+
+    ```ts
+    import * as result from 'true-myth/result';
+
+    const logError = (error: unknown) => console.logError('Got error:', error);
+
+    result.err<number, string>('error')
+      .inspectErr((error) => console.log('Got error:', error))
+      .mapErr((e) => e.toUpperCase());
+    // Logs: "Got error: error"
+    // Returns: Err('ERROR')
+
+    result.ok<number, string>(42)
+      .inspectErr((error) => console.log('Got error:', error))
+      .mapErr((e) => e.toUpperCase());
+    // Logs nothing
+    // Returns: Ok(42)
+    ```
+
+    @param fn The function to call with the error value, only called for `Err`.
+    @returns The original Result, unchanged
+   */
+  inspectErr(fn: (error: E) => void): Result<T, E> {
+    if (this.repr[0] === 'Err') {
+      fn(this.repr[1]);
+    }
+
+    return this as Result<T, E>;
+  }
+
   /** Method variant for {@linkcode toString} */
   toString(): string {
     return `${this.repr[0]}(${safeToString(this.repr[1])})`;
@@ -578,8 +651,6 @@ export function tryOrElse<T, E>(
   `Ok` variant, the map function is applied to it, and you get back a new
   `Result` with the value transformed, and still wrapped in an `Ok`.
 
-  #### Examples
-
   ```ts
   import { ok, err, map, toString } from 'true-myth/result';
   const double = n => n * 2;
@@ -618,8 +689,6 @@ export function map<T, U, E>(
   Map over a {@linkcode Result} instance as in [`map`](#map) and get out the
   value if `result` is an {@linkcode Ok}, or return a default value if `result`
   is an {@linkcode Err}.
-
-  #### Examples
 
   ```ts
   import { ok, err, mapOr } from 'true-myth/result';
@@ -676,8 +745,6 @@ export function mapOr<T, U, E>(
 
   Like {@linkcode mapOr} but using a function to transform the error into a
   usable value instead of simply using a default value.
-
-  #### Examples
 
   ```ts
   import { ok, err, mapOrElse } from 'true-myth/result';
@@ -750,8 +817,6 @@ export function mapOrElse<T, U, E>(
   different types of errors, or if you need an error of one shape to be in a
   different shape to use somewhere else in your codebase.
 
-  #### Examples
-
   ```ts
   import { ok, err, mapErr, toString } from 'true-myth/result';
 
@@ -795,8 +860,6 @@ export function mapErr<T, E, F>(
 
   Notice that, unlike in [`map`](#map) or its variants, the original `result` is
   not involved in constructing the new `Result`.
-
-  #### Examples
 
   ```ts
   import { and, ok, err, toString } from 'true-myth/result';
@@ -849,8 +912,6 @@ export function and<T, U, E>(
   > because [`bind` already means something in JavaScript][bind].
 
   [bind]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function/bind
-
-  #### Examples
 
   ```ts
   import { ok, err, andThen, toString } from 'true-myth/result';
@@ -1032,6 +1093,178 @@ export function unwrapOrElse<T, U, E>(
   result?: Result<T, E>
 ): (T | U) | ((result: Result<T, E>) => T | U) {
   const op = (r: Result<T, E>) => r.unwrapOrElse(orElseFn);
+  return curry1(op, result);
+}
+
+/**
+  Run a side effect with the wrapped value without modifying the {@linkcode
+  Result}.
+
+  This is useful for performing actions like logging, debugging, or other “side
+  effects” external to the wrapped value. (**Note:** You should *never* mutate
+  the value in the callback. Doing so will be extremely surprising to callers.)
+  The function is only called if the `Result` is {@linkcode Ok}, and the
+  original `Result` is returned unchanged for further chaining.
+
+  ```ts
+  import * as result from 'true-myth/result';
+
+  const double = (n: number) => n * 2;
+  const log = (value: unknown) => console.log(value);
+
+  // Logs `42` then `84`, and returns `Ok(84)`.
+  const anOk = result.ok<number, string>(42);
+  result.inspect(
+    log,
+    result.map(
+      double,
+      result.inspect(
+        log,
+        anOk
+      )
+    )
+  );
+
+  // Does not log anything, and returns `Err('error')`.
+  const anErr = result.err<number, string>('error');
+  result.inspect(
+    log,
+    result.map(
+      double,
+      result.inspect(
+        log,
+        anErr
+      )
+    )
+  );
+  ```
+
+  @template T The type of the wrapped value
+  @template E The type of the error value
+  @param fn The function to call with the wrapped value (only called for Ok)
+  @param result The Result to inspect
+  @returns The original Result, unchanged
+ */
+export function inspect<T, E>(fn: (value: T) => void, result: Result<T, E>): Result<T, E>;
+export function inspect<T, E>(fn: (value: T) => void): (result: Result<T, E>) => Result<T, E>;
+export function inspect<T, E>(
+  fn: (value: T) => void,
+  result?: Result<T, E>
+): Result<T, E> | ((result: Result<T, E>) => Result<T, E>) {
+  const op = (r: Result<T, E>) => r.inspect(fn);
+  return curry1(op, result);
+}
+
+/**
+  Run a side effect with the error value without modifying the {@linkcode
+  Result}.
+
+  This is useful for performing actions like logging, debugging, or other “side
+  effects” external to the wrapped value. (**Note:** You should *never* mutate
+  the value in the callback. Doing so will be extremely surprising to callers.)
+  The function is only called if the `Result` is {@linkcode Ok}, and the
+  original `Result` is returned unchanged for further chaining.
+
+  > [!NOTE]
+  > TypeScript type inference is limited with the curried form. You will need to
+  > provide explicit type parameters. Alternatively, use the non-curried form
+  > to get consistent type inference.
+
+  ```ts
+  import * as result from 'true-myth/result';
+
+  const double = (n: number) => n * 2;
+  const logError = (value: unknown) => console.log('Got error:', value);
+
+  // Logs: "Got error: error"
+  const anErr = result.err<number, string>('error');
+  result.inspectErr(
+    logError,
+    result.map(
+      double,
+      result.inspectErr(
+        logError,
+        anOk
+      )
+    )
+  );
+
+  // Does not log anything, and returns `Ok(42)`.
+  const anOk = result.ok<number, string>(42);
+  result.inspectErr(
+    logError,
+    result.map(
+      double,
+      result.inspectErr(
+        logError,
+        anErr
+      )
+    )
+  );
+  ```
+
+  @template T The type of the wrapped value
+  @template E The type of the error value
+  @param fn The function to call with the error value (only called for Err)
+  @param result The Result to inspect
+  @returns The original Result, unchanged
+ */
+export function inspectErr<T, E>(fn: (error: E) => void, result: Result<T, E>): Result<T, E>;
+/**
+  Run a side effect with the error value without modifying the {@linkcode
+  Result}.
+
+  This is useful for performing actions like logging, debugging, or other “side
+  effects” external to the wrapped value. (**Note:** You should *never* mutate
+  the value in the callback. Doing so will be extremely surprising to callers.)
+  The function is only called if the `Result` is {@linkcode Ok}, and the
+  original `Result` is returned unchanged for further chaining.
+
+  ```ts
+  import * as result from 'true-myth/result';
+
+  const double = (n: number) => n * 2;
+  const logError = (value: unknown) => console.log('Got error:', value);
+
+  // Logs: "Got error: error"
+  const anErr = result.err<number, string>('error');
+  result.inspectErr(
+    logError,
+    result.map(
+      double,
+      result.inspectErr(
+        logError,
+        anOk
+      )
+    )
+  );
+
+  // Does not log anything, and returns `Ok(42)`.
+  const anOk = result.ok<number, string>(42);
+  result.inspectErr(
+    logError,
+    result.map(
+      double,
+      result.inspectErr(
+        logError,
+        anErr
+      )
+    )
+  );
+  ```
+
+  @template T The type of the wrapped value
+  @template E The type of the error value
+  @param fn The function to call with the error value (only called for Err)
+  @param result The Result to inspect
+  @returns The original Result, unchanged
+ */
+export function inspectErr<T, E>(fn: (error: E) => void): (result: Result<T, E>) => Result<T, E>;
+export function inspectErr<T, E>(
+  fn: (error: E) => void,
+  result?: Result<T, E>
+): Result<T, E> | ((result: Result<T, E>) => Result<T, E>) {
+  const op = (r: Result<T, E>) => r.inspectErr(fn);
   return curry1(op, result);
 }
 

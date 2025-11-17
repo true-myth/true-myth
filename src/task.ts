@@ -353,6 +353,72 @@ class TaskImpl<T, E> implements PromiseLike<Result<T, E>> {
   }
 
   /**
+    Run a side effect with the wrapped value without modifying the
+    {@linkcode Task}.
+
+    This is useful for performing actions like logging, debugging, or other
+    “side effects” external to the wrapped value. (**Note:** You should *never*
+    mutate the value in the callback. Doing so will be extremely surprising to
+    callers.) The function is only called if the `Task` is {@linkcode Resolved},
+    and the original `Task` is returned unchanged for further chaining.
+
+    ```ts
+    import * as task from 'true-myth/task';
+
+    const double = (n: number) => n * 2;
+    const log = (value: unknown) => console.log(value);
+
+    // Logs `42` then `84`, and returns `Ok(84)`.
+    task.resolve<number, string>(42).inspect(log).map(double).inspect(log);
+
+    // Does not log anything, and returns `Err('error')`.
+    task.reject<number, string>('error').inspect(log).map(double).inspect(log);
+    ```
+
+    @param fn The function to call with the resolved value.
+    @returns The original `Task`, unchanged
+   */
+  inspect(fn: (value: T) => void): Task<T, E> {
+    return fromUnsafePromise(this.#promise.then(result.inspect(fn)));
+  }
+
+  /**
+    Run a side effect with the wrapped value without modifying the {@linkcode
+    Task}.
+
+    This is useful for performing actions like logging, debugging, or other
+    “side effects” external to the wrapped value. (**Note:** You should *never*
+    mutate the value in the callback. Doing so will be extremely surprising to
+    callers.) The function is only called if the `Task` is {@linkcode Rejected},
+    and the original `Task` is returned unchanged for further chaining.
+
+    ```ts
+    import * as task from 'true-myth/task';
+
+    const double = (n: number) => n * 2;
+    const log = (value: unknown) => console.log(value);
+
+    // Logs `42` then `84`, and returns `Ok(84)`.
+    task.resolve<number, string>(42)
+      .inspectRejected(log)
+      .map(double)
+      .inspectRejected(log);
+
+    // Does not log anything, and returns `Err('error')`.
+    task.reject<number, string>('error')
+      .inspectRejected(log)
+      .map(double)
+      .inspectRejected(log);
+    ```
+
+    @param fn The function to call with the rejected value.
+    @returns The original `Task`, unchanged
+   */
+  inspectRejected(fn: (error: E) => void): Task<T, E> {
+    return fromUnsafePromise(this.#promise.then(result.inspectErr(fn)));
+  }
+
+  /**
     Map over a {@linkcode Task}, exactly as in {@linkcode map}, but operating on
     the rejection reason if the `Task` rejects, producing a new `Task`, still
     rejected, with the value returned from the function. If the task completed
@@ -2174,6 +2240,200 @@ export function map<T, U, E>(
 }
 
 /**
+  Auto-curried, standalone function form of {@linkcode Task.inspect
+  Task.prototype.inspect}.
+
+  This is useful for performing actions like logging, debugging, or other “side
+  effects” external to the wrapped value. (**Note:** You should *never* mutate
+  the value in the callback. Doing so will be extremely surprising to callers.)
+  The function is only called if the `Task` resolves, and the original `Task` is
+  returned unchanged for further chaining.
+
+  > [!NOTE]
+  > TypeScript type inference is limited with the curried form. You will need to
+  > provide explicit type parameters. Alternatively, use the non-curried form
+  > to get consistent type inference.
+
+  ```ts
+  import * as task from 'true-myth/task';
+
+  const double = (n: number) => n * 2;
+  const log = (value: unknown) => console.log(value);
+
+  const logNumber = task.inspect<number, unknown>(log);
+  const doubleTask = task.map(double);
+
+  // Logs `42` then `84`, and returns `Ok(84)`.
+  let aResolvingTask = task.resolve<number, string>(42);
+  let aResolvingTask = task.resolve<number, string>(42);
+  await logNumber(doubleTask(logNumber(aResolvingTask)));
+
+  // Does not log anything, and returns `Err('error')`.
+  let aRejectingTask = task.reject<number, string>('error');
+  await logNumber(doubleTask(logNumber(aRejectingTask)));
+  ```
+
+  @template T The type of the value when the `Task` resolves successfully.
+  @template E The type of the rejection reason when the `Task` rejects.
+  @param fn The function to call with the resolved value (only called on resolution)
+  @param task The Task to inspect
+  @returns The original Task, unchanged
+ */
+export function inspect<T, E>(fn: (value: T) => void): (task: Task<T, E>) => Task<T, E>;
+/**
+  Standalone function form of {@linkcode Task.inspect Task.prototype.inspect}.
+
+  This is useful for performing actions like logging, debugging, or other “side
+  effects” external to the wrapped value. (**Note:** You should *never* mutate
+  the value in the callback. Doing so will be extremely surprising to callers.)
+  The function is only called if the `Task` resolves, and the original `Task` is
+  returned unchanged for further chaining.
+
+  ```ts
+  import * as task from 'true-myth/task';
+
+  const double = (n: number) => n * 2;
+  const log = (value: unknown) => console.log(value);
+
+  // Logs `42` then `84`, and returns `Resolved(84)`.
+  let aResolvingTask = task.resolve<number, string>(42);
+  task.inspect(
+    log,
+    task.map(
+      double,
+      task.inspect(
+        log,
+        aResolvingTask
+      )
+    )
+  );
+
+  // Does not log anything, and returns `Err('error')`.
+  let aRejectingTask = task.reject<number, string>('error');
+  await task.inspect(
+    log,
+    task.map(
+      double,
+      task.inspect(
+        log,
+        aRejectingTask
+      )
+    )
+  );
+  ```
+
+  @template T The type of the value when the `Task` resolves successfully.
+  @template E The type of the rejection reason when the `Task` rejects.
+  @param fn The function to call with the resolved value (only called on resolution)
+  @param task The Task to inspect
+  @returns The original Task, unchanged
+ */
+export function inspect<T, E>(fn: (value: T) => void, task: Task<T, E>): Task<T, E>;
+export function inspect<T, E>(
+  fn: (value: T) => void,
+  task?: Task<T, E>
+): Task<T, E> | ((task: Task<T, E>) => Task<T, E>) {
+  return curry1((task) => task.inspect(fn), task);
+}
+
+/**
+  Auto-curried, standalone function form of
+  {@linkcode Task.inspectRejection Task.prototype.inspectRejection}.
+
+  This is useful for performing actions like logging, debugging, or other “side
+  effects” external to the wrapped value. (**Note:** You should *never* mutate
+  the value in the callback. Doing so will be extremely surprising to callers.)
+  The function is only called if the `Task` reject, and the original `Task` is
+  returned unchanged for further chaining.
+
+  > [!NOTE]
+  > TypeScript type inference is limited with the curried form. You will need to
+  > provide explicit type parameters. Alternatively, use the non-curried form
+  > to get consistent type inference.
+
+  ```ts
+  import * as task from 'true-myth/task';
+
+  const double = (n: number) => n * 2;
+  const logError = (error: unknown) => console.error('Got error:', error);
+
+  const logAnyError = task.inspect<number, unknown>(logError);
+  const doubleTask = task.map(double);
+
+  // Does not log anything, and returns `Resolved(42)`.
+  let aResolvingTask = task.resolve<number, string>(42);
+  logAnyError(doubleTask(logAnyError(aResolvingTask)));
+
+  // Logs: "Got error: error"
+  let aRejectingTask = task.reject<number, string>('error');
+  logAnyError(doubleTask(logAnyError(aRejectingTask)));
+  ```
+
+  @template T The type of the value when the `Task` resolves successfully.
+  @template E The type of the rejection reason when the `Task` rejects.
+  @param fn The function to call with the rejection reason (only called on rejection)
+  @param task The Task to inspect
+  @returns The original Task, unchanged
+ */
+export function inspectRejected<T, E>(fn: (error: E) => void): (task: Task<T, E>) => Task<T, E>;
+/**
+  Standalone function form of {@linkcode Task.inspectRejection
+  Task.prototype.inspectRejection}.
+
+  This is useful for performing actions like logging, debugging, or other “side
+  effects” external to the wrapped value. (**Note:** You should *never* mutate
+  the value in the callback. Doing so will be extremely surprising to callers.)
+  The function is only called if the `Task` reject, and the original `Task` is
+  returned unchanged for further chaining.
+
+  ```ts
+  import * as task from 'true-myth/task';
+
+  const double = (n: number) => n * 2;
+  const logError = (error: unknown) => console.error('Got error:', error);
+
+  // Does not log anything, and returns `Resolved(42)`.
+  let aResolvingTask = task.resolve<number, string>(42);
+  task.inspectRejected(
+    logError,
+    task.map(
+      double,
+      task.inspectRejected(
+        logError,
+        aResolvingTask
+      )
+    )
+  );
+
+  // Logs: "Got error: error"
+  let aRejectingTask = task.reject<number, string>('error');
+  task.inspectRejected(
+    logError,
+    task.map(
+      double,
+      task.inspectRejected(
+        logError,
+        aRejectingTask
+      )
+    )
+  );
+  ```
+
+  @template T The type of the value when the `Task` resolves successfully.
+  @template E The type of the rejection reason when the `Task` rejects.
+  @param fn The function to call with the rejection reason (only called on rejection)
+  @param task The Task to inspect
+  @returns The original Task, unchanged
+ */
+export function inspectRejected<T, E>(fn: (error: E) => void, task: Task<T, E>): Task<T, E>;
+export function inspectRejected<T, E>(
+  fn: (error: E) => void,
+  task?: Task<T, E>
+): Task<T, E> | ((task: Task<T, E>) => Task<T, E>) {
+  return curry1((task) => task.inspectRejected(fn), task);
+}
+
+/**
   Auto-curried, standalone function form of
   {@linkcode Task.mapRejected Task.prototype.mapRejected}.
 
@@ -2191,6 +2451,13 @@ export function map<T, U, E>(
   @template E The type of the rejection reason when the `Task` rejects.
  */
 export function mapRejected<T, E, F>(mapFn: (e: E) => F): (task: Task<T, E>) => Task<T, F>;
+/**
+  Standalone function form of {@linkcode Task.mapRejected
+  Task.prototype.mapRejected}.
+
+  @template T The type of the value when the `Task` resolves successfully.
+  @template E The type of the rejection reason when the `Task` rejects.
+ */
 export function mapRejected<T, E, F>(mapFn: (e: E) => F, task: Task<T, E>): Task<T, F>;
 export function mapRejected<T, E, F>(
   mapFn: (e: E) => F,

@@ -338,6 +338,69 @@ describe('`Maybe` pure functions', () => {
     expect(undefinedOr42).toEqual(42);
   });
 
+  describe('`inspect`', () => {
+    test('with Just', () => {
+      const value = 42;
+      const theJust = maybe.of(value);
+      let sideEffect: number | null = null;
+
+      const result = maybe.inspect((v) => {
+        sideEffect = v;
+      }, theJust);
+
+      expect(sideEffect).toBe(value);
+      expect(result).toBe(theJust);
+      expectTypeOf(result).toEqualTypeOf<Maybe<number>>();
+    });
+
+    test('with Nothing', () => {
+      const theNothing = maybe.nothing<number>();
+      let sideEffect: number | null = null;
+
+      const result = maybe.inspect((v) => {
+        sideEffect = v;
+      }, theNothing);
+
+      expect(sideEffect).toBe(null);
+      expect(result).toBe(theNothing);
+      expectTypeOf(result).toEqualTypeOf<Maybe<number>>();
+    });
+
+    describe('curried form', () => {
+      test('with Just', () => {
+        const value = 'hello';
+        const theJust = maybe.of(value);
+        let sideEffect: string | null = null;
+
+        const curried = maybe.inspect((v: string) => {
+          sideEffect = v;
+        });
+
+        expectTypeOf(curried).toEqualTypeOf<(maybe: Maybe<string>) => Maybe<string>>();
+
+        const result = curried(theJust);
+
+        expect(sideEffect).toBe(value);
+        expect(result).toBe(theJust);
+      });
+
+      test('with Nothing', () => {
+        const theNothing = maybe.nothing<string>();
+        let sideEffect: string | null = null;
+
+        const curried = maybe.inspect((v: string) => {
+          sideEffect = v;
+        });
+
+        const result = curried(theNothing);
+
+        expect(sideEffect).toBe(null);
+        expect(result).toBe(theNothing);
+        expectTypeOf(result).toEqualTypeOf<Maybe<string>>();
+      });
+    });
+  });
+
   describe('`toString`', () => {
     test('with simple values', () => {
       expect(maybe.toString(maybe.of(42))).toEqual('Just(42)');
@@ -1045,6 +1108,20 @@ describe('`Maybe` class', () => {
       expect(theJust.unwrapOrElse(() => 'other value')).toEqual(value);
     });
 
+    test('`inspect` method', () => {
+      const value = 42;
+      const theJust = new Maybe(value);
+      let sideEffect: number | null = null;
+
+      const result = theJust.inspect((v) => {
+        sideEffect = v;
+      });
+
+      expect(sideEffect).toBe(value);
+      expect(result).toBe(theJust);
+      expectTypeOf(result).toEqualTypeOf<Maybe<number>>();
+    });
+
     test('`toString` method', () => {
       expect(maybe.of(42).toString()).toEqual('Just(42)');
     });
@@ -1286,6 +1363,19 @@ describe('`Maybe` class', () => {
       const theNothing = new Maybe();
       const theDefaultValue = 'it be all fine tho';
       expect(theNothing.unwrapOrElse(() => theDefaultValue)).toEqual(theDefaultValue);
+    });
+
+    test('`inspect` method', () => {
+      const theNothing = new Maybe<number>();
+      let sideEffect: number | null = null;
+
+      const result = theNothing.inspect((v) => {
+        sideEffect = v;
+      });
+
+      expect(sideEffect).toBe(null);
+      expect(result).toBe(theNothing);
+      expectTypeOf(result).toEqualTypeOf<Maybe<number>>();
     });
 
     test('`toString` method', () => {
