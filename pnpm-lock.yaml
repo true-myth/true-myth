@@ -28,7 +28,7 @@ importers:
         version: 2.1.27
       effect:
         specifier: ^3.17.5
-        version: 3.19.4
+        version: 3.19.5
       feed:
         specifier: ^5.0.1
         version: 5.1.0
@@ -1119,8 +1119,8 @@ packages:
   eastasianwidth@0.2.0:
     resolution: {integrity: sha512-I88TYZWc9XiYHRQ4/3c5rjjfgkjhLyW2luGIheGERbNQ6OY7yTybanSpDXZa8y7VUP9YmDcYa+eyq4ca7iLqWA==}
 
-  effect@3.19.4:
-    resolution: {integrity: sha512-gApFffMwpDVgmw/FzCaYWt6zw4m0xAnQf5+cPS0+Sl85AxfeovJeEIsiEQVlk+ZvtBYcoPXxi65GIyruzanQ5g==}
+  effect@3.19.5:
+    resolution: {integrity: sha512-P/Yml/wuqfIWVg4EH3QWKEqe4txwZVa9tCnlp24mRtIxN/wbn27KLOuDyF0HcKuMYsX/SGw8Lxe0T0Y6q4tvBA==}
 
   emoji-regex@8.0.0:
     resolution: {integrity: sha512-MSjYzcWNOA0ewAHpz0MxpYFvwg6yjy1NG3xteoqz644VCo/RPgnr1/GGt+ic3iJTzQ8Eu3TdM14SawnVUmGE6A==}
@@ -3584,7 +3584,7 @@ snapshots:
 
   eastasianwidth@0.2.0: {}
 
-  effect@3.19.4:
+  effect@3.19.5:
     dependencies:
       '@standard-schema/spec': 1.0.0
       fast-check: 3.23.2
