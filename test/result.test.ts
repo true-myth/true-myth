@@ -681,40 +681,40 @@ describe('`Result` pure functions', () => {
     });
   });
 
-  describe('`all` method', () => {
+  describe('`all` function', () => {
     test('with empty results', () => {
       const empty = result.all([]);
-
+      expectTypeOf(empty).toEqualTypeOf<Result<[], never>>();
       expect(empty).toEqual(result.ok([]));
     });
 
     test('with one Ok', () => {
       const oneOk = result.all([result.ok(1)]);
-
+      expectTypeOf(oneOk).toEqualTypeOf<Result<[number], never>>();
       expect(oneOk).toEqual(result.ok([1]));
     });
 
     test('with one Err', () => {
       const oneErr = result.all([result.err('error 1')]);
-
+      expectTypeOf(oneErr).toEqualTypeOf<Result<[never], string>>();
       expect(oneErr).toEqual(result.err('error 1'));
     });
 
     test('with all Ok', () => {
-      const allOk = result.all([result.ok(1), result.ok(2), result.ok(3)]);
-
-      expect(allOk).toEqual(result.ok([1, 2, 3]));
+      const allOk = result.all([result.ok(1), result.ok('two'), result.ok(true)]);
+      expectTypeOf(allOk).toEqualTypeOf<Result<[number, string, boolean], never>>();
+      expect(allOk).toEqual(result.ok([1, 'two', true]));
     });
 
     test('with all Err', () => {
       const allErr = result.all([result.err('error 1'), result.err('error 2')]);
-
+      expectTypeOf(allErr).toEqualTypeOf<Result<[never, never], string>>();
       expect(allErr).toEqual(result.err('error 1'));
     });
 
     test('with some Err', () => {
       const someErr = result.all([result.ok(1), result.err('error 2'), result.ok(3)]);
-
+      expectTypeOf(someErr).toEqualTypeOf<Result<[number, never, number], string>>();
       expect(someErr).toEqual(result.err('error 2'));
     });
   });
@@ -742,54 +742,54 @@ describe('`Result` pure functions', () => {
   });
 });
 
-describe('`allResults` method', () => {
+describe('`transposeAll` function', () => {
   test('with empty results', () => {
     const empty = result.transposeAll([]);
-
+    expectTypeOf(empty).toEqualTypeOf<Result<[], never>>();
     expect(empty).toEqual(result.ok([]));
   });
 
   test('with one Ok', () => {
     const oneOk = result.transposeAll([result.ok(1)]);
-
+    expectTypeOf(oneOk).toEqualTypeOf<Result<[number], never[]>>();
     expect(oneOk).toEqual(result.ok([1]));
   });
 
   test('with one Err', () => {
     const oneErr = result.transposeAll([result.err('error 1')]);
-
+    expectTypeOf(oneErr).toEqualTypeOf<Result<[never], string[]>>();
     expect(oneErr).toEqual(result.err(['error 1']));
   });
 
   test('with all Ok', () => {
     const allOk = result.transposeAll([result.ok(1), result.ok(2), result.ok(3)]);
-
+    expectTypeOf(allOk).toEqualTypeOf<Result<[number, number, number], never[]>>();
     expect(allOk).toEqual(result.ok([1, 2, 3]));
   });
 
   test('with all Err', () => {
     const allErr = result.transposeAll([result.err('error 1'), result.err('error 2')]);
-
+    expectTypeOf(allErr).toEqualTypeOf<Result<[never, never], string[]>>();
     expect(allErr).toEqual(result.err(['error 1', 'error 2']));
   });
 
   test('with some Err', () => {
     const someErr = result.transposeAll([result.ok(1), result.err('error 2'), result.ok(3)]);
-
+    expectTypeOf(someErr).toEqualTypeOf<Result<[number, never, number], string[]>>();
     expect(someErr).toEqual(result.err(['error 2']));
   });
 });
 
-describe('`any` method', () => {
+describe('`any` function', () => {
   test('with empty results', () => {
     const empty = result.transposeAny([]);
-
+    expectTypeOf(empty).toEqualTypeOf<Result<[], never>>();
     expect(empty).toEqual(result.err([]));
   });
 
   test('with one Ok', () => {
     const oneOk = result.transposeAny([result.ok(1)]);
-
+    expectTypeOf(oneOk).toEqualTypeOf<Result<Array<number>, [never]>>();
     expect(oneOk).toEqual(result.ok(1));
   });
 
@@ -801,13 +801,13 @@ describe('`any` method', () => {
 
   test('with all Ok', () => {
     const allOk = result.transposeAny([result.ok(1), result.ok(2), result.ok(3)]);
-
+    expectTypeOf(allOk).toEqualTypeOf<Result<Array<number>, [never, never, never]>>();
     expect(allOk).toEqual(result.ok(1));
   });
 
   test('with all Err', () => {
     const allErr = result.transposeAny([result.err('error 1'), result.err('error 2')]);
-
+    expectTypeOf(allErr).toEqualTypeOf<Result<Array<never>, [string, string]>>();
     expect(allErr).toEqual(result.err(['error 1', 'error 2']));
   });
 
@@ -817,7 +817,7 @@ describe('`any` method', () => {
       result.err('error 2'),
       result.ok(3),
     ]);
-
+    expectTypeOf(someErr).toEqualTypeOf<Result<Array<number>, [string, string, never]>>();
     expect(someErr).toEqual(result.ok(3));
   });
 });
@@ -856,10 +856,10 @@ test('narrowing', () => {
 describe('`Ok` instance', () => {
   test('constructor', () => {
     const fullyQualifiedOk = Result.ok<number, string>(42);
-    expectTypeOf(fullyQualifiedOk).toMatchTypeOf<Result<number, string>>();
+    expectTypeOf(fullyQualifiedOk).toEqualTypeOf<Result<number, string>>();
 
     const unqualifiedOk = Result.ok('string');
-    expectTypeOf(unqualifiedOk).toMatchTypeOf<Result<string, unknown>>();
+    expectTypeOf(unqualifiedOk).toExtend<Result<string, unknown>>();
 
     expect(() => Result.ok(null)).not.toThrow();
     expect(() => Result.ok(undefined)).not.toThrow();
@@ -1144,11 +1144,11 @@ describe('`Ok` instance', () => {
 describe('`result.Err` class', () => {
   test('constructor', () => {
     const fullyQualifiedErr = Result.err<string, number>(42);
-    expectTypeOf(fullyQualifiedErr).toMatchTypeOf<Result<string, number>>();
+    expectTypeOf(fullyQualifiedErr).toEqualTypeOf<Result<string, number>>();
 
     const unqualifiedErr = Result.err('string');
-    expectTypeOf(unqualifiedErr).toMatchTypeOf<Result<unknown, string>>();
-    expectTypeOf(unqualifiedErr).toMatchTypeOf<Result<never, string>>();
+    expectTypeOf(unqualifiedErr).toExtend<Result<unknown, string>>();
+    expectTypeOf(unqualifiedErr).toExtend<Result<never, string>>();
 
     expect(() => Result.err(null)).not.toThrow();
     expect(() => Result.err(undefined)).not.toThrow();
