@@ -1535,8 +1535,10 @@ type ResultTypesFor<A extends readonly AnyResult[]> = {
   @internal
  */
 export type All<A extends readonly AnyResult[]> = Result<
+  // `[...]` to keep the ordering for a tuple type
   [...ResultTypesFor<A>['ok']],
-  ResultTypesFor<A>['err']
+  // `[number]` to turn it into an unordered array
+  ResultTypesFor<A>['err'][number]
 >;
 
 /**
@@ -1586,7 +1588,7 @@ export type All<A extends readonly AnyResult[]> = Result<
 export function all(results: readonly []): Result<[], never>;
 export function all<const A extends readonly AnyResult[]>(results: A): All<A>;
 export function all(results: readonly AnyResult[]): Result<unknown[], unknown> {
-  const oks = [];
+  const oks = new Array<unknown>();
 
   for (const result of results) {
     if (result.isErr) {
@@ -1606,14 +1608,19 @@ export function all(results: readonly AnyResult[]): Result<unknown[], unknown> {
   @internal
  */
 export type AllResults<A extends readonly AnyResult[]> = Result<
+  // `[...]` to keep the ordering for a tuple type
   [...ResultTypesFor<A>['ok']],
-  ResultTypesFor<A>['err'][]
+  // `[number]` to turn it into an unordered array, `Array` to capture that it
+  // an array of those types. Notably, the array *will* be ordered, but not in a
+  // way that we can capture statically: we do not know *which* elements will be
+  // in the resulting array.
+  Array<ResultTypesFor<A>['err'][number]>
 >;
 
 /**
   Given an array of results, return a new {@linkcode Ok} result if all results
-  are {@linkcode Ok} or a new {@linkcode Err} result if some result is
-  {@linkcode Err}.
+  are {@linkcode Ok} or a new {@linkcode Err} result with all errors if one or
+  more of the results is {@linkcode Err}.
 
   ## Examples
 
@@ -1621,9 +1628,9 @@ export type AllResults<A extends readonly AnyResult[]> = Result<
   containing an array of all provided {@linkcode Ok} values:
 
   ```ts
-  import Result, { all } from 'true-myth/result';
+  import Result, { transposeAll } from 'true-myth/result';
 
-  let result = all([
+  let result = transposeAll([
     Result.ok(10),
     Result.ok(100),
     Result.ok(1000)
@@ -1636,9 +1643,9 @@ export type AllResults<A extends readonly AnyResult[]> = Result<
   containing an array of all {@linkcode Err} encountered:
 
   ```ts
-  import Result, { all } from 'true-myth/result';
+  import Result, { transposeAll } from 'true-myth/result';
 
-  let result = all([
+  let result = transposeAll([
     Result.ok(10),
     Result.err("something went wrong"),
     Result.err("something else went wrong")
@@ -1719,7 +1726,7 @@ export function transposeAll(results: readonly AnyResult[]): Result<unknown[], u
 export function transposeAny(results: []): Result<[], never>;
 export function transposeAny<const A extends AnyResult[]>(
   results: A
-): Result<ResultTypesFor<A>['ok'], [...ResultTypesFor<A>['err']]>;
+): Result<Array<ResultTypesFor<A>['ok'][number]>, [...ResultTypesFor<A>['err']]>;
 export function transposeAny(
   results: readonly [] | readonly AnyResult[]
 ): Result<unknown, unknown[]> {
