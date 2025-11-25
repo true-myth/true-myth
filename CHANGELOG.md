@@ -8,6 +8,11 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 
 
+## 9.3.1 (2025-11-25)
+
+Correctly publish to npm so README shows up, that’s it.
+
+
 ## 9.3.0 (2025-11-25)
 
 The big new feature is an `inspect` method and function that allows you to “tap into” a `Maybe`, `Result`, or `Task` to perform side effects safely. This can be helpful for debugging, for adding tracing, or for many other similar things. For example, to debug what value exists in a chain of `Maybe` operations, you could use the new `inspect` method like this:
