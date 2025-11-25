@@ -7,6 +7,50 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 
 
+
+## 9.3.0 (2025-11-25)
+
+The big new feature is an `inspect` method and function that allows you to “tap into” a `Maybe`, `Result`, or `Task` to perform side effects safely. This can be helpful for debugging, for adding tracing, or for many other similar things. For example, to debug what value exists in a chain of `Maybe` operations, you could use the new `inspect` method like this:
+
+```ts
+import type Maybe from 'true-myth/maybe';
+
+const log = (value: unknown) => console.log("The value:", value);
+const randomInteger = () => Math.floor(Math.random() * Number.MAX_SAFE_INTEGER);
+
+const finalMaybe = Maybe.of(randomInteger())
+  .inspect(log)
+  .map((n) => n % randomInteger())
+  .inspect(log)
+  .andThen((n) => n % 2 === 0 ? Maybe.just(n / 2) : Maybe.nothing())
+  .inspect(log);
+```
+
+For any given run, this will always log two values; it will also log a third when the modulo check passes. The output is the `Maybe` value.
+
+There are also `inspectErr` and `inspectRejected` methods and functions for `Result` and `Task` instances respectively.
+
+### Changes
+
+#### :rocket: Enhancement
+* [#1194](https://github.com/true-myth/true-myth/pull/1194) feature: add `inspect` functionality ([@chriskrycho](https://github.com/chriskrycho))
+
+#### :bug: Bug Fix
+* [#1189](https://github.com/true-myth/true-myth/pull/1189) Result: fix type-level bugs in `any`, `all`, and `transposeAll` ([@chriskrycho](https://github.com/chriskrycho))
+
+#### :memo: Documentation
+* [#1155](https://github.com/true-myth/true-myth/pull/1155) Fix typo in Task docs (`Task.rejecte` to `Task.reject`) ([@kbrgl](https://github.com/kbrgl))
+* [#1150](https://github.com/true-myth/true-myth/pull/1150) Docs: fix `jitter` example: `Delay` -> `delay` ([@Zegnat](https://github.com/Zegnat))
+
+#### :house: Internal
+* [#1195](https://github.com/true-myth/true-myth/pull/1195) internal: simplify/modernize tsconfig.json configuration ([@chriskrycho](https://github.com/chriskrycho))
+
+### Committers: 3
+- Chris Krycho ([@chriskrycho](https://github.com/chriskrycho))
+- Kabir Goel ([@kbrgl](https://github.com/kbrgl))
+- Martijn van der Ven ([@Zegnat](https://github.com/Zegnat))
+
+
 ## 9.2.0 (2025-09-27)
 
 Adds a `flatten` helper and method to each of `Maybe`, `Result`, and `Task` to help with the situations where you end up with a nested version of each. For example, with `Maybe`:
