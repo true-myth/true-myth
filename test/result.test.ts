@@ -808,6 +808,12 @@ describe('`Result` pure functions', () => {
       expect(empty).toEqual(result.ok([]));
     });
 
+    test('with readonly tuple', () => {
+      const tuple = [result.ok(1)] as const;
+      const oneOk = result.all(tuple);
+      expectTypeOf(oneOk).toEqualTypeOf<Result<[number], never>>();
+    });
+
     test('with one Ok', () => {
       const oneOk = result.all([result.ok(1)]);
       expectTypeOf(oneOk).toEqualTypeOf<Result<[number], never>>();
@@ -869,6 +875,12 @@ describe('`transposeAll` function', () => {
     expect(empty).toEqual(result.ok([]));
   });
 
+  test('with readonly tuple', () => {
+    const tuple = [result.ok(1)] as const;
+    const oneOk = result.transposeAll(tuple);
+    expectTypeOf(oneOk).toEqualTypeOf<Result<[number], never[]>>();
+  });
+
   test('with one Ok', () => {
     const oneOk = result.transposeAll([result.ok(1)]);
     expectTypeOf(oneOk).toEqualTypeOf<Result<[number], never[]>>();
@@ -905,6 +917,12 @@ describe('`any` function', () => {
     const empty = result.transposeAny([]);
     expectTypeOf(empty).toEqualTypeOf<Result<[], never>>();
     expect(empty).toEqual(result.err([]));
+  });
+
+  test('with readonly tuple', () => {
+    const tuple = [result.ok(1)] as const;
+    const oneOk = result.transposeAny(tuple);
+    expectTypeOf(oneOk).toEqualTypeOf<Result<Array<number>, [never]>>();
   });
 
   test('with one Ok', () => {

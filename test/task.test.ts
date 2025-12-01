@@ -1331,6 +1331,13 @@ describe('`Task`', () => {
 
 describe('module-scope functions', () => {
   describe('all', () => {
+    test('with readonly tuple', () => {
+      let { task } = Task.withResolvers<string, number>();
+      const tuple = [task] as const;
+      let result = all(tuple);
+      expectTypeOf(result).toEqualTypeOf<Task<[string], number>>();
+    });
+
     describe('with a single task', () => {
       test('that is still pending', () => {
         let { task } = Task.withResolvers<string, number>();
@@ -1524,6 +1531,13 @@ describe('module-scope functions', () => {
   });
 
   describe('allSettled', () => {
+    test('with readonly tuple', () => {
+      let { task } = Task.withResolvers<string, number>();
+      const tuple = [task] as const;
+      let result = allSettled(tuple);
+      expectTypeOf(result).toEqualTypeOf<Task<[Result<string, number>], never>>();
+    });
+
     describe('with a single task', () => {
       test('that is still pending', () => {
         let { task } = Task.withResolvers<string, number>();
@@ -1690,6 +1704,13 @@ describe('module-scope functions', () => {
         expect(result.reason.errors.length).toBe(0);
         expect(result.reason.toString()).toMatch('No tasks');
       }
+    });
+
+    test('with readonly tuple', async () => {
+      let { task } = Task.withResolvers<string, number>();
+      const tuple = [task] as const;
+      let result = any(tuple);
+      expectTypeOf(result).toEqualTypeOf<Task<string, AggregateRejection<[number]>>>();
     });
 
     describe('with a single task', () => {
