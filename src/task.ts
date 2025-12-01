@@ -968,6 +968,7 @@ class TaskImpl<T, E> implements PromiseLike<Result<T, E>> {
  */
 export type AnyTask = Task<unknown, unknown>;
 
+/** @internal */
 export type TaskTypesFor<A extends readonly AnyTask[]> = {
   resolution: { -readonly [P in keyof A]: ResolvesTo<A[P]> };
   rejection: { -readonly [P in keyof A]: RejectsWith<A[P]> };
