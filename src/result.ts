@@ -1957,7 +1957,7 @@ export function transposeAll(results: readonly AnyResult[]): Result<unknown[], u
   @template A The type of the array or tuple of tasks.
 */
 export function transposeAny(results: []): Result<[], never>;
-export function transposeAny<const A extends AnyResult[]>(
+export function transposeAny<const A extends readonly AnyResult[]>(
   results: A
 ): Result<Array<ResultTypesFor<A>['ok'][number]>, [...ResultTypesFor<A>['err']]>;
 export function transposeAny(
