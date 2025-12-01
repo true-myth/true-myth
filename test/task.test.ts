@@ -1547,8 +1547,7 @@ describe('module-scope functions', () => {
       });
 
       test('that has resolved', async () => {
-        let theTask = Task.resolve('hello');
-        let result = allSettled([theTask]);
+        let result = allSettled([Task.resolve('hello')]);
         expectTypeOf(result).toEqualTypeOf<Task<[Result<string, never>], never>>();
         await result;
         expect(result.state).toBe(State.Resolved);

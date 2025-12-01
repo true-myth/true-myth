@@ -1160,6 +1160,7 @@ export type Settled<A extends readonly AnyTask[]> = {
 
   @template A The type of the array or tuple of tasks.
  */
+export function allSettled(tasks: []): Task<[], never>;
 export function allSettled<const A extends readonly AnyTask[]>(tasks: A): Task<Settled<A>, never>;
 export function allSettled(tasks: AnyTask[]): Task<unknown, never> {
   // All task promises should resolve; none should ever reject, by definition.
