@@ -942,6 +942,515 @@ describe('`any` function', () => {
   });
 });
 
+describe('`allKeyed` function', () => {
+  test('with empty results', () => {
+    const empty = result.allKeyed({});
+    expectTypeOf(empty).toEqualTypeOf<Result<Record<string | symbol, never>, never>>();
+    expect(empty).toEqual(result.ok({}));
+  });
+
+  test('with one Ok', () => {
+    const oneOk = result.allKeyed({
+      first: result.ok(1),
+    });
+    expectTypeOf(oneOk).toEqualTypeOf<Result<{ first: number }, never>>();
+    expect(oneOk).toEqual(
+      result.ok({
+        first: 1,
+      })
+    );
+  });
+
+  test('with one Err', () => {
+    const oneErr = result.allKeyed({
+      first: result.err('error 1'),
+    });
+    expectTypeOf(oneErr).toEqualTypeOf<Result<{ first: never }, string>>();
+    expect(oneErr).toEqual(result.err('error 1'));
+  });
+
+  test('with all Ok', () => {
+    const allOk = result.allKeyed({
+      first: result.ok(1),
+      second: result.ok('two'),
+      third: result.ok(true),
+    });
+    expectTypeOf(allOk).toEqualTypeOf<
+      Result<
+        {
+          first: number;
+          second: string;
+          third: boolean;
+        },
+        never
+      >
+    >();
+    expect(allOk).toEqual(
+      result.ok({
+        first: 1,
+        second: 'two',
+        third: true,
+      })
+    );
+  });
+
+  test('with all Err', () => {
+    const allErr = result.allKeyed({
+      first: result.err('error 1'),
+      second: result.err('error 2'),
+    });
+    expectTypeOf(allErr).toEqualTypeOf<
+      Result<
+        {
+          first: never;
+          second: never;
+        },
+        string
+      >
+    >();
+    expect(allErr).toEqual(result.err('error 1'));
+  });
+
+  test('with some Err', () => {
+    const someErr = result.allKeyed({
+      first: result.ok(1),
+      second: result.err('error 2'),
+      third: result.ok(3),
+    });
+    expectTypeOf(someErr).toEqualTypeOf<
+      Result<
+        {
+          first: number;
+          second: never;
+          third: number;
+        },
+        string
+      >
+    >();
+    expect(someErr).toEqual(result.err('error 2'));
+  });
+
+  test('symbol keys', () => {
+    const symbolA = Symbol();
+    const allOk = result.allKeyed({
+      first: result.ok(1),
+      [symbolA]: result.ok('two'),
+    });
+    expectTypeOf(allOk).toEqualTypeOf<
+      Result<
+        {
+          first: number;
+          [symbolA]: string;
+        },
+        never
+      >
+    >();
+    expect(allOk).toEqual(
+      result.ok({
+        first: 1,
+        [symbolA]: 'two',
+      })
+    );
+  });
+
+  test('only own keys', () => {
+    const baseKeyed = {
+      first: result.ok(1),
+    };
+    const keyed = Object.create(baseKeyed) as { second: Result<string, never> };
+    keyed.second = result.ok('two');
+
+    const allOk = result.allKeyed(keyed);
+    expectTypeOf(allOk).toEqualTypeOf<
+      Result<
+        {
+          second: string;
+        },
+        never
+      >
+    >();
+    expect(allOk).toEqual(
+      result.ok({
+        second: 'two',
+      })
+    );
+  });
+});
+
+describe('`transposeAllKeyed` function', () => {
+  test('with empty results', () => {
+    const empty = result.transposeAllKeyed({});
+    expectTypeOf(empty).toEqualTypeOf<Result<Record<string | symbol, never>, never>>();
+    expect(empty).toEqual(result.ok({}));
+  });
+
+  test('with one Ok', () => {
+    const oneOk = result.transposeAllKeyed({
+      first: result.ok(1),
+    });
+    expectTypeOf(oneOk).toEqualTypeOf<
+      Result<
+        {
+          first: number;
+        },
+        {
+          first?: never;
+        }
+      >
+    >();
+    expect(oneOk).toEqual(
+      result.ok({
+        first: 1,
+      })
+    );
+  });
+
+  test('with one Err', () => {
+    const oneErr = result.transposeAllKeyed({
+      first: result.err('error 1'),
+    });
+    expectTypeOf(oneErr).toEqualTypeOf<
+      Result<
+        {
+          first: never;
+        },
+        {
+          first?: string;
+        }
+      >
+    >();
+    expect(oneErr).toEqual(
+      result.err({
+        first: 'error 1',
+      })
+    );
+  });
+
+  test('with all Ok', () => {
+    const allOk = result.transposeAllKeyed({
+      first: result.ok(1),
+      second: result.ok('two'),
+      third: result.ok(true),
+    });
+    expectTypeOf(allOk).toEqualTypeOf<
+      Result<
+        {
+          first: number;
+          second: string;
+          third: boolean;
+        },
+        {
+          first?: never;
+          second?: never;
+          third?: never;
+        }
+      >
+    >();
+    expect(allOk).toEqual(
+      result.ok({
+        first: 1,
+        second: 'two',
+        third: true,
+      })
+    );
+  });
+
+  test('with all Err', () => {
+    const allErr = result.transposeAllKeyed({
+      first: result.err('error 1'),
+      second: result.err('error 2'),
+    });
+    expectTypeOf(allErr).toEqualTypeOf<
+      Result<
+        {
+          first: never;
+          second: never;
+        },
+        {
+          first?: string;
+          second?: string;
+        }
+      >
+    >();
+    expect(allErr).toEqual(
+      result.err({
+        first: 'error 1',
+        second: 'error 2',
+      })
+    );
+  });
+
+  test('with some Err', () => {
+    const someErr = result.transposeAllKeyed({
+      first: result.ok(1),
+      second: result.err('error 2'),
+      third: result.ok(3),
+    });
+    expectTypeOf(someErr).toEqualTypeOf<
+      Result<
+        {
+          first: number;
+          second: never;
+          third: number;
+        },
+        {
+          first?: never;
+          second?: string;
+          third?: never;
+        }
+      >
+    >();
+    expect(someErr).toEqual(
+      result.err({
+        second: 'error 2',
+      })
+    );
+  });
+
+  test('symbol keys', () => {
+    const symbolA = Symbol();
+    const allOk = result.transposeAllKeyed({
+      first: result.ok(1),
+      [symbolA]: result.ok('two'),
+    });
+    expectTypeOf(allOk).toEqualTypeOf<
+      Result<
+        {
+          first: number;
+          [symbolA]: string;
+        },
+        {
+          first?: never;
+          [symbolA]?: never;
+        }
+      >
+    >();
+    expect(allOk).toEqual(
+      result.ok({
+        first: 1,
+        [symbolA]: 'two',
+      })
+    );
+  });
+
+  test('symbol keys with all Ok', () => {
+    const symbolA = Symbol();
+    const allOk = result.transposeAllKeyed({
+      first: result.ok(1),
+      [symbolA]: result.ok('two'),
+    });
+    expectTypeOf(allOk).toEqualTypeOf<
+      Result<
+        {
+          first: number;
+          [symbolA]: string;
+        },
+        {
+          first?: never;
+          [symbolA]?: never;
+        }
+      >
+    >();
+    expect(allOk).toEqual(
+      result.ok({
+        first: 1,
+        [symbolA]: 'two',
+      })
+    );
+  });
+
+  test('symbol keys with symbol key Err', () => {
+    const symbolA = Symbol();
+    const allOk = result.transposeAllKeyed({
+      first: result.ok(1),
+      [symbolA]: result.err('two'),
+    });
+    expectTypeOf(allOk).toEqualTypeOf<
+      Result<
+        {
+          first: number;
+          [symbolA]: never;
+        },
+        {
+          first?: never;
+          [symbolA]?: string;
+        }
+      >
+    >();
+    expect(allOk).toEqual(
+      result.err({
+        [symbolA]: 'two',
+      })
+    );
+  });
+
+  test('only own keys', () => {
+    const baseKeyed = {
+      first: result.ok(1),
+    };
+    const keyed = Object.create(baseKeyed) as { second: Result<string, never> };
+    keyed.second = result.ok('two');
+
+    const allOk = result.transposeAllKeyed(keyed);
+    expectTypeOf(allOk).toEqualTypeOf<
+      Result<
+        {
+          second: string;
+        },
+        {
+          second?: never;
+        }
+      >
+    >();
+    expect(allOk).toEqual(
+      result.ok({
+        second: 'two',
+      })
+    );
+  });
+});
+
+describe('`transposeAnyKeyed` function', () => {
+  test('with empty results', () => {
+    const empty = result.transposeAnyKeyed({});
+    expectTypeOf(empty).toEqualTypeOf<Result<never, Record<string | symbol, never>>>();
+    expect(empty).toEqual(result.err({}));
+  });
+
+  test('with one Ok', () => {
+    const oneOk = result.transposeAnyKeyed({
+      first: result.ok(1),
+    });
+    expectTypeOf(oneOk).toEqualTypeOf<
+      Result<
+        number,
+        {
+          first: never;
+        }
+      >
+    >();
+    expect(oneOk).toEqual(result.ok(1));
+  });
+
+  test('with one Err', () => {
+    const oneErr = result.transposeAnyKeyed({
+      first: result.err('error 1'),
+    });
+
+    expect(oneErr).toEqual(
+      result.err({
+        first: 'error 1',
+      })
+    );
+  });
+
+  test('with all Ok', () => {
+    const allOk = result.transposeAnyKeyed({
+      first: result.ok(1),
+      second: result.ok('two'),
+      third: result.ok(true),
+    });
+    expectTypeOf(allOk).toEqualTypeOf<
+      Result<
+        number | string | boolean,
+        {
+          first: never;
+          second: never;
+          third: never;
+        }
+      >
+    >();
+    expect(allOk).toEqual(result.ok(1));
+  });
+
+  test('with all Err', () => {
+    const allErr = result.transposeAnyKeyed({
+      first: result.err('error 1'),
+      second: result.err('error 2'),
+    });
+    expectTypeOf(allErr).toEqualTypeOf<
+      Result<
+        never,
+        {
+          first: string;
+          second: string;
+        }
+      >
+    >();
+    expect(allErr).toEqual(
+      result.err({
+        first: 'error 1',
+        second: 'error 2',
+      })
+    );
+  });
+
+  test('with some Err', () => {
+    const someErr = result.transposeAnyKeyed({
+      first: result.err('error 1'),
+      second: result.err('error 2'),
+      third: result.ok(3),
+    });
+    expectTypeOf(someErr).toEqualTypeOf<
+      Result<
+        number,
+        {
+          first: string;
+          second: string;
+          third: never;
+        }
+      >
+    >();
+    expect(someErr).toEqual(result.ok(3));
+  });
+
+  test('symbol keys', () => {
+    const symbolA = Symbol();
+    const someErr = result.transposeAnyKeyed({
+      first: result.err('error 1'),
+      [symbolA]: result.err('error 2'),
+    });
+    expectTypeOf(someErr).toEqualTypeOf<
+      Result<
+        never,
+        {
+          first: string;
+          [symbolA]: string;
+        }
+      >
+    >();
+    expect(someErr).toEqual(
+      result.err({
+        first: 'error 1',
+        [symbolA]: 'error 2',
+      })
+    );
+  });
+
+  test('only own keys', () => {
+    const baseKeyed = {
+      first: result.err('one'),
+    };
+    const keyed = Object.create(baseKeyed) as { second: Result<never, string> };
+    keyed.second = result.err('two');
+
+    const someErr = result.transposeAnyKeyed(keyed);
+    expectTypeOf(someErr).toEqualTypeOf<
+      Result<
+        never,
+        {
+          second: string;
+        }
+      >
+    >();
+    expect(someErr).toEqual(
+      result.err({
+        second: 'two',
+      })
+    );
+  });
+});
+
 // We aren't even really concerned with the "runtime" behavior here, which we
 // know to be correct from other tests. Instead, this test just checks whether
 // the types are narrowed as they should be.

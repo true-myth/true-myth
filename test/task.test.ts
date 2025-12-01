@@ -42,6 +42,10 @@ import Task, {
   stopRetrying,
   isRetryFailed,
   flatten,
+  allKeyed,
+  allSettledKeyed,
+  anyKeyed,
+  AggregateKeyedRejection,
 } from 'true-myth/task';
 import {
   exponential,
@@ -1934,6 +1938,1015 @@ describe('module-scope functions', () => {
           expect(result.reason.errors[1]).toBe(true);
         }
       });
+    });
+  });
+
+  describe('allKeyed', () => {
+    describe('with a single task', () => {
+      test('that is still pending', () => {
+        let { task } = Task.withResolvers<string, number>();
+        let result = allKeyed({
+          first: task,
+        });
+        expectTypeOf(result).toEqualTypeOf<
+          Task<
+            {
+              first: string;
+            },
+            number
+          >
+        >();
+        expect(result.state).toBe(State.Pending);
+      });
+
+      test('that has resolved', async () => {
+        let theTask = Task.resolve('hello');
+        let result = allKeyed({
+          first: theTask,
+        });
+        expectTypeOf(result).toEqualTypeOf<
+          Task<
+            {
+              first: string;
+            },
+            never
+          >
+        >();
+        await result;
+        expect(result.state).toBe(State.Resolved);
+        if (result.isResolved) {
+          expect(result.value).toEqual({
+            first: 'hello',
+          });
+        }
+      });
+
+      test('that has rejected', async () => {
+        let theReason = 'oops';
+        let theTask = Task.reject<string, string>(theReason);
+        let result = allKeyed({
+          first: theTask,
+        });
+        await result;
+        expectTypeOf(result).toEqualTypeOf<
+          Task<
+            {
+              first: string;
+            },
+            string
+          >
+        >();
+        expect(result.state).toBe(State.Rejected);
+        if (result.isRejected) {
+          expect(result.reason).toBe(theReason);
+        }
+      });
+    });
+
+    describe('with two tasks', () => {
+      test('that are all still pending', () => {
+        let { task: task1 } = Task.withResolvers<string, number>();
+        let { task: task2 } = Task.withResolvers<boolean, Error>();
+        let result = allKeyed({ task1, task2 });
+        expectTypeOf(result).toEqualTypeOf<
+          Task<
+            {
+              task1: string;
+              task2: boolean;
+            },
+            number | Error
+          >
+        >();
+        expect(result.state).toBe(State.Pending);
+      });
+
+      describe('when the first resolves', () => {
+        test('while the second is pending', async () => {
+          let { task: task1, resolve: resolve1 } = Task.withResolvers<string, number>();
+          let { task: task2 } = Task.withResolvers<number, boolean>();
+          let result = allKeyed({ task1, task2 });
+          expectTypeOf(result).toEqualTypeOf<
+            Task<
+              {
+                task1: string;
+                task2: number;
+              },
+              number | boolean
+            >
+          >();
+
+          resolve1('first');
+          expect(result.state).toBe(State.Pending);
+        });
+
+        test('when the second has already resolved', async () => {
+          let { task: task1, resolve: resolve1 } = Task.withResolvers<number, string>();
+          let { task: task2, resolve: resolve2 } = Task.withResolvers<string, boolean>();
+          let result = allKeyed({ task1, task2 });
+          expectTypeOf(result).toEqualTypeOf<
+            Task<
+              {
+                task1: number;
+                task2: string;
+              },
+              string | boolean
+            >
+          >();
+
+          resolve2('second');
+          resolve1(1);
+          await result;
+          expect(result.state).toBe(State.Resolved);
+          if (result.isResolved) {
+            expectTypeOf(result.value).toEqualTypeOf<{
+              task1: number;
+              task2: string;
+            }>();
+            expect(result.value).toEqual({
+              task1: 1,
+              task2: 'second',
+            });
+          }
+        });
+
+        test('when the second has rejected', async () => {
+          let { task: task1, resolve: resolve1 } = Task.withResolvers<string, number>();
+          let { task: task2, reject: reject2 } = Task.withResolvers<boolean, string>();
+          let result = allKeyed({ task1, task2 });
+          expectTypeOf(result).toEqualTypeOf<
+            Task<
+              {
+                task1: string;
+                task2: boolean;
+              },
+              number | string
+            >
+          >();
+
+          reject2('error');
+          resolve1('first');
+          await result;
+          expect(result.state).toBe(State.Rejected);
+          if (result.isRejected) {
+            expect(result.reason).toBe('error');
+          }
+        });
+      });
+
+      describe('when the second resolves', () => {
+        test('while the first is pending', async () => {
+          let { task: task1 } = Task.withResolvers<number, boolean>();
+          let { task: task2, resolve: resolve2 } = Task.withResolvers<string, Error>();
+          let result = allKeyed({ task1, task2 });
+          expectTypeOf(result).toEqualTypeOf<
+            Task<
+              {
+                task1: number;
+                task2: string;
+              },
+              boolean | Error
+            >
+          >();
+
+          resolve2('second');
+          expect(result.state).toBe(State.Pending);
+        });
+
+        test('when the first has already resolved', async () => {
+          let { task: task1, resolve: resolve1 } = Task.withResolvers<string, number>();
+          let { task: task2, resolve: resolve2 } = Task.withResolvers<number, boolean>();
+          let result = allKeyed({ task1, task2 });
+          expectTypeOf(result).toEqualTypeOf<
+            Task<
+              {
+                task1: string;
+                task2: number;
+              },
+              number | boolean
+            >
+          >();
+
+          resolve1('first');
+          resolve2(2);
+          await result;
+          expect(result.state).toBe(State.Resolved);
+          if (result.isResolved) {
+            expect(result.value).toEqual({
+              task1: 'first',
+              task2: 2,
+            });
+          }
+        });
+
+        test('when the first has rejected', async () => {
+          let { task: task1, reject: reject1 } = Task.withResolvers<number, string>();
+          let { task: task2, resolve: resolve2 } = Task.withResolvers<string, boolean>();
+          let result = allKeyed({ task1, task2 });
+          expectTypeOf(result).toEqualTypeOf<
+            Task<
+              {
+                task1: number;
+                task2: string;
+              },
+              string | boolean
+            >
+          >();
+
+          reject1('error');
+          resolve2('second');
+          await result;
+          expect(result.state).toBe(State.Rejected);
+          if (result.isRejected) {
+            expect(result.reason).toBe('error');
+          }
+        });
+      });
+    });
+
+    test('rejection happens immediately', async () => {
+      let { task: task1, reject: reject1 } = Task.withResolvers<number, string>();
+      let { task: task2 } = Task.withResolvers<string, boolean>();
+      let result = allKeyed({ task1, task2 });
+      expectTypeOf(result).toEqualTypeOf<
+        Task<
+          {
+            task1: number;
+            task2: string;
+          },
+          string | boolean
+        >
+      >();
+
+      reject1('error');
+      await result;
+      expect(result.state).toBe(State.Rejected);
+      if (result.isRejected) {
+        expect(result.reason).toBe('error');
+      }
+    });
+
+    // Covers the early return path when a second rejection triggers.
+    test('multiple rejections', async () => {
+      let result = allKeyed({
+        first: Task.reject('first'),
+        second: Task.reject('second'),
+      });
+      await result;
+      if (result.isRejected) {
+        expect(result.reason).toBe('first');
+      } else {
+        expect.unreachable();
+      }
+    });
+
+    test('with an empty set of tasks', async () => {
+      let noTasks = allKeyed({});
+      expectTypeOf(noTasks).toEqualTypeOf<Task<Record<string | symbol, never>, never>>();
+      await noTasks;
+      expect(noTasks.state).toBe(State.Resolved);
+      if (noTasks.isResolved) {
+        expect(noTasks.value).toEqual({});
+      }
+    });
+
+    test('with multiple tasks (integration)', async () => {
+      let { task: willReject, reject } = Task.withResolvers();
+
+      let allTasks = allKeyed({
+        first: timer(10),
+        second: timer(20),
+        third: willReject,
+      });
+
+      let theReason = 'something went wrong';
+      reject(theReason);
+      let result = await allTasks;
+      expect(allTasks.state).toBe(State.Rejected);
+      if (allTasks.isRejected) {
+        expect(allTasks.reason).toBe(theReason);
+      }
+
+      expect(result.isErr).toBe(true);
+      if (result.isErr) {
+        expect(result.error).toBe(theReason);
+      } else {
+        expect.unreachable();
+      }
+    });
+
+    test('symbol keys', async () => {
+      let theTask = Task.resolve('hello');
+      const symbol = Symbol();
+      let result = allKeyed({
+        [symbol]: theTask,
+      });
+      expectTypeOf(result).toEqualTypeOf<
+        Task<
+          {
+            [symbol]: string;
+          },
+          never
+        >
+      >();
+      await result;
+      expect(result.state).toBe(State.Resolved);
+      if (result.isResolved) {
+        expect(result.value).toEqual({
+          [symbol]: 'hello',
+        });
+      }
+    });
+
+    test('only own keys', async () => {
+      let { task: task1, reject: reject1 } = Task.withResolvers<number, string>();
+      let { task: task2, resolve: resolve2 } = Task.withResolvers<string, boolean>();
+      const baseKeyed = {
+        task1,
+      };
+      const keyed = Object.create(baseKeyed) as { task2: Task<string, boolean> };
+      keyed.task2 = task2;
+
+      let result = allKeyed(keyed);
+      expectTypeOf(result).toEqualTypeOf<
+        Task<
+          {
+            task2: string;
+          },
+          boolean
+        >
+      >();
+      reject1('err1');
+      resolve2('hello');
+      await result;
+      expect(result.state).toBe(State.Resolved);
+      if (result.isResolved) {
+        expect(result.value).toEqual({
+          task2: 'hello',
+        });
+      }
+    });
+  });
+
+  describe('allSettledKeyed', () => {
+    describe('with a single task', () => {
+      test('that is still pending', () => {
+        let { task } = Task.withResolvers<string, number>();
+        let result = allSettledKeyed({ task });
+        expectTypeOf(result).toEqualTypeOf<
+          Task<
+            {
+              task: Result<string, number>;
+            },
+            never
+          >
+        >();
+        expect(result.state).toBe(State.Pending);
+      });
+
+      test('that has resolved', async () => {
+        let theTask = Task.resolve('hello');
+        let result = allSettledKeyed({ task: theTask });
+        expectTypeOf(result).toEqualTypeOf<
+          Task<
+            {
+              task: Result<string, never>;
+            },
+            never
+          >
+        >();
+        await result;
+        expect(result.state).toBe(State.Resolved);
+        if (result.isResolved) {
+          expect(result.value.task.isOk).toBe(true);
+          expect(unwrap(result.value.task)).toBe('hello');
+        }
+      });
+
+      test('that has rejected', async () => {
+        let theReason = 'oops';
+        let theTask = Task.reject<string, string>(theReason);
+        let result = allSettledKeyed({ task: theTask });
+        await result;
+        expectTypeOf(result).toEqualTypeOf<
+          Task<
+            {
+              task: Result<string, string>;
+            },
+            never
+          >
+        >();
+        expect(result.state).toBe(State.Resolved);
+        if (result.isResolved) {
+          expect(result.value.task.isErr).toBe(true);
+          expect(unwrapErr(result.value.task)).toBe(theReason);
+        }
+      });
+    });
+
+    describe('with two tasks', () => {
+      test('that are all still pending', () => {
+        let { task: task1 } = Task.withResolvers<string, number>();
+        let { task: task2 } = Task.withResolvers<boolean, Error>();
+        let result = allSettledKeyed({ task1, task2 });
+        expectTypeOf(result).toEqualTypeOf<
+          Task<
+            {
+              task1: Result<string, number>;
+              task2: Result<boolean, Error>;
+            },
+            never
+          >
+        >();
+        expect(result.state).toBe(State.Pending);
+      });
+
+      describe('when the first resolves', () => {
+        test('while the second is pending', async () => {
+          let { task: task1, resolve: resolve1 } = Task.withResolvers<string, number>();
+          let { task: task2 } = Task.withResolvers<number, boolean>();
+          let result = allSettledKeyed({ task1, task2 });
+          expectTypeOf(result).toEqualTypeOf<
+            Task<
+              {
+                task1: Result<string, number>;
+                task2: Result<number, boolean>;
+              },
+              never
+            >
+          >();
+
+          resolve1('first');
+          expect(result.state).toBe(State.Pending);
+        });
+
+        test('when the second has already resolved', async () => {
+          let { task: task1, resolve: resolve1 } = Task.withResolvers<number, string>();
+          let { task: task2, resolve: resolve2 } = Task.withResolvers<string, boolean>();
+          let result = allSettledKeyed({ task1, task2 });
+          expectTypeOf(result).toEqualTypeOf<
+            Task<
+              {
+                task1: Result<number, string>;
+                task2: Result<string, boolean>;
+              },
+              never
+            >
+          >();
+
+          resolve2('second');
+          resolve1(1);
+          await result;
+          expect(result.state).toBe(State.Resolved);
+          if (result.isResolved) {
+            expect(result.value.task1.isOk).toBe(true);
+            expect(result.value.task2.isOk).toBe(true);
+            expect(unwrap(result.value.task1)).toBe(1);
+            expect(unwrap(result.value.task2)).toBe('second');
+          }
+        });
+
+        test('when the second has rejected', async () => {
+          let { task: task1, resolve: resolve1 } = Task.withResolvers<string, number>();
+          let { task: task2, reject: reject2 } = Task.withResolvers<boolean, string>();
+          let result = allSettledKeyed({ task1, task2 });
+          expectTypeOf(result).toEqualTypeOf<
+            Task<
+              {
+                task1: Result<string, number>;
+                task2: Result<boolean, string>;
+              },
+              never
+            >
+          >();
+
+          reject2('error');
+          resolve1('first');
+          await result;
+          expect(result.state).toBe(State.Resolved);
+          if (result.isResolved) {
+            expect(result.value.task1.isOk).toBe(true);
+            expect(result.value.task2.isErr).toBe(true);
+            expect(unwrap(result.value.task1)).toBe('first');
+            expect(unwrapErr(result.value.task2)).toBe('error');
+          }
+        });
+      });
+
+      describe('when the second resolves', () => {
+        test('while the first is pending', async () => {
+          let { task: task1 } = Task.withResolvers<number, boolean>();
+          let { task: task2, resolve: resolve2 } = Task.withResolvers<string, Error>();
+          let result = allSettledKeyed({ task1, task2 });
+          expectTypeOf(result).toEqualTypeOf<
+            Task<
+              {
+                task1: Result<number, boolean>;
+                task2: Result<string, Error>;
+              },
+              never
+            >
+          >();
+
+          resolve2('second');
+          expect(result.state).toBe(State.Pending);
+        });
+
+        test('when the first has already resolved', async () => {
+          let { task: task1, resolve: resolve1 } = Task.withResolvers<string, number>();
+          let { task: task2, resolve: resolve2 } = Task.withResolvers<number, boolean>();
+          let result = allSettledKeyed({ task1, task2 });
+          expectTypeOf(result).toEqualTypeOf<
+            Task<
+              {
+                task1: Result<string, number>;
+                task2: Result<number, boolean>;
+              },
+              never
+            >
+          >();
+
+          resolve1('first');
+          resolve2(2);
+          await result;
+          expect(result.state).toBe(State.Resolved);
+          if (result.isResolved) {
+            expect(result.value.task1.isOk).toBe(true);
+            expect(result.value.task2.isOk).toBe(true);
+            expect(unwrap(result.value.task1)).toBe('first');
+            expect(unwrap(result.value.task2)).toBe(2);
+          }
+        });
+
+        test('when the first has rejected', async () => {
+          let { task: task1, reject: reject1 } = Task.withResolvers<number, string>();
+          let { task: task2, resolve: resolve2 } = Task.withResolvers<string, boolean>();
+          let result = allSettledKeyed({ task1, task2 });
+          expectTypeOf(result).toEqualTypeOf<
+            Task<
+              {
+                task1: Result<number, string>;
+                task2: Result<string, boolean>;
+              },
+              never
+            >
+          >();
+
+          reject1('error');
+          resolve2('second');
+          await result;
+          expect(result.state).toBe(State.Resolved);
+          if (result.isResolved) {
+            expect(result.value.task1.isErr).toBe(true);
+            expect(result.value.task2.isOk).toBe(true);
+            expect(unwrapErr(result.value.task1)).toBe('error');
+            expect(unwrap(result.value.task2)).toBe('second');
+          }
+        });
+      });
+    });
+
+    test('symbol keys', async () => {
+      let theTask = Task.resolve('hello');
+      const symbol = Symbol();
+      let result = allSettledKeyed({
+        [symbol]: theTask,
+      });
+      expectTypeOf(result).toEqualTypeOf<
+        Task<
+          {
+            [symbol]: Result<string, never>;
+          },
+          never
+        >
+      >();
+      await result;
+      expect(result.state).toBe(State.Resolved);
+      if (result.isResolved) {
+        expect(result.value[symbol].isOk).toBe(true);
+        expect(unwrap(result.value[symbol])).toBe('hello');
+      }
+    });
+
+    test('only own keys', async () => {
+      let { task: task1, reject: reject1 } = Task.withResolvers<number, string>();
+      let { task: task2, resolve: resolve2 } = Task.withResolvers<string, boolean>();
+      const baseKeyed = {
+        task1,
+      };
+      const keyed = Object.create(baseKeyed) as { task2: Task<string, boolean> };
+      keyed.task2 = task2;
+
+      let result = allSettledKeyed(keyed);
+      expectTypeOf(result).toEqualTypeOf<
+        Task<
+          {
+            task2: Result<string, boolean>;
+          },
+          never
+        >
+      >();
+      reject1('err1');
+      resolve2('hello');
+      await result;
+      expect(result.state).toBe(State.Resolved);
+      if (result.isResolved) {
+        expect(result.value).toEqual({
+          task2: Result.ok('hello'),
+        });
+      }
+    });
+  });
+
+  describe('anyKeyed', () => {
+    test('with an empty array', async () => {
+      let result = anyKeyed({});
+      expectTypeOf(result).toEqualTypeOf<
+        Task<never, AggregateKeyedRejection<Record<string | symbol, never>>>
+      >();
+      await result;
+      expect(result.state).toBe(State.Rejected);
+      if (result.isRejected) {
+        expect(result.reason).toBeInstanceOf(AggregateKeyedRejection);
+        expect(result.reason.errors).toEqual({});
+        expect(result.reason.toString()).toMatch('No tasks');
+      }
+    });
+
+    describe('with a single task', () => {
+      test('that is still pending', () => {
+        let { task } = Task.withResolvers();
+        let result = anyKeyed({ task });
+        expect(result.state).toBe(State.Pending);
+      });
+
+      test('that has resolved', async () => {
+        let theTask = Task.resolve('hello');
+        let result = anyKeyed({ theTask });
+        await result;
+        expect(result.state).toBe(State.Resolved);
+        if (result.isResolved) {
+          expect(result.value).toBe('hello');
+        }
+      });
+
+      test('that has rejected', async () => {
+        let theReason = 'oops';
+        let theTask = Task.reject<string, string>(theReason);
+        let result = anyKeyed({ task: theTask });
+        await result;
+        expect(result.state).toBe(State.Rejected);
+        if (result.isRejected) {
+          expect(result.reason.errors.task).toBe(theReason);
+          expect(result.reason.toString()).toMatch('{task: "oops"}');
+        }
+      });
+    });
+
+    describe('with two tasks', () => {
+      test('that are all still pending', () => {
+        let { task: task1 } = Task.withResolvers();
+        let { task: task2 } = Task.withResolvers();
+        let result = anyKeyed({ task1, task2 });
+        expect(result.state).toBe(State.Pending);
+      });
+
+      describe('when the first resolves', () => {
+        test('while the second is pending', async () => {
+          let { task: task1, resolve: resolve1 } = Task.withResolvers<string, number>();
+          let { task: task2 } = Task.withResolvers<number, boolean>();
+          let result = anyKeyed({ task1, task2 });
+          expectTypeOf(result).toEqualTypeOf<
+            Task<
+              string | number,
+              AggregateKeyedRejection<{
+                task1: number;
+                task2: boolean;
+              }>
+            >
+          >();
+
+          resolve1('first');
+          await result;
+          expect(result.state).toBe(State.Resolved);
+          if (result.isResolved) {
+            expect(result.value).toBe('first');
+          }
+        });
+
+        test('when the second has already resolved', async () => {
+          let { task: task1, resolve: resolve1 } = Task.withResolvers<number, string>();
+          let { task: task2, resolve: resolve2 } = Task.withResolvers<string, boolean>();
+          let result = anyKeyed({ task1, task2 });
+          expectTypeOf(result).toEqualTypeOf<
+            Task<
+              number | string,
+              AggregateKeyedRejection<{
+                task1: string;
+                task2: boolean;
+              }>
+            >
+          >();
+
+          resolve2('second');
+          resolve1(1);
+          await result;
+          expect(result.state).toBe(State.Resolved);
+          if (result.isResolved) {
+            expect(result.value).toBe('second');
+          }
+        });
+
+        test('when the second has rejected', async () => {
+          let { task: task1, resolve: resolve1 } = Task.withResolvers<string, number>();
+          let { task: task2, reject: reject2 } = Task.withResolvers<boolean, string>();
+          let result = anyKeyed({ task1, task2 });
+          expectTypeOf(result).toEqualTypeOf<
+            Task<
+              string | boolean,
+              AggregateKeyedRejection<{
+                task1: number;
+                task2: string;
+              }>
+            >
+          >();
+
+          reject2('error');
+          resolve1('first');
+          await result;
+          expect(result.state).toBe(State.Resolved);
+          if (result.isResolved) {
+            expect(result.value).toBe('first');
+          }
+        });
+      });
+
+      describe('when the first rejects', () => {
+        test('while the second is pending', async () => {
+          let { task: task1, reject: reject1 } = Task.withResolvers<string, number>();
+          let { task: task2 } = Task.withResolvers<number, boolean>();
+          let result = anyKeyed({ task1, task2 });
+          expectTypeOf(result).toEqualTypeOf<
+            Task<
+              string | number,
+              AggregateKeyedRejection<{
+                task1: number;
+                task2: boolean;
+              }>
+            >
+          >();
+
+          reject1(1);
+          expect(result.state).toBe(State.Pending);
+        });
+
+        test('when the second has already resolved', async () => {
+          let { task: task1, resolve: resolve1 } = Task.withResolvers<number, string>();
+          let { task: task2, resolve: resolve2 } = Task.withResolvers<string, boolean>();
+          let result = anyKeyed({ task1, task2 });
+          expectTypeOf(result).toEqualTypeOf<
+            Task<
+              number | string,
+              AggregateKeyedRejection<{
+                task1: string;
+                task2: boolean;
+              }>
+            >
+          >();
+
+          resolve2('second');
+          resolve1(1);
+          await result;
+          expect(result.state).toBe(State.Resolved);
+          if (result.isResolved) {
+            expect(result.value).toBe('second');
+          }
+        });
+
+        test('when the second has also rejected', async () => {
+          let { task: task1, reject: reject1 } = Task.withResolvers<string, number>();
+          let { task: task2, reject: reject2 } = Task.withResolvers<boolean, string>();
+          let result = anyKeyed({ task1, task2 });
+          expectTypeOf(result).toEqualTypeOf<
+            Task<
+              string | boolean,
+              AggregateKeyedRejection<{
+                task1: number;
+                task2: string;
+              }>
+            >
+          >();
+
+          reject2('error');
+          reject1(1);
+          await result;
+          expect(result.state).toBe(State.Rejected);
+          if (result.isRejected) {
+            expect(result.reason).toBeInstanceOf(AggregateKeyedRejection);
+            expect(result.reason.errors).toEqual({
+              task1: 1,
+              task2: 'error',
+            });
+          }
+        });
+      });
+
+      describe('when the second resolves', () => {
+        test('while the first is pending', async () => {
+          let { task: task1 } = Task.withResolvers<number, boolean>();
+          let { task: task2, resolve: resolve2 } = Task.withResolvers<string, Error>();
+          let result = anyKeyed({ task1, task2 });
+          expectTypeOf(result).toEqualTypeOf<
+            Task<
+              number | string,
+              AggregateKeyedRejection<{
+                task1: boolean;
+                task2: Error;
+              }>
+            >
+          >();
+
+          resolve2('second');
+          await result;
+          expect(result.state).toBe(State.Resolved);
+          if (result.isResolved) {
+            expect(result.value).toBe('second');
+          }
+        });
+
+        test('when the first has already resolved', async () => {
+          let { task: task1, resolve: resolve1 } = Task.withResolvers<string, number>();
+          let { task: task2, resolve: resolve2 } = Task.withResolvers<number, boolean>();
+          let result = anyKeyed({ task1, task2 });
+          expectTypeOf(result).toEqualTypeOf<
+            Task<
+              string | number,
+              AggregateKeyedRejection<{
+                task1: number;
+                task2: boolean;
+              }>
+            >
+          >();
+
+          resolve1('first');
+          resolve2(2);
+          await result;
+          expect(result.state).toBe(State.Resolved);
+          if (result.isResolved) {
+            expect(result.value).toBe('first');
+          }
+        });
+
+        test('when the first has rejected', async () => {
+          let { task: task1, reject: reject1 } = Task.withResolvers<number, string>();
+          let { task: task2, resolve: resolve2 } = Task.withResolvers<string, boolean>();
+          let result = anyKeyed({ task1, task2 });
+          expectTypeOf(result).toEqualTypeOf<
+            Task<
+              number | string,
+              AggregateKeyedRejection<{
+                task1: string;
+                task2: boolean;
+              }>
+            >
+          >();
+
+          reject1('error');
+          resolve2('second');
+          await result;
+          expect(result.state).toBe(State.Resolved);
+          if (result.isResolved) {
+            expect(result.value).toBe('second');
+          }
+        });
+      });
+    });
+
+    describe('when the second rejects', () => {
+      test('while the first is pending', async () => {
+        let { task: task1 } = Task.withResolvers<number, boolean>();
+        let { task: task2, reject: reject2 } = Task.withResolvers<string, number>();
+        let result = anyKeyed({ task1, task2 });
+        expectTypeOf(result).toEqualTypeOf<
+          Task<
+            number | string,
+            AggregateKeyedRejection<{
+              task1: boolean;
+              task2: number;
+            }>
+          >
+        >();
+
+        reject2(2);
+        expect(result.state).toBe(State.Pending);
+      });
+
+      test('when the first has already resolved', async () => {
+        let { task: task1, resolve: resolve1 } = Task.withResolvers<string, number>();
+        let { task: task2, reject: reject2 } = Task.withResolvers<number, boolean>();
+        let result = anyKeyed({ task1, task2 });
+        expectTypeOf(result).toEqualTypeOf<
+          Task<
+            string | number,
+            AggregateKeyedRejection<{
+              task1: number;
+              task2: boolean;
+            }>
+          >
+        >();
+
+        resolve1('first');
+        reject2(true);
+        await result;
+        expect(result.state).toBe(State.Resolved);
+        if (result.isResolved) {
+          expect(result.value).toBe('first');
+        }
+      });
+
+      test('when the first has also rejected', async () => {
+        let { task: task1, reject: reject1 } = Task.withResolvers<number, string>();
+        let { task: task2, reject: reject2 } = Task.withResolvers<string, boolean>();
+        let result = anyKeyed({ task1, task2 });
+        expectTypeOf(result).toEqualTypeOf<
+          Task<
+            number | string,
+            AggregateKeyedRejection<{
+              task1: string;
+              task2: boolean;
+            }>
+          >
+        >();
+
+        reject1('error');
+        reject2(true);
+        await result;
+        expect(result.state).toBe(State.Rejected);
+        if (result.isRejected) {
+          expect(result.reason).toBeInstanceOf(AggregateKeyedRejection);
+          expect(result.reason.errors).toEqual({
+            task1: 'error',
+            task2: true,
+          });
+        }
+      });
+    });
+
+    test('symbol keys', async () => {
+      let theTask = Task.reject<string, string>('oops');
+      const symbol = Symbol('description');
+      let result = anyKeyed({
+        [symbol]: theTask,
+      });
+      await result;
+      expectTypeOf(result).toEqualTypeOf<
+        Task<
+          string,
+          AggregateKeyedRejection<{
+            [symbol]: string;
+          }>
+        >
+      >();
+      expect(result.state).toBe(State.Rejected);
+      if (result.isRejected) {
+        expect(result.reason.errors).toEqual({
+          [symbol]: 'oops',
+        });
+        expect(result.reason.toString()).toMatch(
+          'AggregateKeyedRejection: `Task.anyKeyed`: {Symbol(description): "oops"}'
+        );
+      }
+    });
+
+    test('only own keys', async () => {
+      let { task: task1, resolve: resolve1 } = Task.withResolvers<number, string>();
+      let { task: task2, reject: reject2 } = Task.withResolvers<string, boolean>();
+      const baseKeyed = {
+        task1,
+      };
+      const keyed = Object.create(baseKeyed) as { task2: Task<string, boolean> };
+      keyed.task2 = task2;
+
+      let result = anyKeyed(keyed);
+      resolve1(1);
+      reject2(false);
+      await result;
+      expectTypeOf(result).toEqualTypeOf<
+        Task<
+          string,
+          AggregateKeyedRejection<{
+            task2: boolean;
+          }>
+        >
+      >();
+      expect(result.state).toBe(State.Rejected);
+      if (result.isRejected) {
+        expect(result.reason.errors).toEqual({
+          task2: false,
+        });
+        expect(result.reason.toString()).toMatch(
+          'AggregateKeyedRejection: `Task.anyKeyed`: {task2: false}'
+        );
+      }
     });
   });
 

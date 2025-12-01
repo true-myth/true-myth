@@ -1064,7 +1064,7 @@ export type All<A extends readonly AnyTask[]> = Task<
 */
 export function all(tasks: []): Task<[], never>;
 export function all<const A extends readonly AnyTask[]>(tasks: A): All<A>;
-export function all(tasks: AnyTask[]): Task<unknown, unknown> {
+export function all(tasks: AnyTask[]): Task<unknown[], unknown> {
   if (tasks.length === 0) {
     return Task.resolve([]);
   }
@@ -1106,6 +1106,102 @@ export function all(tasks: AnyTask[]): Task<unknown, unknown> {
           }
 
           oks[idx] = value;
+          resolved += 1;
+          if (resolved === total) {
+            resolve(oks);
+          }
+        },
+      });
+    }
+  });
+}
+
+/**
+  A type utility for mapping an input dictionary of tasks into the appropriate output
+  for `allKeyed`.
+
+  @internal
+ */
+export type AllKeyed<A extends Record<string | symbol, AnyTask>> = Task<
+  { -readonly [P in keyof A]: ResolvesTo<A[P]> },
+  RejectsWith<A[keyof A]>
+>;
+
+/**
+  Given a dictionary of tasks, return a new `Task` that resolves once all tasks
+  successfully resolve or any task rejects.
+
+  ## Examples
+
+  Once all tasks resolve:
+
+  ```ts
+  import { allKeyed, timer } from 'true-myth/task';
+
+  let allTasks = allKeyed({
+    first: timer(10),
+    second: timer(100),
+    third: timer(1_000),
+  });
+
+  let result = await allTasks;
+  console.log(result.toString()); // Ok({ first: 10, second: 100, third: 1000 })
+  ```
+
+  If any tasks do *not* resolve:
+
+  ```ts
+  let { task: willReject, reject } = Task.withResolvers<never, string>();
+
+  let allTasks = allKeyed({
+    first: timer(10),
+    second: timer(20),
+    third: willReject,
+  });
+
+  reject("something went wrong");
+  let result = await allTasks;
+  console.log(result.toString()); // Err("something went wrong")
+  ```
+
+  @param tasks The dictionary of tasks to wait on.
+
+  @template A The type of the dictionary of tasks.
+*/
+export function allKeyed(
+  tasks: Record<string | symbol, never>
+): Task<Record<string | symbol, never>, never>;
+export function allKeyed<const A extends Record<string | symbol, AnyTask>>(tasks: A): AllKeyed<A>;
+export function allKeyed(
+  tasks: Record<string | symbol, AnyTask>
+): Task<Record<string | symbol, unknown>, unknown> {
+  const total = Reflect.ownKeys(tasks).length;
+  if (total === 0) {
+    return Task.resolve({});
+  }
+
+  let oks: Record<string | symbol, unknown> = {};
+  let resolved = 0;
+  let hasRejected = false;
+
+  return new Task((resolve, reject) => {
+    for (const key of Reflect.ownKeys(tasks)) {
+      tasks[key]!.match({
+        Rejected: (reason) => {
+          if (hasRejected) {
+            return;
+          }
+
+          hasRejected = true;
+          reject(reason);
+        },
+
+        Resolved: (value) => {
+          if (hasRejected) {
+            return;
+          }
+
+          oks[key] = value;
           resolved += 1;
           if (resolved === total) {
             resolve(oks);
@@ -1172,6 +1268,68 @@ export function allSettled(tasks: AnyTask[]): Task<unknown, never> {
 }
 
 /**
+  @internal
+*/
+export type SettledKeyed<A extends Record<string | symbol, AnyTask>> = {
+  -readonly [K in keyof A]: Result<ResolvesTo<A[K]>, RejectsWith<A[K]>>;
+};
+
+/**
+  Given a dictionary of tasks, return a new {@linkcode Task} which resolves once all
+  of the tasks have either resolved or rejected. The resulting `Task` is a dictionary
+  corresponding exactly to the tasks passed in, either resolved or
+  rejected.
+
+  ## Example
+
+  Given a mix of resolving and rejecting tasks:
+
+  ```ts
+  let settledTask = allSettledKeyed({
+    first: Task.resolve<string, number>("hello"),
+    second: Task.reject<number, boolean>(true),
+    third: Task.resolve<{ fancy: boolean }>, Error>({ fancy: true }),
+  });
+
+  let output = await settledTask;
+  if (output.isOk) { // always true, not currently statically knowable
+    console.log(output.first.toString());  // Ok("hello")
+    console.log(output.second.toString()); // Err(true)
+    console.log(output.third.toString());  // Ok({ fancy: true })
+  }
+  ```
+
+  @param tasks The tasks to wait on settling.
+
+  @template A The type of the array or tuple of tasks.
+ */
+export function allSettledKeyed(
+  tasks: Record<string | symbol, never>
+): Task<Record<string | symbol, never>, never>;
+export function allSettledKeyed<const A extends Record<string | symbol, AnyTask>>(
+  tasks: A
+): Task<SettledKeyed<A>, never>;
+export function allSettledKeyed(tasks: Record<string | symbol, AnyTask>): Task<unknown, never> {
+  // All task promises should resolve; none should ever reject, by definition.
+  // The “settled” state here is represented by the `Task` itself, *not* by the
+  // `Promise` rejection. This means the logic of `allSettled` is actually just
+  // `Promise.all`!
+  return new Task((resolve) => {
+    const tasksArr = [];
+    for (const [idx, key] of Reflect.ownKeys(tasks).entries()) {
+      tasksArr[idx] = tasks[key];
+    }
+    Promise.all(tasksArr).then((resultsArr) => {
+      const results: Record<string | symbol, unknown> = {};
+      for (const [idx, key] of Reflect.ownKeys(tasks).entries()) {
+        results[key] = resultsArr[idx];
+      }
+      resolve(results);
+    });
+  });
+}
+
+/**
   Given an array of tasks, return a new {@linkcode Task} which resolves once
   _any_ of the tasks resolves successfully, or which rejects once _all_ the
   tasks have rejected.
@@ -1228,7 +1386,9 @@ export function any<const A extends readonly AnyTask[]>(
   // `[...]` to keep the ordering for a tuple type
   AggregateRejection<[...TaskTypesFor<A>['rejection']]>
 >;
-export function any(tasks: readonly [] | readonly AnyTask[]): AnyTask {
+export function any(
+  tasks: readonly [] | readonly AnyTask[]
+): Task<unknown, AggregateRejection<unknown[]>> {
   if (tasks.length === 0) {
     return Task.reject(new AggregateRejection([]));
   }
@@ -1274,6 +1434,100 @@ export function any(tasks: readonly [] | readonly AnyTask[]): AnyTask {
 
           if (rejected === total) {
             reject(new AggregateRejection(rejections));
+          }
+        },
+      });
+    }
+  });
+}
+
+/**
+  Given a dictionary of tasks, return a new {@linkcode Task} which resolves once
+  _any_ of the tasks resolves successfully, or which rejects once _all_ the
+  tasks have rejected.
+
+  ## Examples
+
+  When any item resolves:
+
+  ```ts
+  import { anyKeyed, timer } from 'true-myth/task';
+
+  let anyTask = anyKeyed({
+    first: timer(20),
+    second: timer(10),
+    third: timer(30),
+  });
+
+  let result = await anyTask;
+  console.log(result.toString()); // Ok(10);
+  ```
+
+  When all items reject:
+
+  ```ts
+  import Task, { anyKeyed, timer } from 'true-myth/task';
+
+  let anyTask = anyKeyed({
+    first: timer(20).andThen((time) => Task.reject(`${time}ms`)),
+    second: timer(10).andThen((time) => Task.reject(`${time}ms`)),
+    third: timer(30).andThen((time) => Task.reject(`${time}ms`)),
+  });
+
+  let result = await anyTask;
+  console.log(result.toString()); // Err(AggregateKeyedRejection: `Task.any`: { first: '10ms', second: '20ms', third: '30ms' })
+  ```
+
+  @param tasks The dictionary of tasks to check for any resolution.
+  @returns A Task which is either {@linkcode Resolved} with the value of the
+    first task to resolve, or {@linkcode Rejected} with the rejection reasons
+    for all the tasks passed in in an {@linkcode AggregateKeyedRejection}.
+
+  @template A The type of the dictionary of tasks.
+*/
+export function anyKeyed(
+  tasks: Record<string | symbol, never>
+): Task<never, AggregateKeyedRejection<Record<string | symbol, never>>>;
+export function anyKeyed<const A extends Record<string | symbol, AnyTask>>(
+  tasks: A
+): Task<
+  ResolvesTo<A[keyof A]>,
+  AggregateKeyedRejection<{ -readonly [P in keyof A]: RejectsWith<A[P]> }>
+>;
+export function anyKeyed(
+  tasks: Record<string | symbol, AnyTask>
+): Task<unknown, AggregateKeyedRejection<Record<string | symbol, unknown>>> {
+  const total = Reflect.ownKeys(tasks).length;
+  if (total === 0) {
+    return Task.reject(new AggregateKeyedRejection({}));
+  }
+
+  let hasResolved = false;
+  let rejections: Record<string | symbol, unknown> = {};
+  let rejected = 0;
+
+  return new Task((resolve, reject) => {
+    for (const key of Reflect.ownKeys(tasks)) {
+      tasks[key]!.match({
+        Resolved: (value) => {
+          if (hasResolved) {
+            return;
+          }
+
+          hasResolved = true;
+          resolve(value);
+        },
+
+        Rejected: (reason) => {
+          if (hasResolved) {
+            return;
+          }
+
+          rejections[key] = reason;
+          rejected += 1;
+
+          if (rejected === total) {
+            reject(new AggregateKeyedRejection(rejections));
           }
         },
       });
@@ -1342,6 +1596,33 @@ export class AggregateRejection<E extends unknown[]> extends Error {
 
   toString() {
     let internalMessage = this.errors.length > 0 ? `[${safeToString(this.errors)}]` : 'No tasks';
+    return super.toString() + `: ${internalMessage}`;
+  }
+}
+
+/**
+  An error type produced when {@linkcode anyKeyed} produces any rejections. All
+  rejections are aggregated into this type.
+
+  > [!NOTE]
+  > This error type is not allowed to be subclassed.
+
+  @template E The type of the rejection reasons.
+*/
+export class AggregateKeyedRejection<E extends Record<string | symbol, unknown>> extends Error {
+  readonly name = 'AggregateKeyedRejection';
+
+  constructor(readonly errors: E) {
+    super('`Task.anyKeyed`');
+  }
+
+  toString() {
+    let internalMessage =
+      Reflect.ownKeys(this.errors).length > 0
+        ? `{${Reflect.ownKeys(this.errors)
+            .map((key) => `${String(key)}: ${safeToString(this.errors[key]!)}`)
+            .join(', ')}}`
+        : 'No tasks';
     return super.toString() + `: ${internalMessage}`;
   }
 }
