@@ -1922,9 +1922,9 @@ export function transposeAll(results: readonly AnyResult[]): Result<unknown[], u
   containing the value of the first {@linkcode Ok} result:
 
   ```ts
-  import { any } from 'true-myth/result';
+  import { transposeAny } from 'true-myth/result';
 
-  let result = any([
+  let result = transposeAny([
     Result.err("something went wrong"),
     Result.ok(10),
     Result.err("something else went wrong")
@@ -1937,9 +1937,9 @@ export function transposeAll(results: readonly AnyResult[]): Result<unknown[], u
   containing an array of all {@linkcode Err} encountered:
 
   ```ts
-  import { any } from 'true-myth/result';
+  import { transposeAny } from 'true-myth/result';
 
-  let result = any([
+  let result = transposeAny([
     Result.err("something went wrong"),
     Result.err("something else went wrong"),
     Result.err("even more went wrong")

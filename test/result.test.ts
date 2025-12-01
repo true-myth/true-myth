@@ -900,7 +900,7 @@ describe('`transposeAll` function', () => {
   });
 });
 
-describe('`any` function', () => {
+describe('`transposeAny` function', () => {
   test('with empty results', () => {
     const empty = result.transposeAny([]);
     expectTypeOf(empty).toEqualTypeOf<Result<[], never>>();
