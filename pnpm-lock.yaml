@@ -13,7 +13,7 @@ importers:
     devDependencies:
       '@release-it-plugins/lerna-changelog':
         specifier: ^8.0.1
-        version: 8.0.1(release-it@19.0.6(@types/node@24.10.2)(magicast@0.3.5))
+        version: 8.0.1(release-it@19.1.0(@types/node@24.10.2)(magicast@0.3.5))
       '@types/markdown-it':
         specifier: ^14.1.2
         version: 14.1.2
@@ -49,7 +49,7 @@ importers:
         version: 3.7.4
       release-it:
         specifier: ^19.0.6
-        version: 19.0.6(@types/node@24.10.2)(magicast@0.3.5)
+        version: 19.1.0(@types/node@24.10.2)(magicast@0.3.5)
       rimraf:
         specifier: ^6.1.2
         version: 6.1.2
@@ -1551,8 +1551,8 @@ packages:
   lru-cache@10.4.3:
     resolution: {integrity: sha512-JNAzZcXrCt42VGLuYz0zfAzDfAvJWW6AfYlDBQyDV5DClI2m5sAmK+OIO7s59XfsRsWHp02jAJrRadPRGTt6SQ==}
 
-  lru-cache@11.2.2:
-    resolution: {integrity: sha512-F9ODfyqML2coTIsQpSkRHnLSZMtkU8Q+mSfcaIyKwy58u+8k5nvAYeiNhsyMARvzNcXJ9QfWVrcPsC9e9rAxtg==}
+  lru-cache@11.2.4:
+    resolution: {integrity: sha512-B5Y16Jr9LB9dHVkh6ZevG+vAbOsNOYCX+sXvFWFu7B3Iz5mijW3zdbMyhsh8ANd2mSWBYdJgnqi+mL7/LrOPYg==}
     engines: {node: 20 || >=22}
 
   lru-cache@6.0.0:
@@ -2003,8 +2003,8 @@ packages:
   regex@6.0.1:
     resolution: {integrity: sha512-uorlqlzAKjKQZ5P+kTJr3eeJGSVroLKoHmquUj4zHWuR+hEyNqlXsSKlYYF5F4NI6nl7tWCs0apKJ0lmfsXAPA==}
 
-  release-it@19.0.6:
-    resolution: {integrity: sha512-XTCNZ2mV9wjASQmc2bcQjA+ImJiFMijbFSyQE6lDmP1Plq17acjYaoY5FmJb5Lh/Nv4UDwfRlKQMv1DvHFKf1g==}
+  release-it@19.1.0:
+    resolution: {integrity: sha512-XgAIZVKgHgOBUUoLFrUfXHG4cUDiXPWFW0AHIAgk17Tk9JbIjz9YyAU8MyQer7dWkfG5IpNU9QH8tViQZGfhaw==}
     engines: {node: ^20.12.0 || >=22.0.0}
     hasBin: true
 
@@ -2913,13 +2913,13 @@ snapshots:
   '@pkgjs/parseargs@0.11.0':
     optional: true
 
-  '@release-it-plugins/lerna-changelog@8.0.1(release-it@19.0.6(@types/node@24.10.2)(magicast@0.3.5))':
+  '@release-it-plugins/lerna-changelog@8.0.1(release-it@19.1.0(@types/node@24.10.2)(magicast@0.3.5))':
     dependencies:
       execa: 5.1.1
       lerna-changelog: 2.2.0
       lodash: 4.17.21
       mdast-util-from-markdown: 2.0.2
-      release-it: 19.0.6(@types/node@24.10.2)(magicast@0.3.5)
+      release-it: 19.1.0(@types/node@24.10.2)(magicast@0.3.5)
       tmp: 0.2.5
       validate-peer-dependencies: 2.2.0
       which: 5.0.0
@@ -3970,7 +3970,7 @@ snapshots:
 
   lru-cache@10.4.3: {}
 
-  lru-cache@11.2.2: {}
+  lru-cache@11.2.4: {}
 
   lru-cache@6.0.0:
     dependencies:
@@ -4451,7 +4451,7 @@ snapshots:
 
   path-scurry@2.0.1:
     dependencies:
-      lru-cache: 11.2.2
+      lru-cache: 11.2.4
       minipass: 7.1.2
 
   pathe@2.0.3: {}
@@ -4531,7 +4531,7 @@ snapshots:
     dependencies:
       regex-utilities: 2.3.0
 
-  release-it@19.0.6(@types/node@24.10.2)(magicast@0.3.5):
+  release-it@19.1.0(@types/node@24.10.2)(magicast@0.3.5):
     dependencies:
       '@nodeutils/defaults-deep': 1.1.0
       '@octokit/rest': 22.0.0
