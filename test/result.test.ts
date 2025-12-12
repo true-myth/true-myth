@@ -927,7 +927,7 @@ describe('`transposeAny` function', () => {
 
   test('with one Ok', () => {
     const oneOk = result.transposeAny([result.ok(1)]);
-    expectTypeOf(oneOk).toEqualTypeOf<Result<Array<number>, [never]>>();
+    expectTypeOf(oneOk).toEqualTypeOf<Result<number, [never]>>();
     expect(oneOk).toEqual(result.ok(1));
   });
 
@@ -939,13 +939,13 @@ describe('`transposeAny` function', () => {
 
   test('with all Ok', () => {
     const allOk = result.transposeAny([result.ok(1), result.ok(2), result.ok(3)]);
-    expectTypeOf(allOk).toEqualTypeOf<Result<Array<number>, [never, never, never]>>();
+    expectTypeOf(allOk).toEqualTypeOf<Result<number, [never, never, never]>>();
     expect(allOk).toEqual(result.ok(1));
   });
 
   test('with all Err', () => {
     const allErr = result.transposeAny([result.err('error 1'), result.err('error 2')]);
-    expectTypeOf(allErr).toEqualTypeOf<Result<Array<never>, [string, string]>>();
+    expectTypeOf(allErr).toEqualTypeOf<Result<never, [string, string]>>();
     expect(allErr).toEqual(result.err(['error 1', 'error 2']));
   });
 
@@ -955,7 +955,7 @@ describe('`transposeAny` function', () => {
       result.err('error 2'),
       result.ok(3),
     ]);
-    expectTypeOf(someErr).toEqualTypeOf<Result<Array<number>, [string, string, never]>>();
+    expectTypeOf(someErr).toEqualTypeOf<Result<number, [string, string, never]>>();
     expect(someErr).toEqual(result.ok(3));
   });
 });
