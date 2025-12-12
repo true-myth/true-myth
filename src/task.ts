@@ -1040,12 +1040,14 @@ export type All<A extends readonly AnyTask[]> = Task<
   ]);
 
   let result = await allTasks;
-  console.log(result.toString()); // [Ok(10,100,1000)]
+  console.log(result.toString()); // Ok(10,100,1000)
   ```
 
   If any tasks do *not* resolve:
 
   ```ts
+  import Task, { all, timer } from 'true-myth/task';
+
   let { task: willReject, reject } = Task.withResolvers<never, string>();
 
   let allTasks = all([
@@ -1216,8 +1218,7 @@ export function allSettled(tasks: AnyTask[]): Task<unknown, never> {
   @param tasks The set of tasks to check for any resolution.
   @returns A Task which is either {@linkcode Resolved} with the value of the
     first task to resolve, or {@linkcode Rejected} with the rejection reasons
-    for all the tasks passed in in an {@linkcode AggregateRejection}. Note that
-    the order of the rejection reasons is not guaranteed.
+    for all the tasks passed in in an {@linkcode AggregateRejection}.
 
   @template A The type of the array or tuple of tasks.
 */
