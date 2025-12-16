@@ -1959,7 +1959,7 @@ export function transposeAll(results: readonly AnyResult[]): Result<unknown[], u
 export function transposeAny(results: []): Result<[], never>;
 export function transposeAny<const A extends readonly AnyResult[]>(
   results: A
-): Result<Array<ResultTypesFor<A>['ok'][number]>, [...ResultTypesFor<A>['err']]>;
+): Result<ResultTypesFor<A>['ok'][number], [...ResultTypesFor<A>['err']]>;
 export function transposeAny(
   results: readonly [] | readonly AnyResult[]
 ): Result<unknown, unknown[]> {
