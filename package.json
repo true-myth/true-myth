@@ -76,7 +76,7 @@
     "markdown-it-deflist": "^3.0.0",
     "markdown-it-footnote": "^4.0.0",
     "miniglob": "^0.1.2",
-    "oxc-minify": "^0.104.0",
+    "oxc-minify": "^0.106.0",
     "prettier": "^3.6.2",
     "release-it": "^19.0.6",
     "rimraf": "^6.1.2",
