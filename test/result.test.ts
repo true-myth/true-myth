@@ -736,16 +736,8 @@ describe('`Result` pure functions', () => {
   describe('`safe` function', () => {
     const THE_MESSAGE = 'the error message';
 
-    function example(
-      value: number,
-      { throwErr: shouldThrow = false }: { throwErr?: boolean } = {
-        throwErr: false,
-      }
-    ): string {
-      if (shouldThrow) {
-        throw new Error(THE_MESSAGE);
-      }
-
+    function example(value: number, config: { throwErr?: boolean } = { throwErr: false }): string {
+      if (config.throwErr) throw new Error(THE_MESSAGE);
       return `value was ${value}`;
     }
 
