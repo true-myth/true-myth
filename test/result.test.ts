@@ -922,7 +922,7 @@ describe('`transposeAny` function', () => {
   test('with readonly tuple', () => {
     const tuple = [result.ok(1)] as const;
     const oneOk = result.transposeAny(tuple);
-    expectTypeOf(oneOk).toEqualTypeOf<Result<Array<number>, [never]>>();
+    expectTypeOf(oneOk).toEqualTypeOf<Result<number, [never]>>();
   });
 
   test('with one Ok', () => {
