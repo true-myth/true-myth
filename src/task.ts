@@ -146,10 +146,6 @@ class TaskImpl<T, E> implements PromiseLike<Result<T, E>> {
 
       case State.Rejected:
         return `Task.Rejected(${safeToString(this.#state[1])})`;
-
-      /* v8 ignore next 2 */
-      default:
-        unreachable(this.#state);
     }
   }
 
@@ -1466,11 +1462,6 @@ export class InvalidAccess extends Error {
   constructor(field: 'value' | 'reason', state: State) {
     super(`Tried to access 'Task.${field}' when its state was '${state}'`);
   }
-}
-
-/* v8 ignore next 3 */
-function unreachable(value: never): never {
-  throw new Error(`Unexpected value: ${value}`);
 }
 
 /**
