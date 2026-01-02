@@ -247,10 +247,13 @@ export function asyncParserFor<S extends StandardSchemaV1>(
 
     let parseTask =
       standardSchemaResult instanceof Promise
-        ? task.fromPromise(standardSchemaResult, () => {
-            /* v8 ignore next 2 */
-            throw new Error('Standard Schema should never throw an error');
-          })
+        ? task.fromPromise(
+            standardSchemaResult,
+            /* v8 ignore next 3 */
+            () => {
+              throw new Error('Standard Schema should never throw an error');
+            }
+          )
         : task.resolve(standardSchemaResult);
 
     return parseTask.andThen((standardSchemaResult) =>
