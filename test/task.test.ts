@@ -148,7 +148,7 @@ describe('`Task`', () => {
       });
 
       test('allows explicitly setting a type for `E`', () => {
-        let rejectedWithUnit = Task.resolve<Unit, string>();
+        let rejectedWithUnit = Task.resolve<string>();
         expectTypeOf(rejectedWithUnit).toEqualTypeOf<Task<Unit, string>>();
 
         let rejectedWithValue = Task.resolve<string, number>('hello');
@@ -2125,7 +2125,7 @@ describe('module-scope functions', () => {
     });
 
     test('allows explicitly setting a type for `E`', () => {
-      let resolvedWithUnit = resolve<Unit, string>();
+      let resolvedWithUnit = resolve<string>();
       expectTypeOf(resolvedWithUnit).toEqualTypeOf<Task<Unit, string>>();
 
       let resolvedWithValue = resolve<string, number>('hello');

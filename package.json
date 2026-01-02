@@ -69,7 +69,8 @@
     "@release-it-plugins/lerna-changelog": "^8.0.1",
     "@types/markdown-it": "^14.1.2",
     "@types/node": "^25.0.3",
-    "@vitest/coverage-v8": "^3.2.4",
+    "@typescript/native-preview": "7.0.0-dev.20260101.1",
+    "@vitest/coverage-v8": "^4.0.16",
     "arktype": "^2.1.27",
     "effect": "^3.19.6",
     "feed": "^5.1.0",
@@ -84,12 +85,11 @@
     "typedoc": "^0.28.14",
     "typedoc-plugin-markdown": "^4.9.0",
     "typedoc-vitepress-theme": "^1.1.2",
-    "typescript": "5.3.3",
     "valibot": "^1.2.0",
-    "vite-tsconfig-paths": "^6.0.1",
+    "vite-tsconfig-paths": "^6.0.3",
     "vitepress": "2.0.0-alpha.15",
-    "vitest": "^3.2.4",
-    "zod": "^4.1.13"
+    "vitest": "^4.0.16",
+    "zod": "^4"
   },
   "engines": {
     "node": "18.* || >= 20.*"
