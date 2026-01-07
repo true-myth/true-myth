@@ -13,7 +13,7 @@ importers:
     devDependencies:
       '@release-it-plugins/lerna-changelog':
         specifier: ^8.0.1
-        version: 8.0.1(release-it@19.2.2(@types/node@25.0.3)(magicast@0.3.5))
+        version: 8.0.1(release-it@19.2.3(@types/node@25.0.3)(magicast@0.3.5))
       '@types/markdown-it':
         specifier: ^14.1.2
         version: 14.1.2
@@ -49,7 +49,7 @@ importers:
         version: 3.7.4
       release-it:
         specifier: ^19.0.6
-        version: 19.2.2(@types/node@25.0.3)(magicast@0.3.5)
+        version: 19.2.3(@types/node@25.0.3)(magicast@0.3.5)
       rimraf:
         specifier: ^6.1.2
         version: 6.1.2
@@ -2027,8 +2027,8 @@ packages:
   regex@6.0.1:
     resolution: {integrity: sha512-uorlqlzAKjKQZ5P+kTJr3eeJGSVroLKoHmquUj4zHWuR+hEyNqlXsSKlYYF5F4NI6nl7tWCs0apKJ0lmfsXAPA==}
 
-  release-it@19.2.2:
-    resolution: {integrity: sha512-57TBUTBbBXLJsPufYS+Hsb1dSZKZ0ktiYgPkNc3Pmlq/QQtH9X0oD0SG2ib5CsXHTI11m19pyK60NXmvtE6cLg==}
+  release-it@19.2.3:
+    resolution: {integrity: sha512-GTSfrKb0cPmssEFliX0+WQBHC6NiDsMR/M8Y2tkvct/TO36BjB5XV6LO5BUTYV12C3+f78Y8aroku7jCyNiDeA==}
     engines: {node: ^20.12.0 || >=22.0.0}
     hasBin: true
 
@@ -2941,13 +2941,13 @@ snapshots:
   '@pkgjs/parseargs@0.11.0':
     optional: true
 
-  '@release-it-plugins/lerna-changelog@8.0.1(release-it@19.2.2(@types/node@25.0.3)(magicast@0.3.5))':
+  '@release-it-plugins/lerna-changelog@8.0.1(release-it@19.2.3(@types/node@25.0.3)(magicast@0.3.5))':
     dependencies:
       execa: 5.1.1
       lerna-changelog: 2.2.0
       lodash: 4.17.21
       mdast-util-from-markdown: 2.0.2
-      release-it: 19.2.2(@types/node@25.0.3)(magicast@0.3.5)
+      release-it: 19.2.3(@types/node@25.0.3)(magicast@0.3.5)
       tmp: 0.2.5
       validate-peer-dependencies: 2.2.0
       which: 5.0.0
@@ -4564,7 +4564,7 @@ snapshots:
     dependencies:
       regex-utilities: 2.3.0
 
-  release-it@19.2.2(@types/node@25.0.3)(magicast@0.3.5):
+  release-it@19.2.3(@types/node@25.0.3)(magicast@0.3.5):
     dependencies:
       '@nodeutils/defaults-deep': 1.1.0
       '@octokit/rest': 22.0.1
