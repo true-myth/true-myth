@@ -73,7 +73,7 @@ importers:
         version: 1.2.0(typescript@5.3.3)
       vite-tsconfig-paths:
         specifier: ^6.0.1
-        version: 6.0.3(rolldown-vite@7.3.1(@types/node@25.0.3)(jiti@2.6.1)(yaml@2.8.2))(typescript@5.3.3)
+        version: 6.0.4(rolldown-vite@7.3.1(@types/node@25.0.3)(jiti@2.6.1)(yaml@2.8.2))(typescript@5.3.3)
       vitepress:
         specifier: 2.0.0-alpha.15
         version: 2.0.0-alpha.15(@types/node@25.0.3)(jiti@2.6.1)(oxc-minify@0.110.0)(postcss@8.5.6)(typescript@5.3.3)(yaml@2.8.2)
@@ -2415,8 +2415,8 @@ packages:
     engines: {node: ^18.0.0 || ^20.0.0 || >=22.0.0}
     hasBin: true
 
-  vite-tsconfig-paths@6.0.3:
-    resolution: {integrity: sha512-7bL7FPX/DSviaZGYUKowWF1AiDVWjMjxNbE8lyaVGDezkedWqfGhlnQ4BZXre0ZN5P4kAgIJfAlgFDVyjrCIyg==}
+  vite-tsconfig-paths@6.0.4:
+    resolution: {integrity: sha512-iIsEJ+ek5KqRTK17pmxtgIxXtqr3qDdE6OxrP9mVeGhVDNXRJTKN/l9oMbujTQNzMLe6XZ8qmpztfbkPu2TiFQ==}
     peerDependencies:
       vite: '*'
     peerDependenciesMeta:
@@ -4958,7 +4958,7 @@ snapshots:
       - tsx
       - yaml
 
-  vite-tsconfig-paths@6.0.3(rolldown-vite@7.3.1(@types/node@25.0.3)(jiti@2.6.1)(yaml@2.8.2))(typescript@5.3.3):
+  vite-tsconfig-paths@6.0.4(rolldown-vite@7.3.1(@types/node@25.0.3)(jiti@2.6.1)(yaml@2.8.2))(typescript@5.3.3):
     dependencies:
       debug: 4.4.3
       globrex: 0.1.2
