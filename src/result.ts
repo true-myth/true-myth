@@ -1835,6 +1835,84 @@ export function all(results: readonly AnyResult[]): Result<unknown[], unknown> {
 }
 
 /**
+  A type utility for mapping an input dictionary of results into the appropriate
+  output for `allKeyed`.
+
+  @internal
+ */
+export type AllKeyed<A extends Record<string | symbol, AnyResult>> = Result<
+  { -readonly [P in keyof A]: OkFor<A[P]> },
+  ErrFor<A[keyof A]>
+>;
+
+/**
+  Given a dictionary of results, return a new {@linkcode Ok} result if all results
+  are {@linkcode Ok} or a new {@linkcode Err} result if some result is
+  {@linkcode Err}.
+
+  ## Examples
+
+  If all results are {@linkcode Ok}, return a new {@linkcode Ok} result
+  containing a dictionary of all given {@linkcode Ok} values:
+
+  ```ts
+  import Result, { allKeyed } from 'true-myth/result';
+
+  let result = allKeyed({
+    first: Result.ok(10),
+    second: Result.ok(100),
+    third: Result.ok(1000)
+  });
+
+  console.log(result.toString()); // Ok({ first: 10, second: 100, third: 1000 })
+  ```
+
+  If any result is {@linkcode Err}, return a new {@linkcode Err} result
+  containing the first {@linkcode Err} encountered:
+
+  ```ts
+  import Result, { allKeyed } from 'true-myth/result';
+
+  let result = allKeyed({
+    first: Result.ok(10),
+    second: Result.ok("something went wrong"),
+    third: Result.err("something else went wrong")
+  });
+
+  console.log(result.toString()); // Err(something went wrong)
+  ```
+
+  @param results The dictionary of results.
+  @return A new {@linkcode Result} containing a dictionary of all {@linkcode Ok}
+    values if all results are {@linkcode Ok}, or a new {@linkcode Err} result
+    containing the first {@linkcode Err} encountered.
+
+  @template A The type of the dictionary of results.
+*/
+export function allKeyed(
+  results: Record<string | symbol, never>
+): Result<Record<string | symbol, never>, never>;
+export function allKeyed<const A extends Record<string | symbol, AnyResult>>(
+  results: A
+): AllKeyed<A>;
+export function allKeyed(
+  results: Record<string | symbol, AnyResult>
+): Result<Record<string | symbol, unknown>, unknown> {
+  const oks: Record<string | symbol, unknown> = {};
+
+  for (const key of Reflect.ownKeys(results)) {
+    const result = results[key]!;
+    if (result.isErr) {
+      return Result.err(result.error);
+    }
+
+    oks[key] = result.value;
+  }
+
+  return Result.ok(oks);
+}
+
+/**
   A type utility for mapping an input array of results into the appropriate
   output for `allResults`.
 
@@ -1912,6 +1990,85 @@ export function transposeAll(results: readonly AnyResult[]): Result<unknown[], u
 }
 
 /**
+  A type utility for mapping an input dictionary of results into the appropriate
+  output for `allResultsKeyed`.
+
+  @internal
+ */
+export type AllResultsKeyed<A extends Record<string | symbol, AnyResult>> = Result<
+  { -readonly [P in keyof A]: OkFor<A[P]> },
+  { -readonly [P in keyof A]?: ErrFor<A[P]> }
+>;
+
+/**
+  Given a dictionary of results, return a new {@linkcode Ok} result if all results
+  are {@linkcode Ok} or a new {@linkcode Err} result with all errors if one or
+  more of the results is {@linkcode Err}.
+
+  ## Examples
+
+  If all results are {@linkcode Ok}, return a new {@linkcode Ok} result
+  containing a dictionary of all provided {@linkcode Ok} values:
+
+  ```ts
+  import Result, { transposeAllKeyed } from 'true-myth/result';
+
+  let result = transposeAllKeyed({
+    first: Result.ok(10),
+    second: Result.ok(100),
+    third: Result.ok(1000)
+  });
+
+  console.log(result.toString()); // Ok({ first: 10, second: 100, third: 1000 })
+  ```
+
+  If any result is {@linkcode Err}, return a new {@linkcode Err} result
+  containing a dictionary of all {@linkcode Err} encountered:
+
+  ```ts
+  import Result, { transposeAllKeyed } from 'true-myth/result';
+
+  let result = transposeAllKeyed({
+    first: Result.ok(10),
+    second: Result.err("something went wrong"),
+    third: Result.err("something else went wrong")
+  });
+
+  console.log(result.toString()); // Err({ second: 'something went wrong', third: 'something else went wrong' })
+  ```
+
+  @param results The dictionary of results.
+  @return A new {@linkcode Result} containing a dictionary of all {@linkcode Ok}
+    values if all results are {@linkcode Ok}, or a new {@linkcode Err} result
+    containing a dictionary of all {@linkcode Err} encountered.
+
+  @template A The type of the dictionary of results.
+*/
+export function transposeAllKeyed(
+  results: Record<string | symbol, never>
+): Result<Record<string | symbol, never>, never>;
+export function transposeAllKeyed<const A extends Record<string | symbol, AnyResult>>(
+  results: A
+): AllResultsKeyed<A>;
+export function transposeAllKeyed(
+  results: Record<string | symbol, AnyResult>
+): Result<Record<string | symbol, unknown>, Record<string | symbol, unknown>> {
+  const oks: Record<string | symbol, unknown> = {};
+  const errs: Record<string | symbol, unknown> = {};
+
+  for (const key of Reflect.ownKeys(results)) {
+    const result = results[key]!;
+    if (result.isErr) {
+      errs[key] = result.error;
+    } else if (Reflect.ownKeys(errs).length === 0) {
+      oks[key] = result.value;
+    }
+  }
+
+  return Reflect.ownKeys(errs).length === 0 ? Result.ok(oks) : Result.err(errs);
+}
+
+/**
   Given an array of results, return a new {@linkcode Ok} result if _any_ of the
   results is {@linkcode Ok}, or a new {@linkcode Err} result if _all_ the
   results are {@linkcode Err}.
@@ -1974,6 +2131,74 @@ export function transposeAny(
       return Result.ok(result.value);
     } else {
       errs.push(result.error);
+    }
+  }
+
+  return Result.err(errs);
+}
+
+/**
+  Given a dictionary of results, return a new {@linkcode Ok} result if _any_ of the
+  results is {@linkcode Ok}, or a new {@linkcode Err} result if _all_ the
+  results are {@linkcode Err}.
+
+  ## Examples
+
+  When any result is {@linkcode Ok}, return a new {@linkcode Ok} result
+  containing the value of the first {@linkcode Ok} result:
+
+  ```ts
+  import { transposeAnyKeyed } from 'true-myth/result';
+
+  let result = transposeAnyKeyed({
+    first: Result.err("something went wrong"),
+    second: Result.ok(10),
+    third: Result.err("something else went wrong")
+  });
+
+  console.log(result.toString()); // Ok(10);
+  ```
+
+  When all results are {@linkcode Err}, return a new {@linkcode Err} result
+  containing a dictionary of all {@linkcode Err} encountered:
+
+  ```ts
+  import { transposeAnyKeyed } from 'true-myth/result';
+
+  let result = transposeAnyKeyed({
+    first: Result.err("something went wrong"),
+    second: Result.err("something else went wrong"),
+    third: Result.err("even more went wrong")
+  });
+
+  console.log(result.toString()); // Err({ first: 'something went wrong', second: 'something else went wrong', third: 'even more went wrong' })
+  ```
+
+  @param results The dictionary of results to check.
+  @returns A new {@linkcode Result} containing the value of the first {@linkcode
+    Ok} result if any results are {@linkcode Ok}, or a new {@linkcode Err}
+    result containing a dictionary of all {@linkcode Err} encountered if all results
+    are {@linkcode Err}.
+
+  @template A The type of the dictionary of tasks.
+*/
+export function transposeAnyKeyed(
+  results: Record<string | symbol, never>
+): Result<never, Record<string | symbol, never>>;
+export function transposeAnyKeyed<const A extends Record<string | symbol, AnyResult>>(
+  results: A
+): Result<OkFor<A[keyof A]>, { -readonly [P in keyof A]: ErrFor<A[P]> }>;
+export function transposeAnyKeyed(
+  results: Record<string | symbol, AnyResult>
+): Result<unknown, Record<string | symbol, unknown>> {
+  const errs: Record<string | symbol, unknown> = {};
+
+  for (const key of Reflect.ownKeys(results)) {
+    const result = results[key]!;
+    if (result.isOk) {
+      return Result.ok(result.value);
+    } else {
+      errs[key] = result.error;
     }
   }
 
