@@ -102,7 +102,7 @@ export default defineConfig({
   },
 
   markdown: {
-    languages: ['javascript', 'json'],
+    languages: ['typescript', 'javascript', 'json'],
     codeTransformers: [
       transformerTwoslash({
         twoslashOptions: {
