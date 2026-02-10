@@ -2,7 +2,7 @@
 
 :::warning 🚧 Under Construction 🚧
 
-There will be more, different, and *better*, content here Soon™. We didn’t want to block getting the new docs site live on having finished updating all the existing content!
+There will be more, different, and *better*, content here Soon™. We didn't want to block getting the new docs site live on having finished updating all the existing content!
 
 :::
 
@@ -20,57 +20,58 @@ You can think of a `Task<T, E>` as being basically a `Promise<Result<T, E>>`, be
 
 2. Unlike `Promise`, `Task` robustly distinguishes between `map` and `andThen` operations.
 
-`Task` also implements JavaScript’s `PromiseLike` interface, so you can`await` it; when a `Task<T, E>` is awaited, it produces a `Result<T, E>`.
+`Task` also implements JavaScript's `PromiseLike` interface, so you can`await` it; when a `Task<T, E>` is awaited, it produces a `Result<T, E>`.
 
 ## Creating a `Task`
 
-The simplest way to create a `Task` is to call `Task.fromPromise(somePromise)`. Because any promise may reject/throw an error, this simplest form catches all rejections and maps them into the `Rejected` variant. Given a `Promise<T>`, the resulting `Task` thus has the type `Task<T, unknown>`. For example:
+The simplest way to create a `Task` is to call `fromPromise(somePromise)`. Because any promise may reject/throw an error, this simplest form catches all rejections and maps them into the `Rejected` variant. Given a `Promise<T>`, the resulting `Task` thus has the type `Task<T, unknown>`. For example:
 
-```ts
+```ts twoslash
+import * as task from 'true-myth/task';
+
 let { promise, reject } = Promise.withResolvers<number>();
 
 // `theTask` has the type `Task<number, unknown>`
-let theTask = Task.fromPromise(promise);
+let theTask = task.fromPromise(promise);
 
 // The rejection will always produce
 reject("Tasks always safely handle errors!");
 await theTask;
-console.log(theTask.state); // State.Rejected
-
-// The `reason` here is of type `unknown`. Attempting to access it on a pending
-// or resolved `Task` (rather than a rejected `Task`) will throw an error.
-console.log(theTask.reason); // "Tasks always safely handle errors!"
 ```
 
 You can also provide a fallback value for the error using `tryOr`:
 
-```ts
+```ts twoslash
+import * as task from 'true-myth/task';
+
 let { promise, reject } = Promise.withResolvers<number>();
 
 // `theTask` has the type `Task<number, string>`
-let theTask = Task.tryOr(promise, "a fallback error");
+let theTask = task.tryOr("a fallback error", () => promise);
 
 reject({ thisStructuredObject: "will be ignored!" });
 await theTask;
-
-console.log(theTask.reason); // "a fallback error"
 ```
 
-You can use `Task.tryOrElse` to produce a known rejection reason from the `unknown` rejection reason of a `Promise`:
+You can use `tryOrElse` to produce a known rejection reason from the `unknown` rejection reason of a `Promise`:
 
-```ts
+```ts twoslash
+import * as task from 'true-myth/task';
+
 let { promise, reject } = Promise.withResolvers<number>();
 
 // `theTask` has the type `Task<number, Error>`
-let theTask = Task.tryOrElse(
-  promise,
-  (reason) => new Error("Promise was rejected", { cause: reason })
+let theTask = task.tryOrElse(
+  (reason) => new Error("Promise was rejected", { cause: reason }),
+  () => promise,
 );
 ```
 
-`Task` also has `resolved` and `rejected` static helpers:
+`Task` also has `resolve` and `reject` static helpers:
 
-```ts
+```ts twoslash
+import Task from 'true-myth/task';
+
 // `resolved` has the type `Task<number, never>`
 let resolved = Task.resolve(123);
 
@@ -81,11 +82,13 @@ let rejected = Task.reject("something went wrong");
 
 ## Working with a `Task`
 
-There are many helpers (“combinators”) for working with a `Task`. The most common are `map`, `mapRejected`, `andThen`, and `orElse`.
+There are many helpers ("combinators") for working with a `Task`. The most common are `map`, `mapRejected`, `andThen`, and `orElse`.
 
-- `map` transforms a value “within” a `Task` context:
+- `map` transforms a value "within" a `Task` context:
 
-    ```ts
+    ```ts twoslash
+    import Task from 'true-myth/task';
+
     let theTask = Task.resolve(123);
     let doubled = theTask.map((n) => n * 2);
     let theResult = await doubled;
@@ -94,7 +97,9 @@ There are many helpers (“combinators”) for working with a `Task`. The most c
 
 - `mapRejected` does the same, but for a rejection:
 
-    ```ts
+    ```ts twoslash
+    import Task from 'true-myth/task';
+
     let theTask = Task.reject(new Error("ugh"));
     let wrapped = theTask.mapRejected(
       (err) => new Error(`sigh (caused by: ${err.message})`)
@@ -105,43 +110,26 @@ There are many helpers (“combinators”) for working with a `Task`. The most c
 
 - `andThen` uses the value produced by one resolved `Task` to create another `Task`, but without nesting them. `orElse` is like `andThen`, but for the `Rejection`. You can often combine them to good effect. For example, a safe `fetch` usage might look like this:
 
-    ```ts
-    let fetchUsersTask = Task.try(fetch(/* some endpoint */))
+    ```ts twoslash
+    // @noErrors
+    import * as task from 'true-myth/task';
+
+    let fetchUsersTask = task.fromPromise(fetch('https://api.example.com/users'))
       .orElse(handleError('http'))
-      .andThen((res) => Task.try(res.json().orElse(handleError('parse')))
-      .match({
-        Resolved: (users) => {
-          for (let user of users) {
-            console.log(user);
-          }
-        },
-        Rejected: (error) => {
-          let currentError = error;
-          console.error(currentError.message)
-          while (currentError = currentError.cause) {
-            console.error(currentError.message);
-          }
-        },
-      });
+      .andThen((res) => task.fromPromise(res.json()).orElse(handleError('parse')));
 
     let usersResult = await fetchUsersTask;
     usersResult.match({
       Ok: (users) => {
-        for (let user of users) {
-          console.log(user);
-        }
+        console.log(users);
       },
       Err: (error) => {
-        let currentError = error;
-        console.error(currentError.message)
-        while (currentError = currentError.cause) {
-          console.error(currentError.message);
-        }
+        console.error(error.message);
       }
     });
 
-    function handleError(name: string): (error: unknown) => Error {
-      return new Error(`my-lib.${name}`, { cause: error });
+    function handleError(name: string) {
+      return (error: unknown) => new Error(`my-lib.${name}`, { cause: error });
     }
     ```
 

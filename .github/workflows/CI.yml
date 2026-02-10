@@ -62,3 +62,13 @@ jobs:
       - uses: jdx/mise-action@v3
       - run: pnpm install
       - run: pnpm run docs
+
+  test_docs:
+    name: 'Test docs (twoslash)'
+    runs-on: ubuntu-latest
+    continue-on-error: false
+    steps:
+      - uses: actions/checkout@v4
+      - uses: jdx/mise-action@v3
+      - run: pnpm install
+      - run: pnpm test:docs

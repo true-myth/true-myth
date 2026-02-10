@@ -1,10 +1,10 @@
 # Task Retries and Delays
 
-When working with a `Task`, you often need to retry it in the case of failure. Maybe an API endpoint failed to respond in time, or perhaps it’s expected that a given operation may fail a few times before succeeding. True Myth’s `task` module provides the `withRetries` helper to make this easy both to do at all and to get things “right” in terms of your system’s performance.
+When working with a `Task`, you often need to retry it in the case of failure. Maybe an API endpoint failed to respond in time, or perhaps it's expected that a given operation may fail a few times before succeeding. True Myth's `task` module provides the `withRetries` helper to make this easy both to do at all and to get things "right" in terms of your system's performance.
 
 ## Retrying a task
 
-True Myth’s approach to retries is designed to let you compose all the pieces together yourself, and to opt into as much or as little complexity as you need.
+True Myth's approach to retries is designed to let you compose all the pieces together yourself, and to opt into as much or as little complexity as you need.
 
 The `withRetries` function ([API docs](/api/task/functions/withRetries)) accepts two arguments:
 
@@ -13,9 +13,9 @@ The `withRetries` function ([API docs](/api/task/functions/withRetries)) accepts
 
 Although you _can_ customize nearly every part of this, you do not _have_ to customize any of it.
 
-Here’s the simplest version of a function that retries a `fetch` call:
+Here's the simplest version of a function that retries a `fetch` call:
 
-```ts
+```ts twoslash
 import * as task from 'true-myth/task';
 
 let fetcher = () => task.fromPromise(fetch('https://true-myth.js.org'));
@@ -30,15 +30,15 @@ We also provide the following tools to customize the behavior of `withRetries`:
 - The retry strategy argument.
 - The `stopRetrying` helper.
 
-In each of the following examples, we’ll use the following helper to give us slightly nicer types to work with in the case of rejections:
+In each of the following examples, we'll use the following helper to give us slightly nicer types to work with in the case of rejections:
 
-```ts
+```ts twoslash
 function intoError(cause: unknown): Error {
   return new Error('unknown error', { cause });
 }
 ```
 
-We won’t repeat this, for the sake of simplicity.
+We won't repeat this, for the sake of simplicity.
 
 ### The retry status
 
@@ -50,9 +50,13 @@ The `elapsed` value will always be greater than or equal to the requested elapse
 
 :::
 
-Here’s one example of using the retry status in practice.
+Here's one example of using the retry status in practice.
 
-```ts
+```ts twoslash
+function intoError(cause: unknown): Error {
+  return new Error('unknown error', { cause });
+}
+// ---cut---
 import Task, * as task from 'true-myth/task';
 
 let fetcher = ({ count, elapsed }: task.RetryStatus): Task<Response, Error> => {
@@ -66,12 +70,27 @@ let fetcher = ({ count, elapsed }: task.RetryStatus): Task<Response, Error> => {
     .mapRejected(intoError);
 };
 
-let taskWithRetries = withRetries(fetcher);
+let taskWithRetries = task.withRetries(fetcher);
 ```
 
 In this example, we reject with an error if the task has already been retried more than 100 times or if it has taken more 1,000 milliseconds (one second). The resulting `Task` has the type `Task<Response, RetryFailed<Error>>`. [The `RetryFailed` type](/api/task/classes/RetryFailed) gathers up all the different kinds of errors emitted during retries so you can inspect them:
 
-```ts
+```ts twoslash
+function intoError(cause: unknown): Error {
+  return new Error('unknown error', { cause });
+}
+import Task, * as task from 'true-myth/task';
+let fetcher = ({ count, elapsed }: task.RetryStatus): Task<Response, Error> => {
+  if (count > 100 || elapsed > 1_000) {
+    let message = `Overdid it! Count: ${count} | Time elapsed: ${elapsed}`;
+    return task.reject(new Error(message));
+  }
+  return task
+    .fromPromise(fetch('https://true-myth.js.org'))
+    .mapRejected(intoError);
+};
+let taskWithRetries = task.withRetries(fetcher);
+// ---cut---
 let described = taskWithRetries.orElse((retryFailed) => {
   let tries = `Failed ${retryFailed.tries} times.`;
   let time = `Took ${retryFailed.totalDuration}ms.`;
@@ -102,7 +121,11 @@ Second, you can supply a retry strategy, which tells `task.withRetries` how ofte
 
 For example, to use an exponential backoff strategy with the original `fetcher`, starting at 10 milliseconds and increasing by a factor of 10 with each retry, you could write this:
 
-```ts
+```ts twoslash
+function intoError(cause: unknown): Error {
+  return new Error('unknown error', { cause });
+}
+// ---cut---
 import * as task from "true-myth/task";
 import { exponential } from "true-myth/task/delay";
 
@@ -123,7 +146,7 @@ Third, you can stop retrying at any time, using the supplied `stopRetrying()` fu
 
 This next example show roughly the full <abbr title='application programming interface'>API</abbr> available, using the `exponential` delay strategy supplied by the library (there other supplied strategies are `fibonacci`, `fixed`, `immediate`, `linear`, and `none`):
 
-```ts
+```ts twoslash
 import * as task from 'true-myth/task';
 import { exponential, jitter } from 'true-myth/task/delay';
 
@@ -138,11 +161,11 @@ let fetchTask = task.withRetries(
       return task.reject(wrapped);
     });
   },
-  exponential({ from: 10, factor: 3 }).map(jitter).take(10)
+  exponential({ from: 10, withFactor: 3 }).map(jitter).take(10)
 );
 ```
 
-All of the built-in retry delay strategies (`exponential`, `fibonacci`, `fixed`, `immediate`, `linear`, and `none`) have good defaults such that you can simply call them like `fibonacci()`. The goal here is “progressive disclosure of complexity”: out of the box, it does something reasonable, and you can opt into customizing it with quite a few options, and if you need totally custom behavior, you can supply your own generator or iterable iterator.
+All of the built-in retry delay strategies (`exponential`, `fibonacci`, `fixed`, `immediate`, `linear`, and `none`) have good defaults such that you can simply call them like `fibonacci()`. The goal here is "progressive disclosure of complexity": out of the box, it does something reasonable, and you can opt into customizing it with quite a few options, and if you need totally custom behavior, you can supply your own generator or iterable iterator.
 
 [crate]: https://docs.rs/retry/latest/retry/
 
@@ -150,15 +173,15 @@ All of the built-in retry delay strategies (`exponential`, `fibonacci`, `fixed`,
 
 In general, a retry strategy is a way of configuring a retry function for when it should retry: how long between the first retry and the second, the second and the third, and so on. In the wild, you will commonly see both linear and exponential backoff, for example.
 
-True Myth’s `task.withRetries` function doesn’t actually know *anything* about back-off strategies, though. Instead, `task.withRetries` accepts any iterator that produces numbers. Each number produced by the iterator is used as the duration of time to wait before retrying again.
+True Myth's `task.withRetries` function doesn't actually know *anything* about back-off strategies, though. Instead, `task.withRetries` accepts any iterator that produces numbers. Each number produced by the iterator is used as the duration of time to wait before retrying again.
 
-This way, we don’t have to bake in special handling for a handful of pre-configured backoff strategies. Instead, we can *implement* those common strategies and make them available to you, while also allowing you maximum flexibility to implement your own.
+This way, we don't have to bake in special handling for a handful of pre-configured backoff strategies. Instead, we can *implement* those common strategies and make them available to you, while also allowing you maximum flexibility to implement your own.
 
 When combined with iterator helpers (either manually authored via generator functions or via the new iterator built-ins in ES2025), this makes for a very straightforward way to build up custom retry behaviors, because an iterator—and in particular a generator function—is a very natural way to express a sequence of numbers produced on demand, potentially forever.
 
 ::: info Credit where due!
 
-True Myth borrowed this idea, and modeled this <abbr title='application programming interface'>API</abbr>, fairly directly on the [the Rust `retry` crate][crate]: it’s a brilliant insight, but the insight was not ours!
+True Myth borrowed this idea, and modeled this <abbr title='application programming interface'>API</abbr>, fairly directly on the [the Rust `retry` crate][crate]: it's a brilliant insight, but the insight was not ours!
 
 [itit]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Iteration_protocols
 
@@ -175,7 +198,7 @@ The strategies provided in this module represent the _most common_, but definite
 - `linear` ([API docs](/api/task/delay/functions/linear))
 - `none` ([API docs](/api/task/delay/functions/none))
 
-Additionally, the `jitter` function provides a useful tool for generating random variations on a retry strategy, to help avoid [“thundering herd” problems][thp] where many tasks kick off at the same time, fail at the same time, and then retry at the same time, causing increasing load on a resource that is already failing.
+Additionally, the `jitter` function provides a useful tool for generating random variations on a retry strategy, to help avoid ["thundering herd" problems][thp] where many tasks kick off at the same time, fail at the same time, and then retry at the same time, causing increasing load on a resource that is already failing.
 
 [thp]: https://en.wikipedia.org/wiki/Thundering_herd_problem
 
@@ -189,9 +212,9 @@ There are three basic patterns for creating custom retry strategies:
 - Subclassing the `Iterator` class (requires ES2025 or a polyfill).
 - Implementing the `Iterator` interface.
 
-For the following examples, we’ll use this function to get a `Result` that usually rejects.
+For the following examples, we'll use this function to get a `Result` that usually rejects.
 
-```ts
+```ts twoslash
 import Task from 'true-myth/task';
 
 const unpredictable = () => Math.random() > 0.9
@@ -201,9 +224,14 @@ const unpredictable = () => Math.random() > 0.9
 
 ### Using generator functions
 
-Here’s an example of implementing a custom retry strategy using a generator function to produce up to 10 random backoffs of up to 10 seconds (10,000 milliseconds) each:
+Here's an example of implementing a custom retry strategy using a generator function to produce up to 10 random backoffs of up to 10 seconds (10,000 milliseconds) each:
 
-```ts
+```ts twoslash
+import Task from 'true-myth/task';
+const unpredictable = () => Math.random() > 0.9
+  ? Task.resolve("Success!")
+  : Task.reject(new Error("Nope, try again!"));
+// ---cut---
 import * as task from 'true-myth/task';
 
 function* random10Times(): task.delay.Strategy {
@@ -223,7 +251,8 @@ We use a generator function that yields a random integer somewhere between `0` a
 
 ### Subclassing `Iterator`
 
-```ts
+```ts twoslash
+// @noErrors
 class InRange extends Iterator<number> {
   readonly #start: number;
   readonly #end: number;
@@ -255,7 +284,8 @@ Then you can use any of these as a retry strategy (note that these examples assu
 
 [helpers]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Iterator#iterator_helper_methods
 
-```ts
+```ts twoslash
+// @noErrors
 import * as task from 'true-myth/task';
 import { someRetryableTask } from 'somewhere/in/your-app';
 
@@ -279,11 +309,12 @@ let usingRangeIterator = task.withRetries(
 
 :::warning 🚧 Under Construction 🚧
 
-There will be more content here Soon™. We didn’t want to block getting the new docs site live on having finished updating all the existing content!
+There will be more content here Soon™. We didn't want to block getting the new docs site live on having finished updating all the existing content!
 
 :::
 
-```ts
+```ts twoslash
+// @noErrors
 class RandomInteger implements Iterator<number> {
   #nextValue: number;
 
@@ -320,7 +351,7 @@ All the helpers from [`true-myth/task/delay`](/api/task/delay/) are infinite exc
 
 Update to at least TS 5.6+, or use a TypeScript-aware polyfill for the Iterator Helpers feature (ES2025). In that case, you can simply use the `take` method directly:
 
-```ts
+```ts twoslash
 import * as task from 'true-myth/task';
 import * as delay from 'true-myth/task/delay';
 
@@ -332,9 +363,9 @@ let theTask = task.withRetries(
 
 ### Fallback approach
 
-If you are unable to use a polyfill or upgrade to TS 5.6 for now, you can still use these safely using generator functions, which are long-standing JavaScript features available in all modern browsers since ES6. The above example might be written like this (note that these are fully-general versions of the `take` and `map` functions—that is, much more general than is required for working with the “strategies” from True Myth).
+If you are unable to use a polyfill or upgrade to TS 5.6 for now, you can still use these safely using generator functions, which are long-standing JavaScript features available in all modern browsers since ES6. The above example might be written like this (note that these are fully-general versions of the `take` and `map` functions—that is, much more general than is required for working with the "strategies" from True Myth).
 
-```ts
+```ts twoslash
 import * as task from 'true-myth/task';
 import * as delay from 'true-myth/task/delay';
 

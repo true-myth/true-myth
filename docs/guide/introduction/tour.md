@@ -15,7 +15,7 @@ These examples don't cover every corner of the API; it's just here to show you w
 
 ### `Result` with a functional style
 
-```typescript
+```ts twoslash
 import Result, { err, map, ok, toString } from 'true-myth/result';
 
 function fallibleCheck(isValid: boolean): Result<string, { reason: string }> {
@@ -35,7 +35,7 @@ console.log(toString(mappedBad)); // "Err("was not valid")"
 
 ### `Maybe` with the method style
 
-```typescript
+```ts twoslash
 import Maybe, { just, nothing } from 'true-myth/maybe';
 
 function safeLength(mightBeAString: Maybe<string>): Maybe<number> {
@@ -52,10 +52,10 @@ console.log(safeLength(nothingHere).toString()); // Nothing
 
 You can use `Maybe.of` to construct a `Maybe` from any value. It will return a `Nothing` if the passed type is `null` or `undefined`, or a `Just` otherwise.
 
-```typescript
+```ts twoslash
 import Maybe, { mapOr } from 'true-myth/maybe';
 
-function acceptsANullOhNo(value: number | null): Maybe<string> {
+function acceptsANullOhNo(value: number | null): string {
   const maybeNumber = Maybe.of(value);
   return mapOr('0', (n) => n.toString(), maybeNumber);
 }
@@ -65,7 +65,7 @@ function acceptsANullOhNo(value: number | null): Maybe<string> {
 
 The library provides smart type narrowing tools to allow you to get at the values wrapped in the type:
 
-```typescript
+```ts twoslash
 import { ok } from 'true-myth/result';
 
 const theAnswer = ok(42);
@@ -74,7 +74,7 @@ const theAnswerValue = theAnswer.isOk ? theAnswer.value : 0;
 
 However, ternaries like this can be annoying at times, and don't necessarily fit into functional composition pipelines when the expressions become more complicated. For situations like those, you can use one of the safe unwrap methods:
 
-```typescript
+```ts twoslash
 import { ok, unwrapOr } from 'true-myth/result';
 
 const theAnswer = ok(42);
@@ -83,7 +83,7 @@ const theAnswerValue = unwrapOr(0, theAnswer);
 
 You can also use TypeScript's "type narrowing" capabilities: if you _check_ which variant you are accessing, TypeScript will "narrow" the type to that variant and allow you to access the `value` directly if it is available.
 
-```typescript
+```ts twoslash
 import Maybe from 'true-myth/maybe';
 
 // Maybe<string>
@@ -100,16 +100,14 @@ if (couldBeSomething.isJust) {
 
 This can also be convenient in functional style pipelines:
 
-```typescript
-import { filter, map, pipe, prop } from 'ramda';
+```ts twoslash
 import * as result from 'true-myth/result';
-import { unwrapErr } from 'true-myth/test-support';
+import type { Result } from 'true-myth/result';
 
 function getErrorMessages(results: Array<Result<string, Error>>) {
   return results
     .filter(result.isErr)
-    .map(result.unwrapErr) // would not type-checkout with previous line
-    .map((error) => error.message);
+    .map((errResult) => errResult.error.message);
 }
 ```
 
@@ -120,7 +118,7 @@ A `Task` is effectively the composition of a `Promise` and a `Result`.[^task-imp
 
 You can wrap existing, non-`Promise`-based async operations using the `Task` constructor, much like you could with a `Promise`. For example, if you have some reason to use the old `XMLHttpRequest` instead of the more modern `fetch` API, you can wrap it with a `Task` like this:
 
-```ts
+```ts twoslash
 import Task from 'true-myth/task';
 
 interface RequestError {
@@ -166,16 +164,16 @@ let xhrTask = new Task<string, RequestError | HttpError>((resolve, reject) => {
 
 With `Task` in place, you could write a single adapter for `XMLHttpRequest` in one place in your app or library, which *always* produces a `Task` safely.
 
-With `Task`’s ability to robustly handled all the error cases, you can use this just like you would a `Promise`, with `async` and `await`, or you can use `Task`’s own robust library of combinators. For example, to preserve type safety while working with a response, you might combine `Task` with [the excellent `zod` library][zod] to handle API responses robustly, like so:
+With `Task`'s ability to robustly handled all the error cases, you can use this just like you would a `Promise`, with `async` and `await`, or you can use `Task`'s own robust library of combinators. For example, to preserve type safety while working with a response, you might combine `Task` with [the excellent `zod` library][zod] to handle API responses robustly, like so:
 
-```ts
+```ts twoslash
 import * as task from 'true-myth/task';
 import { z } from 'zod';
 
 const User = z.object({
   id: z.string().uuid(),
   name: z.optional(z.string()),
-  birthday: z.date(),
+  birthday: z.coerce.date(),
 });
 
 const Users = z.array(User);
@@ -196,7 +194,23 @@ let usersTask = task.tryOrElse(
 
 The resulting type here will be `Task<Array<User>>, Error>`. You can then perform further operations on it using more tools like `map` or `match`:
 
-```ts
+```ts twoslash
+// @noErrors
+import * as task from 'true-myth/task';
+import { z } from 'zod';
+const User = z.object({ id: z.string().uuid(), name: z.optional(z.string()), birthday: z.coerce.date() });
+const Users = z.array(User);
+let usersTask = task.tryOrElse(
+  (httpError) => new Error('Fetch error', { cause: httpError }),
+  () => fetch('https://api.example.com/users')
+).andThen((res) => task.tryOrElse(
+  (parseError) => new Error('Parse error', { cause: parseError }),
+  () => res.json(),
+)).andThen((json) => {
+  let result = Users.safeParse(json);
+  return result.success ? task.resolve(result.data) : task.reject(new Error('Schema error', { cause: result.error }));
+});
+// ---cut---
 usersTask.match({
   Resolved: (users) => {
     for (let user of users) {
@@ -219,7 +233,23 @@ usersTask.match({
 
 Alternatively, you can `await` it and operate on its underlying `Result`:
 
-```ts
+```ts twoslash
+// @noErrors
+import * as task from 'true-myth/task';
+import { z } from 'zod';
+const User = z.object({ id: z.string().uuid(), name: z.optional(z.string()), birthday: z.coerce.date() });
+const Users = z.array(User);
+let usersTask = task.tryOrElse(
+  (httpError) => new Error('Fetch error', { cause: httpError }),
+  () => fetch('https://api.example.com/users')
+).andThen((res) => task.tryOrElse(
+  (parseError) => new Error('Parse error', { cause: parseError }),
+  () => res.json(),
+)).andThen((json) => {
+  let result = Users.safeParse(json);
+  return result.success ? task.resolve(result.data) : task.reject(new Error('Schema error', { cause: result.error }));
+});
+// ---cut---
 let users = (await usersTask).unwrapOr([]);
 ```
 
@@ -232,7 +262,8 @@ let users = (await usersTask).unwrapOr([]);
 
 All static functions which take two or more parameters are automatically partially applied/curried so you can supply only _some_ of the arguments as makes sense. For example, if you were using [lodash], you might have something like this:
 
-```ts
+```ts twoslash
+// @noErrors
 import * as _ from 'lodash/fp';
 import { just, nothing, map } from 'true-myth/maybe';
 
@@ -269,7 +300,8 @@ console.log(result); // 18
 
 This makes for a much nicer API than needing to include the parameters for every function. If we _didn't_ have the curried functions, we'd have a much, _much_ noisier input:
 
-```ts
+```ts twoslash
+// @noErrors
 import * as _ from 'lodash';
 import Maybe, { map } from 'true-myth/maybe';
 

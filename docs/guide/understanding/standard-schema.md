@@ -6,7 +6,7 @@
 
 [ss]: https://standardschema.dev
 
-What that means in practice is that libraries like True Myth can provide an implementation that works across all sorts of “schema libraries”: from [Arktype][a] to [Zod][z] (yes, from A to Z). In the case of True Myth, that means you can use a very thin layer to translate between a parser you have written with any library that implements Standard Schema support and True Myth’s `Result` or `Task` types.
+What that means in practice is that libraries like True Myth can provide an implementation that works across all sorts of "schema libraries": from [Arktype][a] to [Zod][z] (yes, from A to Z). In the case of True Myth, that means you can use a very thin layer to translate between a parser you have written with any library that implements Standard Schema support and True Myth's `Result` or `Task` types.
 
 [a]: https://arktype.io
 [z]: https://zod.dev
@@ -25,10 +25,11 @@ Our integration provides two functions and two corresponding types for each:
 [PFT]: /api/standard-schema/type-aliases/ParserFor.html
 [APFT]: /api/standard-schema/type-aliases/AsyncParserFor.html
 
-As their names imply, the [`parserFor`][pF] and [`asyncParserFor`][aPF] functions accept a schema from one of the Standard Schema-compliant libraries and produce a [`ParseResult`][PRT] or [`ParseTask`][PTT] wrapping the type that would be produced by the schema—but using True Myth’s `Result` and `Task` types respectively, instead of the Standard Schema Result type.
+As their names imply, the [`parserFor`][pF] and [`asyncParserFor`][aPF] functions accept a schema from one of the Standard Schema-compliant libraries and produce a [`ParseResult`][PRT] or [`ParseTask`][PTT] wrapping the type that would be produced by the schema—but using True Myth's `Result` and `Task` types respectively, instead of the Standard Schema Result type.
 
-```ts
-import { parserFor } from 'true-myth';
+```ts twoslash
+// @noErrors
+import { parserFor } from 'true-myth/standard-schema';
 import { type } from 'arktype';
 import * as z from 'zod';
 
@@ -46,10 +47,11 @@ const parsePersonWithArktype = parserFor(personParserArktype);
 const parsePersonWithZod = parserFor(personParserZod);
 ```
 
-The related utility types, [`ParserFor`][PFT] and [`AsyncParserFor`][APFT], are shorthands for functions that can take unknown data and produce parsed data wrapped in a `Result` or `Task`. In other words: they’re fully generic aliases for the type of a function produced by `parserFor` and `asyncParserFor` respectively.
+The related utility types, [`ParserFor`][PFT] and [`AsyncParserFor`][APFT], are shorthands for functions that can take unknown data and produce parsed data wrapped in a `Result` or `Task`. In other words: they're fully generic aliases for the type of a function produced by `parserFor` and `asyncParserFor` respectively.
 
-```ts
-import { parserFor } from 'true-myth';
+```ts twoslash
+// @noErrors
+import { parserFor, type ParserFor } from 'true-myth/standard-schema';
 import { type } from 'arktype';
 import * as z from 'zod';
 

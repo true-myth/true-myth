@@ -1,6 +1,6 @@
 # Dealing with Nothingness: `Maybe`
 
-How do you represent the concept of _not having anything_, programmatically? True Myth provides a `Maybe` type. Let’s look at JavaScript‘s defaults here to see why a `Maybe` type is useful!
+How do you represent the concept of _not having anything_, programmatically? True Myth provides a `Maybe` type. Let's look at JavaScript's defaults here to see why a `Maybe` type is useful!
 
 ## `null` and `undefined`
 
@@ -50,7 +50,7 @@ TypeScript takes us a big step in the right direction, so long as our type annot
 
 But we still end up writing a ton of repeated boilerplate to deal with this problem. Rather than just handling it once and being done with it, we play a never-ending game of whack-a-mole. It just uses [type narrowing][narrowing] to make it safe:
 
-```ts
+```ts twoslash
 function isNil(thingToCheck: unknown): thingToCheck is null | undefined {
   return thingToCheck === undefined || thingToCheck === null;
 }
@@ -114,6 +114,6 @@ Put simply: without the type parameter, if you had a `Nothing` variant of a `May
 
 :::warning 🚧 Under Construction 🚧
 
-There will be more content here Soon™. We didn’t want to block getting the new docs site live on having fleshed out the whole tutorial!
+There will be more content here Soon™. We didn't want to block getting the new docs site live on having fleshed out the whole tutorial!
 
 :::

@@ -4,7 +4,7 @@
 
 :::warning 🚧 Under Construction 🚧
 
-There will be different, and *better*, content here Soon™. We didn’t want to block getting the new docs site live on having finished updating all the existing content!
+There will be different, and *better*, content here Soon™. We didn't want to block getting the new docs site live on having finished updating all the existing content!
 
 :::
 
@@ -14,8 +14,8 @@ The library is designed to be used with a functional style, allowing you to comp
 
 ### Examples: functional style
 
-```ts
-import Maybe from 'true-myth/maybe';
+```ts twoslash
+import Maybe, { toString } from 'true-myth/maybe';
 
 // Construct a `Just` where you have a value to use, and the function accepts
 // a `Maybe`.
@@ -40,15 +40,14 @@ console.log(toString(wrappedWhoElseKnows)); // "Just(true,false)"
 
 ### Examples: fluent object invocation
 
-**Note:** in the "class"-style, if you are constructing a `Maybe` from an unknown source, you must either do the work to check the value yourself, or use `Maybe.of` – you can't know at that point whether it's safe to construct a `Just` without checking, but `of` will always work correctly!
+**Note:** in the "class"-style, if you are constructing a `Maybe` from an unknown source, you must either do the work to check the value yourself, or use `Maybe.of` – you can't know at that point whether it's safe to construct a `Just` without checking, but `of` will always work correctly!
 
-```typescript
-import { isVoid } from 'true-myth/utils';
-import Maybe, { Just, Nothing } from 'true-myth/maybe';
+```ts twoslash
+import Maybe from 'true-myth/maybe';
 
 // Construct a `Just` where you have a value to use, and the function accepts
 // a `Maybe`.
-const aKnownNumber = new Just(12);
+const aKnownNumber = Maybe.just(12);
 
 // Once the item is constructed, you can apply methods directly on it.
 const fromMappedJust = aKnownNumber.map((x) => x * 2).unwrapOr(0);
@@ -56,27 +55,23 @@ console.log(fromMappedJust); // 24
 
 // Construct a `Nothing` where you don't have a value to use, but the
 // function requires a value (and accepts a `Maybe<string>`).
-const aKnownNothing = new Nothing();
+const aKnownNothing = Maybe.nothing<number>();
 
 // The same operations will behave safely on a `Nothing` as on a `Just`:
 const fromMappedNothing = aKnownNothing.map((x) => x * 2).unwrapOr(0);
 console.log(fromMappedNothing); // 0
 
 // Construct a `Maybe` where you don't know whether the value will exist or
-// not, using `isVoid` to decide which to construct.
+// not, using `Maybe.of` to safely wrap the value.
 type WhoKnows = { mightBeAThing?: boolean[] };
 
 const whoKnows: WhoKnows = {};
-const wrappedWhoKnows = !isVoid(whoKnows.mightBeAThing)
-  ? new Just(whoKnows.mightBeAThing)
-  : new Nothing();
+const wrappedWhoKnows = Maybe.of(whoKnows.mightBeAThing);
 
 console.log(wrappedWhoKnows.toString()); // Nothing
 
 const whoElseKnows: WhoKnows = { mightBeAThing: [true, false] };
-const wrappedWhoElseKnows = !isVoid(whoElseKnows.mightBeAThing)
-  ? new Just(whoElseKnows.mightBeAThing)
-  : new Nothing();
+const wrappedWhoElseKnows = Maybe.of(whoElseKnows.mightBeAThing);
 
 console.log(wrappedWhoElseKnows.toString()); // "Just(true,false)"
 ```
@@ -89,13 +84,13 @@ As you can see, it's often advantageous to use `Maybe.of` even if you're otherwi
 
 In fact, if you're dealing with data you are not constructing directly yourself, **_always_** prefer to use [`Maybe.of`] to create a new `Maybe`. If an API lies to you for some reason and hands you an `undefined` or a `null` (even though you expect it to be an actual `T` in a specific scenario), the `.of()` function will still construct it correctly for you.
 
-By contrast, if you do `Maybe.just(someVariable)` and `someVariable` is `null` or `undefined`, the program will throw at that point. This is a simple consequence of the need to make the `new Just()` constructor work; we cannot construct `Just` safely in a way that excludes a type of `Maybe<null>` or `Maybe<undefined>` otherwise – and that would defeat the whole purpose of using a `Maybe`!
+By contrast, if you do `Maybe.just(someVariable)` and `someVariable` is `null` or `undefined`, the program will throw at that point. This is a simple consequence of the need to make the `new Just()` constructor work; we cannot construct `Just` safely in a way that excludes a type of `Maybe<null>` or `Maybe<undefined>` otherwise – and that would defeat the whole purpose of using a `Maybe`!
 
 ### Writing type constraints
 
 Especially when constructing a `Nothing`, you may need to specify what _kind_ of `Nothing` it is. The TypeScript type system can figure it out based on the value passed in for a `Just`, but there's no value to use with a `Nothing`, so you may have to specify it. In that case, you can write the type explicitly:
 
-```typescript
+```ts twoslash
 import Maybe, { nothing } from 'true-myth/maybe';
 
 function takesAMaybeString(thingItTakes: Maybe<string>) {
@@ -113,7 +108,8 @@ takesAMaybeString(nothingHereEither);
 
 Note that this _is_ necessary if you declare the `Maybe` in a statement inside a function, but is _not_ necessary when you have an expression-bodied arrow function or when you return the item directly:
 
-```typescript
+```ts twoslash
+// @errors: 2322
 import Maybe, { nothing } from 'true-myth/maybe';
 
 // ERROR: Type 'Maybe<{}>' is not assignable to type 'Maybe<number>'.
@@ -137,7 +133,7 @@ The best times to create and safely unwrap `Maybe`s are at the _boundaries_ of y
 
 You won't normally need to unwrap it at any point _other_ than the boundaries, because you can simply apply any transformations using the helper functions or methods, and be confident that you'll have either correctly transformed data, or a `Nothing`, at the end, depending on your inputs.
 
-If you are handing data off to another API, for example, you might convert a `Nothing` right back into a `null` in a JSON payload, as that's a reasonable way to send the data across the wire – the consumer can then decide how to handle it as is appropriate in its own context.
+If you are handing data off to another API, for example, you might convert a `Nothing` right back into a `null` in a JSON payload, as that's a reasonable way to send the data across the wire – the consumer can then decide how to handle it as is appropriate in its own context.
 
 If you are rendering a UI, having a `Nothing` when you need to render gives you an opportunity to provide default/fallback content – whether that's an explanation that there's nothing there, or a sensible substitute, or anything else that might be appropriate at that point in your app.
 
