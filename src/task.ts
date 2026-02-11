@@ -229,7 +229,7 @@ class TaskImpl<T, E> implements PromiseLike<Result<T, E>> {
     let { task, resolve, reject } = Task.withResolvers<string, Error>();
     reject(new Error("oh teh noes!"));
 
-    let result = await task.mapRejection((s) => s.message.length);
+    let result = await task.mapRejected((s) => s.message.length);
     let errLength = result.isErr ? result.error : 0;
     console.log(errLength); // 5
     ```
@@ -1188,7 +1188,7 @@ export function allSettled(tasks: AnyTask[]): Task<unknown, never> {
   When all items reject:
 
   ```ts twoslash
-  import Task, { timer } from 'true-myth/task';
+  import Task, { any, timer } from 'true-myth/task';
 
   let anyTask = any([
     timer(20).andThen((time) => Task.reject(`${time}ms`)),
@@ -1549,7 +1549,7 @@ export interface TaskConstructor {
     let { task, resolve, reject } = Task.withResolvers<string, Error>();
     reject(new Error("oh teh noes!"));
 
-    let result = await task.mapRejection((s) => s.message.length);
+    let result = await task.mapRejected((s) => s.message.length);
     let errLength = result.isErr ? result.error : 0;
     console.log(errLength); // 5
     ```
