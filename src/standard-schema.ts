@@ -25,7 +25,7 @@ export type ParseResult<T> = Result<T, StandardSchemaV1.FailureResult>;
 
   ## Example
 
-  ```ts
+  ```ts twoslash
   import { parserFor, type ParserFor } from 'true-myth/standard-schema';
   import * as z from 'zod';
 
@@ -57,7 +57,7 @@ export type ParseTask<T> = Task<T, StandardSchemaV1.FailureResult>;
 
   ## Example
 
-  ```ts
+  ```ts twoslash
   import { parserFor, type ParserFor } from 'true-myth/standard-schema';
   import { type } from 'arktype';
 
@@ -87,7 +87,7 @@ export type AsyncParserFor<T> = (data: unknown) => ParseTask<T>;
 
   Creating a parser with Zod:
 
-  ```ts
+  ```ts twoslash
   import { parserFor } from 'true-myth/standard-schema';
   import * as z from 'zod';
 
@@ -101,10 +101,9 @@ export type AsyncParserFor<T> = (data: unknown) => ParseTask<T>;
     age: z.number().nonnegative(),
   }));
   ```
-
   Creating a parser with Arktype:
 
-  ```ts
+  ```ts twoslash
   import { parserFor } from 'true-myth/standard-schema';
   import { type } from 'arktype';
 
@@ -118,13 +117,13 @@ export type AsyncParserFor<T> = (data: unknown) => ParseTask<T>;
     age: 'number>=0',
   }));
   ```
-
   Other libraries work similarly!
 
   Once you have a parser, you can simply call it with any value and then use the
   normal {@linkcode Result} APIs.
 
-  ```ts
+  ```ts twoslash
+  // @noErrors
   parsePerson({ name: "Old!", age: 112 }).match({
     Ok: (person) => {
       console.log(`${person.name ?? "someone"} is ${person.age} years old.`);
@@ -134,7 +133,6 @@ export type AsyncParserFor<T> = (data: unknown) => ParseTask<T>;
     }
   });
   ```
-
   ## Throws
 
   The parser created by `parserFor` will throw an {@linkcode InvalidAsyncSchema}
@@ -199,7 +197,7 @@ function isSuccess<O>(sr: StandardSchemaV1.Result<O>): sr is StandardSchemaV1.Su
 
   With Zod:
 
-  ```ts
+  ```ts twoslash
   import { asyncParserFor } from 'true-myth/standard-schema';
   import * as z from 'zod';
 
@@ -215,14 +213,14 @@ function isSuccess<O>(sr: StandardSchemaV1.Result<O>): sr is StandardSchemaV1.Su
     age: z.number().refine(async (val) => val >= 0),
   }));
   ```
-
   Other libraries that support async validation or transformation work similarly
   (but not all libraries support this).
 
   Once you have a parser, you can simply call it with any value and then use the
   normal {@linkcode Task} APIs.
 
-  ```ts
+  ```ts twoslash
+  // @noErrors
   await parsePerson({ name: "Old!", age: 112 }).match({
     Resolved: (person) => {
       console.log(`${person.name ?? "someone"} is ${person.age} years old.`);
@@ -232,7 +230,6 @@ function isSuccess<O>(sr: StandardSchemaV1.Result<O>): sr is StandardSchemaV1.Su
     }
   });
   ```
-
   @param schema A Standard Schema-compatible schema that produces a result,
     possibly asynchronously.
   @returns A {@linkcode Task} that resolves to the output of the schema when it

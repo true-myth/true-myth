@@ -26,7 +26,7 @@ export {
   /**
     Re-exports `true-myth/task/delay` as a namespace object for convenience.
 
-    ```ts
+    ```ts twoslash
     import * as task from 'true-myth/task';
     let strategy = task.delay.exponential({ from: 5, withFactor: 5 }).take(5);
     ```
@@ -37,11 +37,10 @@ export {
 
     @deprecated Use `delay` instead:
 
-      ```ts
+      ```ts twoslash
       import * as task from 'true-myth/task';
       let strategy = task.delay.exponential({ from: 5, withFactor: 5 }).take(5);
       ```
-
       The `Delay` namespace re-export will be removed in favor of the `delay`
       re-export in v10.
   */
@@ -212,26 +211,28 @@ class TaskImpl<T, E> implements PromiseLike<Result<T, E>> {
 
     ### Resolution
 
-    ```ts
-    let { task, resolveWith, rejectWith } = Task.withResolvers<string, Error>();
-    resolveWith("Hello!");
+    ```ts twoslash
+    import Task from 'true-myth/task';
+
+    let { task, resolve, reject } = Task.withResolvers<string, Error>();
+    resolve("Hello!");
 
     let result = await task.map((s) => s.length);
     let length = result.unwrapOr(0);
     console.log(length); // 5
     ```
-
     ### Rejection
 
-    ```ts
-    let { task, resolveWith, rejectWith } = Task.withResolvers<string, Error>();
-    rejectWith(new Error("oh teh noes!"));
+    ```ts twoslash
+    import Task from 'true-myth/task';
 
-    let result = await task.mapRejection((s) => s.length);
+    let { task, resolve, reject } = Task.withResolvers<string, Error>();
+    reject(new Error("oh teh noes!"));
+
+    let result = await task.mapRejection((s) => s.message.length);
     let errLength = result.isErr ? result.error : 0;
     console.log(errLength); // 5
     ```
-
     @group Constructors
    */
   static withResolvers<T, E>(): WithResolvers<T, E> {
@@ -324,21 +325,20 @@ class TaskImpl<T, E> implements PromiseLike<Result<T, E>> {
 
     ## Examples
 
-    ```ts
+    ```ts twoslash
     import Task from 'true-myth/task';
-    const double = n => n * 2;
+    const double = (n: number) => n * 2;
 
     const aResolvedTask = Task.resolve(12);
     const mappedResolved = aResolvedTask.map(double);
-    let resolvedResult = await aResolvedTask;
+    let resolvedResult = await mappedResolved;
     console.log(resolvedResult.toString()); // Ok(24)
 
     const aRejectedTask = Task.reject("nothing here!");
     const mappedRejected = aRejectedTask.map(double);
-    let rejectedResult = await aRejectedTask;
+    let rejectedResult = await mappedRejected;
     console.log(rejectedResult.toString()); // Err("nothing here!")
     ```
-
     @template T The type of the resolved value.
     @template U The type of the resolved value of the returned `Task`.
     @param mapFn The function to apply the value to when the `Task` finishes if
@@ -358,7 +358,7 @@ class TaskImpl<T, E> implements PromiseLike<Result<T, E>> {
     callers.) The function is only called if the `Task` is {@linkcode Resolved},
     and the original `Task` is returned unchanged for further chaining.
 
-    ```ts
+    ```ts twoslash
     import * as task from 'true-myth/task';
 
     const double = (n: number) => n * 2;
@@ -370,7 +370,6 @@ class TaskImpl<T, E> implements PromiseLike<Result<T, E>> {
     // Does not log anything, and returns `Err('error')`.
     task.reject<number, string>('error').inspect(log).map(double).inspect(log);
     ```
-
     @param fn The function to call with the resolved value.
     @returns The original `Task`, unchanged
    */
@@ -388,7 +387,7 @@ class TaskImpl<T, E> implements PromiseLike<Result<T, E>> {
     callers.) The function is only called if the `Task` is {@linkcode Rejected},
     and the original `Task` is returned unchanged for further chaining.
 
-    ```ts
+    ```ts twoslash
     import * as task from 'true-myth/task';
 
     const double = (n: number) => n * 2;
@@ -406,7 +405,6 @@ class TaskImpl<T, E> implements PromiseLike<Result<T, E>> {
       .map(double)
       .inspectRejected(log);
     ```
-
     @param fn The function to call with the rejected value.
     @returns The original `Task`, unchanged
    */
@@ -425,20 +423,19 @@ class TaskImpl<T, E> implements PromiseLike<Result<T, E>> {
 
     ## Examples
 
-    ```ts
+    ```ts twoslash
     import Task from 'true-myth/task';
 
     const extractReason = (err: { code: number, reason: string }) => err.reason;
 
     const aResolvedTask = Task.resolve(12);
-    const mappedResolved = aResolvedTask.mapRejected(extractReason);
-    console.log(mappedOk));  // Ok(12)
+    const mappedResolved = await aResolvedTask.mapRejected(extractReason);
+    console.log(mappedResolved.toString());  // Ok(12)
 
     const aRejectedTask = Task.reject({ code: 101, reason: 'bad file' });
     const mappedRejection = await aRejectedTask.mapRejected(extractReason);
-    console.log(toString(mappedRejection));  // Err("bad file")
+    console.log(mappedRejection.toString());  // Err("bad file")
     ```
-
     @template T The type of the value produced if the `Task` resolves.
     @template E The type of the rejection reason if the `Task` rejects.
     @template F The type of the rejection for the new `Task`, returned by the
@@ -476,7 +473,8 @@ class TaskImpl<T, E> implements PromiseLike<Result<T, E>> {
 
     Using `and` to get new `Task` values from other `Task` values:
 
-    ```ts
+    ```ts twoslash
+    // @noErrors
     import Task from 'true-myth/task';
 
     let resolvedA = Task.resolve<string, string>('A');
@@ -501,11 +499,12 @@ class TaskImpl<T, E> implements PromiseLike<Result<T, E>> {
     expect(raAndA.toString()).toEqual('Task.Rejected("bad")');
     expect(raAndRb.toString()).toEqual('Task.Rejected("bad")');
     ```
-
     Using `and` to get new `Task` values from a `Result`:
 
-    ```ts
+    ```ts twoslash
+    // @noErrors
     import Task from 'true-myth/task';
+    import Result from 'true-myth/result';
 
     let resolved = Task.resolve<string, string>('A');
     let rejected = Task.reject<string, string>('bad');
@@ -529,7 +528,6 @@ class TaskImpl<T, E> implements PromiseLike<Result<T, E>> {
     expect(raAndA.toString()).toEqual('Task.Rejected("bad")');
     expect(raAndRb.toString()).toEqual('Task.Rejected("bad")');
     ```
-
     @template U The type of the value for a resolved version of the `other`
       `Task`, i.e., the success type of the final `Task` present if the first
       `Task` is `Ok`.
@@ -596,7 +594,7 @@ class TaskImpl<T, E> implements PromiseLike<Result<T, E>> {
 
     Using `andThen` to construct a new `Task` from a `Task` value:
 
-    ```ts
+    ```ts twoslash
     import * as task from 'true-myth/task';
 
     const toLengthAsResolved = (s: string) => task.resolve(s.length);
@@ -609,11 +607,11 @@ class TaskImpl<T, E> implements PromiseLike<Result<T, E>> {
     const notLengthAsResult = await aRejectedTask.andThen(toLengthAsResolved);
     console.log(notLengthAsResult.toString()); // Err(srsly,whatever)
     ```
-
     Using `andThen` to construct a new `Task` from a `Result` value:
 
-    ```ts
+    ```ts twoslash
     import * as task from 'true-myth/task';
+    import { ok } from 'true-myth/result';
 
     const toLengthAsResult = (s: string) => ok(s.length);
 
@@ -625,7 +623,6 @@ class TaskImpl<T, E> implements PromiseLike<Result<T, E>> {
     const notLengthAsResult = await aRejectedTask.andThen(toLengthAsResult);
     console.log(notLengthAsResult.toString()); // Err(srsly,whatever)
     ```
-
     @template U The type of the value produced by the new `Task` of the `Result`
       returned by the `thenFn`.
     @param thenFn  The function to apply to the wrapped `T` if `maybe` is `Just`.
@@ -690,7 +687,7 @@ class TaskImpl<T, E> implements PromiseLike<Result<T, E>> {
 
     Using `or` to get new `Task` values from other `Task` values:
 
-    ```ts
+    ```ts twoslash
     import Task from 'true-myth/task';
 
     const resolvedA = Task.resolve<string, string>('a');
@@ -703,10 +700,9 @@ class TaskImpl<T, E> implements PromiseLike<Result<T, E>> {
     console.log(rejectedWat.or(resolvedB).toString());  // Resolved("b")
     console.log(rejectedWat.or(rejectedHeaddesk).toString());  // Rejected(":headdesk:")
     ```
-
     Using `or` to get new `Task` values from `Result` values:
 
-    ```ts
+    ```ts twoslash
     import Task from 'true-myth/task';
     import Result from 'true-myth/result';
 
@@ -720,7 +716,6 @@ class TaskImpl<T, E> implements PromiseLike<Result<T, E>> {
     console.log(rejected.or(ok).toString());  // Resolved("ok")
     console.log(rejected.or(err).toString());  // Rejected("err")
     ```
-
     @template F   The type wrapped in the `Rejected` case of `other`.
     @param other  The `Result` to use if `this` is `Rejected`.
     @returns      `this` if it is `Resolved`, otherwise `other`.
@@ -809,7 +804,7 @@ class TaskImpl<T, E> implements PromiseLike<Result<T, E>> {
 
     ## Example
 
-    ```ts
+    ```ts twoslash
     import Task from 'true-myth/task';
 
     let theTask = new Task<number, Error>((resolve, reject) => {
@@ -832,7 +827,6 @@ class TaskImpl<T, E> implements PromiseLike<Result<T, E>> {
       },
     });
     ```
-
     This can both be used to produce side effects (as here) and to produce a
     value regardless of the resolution/rejection of the task, and is often
     clearer than trying to use other methods. Thus, this is especially
@@ -932,8 +926,8 @@ class TaskImpl<T, E> implements PromiseLike<Result<T, E>> {
 
     ## Examples
 
-    ```ts
-    import * as task from 'true-myth/task';
+    ```ts twoslash
+    import Task, * as task from 'true-myth/task';
 
     const nested = task.resolve(task.resolve('hello'));
     const flattened = nested.flatten(); // Task<string, never>
@@ -1026,7 +1020,7 @@ export type All<A extends readonly AnyTask[]> = Task<
 
   Once all tasks resolve:
 
-  ```ts
+  ```ts twoslash
   import { all, timer } from 'true-myth/task';
 
   let allTasks = all([
@@ -1038,10 +1032,9 @@ export type All<A extends readonly AnyTask[]> = Task<
   let result = await allTasks;
   console.log(result.toString()); // Ok(10,100,1000)
   ```
-
   If any tasks do *not* resolve:
 
-  ```ts
+  ```ts twoslash
   import Task, { all, timer } from 'true-myth/task';
 
   let { task: willReject, reject } = Task.withResolvers<never, string>();
@@ -1056,7 +1049,6 @@ export type All<A extends readonly AnyTask[]> = Task<
   let result = await allTasks;
   console.log(result.toString()); // Err("something went wrong")
   ```
-
   @param tasks The list of tasks to wait on.
 
   @template A The type of the array or tuple of tasks.
@@ -1132,11 +1124,13 @@ export type Settled<A extends readonly AnyTask[]> = {
 
   Given a mix of resolving and rejecting tasks:
 
-  ```ts
+  ```ts twoslash
+  import Task, { allSettled } from 'true-myth/task';
+
   let settledTask = allSettled([
     Task.resolve<string, number>("hello"),
     Task.reject<number, boolean>(true),
-    Task.resolve<{ fancy: boolean }>, Error>({ fancy: true }),
+    Task.resolve<{ fancy: boolean }, Error>({ fancy: true }),
   ]);
 
   let output = await settledTask;
@@ -1146,7 +1140,6 @@ export type Settled<A extends readonly AnyTask[]> = {
     }
   }
   ```
-
   The resulting output will be:
 
   ```
@@ -1180,7 +1173,7 @@ export function allSettled(tasks: AnyTask[]): Task<unknown, never> {
 
   When any item resolves:
 
-  ```ts
+  ```ts twoslash
   import { any, timer } from 'true-myth/task';
 
   let anyTask = any([
@@ -1192,10 +1185,9 @@ export function allSettled(tasks: AnyTask[]): Task<unknown, never> {
   let result = await anyTask;
   console.log(result.toString()); // Ok(10);
   ```
-
   When all items reject:
 
-  ```ts
+  ```ts twoslash
   import Task, { timer } from 'true-myth/task';
 
   let anyTask = any([
@@ -1207,7 +1199,6 @@ export function allSettled(tasks: AnyTask[]): Task<unknown, never> {
   let result = await anyTask;
   console.log(result.toString()); // Err(AggregateRejection: `Task.any`: 10ms,20ms,30ms)
   ```
-
   The order in the resulting `AggregateRejection` is guaranteed to be stable and
   to match the order of the tasks passed in.
 
@@ -1286,7 +1277,7 @@ export function any(tasks: readonly [] | readonly AnyTask[]): AnyTask {
 
   ## Example
 
-  ```ts
+  ```ts twoslash
   import Task, { race } from 'true-myth/task';
 
   let { task: task1, resolve } = Task.withResolvers();
@@ -1297,7 +1288,6 @@ export function any(tasks: readonly [] | readonly AnyTask[]): AnyTask {
   let theResult = await race([task1, task2, task3]);
   console.log(theResult.toString()); // Ok("Cool!")
   ```
-
   @param tasks The tasks to race against each other.
 
   @template A The type of the array or tuple of tasks.
@@ -1541,26 +1531,28 @@ export interface TaskConstructor {
 
     ### Resolution
 
-    ```ts
-    let { task, resolveWith, rejectWith } = Task.withResolvers<string, Error>();
-    resolveWith("Hello!");
+    ```ts twoslash
+    import Task from 'true-myth/task';
+
+    let { task, resolve, reject } = Task.withResolvers<string, Error>();
+    resolve("Hello!");
 
     let result = await task.map((s) => s.length);
     let length = result.unwrapOr(0);
     console.log(length); // 5
     ```
-
     ### Rejection
 
-    ```ts
-    let { task, resolveWith, rejectWith } = Task.withResolvers<string, Error>();
-    rejectWith(new Error("oh teh noes!"));
+    ```ts twoslash
+    import Task from 'true-myth/task';
 
-    let result = await task.mapRejection((s) => s.length);
+    let { task, resolve, reject } = Task.withResolvers<string, Error>();
+    reject(new Error("oh teh noes!"));
+
+    let result = await task.mapRejection((s) => s.message.length);
     let errLength = result.isErr ? result.error : 0;
     console.log(errLength); // 5
     ```
-
     @group Constructors
    */
   withResolvers<T, E>(): WithResolvers<T, E>;
@@ -1742,37 +1734,33 @@ export function fromPromise<T>(
   Given an {@linkcode "result".Ok Ok<T, E>}, `fromResult` will produces a
   {@linkcode Resolved Resolved<T, E>} task.
 
-  ```ts
+  ```ts twoslash
   import { fromResult } from 'true-myth/task';
   import { ok } from 'true-myth/result';
 
   let successful = fromResult(ok("hello")); // -> Resolved("hello")
   ```
-
   Likewise, given an `Err`, `fromResult` will produces a {@linkcode Rejected}
   task.
 
-  ```ts
+  ```ts twoslash
   import { fromResult } from 'true-myth/task';
   import { err } from 'true-myth/result';
 
   let successful = fromResult(err("uh oh!")); // -> Rejected("uh oh!")
   ```
-
   It is often clearest to access the function via a namespace-style import:
 
-  ```ts
-
+  ```ts twoslash
   import * as task from 'true-myth/task';
   import { ok } from 'true-myth/result';
 
   let theTask = task.fromResult(ok(123));
   ```
-
   As an alternative, it can be useful to rename the import:
 
-  ```ts
-  import { fromResult: taskFromResult } from 'true-myth/task';
+  ```ts twoslash
+  import { fromResult as taskFromResult } from 'true-myth/task';
   import { err } from 'true-myth/result';
 
   let theTask = taskFromResult(err("oh no!"));
@@ -1833,10 +1821,10 @@ export function fromUnsafePromise<T, E>(promise: Promise<Result<T, E>>): Task<T,
 
   ## Examples
 
-  ```ts
+  ```ts twoslash
   import { safelyTry } from 'true-myth/task';
 
-  function throws(): Promise<T> {
+  function throws(): Promise<string> {
     throw new Error("Uh oh!");
   }
 
@@ -1845,7 +1833,6 @@ export function fromUnsafePromise<T, E>(promise: Promise<Result<T, E>>): Task<T,
   let theResult = await theTask;
   console.log(theResult.toString()); // Err(Error: Uh oh!)
   ```
-
   @param fn A function which returns a `Promise` when called.
   @returns A `Task` which resolves to the resolution value of the promise or
     rejects with the rejection value of the promise *or* any error thrown while
@@ -1871,7 +1858,7 @@ export function safelyTry<T>(fn: () => Promise<T>): Task<T, unknown> {
 
   ## Examples
 
-  ```ts
+  ```ts twoslash
   import { tryOr } from 'true-myth/task';
 
   function throws(): Promise<number> {
@@ -1885,11 +1872,10 @@ export function safelyTry<T>(fn: () => Promise<T>): Task<T, unknown> {
     console.error(theResult.error); // "fallback"
   }
   ```
-
   You can also write this in “curried” form, passing just the fallback value and
   getting back a function which accepts the:
 
-  ```ts
+  ```ts twoslash
   import { tryOr } from 'true-myth/task';
 
   function throws(): Promise<number> {
@@ -1903,7 +1889,6 @@ export function safelyTry<T>(fn: () => Promise<T>): Task<T, unknown> {
     console.error(theResult.error); // "fallback"
   }
   ```
-
   Note that in the curried form, you must specify the expected `T` type of the
   resulting `Task`, or else it will always be `unknown`.
 
@@ -1959,7 +1944,7 @@ export const safelyTryOrElse = tryOrElse;
 
   ## Examples
 
-  ```ts
+  ```ts twoslash
   import { tryOrElse } from 'true-myth/task';
 
   function throws(): Promise<number> {
@@ -1974,11 +1959,10 @@ export const safelyTryOrElse = tryOrElse;
   let theResult = await theTask;
   console.log(theResult.toString); // Err("Something went wrong: Error: Uh oh!")
   ```
-
   You can also write this in “curried” form, passing just the fallback value and
   getting back a function which accepts the:
 
-  ```ts
+  ```ts twoslash
   import { tryOrElse } from 'true-myth/task';
 
   function throws(): Promise<number> {
@@ -1992,7 +1976,6 @@ export const safelyTryOrElse = tryOrElse;
   let theResult = await withFallback(throws);
   console.log(theResult.toString); // Err("Something went wrong: Error: Uh oh!")
   ```
-
   Note that in the curried form, you must specify the expected `T` type of the
   resulting `Task`, or else it will always be `unknown`.
 
@@ -2039,14 +2022,14 @@ export function tryOrElse<T, E>(
   produce a `Task` instead of a `Promise` and which does not throw an error for
   rejections, but instead produces a {@linkcode Rejected} variant of the `Task`.
 
-  ```ts
+  ```ts twoslash
+  // @noErrors
   import { safe } from 'true-myth/task';
 
   const fetch = safe(window.fetch);
   const toJson = safe((response: Response) => response.json() as unknown);
   let json = fetch('https://www.example.com/api/users').andThen(toJson);
   ```
-
   @param fn A function to wrap so it never throws an error or produces a
     `Promise` rejection.
 */
@@ -2069,7 +2052,8 @@ export function safe<
   produce a `Task` instead of a `Promise` and which does not throw an error for
   rejections, but instead produces a {@linkcode Rejected} variant of the `Task`.
 
-  ```ts
+  ```ts twoslash
+  // @noErrors
   import { safe } from 'true-myth/task';
 
   class CustomError extends Error {
@@ -2080,18 +2064,17 @@ export function safe<
   }
 
   function handleErr(name: string): (cause: unknown) => CustomError {
-    return (cause) => new CustomError(name);
+    return (cause) => new CustomError(name, cause);
   }
 
   const fetch = safe(window.fetch, handleErr('fetch'));
   const toJson = safe(
-    (response: Response) => response.toJson(),
+    (response: Response) => response.json(),
     handleErr('json-parsing')
   );
 
   let json = fetch('https://www.example.com/api/users').andThen(toJson);
   ```
-
   @param fn A function to wrap so it never throws an error or produces a
     `Promise` rejection.
   @param onError A function to use to transform the
@@ -2122,7 +2105,7 @@ export function safe<
   This is basically just a convenience for something you could do yourself by
   chaining `safe` with `Maybe.of`:
 
-  ```ts
+  ```ts twoslash
   import Maybe from 'true-myth/maybe';
   import { safe, safeNullable } from 'true-myth/task';
 
@@ -2137,7 +2120,6 @@ export function safe<
   const moreWorkThisWay= safe(numberOrNull);
   let theTask = moreWorkThisWay(123).map((n) => Maybe.of(n));
   ```
-
   The convenience is high, though, since you can now use this to create fully
   safe abstractions to use throughout your codebase, rather than having to
   remember to do the additional call to `map` the `Task`’s resolution value into
@@ -2162,7 +2144,7 @@ export function safeNullable<
   This is basically just a convenience for something you could do yourself by
   chaining `safe` with `Maybe.of`:
 
-  ```ts
+  ```ts twoslash
   import Maybe from 'true-myth/maybe';
   import { safe, safeNullable } from 'true-myth/task';
 
@@ -2177,7 +2159,6 @@ export function safeNullable<
   const moreWorkThisWay= safe(numberOrNull);
   let theTask = moreWorkThisWay(123).map((n) => Maybe.of(n));
   ```
-
   The convenience is high, though, since you can now use this to create fully
   safe abstractions to use throughout your codebase, rather than having to
   remember to do the additional call to `map` the `Task`’s resolution value into
@@ -2248,7 +2229,7 @@ export function map<T, U, E>(
   > provide explicit type parameters. Alternatively, use the non-curried form
   > to get consistent type inference.
 
-  ```ts
+  ```ts twoslash
   import * as task from 'true-myth/task';
 
   const double = (n: number) => n * 2;
@@ -2259,14 +2240,12 @@ export function map<T, U, E>(
 
   // Logs `42` then `84`, and returns `Ok(84)`.
   let aResolvingTask = task.resolve<number, string>(42);
-  let aResolvingTask = task.resolve<number, string>(42);
   await logNumber(doubleTask(logNumber(aResolvingTask)));
 
   // Does not log anything, and returns `Err('error')`.
   let aRejectingTask = task.reject<number, string>('error');
   await logNumber(doubleTask(logNumber(aRejectingTask)));
   ```
-
   @template T The type of the value when the `Task` resolves successfully.
   @template E The type of the rejection reason when the `Task` rejects.
   @param fn The function to call with the resolved value (only called on resolution)
@@ -2283,7 +2262,7 @@ export function inspect<T, E>(fn: (value: T) => void): (task: Task<T, E>) => Tas
   The function is only called if the `Task` resolves, and the original `Task` is
   returned unchanged for further chaining.
 
-  ```ts
+  ```ts twoslash
   import * as task from 'true-myth/task';
 
   const double = (n: number) => n * 2;
@@ -2315,7 +2294,6 @@ export function inspect<T, E>(fn: (value: T) => void): (task: Task<T, E>) => Tas
     )
   );
   ```
-
   @template T The type of the value when the `Task` resolves successfully.
   @template E The type of the rejection reason when the `Task` rejects.
   @param fn The function to call with the resolved value (only called on resolution)
@@ -2345,7 +2323,7 @@ export function inspect<T, E>(
   > provide explicit type parameters. Alternatively, use the non-curried form
   > to get consistent type inference.
 
-  ```ts
+  ```ts twoslash
   import * as task from 'true-myth/task';
 
   const double = (n: number) => n * 2;
@@ -2362,7 +2340,6 @@ export function inspect<T, E>(
   let aRejectingTask = task.reject<number, string>('error');
   logAnyError(doubleTask(logAnyError(aRejectingTask)));
   ```
-
   @template T The type of the value when the `Task` resolves successfully.
   @template E The type of the rejection reason when the `Task` rejects.
   @param fn The function to call with the rejection reason (only called on rejection)
@@ -2380,7 +2357,7 @@ export function inspectRejected<T, E>(fn: (error: E) => void): (task: Task<T, E>
   The function is only called if the `Task` reject, and the original `Task` is
   returned unchanged for further chaining.
 
-  ```ts
+  ```ts twoslash
   import * as task from 'true-myth/task';
 
   const double = (n: number) => n * 2;
@@ -2412,7 +2389,6 @@ export function inspectRejected<T, E>(fn: (error: E) => void): (task: Task<T, E>
     )
   );
   ```
-
   @template T The type of the value when the `Task` resolves successfully.
   @template E The type of the rejection reason when the `Task` rejects.
   @param fn The function to call with the rejection reason (only called on rejection)
@@ -2665,8 +2641,8 @@ export function toPromise<T, E>(task: Task<T, E>) {
 
   ## Examples
 
-  ```ts
-  import * as task from 'true-myth/task';
+  ```ts twoslash
+  import Task, * as task from 'true-myth/task';
 
   const nested = task.resolve(task.resolve('hello'));
   const flattened = task.flatten(nested); // Task<string, never>
@@ -2727,7 +2703,8 @@ export function flatten<T, E, F>(nestedTask: Task<Task<T, E>, F>): Task<T, E | F
   timeout but that the client is allowed to try again. For other error codes, it
   will simply reject immediately.
 
-  ```ts
+  ```ts twoslash
+  // @noErrors
   import * as task from 'true-myth/task';
   import * as delay from 'true-myth/task/delay';
 
@@ -2744,7 +2721,6 @@ export function flatten<T, E, F>(nestedTask: Task<Task<T, E>, F>): Task<T, E | F
     delay.fibonacci().map(delay.jitter).take(10)
   );
   ```
-
   Here, this uses a Fibonacci backoff strategy, which can be preferable in some
   cases to a classic exponential backoff strategy (see [A Performance Comparison
   of Different Backoff Algorithms under Different Rebroadcast Probabilities for
@@ -2762,7 +2738,11 @@ export function flatten<T, E, F>(nestedTask: Task<Task<T, E>, F>): Task<T, E | F
   For example, imagine you have a library function that returns a custom `Error`
   subclass that includes an `isFatal` value on it, something like this::
 
-  ```ts
+  ```ts twoslash
+
+  import Task, * as task from 'true-myth/task';
+
+  // ---cut---
   class AppError extends Error {
     isFatal: boolean;
     constructor(message: string, options?: { isFatal?: boolean, cause?: unknown }) {
@@ -2771,18 +2751,18 @@ export function flatten<T, E, F>(nestedTask: Task<Task<T, E>, F>): Task<T, E | F
     }
   }
   ```
-
   You could check that flag in a `Task` rejection and return `stopRetrying()` if
   it is set:
 
-  ```ts
+  ```ts twoslash
+  // @noErrors
   import * as task from 'true-myth/task';
   import { fibonacci, jitter } from 'true-myth/task/delay';
   import { doSomethingThatMayFailWithAppError } from 'someplace/in/my-app';
 
   let theTask = task.withRetries(
     () => {
-      doSomethingThatMayFailWithAppError().orElse((rejection) => {
+      return doSomethingThatMayFailWithAppError().orElse((rejection) => {
         if (rejection.isFatal) {
           return task.stopRetrying("It was fatal!", { cause: rejection });
         }
@@ -2793,7 +2773,6 @@ export function flatten<T, E, F>(nestedTask: Task<Task<T, E>, F>): Task<T, E | F
     fibonacci().map(jitter).take(20)
   );
   ```
-
   ### Using the retry `status` parameter
 
   Every time `withRetries` tries the `retryable`, it provides the current count
@@ -2806,7 +2785,8 @@ export function flatten<T, E, F>(nestedTask: Task<Task<T, E>, F>): Task<T, E | F
   response to JSON fails. It also stops if it has tried the call more than 10
   times or if the total elapsed time exceeds 10 seconds.
 
-  ```ts
+  ```ts twoslash
+  // @noErrors
   import * as task from 'true-myth/task';
   import { exponential, jitter } from 'true-myth/task/delay';
 
@@ -2830,7 +2810,6 @@ export function flatten<T, E, F>(nestedTask: Task<Task<T, E>, F>): Task<T, E | F
     exponential().map(jitter),
   );
   ```
-
   ### Custom strategies
 
   While the {@link task/delay} module supplies a number of useful strategies,
@@ -2842,7 +2821,8 @@ export function flatten<T, E, F>(nestedTask: Task<Task<T, E>, F>): Task<T, E | F
   [monotonically increasing][monotonic] value proportional to the current
   value:
 
-  ```ts
+  ```ts twoslash
+  // @noErrors
   import * as task from 'true-myth/task';
 
   function* randomIncrease(options?: { from: number }) {
@@ -2855,13 +2835,12 @@ export function flatten<T, E, F>(nestedTask: Task<Task<T, E>, F>): Task<T, E | F
   }
 
   await task.withRetries(({ count }) => {
-    let delay = Math.round(Math.random() * 100);
-    return task.timer(delay).andThen((time) =>
+    let ms = Math.round(Math.random() * 100);
+    return task.timer(ms).andThen((time) =>
       task.reject(`Rejection #${count} after ${time}ms`),
     );
-  }, randomIncrease(10).take(10));
+  }, randomIncrease({ from: 10 }).take(10));
   ```
-
   [monotonic]: https://en.wikipedia.org/wiki/Monotonic_function
 
   @param retryable A callback that produces a {@linkcode Task Task<T, E>}.
@@ -3004,7 +2983,8 @@ export const RETRY_FAILED_NAME = 'TrueMyth.Task.RetryFailed';
   can check whether its `name` is {@linkcode RETRY_FAILED_NAME} or you can use
   the {@linkcode isRetryFailed} helper function:
 
-  ```ts
+  ```ts twoslash
+  // @noErrors
   import * as task from 'true-myth/task';
 
   // snip
@@ -3012,7 +2992,7 @@ export const RETRY_FAILED_NAME = 'TrueMyth.Task.RetryFailed';
   if (result.isErr) {
     if (task.isRetryFailed(result.error)) {
       if (result.error.cause) {
-        console.error('You quit on purpose: ', cause);
+        console.error('You quit on purpose: ', result.error.cause);
       }
 
       for (let rejection of result.error.rejections) {
@@ -3023,7 +3003,6 @@ export const RETRY_FAILED_NAME = 'TrueMyth.Task.RetryFailed';
     }
   }
   ```
-
   [mdn-error]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error
 
   @group Errors
