@@ -1,6 +1,8 @@
+import { transformerTwoslash } from '@shikijs/vitepress-twoslash';
 import { defineConfig } from 'vitepress';
 import deflist from 'markdown-it-deflist';
 import footnote from 'markdown-it-footnote';
+import path from 'node:path';
 
 import typedocSidebar from '../api/typedoc-sidebar.json';
 
@@ -10,7 +12,7 @@ export default defineConfig({
 
   description: 'Safe, idiomatic null, error, and async code handling in TypeScript',
 
-  // There’s a bug that I’m just working around with this for now.
+  // There's a bug that I'm just working around with this for now.
   ignoreDeadLinks: true,
 
   // This should help page size a bit?
@@ -100,8 +102,37 @@ export default defineConfig({
   },
 
   markdown: {
+    languages: ['typescript', 'javascript', 'json'],
+    codeTransformers: [
+      transformerTwoslash({
+        twoslashOptions: {
+          compilerOptions: {
+            target: 99, // ESNext
+            module: 199, // NodeNext
+            moduleResolution: 99, // NodeNext
+            lib: ['lib.esnext.full.d.ts'],
+            strict: true,
+            noUnusedLocals: false,
+            noUnusedParameters: false,
+            esModuleInterop: true,
+            paths: {
+              'true-myth': [path.resolve(__dirname, '../../src/index.ts')],
+              'true-myth/*': [path.resolve(__dirname, '../../src/*.ts')],
+            },
+          },
+        },
+      }),
+    ],
     config: (md) => {
       md.use(deflist).use(footnote);
+    },
+  },
+
+  vite: {
+    resolve: {
+      alias: {
+        'true-myth': path.resolve(__dirname, '../../src'),
+      },
     },
   },
 });

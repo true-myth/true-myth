@@ -1,6 +1,6 @@
 # Handling Errors: `Result`
 
-Many functions have to deal with the result of operations which might fail. `Result` is True Myth’s type for dealing with *synchronous* fallible operations.
+Many functions have to deal with the result of operations which might fail. `Result` is True Myth's type for dealing with *synchronous* fallible operations.
 
 ## Failure handling
 
@@ -124,7 +124,7 @@ Our way out is `Result`. It lets us just return one thing from a function, which
 
 Here's what that same example from above would look like using `Result`:
 
-```typescript
+```ts twoslash
 import Result, { ok, err, map, toString } from 'true-myth/result';
 
 function mightSucceed(doesSucceed: boolean): Result<number, string> {
@@ -144,11 +144,11 @@ Note that if we tried to call `mightSucceed(true) * 2` here, we'd get a type err
 
 ## Working with APIs that throw errors
 
-It might be nice to live in a world where everything *already* used `Result` to handle expected errors, but of course that isn’t the real world! Instead, we often need a way to bridge between “normal” JavaScript APIs and the safer True Myth APIs. One useful tool here is the `safe` function.
+It might be nice to live in a world where everything *already* used `Result` to handle expected errors, but of course that isn't the real world! Instead, we often need a way to bridge between "normal" JavaScript APIs and the safer True Myth APIs. One useful tool here is the `safe` function.
 
 For example, if you are using the Node `fs.renameFileSync` to rename a file synchronously (perhaps in a script where asynchrony is not necessary), you could capture its error cases with a `Result`, instead of with exceptions.
 
-```ts
+```ts twoslash
 import fs from 'node:fs';
 import * as result from 'true-myth/result';
 
@@ -164,7 +164,7 @@ The type of the new `rename` variable we have created is exactly the same as the
 
 This most basic version of using `result.safe` already helps us out a bunch by getting rid of errors thrown. There is an even more powerful overload that allows you to transform the error
 
-```ts
+```ts twoslash
 import fs from 'node:fs';
 import * as result from 'true-myth/result';
 
@@ -185,13 +185,13 @@ if (renameResult.isErr) {
 
 :::tip
 
-Unfortunately, if you try to use `result.safe` with functions that are defined with TypeScript’s function overloads, it will collapse all of the overload types together. This is not a limitation of True Myth but of TypeScript itself.
+Unfortunately, if you try to use `result.safe` with functions that are defined with TypeScript's function overloads, it will collapse all of the overload types together. This is not a limitation of True Myth but of TypeScript itself.
 
 :::
 
-There is also a more general version of `safe` that allows you to handle any function call that may throw an error, `tryOrElse`. Unlike with `safe`, you will usually `tryOrElse` not by creating a new function, but by invoking it directly in a callback. For example, instead of creating a `rename` function, we could call `fs.renameSync` directly. We pass a callback which invokes the fallible function, like this, so that `result.tryOrElse` can catch the error (if we didn’t pass a callback, the error would be thrown before `tryOrElse` had a chance to run):
+There is also a more general version of `safe` that allows you to handle any function call that may throw an error, `tryOrElse`. Unlike with `safe`, you will usually `tryOrElse` not by creating a new function, but by invoking it directly in a callback. For example, instead of creating a `rename` function, we could call `fs.renameSync` directly. We pass a callback which invokes the fallible function, like this, so that `result.tryOrElse` can catch the error (if we didn't pass a callback, the error would be thrown before `tryOrElse` had a chance to run):
 
-```ts
+```ts twoslash
 import fs from 'node:fs';
 import * as result from 'true-myth/result';
 
@@ -221,7 +221,7 @@ Using `result.tryOrElse` does *not* have the problem that `result.safe` does, so
 
 You may have noticed that we are repeating some of that boilerplate for error wrapping. We can define that as a standalone function that we can then use anywhere. We can even make it able to provide useful information about the context it is coming from by accepting a `context` argument that can be any string, and returning the callback that handles the unknown error type:
 
-```ts
+```ts twoslash
 function withWrappedError(context: string): (error: unknown) => Error {
   return (error) => {
     if (error instanceof Error) {
@@ -235,10 +235,23 @@ function withWrappedError(context: string): (error: unknown) => Error {
 
 With that defined, we could update our invocation to look like this:
 
-```ts
+```ts twoslash
+import fs from 'node:fs';
+import * as result from 'true-myth/result';
+
+function withWrappedError(context: string): (error: unknown) => Error {
+  return (error) => {
+    if (error instanceof Error) {
+      return error;
+    } else {
+      return new Error(`Unexpected error in '${context}'`, { cause: error });
+    }
+  };
+}
+// ---cut---
 let renameResult = result.tryOrElse(withWrappedError('renameSync'), () =>
   fs.renameSync('original', 'updated')
 );
 ```
 
-This is one of the big upsides to True Myth’s approach to error handling: we get type safety and *composability*—each of these pieces works just fine on its own, but you can pull them together quite easily as well.
+This is one of the big upsides to True Myth's approach to error handling: we get type safety and *composability*—each of these pieces works just fine on its own, but you can pull them together quite easily as well.
