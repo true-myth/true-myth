@@ -114,10 +114,5 @@
       "internal": ":house: Internal",
       "deprecation": ":wastebasket: Deprecation"
     }
-  },
-  "pnpm": {
-    "overrides": {
-      "vite": "npm:rolldown-vite@latest"
-    }
   }
 }
