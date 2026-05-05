@@ -1,0 +1,22 @@
+// Narrow tsconfig for the ESLint rule-tester fixture. Keeping the include
+// list small means @typescript-eslint/project-service initialises quickly.
+{
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "extends": "../../ts/base.tsconfig.json",
+  "compilerOptions": {
+    "baseUrl": "../..",
+    "paths": {
+      "true-myth": ["src/index.ts"],
+      "true-myth/eslint-plugin": ["src/eslint-plugin/index.ts"],
+      "true-myth/*": ["src/*.ts"],
+      "my-lib": ["test/fixtures/my-lib.ts"],
+      "my-lib/my-type": ["test/fixtures/my-type.ts"]
+    }
+  },
+  "include": [
+    "./eslint-plugin-rule-tester.ts",
+    "./my-lib.ts",
+    "./my-type.ts",
+    "./true-myth-reexport.ts"
+  ]
+}

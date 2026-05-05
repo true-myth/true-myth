@@ -42,8 +42,18 @@ jobs:
       - run: pnpm add --save-dev typescript@${{ matrix.ts-version }}
       - run: pnpm type-check
 
-  tests_integration:
-    name: 'Tests: 3rd-party integrations'
+  tests_package_integration:
+    name: 'Tests: package integrations'
+    runs-on: ubuntu-latest
+    continue-on-error: false
+    steps:
+      - uses: actions/checkout@v4
+      - uses: jdx/mise-action@v3
+      - run: pnpm install
+      - run: pnpm test:integration:first-party
+
+  tests_third_party_integration:
+    name: 'Tests: third-party integrations'
     runs-on: ubuntu-latest
     continue-on-error: true
     steps:
@@ -52,7 +62,7 @@ jobs:
       - run: pnpm install
       - run: pnpm add --save-dev typescript@latest
       - run: tsc --noEmit --project ts/test.tsconfig.json
-      - run: pnpm test --config vitest.integration.config.ts
+      - run: pnpm test:integration:third-party
 
   check_docs:
     name: 'Build docs'

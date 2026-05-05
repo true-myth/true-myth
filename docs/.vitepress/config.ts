@@ -24,8 +24,8 @@ export default defineConfig({
       { text: 'Home', link: '/' },
       { text: 'Guide', link: '/guide/introduction/' },
       { text: 'API', link: '/api/' },
+      { text: 'Lint plugin', link: '/eslint-plugin/' },
       { text: 'Releases', link: 'https://github.com/true-myth/true-myth/releases' },
-      { text: 'true-myth-zod', link: 'https://github.com/true-myth/true-myth-zod' },
     ],
 
     sidebar: {

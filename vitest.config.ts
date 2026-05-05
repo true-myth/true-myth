@@ -10,6 +10,10 @@ export const BaseConfig = defineConfig({
         replacement: fileURLToPath(new URL('./src/index.ts', import.meta.url)),
       },
       {
+        find: /^true-myth\/eslint-plugin$/,
+        replacement: fileURLToPath(new URL('./src/eslint-plugin/index.ts', import.meta.url)),
+      },
+      {
         find: /^true-myth\/(.+)$/,
         replacement: fileURLToPath(new URL('./src/$1.ts', import.meta.url)),
       },

@@ -7,6 +7,13 @@
     "declaration": true,
     "declarationMap": true,
     "sourceMap": true,
-    "outDir": "../dist"
+    "outDir": "../dist",
+    "rootDir": "../src",
+    "types": ["node"],
+    "paths": {
+      "true-myth": ["../src/index.ts"],
+      "true-myth/eslint-plugin": ["../src/eslint-plugin/index.ts"],
+      "true-myth/*": ["../src/*.ts"]
+    }
   }
 }

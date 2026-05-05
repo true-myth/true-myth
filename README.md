@@ -81,8 +81,11 @@ Size of the ESM build without tree-shaking (yes, these are in *bytes*: this is a
 Notes:
 
 - The unmodified size *includes comments*.
+
 - Thus, running through Terser gets us a much more realistic size: about 18.1KB to parse.
+
 - The total size across the wire of the whole library will be ~5.2KB.
+
 - This is all tree-shakeable to a significant degree: you should only have to “pay for” the types and functions you actually use, directly or indirectly. If your production bundle does not import or use anything from `true-myth/test-support`, you will not pay for it, for example. However, some parts of the library do depend directly on other parts: for example, `toolbelt` uses exports from `result` and `maybe`, and `Task` makes extensive use of `Result` under the hood.
 
     In detail, here are the dependencies of each module:
@@ -97,6 +100,8 @@ Notes:
     | `task/delay.js`      | None                                                         |
     | `test-support.js`    | `maybe.js`, `result.js`                                      |
     | `toolbelt.js`        | `maybe.js`, `result.js`, `-private/utils.js`                 |
+
+- This intentionally excludes the ESLint plugin contents, which should not be part of an production bundle.
 
 [^terser]: Using [terser](https://github.com/terser/terser) 5.46.2 with `--compress --mangle --mangle-props`.
 
