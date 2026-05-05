@@ -81,6 +81,7 @@
     "release-it": "^19.0.6",
     "rimraf": "^6.1.2",
     "shelljs": "^0.10.0",
+    "terser": "^5.46.2",
     "typedoc": "^0.28.14",
     "typedoc-plugin-markdown": "^4.9.0",
     "typedoc-vitepress-theme": "^1.1.2",
