@@ -22,7 +22,7 @@ set files (fd --extension "js")
 for file in $files;
   cp "./$file" ../measure
   set minified (echo "$file" | sd '\.js' '.min.js')
-  terser "./$file" -o "./$minified" --compress --mangle
+  pnpm exec terser "./$file" -o "./$minified" --compress --mangle
 end;
 brotli -kq 11 ./**/*.min.js
 cp ./**/*.min.js ./**/*.min.js.br ../measure

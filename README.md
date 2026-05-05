@@ -65,17 +65,17 @@ Size of the ESM build without tree-shaking (yes, these are in *bytes*: this is a
 
 |       file         | size (B) | terser[^terser] (B) | terser and brotli[^brotli] (B) |
 | ------------------ | -------- | ------------------- | ------------------------------ |
-| -private/utils.js  |      888 |                 321 |                            166 |
+| -private/utils.js  |      942 |                 358 |                            175 |
 | index.js           |      644 |                 352 |                            122 |
-| maybe.js           |    18872 |                3637 |                            908 |
-| result.js          |    15274 |                3927 |                            972 |
-| standard-schema.js |     5975 |                 762 |                            317 |
+| maybe.js           |    23052 |                3838 |                            943 |
+| result.js          |    21376 |                4257 |                           1034 |
+| standard-schema.js |     5984 |                 758 |                            318 |
 | task/delay.js      |     3901 |                 649 |                            259 |
-| task.js            |    54755 |                7448 |                           2025 |
+| task.js            |    59937 |                7629 |                           2036 |
 | test-support.js    |      473 |                 142 |                             89 |
-| toolbelt.js        |     3739 |                 890 |                            277 |
+| toolbelt.js        |     3739 |                 886 |                            278 |
 | unit.js            |      656 |                  58 |                             57 |
-| **total[^total]**  |   105177 |               18186 |                           5192 |
+| **total[^total]**  |   120704 |               18927 |                           5311 |
 
 
 Notes:
