@@ -6,7 +6,7 @@
   <a href='https://github.com/true-myth/true-myth/blob/main/.github/workflows/CI.yml'><img src='https://github.com/true-myth/true-myth/actions/workflows/CI.yml/badge.svg?branch=main' title='CI'></a>
   <a href='https://github.com/true-myth/true-myth/blob/master/package.json#L78-L85'><img src='https://img.shields.io/badge/Vitest-100%25-0a7c00.svg' alt='Test coverage: 100%'></a>
   <a href='https://www.npmjs.com/package/true-myth'><img src='https://img.shields.io/npm/v/true-myth.svg' alt='npm'></a>
-  <a href='https://github.com/true-myth/true-myth/blob/main/.github/workflows/CI.yml#L59'><img src='https://img.shields.io/badge/TypeScript-5.3%20%3C=%205.9%20%7C%20next-3178c6' alt='supported TypeScript versions'></a>
+  <a href='https://github.com/true-myth/true-myth/blob/main/.github/workflows/CI.yml#L59'><img src='https://img.shields.io/badge/TypeScript-5.3%20%3C=%206.0%20%7C%20next-3178c6' alt='supported TypeScript versions'></a>
   <a href='https://github.com/true-myth/true-myth/actions/workflows/Nightly.yml'><img src='https://github.com/true-myth/true-myth/workflows/Nightly%20TypeScript%20Run/badge.svg' alt='Nightly TypeScript Run'></a>
   <img src='https://img.shields.io/badge/stability-active-663399' alt='Stability: Active'>
   <a href='https://github.com/true-myth/true-myth/blob/main/LICENSE'><img src='https://img.shields.io/github/license/true-myth/true-myth.svg'></a>
@@ -52,7 +52,7 @@ For details on using a pure ES modules package in TypeScript, see [the TypeScrip
 
 This project follows the current draft of [the Semantic Versioning for TypeScript Types][semver] specification.
 
-- **Currently supported TypeScript versions:** 5.3, 5.4, 5.5, 5.6, 5.7, 5.8, and 5.9
+- **Currently supported TypeScript versions:** 5.3–6.0
 - **Compiler support policy:** [simple majors][sm]
 - **Public API:** all published, documented types not in a `-private` module and not marked as `@internal` or `@private` are public
 
