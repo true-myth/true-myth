@@ -17,7 +17,7 @@ import {
 import { unwrapErr } from 'true-myth/test-support';
 
 interface Person {
-  name?: string | undefined;
+  name?: string;
   age: number;
 }
 
@@ -58,7 +58,7 @@ describe('Standard Schema 3rd-party integrations', () => {
   describe('with Effect Schema', () => {
     describe('parserFor', () => {
       const PersonSchema = effect.Schema.Struct({
-        name: effect.Schema.optional(effect.Schema.String),
+        name: effect.Schema.optionalWith(effect.Schema.String, { exact: true }),
         age: effect.Schema.Number.pipe(effect.Schema.nonNegative()),
       });
 
@@ -86,7 +86,7 @@ describe('Standard Schema 3rd-party integrations', () => {
       // pretty silly: it just supplies the same transformation more than once!
       // But it gives us a useful test.
       const AsyncSchema = effect.Schema.Struct({
-        name: effect.Schema.optional(effect.Schema.String),
+        name: effect.Schema.optionalWith(effect.Schema.String, { exact: true }),
         age: effect.Schema.Number.pipe(
           effect.Schema.filterEffect((age) => effect.Effect.promise(async () => age >= 0))
         ),
@@ -116,7 +116,7 @@ describe('Standard Schema 3rd-party integrations', () => {
   describe('with Valibot', () => {
     describe('parserFor', () => {
       const PersonSchema = v.object({
-        name: v.optional(v.string()),
+        name: v.exactOptional(v.string()),
         age: v.pipe(v.number(), v.minValue(0)),
       });
 
@@ -141,7 +141,7 @@ describe('Standard Schema 3rd-party integrations', () => {
 
     describe('asyncParserFor', () => {
       const PersonSchema = v.objectAsync({
-        name: v.pipe(v.optional(v.string())),
+        name: v.exactOptional(v.string()),
         // Define an async refinement so we have something to work with. The
         // actual value here is not especially interesting.
         age: v.pipeAsync(
@@ -174,7 +174,7 @@ describe('Standard Schema 3rd-party integrations', () => {
   describe('with Zod', () => {
     describe('parserFor', () => {
       const PersonSchema = z.object({
-        name: z.string().optional(),
+        name: z.string().exactOptional(),
         age: z.number().nonnegative(),
       });
 
@@ -199,7 +199,7 @@ describe('Standard Schema 3rd-party integrations', () => {
 
     describe('asyncParserFor', () => {
       const PersonSchema = z.object({
-        name: z.optional(z.string()),
+        name: z.exactOptional(z.string()),
         // Define an async refinement so we have something to work with. The
         // actual value here is not especially interesting.
         age: z.number().refine(async (val) => val >= 0),
