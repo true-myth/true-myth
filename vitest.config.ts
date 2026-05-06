@@ -1,18 +1,25 @@
-import tsconfigPaths from 'vite-tsconfig-paths';
+import { fileURLToPath } from 'node:url';
+
 import { defineConfig } from 'vitest/config';
 
 export const BaseConfig = defineConfig({
-  plugins: [tsconfigPaths()],
+  resolve: {
+    alias: [
+      {
+        find: /^true-myth$/,
+        replacement: fileURLToPath(new URL('./src/index.ts', import.meta.url)),
+      },
+      {
+        find: /^true-myth\/(.+)$/,
+        replacement: fileURLToPath(new URL('./src/$1.ts', import.meta.url)),
+      },
+    ],
+  },
 });
 
 export default defineConfig({
   ...BaseConfig,
   test: {
-    typecheck: {
-      tsconfig: './ts/test.tsconfig.json',
-      enabled: true,
-      include: ['test/*.test.ts'],
-    },
     include: ['test/**/*.test.ts'],
     exclude: ['test/integration'],
     coverage: {
@@ -27,5 +34,5 @@ export default defineConfig({
         lines: 100,
       },
     },
-  }
+  },
 });
