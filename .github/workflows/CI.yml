@@ -51,6 +51,7 @@ jobs:
       - uses: jdx/mise-action@v3
       - run: pnpm install
       - run: pnpm add --save-dev typescript@latest
+      - run: tsc --noEmit --project ts/test.tsconfig.json
       - run: pnpm test --config vitest.integration.config.ts
 
   check_docs:
