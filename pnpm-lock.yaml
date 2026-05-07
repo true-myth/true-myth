@@ -31,7 +31,7 @@ importers:
         version: 3.21.2
       feed:
         specifier: ^5.1.0
-        version: 5.2.0
+        version: 5.2.1
       markdown-it-deflist:
         specifier: ^3.0.0
         version: 3.0.0
@@ -1273,8 +1273,8 @@ packages:
       picomatch:
         optional: true
 
-  feed@5.2.0:
-    resolution: {integrity: sha512-hgH6CCb+7+0c8PBlakI2KubG6R+Rb1MhpNcdvqUXZTBwBHf32piwY255diAkAmkGZ6AWlywOU88AkOgP9q8Rdw==}
+  feed@5.2.1:
+    resolution: {integrity: sha512-jTynzYPWs9ALjro0GW8j7sv9y7cJBeOdD4Y88kVqYy/eyusIX3g+499JiTDIlD9Ge/unebx57T4Uzo6vpYvMtA==}
     engines: {node: '>=20', pnpm: '>=10'}
 
   fill-range@7.1.1:
@@ -2184,8 +2184,8 @@ packages:
   safer-buffer@2.1.2:
     resolution: {integrity: sha512-YZo3K82SD7Riyi0E1EQPojLz7kpepnSQI9IyPbHHg1XXXevb5dJI7tpyN2ADxGcQbHG7vcyRHk0cbwqcQriUtg==}
 
-  sax@1.4.4:
-    resolution: {integrity: sha512-1n3r/tGXO6b6VXMdFT54SHzT9ytu9yr7TaELowdYpMqY/Ao7EnlQGmAQ1+RatX7Tkkdm6hONI2owqNx2aZj5Sw==}
+  sax@1.6.0:
+    resolution: {integrity: sha512-6R3J5M4AcbtLUdZmRv2SygeVaM7IhrLXu9BmnOGmmACak8fiUtOsYNWUS4uK7upbmHIBbLBeFeI//477BKLBzA==}
     engines: {node: '>=11.0.0'}
 
   semver@7.7.3:
@@ -3704,7 +3704,7 @@ snapshots:
     optionalDependencies:
       picomatch: 4.0.4
 
-  feed@5.2.0:
+  feed@5.2.1:
     dependencies:
       xml-js: 1.6.11
 
@@ -4736,7 +4736,7 @@ snapshots:
 
   safer-buffer@2.1.2: {}
 
-  sax@1.4.4: {}
+  sax@1.6.0: {}
 
   semver@7.7.3: {}
 
@@ -5123,7 +5123,7 @@ snapshots:
 
   xml-js@1.6.11:
     dependencies:
-      sax: 1.4.4
+      sax: 1.6.0
 
   y18n@5.0.8: {}
 
