@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+
+# Install mise on BuildKite-hosted agents where it is not pre-installed.
+if ! command -v mise &>/dev/null; then
+  curl -fsSL https://mise.run | sh
+  export PATH="$HOME/.local/bin:$PATH"
+fi
+
+# Install the Node.js and pnpm versions pinned in mise.toml.
+mise install
+
+# Expose mise-managed tool shims so that pnpm/node are available directly
+# in step commands, both on hosted agents and self-hosted agents without
+# mise activate in their shell profile.
+export PATH="$HOME/.local/share/mise/shims:$PATH"

@@ -1,0 +1,9 @@
+agents:
+  queue: "default"
+
+steps:
+  - label: ":typescript: TypeScript next (nightly)"
+    command: |
+      pnpm install
+      pnpm add --save-dev typescript@next
+      pnpm type-check
