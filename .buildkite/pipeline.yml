@@ -5,6 +5,46 @@ secrets:
   - CLOUDFLARE_API_TOKEN
 
 steps:
+  - label: ":nodejs: Tests"
+    key: "tests"
+    command: |
+      pnpm install
+      pnpm test
+
+  - label: ":package: Build"
+    key: "build"
+    command: |
+      pnpm install
+      pnpm build
+
+  - label: ":typescript: Type check TS {{matrix}}"
+    key: "ts-matrix"
+    env:
+      TS_VERSION: "{{matrix}}"
+    command: |
+      pnpm install
+      pnpm add --save-dev typescript@$TS_VERSION
+      pnpm type-check
+    matrix:
+      - "5.3"
+      - "5.4"
+      - "5.5"
+      - "5.6"
+      - "5.7"
+      - "5.8"
+      - "5.9"
+      - "6.0"
+      - "next"
+
+  - label: ":test_tube: Integration tests"
+    key: "integration"
+    soft_fail: true
+    command: |
+      pnpm install
+      pnpm add --save-dev typescript@latest
+      pnpm type-check
+      pnpm test --config vitest.integration.config.ts
+
   - label: ":books: Build docs"
     key: "check-docs"
     command: |
