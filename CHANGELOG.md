@@ -8,6 +8,47 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 
 
+
+## 9.4.0 (2026-05-25)
+
+Headline features and fixes:
+
+- Support for TypeScript v6 and v7 (a.k.a. `tsgo`)
+- An ESLint plugin with `must-use` and `must-await-task` rules to help you use True Myth more safely
+- A very welcome bundle of type safety improvements and fixes from [@auvred](https://github.com/auvred)
+
+#### :rocket: Enhancement
+* [#1317](https://github.com/true-myth/true-myth/pull/1317) Add support for TypeScript Native Preview ([@chriskrycho](https://github.com/chriskrycho))
+* [#1295](https://github.com/true-myth/true-myth/pull/1295) Add an ESLint plugin with `must-use` and `must-await-task` ([@chriskrycho](https://github.com/chriskrycho))
+* [#1290](https://github.com/true-myth/true-myth/pull/1290) Add explicit support for TS v6 ([@chriskrycho](https://github.com/chriskrycho))
+
+#### :bug: Bug Fix
+* [#1243](https://github.com/true-myth/true-myth/pull/1243) Fix missing test update for `transposeAny` (#1206) ([@chriskrycho](https://github.com/chriskrycho))
+* [#1206](https://github.com/true-myth/true-myth/pull/1206) Result: fix `transposeAny` return type ([@auvred](https://github.com/auvred))
+* [#1207](https://github.com/true-myth/true-myth/pull/1207) Task: fix type inference of tasks passed to `allSettled` ([@auvred](https://github.com/auvred))
+* [#1205](https://github.com/true-myth/true-myth/pull/1205) Result: fix `transposeAny` to accept readonly tuples/arrays ([@auvred](https://github.com/auvred))
+
+#### :memo: Documentation
+* [#1291](https://github.com/true-myth/true-myth/pull/1291) docs: update distribution size info ([@chriskrycho](https://github.com/chriskrycho))
+* [#1210](https://github.com/true-myth/true-myth/pull/1210) Docs: remove obsolete note about AggregateRejection order & few nits ([@auvred](https://github.com/auvred))
+* [#1211](https://github.com/true-myth/true-myth/pull/1211) docs: mark `TaskTypesFor` as `@internal` ([@auvred](https://github.com/auvred))
+* [#1208](https://github.com/true-myth/true-myth/pull/1208) docs: correct `transposeAny` name in example ([@auvred](https://github.com/auvred))
+
+#### :house: Internal
+* [#1319](https://github.com/true-myth/true-myth/pull/1319) infra: run `clean` and run `docs` correctly on prepublish ([@chriskrycho](https://github.com/chriskrycho))
+* [#1316](https://github.com/true-myth/true-myth/pull/1316) infra: switch to oxfmt for formatting ([@chriskrycho](https://github.com/chriskrycho))
+* [#1296](https://github.com/true-myth/true-myth/pull/1296) build: update to Vitest v4 ([@chriskrycho](https://github.com/chriskrycho))
+* [#1291](https://github.com/true-myth/true-myth/pull/1291) docs: update distribution size info ([@chriskrycho](https://github.com/chriskrycho))
+* [#1289](https://github.com/true-myth/true-myth/pull/1289) Fix 3rd-party integration tests for TS v6 ([@chriskrycho](https://github.com/chriskrycho))
+* [#1284](https://github.com/true-myth/true-myth/pull/1284) Update to pnpm v11 ([@chriskrycho](https://github.com/chriskrycho))
+* [#1245](https://github.com/true-myth/true-myth/pull/1245) Fix coverage directive for 'impossible' Standard Schema failure ([@chriskrycho](https://github.com/chriskrycho))
+* [#1244](https://github.com/true-myth/true-myth/pull/1244) Trivial cleanup of `example` test helper for `result.safe` ([@chriskrycho](https://github.com/chriskrycho))
+
+#### Committers: 2
+- Chris Krycho ([@chriskrycho](https://github.com/chriskrycho))
+- [@auvred](https://github.com/auvred)
+
+
 ## 9.3.1 (2025-11-25)
 
 Correctly publish to npm so README shows up, that’s it.
