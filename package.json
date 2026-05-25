@@ -70,7 +70,8 @@
     "dist",
     "src",
     "README.md",
-    "CHANGELOG.md"
+    "CHANGELOG.md",
+    "LICENSE"
   ],
   "license": "MIT",
   "devDependencies": {
