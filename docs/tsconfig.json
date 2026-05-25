@@ -13,7 +13,9 @@
       "true-myth/task/delay": ["../src/task/delay.ts"],
       "true-myth/*": ["../src/*.ts"],
       "*": ["./types/*"]
-    }
+    },
+    // For tests.
+    "types": ["node"]
   },
   "typedocOptions": {
     "name": "True Myth",
