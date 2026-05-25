@@ -8,6 +8,10 @@
     "esModuleInterop": true,
     "resolveJsonModule": true,
     "paths": {
+      "true-myth": ["../src/index.ts"],
+      "true-myth/eslint-plugin": ["../src/eslint-plugin/index.ts"],
+      "true-myth/task/delay": ["../src/task/delay.ts"],
+      "true-myth/*": ["../src/*.ts"],
       "*": ["./types/*"]
     }
   },

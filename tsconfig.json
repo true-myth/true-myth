@@ -11,10 +11,17 @@
       "true-myth": [
         "./src/index.ts"
       ],
+      "true-myth/eslint-plugin": [
+        "./src/eslint-plugin/index.ts"
+      ],
       "true-myth/*": [
         "./src/*.ts"
       ]
-    }
+    },
+    // For tests.
+    "types": [
+      "node"
+    ]
   },
   "include": [
     "src",

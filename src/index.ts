@@ -6,6 +6,8 @@
   @packageDocumentation
  */
 
+/* v8 ignore start */
+
 export * as maybe from './maybe.js';
 export { default as Maybe } from './maybe.js';
 
@@ -20,3 +22,5 @@ export { default as Task } from './task.js';
 export * as toolbelt from './toolbelt.js';
 
 export { default as Unit } from './unit.js';
+
+/* v8 ignore stop */

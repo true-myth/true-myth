@@ -17,7 +17,7 @@ end
 mkdir -p ./measure
 cd dist
 cleanup
-set files (fd --extension "js")
+set files (fd --extension "js" --exclude "eslint-plugin")
 
 for file in $files;
   cp "./$file" ../measure
