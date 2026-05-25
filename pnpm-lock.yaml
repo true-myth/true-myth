@@ -88,7 +88,7 @@ importers:
         version: 5.3.3
       valibot:
         specifier: ^1.2.0
-        version: 1.4.0(typescript@5.3.3)
+        version: 1.4.1(typescript@5.3.3)
       vitepress:
         specifier: 2.0.0-alpha.17
         version: 2.0.0-alpha.17(@emnapi/core@1.10.0)(@emnapi/runtime@1.10.0)(@types/node@25.9.1)(jiti@2.6.1)(oxc-minify@0.132.0)(postcss@8.5.15)(terser@5.48.0)(typescript@5.3.3)(yaml@2.8.4)
@@ -2666,8 +2666,8 @@ packages:
     resolution: {integrity: sha512-n2huDr9h9yzd6exQVnH/jU5mr+Pfx08LRXXZhkLLetAMESRj+anQsTAh940iMrIetKAmry9coFuZQ2jY8/p3WA==}
     engines: {node: ^12.20.0 || ^14.13.1 || >=16.0.0}
 
-  valibot@1.4.0:
-    resolution: {integrity: sha512-iC/x7fVcSyOwlm/VSt7RlHnzNGLGvR9GnxdifUeWoCJo0q4ZZvrVkIHC6faTlkxG47I2Y4UrFquPuVHCrOnrLg==}
+  valibot@1.4.1:
+    resolution: {integrity: sha512-klCmFTz2jeDluy9RwX+F884TCiogtdBJ/YaxSx1EOBYXa3NXNWj8kR1jjN8rzluwojJVWWaHJ4r1U5LfICnM3g==}
     peerDependencies:
       typescript: '>=5'
     peerDependenciesMeta:
@@ -5497,7 +5497,7 @@ snapshots:
 
   url-join@5.0.0: {}
 
-  valibot@1.4.0(typescript@5.3.3):
+  valibot@1.4.1(typescript@5.3.3):
     optionalDependencies:
       typescript: 5.3.3
 
