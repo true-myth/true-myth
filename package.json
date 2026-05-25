@@ -19,7 +19,7 @@
   "bugs": {
     "url": "https://github.com/true-myth/true-myth/issues"
   },
-  "version": "9.3.1",
+  "version": "9.4.0",
   "type": "module",
   "main": "dist/index.js",
   "module": "dist/index.js",
@@ -51,7 +51,7 @@
     "clean": "rimraf ./dist",
     "format": "prettier",
     "prettier": "prettier",
-    "prepublishOnly": "pnpm test && pnpm build",
+    "prepublishOnly": "pnpm test:all && pnpm build && pnpm docs",
     "postpublish": "pnpm clean",
     "test": "vitest run",
     "test:all": "pnpm test && pnpm test:integration",
