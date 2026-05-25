@@ -155,7 +155,7 @@ class TaskImpl<T, E> implements PromiseLike<Result<T, E>> {
 
     @group Constructors
    */
-  static resolve<T extends Unit, E = never>(): Task<Unit, E>;
+  static resolve<_T extends Unit, E = never>(): Task<Unit, E>;
   /**
     Construct a `Task` which is already resolved. Useful when you have a value
     already, but need it to be available in an API which expects a `Task`.
@@ -181,7 +181,7 @@ class TaskImpl<T, E> implements PromiseLike<Result<T, E>> {
 
     @group Constructors
    */
-  static reject<T = never, E extends {} = {}>(): Task<T, Unit>;
+  static reject<T = never, _E extends {} = {}>(): Task<T, Unit>;
   /**
     Construct a `Task` which is already rejected. Useful when you have an error
     already, but need it to be available in an API which expects a `Task`.
@@ -1506,7 +1506,7 @@ export interface TaskConstructor {
 
     @group Constructors
    */
-  resolve<T extends Unit, E = never>(): Task<Unit, E>;
+  resolve<_T extends Unit, E = never>(): Task<Unit, E>;
   /**
     Construct a `Task` which is already resolved. Useful when you have a value
     already, but need it to be available in an API which expects a `Task`.
@@ -1521,7 +1521,7 @@ export interface TaskConstructor {
 
     @group Constructors
    */
-  reject<T = never, E extends {} = {}>(): Task<T, Unit>;
+  reject<T = never, _E extends {} = {}>(): Task<T, Unit>;
   /**
     Construct a `Task` which is already rejected. Useful when you have an error
     already, but need it to be available in an API which expects a `Task`.
