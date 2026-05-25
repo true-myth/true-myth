@@ -48,10 +48,10 @@
   ],
   "scripts": {
     "build": "tsc --project ts/publish.tsconfig.json",
-    "clean": "rimraf ./dist",
+    "clean": "rimraf ./dist ./docs-dist",
     "format": "prettier",
     "prettier": "prettier",
-    "prepublishOnly": "pnpm test:all && pnpm build && pnpm docs",
+    "prepublishOnly": "pnpm clean && pnpm test:all && pnpm build && pnpm run docs",
     "postpublish": "pnpm clean",
     "test": "vitest run",
     "test:all": "pnpm test && pnpm test:integration",
