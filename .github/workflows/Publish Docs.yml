@@ -25,31 +25,14 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 0 # Not needed if lastUpdated is not enabled
-
-      - name: Toolchain setup with mise
-        uses: jdx/mise-action@v3
 
       - name: Setup Pages
         uses: actions/configure-pages@v4
 
-      - name: Install dependencies
-        run: pnpm install
-
-      - name: Update to latest supported TS version to match TypeDoc requirements
-        run: pnpm add --save-dev typescript@latest
-
-      - name: Generate docs
-        run: pnpm run docs
-
-      - name: Replace docs with redirects to true-myth.dev
-        run: node scripts/generate-redirects.mjs
-
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: docs/.vitepress/dist
+          path: redirect-site
 
   deploy:
     environment:
