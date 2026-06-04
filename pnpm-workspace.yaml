@@ -1,2 +1,6 @@
+allowBuilds:
+  esbuild: true
+  sharp: false
+  workerd: true
 overrides:
   vite: npm:rolldown-vite@latest

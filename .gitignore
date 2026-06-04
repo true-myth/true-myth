@@ -68,6 +68,9 @@ docs-dist
 docs/.vitepress/cache
 docs/api/
 
+# Or wrangler output.
+.wrangler
+
 # Exclude auto-created jsconfig.json
 jsconfig.json
 
