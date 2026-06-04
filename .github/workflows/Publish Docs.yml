@@ -43,6 +43,9 @@ jobs:
       - name: Generate docs
         run: pnpm run docs
 
+      - name: Replace docs with redirects to true-myth.dev
+        run: node scripts/generate-redirects.mjs
+
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
