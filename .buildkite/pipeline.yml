@@ -1,6 +1,9 @@
 agents:
   queue: "default"
 
+secrets:
+  - CLOUDFLARE_API_TOKEN
+
 steps:
   - label: ":books: Build docs"
     key: "check-docs"
