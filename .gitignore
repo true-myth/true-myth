@@ -68,6 +68,9 @@ docs-dist
 docs/.vitepress/cache
 docs/api/
 
+# Or wrangler output.
+.wrangler
+
 # Exclude auto-created jsconfig.json
 jsconfig.json
 
@@ -79,5 +82,3 @@ jsconfig.json
 
 # Nova config
 .nova
-.codanna/index
-.fastembed_cache
