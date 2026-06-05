@@ -2,5 +2,23 @@ allowBuilds:
   esbuild: true
   sharp: false
   workerd: true
+minimumReleaseAgeExclude:
+  - tar@7.5.7
+  - tar@7.5.3
+  - tar@7.5.8
+  - basic-ftp@5.2.0
+  - tar@7.5.10
+  - tar@7.5.11
+  - undici@6.24.0
+  - tar@7.5.4
+  - lodash@4.17.24
+  - defu@6.1.5
+  - vite@8.0.5
+  - basic-ftp@5.2.2
+  - basic-ftp@5.2.3
+  - basic-ftp@5.3.1
+  - ip-address@10.1.1
+  - '@tootallnate/once@2.0.1'
+  - tmp@0.2.6
 overrides:
   vite: npm:rolldown-vite@latest
