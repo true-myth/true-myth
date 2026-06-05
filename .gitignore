@@ -67,6 +67,7 @@ dist
 docs-dist
 docs/.vitepress/cache
 docs/api/
+redirect-site
 
 # Or wrangler output.
 .wrangler
