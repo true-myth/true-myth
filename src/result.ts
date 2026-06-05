@@ -381,6 +381,78 @@ class ResultImpl<T, E> {
     return this.andThen(identity);
   }
 
+  /**
+    Given a `Result` whose `Err` variant is an `Error` (including any subclass
+    of `Error`), return the wrapped `Ok` value or throw the `Err` value.
+
+    > [!NOTE]
+    > Idiomatic code using True Myth will rarely use this helper. It exists for
+    > interopability with the broader JavaScript/TypeScript ecosystem, where some
+    > libraries use thrown exceptions for control flow or important semantics. For
+    > example, some ORMs use thrown exceptions as a primary (and sometimes the
+    > only) way to abort a transaction.
+
+    ```ts
+    import Result, * as result from 'true-myth/result';
+
+    class TooLow extends Error {
+      constructor(value: number) {
+        super(`The value was too low: ${value}`);
+      }
+    }
+
+    function getNumber(): Result<number, TooLow> {
+      let value = Math.random();
+      return value > 0.5 ? result.ok(value) : result.err(new TooLow(value));
+    }
+
+    let result = getNumber().orThrow();
+    ```
+   */
+  orThrow(this: Result<T, Error>): T {
+    if (this.isErr) {
+      throw this.error;
+    }
+
+    return this.value;
+  }
+
+  /**
+    Given a `Result`, return its wrapped value or throw an `Error`.
+
+    > [!NOTE]
+    > Idiomatic code using True Myth will rarely use this helper. It exists for
+    > interopability with the broader JavaScript/TypeScript ecosystem, where
+    > some libraries use thrown exceptions for control flow or important
+    > semantics. For example, some ORMs use thrown exceptions as a primary (and
+    > sometimes the only) way to abort a transaction.
+
+    ```ts
+    import * as result from 'true-myth/result';
+
+    class OrmError extends Error {
+      readonly name = "MyLib.OrmError";
+
+      constructor(err: unknown) {
+        super("True Myth `Result` was an `Err`", { cause: err });
+      }
+    }
+
+    function someOrmTransaction() {
+      let output = doSomeResultReturningOperation()
+        .orThrowWith((err) => new OrmError(err));
+      // ...
+    }
+    ```
+   */
+  orThrowWith<Thrown extends Error>(build: (err: E) => Thrown): T {
+    if (this.repr[0] === 'Err') {
+      throw build(this.repr[1]);
+    }
+
+    return this.repr[1];
+  }
+
   cast() {
     return this;
   }
@@ -1674,7 +1746,7 @@ export function ap<A, B, E>(
   can use this `safe` method to transform it into a form which will *not* throw:
 
   ```ts
-  import { safe } from 'true-myth/task';
+  import { safe } from 'true-myth/result';
   const parse = safe(JSON.parse);
 
   let result = parse(`"ill-formed gobbledygook'`);
@@ -1709,7 +1781,7 @@ export function safe<F extends AnyFunction, P extends Parameters<F>, R extends R
   wrapping it in a custom error :
 
   ```ts
-  import { safe } from 'true-myth/task';
+  import { safe } from 'true-myth/result';
 
   class ParsingError extends Error {
     name = 'ParsingError';
@@ -1978,6 +2050,120 @@ export function transposeAny(
   }
 
   return Result.err(errs);
+}
+
+/**
+  Given a `Result` whose `Err` variant is an `Error` (including any subclass of
+  `Error`), return the wrapped `Ok` value or throw the `Err` value.
+
+  > [!NOTE]
+  > Idiomatic code using True Myth will rarely use this helper. It exists for
+  > interopability with the broader JavaScript/TypeScript ecosystem, where some
+  > libraries use thrown exceptions for control flow or important semantics. For
+  > example, some ORMs use thrown exceptions as a primary (and sometimes the
+  > only) way to abort a transaction.
+
+  ```ts
+  import Result, * as result from 'true-myth/result';
+
+  class TooLow extends Error {
+    constructor(value: number) {
+      super(`The value was too low: ${value}`);
+    }
+  }
+
+  function getNumber(): Result<number, TooLow> {
+    let value = Math.random();
+    return value > 0.5 ? result.ok(value) : result.err(new TooLow(value));
+  }
+
+  function useIt() {
+    let result = result.orThrow(getNumber());
+  }
+  ```
+ */
+export function orThrow<T, E extends Error>(result: Result<T, E>): T {
+  return result.orThrow();
+}
+
+/**
+  Given a `Result`, return its wrapped value or build an `Error` and throw it.
+
+  > [!NOTE]
+  > Idiomatic code using True Myth will rarely use this helper. It exists for
+  > interopability with the broader JavaScript/TypeScript ecosystem, where some
+  > libraries use thrown exceptions for control flow or important semantics. For
+  > example, some ORMs use thrown exceptions as a primary (and sometimes the
+  > only) way to abort a transaction.
+
+  This is the main form, which takes both the exception builder and the `Result`.
+  A curried form exists as well.
+
+  ```ts
+  import * as result from 'true-myth/result';
+
+  class OrmError extends Error {
+    readonly name = "MyLib.OrmError";
+
+    constructor(err: unknown) {
+      super("True Myth `Result` was an `Err`", { cause: err });
+    }
+  }
+
+  function someOrmTransaction() {
+    let output = result.orThrowWith(
+      (err) => new OrmError(err),
+      doSomeResultReturningOperation(),
+    );
+    // ...
+  }
+  ```
+ */
+export function orThrowWith<T, E, Thrown extends Error>(
+  buildError: (err: E) => Thrown,
+  result: Result<T, E>
+): T;
+/**
+  Given a `Result`, return its wrapped value or throw an `Error`.
+
+  > [!NOTE]
+  > Idiomatic code using True Myth will rarely use this helper. It exists for
+  > interopability with the broader JavaScript/TypeScript ecosystem, where some
+  > libraries use thrown exceptions for control flow or important semantics. For
+  > example, some ORMs use thrown exceptions as a primary (and sometimes the
+  > only) way to abort a transaction.
+
+  This is the curried form, which allows you to create a standalone function
+  easily and pass any `Result` to it later. A form that accepts both the error
+  builder and the result at once exists as well.
+
+  ```ts
+  import * as result from 'true-myth/result';
+
+  class OrmError extends Error {
+    readonly name = "MyLib.OrmError";
+
+    constructor(err: unknown) {
+      super("True Myth `Result` was an `Err`", { cause: err });
+    }
+  }
+
+  const abortable = result.orThrowWith((err) => new OrmError(err));
+
+  function someOrmTransaction() {
+    let output = abortable(doSomeResultReturningOperation());
+    // ...
+  }
+  ```
+ */
+export function orThrowWith<T, E, Thrown extends Error>(
+  buildError: (err: E) => Thrown
+): (result: Result<T, E>) => T;
+export function orThrowWith<T, E, Thrown extends Error>(
+  buildError: (err: E) => Thrown,
+  result?: Result<T, E>
+): T | ((result: Result<T, E>) => T) {
+  return result ? result.orThrowWith(buildError) : (result) => result.orThrowWith(buildError);
 }
 
 /**

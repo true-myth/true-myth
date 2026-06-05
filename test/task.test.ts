@@ -27,6 +27,8 @@ import Task, {
   reject,
   withResolvers,
   orElse,
+  orThrow,
+  orThrowWith,
   match,
   or,
   andThen,
@@ -1299,6 +1301,43 @@ describe('`Task`', () => {
         expect(theTask.isResolved).toBe(false);
         expect(theTask.isRejected).toBe(true);
       }
+    });
+  });
+
+  describe('`orThrow` method', () => {
+    test('when the task resolves, returns the value', async () => {
+      await expect(Task.resolve(123).orThrow()).resolves.toBe(123);
+    });
+
+    test('when the task rejects, throws the error', async () => {
+      const theError = new Error('oh no');
+      await expect(Task.reject(theError).orThrow()).rejects.toThrow(theError);
+    });
+  });
+
+  describe('`orThrowWith` method', () => {
+    class WrappedError extends Error {
+      constructor(readonly cause: unknown) {
+        super('WrappedError', { cause });
+      }
+    }
+
+    test('when the task resolves, returns the value', async () => {
+      await expect(Task.resolve(123).orThrowWith((e) => new WrappedError(e))).resolves.toBe(123);
+    });
+
+    test('when the task rejects, throws the built error', async () => {
+      await expect(
+        Task.reject('oh no').orThrowWith((e) => new WrappedError(e))
+      ).rejects.toBeInstanceOf(WrappedError);
+    });
+
+    test('passes the rejection reason to the builder', async () => {
+      await expect(
+        Task.reject('oh no').orThrowWith((e) => new WrappedError(e))
+      ).rejects.toMatchObject({
+        cause: 'oh no',
+      });
     });
   });
 
@@ -3296,6 +3335,57 @@ describe('module-scope functions', () => {
         // Does *not* absorb initial type.
         expectTypeOf(theTask.reason).toEqualTypeOf<RejA | RejB>();
       }
+    });
+  });
+
+  describe('orThrow', () => {
+    test('when the task resolves, returns the value', async () => {
+      await expect(orThrow(Task.resolve(123))).resolves.toBe(123);
+    });
+
+    test('when the task rejects, throws the error', async () => {
+      const theError = new Error('oh no');
+      await expect(orThrow(Task.reject(theError))).rejects.toThrow(theError);
+    });
+  });
+
+  describe('orThrowWith', () => {
+    class WrappedError extends Error {
+      constructor(readonly cause: unknown) {
+        super('WrappedError', { cause });
+      }
+    }
+
+    describe('with both arguments', () => {
+      test('when the task resolves, returns the value', async () => {
+        await expect(orThrowWith((e) => new WrappedError(e), Task.resolve(123))).resolves.toBe(123);
+      });
+
+      test('when the task rejects, throws the built error', async () => {
+        await expect(
+          orThrowWith((e) => new WrappedError(e), Task.reject('oh no'))
+        ).rejects.toBeInstanceOf(WrappedError);
+      });
+
+      test('passes the rejection reason to the builder', async () => {
+        await expect(
+          orThrowWith((e) => new WrappedError(e), Task.reject('oh no'))
+        ).rejects.toMatchObject({
+          cause: 'oh no',
+        });
+      });
+    });
+
+    describe('with curried form', () => {
+      test('when the task resolves, returns the value', async () => {
+        const throwWrapped = orThrowWith((e: string) => new WrappedError(e));
+        await expect(throwWrapped(Task.resolve(123))).resolves.toBe(123);
+      });
+
+      test('when the task rejects, throws the built error', async () => {
+        const throwWrapped = orThrowWith((e: string) => new WrappedError(e));
+        await expect(throwWrapped(Task.reject('oh no'))).rejects.toBeInstanceOf(WrappedError);
+      });
     });
   });
 

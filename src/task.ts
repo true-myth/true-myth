@@ -801,6 +801,71 @@ class TaskImpl<T, E> implements PromiseLike<Result<T, E>> {
   }
 
   /**
+    Given a {@linkcode Task}, return a `Promise` of its wrapped value or throw
+    an `Error`.
+
+    > [!NOTE]
+    > Idiomatic code using True Myth will rarely use this helper. It exists for
+    > interoperability with the broader JavaScript/TypeScript ecosystem, where
+    > some libraries use thrown exceptions for control flow or important
+    > semantics. For example, some ORMs use thrown exceptions as a primary (and
+    > sometimes the only) way to abort a transaction.
+
+    ```ts
+    import Task from ‘true-myth/task’;
+
+    class TooLow extends Error {
+      constructor(value: number) {
+        super(`The value was too low: ${value}`);
+      }
+    }
+
+    async function getNumber(): Promise<Task<number, TooLow>> {
+      let value = Math.random();
+      return value > 0.5 ? Task.resolve(value) : Task.reject(new TooLow(value));
+    }
+
+    let value = await (await getNumber()).orThrow();
+    ```
+   */
+  orThrow(this: Task<T, Error>): Promise<T> {
+    return this.toPromise().then(result.orThrow);
+  }
+
+  /**
+    Given a {@linkcode Task}, return a `Promise` of its wrapped value or build
+    an `Error` and throw it.
+
+    > [!NOTE]
+    > Idiomatic code using True Myth will rarely use this helper. It exists for
+    > interoperability with the broader JavaScript/TypeScript ecosystem, where
+    > some libraries use thrown exceptions for control flow or important
+    > semantics. For example, some ORMs use thrown exceptions as a primary (and
+    > sometimes the only) way to abort a transaction.
+
+    ```ts
+    import Task from ‘true-myth/task’;
+
+    class OrmError extends Error {
+      readonly name = "MyLib.OrmError";
+
+      constructor(err: unknown) {
+        super("True Myth `Task` was `Rejected`", { cause: err });
+      }
+    }
+
+    async function someOrmTransaction() {
+      let output = await doSomeTaskReturningOperation()
+        .orThrowWith((reason) => new OrmError(reason));
+      // ...
+    }
+    ```
+   */
+  orThrowWith<Thrown extends Error>(build: (reason: E) => Thrown): Promise<T> {
+    return this.#promise.then(result.orThrowWith(build));
+  }
+
+  /**
     Allows you to produce a new value by providing functions to operate against
     both the {@linkcode Resolved} and {@linkcode Rejected} states once the
     {@linkcode Task} resolves.
@@ -2584,6 +2649,125 @@ export function orElse<T, E, F, U = T>(
   task?: Task<T, E>
 ): Task<T | U, F> | ((task: Task<T, E>) => Task<T | U, F>) {
   return curry1((task) => task.orElse(elseFn), task);
+}
+
+/**
+  Given a `Task` whose rejection type is an `Error` (including any subclass of
+  `Error`), return a `Promise` of the resolved value or throw the rejection
+  reason.
+
+  > [!NOTE]
+  > Idiomatic code using True Myth will rarely use this helper. It exists for
+  > interoperability with the broader JavaScript/TypeScript ecosystem, where
+  > some libraries use thrown exceptions for control flow or important
+  > semantics. For example, some ORMs use thrown exceptions as a primary (and
+  > sometimes the only) way to abort a transaction.
+
+  ```ts
+  import * as task from 'true-myth/task';
+
+  class TooLow extends Error {
+    constructor(value: number) {
+      super(`The value was too low: ${value}`);
+    }
+  }
+
+  function getNumber(): task.Task<number, TooLow> {
+    let value = Math.random();
+    return value > 0.5 ? task.resolve(value) : task.reject(new TooLow(value));
+  }
+
+  async function useIt() {
+    let value = await task.orThrow(getNumber());
+  }
+  ```
+
+  @template T The type of the value when the `Task` resolves successfully.
+  @template E The type of the rejection reason when the `Task` rejects.
+ */
+export function orThrow<T, E extends Error>(task: Task<T, E>): Promise<T> {
+  return task.orThrow();
+}
+
+/**
+  Given a `Task`, return a `Promise` of the resolved value or build an `Error`
+  and throw it.
+
+  > [!NOTE]
+  > Idiomatic code using True Myth will rarely use this helper. It exists for
+  > interoperability with the broader JavaScript/TypeScript ecosystem, where
+  > some libraries use thrown exceptions for control flow or important
+  > semantics. For example, some ORMs use thrown exceptions as a primary (and
+  > sometimes the only) way to abort a transaction.
+
+  This is the main form, which takes both the eeption builder and the `Task`. A
+  curried form exists as well.
+
+  ```ts
+  import * as task from 'true-myth/task';
+
+  class OrmError extends Error {
+    readonly name = "MyLib.OrmError";
+
+    constructor(err: unknown) {
+      super("True Myth `Task` was `Rejected`", { cause: err });
+    }
+  }
+
+  async function someOrmTransaction() {
+    let output = await task.orThrowWith(
+      (reason) => new OrmError(reason),
+      doSomeTaskReturningOperation(),
+    );
+    // ...
+  }
+  ```
+ */
+export function orThrowWith<T, E, Thrown extends Error>(
+  buildError: (reason: E) => Thrown,
+  task: Task<T, E>
+): Promise<T>;
+/**
+  Given a `Task`, return a `Promise` of the resolved value or throw an `Error`.
+
+  > [!NOTE]
+  > Idiomatic code using True Myth will rarely use this helper. It exists for
+  > interoperability with the broader JavaScript/TypeScript ecosystem, where
+  > some libraries use thrown exceptions for control flow or important
+  > semantics. For example, some ORMs use thrown exceptions as a primary (and
+  > sometimes the only) way to abort a transaction.
+
+  This is the curried form, which allows you to create a standalone function
+  easily and pass any `Task` to it later. A form that accepts both the error
+  builder and the task at once exists as well.
+
+  ```ts
+  import * as task from 'true-myth/task';
+
+  class OrmError extends Error {
+    readonly name = "MyLib.OrmError";
+
+    constructor(err: unknown) {
+      super("True Myth `Task` was `Rejected`", { cause: err });
+    }
+  }
+
+  const abortable = task.orThrowWith((reason) => new OrmError(reason));
+
+  async function someOrmTransaction() {
+    let output = await abortable(doSomeTaskReturningOperation());
+    // ...
+  }
+  ```
+ */
+export function orThrowWith<T, E, Thrown extends Error>(
+  buildError: (reason: E) => Thrown
+): (task: Task<T, E>) => Promise<T>;
+export function orThrowWith<T, E, Thrown extends Error>(
+  buildError: (reason: E) => Thrown,
+  task?: Task<T, E>
+): Promise<T> | ((task: Task<T, E>) => Promise<T>) {
+  return task ? task.orThrowWith(buildError) : (task) => task.orThrowWith(buildError);
 }
 
 /**

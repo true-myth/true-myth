@@ -837,6 +837,49 @@ describe('`Result` pure functions', () => {
     });
   });
 
+  describe('`orThrow` function', () => {
+    test('with `Ok`', () => {
+      const theOk = result.ok(123);
+      expect(result.orThrow(theOk)).toBe(123);
+    });
+
+    test('with `Err`', () => {
+      const theError = new Error('oh no');
+      const theErr = result.err(theError);
+      expect(() => result.orThrow(theErr)).toThrow(theError);
+    });
+  });
+
+  describe('`orThrowWith` function', () => {
+    class WrappedError extends Error {
+      constructor(readonly cause: unknown) {
+        super('WrappedError', { cause });
+      }
+    }
+
+    test('with `Ok` (direct form)', () => {
+      const theOk = result.ok(123);
+      expect(result.orThrowWith((e) => new WrappedError(e), theOk)).toBe(123);
+    });
+
+    test('with `Err` (direct form)', () => {
+      const theErr = result.err('oh no');
+      expect(() => result.orThrowWith((e) => new WrappedError(e), theErr)).toThrow(WrappedError);
+    });
+
+    test('with `Ok` (curried form)', () => {
+      const theOk = result.ok(123);
+      const throwWrapped = result.orThrowWith((e: string) => new WrappedError(e));
+      expect(throwWrapped(theOk)).toBe(123);
+    });
+
+    test('with `Err` (curried form)', () => {
+      const theErr = result.err('oh no');
+      const throwWrapped = result.orThrowWith((e: string) => new WrappedError(e));
+      expect(() => throwWrapped(theErr)).toThrow(WrappedError);
+    });
+  });
+
   describe('`flatten` function', () => {
     test('with `Ok(Ok(value))`', () => {
       let wrapped = result.ok(result.ok(123));
@@ -1261,6 +1304,24 @@ describe('`Ok` instance', () => {
     expect(result.toString()).toEqual(`Ok(5)`);
   });
 
+  test('`orThrow` method', () => {
+    const theOk = Result.ok<number, Error>(123);
+    expect(theOk.orThrow()).toBe(123);
+  });
+
+  describe('`orThrowWith` method', () => {
+    class WrappedError extends Error {
+      constructor(readonly cause: unknown) {
+        super('WrappedError', { cause });
+      }
+    }
+
+    test('returns the value', () => {
+      const theOk = Result.ok<number, string>(123);
+      expect(theOk.orThrowWith((e) => new WrappedError(e))).toBe(123);
+    });
+  });
+
   test('`cast` method', () => {
     const val = Result.ok<string, string>('hello');
 
@@ -1575,6 +1636,37 @@ describe('`result.Err` class', () => {
     const result = fn.ap(val);
 
     expect(result.toString()).toEqual(`Err("ERR_ALLURBASE")`);
+  });
+
+  test('`orThrow` method', () => {
+    const theError = new Error('oh no');
+    const theErr = Result.err<number, Error>(theError);
+    expect(() => theErr.orThrow()).toThrow(theError);
+  });
+
+  describe('`orThrowWith` method', () => {
+    class WrappedError extends Error {
+      constructor(readonly cause: unknown) {
+        super('WrappedError', { cause });
+      }
+    }
+
+    test('throws the built error', () => {
+      const theErr = Result.err<number, string>('oh no');
+      expect(() => theErr.orThrowWith((e) => new WrappedError(e))).toThrow(WrappedError);
+    });
+
+    test('passes the error to the builder', () => {
+      const theErr = Result.err<number, string>('oh no');
+      let caught: unknown;
+      try {
+        theErr.orThrowWith((e) => new WrappedError(e));
+      } catch (e) {
+        caught = e;
+      }
+      expect(caught).toBeInstanceOf(WrappedError);
+      expect((caught as WrappedError).cause).toBe('oh no');
+    });
   });
 });
 
