@@ -92,7 +92,7 @@
     "markdown-it-deflist": "^3.0.1",
     "markdown-it-footnote": "^4.0.0",
     "miniglob": "^0.1.2",
-    "oxc-minify": "^0.134.0",
+    "oxc-minify": "^0.135.0",
     "oxfmt": "^0.53.0",
     "release-it": "^19.2.4",
     "rimraf": "^6.1.3",
