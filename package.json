@@ -93,7 +93,7 @@
     "markdown-it-footnote": "^4.0.0",
     "miniglob": "^0.1.2",
     "oxc-minify": "^0.134.0",
-    "oxfmt": "^0.53.0",
+    "oxfmt": "^0.54.0",
     "release-it": "^19.2.4",
     "rimraf": "^6.1.3",
     "shelljs": "^0.10.0",
