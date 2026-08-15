@@ -11,3 +11,28 @@ body {
   font-family: system-ui, sans-serif;
   text-align: center;
 }
+
+main {
+  max-width: 36em;
+  text-align: left;
+}
+
+h1, h2, p {
+  margin: 1rem 0;
+  padding: 0;
+}
+
+h1 {
+  font-variation-settings: "wght" 300, "wdth" 200;
+  font-size: 1.6em;
+}
+
+h2 {
+  font-weight: 300;
+  font-style: italic;
+  font-size: 1.3em;
+}
+
+code {
+  font-family: ui-monospace, monospace;
+}
