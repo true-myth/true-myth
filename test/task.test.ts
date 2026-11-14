@@ -1,4 +1,4 @@
-import { afterEach, assert, beforeEach, describe, expect, expectTypeOf, test } from 'vitest';
+import { afterEach, assert, beforeEach, describe, expect, expectTypeOf, test, vi } from 'vitest';
 
 import Task, {
   InvalidAccess,
@@ -3668,6 +3668,76 @@ describe('module-scope functions', () => {
         expect(printError(theError)).toMatch(
           /TrueMyth\.Task\.RetryFailed: Stopped retrying after 5 tries \(\d+ms\)/
         );
+      });
+    });
+
+    describe('elapsed time', () => {
+      beforeEach(() => {
+        vi.useFakeTimers({ now: 0 });
+      });
+
+      afterEach(() => {
+        vi.useRealTimers();
+      });
+
+      test('`elapsed` is the time since the first call', async () => {
+        let seen: Array<[count: number, elapsed: number]> = [];
+        let theTask = withRetries(
+          ({ count, elapsed }) => {
+            seen.push([count, elapsed]);
+            return Task.reject('nope');
+          },
+          take(fixed({ at: 100 }), 5)
+        );
+
+        await vi.runAllTimersAsync();
+        let theError = unwrapErr(await theTask);
+
+        expect(seen).toEqual([
+          [0, 0],
+          [1, 100],
+          [2, 200],
+          [3, 300],
+          [4, 400],
+          [5, 500],
+        ]);
+        assert(isRetryFailed(theError));
+        expect(theError.totalDuration).toBe(500);
+        expect(theError.message).toBe('Stopped retrying after 5 tries (500ms)');
+      });
+
+      test('`totalDuration` includes the time of the last attempt', async () => {
+        let theTask = withRetries(
+          ({ count }) => (count < 2 ? Task.reject('nope') : stopRetrying('done')),
+          take(fixed({ at: 100 }), 5)
+        );
+
+        await vi.runAllTimersAsync();
+        let theError = unwrapErr(await theTask);
+
+        assert(isRetryFailed(theError));
+        expect(theError.tries).toBe(2);
+        expect(theError.totalDuration).toBe(200);
+      });
+
+      test('`elapsed` counts time spent inside the retryable', async () => {
+        let seen = new Array<number>();
+        let theTask = withRetries(
+          ({ elapsed }) => {
+            seen.push(elapsed);
+            return new Task<never, string>((_, reject) => {
+              setTimeout(() => reject('slow failure'), 50);
+            });
+          },
+          take(fixed({ at: 100 }), 2)
+        );
+
+        await vi.runAllTimersAsync();
+        let theError = unwrapErr(await theTask);
+
+        expect(seen).toEqual([0, 150, 300]);
+        assert(isRetryFailed(theError));
+        expect(theError.totalDuration).toBe(350);
       });
     });
 
