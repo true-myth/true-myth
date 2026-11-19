@@ -3067,8 +3067,11 @@ export function withRetries<T, E>(
   const startTime = Date.now();
 
   let count = 0;
-  let totalDuration = 0;
   let rejections = new Array<E>();
+
+  // Always measured from the start of the first call, so it is the real time
+  // spent so far, including the time spent inside each call.
+  const elapsedTime = () => Date.now() - startTime;
 
   /**
     Internal helper so the operation can recurse. Note: if you have too large a
@@ -3079,13 +3082,13 @@ export function withRetries<T, E>(
    */
   function helper(): Task<T, RetryFailed<E>> {
     // Try it!
-    let taskOrErr = retryable({ count, elapsed: totalDuration });
+    let taskOrErr = retryable({ count, elapsed: elapsedTime() });
 
     if (taskOrErr instanceof Error) {
       return Task.reject(
         new RetryFailed({
           tries: count,
-          totalDuration,
+          totalDuration: elapsedTime(),
           rejections,
           cause: taskOrErr,
         })
@@ -3105,7 +3108,7 @@ export function withRetries<T, E>(
         return Task.reject(
           new RetryFailed({
             tries: count,
-            totalDuration,
+            totalDuration: elapsedTime(),
             rejections,
             cause: reason,
           })
@@ -3116,11 +3119,16 @@ export function withRetries<T, E>(
 
       let next = strategy.next();
       if (next.done) {
-        return Task.reject(new RetryFailed({ tries: count, totalDuration, rejections }));
+        return Task.reject(
+          new RetryFailed({
+            tries: count,
+            totalDuration: elapsedTime(),
+            rejections,
+          })
+        );
       }
 
       let delay = next.value;
-      totalDuration += Date.now() - startTime;
       count += 1;
 
       return timer(delay).andThen(helper);
