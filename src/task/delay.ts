@@ -81,7 +81,7 @@ export function* fixed(options?: {
   /** Delay duration in milliseconds. Default is `1` (immediate). */
   at: number;
 }): Generator<number> {
-  let integralValue = options?.at ? Math.round(options.at) : 1;
+  let integralValue = Math.round(options?.at ?? 1);
   while (true) {
     yield integralValue;
   }
@@ -122,7 +122,7 @@ export function* linear(options?: {
   let curr = options?.from ? Math.round(options.from) : 0;
   while (true) {
     yield curr;
-    curr += step;
+    curr = Math.min(curr + step, Number.MAX_SAFE_INTEGER);
   }
 }
 

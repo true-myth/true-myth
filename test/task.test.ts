@@ -3817,6 +3817,11 @@ describe('module-scope functions', () => {
         let values = Array.from(take(fixed({ at: 1.2 }), 5));
         expect(values).toEqual([1, 1, 1, 1, 1]);
       });
+
+      test('with value `0`', () => {
+        let values = Array.from(take(fixed({ at: 0 }), 5));
+        expect(values).toEqual([0, 0, 0, 0, 0]);
+      });
     });
 
     test('immediate', () => {
@@ -3843,6 +3848,17 @@ describe('module-scope functions', () => {
       test('with non-integral value', () => {
         let values = Array.from(take(linear({ from: 1.1, withStepSize: 2 }), 5));
         expect(values).toEqual([1, 3, 5, 7, 9]);
+      });
+
+      test('stops at `Number.MAX_SAFE_INTEGER`', () => {
+        let from = Number.MAX_SAFE_INTEGER - 3;
+        let values = Array.from(take(linear({ from, withStepSize: 2 }), 4));
+        expect(values).toEqual([
+          from,
+          Number.MAX_SAFE_INTEGER - 1,
+          Number.MAX_SAFE_INTEGER,
+          Number.MAX_SAFE_INTEGER,
+        ]);
       });
     });
 
