@@ -109,12 +109,23 @@ class TaskImpl<T, E> implements PromiseLike<Result<T, E>> {
    */
   constructor(executor: (resolve: (value: T) => void, reject: (reason: E) => void) => void) {
     this.#promise = new Promise<Result<T, E>>((resolve) => {
+      // Like a `Promise`, a `Task` settles only once: after the first call to
+      // `resolve` or `reject`, later calls are ignored, so the state always
+      // matches the `Result` the `Task` produces.
       executor(
         (value) => {
+          if (this.#state[0] !== State.Pending) {
+            return;
+          }
+
           this.#state = [State.Resolved, value];
           resolve(Result.ok(value));
         },
         (reason) => {
+          if (this.#state[0] !== State.Pending) {
+            return;
+          }
+
           this.#state = [State.Rejected, reason];
           resolve(Result.err(reason));
         }

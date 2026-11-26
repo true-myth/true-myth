@@ -80,6 +80,31 @@ describe('`Task`', () => {
       expect(unwrapErr(result)).toEqual(theReason);
     });
 
+    test('only the first `resolve` or `reject` counts', async () => {
+      let resolvedTwice = new Task<number, string>((resolve) => {
+        resolve(1);
+        resolve(2);
+      });
+      expect(unwrap(await resolvedTwice)).toBe(1);
+      expect(resolvedTwice.toString()).toBe('Task.Resolved(1)');
+
+      let resolvedThenRejected = new Task<number, string>((resolve, reject) => {
+        resolve(1);
+        reject('oh teh noes');
+      });
+      expect(unwrap(await resolvedThenRejected)).toBe(1);
+      expect(resolvedThenRejected.state).toBe(State.Resolved);
+      expect(resolvedThenRejected.toString()).toBe('Task.Resolved(1)');
+
+      let rejectedThenResolved = new Task<number, string>((resolve, reject) => {
+        reject('oh teh noes');
+        resolve(1);
+      });
+      expect(unwrapErr(await rejectedThenResolved)).toBe('oh teh noes');
+      expect(rejectedThenResolved.state).toBe(State.Rejected);
+      expect(rejectedThenResolved.toString()).toBe('Task.Rejected("oh teh noes")');
+    });
+
     test('when an error is thrown', async () => {
       // Wire up a promise to wait on this so we can make the test wait till
       // this is done before exiting. Otherwise, the promise may leak across
